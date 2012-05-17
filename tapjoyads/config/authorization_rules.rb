@@ -162,7 +162,7 @@ authorization do
     includes :tools
     has_permission_on :dashboard_tools, :to => [ :manage_user_roles, :update_user_roles ]
     has_permission_on :dashboard_tools_users, :to => [ :index, :show ]
-    has_permission_on :dashboard_tools_users_role_assignments, :to => [ :create, :destroy ]
+    has_permission_on :dashboard_tools_role_assignments, :to => [ :create, :destroy ]
   end
 
   role :products do
