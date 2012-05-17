@@ -8,7 +8,7 @@
     Please complete all questions!
 
   #main
-    - form_tag(survey_results_path) do
+    = form_tag(survey_results_path) do
       = hidden_field_tag(:udid, params[:udid])
       = hidden_field_tag(:click_key, params[:click_key])
       = hidden_field_tag(:id, params[:id])
@@ -24,6 +24,8 @@
               :question => survey_question
       = submit_tag("Submit", :class => 'button')
   #footer
+    .privacy
+      = link_to t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'
     = render '/shared/truste'
 
 - content_for :page_styles do

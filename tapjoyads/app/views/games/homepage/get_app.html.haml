@@ -11,7 +11,7 @@
           .sub-title
             = @offer.partner_name
     .mod.get-app
-      - link_to(@offer.url) do
+      = link_to(@click_url) do
         .ui-joy-button.orange-action
           .text-center.get-app
             = t('text.games.get_app')
@@ -23,5 +23,47 @@
     - if @app_metadata
       .mod.score-summary
         %img{:src => BLANK_IMAGE}
-        %span.percentage= "#{@app_metadata.positive_thumbs_percentage.floor}%"
-        %span.description= "from #{@app_metadata.app_reviews.by_gamers.size} voters"
+        .text
+          %span.percentage= "#{@app_metadata.positive_thumbs_percentage.floor}%"
+          %span.description= t("text.games.app_review_num_voters", :count => @app_metadata.app_reviews.size)
+    = render "games/app_reviews/list"
+- content_for :page_javascript do
+  :plain
+    var flag_review = function( value ){
+      var error = function(xhr, textStatus, errorThrown){
+        var data = JSON.parse(xhr.responseText);
+      };
+      var success = function( $el ){
+        return function(data,textStatus){
+            var $par = $el.closest('.moderation-panel');
+            var $tri = $par.prev();
+            $par.html($('<span class="'+data.class+'"></span>').html(data.msg));
+            $par.delay(3000).slideUp('fast', function(){$tri.hide();} );
+          };
+      };
+      return function(e){
+          var $el = $(this);
+          var $root = $el.parents('div.line-item.review');
+          var url = $el.attr('href');
+          $.ajax({
+             type: 'POST',
+             url: url,
+             data: {value: value},
+             success: success($el),
+             error: error,
+             dataType: 'json'
+          });
+          e.preventDefault();
+        };
+    };
+    var reveal_review = function(){
+      var $el = $(this);
+      var $root = $el.parents('div.line-item.review');
+      $root.removeClass('fixed-height');
+      $root.addClass('var-height');
+    };
+
+    $('#offer-detail').delegate('.more-btn','click', reveal_review);
+    $('#offer-detail').delegate('.yn a.y','click', flag_review(1));
+    $('#offer-detail').delegate('.yn a.n','click', flag_review(-1));
+    $('#offer-detail').delegate('a.concern','click',flag_review(null));

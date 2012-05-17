@@ -1,0 +1,36 @@
+- @page_title = 'Per-App Inventory Management'
+= render :partial => 'actions'
+
+.left-indented
+  .box-full
+    = form_tag(promoted_offers_inventory_management_path, { :method => :get, :class => 'tjform', :id => :app_promoted_offer}) do
+      = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
+      %p
+        You can customize offers that may be promoted on a Per-App basis. These offers are promoted in addition to the globally promoted offers.
+      - if @global_offers.present?
+        %p
+          The following offers are being promoted currently, based on the global settings:
+        %p
+          %ul
+            - @global_offers.each do |offer|
+              %li= offer.name
+      - if @app
+        - if @available_offers.present?
+          = hidden_field_tag :current_app, @app.id
+          %table
+            %tbody
+              %tr
+                %th
+                  Promoted Offers
+                %td
+                  = select_tag :promoted_offers, options_for_select(@available_offers, @currently_promoted), {:multiple => true, :class => 'chosen', :style => "width: 450px;"}
+              %tr
+                %td{ :colspan => 2 }
+                  = submit_tag('Save', :class => 'button')
+        - else
+          - if @app.primary_currency
+            %p
+              No offers are available for promotion. Please select a different app.
+          - else
+            %p
+              A valid currency must be associated with the app for customization.

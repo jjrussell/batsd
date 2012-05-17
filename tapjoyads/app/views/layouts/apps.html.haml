@@ -1,6 +1,6 @@
 - content_for :apps_layout do
   = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
-  = render('apps/actions', :app => @app)
+  = render('dashboard/apps/actions', :app => @app)
 
   #apps_main
     = yield

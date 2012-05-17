@@ -29,7 +29,9 @@ module GetOffersHelper
       :display_multiplier => params[:display_multiplier],
       :device_name        => params[:device_name],
       :library_version    => params[:library_version],
-      :gamer_id           => params[:gamer_id])
+      :gamer_id           => params[:gamer_id],
+      :os_version         => params[:os_version],
+      :mac_address        => params[:mac_address])
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'
@@ -37,7 +39,21 @@ module GetOffersHelper
       else
         prefix = "tjvideo://"
       end
-      "#{prefix}video_id=#{offer.id}&amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&currency_name=#{URI::escape(@currency.name)}&click_url=#{click_url}"
+
+      video_complete_url = offer.destination_url(
+        :publisher_user_id  => params[:publisher_user_id],
+        :publisher_app_id   => @publisher_app.id,
+        :currency           => @currency,
+        :udid               => params[:udid]
+      )
+
+      parameters = "video_id=#{offer.id}&"
+      parameters << "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&"
+      parameters << "currency_name=#{URI::escape(@currency.name)}&"
+      parameters << "click_url=#{click_url}&"
+      parameters << "video_complete_url=#{video_complete_url}"
+
+      "#{prefix}#{parameters}"
     else
       click_url
     end
@@ -56,7 +72,8 @@ module GetOffersHelper
         :primary_country    => geoip_data[:primary_country],
         :display_multiplier => params[:display_multiplier],
         :library_version    => params[:library_version],
-        :language_code      => params[:language_code])
+        :language_code      => params[:language_code],
+        :os_version         => params[:os_version])
   end
 
   def visual_cost(offer)
@@ -84,4 +101,19 @@ module GetOffersHelper
     support_params
   end
 
+  def featured_offer_text(offer, currency)
+    return '' unless offer.item_type == 'App'
+    (offer.rewarded? && currency.rewarded?) ? t('text.featured.download_and_run') : t('text.featured.try_out')
+  end
+
+  def featured_offer_earn_currency_text(offer, currency, display_multiplier)
+    if offer.rewarded? && currency.rewarded?
+      return t('text.featured.earn_currency', :amount_and_currency => "#{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}")
+    end
+    t('text.featured.download')
+  end
+
+  def featured_offer_action_text(offer)
+    offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now')
+  end
 end

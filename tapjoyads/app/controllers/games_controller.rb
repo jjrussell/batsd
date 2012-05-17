@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
 
   protected
 
@@ -28,25 +28,29 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
+    I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+  end
+
+  def get_locale_filename
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}"
   end
 
   def get_language_codes
     return [] unless params[:language_code]
 
-    code = params[:language_code]
-
+    code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
     splits = []
+    unset_priority = 2.0
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
-      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-      quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
+      language = language.downcase
+      quality = unset_priority -= 0.1 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
       splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
       result
@@ -111,20 +115,39 @@ class GamesController < ApplicationController
   def handle_mogli_exceptions(e)
     case e
     when Mogli::Client::FeedActionRequestLimitExceeded
-      @error_msg = "You've reached the limit. Please try again later."
+      @error_msg = t('text.games.mogli_reach_limit_error')
     when Mogli::Client::HTTPException
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
+      @error_msg = t('text.games.social_invite_friend_error')
     when Mogli::Client::SessionInvalidatedDueToPasswordChange, Mogli::Client::OAuthException
-      @error_msg = "Please authorize us before sending out an invite."
+      @error_msg = t('text.games.social_need_authorize_error')
     else
-      @error_msg = "There was an issue with inviting your friend. Please try again later."
+      @error_msg = t('text.games.social_invite_friend_error')
     end
 
     dissociate_and_redirect
   end
 
+  def handle_twitter_exceptions(e)
+    case e
+    when Twitter::Forbidden
+      render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
+    when Twitter::Unauthorized
+      current_gamer.dissociate_account!(Invitation::TWITTER)
+      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
+      redirect_to games_social_get_twitter_friends_path
+    when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
+      render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
+      flash[:error] = t('text.games.twitter_internal_error')
+      redirect_to social_feature_redirect_path
+    else
+      render :json => { :success => false, :error => t('text.games.social_invite_friend_error') } and return if params[:ajax].present?
+      flash[:error] = t('text.games.social_invite_friend_error')
+      redirect_to social_feature_redirect_path
+    end
+  end
+
   def handle_errno_exceptions
-    flash[:error] = "There was a connection issue. Please try again later."
+    flash[:error] = t('text.games.errno_error')
     redirect_to social_feature_redirect_path
   end
 
@@ -141,14 +164,18 @@ class GamesController < ApplicationController
   def require_gamer
     unless current_gamer
       path = url_for(params.merge(:only_path => true))
-      options = { :path => path } unless path == games_root_path
-      redirect_to games_login_path(options)
+      options = { :path => path } unless path == games_path
+      options[:referrer] = params[:referrer] if params[:referrer].present?
+      if request.xhr?
+        render :json=> "Unauthorized", :status => 401
+      else
+        redirect_to games_login_path(options)
+      end
     end
   end
 
   def render_login_page
     @gamer_session ||= GamerSession.new
-    @gamer ||= Gamer.new
     render 'games/gamer_sessions/new'
   end
 
@@ -163,7 +190,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{games_social_index_path}"
+    "#{WEBSITE_URL}#{games_social_root_path}"
   end
 
   def current_gamer
@@ -219,14 +246,6 @@ class GamesController < ApplicationController
     current_gamer.devices.size > 1
   end
 
-  def device_type
-    @device_type ||= HeaderParser.device_type(request.user_agent)
-  end
-
-  def os_version
-    @os_version ||= HeaderParser.os_version(request.user_agent)
-  end
-
   def select_layout
     if params[:ajax].present?
       nil
@@ -241,7 +260,6 @@ class GamesController < ApplicationController
       session[:tjms_stime] = now.to_i
       session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
-
     tjm_request_options = {
       :time       => now,
       :session    => session,
@@ -252,12 +270,14 @@ class GamesController < ApplicationController
       :gamer      => current_gamer,
       :device_id  => current_device_id,
     }
+    @tjm_social_request = TjmRequest.new(tjm_request_options.merge(:is_social => true)) if params[:referrer].present?
     @tjm_request = TjmRequest.new(tjm_request_options)
 
     session[:tjms_ltime] = now
   end
 
   def save_tjm_request
+    @tjm_social_request.save if @tjm_social_request.present?
     @tjm_request.save if @tjm_request.present?
   end
 
@@ -266,6 +286,19 @@ class GamesController < ApplicationController
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
+  def record_recommended_apps
+    return unless @tjm_request
+    current_recommendations.each_with_index do |app, index|
+      recommendation_tjm_request = @tjm_request.clone
+      recommendation_tjm_request.app_id         = app.id
+      recommendation_tjm_request.list_rank      = index
+      recommendation_tjm_request.display_path   = recommendation_tjm_request.path
+
+      recommendation_tjm_request.replace_path('tjm_recommendation_impression')
+      recommendation_tjm_request.save
+    end
   end
 
 end

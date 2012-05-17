@@ -14,14 +14,17 @@
     #main
       #top_nav
         .left
-          = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{DASHBOARD_URL}/"
+          - if XMAN
+            = link_to image_tag("tapjoylogo_#{XMAN}.png"), "#{DASHBOARD_URL}/"
+          - else
+            = link_to image_tag("#{RUN_MODE_PREFIX}tapjoylogo.png"), "#{DASHBOARD_URL}/"
         .right
           = link_to('Dev forum', DEV_FORUM_URL)
           |
           - if current_user
             = current_user.username
             |
-            - if permitted_to?(:index, :apps)
+            - if permitted_to?(:index, :dashboard_apps)
               = link_to('Partner Home', apps_path)
               |
             = link_to('Logout', logout_path)
@@ -35,7 +38,7 @@
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
-            = msg
+            = raw msg
         - [:error, :warning, :notice].each do |name|
           - if flash[name].blank?
             .flash.hidden{ :id => "flash_#{name}", :title => "Click to dismiss this message" }

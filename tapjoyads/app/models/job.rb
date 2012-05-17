@@ -1,14 +1,15 @@
 class Job < ActiveRecord::Base
   include UuidPrimaryKey
 
-  JOB_TYPES = %w( master queue )
+  JOB_TYPES = %w( master queue internal )
   FREQUENCIES = %w( interval hourly daily )
+  CONCURRENCY_DIR = "#{Rails.root}/tmp/job_concurrency"
 
   validates_presence_of :controller, :action
   validates_inclusion_of :job_type, :in => JOB_TYPES
   validates_inclusion_of :frequency, :in => FREQUENCIES
   validates_inclusion_of :active, :in => [ true, false ]
-  validates_numericality_of :seconds, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_numericality_of :seconds, :max_concurrency, :only_integer => true, :greater_than_or_equal_to => 0
   validates_each :seconds, :allow_nil => true do |record, attribute, value|
     if record.frequency == 'daily'
       record.errors.add(attribute, 'should be less than 1 day') unless value < 1.day.to_i
@@ -18,9 +19,9 @@ class Job < ActiveRecord::Base
   end
   validate :check_job_path
 
-  named_scope :active, :conditions => 'active = true'
-  named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
-  named_scope :for_index, :order => "active desc, job_type, frequency, seconds"
+  scope :active, :conditions => 'active = true'
+  scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
+  scope :for_index, :order => "active desc, job_type, frequency, seconds"
 
   attr_reader :next_run_time
 
@@ -69,7 +70,11 @@ class Job < ActiveRecord::Base
     "#{controller}/#{action}"
   end
 
-private
+  def concurrency_filename(unicorn_pid, guid = nil)
+    "#{unicorn_pid}.#{controller}_#{action[0...((action =~ /\?/) || action.size)]}.#{guid}"
+  end
+
+  private
 
   def check_job_path
     if controller_changed? || action_changed?

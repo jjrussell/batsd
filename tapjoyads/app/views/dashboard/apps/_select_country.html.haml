@@ -1,0 +1,12 @@
+%tr#appstore_country_toggle.admin.hidden
+  %th
+    Country
+    #help_country.help ?
+  %td
+    = select_tag 'app_country', options_for_select(App::APPSTORE_COUNTRIES_OPTIONS, 'US'), :class => 'wide'
+    = select_tag 'app_language', options_for_select(App::WINDOWS_ACCEPT_LANGUAGES_OPTIONS, 'en-us'), :class => 'wide'
+    .hidden
+      #help_country_content{ :name => 'Country' }
+        %ul
+          %li Doesn't apply to Android.
+          %li NOTE: Don't forget to set the country targeting portion of the offer.

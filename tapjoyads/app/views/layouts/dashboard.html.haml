@@ -1,0 +1,135 @@
+!!!
+
+%html
+  %head
+    %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
+    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+    = stylesheet_link_tag 'bootstrap.min', 'dashboard', 'jquery-ui-1.8.5', 'colorbox', 'themes/blue/style', 'chosen'
+    = stylesheet_link_tag 'print', :media => 'print'
+    %style{ :type => 'text/css' }
+      = yield :page_styles
+      :plain
+        #acting_as {
+          font-size: 0.8em;
+          background-color: yellow;
+          float: right;
+        }
+      - if @kiosk
+        :plain
+          body {
+            padding-top: 20px;
+            background:url("/images/ops/ops-fabric-bg.png") repeat scroll 0 0 #C7C7C7;
+          }
+    = yield :page_head
+    = render('shared/analytics')
+  %body
+    - unless @kiosk
+      .navbar.navbar-fixed-top
+        .navbar-inner
+          .container-fluid
+            = link_to DASHBOARD_URL, :class => "brand" do
+              = image_tag("tapjoy_#{XMAN ? XMAN : ''}.png", :height => 36)
+            - tabs = []
+            - tabs << { :apps      => apps_path }            if permitted_to?(:index, :dashboard_apps)
+            - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :dashboard_reporting)
+            - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :dashboard_billing)
+            - tabs << { :account   => users_path }           if permitted_to?(:index, :dashboard_users)
+            - tabs << { :partners  => partners_path }        if permitted_to?(:index, :dashboard_partners)
+            - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :dashboard_premier) and current_partner.is_premier?
+            - tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
+            - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
+            = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
+
+            %ul.nav
+              - if permitted_to?(:index, :dashboard_ops)
+                %li.active.dropdown#ops-menu
+                  = link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
+                    Ops
+                    %b.caret
+                  %ul.dropdown-menu
+                    %li{:class => active_class(ops_path)                }= link_to 'dashboard', ops_path
+                    %li{:class => active_class(as_groups_ops_path)      }= link_to 'auto-scaler', as_groups_ops_path
+                    %li{:class => active_class(elb_status_ops_path)     }= link_to 'load-balancer', elb_status_ops_path
+                    %li{:class => active_class(service_stats_ops_path)  }= link_to 'service-stats', service_stats_ops_path
+                    %li{:class => active_class(vertica_status_ops_path) }= link_to 'vertica-status', vertica_status_ops_path
+                    %li.divider
+                    %li= link_to 'kiosk-mode', ops_path(:kiosk => true)
+
+            %ul.nav.pull-right
+              %li.dropdown#account-menu
+                = link_to '#account-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
+                  = current_user.username
+                  %b.caret
+                %ul.dropdown-menu
+                  %li
+                    - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns".html_safe
+                    - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
+                    = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
+                  - unless current_partner_active_app_offers.blank?
+                    %li
+                      #active_campaigns_box.hidden
+                        %table{:cellspacing => 0}
+                          %tbody
+                            - current_partner_active_app_offers.each do |offer|
+                              %tr
+                                %td
+                                  = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
+                                    = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
+                                %td
+                                  = link_to offer.name, url_to_offer_item(offer)
+                                %td.offer-type
+                                  = image_tag(platform_icon_url(offer))
+                                  = offer.self_promote_only? ? '[SELF]' : ''
+                                %td
+                                  = number_to_currency(offer.bid / 100.0)
+                  - if premier_enabled?
+                    %li
+                      = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
+                  %li
+                    = link_to('Knowledge Center', KNOWLEDGE_CENTER_URL)
+                  %li
+                    = link_to('Dev forum', DEV_FORUM_URL)
+                  %li
+                    = link_to('Logout', logout_path)
+              - if current_user.can_manage_account? && !controller.class.current_tab == 'ops'
+                %li
+                  = form_tag('') do
+                    = select_tag(:recent_partners, options_for_select(@recent_partners))
+                    = link_to('Partner page', partner_path(current_partner))
+    .container-fluid
+      .row-fluid
+        - flash.each do |name, msg|
+          -# Set name to info if it is notice since bootstrap has no 'notice' type
+          .alert{ :class => "alert-#{name == :notice ? :info : name}" }
+            %a.close{ :data => { :dismiss => 'alert' } } &times;
+            %strong #{name.to_s.humanize}:
+            = msg.html_safe
+        - [:error, :warning, :notice].each do |name|
+          - if flash[name].blank?
+            .alert.hidden{ :id => "flash_#{name}", :class => "alert-#{name == :notice ? :info : name}" }
+              %a.close{ :data => { :dismiss => 'alert' } } &times;
+              %strong #{name.to_s.humanize}:
+              %span.message &nbsp;
+      .row-fluid
+        = yield :page_sidebar
+        = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
+      .clear
+
+    = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap'
+    = yield :included_javascripts
+
+    %script{ :type => 'text/javascript', :charset => 'utf-8' }
+      = yield :page_javascript
+      :plain
+        $(function ($) {
+          $('a[rel*=facebox]').facebox({
+            closeImage: '/images/closelabel.png'
+          });
+          $('#recent_partners').change(function() {
+            var form = $(this).parent('form');
+            var url = $(this).val();
+            form.attr('action', url);
+            form.submit();
+          });
+        });

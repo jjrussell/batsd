@@ -1,9 +1,14 @@
+require_dependency 'video_button' # Offer caches VideoButton objects
+
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
   include Offer::Rejecting
   include Offer::UrlGeneration
+  include Offer::BannerCreatives
+  include Offer::ThirdPartyTracking
   acts_as_cacheable
+  acts_as_tracking
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -11,32 +16,33 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
-  CLASSIC_OFFER_TYPE               = '0'
-  DEFAULT_OFFER_TYPE               = '1'
-  FEATURED_OFFER_TYPE              = '2'
-  DISPLAY_OFFER_TYPE               = '3'
-  NON_REWARDED_DISPLAY_OFFER_TYPE  = '4'
-  NON_REWARDED_FEATURED_OFFER_TYPE = '5'
-  VIDEO_OFFER_TYPE                 = '6'
-  FEATURED_BACKFILLED_OFFER_TYPE   = '7'
+  CLASSIC_OFFER_TYPE                          = '0'
+  DEFAULT_OFFER_TYPE                          = '1'
+  FEATURED_OFFER_TYPE                         = '2'
+  DISPLAY_OFFER_TYPE                          = '3'
+  NON_REWARDED_DISPLAY_OFFER_TYPE             = '4'
+  NON_REWARDED_FEATURED_OFFER_TYPE            = '5'
+  VIDEO_OFFER_TYPE                            = '6'
+  FEATURED_BACKFILLED_OFFER_TYPE              = '7'
   NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE = '8'
+  REENGAGEMENT_OFFER_TYPE                     = '9'
+  NON_REWARDED_BACKFILLED_OFFER_TYPE          = '10'
   OFFER_TYPE_NAMES = {
-    DEFAULT_OFFER_TYPE               => 'Offerwall Offers',
-    FEATURED_OFFER_TYPE              => 'Rewarded Featured Offers',
-    DISPLAY_OFFER_TYPE               => 'Display Ad Offers',
-    NON_REWARDED_DISPLAY_OFFER_TYPE  => 'Non-Rewarded Display Ad Offers',
-    NON_REWARDED_FEATURED_OFFER_TYPE => 'Non-Rewarded Featured Offers',
-    VIDEO_OFFER_TYPE                 => 'Video Offers',
-    FEATURED_BACKFILLED_OFFER_TYPE   => 'Rewarded Featured Offers (Backfilled)',
-    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)'
+    DEFAULT_OFFER_TYPE                          => 'Offerwall Offers',
+    FEATURED_OFFER_TYPE                         => 'Rewarded Featured Offers',
+    DISPLAY_OFFER_TYPE                          => 'Display Ad Offers',
+    NON_REWARDED_DISPLAY_OFFER_TYPE             => 'Non-Rewarded Display Ad Offers',
+    NON_REWARDED_FEATURED_OFFER_TYPE            => 'Non-Rewarded Featured Offers',
+    VIDEO_OFFER_TYPE                            => 'Video Offers',
+    FEATURED_BACKFILLED_OFFER_TYPE              => 'Rewarded Featured Offers (Backfilled)',
+    NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE => 'Non-Rewarded Featured Offers (Backfilled)',
+    REENGAGEMENT_OFFER_TYPE                     => 'Reengagement Offers',
+    NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
-  DISPLAY_AD_SIZES = ['320x50', '640x100', '768x90'] # data stored as pngs
-  FEATURED_AD_SIZES = ['960x640', '640x960', '480x320', '320x480'] # data stored as jpegs
-  CUSTOM_AD_SIZES = DISPLAY_AD_SIZES + FEATURED_AD_SIZES
   OFFER_LIST_EXCLUDED_COLUMNS = %w( active
                                     allow_negative_balance
                                     created_at
@@ -68,21 +74,16 @@ class Offer < ActiveRecord::Base
   DIRECT_PAY_PROVIDERS = %w( boku paypal )
 
   FREQUENCIES_CAPPING_INTERVAL = {
-    "none"     => 0,
-    "1 minute" => 1.minute.to_i,
-    "1 hour"   => 1.hour.to_i,
-    "8 hours"  => 8.hours.to_i,
-    "24 hours" => 24.hours.to_i,
-    "2 days"   => 2.days.to_i,
-    "3 days"   => 3.days.to_i,
+    'none'     => 0,
+    '1 minute' => 1.minute.to_i,
+    '1 hour'   => 1.hour.to_i,
+    '8 hours'  => 8.hours.to_i,
+    '24 hours' => 24.hours.to_i,
+    '2 days'   => 2.days.to_i,
+    '3 days'   => 3.days.to_i,
   }
 
-  serialize :banner_creatives, Array
-  serialize :approved_banner_creatives, Array
-
-  CUSTOM_AD_SIZES.each do |size|
-    attr_accessor "banner_creative_#{size}_blob".to_sym
-  end
+  attr_reader :video_button_tracking_offers
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -91,13 +92,15 @@ class Offer < ActiveRecord::Base
   has_many :offer_events
   has_many :editors_picks
   has_many :approvals, :class_name => 'CreativeApprovalQueue'
+  has_many :brands, :through => :brand_offer_mappings
+  has_many :brand_offer_mappings
+  has_many :sales_reps
 
   belongs_to :partner
   belongs_to :item, :polymorphic => true
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
-  belongs_to :tracking_for, :polymorphic => true
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -157,9 +160,8 @@ class Offer < ActiveRecord::Base
   end
   validates_each :multi_complete do |record, attribute, value|
     if value
-      record.errors.add(attribute, "is not for App offers") unless record.multi_completable?
+      record.errors.add(attribute, "is not for App offers, Action offers, or Survey offers") unless record.multi_completable?
       record.errors.add(attribute, "cannot be used for non-interval pay-per-click offers") if record.pay_per_click? && record.interval == 0
-      record.errors.add(attribute, 'cannot be used for Survey offers') if record.item_type == 'SurveyOffer'
     end
   end
   validates_each :instructions_overridden, :if => :instructions_overridden? do |record, attribute, value|
@@ -181,7 +183,7 @@ class Offer < ActiveRecord::Base
   end
 
   before_validation :update_payment
-  before_validation_on_create :set_reseller_from_partner
+  before_validation :set_reseller_from_partner, :on => :create
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
   before_save :fix_country_targeting
@@ -191,41 +193,42 @@ class Offer < ActiveRecord::Base
   before_save :nullify_banner_creatives
   after_update :lock_survey_offer
   after_save :update_enabled_rating_offer_id
+  after_save :update_enabled_deeplink_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
-  before_cache :clear_creative_blobs
+  set_callback :cache, :before, :clear_creative_blobs
+  set_callback :cache, :before, :update_video_button_tracking_offers
 
-  named_scope :enabled_offers, :joins => :partner,
-    :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0))"
-  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
-  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
-  named_scope :non_rewarded, :conditions => "NOT rewarded"
-  named_scope :rewarded, :conditions => "rewarded"
-  named_scope :featured, :conditions => { :featured => true }
-  named_scope :apps, :conditions => { :item_type => 'App' }
-  named_scope :free, :conditions => { :price => 0 }
-  named_scope :nonfeatured, :conditions => { :featured => false }
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
-  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
-  named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
+  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
+  scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
+  scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
+  scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
+  scope :non_rewarded, :conditions => "NOT rewarded"
+  scope :rewarded, :conditions => "rewarded"
+  scope :featured, :conditions => { :featured => true }
+  scope :apps, :conditions => { :item_type => 'App' }
+  scope :free, :conditions => { :price => 0 }
+  scope :nonfeatured, :conditions => { :featured => false }
+  scope :visible, :conditions => { :hidden => false }
+  scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
+  scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
+  scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
+  scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :video_offers, :conditions => "item_type = 'VideoOffer'"
+  scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
+  scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
-  named_scope :papaya_app_offers,
+  scope :papaya_app_offers,
     :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
       inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
-  named_scope :papaya_action_offers,
+  scope :papaya_action_offers,
     :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
       inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
       inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
@@ -234,7 +237,7 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler
+  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -245,6 +248,8 @@ class Offer < ActiveRecord::Base
     :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
+    return super if new_record?
+
     super.tap do |clone|
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
@@ -264,92 +269,12 @@ class Offer < ActiveRecord::Base
 
   def countries_blacklist
     if app_offer?
-      item.get_countries_blacklist
+      item.get_countries_blacklist || []
     else
       []
     end
   end
   memoize :countries_blacklist
-
-  def banner_creatives
-    self.banner_creatives = [] if super.nil?
-    super.sort
-  end
-
-  def approved_banner_creatives
-    self.approved_banner_creatives = [] if super.nil?
-    super.sort
-  end
-
-  def banner_creatives_was
-    ret_val = super
-    return [] if ret_val.nil?
-    ret_val
-  end
-
-  def can_change_banner_creatives?
-    !rewarded? || featured?
-  end
-
-  def banner_creative_sizes(return_all = false)
-    return DISPLAY_AD_SIZES + FEATURED_AD_SIZES if return_all
-    return DISPLAY_AD_SIZES if !featured?
-    return FEATURED_AD_SIZES
-  end
-
-  def banner_creative_sizes_with_labels
-    banner_creative_sizes.collect do |size|
-      data = {:size => size, :label => size.dup}
-
-      if featured?
-        width, height = size.split('x').map(&:to_i)
-        orientation = (width > height) ? 'landscape' : 'portrait';
-        data[:label] << " #{orientation}"
-      end
-
-      data
-    end
-  end
-
-  def should_update_approved_banner_creatives?
-    banner_creatives_changed? && banner_creatives != approved_banner_creatives
-  end
-
-  def banner_creatives_changed?
-    return false if (super && banner_creatives_was.empty? && banner_creatives.empty?)
-    super
-  end
-
-  def has_banner_creative?(size)
-    self.banner_creatives.include?(size)
-  end
-
-  def banner_creative_approved?(size)
-    has_banner_creative?(size) && self.approved_banner_creatives.include?(size)
-  end
-
-  def remove_banner_creative(size)
-    return unless has_banner_creative?(size)
-    self.banner_creatives = banner_creatives.reject { |c| c == size }
-    self.approved_banner_creatives = approved_banner_creatives.reject { |c| c == size }
-  end
-
-  def add_banner_creative(size)
-    return unless banner_creative_sizes.include?(size)
-    return if has_banner_creative?(size)
-    self.banner_creatives += [size]
-  end
-
-  def approve_banner_creative(size)
-    return unless has_banner_creative?(size)
-    return if banner_creative_approved?(size)
-    self.approved_banner_creatives += [size]
-  end
-
-  def add_banner_approval(user, size)
-    approvals.create(:user => user, :size => size)
-    approvals.last
-  end
 
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
@@ -417,6 +342,10 @@ class Offer < ActiveRecord::Base
     tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
+  def can_be_promoted?
+    primary? && rewarded? && is_enabled?
+  end
+
   def accepting_clicks?
     tapjoy_enabled? && user_enabled? && (payment > 0 || (payment == 0 && reward_value.present? && reward_value > 0))
   end
@@ -431,31 +360,6 @@ class Offer < ActiveRecord::Base
 
   def has_virtual_goods?
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
-  end
-
-  def banner_creative_format(size)
-    return 'jpeg' if FEATURED_AD_SIZES.include? size
-    'png'
-  end
-
-  def banner_creative_path(size, format = nil)
-    format ||= banner_creative_format(size)
-    "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
-  end
-
-  def banner_creative_s3_object(size, format = nil)
-    format ||= banner_creative_format(size)
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    bucket.objects[banner_creative_path(size, format)]
-  end
-
-  def banner_creative_mc_key(size, format = nil)
-    format ||= banner_creative_format(size)
-    banner_creative_path(size, format).gsub('/', '.')
-  end
-
-  def display_custom_banner_for_size?(size)
-    display_banner_ads? && banner_creative_approved?(size)
   end
 
   def video_icon_url(options = {})
@@ -508,6 +412,8 @@ class Offer < ActiveRecord::Base
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
 
       Mc.delete("icon.s3.#{id}")
+      paths = ["icons/200/#{icon_id}.jpg"]
+      CloudFront.invalidate(id, paths) if existing_icon_blob.present?
       return
     end
 
@@ -536,7 +442,7 @@ class Offer < ActiveRecord::Base
   end
 
   def save(perform_validation = true)
-    super(perform_validation)
+    super(:validate => perform_validation)
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
@@ -713,12 +619,6 @@ class Offer < ActiveRecord::Base
     [ 'normal_avg_revenue', 'normal_bid', 'normal_conversion_rate', 'normal_price' ]
   end
 
-  def display_banner_ads?
-    return false if (is_paid? || featured?)
-    return (item_type == 'App' && name.length <= 30) if rewarded?
-    item_type != 'VideoOffer'
-  end
-
   def to_s
     name
   end
@@ -747,6 +647,11 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def promotion_platform
+    self.app ?  self.app.platform.to_sym : nil
+  end
+  memoize :promotion_platform
+
   def calculate_target_installs(num_installs_today)
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
@@ -771,10 +676,20 @@ class Offer < ActiveRecord::Base
   end
 
   def multi_completable?
-    item_type != 'App' || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+    !%w(App ActionOffer SurveyOffer).include?(item_type) || Offer::Rejecting::TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+  end
+
+  def video_button_tracking_offers
+    @video_button_tracking_offers || []
+  end
+
+  def update_video_button_tracking_offers
+    return unless item_type == 'VideoOffer'
+    @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
   private
+
   def calculated_min_bid
     if item_type == 'App'
       if featured? && rewarded?
@@ -791,141 +706,6 @@ class Offer < ActiveRecord::Base
     else
       0
     end
-  end
-
-  def nullify_banner_creatives
-    write_attribute(:banner_creatives, nil) if banner_creatives.empty?
-    write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
-  end
-
-  def sync_creative_approval
-    # Handle banners on this end
-    banner_creatives.each do |size|
-      approval = approvals.find_by_size(size)
-
-      if banner_creative_approved?(size) && approval.present?
-        approvals.destroy(approval)
-      elsif approval.nil?
-        # In case of a desync between the queue and actual approvals
-        approve_banner_creative(size)
-      end
-    end
-
-    # Now remove any approval objects that are no longer valid
-    approvals.each { |a| approvals.destroy(a) unless has_banner_creative?(a.size) }
-
-    # Remove out-of-sync approvals for banners that have been removed
-    self.approved_banner_creatives = self.approved_banner_creatives.select { |size| has_banner_creative?(size) }
-  end
-
-  def sync_banner_creatives!
-    # How this should work...
-    #
-    # ONE OF:
-    #
-    # adding new creative(s):
-    # offer.banner_creatives += ["320x50", "640x100"]
-    # offer.banner_creative_320x50_blob = image_data
-    # offer.banner_creative_640x100_blob = image_data
-    # offer.save!
-    #
-    # removing creative: (only one at a time allowed)
-    # offer.banner_creatives -= ["320x50"]
-    # offer.save!
-    #
-    # updating creative: (only one at a time allowed)
-    # offer.banner_creative_320x50_blob = image_data
-    # offer.save!
-    #
-    creative_blobs = {}
-
-    banner_creative_sizes(true).each do |size|
-      image_data = send("banner_creative_#{size}_blob")
-      creative_blobs[size] = image_data if !image_data.blank?
-    end
-
-    return if (!banner_creatives_changed? && creative_blobs.empty?)
-
-    new_creatives = banner_creatives - banner_creatives_was
-    removed_creatives = banner_creatives_was - banner_creatives
-    changed_creatives = creative_blobs.keys - new_creatives
-
-    if new_creatives.any?
-      raise "Unable to delete or update creatives while also adding creatives" if (removed_creatives.any? || changed_creatives.any?)
-    elsif (banner_creatives.size - banner_creatives_was.size).abs > 1 || creative_blobs.size > 1
-      raise "Unable to delete or update more than one banner creative at a time"
-    end
-
-    error_added = false
-    new_creatives.each do |new_size|
-      unless creative_blobs.has_key?(new_size)
-        self.errors.add("custom_creative_#{new_size}_blob".to_sym, "#{new_size} custom creative file not provided.")
-        error_added = true
-        next
-      end
-      blob = creative_blobs[new_size]
-      # upload to S3
-      upload_banner_creative!(blob, new_size)
-    end
-    raise BannerSyncError.new("multiple new file upload errors") if error_added
-
-    removed_creatives.each do |removed_size|
-      # delete from S3
-      delete_banner_creative!(removed_size)
-    end
-
-    changed_creatives.each do |changed_size|
-      blob = creative_blobs[changed_size]
-      # upload file to S3
-      upload_banner_creative!(blob, changed_size)
-    end
-  end
-
-  def clear_creative_blobs
-    CUSTOM_AD_SIZES.each do |size|
-      blob = send("banner_creative_#{size}_blob")
-      blob.replace("") if blob
-    end
-  end
-
-  def delete_banner_creative!(size, format = nil)
-    format ||= banner_creative_format(size)
-    banner_creative_s3_object(size, format).delete
-  rescue
-    raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
-  end
-
-  def upload_banner_creative!(blob, size, format = nil)
-    format ||= banner_creative_format(size)
-    begin
-      creative_arr = Magick::Image.from_blob(blob)
-      if creative_arr.size != 1
-        raise "image contains multiple layers (e.g. animated .gif)"
-      end
-      creative = creative_arr[0]
-      creative.format = format
-      creative.interlace = Magick::JPEGInterlace if format == 'jpeg'
-    rescue
-      raise BannerSyncError.new("New file is invalid - unable to convert to .#{format}.", "custom_creative_#{size}_blob")
-    end
-
-    width, height = size.split("x").collect{|x|x.to_i}
-    raise BannerSyncError.new("New file has invalid dimensions.", "custom_creative_#{size}_blob") if [width, height] != [creative.columns, creative.rows]
-
-    begin
-      banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 85 }, :acl => :public_read)
-    rescue
-      raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.", "custom_creative_#{size}_blob")
-    end
-
-    # Add to memcache
-    begin
-      Mc.put(banner_creative_mc_key(size, format), Base64.encode64(creative.to_blob).gsub("\n", ''))
-    rescue
-      # no worries, it will get cached later if needed
-    end
-
-    CloudFront.invalidate(id, banner_creative_path(size, format))
   end
 
   def is_test_device?(currency, device)
@@ -973,6 +753,13 @@ class Offer < ActiveRecord::Base
     if item_type == 'RatingOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.app.enabled_rating_offer_id = accepting_clicks? ? id : nil
       item.app.save! if item.app.changed?
+    end
+  end
+
+  def update_enabled_deeplink_offer_id
+    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+      item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
+      item.currency.save! if item.currency.changed?
     end
   end
 
@@ -1031,12 +818,3 @@ class Offer < ActiveRecord::Base
   end
 
 end
-
-class BannerSyncError < StandardError;
-  attr_accessor :offer_attr_name
-  def initialize(message, offer_attr_name = nil)
-    super(message)
-    self.offer_attr_name = offer_attr_name
-  end
-end
-

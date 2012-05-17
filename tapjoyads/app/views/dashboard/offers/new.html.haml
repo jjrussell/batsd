@@ -1,0 +1,7 @@
+- @page_title = 'New Offer'
+
+= render('dashboard/apps/offers_shared/descriptions')
+%br
+
+= form_tag(app_offers_path(@app, :offer_type => params[:offer_type])) do
+  = submit_tag('Create Offer')

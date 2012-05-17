@@ -1,0 +1,543 @@
+---
+zh-sg:
+  activerecord:
+    errors:
+      full_messages:
+        format: "%{attribute} %{message}"
+      messages:
+        accepted: 必须接受
+        blank: 不可以为空白
+        confirmation: 与确认内容不匹配
+        empty: 不可以是空的
+        equal_to: "必须等于 %{count}"
+        even: 必须是偶数
+        exclusion: 被预定了
+        greater_than: "必须大于 %{count}"
+        greater_than_or_equal_to: "必须大于或等于 %{count}"
+        inclusion: 未包括在本列表中
+        invalid: 是无效的
+        less_than: "必须小于 %{count}"
+        less_than_or_equal_to: "必须小于或等于 %{count}"
+        not_a_number: 不是个数字
+        not_an_integer: 必须是个整数
+        odd: 必须是奇数
+        record_invalid: "认定失败: %{errors}"
+        taken: 已经被人用了
+        too_long: "̫太长了 (最大长度是 %{count} 字符"
+        too_short: "̫太短了 (最小长度是 %{count} 字符)"
+        wrong_length: "的长度错误 (应该是 %{count} 字符)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: 电子邮件
+            password: 密码
+      template:
+        body: 以下的字段有问题
+        header:
+          one: "发生一个让 %{model} 无法储存的错误"
+          other: "发生 %{count}个让 %{model}无法储存的错误"
+  authlogic:
+    error_messages:
+      login_not_found: 无效的电子邮件
+      password_invalid: 无效的密码
+  date:
+    abbr_day_names: ~
+    abbr_month_names: ~
+    day_names: ~
+    formats:
+      default: ~
+      long: ~
+      short: ~
+    month_names: ~
+    order: ~
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: ~
+        other: ~
+      about_x_months:
+        one: ~
+        other: ~
+      about_x_years:
+        one: ~
+        other: ~
+      almost_x_years:
+        one: ~
+        other: ~
+      half_a_minute: ~
+      less_than_x_minutes:
+        one: ~
+        other: ~
+      less_than_x_seconds:
+        one: ~
+        other: ~
+      over_x_years:
+        one: ~
+        other: ~
+      x_days:
+        one: ~
+        other: ~
+      x_minutes:
+        one: ~
+        other: ~
+      x_months:
+        one: ~
+        other: ~
+      x_seconds:
+        one: ~
+        other: ~
+    prompts:
+      day: ~
+      hour: ~
+      minute: ~
+      month: ~
+      second: ~
+      year: ~
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: 必须接受
+      blank: 不可以为空白
+      confirmation: 与确认内容不匹配
+      empty: 不可以是空的
+      equal_to: "必须等于 %{count}"
+      even: 必须是偶数
+      exclusion: 被预定了
+      greater_than: "必须大于 %{count}"
+      greater_than_or_equal_to: "必须大于或等于 %{count}"
+      inclusion: 未包括在本列表中
+      invalid: 是无效的
+      less_than: "必须小于 %{count}"
+      less_than_or_equal_to: "必须小于或等于 %{count}"
+      not_a_number: 不是个数字
+      not_an_integer: 必须是个整数
+      odd: 必须是奇数
+      too_long: "太长了 (最大长度是 %{count} 字符)"
+      too_short: "太短了 (最小长度是 %{count} 字符)"
+      wrong_length: "的长度错误 (应该是 %{count} 字符)"
+  helpers:
+    select:
+      prompt: 请选择
+    submit:
+      create: "创造 %{model}"
+      submit: "储存 %{model}"
+      update: "更新 %{model}"
+  number:
+    currency:
+      format:
+        delimiter: ~
+        format: ~
+        precision: ~
+        separator: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+        unit: ~
+    format:
+      delimiter: ~
+      precision: ~
+      separator: ~
+      significant: ~
+      strip_insignificant_zeros: ~
+    human:
+      decimal_units:
+        format: ~
+        units:
+          billion: ~
+          million: ~
+          quadrillion: ~
+          thousand: ~
+          trillion: ~
+          unit: ~
+      format:
+        delimiter: ~
+        precision: ~
+        significant: ~
+        strip_insignificant_zeros: ~
+      storage_units:
+        format: ~
+        units:
+          byte:
+            one: ~
+            other: ~
+          gb: ~
+          kb: ~
+          mb: ~
+          tb: ~
+    percentage:
+      format:
+        delimiter: ~
+    precision:
+      format:
+        delimiter: ~
+  support:
+    array:
+      last_word_connector: ", 与 "
+      two_words_connector: " 与 "
+      words_connector: ", "
+    select:
+      prompt: 请选择
+  text:
+    featured:
+      download: 下载
+      download_and_run: 请下载和安装。
+      earn_currency: "赚 %{amount_and_currency}"
+      earn_now: 赚金币。
+      show_more_apps: 看下一个
+      skip: 跳过
+      title: "赚 %{currency}"
+      try_out: 试一试
+    footer:
+      about: 关于Tapjoy
+      advertisers: Advertisers
+      blog: 博客
+      copyright: "版权申明： %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      developers: 开发者
+      privacy: 隐私政策
+    games:
+      about_body: 爱您拥有的，觅您喜欢的
+      about_title: "\"真有意思，它就是知道我喜欢什么应用。\""
+      account_created_body: "您的Tapjoy 帐户已成功创建！"
+      account_created_title: 成功了！
+      action_required: 请开始！
+      active_gamers_text: "%{count} 人正在用"
+      add: 增加
+      add_to_homescreen: "把 %{tapjoy} 加到你的首页"
+      advertisers_body: 让您的产品深入百万用户，家喻户晓！
+      advertisers_title: 广告商
+      allow_marketing_emails: 允许Tapjoy向我发送市场营销电子邮件
+      almost_done: 就快好了!
+      already_registered:
+        one: "一个Tapjoy 邀请已发送给了%{name}"
+        other: "多个Tapjoy 邀请已发送给了%{name}"
+      amount_and_currency: "%{amount} %{currency}"
+      app_review_concern_reported: 意见已回报
+      app_review_h_no: 不
+      app_review_h_yes: 是
+      app_review_more: 更多...
+      app_review_report_concern: 回报意见
+      app_review_thanks_for_feedback: 多谢你的反馈
+      app_review_was_helpful: 这个评论有帮助吗?
+      back_to_top: 返回页首
+      birthdate: 生日
+      browse_offers: 浏览广告要求
+      call_to_action_body: 爱您拥有的，觅您喜欢的
+      call_to_action_title: "解锁Mobile Joy"
+      cant_fetch_offers: 获取更多产品时遇到了问题。请再试.
+      change: 变更
+      change_linked_account: 更改连接帐户
+      choose_section: 功能选择
+      close: 关闭
+      collect: 收集
+      collect_rewards: 收集奖励
+      connect_my_device: 连接到我的终端
+      connect_to_facebook: 点击连接到Facebook
+      connect_your_android: 请连接您的Android终端
+      connect_your_device: 请连接您的终端
+      connected_to_facebook: 连结到Facebook
+      connected_to_twitter: 连结到Twitter
+      contact_support: 联系客户支持
+      contact_us: 联系我们
+      cookies_required: 请在您的浏览器中启动Cookies
+      deactivate: 停用
+      del_acct_confirm: "请点击下面的按钮来停用您的帐户。帐户停用%{days_before_deletion}天后将被彻底删除。您的帐户一旦删除就无法恢复。"
+      delete_my_account: 删除我的帐户
+      developers_body: 用我们的增值工具为您的应用创造可观收益
+      developers_title: 开发者
+      discover_apps: 一同加入这个有数百万行动应用爱好者的Tapjoy园地，来探索评价最好的应用。今天就开始吧!
+      download_now: 正在下载
+      earn: "赚取%{currency}"
+      earn_rewards: 赚取奖励
+      earn_title: "请完成以下任何项目为您的%{app_name}赚取%{currency}"
+      earning_rewards: Tapjoy提供全面赚取你所有喜爱的移动应用的奖励的方式
+      edit: 修改
+      email_device_link: 把联结发给装置
+      email_notification: 电子邮件提醒
+      enable_javascript: 请在浏览器设置菜单中启用JavaScript以便继续使用Tapjoy。
+      enter_birthdate: 请输入您的生日
+      enter_email: 请输入电邮
+      enter_message: 请输入一条信息
+      enter_name: 请输入姓名
+      enter_password: 请输入密码
+      enter_platform: 请选择iOS或Android
+      enter_tos: 请接受上述条款与条件
+      enter_valid_email: 请输入有效的电子邮件地址
+      errno_error: 发生了联结问题，请稍候再试。
+      error_mark_as_favorite: 将应用标为最爱时发生错误
+      error_unmark_as_favorite: 将应用取消最爱时发生错误
+      facebook_connect_failed: "与你Facebook 个人档案连结时发生错误"
+      failed_to_change_linked: 切换联结账户时发生错误
+      favorite_app: 最喜欢的应用
+      favorite_apps: 最喜欢的应用
+      favorite_category: 最喜欢的类型
+      favorites: 我的最爱
+      feedback: 反馈
+      find_and_invite_friends: 寻找与邀请朋友
+      find_friends_from_facebook: 从Facebook上找朋友
+      find_friends_from_twitter: 从Twitter上找朋友
+      find_friends_on_tapjoy: 寻找其他网络上已经使用Tapjoy的朋友
+      find_more_friends: 寻找更多朋友
+      find_new_apps: 寻找新应用
+      follow_us: 关注我们
+      forgot_pass: 忘记密码了？
+      free: 免费！
+      friend_filter_label: 开始输入姓名
+      generic_issue: 有问题了。请再试。
+      get_app: 获取应用
+      get_it: 下载！
+      grant_permissions_for_invite: 请在送出邀请前授权我们。
+      grant_us_access: 在发送邀请前请给予我们相应的授权/许可。
+      how_it_works_body: 您的所有游戏如下所列。按应用旁的按钮开始赚取虚拟货币。
+      how_it_works_title: 它的原理？
+      install_and_run: "安装并运行 %{name}"
+      install_android_app: 在你的Android装置上下载Tapjoy应用以便开始
+      install_profile: 在下一页登录你的资料，就可以开始探索你喜爱的应用！
+      invalid_emails: 提供的电子邮件无效
+      invalid_fields: 输入无效
+      invite: 邀请好友！
+      invite_by_email: 通过邮件邀请
+      invite_email_body: |-
+          %{name}已邀请您加入Tapjoy，这是发现最热门新应用的绝佳所在。免费注册后您就能发现针对iOS 和Android系统的最好应用，而且您可以在自己最喜爱的应用中赚取现金。
+
+          无需在App Store 或Google Play 中的成千上万应用堆里艰难跋涉才能找到您的下一个下载。Tapjoy 在乎您，会向您推荐您喜欢的应用。
+
+          请在此创建您的帐户，然后开始吧.
+      invite_email_greet: 你好
+      invite_email_signature: Tapjoy团队
+      invite_friends:
+        one: 邀请
+        other: "邀请 %{count} 个朋友"
+      invite_title: 发送一封电子邮件邀请
+      invite_twitter_followers: 邀请Twitter关注者!
+      invites_sent_to:
+        one: "一个Tapjoy邀请已经发送给了%{name}"
+        other: "Tapjoy 邀请已经发送给了 %{name}"
+      issue_registering: 注册帐户发生问题
+      join_the_community: 加入社群
+      join_the_community_blurb: 透过Tapjoy社区群的应用评分与评论来探索更多应用，今天就开始并亲自参与！
+      last_played: "最后进行: %{game}"
+      link_account_header: Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的设备
+      link_account_messaging: "Tapjoy提供你一面赚取正在进行的应用的货币，一面探索最热门iOS与安卓应用的一站式服务。为了感受完整的Tapjoy体验，你必须连接你的iOS或安卓设备。只要在你的iOS设备上回访 %{tjm_url} 或在你的安卓设备上回访 %{android_market_url} 就可以开始了。同时，请随性浏览本网站，创造你的个人档案，以便我们提供你个性化的推荐。"
+      link_account_messaging_android_href: 下载Android应用
+      link_account_messaging_tjm_href: www.tapjoy.com
+      link_my_facebook: 请连接到我的Facebook
+      load_more: 请加载更多
+      loading: 载入…
+      log_in_tapjoy: 登录Tapjoy
+      mark_as_favorite: 加到我的最爱
+      member_since: "会员资格自%{date}起"
+      meta_description: "Tapjoy：针对Android、iPhone 和iPad 上移动应用的一站式服务"
+      meta_keywords: 游戏、移动游戏、移动应用、ios、Android、iPhone、iPad、iTouch
+      mogli_reach_limit_error: 你已经到达上限了，请稍后再试
+      more_apps: 更多应用
+      more_the_merrier: 独乐乐不如众乐乐
+      my_apps: 我的应用
+      next: 下一个
+      no_device: 没有设备
+      no_javascript: 请在您的浏览器中启用JavaScript以继续访问Tapjoy
+      none_selected: 没有选中
+      on_my: "在我的%{device_name}上"
+      oops: 哦！
+      or_learn_more: 或者了解更多
+      other_options: 其它选项
+      our_tos_changed: "我们的%{terms_of_use}已经修订。请查阅后接受。"
+      password_changed: 你的密码已经变更了
+      password_non_match: 密码与确认内容不匹配
+      please_connect_facebook: 请连结到你的Facebook账号
+      post_to_facebook: 贴文到Facebook!
+      post_to_facebook_content: 访问Tapjoy以发现最好的应用与游戏，还可以在您喜爱的应用中赚取虚拟货币。免费加入，所以现在就来Tapjoy.com并获得为您特别推荐的应用
+      privacy_policy_href: 隐私政策
+      profile: 我
+      profile_error: 在更新你的个人档案时发生问题
+      profile_update: 你的资料已经更新了
+      provide_other_email: 请提供另一个电子邮件地址
+      provide_single_email: 请至少提供一个电子邮件地址
+      reactivated_account: 你的账号已经被激活了!
+      recipients_label: 请使用逗号区隔各电子邮件
+      recommend_apps: Tapjoy会根据你喜爱使用的应用内容，对你作个人化的智能推荐
+      recommendations: 智能推荐
+      recommendations_smart: 智能推荐
+      registering: 注册中
+      report_bug: 报告错误
+      reset_password_message: 输入跟你账号相关联的邮箱，我们会发送重置密码的连接给你
+      reset_password_message_submit: 你应该在几分钟之后就收到一封指引你重置密码的电邮
+      reset_password_retry: "如果你还是无法登入，你可以 %{reset_password_url} 或发电邮"
+      reset_password_retry_url_text: 请求另一封密码重置电邮
+      review_app_name: "评论 %{app_name}"
+      review_created: 成功的评论了这个应用
+      review_issue: 出问题了，请稍后再试
+      review_updated: 所有的评论都已经更新
+      reviewed_already: 您已经成功的评论了这个应用
+      scheduled_for_deletion: 你的账号已被关闭并进入删除流程!
+      select_current_device: 请选择您当前使用的终端
+      select_device: 请选择您的终端
+      select_friend: 请选择至少一位朋友，然后才能发送邀请
+      share_on_facebook: 在FaceBook上分享
+      share_on_twitter: 在Twitter上分享
+      share_with_everyone: 和所有人分享
+      share_with_your_friends: 和您的朋友分享
+      social_invite_friend_error: 在邀请你的朋友时发生问题，请稍后再试。
+      social_need_authorize_error: 在送出邀请前，请授权我们
+      social_networks: 社交网络
+      social_settings: 社交化设置
+      social_to_next: "下一页 %{page_size}"
+      social_to_prev: "前一页 %{page_size}"
+      social_to_top: "回顶端 &#8679;"
+      spread_mobile_joy: 散布行动娱乐
+      start_discovering: "现在就开始免费与Tapjoy一同探索吧 "
+      tap_that: "轻触%{icon} 选择%{button}"
+      tapjoy_picks: "Tapjoy 精选"
+      terms_of_use_href: 使用条款
+      thanks_contact_support: 多谢您联系我们的客服，我们的客服专员会尽快与您联系
+      thanks_contact_us: 谢谢您与我们联系，我们会尽快回复
+      thanks_feedback: 感谢您的反馈
+      thanks_report_bug: 感谢您提出的错误报告，我们会尽快测试并确认
+      thats_you: 就是您
+      tos_acknowledge_html: "选中此框，确定自己接受%{terms_of_use} 及%{privacy_policy}"
+      tos_change_acknowledge: 选中此框，确定自己接受服务条款。
+      twitter_at_least_one_friend_error: 在送出邀请前，请至少选择一名朋友
+      twitter_authenticate_error: 透过Twitter取得授权时发生错误，服务并未传回有效的数据
+      twitter_forbidden_error: 由于更新限制，要求已经被否决
+      twitter_general_error: Twitter那边有点问题，请稍后再试
+      twitter_internal_error: Twitter那边有点问题，请稍后再试
+      twitter_invite_msg: 已经邀请你加入Tapjoy，寻找热门应用的最佳场所，现在就免费加入!
+      twitter_invite_title: 请选择Twitter朋友，以便用直接讯息邀请他们
+      unable_to_process: 抱歉，我们无法处理您的请求
+      unlock_mobile_joy: "解锁Mobile Joy"
+      unmark_as_favorite: 从最爱中移除
+      welcome_tapjoy: 欢迎来到Tapjoy!
+      wifi_required: "需要Wifi 连接"
+      wrong_device: 设备错误？
+      you_are_following: "你正在关注 (%{count})"
+      your_followers:
+        one: 你的关注者
+        other: "你的关注者 (%{count})"
+    instructions:
+      amount_and_currency: "%{amount} %{currency}"
+      continue_link: 点击这里继续
+      download_action: 这里
+      download_link_html: "如果您没有这个程序, 点击 %{download_action} 下载"
+      earn_currency_html: "赚 %{amount_and_currency}"
+      footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
+      header: "按照这些步骤来赚 %{currency}："
+      title: 说明
+    offerwall:
+      buy_currency_html: "买 %{amount} %{currency}"
+      earn_currency_html: "赚 %{amount} %{currency}"
+      free: 免费
+      instructions: "完成以下的要求其中之一可以得到 %{currency}"
+      instructions_non_rewarded: 发现Tapjoy的热点!
+      load_error: 请再试一次。
+      load_more: 下一页！
+      loading: 载入中。。。。
+      missing_currency: "没得到 %{currency}?"
+      more_offers: "想要看更多廣告要求? 造訪 Tapjoy 來獲得更多獎勵與個性化的應用推薦!"
+      next: "下页 %{items}"
+      popular_apps: 最流行的软件
+      previous: "上页 %{items}"
+      title: "赚 %{currency}"
+      wifi_required: 需要Wifi
+      wifi_warning: 下载本软件需要wifi连接。
+    shared:
+      about_link: 关于Tapjoy
+      ads_by: 广告来自
+      android: Android
+      back: 返回
+      blog: 博客
+      cancel: 取消
+      change_password: 更改密码
+      city: 城市
+      collect: 收集
+      comment: 评论
+      confirm_password: 请确认密码
+      continue: 继续
+      copyright: "版权申明： %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      country: 国家
+      day: 日
+      earn_verb: 赚取
+      email: 电子邮件
+      facebook_profile: "Facebook 个人资料"
+      favorites: 收藏
+      female: 女性
+      followers: 被关注
+      following: 关注
+      friends: 朋友
+      gender: 性别
+      help: 帮助
+      invite: 邀请
+      ios: iOS
+      join: 加入
+      location: 位置
+      login_noun: 登录
+      login_verb: 登录
+      logout: 登出
+      male: 男性
+      month: 月
+      my_account: 我的帐户
+      my_profile: 我的个人资料
+      my_reviews: 我的评论
+      name: 名字
+      new_password: 新密码
+      nickname: 昵称
+      none: 没有
+      ok: OK
+      options: 选项
+      other: 其它
+      password: 密码
+      please_try_again: 请再试一次
+      preferences: 首选
+      privacy: 隐私
+      privacy_policy: 隐私政策
+      profile: 个人资料
+      rate_and_review: 评论并打分
+      recipients: 收件人
+      reset_password: 重置密码
+      reviews: 评论
+      save: 保存
+      send: 发送
+      sending: 发送中
+      sent: 已发送
+      share: 共享
+      sign_in: 登录
+      sign_up: 注册
+      submit: 提交
+      submit_review: 提交评论
+      success: 成功！
+      title_noun: 标题
+      try_again: 再试
+      unknown: 未知的
+      update_review: 更新评论
+      updating: 更新
+      view_all: 观看全部
+      write_review: 写评论
+      year: 年
+      zip_postal: 邮政编码
+    support:
+      abuse_warning: "本页表格是针对完成了流程但未获得虚拟币奖励的用. 滥用者可导致将来受禁止参与此类活动."
+      description_label: 请描述您下载了APP的流程：
+      email_address_label: 电子邮箱：
+      instructions_1: "如果您没得到 %{currency}, 请您让我们知道您下载了哪款APP, 并且留下您的电子邮箱."
+      instructions_2: "我们完成了确认流程后，你将会获取应得的 %{currency}."
+      invalid_email: 请输入您真实的电子邮箱.
+      missing_description: 请描述您下载了APP的流程.
+      missing_offer: 您需要写下您完成的广告。
+      no_incomplete_offers_label: 没法提供其他的广告。
+      select_offer: 选以下的广告
+      specify_offer_label: 指出要求：
+      submit_support_request: 支持请求
+      support_request_submitted: 支持请求已提交
+      thanks: "感谢您提交了支持请求! 我们完成了确认流程后，你将会获取应得的 %{currency}."
+      title: "没得到 %{currency}?"
+    unavailable_offer:
+      message: "很抱歉，但 %{offer} 已经失效了，你可以回到前一页并更新，来观看最新的广告列表"
+      optional_message: "或者，还是点击这里来下载 %{offer}"
+  time:
+    am: ~
+    formats:
+      classic_short: ~
+      day: ~
+      day_long: ~
+      day_short: ~
+      default: ~
+      long: ~
+      short: ~
+    pm: ~

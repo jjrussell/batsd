@@ -1,0 +1,58 @@
+- @page_title = "External publishers"
+
+%h2 External publishers
+
+%p
+  The below currencies are potential external publishers. If they are enabled, users will be able to earn currency outside the app though Tapjoy Games.
+
+%p
+  .spinner
+    %span#spinner.hidden= image_tag('spinner.gif', :alt => 'Searching...')
+  = label_tag 'search_box', 'Search currencies by Currency name, App name, or Partner name:'
+  = text_field_tag 'search_box', ''
+
+  #search_table
+
+%p
+  = "Total currencies: #{@num_tapjoy_enabled}"
+  &nbsp;
+  = "Total enabled as external pubs: #{@num_external_pubs}"
+
+= render 'search/currencies'
+
+= will_paginate(@currencies)
+
+- content_for :page_styles do
+  :plain
+    table.with-border {
+      border-collapse: collapse;
+    }
+
+    td.img {
+      max-width: 40px;
+      overflow: hidden;
+    }
+
+- content_for :included_javascripts, javascript_include_tag('jquery.delayedobserver')
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#search_box').delayedObserver(0.5, doSearch);
+    });
+
+    // Executes the AJAX call to perform search and updates results div
+    function doSearch() {
+      // controller's URI
+      var term = $("#search_box").val();
+      var url = '#{search_currencies_path}';
+      var params = { term: term };
+
+      if(term.length > 1) {
+        // show spinner
+        $('span#spinner').fadeIn('fast', function() {
+          $("#search_table").load(url, params, function() {
+            $('span#spinner').fadeOut();
+          });
+        });
+      }
+    }

@@ -6,9 +6,7 @@ class Experiments
   }
 
   def self.choose(udid)
-    if udid.present?
-      udid.hash % 2 == 0 ? EXPERIMENTS[:papaya_on] : EXPERIMENTS[:papaya_off]
-    end
+    EXPERIMENTS[:default]
   end
 
   def self.report(start_time, end_time, experiment_id, control_id = EXPERIMENTS[:control])
@@ -31,8 +29,8 @@ class Experiments
     date = start_time.to_date
 
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
-      offerwall_views += WebRequest.count "path = '[offers]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      clicks += WebRequest.count "path = '[offer_click]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      offerwall_views += WebRequest.count "(path = '[offers]' OR path = '[tjm_offers]') AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      clicks += WebRequest.count "(path = '[offer_click]' OR path = '[tjm_offer_click]') AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       conversions += WebRequest.count "path = '[reward]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       date += 1.day
     end

@@ -5,10 +5,10 @@
         .container
           .nav
             .logo
-              - link_to(games_root_path) do
+              = link_to(games_path) do
                 %img{ :src => BLANK_IMAGE }
 
-  - form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
+  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
     #signup-nav.signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
@@ -53,8 +53,6 @@
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
-  .container.mt20.center
-    = render '/shared/truste'
 
     #register-progress.register-progress.hidden.clearfix
       .register-message
@@ -68,7 +66,7 @@
             #loader_a.loader_letter
             #loader_p.loader_letter
 
-    - link_to(GAMES_ANDROID_MARKET_URL) do
+    = link_to(GAMES_ANDROID_MARKET_URL) do
       #register-android.hidden.clearfix
         .title
           = t('text.games.almost_done')
@@ -78,7 +76,7 @@
           .install-btn.ui-joy-button.orange-action
             = t('text.games.download_now')
 
-    - link_to(new_games_gamer_device_path) do
+    = link_to(new_games_device_path) do
       #register-ios.hidden.clearfix
         .title
           = t('text.games.almost_done')
@@ -87,11 +85,14 @@
         #link-ios.install
           %img{ :src => BLANK_IMAGE }
 
+  .container.mt20.center
+    = render '/shared/truste'
+
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
-  = css_tag('marketplace/theme/tjm/logged_out')
+  - css_cache 'marketplace/theme/tjm/logged_out', true
 
 - content_for :page_javascript do
   :plain

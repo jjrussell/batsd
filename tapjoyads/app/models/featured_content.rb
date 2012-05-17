@@ -1,5 +1,6 @@
 class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
+  has_tracking_offers
 
   STAFFPICK = 0
   NEWS      = 1
@@ -7,36 +8,36 @@ class FeaturedContent < ActiveRecord::Base
   CONTEST   = 3
 
   TYPES_MAP = {
-     STAFFPICK => 'StaffPick',
-     NEWS      => 'News',
-     PROMO     => 'Promo',
-     CONTEST   => 'Contest'
-   }
+    STAFFPICK => 'StaffPick',
+    NEWS      => 'News',
+    PROMO     => 'Promo',
+    CONTEST   => 'Contest'
+  }
 
   WEIGHTS = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
-  belongs_to :author, :polymorphic => true
-  belongs_to :offer
-  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'id = tracking_for_id'
+  NO_URL = 'NO_URL'
+
+  belongs_to :author, :class_name => 'Employee'
+  has_one :tracking_offer, :class_name => 'Offer', :as => :tracking_for, :conditions => 'tapjoy_enabled = true'
 
   validates_presence_of :author, :if => :author_required?, :message => "Please select an author."
-  validates_presence_of :offer, :if => :offer_required?, :message => "Please select an offer/app."
+  validates_presence_of :tracking_offer, :if => :offer_required?, :message => "Please select an offer/app."
   validates_presence_of :featured_type, :platforms, :subtitle, :title, :description, :start_date, :end_date, :weight
 
-  after_create :create_tracking_offer
-  after_update :update_tracking_offer
+  before_save :create_offer
 
-  named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
-  named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
-  named_scope :expired,  lambda { |date| { :conditions => [ "end_date < ?", date.to_date ], :order => "end_date ASC" } }
-  named_scope :active, lambda { |date| { :conditions => [ "start_date <= ? AND end_date >= ?", date.to_date, date.to_date ] } }
-  named_scope :for_platform, lambda { |platform| { :conditions => [ "platforms LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
+  scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
+  scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
+  scope :expired,  lambda { |date| { :conditions => [ "end_date < ?", date.to_date ], :order => "end_date ASC" } }
+  scope :active, lambda { |date| { :conditions => [ "start_date <= ? AND end_date >= ?", date.to_date, date.to_date ] } }
+  scope :for_platform, lambda { |platform| { :conditions => [ "platforms LIKE ?", "%#{platform}%" ] } }
+  scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
 
   json_set_field :platforms
 
   def self.featured_contents(platform)
-    platform = 'iphone' unless %w(android iphone).include?(platform)
+    platform = 'iphone' unless %w(android iphone itouch ipad windows).include?(platform)
     Mc.get_and_put("featured_contents.#{platform}", false, 1.hour) do
       now = Time.now.utc
       featured_contents =  FeaturedContent.active(now).for_platform(platform) ||
@@ -104,6 +105,10 @@ class FeaturedContent < ActiveRecord::Base
     save!
   end
 
+  def has_valid_url?
+    button_url != NO_URL
+  end
+
   private
 
   def author_required?
@@ -114,29 +119,17 @@ class FeaturedContent < ActiveRecord::Base
     [ TYPES_MAP[STAFFPICK], TYPES_MAP[PROMO] ].include?(featured_type)
   end
 
-  def create_tracking_offer
-    if offer && !tracking_offer
-      if offer.item_type == 'App'
-        self.tracking_offer = offer.item.create_tracking_offer_for(self,
-          :device_types => platforms,
-          :url_overridden => true,
-          :url => button_url
-        )
-      else
-        self.tracking_offer = offer.item.create_tracking_offer_for(self, :device_types => platforms)
-      end
-      save
+  def create_offer
+    if tracking_offer.blank? && !offer_required?
+      item = GenericOffer.create(
+        :name       => "For_Featured_Content_#{id}",
+        :url        => NO_URL,
+        :partner_id => TAPJOY_PARTNER_ID,
+        :category   => 'Other'
+      )
+      self.tracking_item = item
+      self.button_url = NO_URL
     end
-  end
-
-  def update_tracking_offer
-    if tracking_offer
-      if offer
-        self.tracking_offer.device_types = platforms if platforms_changed?
-        self.tracking_offer.save! if self.tracking_offer.changed?
-      end
-    else
-      create_tracking_offer
-    end
+    true
   end
 end

@@ -2,11 +2,18 @@
 
 require 'yaml'
 
-VERSION_FILENAME = '../server/version.yaml'
+VERSION_FILENAME = "#{File.dirname(__FILE__)}/../../server/version.yaml"
+git_branch = `git branch | grep "^\*"`.split(' ')[1]
+system('git checkout deploy')
 current_tag = YAML::load(File.open(VERSION_FILENAME))["current"]
+system("git checkout #{git_branch}")
+
 if `uname` =~ /Darwin/
   command = "open"
 elsif `uname` =~ /Linux/
   command = "xdg-open"
+else
+  puts "Unsupported operating system!"
+  exit 1
 end
 system("#{command} https://github.com/Tapjoy/tapjoyserver/compare/#{current_tag}...master")

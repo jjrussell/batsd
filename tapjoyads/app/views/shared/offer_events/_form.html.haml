@@ -1,6 +1,6 @@
 - editable_offer ||= false
 
-- form_for(offer_event, :html => { :class => 'tjform' }) do |f|
+= form_for(offer_event, :html => { :class => 'tjform' }) do |f|
   %table
     %tbody
       - if editable_offer
@@ -114,8 +114,8 @@
       });
 
       $('#offer_event_scheduled_for').datetimepicker({
-      	ampm: true,
-      	timeFormat: 'h:mm TT'
+        ampm: true,
+        timeFormat: 'h:mm TT'
       });
 
       $('#daily_budget_selector').change(function() {

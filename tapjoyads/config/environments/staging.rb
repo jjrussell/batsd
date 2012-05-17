@@ -1,35 +1,36 @@
-# Settings specified here will take precedence over those in config/environment.rb
+MACHINE_TYPE = nil
 
-# The production environment is meant for finished, "live" apps.
-# Code is not reloaded between requests
-config.cache_classes = true
+Tapjoyad::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# Enable threaded mode
-# config.threadsafe!
+  # In the development environment your application's code is reloaded on
+  # every request.  This slows down response time but is perfect for development
+  # since you don't have to restart the webserver when you make code changes.
+  config.cache_classes = false
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
-config.action_controller.perform_caching             = true
-config.action_view.cache_template_loading            = true
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-# Disable request forgery protection because this is an api
-config.action_controller.allow_forgery_protection    = false
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = false
 
-config.gem 'mail_safe', :version => '0.3.1'
+  # Print deprecation notices to the Rails logger
+  config.active_support.deprecation = :log
 
-# Use a different cache store in production
-# config.cache_store = :mem_cache_store
+  # Only use best-standards-support built into browsers
+  config.action_dispatch.best_standards_support = :builtin
 
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
+  %w( api job dashboard website web legacy ).each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
+end
 
-# Disable delivery errors, bad email addresses will be ignored
-# config.action_mailer.raise_delivery_errors = false
-
-MEMCACHE_SERVERS = [ '127.0.0.1' ]
+MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']
@@ -43,7 +44,7 @@ end
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'http://d10hyk8bs4mjhv.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = 'staging_'
@@ -51,16 +52,13 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['staging']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['staging']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
-
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
@@ -77,10 +75,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['staging']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'a#X4cHdun84eB9=2bv3fG^RjNe46$T'
@@ -89,6 +83,10 @@ FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

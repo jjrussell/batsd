@@ -5,15 +5,15 @@ class Employee < ActiveRecord::Base
 
   has_many :app_reviews, :as => :author
 
-  validates_presence_of :first_name, :last_name, :title, :email, :superpower, :current_games, :weapon, :biography
+  validates_presence_of :first_name, :last_name, :title, :email
   validates_uniqueness_of :email
   validates_uniqueness_of :desk_location, :allow_blank => true
   validates_inclusion_of :department, :in => DEPARTMENTS, :allow_nil => true
 
-  named_scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
-  named_scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
-  named_scope :all_ordered, :order => 'display_order desc, last_name, first_name'
-  named_scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
+  scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
+  scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
+  scope :all_ordered, :order => 'display_order desc, last_name, first_name'
+  scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
 
   has_one :user, :primary_key => :email, :foreign_key => :email
   has_many :wfhs
@@ -23,7 +23,13 @@ class Employee < ActiveRecord::Base
   end
 
   def location=(array)
-    raise unless Array === array && array.length == 2
+    if array.blank?
+      self.desk_location = nil
+      return
+    elsif String === array
+      array = JSON.load(array)
+    end
+    raise "location must be array" unless Array === array && array.length == 2
     self.desk_location = array.map(&:to_i).join(',')
   end
 
@@ -41,6 +47,14 @@ class Employee < ActiveRecord::Base
 
   def photo_alt_name
     "#{first_name.downcase}_#{last_name.downcase}"
+  end
+
+  def get_avatar_url
+    "https://secure.gravatar.com/avatar/#{generate_gravatar_hash}?d=mm&s=123"
+  end
+
+  def generate_gravatar_hash
+    Digest::MD5.hexdigest email.strip.downcase
   end
 
   def get_photo_url(options = {})

@@ -1,0 +1,74 @@
+- hide_table ||= false
+
+%table.search
+  %tr
+    %td Use the field to the right to search for gamers.
+
+    %td.gamer_search
+      .spinner
+        %span#spinner= image_tag('spinner.gif', :alt => 'Searching...')
+      = label_tag 'search_box', 'Search email:'
+      = text_field_tag 'search_box', ''
+
+- content_for :page_styles do
+  :plain
+    .gamer_search {
+      float: right;
+      text-align: right;
+    }
+
+    #search_box {
+      width: 300px;
+    }
+    .spinner {
+      display: inline;
+    }
+    span#spinner {
+      display: none;
+      margin: 5px;
+    }
+    table.search {
+      width: 100%;
+    }
+    table.search td {
+      vertical-align: top;
+    }
+- content_for :included_javascripts, javascript_include_tag('jquery.delayedobserver')
+- content_for :page_javascript do
+  :plain
+    // Executes the AJAX call to perform search and updates results div
+    function doSearch() {
+      // controller's URI
+      var term = $("#search_box").val();
+      var url = '#{search_gamers_path}';
+      var params = { term: term };
+
+      if(term.length > 1) {
+        // show spinner
+        $('span#spinner').fadeIn('fast', function() {
+          $("#search_results").load(url, params, function() {
+            $('#gamers_table').fadeIn();
+            $('span#spinner').fadeOut();
+            $('#gamers_table').tablesorter({
+              widgets: ['zebra'],
+              headers: {
+                0:  { sorter: false },
+                4:  { sorter: 'usLongDate' },
+                5:  { sorter: 'usLongDate' }
+              },
+              sortList: [[4,0], [2,0]]
+            });
+          });
+        });
+      }
+    }
+
+    $(document).ready(function()
+    {
+      $('#search_box').delayedObserver(0.5, doSearch);
+
+      if($('#search_box').val().length > 1)
+        doSearch();
+      else if(#{!hide_table})
+        $('#gamers_table').fadeIn();
+    });

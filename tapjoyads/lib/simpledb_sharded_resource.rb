@@ -43,7 +43,6 @@ class SimpledbShardedResource < SimpledbResource
     records
   end
 
-
   private
 
   def self.num_domains

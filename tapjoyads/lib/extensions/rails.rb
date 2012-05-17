@@ -6,42 +6,30 @@
 #   limited_route.resources :some_resource
 # end
 #
-module ActionController
-  module Routing
+# module ActionController
+#   module Routing
 
-    class RouteSet
-      alias_method :orig_extract_request_environment, :extract_request_environment
+#     class RouteSet
+#       alias_method :orig_extract_request_environment, :extract_request_environment
 
-      def extract_request_environment(request)
-        orig_extract_request_environment(request).merge({ :host => request.host })
-      end
-    end
+#       def extract_request_environment(request)
+#         orig_extract_request_environment(request).merge({ :host => request.host })
+#       end
+#     end
 
-    class Route
-      alias_method :orig_recognition_conditions, :recognition_conditions
+#     class Route
+#       alias_method :orig_recognition_conditions, :recognition_conditions
 
-      def recognition_conditions
-        result = orig_recognition_conditions
-        result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
-        result
-      end
-    end
+#       def recognition_conditions
+#         result = orig_recognition_conditions
+#         result << "conditions[:hosts].include?(env[:host])" if conditions[:hosts] && Rails.env.production?
+#         result
+#       end
+#     end
 
-  end
-end
-
-#
-# This adds a _with_time logging method for each log severity level.
-# It will time how long it takes to execute a block and append the
-# number of seconds to the log message.
-#
-# example usage:
-# Rails.logger.info_with_time('some message') do
-#   method_that_takes_25_seconds
+#   end
 # end
-#
-# resulting log output: "some message (25s)"
-#
+
 module ActiveSupport
   class BufferedLogger
 
@@ -81,6 +69,51 @@ module ActiveRecord
     end
   end
 
+  class Migration
+    BIG_TABLES = Hash[[ Gamer, GamerProfile, Conversion ].map do |model|
+      [ model.to_s.pluralize.underscore, model ]
+    end]
+    def self.check_table_size(table_name)
+      if BIG_TABLES.include?(table_name.to_s) && BIG_TABLES[table_name.to_s].count > 0
+        puts "*" * 80
+        puts "Cannot ALTER TABLE #{table_name} - please revise your code."
+        puts "add_column, add_index, remove_column, and remove_index are not"
+        puts "allowed to run on the following tables:"
+        BIG_TABLES.each do |big_table_name|
+          puts " - #{big_table_name}"
+        end
+        puts "*" * 80
+        raise "Table too large: #{table_name}"
+      else
+        yield
+      end
+    end
+
+    def self.add_column(table_name, column_name, type, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, type, options)
+      end
+    end
+
+    def self.remove_column(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+
+    def self.add_index(table_name, column_name, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, options)
+      end
+    end
+
+    def self.remove_index(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+  end
+
   class Base
 
     # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
@@ -90,9 +123,40 @@ module ActiveRecord
         attrs = clone_attributes(:read_attribute_before_type_cast)
         attrs.delete(self.class.primary_key)
         record = self.class.new
-        record.attributes = attrs # original version is 'record.send :instance_variable_set, '@attributes', attrs'
+        attrs.each { |k,v| record.write_attribute(k,v) } # original version is 'record.send :instance_variable_set, '@attributes', attrs'
         record
       end
+    end
+
+    def self.remove_column(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+
+    def self.add_index(table_name, column_name, options = {})
+      check_table_size(table_name) do
+        super(table_name, column_name, options)
+      end
+    end
+
+    def self.remove_index(table_name, column_name)
+      check_table_size(table_name) do
+        super(table_name, column_name)
+      end
+    end
+  end
+
+  class Base
+
+    # TODO: Investigate. Monkey-patched during merge of rails3 and master
+    # in order to handle this before_filter in ApplicationController:
+    # def set_readonly_db
+    #   ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+    # end
+    cattr_accessor :readonly
+    def self.readonly?
+      readonly
     end
 
     # ensure API servers are readonly

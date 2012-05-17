@@ -1,35 +1,48 @@
-# Settings specified here will take precedence over those in config/environment.rb
+MACHINE_TYPE = nil
 
-# The test environment is used exclusively to run your application's
-# test suite.  You never need to work with it otherwise.  Remember that
-# your test database is "scratch space" for the test suite and is wiped
-# and recreated between test runs.  Don't rely on the data there!
-config.cache_classes = true
+Tapjoyad::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# Log error messages when you accidentally call methods on nil.
-config.whiny_nils = true
+  # The test environment is used exclusively to run your application's
+  # test suite.  You never need to work with it otherwise.  Remember that
+  # your test database is "scratch space" for the test suite and is wiped
+  # and recreated between test runs.  Don't rely on the data there!
+  config.cache_classes = true
 
-# Show full error reports and disable caching
-config.action_controller.consider_all_requests_local = true
-config.action_controller.perform_caching             = false
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Disable request forgery protection in test environment
-config.action_controller.allow_forgery_protection    = false
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = true
+  config.action_controller.perform_caching = false
 
-# Tell Action Mailer not to deliver emails to the real world.
-# The :test delivery method accumulates sent emails in the
-# ActionMailer::Base.deliveries array.
-config.action_mailer.delivery_method = :test
+  # Raise exceptions instead of rendering exception templates
+  config.action_dispatch.show_exceptions = false
 
-config.gem 'factory_girl', :version => '2.1.2'
-config.gem 'shoulda', :version => '2.11.1'
-config.gem 'shoulda-addons', :version => '0.2.2', :lib => 'shoulda_addons'
-config.gem 'mocha', :version => '0.9.12'
-config.gem 'rspec', :lib => false, :version => '1.3.2'
-config.gem 'rspec-rails', :lib => false, :version => '1.3.4'
-config.gem 'spork', :version => '0.8.5'
+  # Disable request forgery protection in test environment
+  config.action_controller.allow_forgery_protection    = false
 
-MEMCACHE_SERVERS = ['127.0.0.1']
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.action_mailer.delivery_method = :test
+
+  # Use SQL instead of Active Record's schema dumper when creating the test database.
+  # This is necessary if your schema can't be completely dumped by the schema dumper,
+  # like if you have constraints or database-specific column types
+  # config.active_record.schema_format = :sql
+
+  # Print deprecation notices to the stderr
+  config.active_support.deprecation = :stderr
+  config.time_zone = 'UTC'
+
+  %w( api dashboard website web legacy ).each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
+end
+
+MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
@@ -50,6 +63,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
+XMAN = false
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
@@ -71,10 +85,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['test']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
@@ -87,11 +97,13 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = true
 
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
+
 DEV_FACEBOOK_ID = '100000459598424'
 
 DEVICE_LINK_TRACKING_PIXEL = ''
-
-Sass::Plugin.options[:style] = :nested
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '8a9e4550-6230-40f4-bd6b-6c376fd37ac3'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'

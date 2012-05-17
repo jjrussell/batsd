@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Recommender do
   describe ".instance" do
     context "with an argument" do
-      before :all do
+      before :each do
         @recommender = Recommender.instance(:most_popular_recommender)
       end
 
@@ -76,14 +76,15 @@ def recommender_instance_spec(recommender)
           recommender.for_app(@app).should be_an Array
         end
 
-        it "returns an array composed of pairs" do
-          recommender.for_app(@app).first.should be_an Array
-          recommender.for_app(@app).first.length.should == 2
+        it "returns an array composed of hashes" do
+          recommender.for_app(@app).first.should be_a Hash
+          recommender.for_app(@app).first.should have_key :recommendation
+          recommender.for_app(@app).first.should have_key :weight
         end
 
-        it "returns an array of pairs of the form [String, Numeric]" do
-          recommender.for_app(@app).first.first.should be_a String
-          recommender.for_app(@app).first.last.should be_a Numeric
+        it "returns an array of hashes of the form { :recommendation => String, :weight => Numeric }" do
+          recommender.for_app(@app).first[:recommendation].should be_a String
+          recommender.for_app(@app).first[:weight].should be_a Numeric
         end
       end
 
@@ -100,14 +101,17 @@ def recommender_instance_spec(recommender)
           recommender.for_device(@udid).should be_an Array
         end
 
-        it "returns an array composed of pairs" do
-          recommender.for_device(@udid).first.should be_an Array
-          recommender.for_device(@udid).first.length.should == 2
+        it "returns an array composed of hashes" do
+          recommender.for_device(@udid).first.should be_a Hash
+          recommender.for_device(@udid).first.should have_key :recommendation
+          recommender.for_device(@udid).first.should have_key :weight
+          recommender.for_device(@udid).first.should have_key :explanation
         end
 
-        it "returns an array of pairs of the form [String, Numeric]" do
-          recommender.for_device(@udid).first.first.should be_a String
-          recommender.for_device(@udid).first.last.should be_a Numeric
+        it "returns an array of hashes of the form { :recommendation => String, :weight => Numeric, :explanation => String }" do
+          recommender.for_device(@udid).first[:recommendation].should be_a String
+          recommender.for_device(@udid).first[:weight].should be_a Numeric
+          recommender.for_device(@udid).first[:explanation].should be_a String
         end
       end
 
@@ -124,14 +128,15 @@ def recommender_instance_spec(recommender)
           recommender.most_popular.should be_an Array
         end
 
-        it "returns an array composed of pairs" do
-          recommender.most_popular.first.should be_an Array
-          recommender.most_popular.first.length.should == 2
+        it "returns an array composed of hashes" do
+          recommender.most_popular.first.should be_a Hash
+          recommender.most_popular.first.should have_key :recommendation
+          recommender.most_popular.first.should have_key :weight
         end
 
-        it "returns an array of pairs of the form [String, Numeric]" do
-          recommender.most_popular.first.first.should be_a String
-          recommender.most_popular.first.last.should be_a Numeric
+        it "returns an array of hashes of the form { :recommendation => String, :weight => Numeric }" do
+          recommender.most_popular.first[:recommendation].should be_a String
+          recommender.most_popular.first[:weight].should be_a Numeric
         end
       end
 

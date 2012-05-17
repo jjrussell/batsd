@@ -2,9 +2,9 @@ FactoryGirl.define do
   factory :user do
     email    { Factory.next(:email) }
     username { |u| u.email }
-    state 'approved'
     password 'asdf'
     password_confirmation 'asdf'
+    country  'earth'
   end
 
   factory :admin, :parent => :user do
@@ -34,6 +34,12 @@ FactoryGirl.define do
     end
   end
 
+  factory :customer_service_manager, :parent => :user do
+    after_build do |cs_manager|
+      cs_manager.user_roles << UserRole.find_or_create_by_name('customer_service_manager')
+    end
+  end
+
   factory :payout_manager_user, :parent => :user do
      after_build do |payout_manager|
       payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
@@ -59,6 +65,7 @@ FactoryGirl.define do
   factory :partner do
     name { Factory.next(:name) }
     approved_publisher true
+    payout_threshold 50_000_00
   end
 
   factory :payout_info do
@@ -97,6 +104,8 @@ FactoryGirl.define do
   end
 
   factory :app_metadata do
+    thumbs_up  0
+    thumbs_down 0
     store_name 'App Store'
     store_id   { Factory.next(:name) }
     name       { Factory.next(:name) }
@@ -250,6 +259,8 @@ FactoryGirl.define do
     password { 'asdf' }
     password_confirmation { 'asdf' }
     terms_of_service { '1' }
+    been_buried_count 0
+    been_helpful_count 0
   end
 
   factory :invitation do
@@ -313,21 +324,30 @@ FactoryGirl.define do
   end
 
   factory :featured_content do
-    featured_type FeaturedContent::STAFFPICK
-    platforms     %w( iphone ipad itouch ).to_json
-    subtitle      'Subtitle'
-    title         'Title'
-    description   'Description'
-    start_date    { Time.zone.now }
-    end_date      { Time.zone.now + 1.day }
-    weight        1
-    offer         { Factory(:app).primary_offer }
-    author        { Factory(:employee) }
-    button_url    'https://www.tapjoy.com'
+    featured_type         FeaturedContent::STAFFPICK
+    platforms             %w( iphone itouch ).to_json
+    subtitle              'Subtitle'
+    title                 'Title'
+    description           'Description'
+    start_date            { Time.zone.now }
+    end_date              { Time.zone.now + 1.day }
+    weight                1
+    tracking_source_offer { Factory(:app).primary_offer }
+    author                { Factory(:employee) }
+    button_url            'https://www.tapjoy.com'
+  end
+
+  factory :brand do
+    name { Factory.next(:name) }
+  end
+
+  factory :brand_offer_mapping do
+    brand {Factory(:brand)}
+    offer {Factory(:app).primary_offer }
+    allocation 1
   end
 
   factory :client do
     name  { Factory.next(:name) }
   end
-
 end

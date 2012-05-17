@@ -1,11 +1,23 @@
 require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
+  let(:stats_hash) do
+    hash = Hash.new([100,200,300])
+    hash['arpdau'] = nil
+    hash
+  end
+
   before :each do
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    time = Time.zone.today + 1.day
+    Timecop.freeze(time.to_time(:utc))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
     @controller.expects(:authenticate).at_least_once.returns(true)
+    Mc.flush('totally_serious')
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe '#index' do
@@ -101,11 +113,11 @@ describe Job::MasterReloadStatzController do
           :price => 1),
         Factory(:app_metadata,
           :store_id => 'android.free',
-          :store_name => 'Market',
+          :store_name => 'Google Play',
           :price => 0),
         Factory(:app_metadata,
           :store_id => 'android.paid',
-          :store_name => 'Market',
+          :store_name => 'Google Play',
           :price => 1),
       ]
 
@@ -150,35 +162,40 @@ describe Job::MasterReloadStatzController do
       get(:partner_index)
 
       expected_stats = {
-        "account_mgr"           => "",
-        "balance"               => "$0.00",
-        "clicks"                => "600",
-        "cvr"                   => "100.0%",
-        "display_conversions"   => "600",
-        "display_cvr"           => "100.0%",
-        "display_ecpm"          => "$10.00",
-        "display_revenue"       => "$6.00",
-        "display_views"         => "600",
-        "est_gross_revenue"     => "$12.00",
-        "featured_conversions"  => "600",
-        "featured_cvr"          => "100.0%",
-        "featured_ecpm"         => "$10.00",
-        "featured_revenue"      => "$6.00",
-        "featured_views"        => "600",
-        "new_users"             => "600",
-        "offerwall_conversions" => "600",
-        "offerwall_cvr"         => "100.0%",
-        "offerwall_ecpm"        => "$10.00",
-        "offerwall_revenue"     => "$6.00",
-        "offerwall_views"       => "600",
-        "paid_installs"         => "600",
-        "partner"               => @partner.name,
-        "rev_share"             => "50.0%",
-        "sales_rep"             => "",
-        "sessions"              => "600",
-        "spend"                 => "$-6.00",
-        "total_revenue"         => "$6.00",
-        "arpdau"                => "-",
+        "account_mgr"               => "",
+        "balance"                   => "$0.00",
+        "clicks"                    => "600",
+        "cvr"                       => "100.0%",
+        "display_conversions"       => "600",
+        "display_cvr"               => "100.0%",
+        "display_ecpm"              => "$10.00",
+        "display_revenue"           => "$6.00",
+        "display_views"             => "600",
+        "est_gross_revenue"         => "$12.00",
+        "featured_conversions"      => "600",
+        "featured_cvr"              => "100.0%",
+        "featured_ecpm"             => "$10.00",
+        "featured_revenue"          => "$6.00",
+        "featured_views"            => "600",
+        "new_users"                 => "600",
+        "offerwall_conversions"     => "600",
+        "offerwall_cvr"             => "100.0%",
+        "offerwall_ecpm"            => "$10.00",
+        "offerwall_revenue"         => "$6.00",
+        "offerwall_views"           => "600",
+        "tjm_offerwall_conversions" => "600",
+        "tjm_offerwall_cvr"         => "100.0%",
+        "tjm_offerwall_ecpm"        => "$10.00",
+        "tjm_offerwall_revenue"     => "$6.00",
+        "tjm_offerwall_views"       => "600",
+        "paid_installs"             => "600",
+        "partner"                   => @partner.name,
+        "rev_share"                 => "50.0%",
+        "sales_rep"                 => "",
+        "sessions"                  => "600",
+        "spend"                     => "-$6.00",
+        "total_revenue"             => "$6.00",
+        "arpdau"                    => "-",
       }
 
       actual_stats = Mc.get('statz.partner.cached_stats.24_hours')
@@ -201,6 +218,7 @@ describe Job::MasterReloadStatzController do
 
       zero_keys = [
         'rewards_opened',
+        'tjm_rewards_opened',
         'featured_offers_opened',
         'display_clicks',
         'paid_clicks',
@@ -249,7 +267,7 @@ describe Job::MasterReloadStatzController do
       stub_appstats
 
       admin_user = Factory(:admin)
-      admin_user2 = Factory(:admin)
+      admin_user2 = Factory(:admin, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user
@@ -290,6 +308,7 @@ describe Job::MasterReloadStatzController do
 
       zero_hash = {
         'rewards' => [0],
+        'tjm_rewards' => [0],
         'featured_published_offers' => [0],
         'display_conversions' => [0],
       }
@@ -391,7 +410,7 @@ def stub_vertica(start_time = nil, end_time = nil)
     expects(:query).
     once.
     with('analytics.actions', :select => 'max(time)').
-    returns([{ :max => Time.zone.parse('2011-02-15') }])
+    returns([{ :max => Time.zone.now }])
 
   VerticaCluster.
     expects(:query).
@@ -426,15 +445,6 @@ def query_conditions(start_time, end_time)
   ]
 end
 
-def stats_hash
-  return @hash if @hash
-  @hash = {}
-  stats_keys.each do |key|
-    @hash[key] = [100,200,300]
-  end
-  @hash
-end
-
 def stats_keys
   @keys ||= Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS +
     [
@@ -445,6 +455,12 @@ def stats_keys
       'rewards_ctr',
       'rewards_cvr',
       'offerwall_ecpm',
+      'tjm_rewards',
+      'tjm_rewards_opened',
+      'tjm_rewards_revenue',
+      'tjm_rewards_ctr',
+      'tjm_rewards_cvr',
+      'tjm_offerwall_ecpm',
       'featured_ctr',
       'featured_cvr',
       'featured_fill_rate',

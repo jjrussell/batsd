@@ -12,8 +12,9 @@ class User < ActiveRecord::Base
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
-  has_many :partners, :through => :partner_assignments
-  has_many :enable_offer_requests
+  has_many :partners, :through => :partner_assignments, :readonly => false
+  has_many :enable_offer_requests, :foreign_key => 'requested_by_id'
+  has_many :enable_offer_assignments, :class_name => 'EnableOfferRequest', :foreign_key => 'assigned_to_id'
   has_many :admin_devices
   has_many :internal_devices
   has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
@@ -25,10 +26,22 @@ class User < ActiveRecord::Base
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
+  validates_presence_of :country, :on => :create,
+    :message => 'Please select a country'
+
+  scope :internal_users, {
+    :conditions => [ "( email LIKE ? OR email LIKE ? ) AND email NOT LIKE ?", "%@tapjoy.com", "%offerpal.com", "%+%" ],
+    :include => [ :role_assignments, :user_roles ]
+  }
+  scope :external_users_with_roles, {
+    :joins => [ :user_roles ],
+    :include => [ :role_assignments, :user_roles ],
+    :conditions => [ 'user_roles.name != ? AND email NOT LIKE ? AND email NOT LIKE ?', 'agency', "%@tapjoy.com", "%offerpal.com" ],
+  }
+
+  serialize :account_type, Array
 
   before_create :regenerate_api_key
-  before_create { |user| user.state = 'approved' }
-
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 
@@ -57,8 +70,7 @@ class User < ActiveRecord::Base
   def self.account_managers
     role = UserRole.find_by_name("account_mgr")
     conditions = [ "#{RoleAssignment.quoted_table_name}.user_role_id = ?", role.id]
-    users = User.find(:all, :joins => [:role_assignments],
-                      :conditions => conditions, :order => 'email')
+    users = User.joins(:role_assignments).where(conditions).order(:email)
   end
 
   def self.sales_reps
@@ -77,8 +89,12 @@ class User < ActiveRecord::Base
     email
   end
 
-private
+  # Make sure nil comes back as an empty array
+  def account_type
+    (super || [])
+  end
 
+private
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)

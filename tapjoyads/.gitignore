@@ -2,10 +2,12 @@
 log
 tmp
 pids
-coverage/
+coverage
 *.swp
 *.swo
 coverage.data
+vendor/bundle
+.bundle
 config/newrelic.yml
 config/database.yml
 db/production.sqlite
@@ -18,3 +20,12 @@ public/stylesheets/*/*.css
 .sass-cache
 public/assets/*
 **.orig
+<<<<<<< HEAD
+.rspec
+=======
+>>>>>>> master
+public/translations
+
+# Bundler
+vendor/bundle
+.bundle

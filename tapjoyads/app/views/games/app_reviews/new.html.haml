@@ -1,18 +1,20 @@
 #review-form.current
   .panel
-    .mod.line-item.page-header
-      .hd
-        .app-icon.squircle
-          = image_tag(@app.get_icon_url(:source => :cloudfront))
-      .bd.lastUnit
-        .title.elip
-          = @app.name
-        .sub-title
-          = @app.partner_name
-    .mod.menu-head
-      = t("text.shared.rate_and_review")
-    .mod.review-form
-      = render 'form'
+    .page-header
+      .line-item.container.pb10
+        .earn-main-app.left.ml5
+          .squircle
+            = image_tag(@app.get_icon_url(:size => 114, :source => :cloudfront))
+        .ml5.mt5
+          .big-title.slate
+            = @app.name
+          .sub-title
+            = @app.partner_name
+      .container
+        .mod.menu-head
+          = t("text.shared.rate_and_review")
+        .mod.review-form
+          = render 'form'
 
 - content_for :page_javascript do
   :plain

@@ -3,10 +3,10 @@ require 'spec/spec_helper'
 describe OfferCompletedController do
   before :each do
     @click = mock()
-    @click.stubs(:id).returns( 'test.another')
-    @click.stubs(:is_new).returns( false)
-    @click.stubs(:udid).returns(  'test')
-    @click.stubs(:advertiser_app_id).returns( 'another' )
+    @click.stubs(:id).returns('test.another')
+    @click.stubs(:is_new).returns(false)
+    @click.stubs(:udid).returns('test')
+    @click.stubs(:advertiser_app_id).returns('another')
     @click.stubs(:installed_at).returns(nil)
     @device = mock()
     @device.stubs(:set_last_run_time!)
@@ -20,9 +20,6 @@ describe OfferCompletedController do
 
   describe "#index" do
     context "with a generic offer" do
-      before :each do
-      end
-
       it "should give an error message on blank click_key" do
         get(:index, {})
         assigns(:error_message).should == "click_key required"

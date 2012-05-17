@@ -1,6 +1,9 @@
 class Currency < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_approvable :on => :create
+
+  json_set_field :promoted_offers
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
@@ -13,6 +16,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
+  has_one :deeplink_offer
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -54,28 +58,49 @@ class Currency < ActiveRecord::Base
     end
   end
 
-  named_scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
-  named_scope :just_app_ids, :select => :app_id, :group => :app_id
-  named_scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
-  named_scope :udid_for_user_id, :conditions => "udid_for_user_id"
-  named_scope :external_publishers, :conditions => "external_publisher"
+  scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
+  scope :just_app_ids, :select => :app_id, :group => :app_id
+  scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
+  scope :udid_for_user_id, :conditions => "udid_for_user_id"
+  scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
+  scope :ordered_by_app_name, :include => [ :app, :partner ], :order => 'apps.name, partners.name'
+  scope :search_name, lambda { |term|
+    { :conditions => [ "tapjoy_enabled and name like ?", term ] }
+  }
+  scope :search_app_name, lambda { |term|
+    {
+      :joins => [ :app ],
+      :conditions => [ "tapjoy_enabled and apps.name like ?", term ]
+    }
+  }
+  scope :search_partner_name, lambda { |term|
+    {
+      :joins => [ :partner ],
+      :conditions => [ "tapjoy_enabled and partners.name like ?", term ]
+    }
+  }
 
   before_validation :sanitize_attributes
-  before_validation_on_create :assign_default_currency_group
-  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller
+  before_validation :assign_default_currency_group, :on => :create
+  before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
+  after_create :create_deeplink_offer
   before_update :update_spend_share
-  after_cache :cache_by_app_id
-  after_cache_clear :clear_cache_by_app_id
+  before_update :reset_to_pending_if_rejected
+  after_create :create_deeplink_offer
+  after_update  :approve_on_tapjoy_enabled
+  set_callback :cache, :after, :cache_by_app_id
+  set_callback :cache_clear, :after, :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  memoize :postcache_weights, :categories
+  delegate :get_promoted_offers, :to => :partner, :prefix => true
+  memoize :postcache_weights, :categories, :partner_get_promoted_offers
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
       if do_lookup
-        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
         Mc.distributed_put("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}", currencies, false, 1.day)
       else
         currencies = []
@@ -133,6 +158,8 @@ class Currency < ActiveRecord::Base
   def get_publisher_amount(offer, displayer_app = nil)
     if displayer_app.present?
       0
+    elsif offer.payment == 2
+      1
     else
       (offer.payment * get_spend_share(offer)).to_i
     end
@@ -183,6 +210,11 @@ class Currency < ActiveRecord::Base
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end
 
+  def update_promoted_offers(offer_ids)
+    self.promoted_offers = offer_ids.sort
+    changed? ? save : true
+  end
+
   def set_values_from_partner_and_reseller
     self.disabled_partners = partner.disabled_partners
     self.reseller          = partner.reseller
@@ -200,9 +232,18 @@ class Currency < ActiveRecord::Base
     true
   end
 
+  def set_promoted_offers
+    self.promoted_offers = app.currencies.present? ? app.currencies.first.get_promoted_offers : ''
+    true
+  end
+
   def hide_rewarded_app_installs_for_version?(app_version, source)
     return false if source == 'tj_games'
-    hide_rewarded_app_installs? && (minimum_hide_rewarded_app_installs_version.blank? || app_version.present? && app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version))
+    return false unless hide_rewarded_app_installs?
+    return true if minimum_hide_rewarded_app_installs_version.blank?
+    return false unless app_version.present?
+
+    app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
   end
 
   def calculate_spend_shares
@@ -211,24 +252,39 @@ class Currency < ActiveRecord::Base
     self.reseller_spend_share = reseller_id? ? reseller.reseller_rev_share * spend_share_ratio : nil
   end
 
+  def after_approve(approval)
+    self.tapjoy_enabled = true
+    self.save
+  end
+
   def rewarded?
     conversion_rate > 0
+  end
+
+  def approve!
+    self.approval.approve!(true)
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_app_currency_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/apps/#{self.app_id}/currencies/#{self.id}"
   end
 
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c }
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
     end
   end
 
   def clear_cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:before_cache) }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
   end
 
@@ -252,4 +308,24 @@ class Currency < ActiveRecord::Base
     true
   end
 
+  def reset_to_pending_if_rejected
+    if self.rejected?
+      self.approval.destroy
+      new_approval = Approval.new(:item_id => id, :item_type => self.class.name, :event => 'create', :created_at => nil, :updated_at => nil)
+      new_approval.save
+    end
+  end
+
+  def create_deeplink_offer
+    self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
+    self.deeplink_offer.save!
+    self.enabled_deeplink_offer_id = self.deeplink_offer.id
+    self.save!
+  end
+
+  def approve_on_tapjoy_enabled
+    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+      self.approve!
+    end
+  end
 end

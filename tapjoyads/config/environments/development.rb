@@ -1,28 +1,41 @@
+MACHINE_TYPE = nil
 
-# In the development environment your application's code is reloaded on
-# every request.  This slows down response time but is perfect for development
-# since you don't have to restart the webserver when you make code changes.
-config.cache_classes = false
+Tapjoyad::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# Log error messages when you accidentally call methods on nil.
-config.whiny_nils = true
+  # In the development environment your application's code is reloaded on
+  # every request.  This slows down response time but is perfect for development
+  # since you don't have to restart the webserver when you make code changes.
+  config.cache_classes = false
 
-# Show full error reports and disable caching
-config.action_controller.consider_all_requests_local = true
-config.action_view.debug_rjs                         = true
-config.action_controller.perform_caching             = false
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Don't care if the mailer can't send
-config.action_mailer.raise_delivery_errors = false
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = true
+  config.action_controller.perform_caching = false
 
-config.gem 'mail_safe', :version => '0.3.1'
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = false
+
+  # Print deprecation notices to the Rails logger
+  config.active_support.deprecation = :log
+
+  # Only use best-standards-support built into browsers
+  config.action_dispatch.best_standards_support = :builtin
+
+  %w( api job dashboard website web legacy ).each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
+end
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
-MEMCACHE_SERVERS = ['127.0.0.1']
+MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
@@ -34,7 +47,7 @@ end
 
 SPROCKETS_CONFIG = {
   :compile => false,
-  :combine => false,
+  :combine => true,
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 
@@ -43,6 +56,8 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
+XMAN = local_config['xman'] || false
+MACHINE_TYPE = local_config['machine_type'] if local_config['machine_type']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
@@ -59,10 +74,6 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['development']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
-
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
@@ -74,6 +85,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = !(local_config['clear_memcache'] == false)
+
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['dev']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['dev']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 

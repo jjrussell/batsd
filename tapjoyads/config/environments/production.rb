@@ -1,39 +1,72 @@
-# Settings specified here will take precedence over those in config/environment.rb
+MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
 
-# The production environment is meant for finished, "live" apps.
-# Code is not reloaded between requests
-config.cache_classes = true
+Tapjoyad::Application.configure do
 
-# Enable threaded mode
-# config.threadsafe!
+  routes = case MACHINE_TYPE
+           when 'dashboard'
+             %w( dashboard api )
+           when 'website'
+             %w( website api )
+           when 'webserver'
+             %w( web legacy )
+           when 'jobserver'
+             %w( job )
+           else
+             %w( api dashboard website web legacy )
+           end
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+  routes.each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
 
-# Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
-config.action_controller.perform_caching             = true
-config.action_view.cache_template_loading            = true
+  # Settings specified here will take precedence over those in config/application.rb
 
-# Disable request forgery protection because this is an api
-config.action_controller.allow_forgery_protection    = false
+  # The production environment is meant for finished, "live" apps.
+  # Code is not reloaded between requests
+  config.cache_classes = true
 
-# Use a different cache store in production
-# config.cache_store = :mem_cache_store
+  # Full error reports are disabled and caching is turned on
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
+  # Specifies the header that your server uses for sending files
+  config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
-# Disable delivery errors, bad email addresses will be ignored
-# config.action_mailer.raise_delivery_errors = false
+  # For nginx:
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
-MEMCACHE_SERVERS = [ 'tj-production.fqfjqv.0001.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0002.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0003.use1.cache.amazonaws.com',
-                     'tj-production.fqfjqv.0004.use1.cache.amazonaws.com' ]
 
-EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
-                         'ActionController::RoutingError']
+  # See everything in the log (default is :info)
+  # config.log_level = :debug
+
+  # Use a different logger for distributed setups
+  # config.logger = SyslogLogger.new
+
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
+
+  # Disable Rails's static asset server
+  # In production, Apache or nginx will already do this
+  # TODO: Fix this with nginx
+  config.serve_static_assets = true
+
+  # Enable serving of images, stylesheets, and javascripts from an asset server
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Disable delivery errors, bad email addresses will be ignored
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable threaded mode
+  # config.threadsafe!
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+
+end
 
 begin
   local_config = YAML::load_file("#{Rails.root}/config/local.yml")
@@ -41,10 +74,26 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+MEMCACHE_SERVERS = [
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+]
+DISTRIBUTED_MEMCACHE_SERVERS = [
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
+  'localhost:21211'
+]
+
 SPROCKETS_CONFIG = {
   :compile => true,
   :combine => true,
-  :host => local_config['asset_host'] || local_config['website_url'] || 'https://www.tapjoy.com'
+  :host => local_config['asset_host'] || local_config['website_url'] || 'https://d2mlgzrlqoz88m.cloudfront.net'
 }
 
 RUN_MODE_PREFIX = ''
@@ -52,16 +101,13 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
+XMAN = false
 
 # Amazon services:
 amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
-
-# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
-# to the list of transient problems which will automatically get retried by RightAws.
-RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
 
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50
@@ -78,9 +124,9 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-send_grid = YAML::load_file("#{Rails.root}/config/send_grid.yaml")['production']
-SEND_GRID_USER = send_grid['user']
-SEND_GRID_PASSWD = send_grid['passwd']
+sendgrid = YAML::load_file("#{Rails.root}/config/sendgrid.yaml")['production']
+SENDGRID_USER = sendgrid['user']
+SENDGRID_PASSWD = sendgrid['passwd']
 
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
@@ -93,6 +139,10 @@ PAPAYA_API_URL = 'https://papayamobile.com'
 PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
+
+twitter = YAML::load_file("#{::Rails.root.to_s}/config/twitter.yaml")
+ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
+ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
 
 DEVICE_LINK_TRACKING_PIXEL = 'http://tapjoy.go2cloud.org/SL2P'
 
