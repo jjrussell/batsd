@@ -2,12 +2,16 @@ Tapjoyad::Application.routes.draw do
   match 'connect' => 'connect#index'
   match 'healthz' => 'healthz#index'
   match 'log_device_app' => 'connect#index'
+  match 'Connect' => 'connect#index'
+  match 'set_publisher_user_id' => 'set_publisher_user_id#index'
+  match '/', :to => redirect('http://www.tapjoy.com')
 
   resources :apps_installed
-  resource :clicks, :controller => :click do
+  resource :click, :controller => :click do
     match :app
     match :reengagement
     match :action
+    match :deeplink
     match :generic
     match :rating
     match :video
@@ -32,6 +36,11 @@ Tapjoyad::Application.routes.draw do
       match :webpage
       match :featured
     end
+  end
+  resources :get_vg_store_items do
+    match :all
+    match :purchased
+    match :user_account
   end
   resources :offer_instructions, :only => [:index]
   resources :offer_completed do
@@ -81,6 +90,4 @@ Tapjoyad::Application.routes.draw do
       end
     end
   end
-
-  match ':controller(/:action(/:id))'
 end
