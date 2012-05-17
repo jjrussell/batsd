@@ -1,4 +1,9 @@
-MACHINE_TYPE = nil
+begin
+  local_config = YAML::load_file("#{Rails.root}/config/local.yml")
+rescue Errno::ENOENT
+  local_config = {}
+end
+MACHINE_TYPE = local_config['machine_type'] || 'development'
 
 Tapjoyad::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
@@ -24,7 +29,21 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  %w( api job dashboard website web legacy ).each do |route|
+  # TODO: make this less copy-and-pasty
+  routes = case MACHINE_TYPE
+           when 'dashboard'
+             %w( dashboard api )
+           when 'website'
+             %w( website api )
+           when 'webserver'
+             %w( web legacy )
+           when 'jobserver'
+             %w( job )
+           else
+             %w( api dashboard job website web legacy )
+           end
+
+  routes.each do |route|
     config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
   end
 end
@@ -39,11 +58,7 @@ DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
-begin
-  local_config = YAML::load_file("#{Rails.root}/config/local.yml")
-rescue Errno::ENOENT
-  local_config = {}
-end
+
 
 SPROCKETS_CONFIG = {
   :compile => false,
@@ -57,7 +72,6 @@ DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
 XMAN = local_config['xman'] || false
-MACHINE_TYPE = local_config['machine_type'] if local_config['machine_type']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
