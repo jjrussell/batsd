@@ -14,7 +14,7 @@ describe SalesRep do
     it { should_not validate_presence_of :end_date }
     it 'is invalid when the start date is after the end date' do
       subject.start_date = Date.today
-      subject.end_date = Date.yesterday
+      subject.end_date = Date.today - 2.days
       subject.should_not be_valid
       subject.errors[:start_date].join.should == "Start date cannot be after end date"
     end
