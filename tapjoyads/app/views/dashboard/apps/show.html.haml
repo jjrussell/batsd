@@ -85,7 +85,7 @@
         %td#app_price= number_to_currency(@app.price / 100.0)
       %tr.app_data.hidden
         %th Description
-        %td#app_description= raw((@app.description || '').gsub("\n", '<br>'))
+        %td#app_description= raw h(@app.description || '').gsub("\n", '<br />')
 
       - if permitted_to?(:edit, :dashboard_statz)
         = render('dashboard/apps/admin_fields', :f => f)
