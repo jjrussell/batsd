@@ -29,8 +29,7 @@
     - if permitted_to? :monthly_data, :dashboard_tools                    # money, executive
       %li= link_to 'Monthly Data', monthly_data_tools_path
     - if permitted_to? :partner_monthly_balance, :dashboard_tools         # money, executive
-      - # TODO: FIX ROUTE
-      - # %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
+      %li= link_to 'Partner Monthly Balance', partner_monthly_balance_tools_path
     - if permitted_to? :new_transfer, :dashboard_tools                    # account_mgr
       %li= link_to 'Transfer Funds', new_transfer_tools_path
 
@@ -95,8 +94,7 @@
     - if permitted_to? :index, :dashboard_tools_survey_offers               # account_mgr
       %li= link_to 'Survey Offers', tools_survey_offers_path
     - if permitted_to? :index, :dashboard_tools_brand_offers                # account_mgr
-      - # TODO: FIX ROUTE
-      - # %li= link_to 'Associate Brands with Offers', tools_brand_offers_path
+      %li= link_to 'Associate Brands with Offers', tools_brand_offers_path
     - if permitted_to? :index, :dashboard_tools_clients                     # account_mgr
       %li= link_to 'Manage Clients', tools_clients_path
     - if permitted_to? :index, :dashboard_tools_partner_changes             # partner_changer

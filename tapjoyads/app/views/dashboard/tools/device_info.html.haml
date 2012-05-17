@@ -49,7 +49,8 @@
         %tr
           %th TJM Gamers
           - if @device.gamers.any?
-            %td= @device.gamers.collect { |g| link_to(g.email, tools_gamer_path(g)) }.join(', ')
+            %td
+              = raw(@device.gamers.collect { |g| link_to(g.email, tools_gamer_path(g)) }.join(', '))
           - else
             %td= 'Not connected to any Tapjoy Marketplace Gamer'
         - if @device.country.present?
