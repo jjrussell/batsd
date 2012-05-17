@@ -182,6 +182,7 @@ Tapjoyad::Application.routes.draw do
           get :reset_device
           get :publishers_without_payout_info
           get :monthly_data
+          get :partner_monthly_balance
           post :update_device
           get :send_currency_failures
           get :new_transfer
