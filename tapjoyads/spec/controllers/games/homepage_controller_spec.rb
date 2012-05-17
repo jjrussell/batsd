@@ -1,15 +1,34 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
-describe Games::HomepageController do
+describe Games::HomepageController, :type=>:controller do
   describe '#get_language_code' do
 
     before :each do
       I18n.locale = :en
     end
 
+    after :each do
+      I18n.locale = :en
+      request.env["HTTP_ACCEPT_LANGUAGE"] = nil
+    end
+
+    it 'has hashes for each locale' do
+      I18n.available_locales.each do |locale|
+        I18n.t('hash', :locale => locale).should_not =~ /translation missing/
+      end
+    end
+
     it 'sets locale based on language code' do
       get(:index, :language_code => "de")
       I18n.locale.should == :de
+    end
+
+    it 'sets locale_filename to include hash of locale file and default locale file, for cache-busting' do
+      get(:index, :language_code => "de")
+      locale_filename = controller.send( :get_locale_filename )
+      locale_filename.should =~ Regexp.new( I18n.t('hash').to_s + '$' )
+      locale_filename.should =~ Regexp.new( I18n.t('hash', I18n.default_locale).to_s )
+      locale_filename.should =~ Regexp.new( '^'+ I18n.locale.to_s + '-' )
     end
 
     it 'checks prefix of provided language code' do
@@ -178,7 +197,10 @@ describe Games::HomepageController do
       @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
       activate_authlogic
       login_as(@gamer)
-      AppReview.expects(:paginate_all_by_app_metadata_id_and_is_blank).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
+      AppReview.stubs(:where).returns(AppReview)
+      AppReview.stubs(:includes).returns(AppReview)
+      AppReview.stubs(:paginate).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do

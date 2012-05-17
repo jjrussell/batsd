@@ -15,7 +15,7 @@
   .container.mt20.center
     = render '/shared/truste'
 
-  - link_to(GAMES_ANDROID_MARKET_URL) do
+  = link_to(GAMES_ANDROID_MARKET_URL) do
     #register-android.hidden.clearfix
       .title
         = t('text.games.almost_done')
@@ -25,7 +25,7 @@
         .install-btn.ui-joy-button.orange-action
           = t('text.games.download_now')
 
-  - link_to(new_games_gamer_device_path) do
+  = link_to(new_games_device_path) do
     #register-ios.hidden.clearfix
       .title
         = t('text.games.almost_done')

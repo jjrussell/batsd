@@ -1,0 +1,45 @@
+- @page_title = 'Offer Discounts'
+
+%h1= "#{link_to(@partner.name, @partner)} :: Offer Discounts"
+= link_to 'Create an Offer Discount', new_partner_offer_discount_path(@partner)
+
+.metadata
+  Current Offer Discount:
+  = "#{@partner.premier_discount}%"
+
+.filters
+  = form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
+    %table
+      %tr
+        %th= label_tag 'filter', 'View:'
+        %td= select_tag 'filter', options_for_select([ ['All', 'all'], ['Active', 'active'] ], params[:filter])
+
+%table#offer_discounts_table.tablesorter
+  %thead
+    %tr
+      %th Expires On
+      %th Created At
+      %th Amount
+      %th Source
+      %th
+  %tbody
+    - @offer_discounts.each do |discount|
+      %tr
+        %td= discount.expires_on.to_s(:pub)
+        %td= discount.created_at.to_s(:pub)
+        %td= number_to_currency(discount.amount * 0.01)
+        %td= discount.source
+        %td= link_to("Deactivate", deactivate_partner_offer_discount_path(@partner, discount), :method => :post, :confirm => "Are you sure?") if discount.source == 'Admin' && discount.active?
+    - if @offer_discounts.empty?
+      %tr
+        %td{ :colspan => 4 } This partner has no offer discounts.
+
+= will_paginate(@offer_discounts)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#filter').change(function() {
+        $('#filter-form').submit();
+      });
+    });

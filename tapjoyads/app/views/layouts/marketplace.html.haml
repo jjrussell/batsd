@@ -86,12 +86,12 @@
 
 
     - js_cache 'tjm', true
-    - js_cache! "#{games_translations_path(:language_code => I18n.locale)}", true
+    - js_cache! games_translations_path(:filename => get_locale_filename), true
 
     :javascript
       stash.require(#{js_requires.to_json}, function(stash){
         Tapjoy.rootPath =  "#{WEBSITE_URL}";
-        Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
+        Tapjoy.iosLinkDevicePath = "#{new_games_device_path}";
         Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
         Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : [].to_json};
         Tapjoy.selectDevicePath = "#{games_switch_device_path}";

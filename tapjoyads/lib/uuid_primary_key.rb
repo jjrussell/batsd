@@ -8,7 +8,7 @@ module UuidPrimaryKey
       validates_presence_of :id
       validates_uniqueness_of :id
 
-      before_validation_on_create :set_primary_key
+      before_validation :set_primary_key, :on => :create
     end
   end
 

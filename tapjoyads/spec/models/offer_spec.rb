@@ -706,7 +706,7 @@ describe Offer do
           Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
           @offer.tapjoy_enabled = true
           @offer.should_not be_valid
-          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+          @offer.errors[:tapjoy_enabled].join.should =~ /store id/i
         end
 
         it 'can be made true with store_id' do
@@ -823,8 +823,8 @@ describe Offer do
 
       it "fails if asset data not provided" do
         @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].should == "320x480 custom creative file not provided."
+        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
+        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
       end
 
       it "uploads assets to s3 when data is provided" do
@@ -947,13 +947,36 @@ describe Offer do
     end
 
     it "still doesn't like long multibyte names" do
-      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
       Offer.for_display_ads.should_not include(@offer)
     end
 
     it "stops complaining about name length if the creatives are approved" do
       @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
       Offer.for_display_ads.should include(@offer)
+    end
+  end
+
+  context "third_party_tracking_url methods" do
+    describe 'impression_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.impression_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.impression_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'click_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.click_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.click_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'conversion_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.conversion_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.conversion_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
     end
   end
 
@@ -997,7 +1020,7 @@ describe Offer do
 
     context "with a provided timestamp" do
       before :each do
-        @ts = Time.zone.now + 3600;
+        @ts = 1.hour.from_now
         @urls.each do |url|
           Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
         end
@@ -1024,13 +1047,10 @@ describe Offer do
   end
 
   describe '#dashboard_statz_url' do
-    include ActionController::UrlWriter
+    include Rails.application.routes.url_helpers
 
     it 'matches URL for Rails statz_url helper' do
-      rails_url = statz_url(:id       => @offer.id,
-                            :host     => URI.parse(DASHBOARD_URL).host,
-                            :protocol => URI.parse(DASHBOARD_URL).scheme)
-      @offer.dashboard_statz_url.should == rails_url
+      @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
     end
   end
 end

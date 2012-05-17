@@ -28,23 +28,23 @@
       .navbar.navbar-fixed-top
         .navbar-inner
           .container-fluid
-            - link_to DASHBOARD_URL, :class => "brand" do
-              = image_tag('tapjoy.png', :height => 36)
+            = link_to DASHBOARD_URL, :class => "brand" do
+              = image_tag("tapjoy_#{XMAN ? XMAN : ''}.png", :height => 36)
             - tabs = []
-            - tabs << { :apps      => apps_path }            if permitted_to?(:index, :apps)
-            - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :reporting)
-            - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :billing)
-            - tabs << { :account   => users_path }           if permitted_to?(:index, :users)
-            - tabs << { :partners  => partners_path }        if permitted_to?(:index, :partners)
-            - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :premier) and current_partner.is_premier?
-            - tabs << { :tools     => tools_path }           if permitted_to?(:index, :tools)
-            - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :statz)
-            = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav')
+            - tabs << { :apps      => apps_path }            if permitted_to?(:index, :dashboard_apps)
+            - tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :dashboard_reporting)
+            - tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :dashboard_billing)
+            - tabs << { :account   => users_path }           if permitted_to?(:index, :dashboard_users)
+            - tabs << { :partners  => partners_path }        if permitted_to?(:index, :dashboard_partners)
+            - tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :dashboard_premier) and current_partner.is_premier?
+            - tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
+            - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
+            = navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
 
             %ul.nav
-              - if permitted_to?(:index, :ops)
+              - if permitted_to?(:index, :dashboard_ops)
                 %li.active.dropdown#ops-menu
-                  - link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
+                  = link_to '#ops-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                     Ops
                     %b.caret
                   %ul.dropdown-menu
@@ -58,12 +58,12 @@
 
             %ul.nav.pull-right
               %li.dropdown#account-menu
-                - link_to '#account-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
+                = link_to '#account-menu', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do
                   = current_user.username
                   %b.caret
                 %ul.dropdown-menu
                   %li
-                    - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns"
+                    - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns".html_safe
                     - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
                     = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
                   - unless current_partner_active_app_offers.blank?
@@ -74,7 +74,7 @@
                             - current_partner_active_app_offers.each do |offer|
                               %tr
                                 %td
-                                  - form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
+                                  = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
                                     = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
                                 %td
                                   = link_to offer.name, url_to_offer_item(offer)
@@ -94,7 +94,7 @@
                     = link_to('Logout', logout_path)
               - if current_user.can_manage_account? && !controller.class.current_tab == 'ops'
                 %li
-                  - form_tag('') do
+                  = form_tag('') do
                     = select_tag(:recent_partners, options_for_select(@recent_partners))
                     = link_to('Partner page', partner_path(current_partner))
     .container-fluid
@@ -104,7 +104,7 @@
           .alert{ :class => "alert-#{name == :notice ? :info : name}" }
             %a.close{ :data => { :dismiss => 'alert' } } &times;
             %strong #{name.to_s.humanize}:
-            = msg
+            = msg.html_safe
         - [:error, :warning, :notice].each do |name|
           - if flash[name].blank?
             .alert.hidden{ :id => "flash_#{name}", :class => "alert-#{name == :notice ? :info : name}" }

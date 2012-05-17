@@ -36,7 +36,7 @@ class Gamer < ActiveRecord::Base
   DAYS_BEFORE_DELETION = 3
   RUDE_BAN_LIMIT = 20
 
-  named_scope :to_delete, lambda {
+  scope :to_delete, lambda {
     {
       :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
       :order => 'deactivated_at'

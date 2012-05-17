@@ -415,14 +415,14 @@ ko:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "계속하시려면 여기를 클릭하십시오."
       download_action: 여기
-      download_link: "이 앱을 가지고 있지 않다면 %{download_action}를 클릭하여 다운로드 받으십시오."
-      earn_currency: "%{amount_and_currency}를 지급 받기."
+      download_link_html: "이 앱을 가지고 있지 않다면 %{download_action}를 클릭하여 다운로드 받으십시오."
+      earn_currency_html: "%{amount_and_currency}를 지급 받기."
       footer: "다음 스텝들을 완료한 이후에, %{amount_and_currency}를 획득할 수 있습니다."
       header: "다음 스텝들을 완료하고 %{currency}를 획득하십시오."
       title: 이용안내
     offerwall:
-      buy_currency: "%{amount} %{currency}를 구매하기."
-      earn_currency: "%{amount} %{currency}를 지급 받기"
+      buy_currency_html: "%{amount} %{currency}를 구매하기."
+      earn_currency_html: "%{amount} %{currency}를 지급 받기"
       free: 무료
       instructions: "다음 액션들 중 한 가지를 완료하면 %{currency}를 지급 받을 수 있습니다."
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

@@ -62,35 +62,81 @@ describe VideoOffer do
   end
 
   context "A Video Offer with multiple video_buttons" do
-    before :each do
-      @video_offer = Factory(:video_offer)
-      @video_button_1 = @video_offer.video_buttons.build
-      @video_button_1.name = "button 1"
-      @video_button_1.url = "http://www.tapjoy.com"
-      @video_button_1.ordinal = 1
-      @video_button_1.save!
-      @video_button_2 = @video_offer.video_buttons.build
-      @video_button_2.name = "button 2"
-      @video_button_2.url = "http://www.tapjoy.com"
-      @video_button_2.ordinal = 2
-      @video_button_2.save!
-      @video_button_3 = @video_offer.video_buttons.build
-      @video_button_3.name = "button 3"
-      @video_button_3.url = "http://www.tapjoy.com"
-      @video_button_3.ordinal = 3
-      @video_button_3.save!
-      @video_offer.reload
+    subject {Factory(:video_offer)}
+
+    let(:buttons) do
+      3.times do |i|
+        button = subject.video_buttons.build
+        button.name     = "button #{i}"
+        button.url      = 'http://www.tapjoy.com'
+        button.ordinal  = i
+        button.stubs(:update_tracking_offer).returns(true)
+        button.save!
+      end
+      subject.video_buttons
     end
 
-    it "has only 2 enabled button" do
-      @video_offer.video_buttons.enabled.size.should == 3
-      @video_offer.should_not be_valid_for_update_buttons
+    context 'given three enabled buttons' do
+      before(:each) do
+        buttons
+        subject.reload
+      end
 
-      @video_button_3.enabled = false
-      @video_button_3.save!
-      @video_offer.reload
-      @video_offer.video_buttons.enabled.size.should == 2
-      @video_offer.should be_valid_for_update_buttons
+      it 'makes buttons enabled by default' do
+        subject.video_buttons.enabled.size.should == 3
+      end
+
+      it 'is not valid for update buttons' do
+        subject.should_not be_valid_for_update_buttons
+      end
     end
+
+    context 'given two enabled buttons (one of which was formerly enabled)' do
+      let(:button) {buttons.last}
+      before(:each) do
+        button.enabled = false
+        button.stubs(:update_tracking_offer).returns(true)
+        button.save!
+        subject.reload
+      end
+
+      it 'correctly tracks disabled buttons' do
+        subject.video_buttons.enabled.size.should == 2
+      end
+
+      it 'is valid for update buttons' do
+        subject.should be_valid_for_update_buttons
+      end
+    end
+
+    #   @video_offer = Factory(:video_offer)
+    #   @video_button_1 = @video_offer.video_buttons.build
+    #   @video_button_1.name = "button 1"
+    #   @video_button_1.url = "http://www.tapjoy.com"
+    #   @video_button_1.ordinal = 1
+    #   @video_button_1.save!
+    #   @video_button_2 = @video_offer.video_buttons.build
+    #   @video_button_2.name = "button 2"
+    #   @video_button_2.url = "http://www.tapjoy.com"
+    #   @video_button_2.ordinal = 2
+    #   @video_button_2.save!
+    #   @video_button_3 = @video_offer.video_buttons.build
+    #   @video_button_3.name = "button 3"
+    #   @video_button_3.url = "http://www.tapjoy.com"
+    #   @video_button_3.ordinal = 3
+    #   @video_button_3.save!
+    #   @video_offer.reload
+
+    # it "has only 2 enabled buttons" do
+    #   subject.video_buttons.enabled.size.should == 3
+    #   subject.should_not be_valid_for_update_buttons
+
+    #   button_3.enabled = false
+    #   button_3.save!
+
+    #   subject.reload
+    #   subject.video_buttons_enabled.size.should == 2
+    #   subject.should be_valid_for_update_buttons
+    # end
   end
 end
