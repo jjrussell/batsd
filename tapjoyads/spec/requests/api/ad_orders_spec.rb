@@ -11,7 +11,7 @@ describe "Ad orders" do
     it "returns 0 when there are no campaigns" do
       udid = 'testudid'
 
-      get "/service1.asmx/GetAdOrder", { :udid => udid, :app_id => testapp.id}
+      get "/get_ad_order", { :udid => udid, :app_id => testapp.id}
       response.status.should be(200)
 
       xml = Hpricot(response.body)
