@@ -15,6 +15,10 @@ describe Dashboard::Tools::PartnerValidationsController do
     it 'renders the validations page' do
       get(:index)
     end
+
+    it 'renders page after sort' do
+      get(:index, :acct_mgr_sort => 'DESC')
+    end
   end
 
   describe '#confirm_payouts' do

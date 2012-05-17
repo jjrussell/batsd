@@ -15,7 +15,7 @@
       %th Confirm
       %th Notes
   %tbody
-    - @partners.each do |partner|
+    - @partners.all.each do |partner|
       - payout_info = partner.payout_info
       - confirmation_notes = partner.confirmation_notes
       %tr
@@ -38,7 +38,7 @@
         %td
           = mail_to(partner.non_managers.first.email) if partner.non_managers.present?
         %td
-          = partner.account_managers.join('<br>')
+          = partner.account_managers.first
         - if partner.completed_payout_info?
           %td
             %span.present
