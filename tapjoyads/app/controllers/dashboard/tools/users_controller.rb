@@ -17,12 +17,12 @@ class Dashboard::Tools::UsersController < Dashboard::DashboardController
       :partner_assignments => [ :partner ]
     })
 
-    if permitted_to? :create, :dashboard_tools_users_partner_assignments
+    if permitted_to? :create, :dashboard_tools_partner_assignments
       @partner_assignments = @user.partner_assignments.sort
       @current_assignments = @user.role_assignments.sort
     end
 
-    if permitted_to? :create, :dashboard_tools_users_role_assignments
+    if permitted_to? :create, :dashboard_tools_role_assignments
       @can_modify_roles = true
       @new_assignments = (UserRole.all - @user.user_roles).map do |user_role|
         RoleAssignment.new(:user => @user, :user_role => user_role)

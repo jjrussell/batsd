@@ -35,7 +35,7 @@
       %th Email
       - if permitted_to?(:show, :dashboard_tools_users)
         %th Edit
-      - if permitted_to?(:destroy, :dashboard_tools_users_partner_assignments)
+      - if permitted_to?(:destroy, :dashboard_tools_partner_assignments)
         %th Remove
       - if permitted_to?(:show, :dashboard_tools_users)
         %th Mailchimp
@@ -45,7 +45,7 @@
       %td= user.email
       - if permitted_to?(:show, :dashboard_tools_users)
         %td= link_to('edit user', tools_user_path(user))
-      - if permitted_to?(:destroy, :dashboard_tools_users_partner_assignments)
+      - if permitted_to?(:destroy, :dashboard_tools_partner_assignments)
         %td
           - partner_assignment = user.partner_assignments.find_by_partner_id(@partner.id)
           - if @partner.users.length > 1

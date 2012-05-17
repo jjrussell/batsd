@@ -139,7 +139,7 @@ authorization do
     has_permission_on :dashboard_tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_external_publishers, :to => [ :index, :update ]
     has_permission_on :dashboard_tools_users, :to => [ :index, :show ]
-    has_permission_on :dashboard_tools_users_partner_assignments, :to => [ :create, :destroy ]
+    has_permission_on :dashboard_tools_partner_assignments, :to => [ :create, :destroy ]
     has_permission_on :dashboard_tools_agency_users, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_partner_program_statz, :to => [ :index, :export ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]

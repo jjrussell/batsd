@@ -17,12 +17,12 @@
     %tr
       %th Updated
       %td= @user.updated_at? ? @user.updated_at.to_s(:db) : 'never'
-    - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+    - if permitted_to? :create, :dashboard_tools_partner_assignments
       %tr
         %th Current partner
         %td= @user.current_partner.present? ? link_to(@user.current_partner.name, @user.current_partner) : 'None'
 
-- if permitted_to? :create, :dashboard_tools_users_partner_assignments
+- if permitted_to? :create, :dashboard_tools_partner_assignments
   %h4 Add to partner
   #search_query
     = label_tag(:partners_name_search_box, 'by partner name or ID:')
@@ -96,18 +96,19 @@
         %th.action &nbsp;
       %th Name
   %tbody
-    - @current_assignments.each do |assignment|
-      %tr
-        - if @can_modify_roles
-          %td
+    - if @current_assignments
+      - @current_assignments.each do |assignment|
+        %tr
+          - if @can_modify_roles
+            %td
+              - if assignment.admin?
+                &nbsp;
+              - else
+                = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
+          %td{:class => assignment.admin? ? 'disabled text' : 'text'}
+            = assignment.user_role.name.titleize
             - if assignment.admin?
-              &nbsp;
-            - else
-              = button_to('remove', tools_user_role_assignment_path(:user_id => @user.id, :id => assignment.id), :method => 'delete', :confirm => 'Are you sure?')
-        %td{:class => assignment.admin? ? 'disabled text' : 'text'}
-          = assignment.user_role.name.titleize
-          - if assignment.admin?
-            (not modifiable)
+              (not modifiable)
 
 - if @can_modify_roles
   %h4 Add new role:
@@ -165,7 +166,7 @@
     }
 
 - content_for :page_javascript do
-  - if permitted_to? :create, :dashboard_tools_users_partner_assignments
+  - if permitted_to? :create, :dashboard_tools_partner_assignments
     :plain
       $(function($){
         $('.show_all_apps').click(function(){
