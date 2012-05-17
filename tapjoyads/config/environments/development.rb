@@ -29,21 +29,7 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # TODO: make this less copy-and-pasty
-  routes = case MACHINE_TYPE
-           when 'dashboard'
-             %w( dashboard api )
-           when 'website'
-             %w( website api )
-           when 'webserver'
-             %w( web legacy )
-           when 'jobserver'
-             %w( job )
-           else
-             %w( api dashboard job website web legacy )
-           end
-
-  routes.each do |route|
+  route_filenames.each do |route|
     config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
   end
 end

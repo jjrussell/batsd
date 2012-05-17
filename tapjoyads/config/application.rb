@@ -39,6 +39,21 @@ module Tapjoyad
     config.generators do |g|
       g.test_framework :rspec
     end
+
+    def self.route_filenames
+      case MACHINE_TYPE
+      when 'dashboard'
+       %w( dashboard api )
+      when 'website'
+       %w( website api )
+      when 'webserver'
+       %w( web legacy )
+      when 'jobserver'
+       %w( job )
+      else
+       %w( api dashboard website web legacy )
+      end
+    end
   end
 
 end
