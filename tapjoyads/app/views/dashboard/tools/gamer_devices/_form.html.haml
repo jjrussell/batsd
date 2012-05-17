@@ -8,7 +8,7 @@
       = f.text_field :device_id
       = error_message_on @gamer_device, :device_id
     - else
-      = link_to @gamer_device.device_id, device_info_tools_path(:udid => @gamer_device.device_id)
+      = link_to @gamer_device.device_id, device_info_tools_path(:udid => @gamer_device.device_id), :id => 'udid'
   .field
     = f.label :name
     = f.text_field :name

@@ -14,6 +14,7 @@ class Dashboard::Tools::GamerDevicesController < Dashboard::DashboardController
   end
 
   def edit
+    @apps = ExternalPublisher.load_all
     @gamer_device = GamerDevice.find(params[:id])
   end
 
