@@ -16,18 +16,9 @@ unless ENV['RAILS_ENV']
   ENV['RAILS_ENV'] ||= rails_mode
 end
 
-#Try to Load Merb
-merb_init_file = File.expand_path(File.dirname(__FILE__)+'/../config/merb_init')
-if File.exists? merb_init_file
-  require File.expand_path(File.dirname(__FILE__)+'/../config/boot')
-  #need this because of the CWD
-  Merb.root = MERB_ROOT
-  require merb_init_file
-else
-  # Load Rails
-  Rails.root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-  require File.join(Rails.root, 'config', 'boot')
-  require File.join(Rails.root, 'config', 'environment')
-end
+# Load Rails
+root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+require File.join(root, 'config', 'boot')
+require File.join(root, 'config', 'environment')
 
 JobRunner.start
