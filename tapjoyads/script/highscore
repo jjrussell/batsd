@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+
+USER_MAPPINGS = {
+  'eric tipton' => 'tipton',
+  'hwan-joon choi' => 'hwanjoon',
+  'michael wheeler' => 'wheeler',
+  'brian stebar ii' => 'stebar',
+  'james logsdon' => 'jlo',
+  'james huang' => 'james',
+  'jeff dickey' => 'dickey',
+  'inderpreet singh' => 'inder',
+  'eric bieller' => 'bieller',
+  'bertrand.kuo' => 'bert',
+  'deng-kai chen' => 'kai',
+  'dengkai' => 'kai',
+  'brian sanders' => 'colonel',
+  'erictip' => 'tipton',
+  'normchan-tj' => 'norman',
+  'jeremy chotiner' => 'chot',
+  'ericbieller' => 'bieller',
+  'brian j. sanders' => 'colonel',
+  'hnirvana' => 'james',
+  'bkuo' => 'bert',
+  'brianstebar' => 'stebar',
+  'farm.cp@gmail.com' => 'farm',
+  'tapkieran' => 'kieran',
+  'hc5duke' => 'hwanjoon',
+  'jamoes' => 'stephen',
+  'cupkatez' => 'kate',
+  'andrew kasper' => 'kasper',
+  'iansmith7' => 'ian',
+  'jchotiner' => 'chot',
+  'peter holiday' => 'pete',
+  'john gronberg' => 'gronberg',
+  'christopher farm' => 'farm',
+  'system administrator' => 'wtf',
+  'pandastic' => 'steve',
+  'katherine zhang' => 'kate',
+  'sasasasumna' => 'adam',
+}
+
+users = {}
+shortlog = {}
+
+`git shortlog --no-merges -sn`.split("\n").each do |entry|
+  count, user = entry.strip.split(" ", 2)
+  count = count.to_i
+  user = user.downcase
+  user_key = USER_MAPPINGS[user] || user.split(' ').first
+  users[user_key] ||= []
+  users[user_key] << user
+  shortlog[user_key] ||= 0
+  shortlog[user_key] += count
+end
+
+longest_keylength = shortlog.keys.map(&:length).max
+longest_countlength = shortlog.values.map(&:to_s).map(&:length).max
+
+shortlog.to_a.sort_by(&:last).reverse.each do |user, count|
+  puts "#{"%#{longest_keylength + 2}s" %user.capitalize}: #{"%#{longest_countlength}d" % count}\t#{users[user].inspect}"
+end
