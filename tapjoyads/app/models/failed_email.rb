@@ -7,6 +7,9 @@ class FailedEmail < SimpledbResource
   self.sdb_attr :cc
   self.sdb_attr :bcc
   self.sdb_attr :subject
+  self.sdb_attr :yamlized_email
+
+  # NOTE: no longer setting serialized_email since Mail::Message can't be marshal'd
   self.sdb_attr :serialized_email
 
   def fill(mail)
@@ -15,7 +18,7 @@ class FailedEmail < SimpledbResource
     self.cc               = mail.cc
     self.bcc              = mail.bcc
     self.subject          = mail.subject
-    self.serialized_email = Base64::encode64(Marshal.dump(mail))
+    self.yamlized_email   = mail.to_yaml
   end
 
 end

@@ -62,6 +62,7 @@ gem 'uglifier', '1.2.3'
 gem 'uuidtools', '2.1.2'
 gem 'vertica', '0.9.1'
 gem 'will_paginate', '~> 3.0'
+gem 'xml-simple', :require => 'xmlsimple'
 
 # This needs to be down here to get sdb stuff
 gem 'newrelic_rpm', '3.3.0'
