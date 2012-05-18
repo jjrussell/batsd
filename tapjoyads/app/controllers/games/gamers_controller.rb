@@ -36,7 +36,7 @@ class Games::GamersController < GamesController
       @gamer.send_welcome_email(request, device_type, params[:default_platforms] || {}, geoip_data, os_version)
 
       if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true) })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_device_path(:data => params[:data]), :android => true) })
       else
         render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => new_games_device_path) })
       end

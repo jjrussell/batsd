@@ -36,7 +36,7 @@ class Games::DevicesController < GamesController
       :mac_address       => mac_address,
       :platform          => 'ios'
     }
-    redirect_to finalize_games_gamer_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
+    redirect_to finalize_games_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."

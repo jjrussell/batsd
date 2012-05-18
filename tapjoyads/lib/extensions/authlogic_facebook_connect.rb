@@ -67,11 +67,11 @@ module AuthlogicFacebookConnect
 
               new_user.before_connect(facebook_session) if new_user.respond_to?(:before_connect)
 
-              new_user.save_with_validation(true)
+              new_user.save!
 
               self.attempted_record = new_user
             rescue Exception => e
-              errors.add_to_base(I18n.t('error_messages.facebooker_session_expired',
+              errors.add(:base, I18n.t('error_messages.facebooker_session_expired',
                 :default => "Your Facebook Connect session has expired, please reconnect."))
             end
           end

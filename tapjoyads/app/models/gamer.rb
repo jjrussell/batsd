@@ -87,7 +87,7 @@ class Gamer < ActiveRecord::Base
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
-    self.terms_of_service      = 1
+    self.terms_of_service      = '1'
     self.referrer              = "NEW_SIGN_UP_WITH_FACEBOOK"
   end
 
