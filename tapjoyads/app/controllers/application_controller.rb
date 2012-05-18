@@ -14,6 +14,9 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
   before_filter :reject_banned_ips
 
+  # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
+  after_filter :store_response
+
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
@@ -23,6 +26,26 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def redis_write
+    @redis_write ||= Redis.new(:host => 'redis.tapjoy.net')
+  end
+
+  def store_response
+    if response.content_type == 'application/json'
+      begin
+        JSON.parse(response.body)
+      rescue JSON::ParserError
+        redis_write.sadd 'rails3.responses', Marshal.dump( { "path" => request.path_parameters, "body" => response.body } )
+      end
+    elsif response.content_type == 'application/xml'
+      begin
+        ::XmlSimple.xml_in(response.body)
+      rescue ArgumentError
+        redis_write.sadd 'rails3.responses', Marshal.dump( { "path" => request.path_parameters, "body" => response.body } )
+      end
+    end
+  end
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
