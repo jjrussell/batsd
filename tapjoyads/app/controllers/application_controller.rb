@@ -36,13 +36,25 @@ class ApplicationController < ActionController::Base
       begin
         JSON.parse(response.body)
       rescue JSON::ParserError
-        redis_write.sadd 'rails3.responses', Marshal.dump( { "path" => request.path_parameters, "body" => response.body } )
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.json'
+        redis_write.sadd key, response.body
       end
     elsif response.content_type == 'application/xml'
       begin
         ::XmlSimple.xml_in(response.body)
       rescue ArgumentError
-        redis_write.sadd 'rails3.responses', Marshal.dump( { "path" => request.path_parameters, "body" => response.body } )
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.xml'
+        redis_write.sadd key, response.body
       end
     end
   end
