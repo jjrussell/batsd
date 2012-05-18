@@ -103,6 +103,7 @@ $(document).ready(function(){
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
+    var rootUrl = $(this).data('root-url');
 
     // Detect device type auto set
     if (Tapjoy.device.idevice || Tapjoy.device.android) {

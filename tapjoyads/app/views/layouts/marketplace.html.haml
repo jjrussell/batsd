@@ -87,8 +87,6 @@
 
     :javascript
       stash.require(#{js_requires.to_json}, function (stash) {
-        Tapjoy.rootPath =  "#{WEBSITE_URL}";
-
         #{yield :page_javascript}
       });
 
