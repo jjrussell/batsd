@@ -35,7 +35,7 @@ class PayoutInfo < ActiveRecord::Base
     end
   end
 
-  named_scope :recently_updated, lambda { |date|
+  scope :recently_updated, lambda { |date|
     {
       :conditions => [
         "updated_at >= ? AND updated_at < ?",

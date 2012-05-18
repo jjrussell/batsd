@@ -1,0 +1,2 @@
+class ActiveRecord::Errors
+end

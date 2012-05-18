@@ -45,7 +45,7 @@ class OfferCacher
     end
 
     def cache_unsorted_offers_prerejected(offers, type, save_to_s3 = false)
-      offers.each { |o| o.run_callbacks(:before_cache); o.clear_association_cache }
+      offers.each { |o| o.run_callbacks(:cache); o.clear_association_cache }
       PLATFORMS.each do |platform|
         HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
           DEVICE_TYPES.each do |device_type|

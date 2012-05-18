@@ -1,6 +1,6 @@
 %td
   - if permitted
-    - form_tag path, :method => :post, :class => 'enable_request' do
+    = form_tag path, :method => :post, :class => 'enable_request' do
       %div{ :class => 'enabled', :style =>  (!partner.confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
         %span{ :class => 'enabled'}
           %strong Confirmed
@@ -20,4 +20,5 @@
 %td.notes
   %span{ :class => 'disabled' }
     - unless partner.confirmation_notes.empty?
-      \- #{partner.confirmation_notes.join('<br>-')}
+      - partner.confirmation_notes.each do |note|
+        %li= note

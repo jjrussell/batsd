@@ -1,0 +1,33 @@
+= form_for([:tools, @app_review], :html => { :class => 'tjform' }) do |f|
+  = f.hidden_field :author_type, :value => @app_review.author_type ? @app_review.author_type : 'Employee'
+  %table
+    %tr
+      %th= f.label :app_metadata_id
+      %td
+        = f.text_field :app_metadata_id
+    %tr
+      %th= f.label :reviewer
+      %td
+        - if @app_review.author && @app_review.author_type == 'Gamer'
+          = @app_review.author_name
+        - elsif @app_review.author.nil?
+          = "Unknown Author"
+        - else
+          = f.select :author_id, options_from_collection_for_select(@employees, :id, :full_name, @app_review.author_id)
+        = error_message_on @app_review, :author
+    %tr
+      %th= f.label :platform
+      %td= f.select :platform, options_for_select(App::PLATFORMS.invert, @app_review.platform)
+    %tr
+      %th= f.label :user_rating
+      %td
+        = f.select :user_rating, ['thumbs down', 'no rating', 'thumbs up'].zip( [-1, 0, 1])
+        = error_message_on @gamer_review, :user_rating
+    %tr
+      %th= f.label :review_text
+      %td
+        = f.text_area :text, :rows => 10, :size => 50
+        = error_message_on @app_review, :text
+    %tr
+      %th
+      %td= f.submit

@@ -5,7 +5,7 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
-  integrate_views
+  render_views
   before :each do
     fake_the_web
   end
@@ -160,6 +160,7 @@ describe DisplayAdController do
 
           response.content_type.should == 'application/json'
           Base64.decode64(assigns['image']).should == custom_banner
+          expect { JSON.parse(response.body) }.should_not raise_error
         end
 
         it 'returns proper image data in xml' do

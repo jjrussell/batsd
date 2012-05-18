@@ -28,7 +28,7 @@ describe OfferEvent do
     before :each do
       @event = Factory(:offer_event)
       @event.scheduled_for = 1.hour.ago
-      @event.save(false)
+      @event.save(:validate => false)
     end
 
     it "is scoped as 'to_run' and 'upcoming'" do

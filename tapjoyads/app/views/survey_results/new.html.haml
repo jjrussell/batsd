@@ -8,7 +8,7 @@
     Please complete all questions!
 
   #main
-    - form_tag(survey_results_path) do
+    = form_tag(survey_results_path) do
       = hidden_field_tag(:udid, params[:udid])
       = hidden_field_tag(:click_key, params[:click_key])
       = hidden_field_tag(:id, params[:id])

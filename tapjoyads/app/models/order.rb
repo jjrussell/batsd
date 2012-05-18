@@ -28,9 +28,9 @@ class Order < ActiveRecord::Base
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
 
-  named_scope :not_invoiced, :conditions => 'status = 0'
-  named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :not_invoiced, :conditions => 'status = 0'
+  scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at

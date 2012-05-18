@@ -26,9 +26,9 @@ deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout master"
+system "git checkout deploy"
 system "git pull --quiet"
-system "git pull --tags origin master"
+system "git pull --tags origin deploy"
 system "git checkout #{deploy_version}"
 
 if server_type == 'jobserver' || server_type == 'masterjobs'
