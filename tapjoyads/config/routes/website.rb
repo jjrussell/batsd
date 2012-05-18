@@ -89,7 +89,7 @@ Tapjoyad::Application.routes.draw do
       resource :flag, :controller => 'app_reviews/flag_moderation', :only => [:create, :destroy]
     end
     # TODO: Fix this legacy namespacing weirdness
-    namespace :social, :path => '' do
+    namespace :social, :path => 'social' do
       root :to => 'social#index'
       match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
       match 'social/connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
