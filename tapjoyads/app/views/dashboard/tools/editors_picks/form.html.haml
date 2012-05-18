@@ -1,0 +1,60 @@
+%h1= @page_title
+
+.right= link_to 'Activity Logs', activities_path(:object_id => @editors_pick.id)
+
+= form_for([:tools, @editors_pick]) do |f|
+  %table
+    %tbody
+      %tr
+        %th= f.label :offer
+        %td
+          = text_field_tag('search_box', @editors_pick.offer.present? ? @editors_pick.offer.search_result_name : '', :size => '40')
+          = error_message_on @editors_pick, :offer_id
+          = f.hidden_field :offer_id
+      - unless @editors_pick.active? || @editors_pick.expired_at
+        %tr
+          %th= f.label :scheduled_for
+          %td
+            = f.text_field :scheduled_for
+            = error_message_on(@editors_pick, :scheduled_for)
+      %tr
+        %th= f.label :display_order
+        %td
+          = f.text_field :display_order, :type => 'number'
+          = error_message_on(@editors_pick, :display_order)
+      %tr
+        %th= f.label :description
+        %td
+          = f.text_area :description, :rows => 4
+          = error_message_on(@editors_pick, :description)
+      %tr
+        %th= f.label :internal_notes
+        %td
+          = f.text_area :internal_notes, :rows => 4
+          = error_message_on(@editors_pick, :internal_notes)
+
+  = f.submit @button_name
+
+%br/
+= link_to 'Back', tools_editors_picks_path
+
+- content_for :page_styles do
+  :plain
+    th {
+      text-align: right;
+    }
+- content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
+- content_for :page_javascript do
+  :plain
+    $('#editors_pick_scheduled_for').datetimepicker({
+      ampm: true,
+      timeFormat: 'h:mm TT'
+    });
+    $('#search_box').autocomplete({
+      source: '#{search_offers_path(:app_offers_only => true)}',
+      delay: 250,
+      minLength: 2,
+      select: function(event, ui) {
+        $('#editors_pick_offer_id').val(ui.item.id);
+      }
+    });

@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SupportRequestsController do
   before :each do
@@ -8,14 +8,14 @@ describe SupportRequestsController do
     @udid = 'test udid'
   end
 
-  describe '#new' do
+  describe '#incomplete_offers' do
     it 'should perform the proper SimpleDB query' do
       now = Time.zone.now
       Time.stubs(:now).returns(now)
       conditions = ["udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", @udid, @currency.id, 30.days.ago.to_f]
 
       Click.expects(:select_all).with({ :conditions => conditions }).once.returns([])
-      get(:new, :app_id => @app.id, :currency_id => @currency.id, :udid => @udid)
+      get(:incomplete_offers, :app_id => @app.id, :currency_id => @currency.id, :udid => @udid)
     end
   end
 end

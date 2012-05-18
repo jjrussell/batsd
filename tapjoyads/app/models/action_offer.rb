@@ -15,7 +15,7 @@ class ActionOffer < ActiveRecord::Base
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   accepts_nested_attributes_for :primary_offer
 

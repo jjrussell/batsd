@@ -11,11 +11,17 @@ class WebsiteController < ApplicationController
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
+  before_filter :inform_of_video_offers
 
   NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
                     Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+
+  VIDEO_OFFERS_NOTICE = "A new iOS and Android SDK (v8.2.0) update is now available here for both Publishers and
+                        Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting
+                        to either Apple or Google. There are a number of important updates - please view our change
+                        log for all the details. If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>."
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -57,7 +63,7 @@ class WebsiteController < ApplicationController
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
     if current_user
-      destination = request.env['HTTP_REFERER'] =~ /tapjoy.com/ ? request.env['HTTP_REFERER'] : dashboard_root_path
+      destination = request.env['HTTP_REFERER'] =~ /tapjoy.com/ ? request.env['HTTP_REFERER'] : root_path
     else
       destination = login_path(:goto => request.path)
     end
@@ -131,6 +137,10 @@ class WebsiteController < ApplicationController
     end
   end
 
+  def inform_of_video_offers
+    flash.now[:message] = VIDEO_OFFERS_NOTICE if current_user
+  end
+
   def nag_user_about_payout_info
     if flash.now[:notice].blank? && current_partner.approved_publisher? &&
       (current_partner.payout_info.nil? || !current_partner.payout_info.valid?)
@@ -152,7 +162,7 @@ class WebsiteController < ApplicationController
   end
 
   def find_app(app_id)
-    if permitted_to? :edit, :statz
+    if permitted_to? :edit, :dashboard_statz
       App.find(app_id)
     else
       current_partner.apps.find(app_id)

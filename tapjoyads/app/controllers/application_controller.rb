@@ -7,23 +7,57 @@ require_dependency 'review_moderation_vote'
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :geoip_data
+  helper_method :geoip_data, :downcase_param
 
-  before_filter :set_time_zone
+  before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
+
+  # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
+  # after_filter :store_response
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
 
-  # See ActionController::Base for details
-  # Uncomment this to filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "password").
-  filter_parameter_logging :password, :password_confirmation
+  def set_readonly_db
+    ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+  end
 
   private
+
+  def redis_write
+    @redis_write ||= Redis.new(:host => 'redis.tapjoy.net')
+  end
+
+  def store_response
+    if response.content_type == 'application/json'
+      begin
+        JSON.parse(response.body)
+      rescue JSON::ParserError
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.json'
+        redis_write.sadd key, response.body
+      end
+    elsif response.content_type == 'application/xml'
+      begin
+        ::XmlSimple.xml_in(response.body)
+      rescue ArgumentError
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.xml'
+        redis_write.sadd key, response.body
+      end
+    end
+  end
 
   def verify_params(required_params, options = {})
     render_missing_text = options.delete(:render_missing_text) { true }
@@ -61,18 +95,14 @@ class ApplicationController < ActionController::Base
     true
   end
 
-  def set_time_zone
-    Time.zone = 'UTC'
-  end
-
   def set_locale
     language_code = params[:language_code]
     I18n.locale = nil
-    if AVAILABLE_LOCALES.include?(language_code)
+    if I18n.available_locales.include?(language_code)
       I18n.locale = language_code
     elsif language_code.present? && language_code['-']
       language_code = language_code.split('-').first
-      if AVAILABLE_LOCALES.include?(language_code)
+      if I18n.available_locales.include?(language_code)
         I18n.locale = language_code
       end
     end
@@ -133,7 +163,7 @@ class ApplicationController < ActionController::Base
   end
 
   def downcase_param(p)
-    params[p] = params[p].downcase if params[p]
+    params[p] = params[p].downcase if params[p].is_a?(String)
   end
 
   def set_param(to, from, lower = false)
@@ -268,5 +298,13 @@ class ApplicationController < ActionController::Base
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
+  end
+
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
+
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 end

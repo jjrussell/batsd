@@ -8,6 +8,10 @@ class Games::HomepageController < GamesController
   skip_before_filter :setup_tjm_request, :only => :translations
 
   def translations
+    tmp = params[:filename]
+    match = tmp.match(/(\w)\-(\w)/)
+    params[:language_code]= match[1]
+    params[:hash] = match[2]
     render "translations.js", :layout => false, :content_type => "application/javascript"
   end
 
@@ -25,7 +29,7 @@ class Games::HomepageController < GamesController
     @app_metadata = @app.primary_app_metadata
     @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
     if @app_metadata
-      app_reviews = AppReview.paginate_all_by_app_metadata_id_and_is_blank(@app_metadata.id, false, :page => params[:app_reviews_page], :include => :author)
+      app_reviews = AppReview.where(:app_metadata_id => @app_metadata.id, :is_blank => false).includes(:author).paginate(:page => params[:app_reviews_page])
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
       review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
 
@@ -99,12 +103,12 @@ class Games::HomepageController < GamesController
 
   def switch_device
     if params[:data].nil?
-      redirect_to games_root_path
+      redirect_to games_path
     elsif set_current_device(params[:data])
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now }
-      redirect_to games_root_path(:switch => true)
+      redirect_to games_path(:switch => true)
     else
-      redirect_to games_root_path(:switch => false)
+      redirect_to games_path(:switch => false)
     end
   end
 
@@ -118,7 +122,7 @@ class Games::HomepageController < GamesController
   end
 
   def send_device_link
-    ios_link_url = "https://#{request.host}#{games_root_path}"
+    ios_link_url = "https://#{request.host}#{games_path}"
     GamesMailer.deliver_link_device(current_gamer, ios_link_url, GAMES_ANDROID_MARKET_URL )
     render(:json => { :success => true })
   end

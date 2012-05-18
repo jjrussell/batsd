@@ -38,47 +38,61 @@
     = yield :page_head
 
     :javascript
-      stash.require(#{css_requires.to_json});
+      stash.require(#{css_requires.to_json}, function () {
+        (function show() {
+          var el = document.getElementById('tapjoy');
+          el ? el.style.display = 'block' : setTimeout(show, 50);
+        }());
+      });
+
+      // request images file separately
+      stash.require('#{path_for('marketplace/theme/tjm/images', 'css', false)}');
 
     %script{ :id => "analytics-goes-here" }
-  %body{ :id => 'tapjoy', :style => 'display: none;'}
+  %body
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
-          #tapjoy {display:none;}
+          .noscript_msg {
+            margin: 50px 0;
+            width: 100%;
+            text-align: center;
+            font-family: Helvetica, sans-serif;
+            font-size: 1.4em;
+          }
       .noscript_msg
         = t('text.games.no_javascript')
 
-    = render :partial => 'games/shared/header'
+    #tapjoy{:style => 'display: none;'}
+      = render :partial => 'games/shared/header'
 
-    - flash.each do |name, msg|
-      .flash.hidden{ :id => "flash-#{name}" }
-        = msg
+      - flash.each do |name, msg|
+        .flash.hidden{ :id => "flash-#{name}" }
+          = msg
 
-    = yield
+      = yield
 
-    = render 'games/shared/submenu'
+      = render 'games/shared/submenu'
 
-    = yield :above_footer
+      = yield :above_footer
 
-    = render 'games/shared/footer'
+      = render 'games/shared/footer'
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
 
 
     - js_cache 'tjm', true
-    - js_cache! "#{games_translations_path(:language_code => I18n.locale)}", true
+    - js_cache! games_translations_path(:filename => get_locale_filename), true
 
     :javascript
       stash.require(#{js_requires.to_json}, function(stash){
         Tapjoy.rootPath =  "#{WEBSITE_URL}";
-        Tapjoy.iosLinkDevicePath = "#{new_games_gamer_device_path}";
+        Tapjoy.iosLinkDevicePath = "#{new_games_device_path}";
         Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
         Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : [].to_json};
         Tapjoy.selectDevicePath = "#{games_switch_device_path}";
         Tapjoy.requireSelectDevice = #{@require_select_device.to_json};
-        document.body.style.display = 'block';
 
         #{yield :page_javascript}
       });

@@ -86,7 +86,7 @@ describe Games::AppReviewsController do
       end
 
       it 'sets a flash notice message' do
-        response.session[:flash][:error].should == 'You have already reviewed this app.'
+        request.session[:flash][:error].should == 'You have already reviewed this app.'
       end
 
       it 'redirects to earn' do

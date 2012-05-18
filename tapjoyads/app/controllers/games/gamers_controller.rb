@@ -7,7 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
-    redirect_to games_root_path if current_gamer.present?
+    redirect_to games_path if current_gamer.present?
   end
 
   def create
@@ -39,11 +39,11 @@ class Games::GamersController < GamesController
       if params[:data].present? && params[:src] == 'android_app'
         render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
       else
-        render(:json => { :success => true, :link_device_url => new_games_gamer_device_path })
+        render(:json => { :success => true, :link_device_url => new_games_device_path })
       end
     else
-      errors = @gamer.errors.reject{|error|error[0] == 'gamer_profile'}
-      errors |= @gamer_profile.errors.to_a
+      errors = @gamer.errors.reject { |k,v| k == :gamer_profile }
+      errors.merge!(@gamer_profile.errors)
       render_json_error(errors) and return
     end
   end
@@ -83,7 +83,7 @@ class Games::GamersController < GamesController
 
   def destroy
     current_gamer.deactivate!
-    GamesMailer.deliver_delete_gamer(current_gamer)
+    GamesMailer.delete_gamer(current_gamer).deliver
     flash[:notice] = t('text.games.scheduled_for_deletion')
     redirect_to games_logout_path
   end
@@ -149,7 +149,7 @@ class Games::GamersController < GamesController
       @gamer.gamer_profile = @gamer_profile
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_root_path
+      redirect_to games_path
     end
   end
 

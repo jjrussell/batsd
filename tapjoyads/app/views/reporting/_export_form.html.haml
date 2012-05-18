@@ -1,7 +1,0 @@
-- form_tag(export_link, :id => 'download', :class => 'tjform') do
-  = hidden_field_tag(:date, @start_time.to_date.to_s(:mdy), { :id => :download_date } )
-  = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy), { :id => :download_end_date })
-  = hidden_field_tag(:granularity, @granularity, { :id => :download_granularity })
-  - if @platform.present?
-    = hidden_field_tag(:platform, @platform, { :id => :download_platform })
-  %a#export_submit{ :href => '', :onclick => 'this.parentNode.submit()' } Download as CSV

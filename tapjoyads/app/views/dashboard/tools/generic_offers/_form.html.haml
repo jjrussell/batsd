@@ -1,0 +1,47 @@
+= form_for [ :tools, @generic_offer ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= label_tag 'Partner'
+      %td
+        = @generic_offer.partner.name
+        = f.hidden_field :partner_id
+    %tr
+      %th= f.label :name
+      %td
+        = f.text_field :name, :size => 50
+        = error_message_on @generic_offer, :name
+
+    %tr
+      %th= f.label :category
+      %td
+        = f.select :category, GenericOffer::CATEGORIES, :include_blank => true
+        = error_message_on @generic_offer, :category
+        .inline_help Classify urls that redirect to video ads outside of our system (such as youtube or vimeo) as Non-Native Video
+    %tr
+      %th= f.label :price
+      %td
+        = f.currency_field :price
+        = error_message_on @generic_offer, :price
+    %tr
+      %th= f.label :url
+      %td
+        = f.text_field :url, :size => 50
+        = error_message_on @generic_offer, :url
+    - if !@generic_offer.new_record?
+      %tr
+        %th= label_tag "Current Icon", "Current Icon"
+        %td= image_tag @generic_offer.primary_offer.get_icon_url, :size => '57x57'
+    %tr
+      %th= label_tag :icon, @generic_offer.new_record? ? 'Upload Icon' : 'Upload New Icon'
+      %td= file_field_tag :icon
+    %tr
+      %th= f.label :instructions
+      %td= f.text_area :instructions
+    %tr
+      %th= f.label :trigger_action
+      %td
+        = f.select :trigger_action, GenericOffer::TRIGGER_ACTIONS, :include_blank => true
+        = error_message_on @generic_offer, :trigger_action
+        .inline_help Specify the action need to be triggered, please keep this field empty if it is a regular generic offer.
+    %tr
+      %td{ :colspan => 2 }= f.submit @generic_offer.new_record? ? 'Create Generic Offer' : 'Update Generic Offer'

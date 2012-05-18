@@ -10,7 +10,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
     message = Marshal.restore(Base64::decode64(message.body))
 
     mailer = message[:mailer_name].constantize
-    mail = message[:mail]
+    mail = Mail::Message.from_yaml(message[:mail_yaml])
 
     begin
       mailer.deliver_without_rescue_errors(mail)

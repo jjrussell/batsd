@@ -1,0 +1,24 @@
+%td
+  - if permitted
+    = form_tag path, :method => :post, :class => 'enable_request' do
+      %div{ :class => 'enabled', :style =>  (!partner.confirmation_notes.empty? ? 'display:none;' : 'display:inline;')}
+        %span{ :class => 'enabled'}
+          %strong Confirmed
+      %div{ :class => 'disabled', :style => (partner.confirmation_notes.empty? ? 'display:none;' : 'display:inline;') }
+        %span{ :class => 'disabled'}
+          %strong Unconfirmed
+          - if partner.can_be_confirmed?(current_user)
+            = submit_tag 'Confirm', :class => 'submit'
+      %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+  - else
+    - if partner.confirmed_for_payout? && partner.completed_payout_info?
+      %span{ :class => 'enabled'}
+        %strong Confirmed
+    - else
+      %span{ :class => 'disabled'}
+        %strong Uncomfirmed
+%td.notes
+  %span{ :class => 'disabled' }
+    - unless partner.confirmation_notes.empty?
+      - partner.confirmation_notes.each do |note|
+        %li= note

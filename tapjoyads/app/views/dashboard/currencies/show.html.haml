@@ -1,0 +1,281 @@
+- @page_title = 'Virtual currency'
+
+%h3 Virtual Currency
+
+= form_for [@app, @currency], :html => {:class => 'tjform'} do |f|
+  %table.currency_form
+    %tr
+      %th
+        = f.label :name, 'Name'
+        #help_name.help ?
+      %td
+        = f.text_field :name
+        = error_message_on(@currency, :name)
+    %tr
+      %th
+        = f.label :conversion_rate, 'Conversion rate ($1=)'
+        #help_conversion_rate.help ?
+      %td
+        .box_with_right_label
+          = f.text_field :conversion_rate
+          = error_message_on(@currency, :conversion_rate)
+          #currency_name_text.right_label
+            = @currency.name
+          .details
+            This conversion rate determines how much currency to award your users for every $1 that <b>you earn (net to you)</b> via Tapjoy.  Tapjoy only awards users virtual currency based on your net earnings.
+    - if @app.currencies.size <= 1
+      %tr
+        %th
+          = label_tag(:managed_by_tapjoy, 'Managed by Tapjoy')
+          #help_managed_by_tapjoy.help ?
+        %td= check_box_tag(:managed_by_tapjoy, nil, @currency.tapjoy_managed?)
+      %tr.managed
+        %th
+          = f.label :initial_balance, 'Initial balance'
+          #help_initial_balance.help ?
+        %td
+          = f.text_field :initial_balance
+          = error_message_on(@currency, :initial_balance)
+    %tr.unmanaged
+      %th
+        = f.label :callback_url, 'Callback URL'
+        #help_callback_url.help ?
+      %td
+        = f.text_field :callback_url
+        = error_message_on(@currency, :callback_url)
+    %tr.unmanaged
+      %th
+        = f.label :secret_key, 'Secret key'
+        #help_secret_key.help ?
+      %td
+        .box_with_right_label
+          = f.text_field :secret_key
+          = error_message_on(@currency, :secret_key)
+          .right_label
+            = link_to("Generate random", "javascript:$.noop();", :id => 'generate_link')
+    %tr
+      %th
+        = f.label :test_devices, 'Test devices'
+        #help_test_devices.help ?
+      %td
+        = f.text_area :test_devices
+        = error_message_on(@currency, :test_devices)
+    %tr
+      %th
+        = f.label :minimum_offerwall_bid, 'Minimum offerwall bid'
+        #help_minimum_offerwall_bid.help ?
+      %td
+        = f.currency_field :minimum_offerwall_bid
+        = error_message_on(@currency, :minimum_offerwall_bid)
+    %tr
+      %th
+        = f.label :minimum_featured_bid, 'Minimum featured bid'
+        #help_minimum_featured_bid.help ?
+      %td
+        = f.currency_field :minimum_featured_bid
+        = error_message_on(@currency, :minimum_featured_bid)
+    %tr
+      %th
+        = f.label :minimum_display_bid, 'Minimum display ad bid'
+        #help_minimum_display_bid.help ?
+      %td
+        = f.currency_field :minimum_display_bid
+        = error_message_on(@currency, :minimum_display_bid)
+    %tr
+      %th
+        Tapjoy Enabled
+        #help_enabled.help ?
+      %td
+        - if @currency.tapjoy_enabled?
+          .tapjoy-enabled Enabled
+        - else
+          .tapjoy-disabled Disabled
+    - if permitted_to?(:edit, :dashboard_statz)
+      = render :partial => 'admin_fields', :locals => {:f => f}
+    %tr
+      %td{ :colspan => 2 }= f.submit
+
+- if @udids_to_check.present?
+  %h3
+    Test Device Last-run time(s)
+    #help_test_device_last_run_time.help ?
+  %table
+    %tr
+      %th UDID
+      %th Last run time
+    - @udids_to_check.each do |arr|
+      %tr
+        %td= arr[0]
+        %td= arr[1]
+
+  - if @currency.tapjoy_managed?
+    %h3
+      Reset Test Device Virtual Goods
+      #help_reset_test_devices.help ?
+    = form_tag({:action => 'reset_test_device'}, {:class => 'tjform'}) do
+      %table
+        %tbody
+          %tr
+            %th= label_tag :udid, "Device ID"
+            %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
+          %tr
+            %th
+              = label_tag :reset_balance, "Reset Balance"
+              #help_reset_test_device_balance.help ?
+            %td= check_box_tag :reset_balance
+          %tr
+            %td{ :colspan => 2 }= submit_tag('Reset this device')
+
+.hidden
+  #help_name_content{:name => 'Name'}
+    The name of the currency
+  #help_conversion_rate_content{:name => 'Conversion rate'}
+    Amount of virtual currency that $1 will be exchanged for.
+  #help_managed_by_tapjoy_content{:name => 'Managed by Tapjoy'}
+    Whether we keep track of the user's currency, or you keep track on your own servers.
+    %br
+    In order to use Tapjoy virtual goods, your virtual currency must be managed by Tapjoy.
+  #help_initial_balance_content{:name => 'Initial balance'}
+    The amount of currency that a new user starts with.
+  #help_callback_url_content{:name => 'Callback URL'}
+    %p
+      When a user has earned currency by completing an offer, we will make an HTTP request to this URL.
+    %p
+      The format of the parameters will be:
+    %p
+      &lt;callback_url&gt;?snuid=&lt;publisher_user_id&gt;&amp;currency=&lt;amount&gt;
+    %p
+      The default request parameters include:
+    %p
+      %strong snuid:
+      This is the user id which was included in the original request for showOffers.
+      %br
+      %strong currency:
+      How much currency should be added to the user's account.
+  #help_secret_key_content{:name => 'Secret key'}
+    %p
+      Optional secret key used to sign the callback. If this is present then we'll also add the following parameters to the callback request:
+
+    %p
+      %strong id:
+      A unique identifier to mark this specific currency award. This will be a guid that is unique to each reward.
+      %br
+      %strong verifier:
+      An MD5 hash of the id, snuid, currency and secret key.
+
+    %p
+      The verifier is computed by taking the MD5 hash of the id, snuid, currency and secret key, separated by colons. In ruby code, this would be:
+    %pre
+      Digest::MD5.hexdigest("\#{id}:\#{snuid}:\#{currency}:\#{secret_key}")
+    %p
+      Your server should recompute the verifier, and reject any requests that do not match. The server should respond with a 403 Forbidden if the verifier does not match.
+  #help_test_devices_content{:name => 'Test devices'}
+    A semicolon (;) separated list of test device IDs (UDID/MEID/IMEI). These devices will see beta virtual goods and a special test offer at the top of the available offers list.
+  #help_reset_test_devices_content{:name => 'Reset Virtual Goods'}
+    Remove all virtual good purchases from a test device and optionally reset the balance.
+  #help_test_device_last_run_time_content{:name => 'Test device last run time'}
+    Displays the last time a test device ran this app.
+  #help_minimum_offerwall_bid_content{:name => 'Minimum offerwall bid'}
+    If you are displaying an offerwall, only offers with a bid higher than this will be shown.
+  #help_minimum_featured_bid_content{:name => 'Minimum featured bid'}
+    If you are displaying featured offers, only featured offers with a bid higher than this will be shown.
+  #help_minimum_display_bid_content{:name => 'Minimum display ad bid'}
+    If you are displaying banner ads, only offers with a bid higher than this will be shown.
+  #help_reset_test_device_balance_content{:name => 'Reset Balance'}
+    Sets the device's balance back to the currency's initial value.
+  #help_enabled_content{:name => 'Tapjoy Enabled'}
+    Tapjoy approval status. Users will NOT be able to earn currency until this is enabled.
+    Please email publishersupport@tapjoy.com to get approval.
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
+      $('#currency_name').keyup(copyCurrencyName);
+      $('#generate_link').click(generateSecretKey);
+
+      toggleManagedByTapjoy();
+      copyCurrencyName();
+
+    });
+
+    function copyCurrencyName() {
+      $('#currency_name_text').text($('#currency_name').val());
+    }
+    function toggleManagedByTapjoy() {
+      if ($('#managed_by_tapjoy').attr('checked')) {
+        $('.managed').show();
+        $('.unmanaged').hide();
+      } else {
+        $('.managed').hide();
+        $('.unmanaged').show();
+        if ($('#currency_callback_url').val() == '#{Currency::TAPJOY_MANAGED_CALLBACK_URL}') {
+          $('#currency_callback_url').val('');
+        }
+      }
+    }
+    function generateSecretKey() {
+      var values = [];
+      for (var i = 0; i < 10; i++) {
+        values.push(i);
+      }
+      for (var i = 0; i < 26; i++) {
+        values.push(String.fromCharCode(65 + i));
+      }
+      for (var i = 0; i < 26; i++) {
+        values.push(String.fromCharCode(97 + i));
+      }
+
+      key = [];
+      for (var i = 0; i < 20; i++) {
+        key.push(values[Math.floor(Math.random() * values.length)])
+      }
+
+      $('#currency_secret_key').val(key.join(''));
+    }
+
+- content_for :page_styles do
+  :plain
+    textarea {
+      height: 34px;
+    }
+
+    textarea,
+    input[type=text] {
+      width: 400px;
+    }
+
+    .managed,
+    .unmanaged {
+      display: hidden;
+    }
+
+    .box_with_right_label {
+      position: relative;
+    }
+
+    .right_label {
+      position: absolute;
+      left: 100%;
+      top: 4px;
+      margin-left: 3px;
+    }
+
+    #generate_link {
+      white-space: nowrap;
+    }
+
+    .tapjoy-enabled {
+      color: #328F0D;
+    }
+    .tapjoy-disabled {
+      color: #AF1515;
+    }
+
+    .currency_form {
+      width: 680px;
+    }
+
+    .details {
+      font-size: 12px;
+    }

@@ -98,7 +98,7 @@ class OfferList
     end
   end
 
-  def get_offers(start, max_offers)
+def get_offers(start, max_offers)
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
 
     all_offers = augmented_offer_list

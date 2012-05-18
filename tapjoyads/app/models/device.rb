@@ -263,6 +263,19 @@ class Device < SimpledbShardedResource
     end
   end
 
+  def self.device_type_to_platform(type)
+    case type
+    when 'iphone', 'ipad', 'ipod' then 'ios'
+    else type
+    end
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.key}"
+  end
+
   private
 
   def fix_parser_error

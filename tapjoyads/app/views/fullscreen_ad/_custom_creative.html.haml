@@ -1,8 +1,8 @@
-.close#close
-  - link_to(params[:preview] == true ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
+%div{:class => "close #{@platform}", :id => 'close'}
+  = link_to(params[:preview] == true ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
     .close_inner#close_inner x
 #main
-  - link_to((params[:preview] == true ? '#' : get_click_url(@offer)), :class => 'image-link') do
+  = link_to((params[:preview] == true ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
   = link_to(featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier]), (params[:preview] == true ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
@@ -263,6 +263,10 @@
       position: absolute;
       opacity: 0;
       z-index: 8;
+    }
+
+    .close.ios {
+      display: none;
     }
 
     .close_inner {

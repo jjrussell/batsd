@@ -2,7 +2,7 @@
 
 %h1 Password Reset
 
-- form_for(:user, @user, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+= form_for(:user, @user, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
   %table
     %tr
       %th= f.label :password, 'New Password'

@@ -1,10 +1,25 @@
 module ToolsHelper
+  def breadcrumb(*links)
+    first = true
+    content_tag :ul, :class => 'breadcrumb' do
+      links.collect do |link|
+        if first
+          # don't show the divider
+          first = false
+          link
+        else
+          "<span class='divider'> / </span> #{link}"
+        end
+      end
+    end
+  end
+
   def location_str(employee)
     employee.location.nil? ? '' : employee.location.inspect
   end
 
   def click_info_ul(click, reward)
-    concat("<ul class='nobr hidden'>")
+    safe_concat("<ul class='nobr hidden'>")
     concat_li_timestamp("Viewed at", click.viewed_at)
     concat_li_timestamp("Clicked at", click.clicked_at)
     concat_li_timestamp("Installed at", click.installed_at)
@@ -21,20 +36,20 @@ module ToolsHelper
     concat_li("Source", click.source)
     concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
     if click.last_clicked_at?
-      concat("<ul>")
+      safe_concat("<ul>")
       click.last_clicked_at.each_with_index do |last_click_time, idx|
         concat_li_timestamp("Previous click #{idx + 1}", last_click_time)
       end
-      concat("</ul>")
+      safe_concat("</ul>")
     end
     if click.last_installed_at?
-      concat("<ul>")
+      safe_concat("<ul>")
       click.last_installed_at.each_with_index do |last_install_time, idx|
         concat_li_timestamp("Previous install #{idx + 1}", last_install_time)
       end
-      concat("</ul>")
+      safe_concat("</ul>")
     end
-    concat("</ul>")
+    safe_concat("</ul>")
   end
 
   def click_tr_class(click, reward)
@@ -76,14 +91,23 @@ module ToolsHelper
   def formatted_items_for_tracking(partner)
     partner.trackable_items.map do |item|
       type = item.class.name.to_s.gsub(/Offer$/, '')
-      ["#{type} - #{item.name}", "#{item.class}:#{item.id}"]
+      platform = if item.respond_to?(:platform_name)
+                   item.platform_name
+                 elsif item.respond_to?(:get_platform)
+                   item.get_platform
+                 elsif item.respond_to?(:primary_offer)
+                   item.primary_offer.get_platform
+                 else
+                   'N/A'
+                 end
+      ["#{type} - #{item.name} - #{platform}", "#{item.class}:#{item.id}"]
     end
   end
 
   private
 
   def concat_li(name, value)
-    concat("<li>#{name}: <nobr>#{value}</nobr></li>")
+    safe_concat("<li>#{name}: <nobr>#{value}</nobr></li>")
   end
 
   def concat_li_timestamp(name, time)
