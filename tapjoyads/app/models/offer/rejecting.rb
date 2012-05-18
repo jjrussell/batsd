@@ -151,6 +151,10 @@ module Offer::Rejecting
     false
   end
 
+  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
+  end
+
   private
 
   def offer_is_the_publisher?(currency)
@@ -287,10 +291,6 @@ module Offer::Rejecting
     return true if screen_layout_size.blank?
 
     !get_screen_layout_sizes.include?(screen_layout_size)
-  end
-
-  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)
