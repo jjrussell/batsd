@@ -10,7 +10,7 @@
   function sendEmail() {
     var url = possibleLinks.desktop;
 
-    $('#register-message .message-content .register-btn').html(_t('shared.sending'));
+    $('.message-content .register-btn', $message).html(_t('shared.sending'));
     $.ajax({
       type: 'POST',
       url: url,

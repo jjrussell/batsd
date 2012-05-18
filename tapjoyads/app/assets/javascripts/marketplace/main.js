@@ -364,7 +364,7 @@ $(document).ready(function(){
   }
 
   // Menu Grid
-  $('.menu-grid').bind('click', function(){
+  $('.menu-grid').on('click', function(){
     if ($(this).hasClass('active')) {
       $(this).removeClass('active');
       $('.menu-dropdown').removeClass('open').addClass('close');
@@ -764,76 +764,88 @@ $(document).ready(function(){
   }, 50);
 
   // Device Switcher
-  if (Tapjoy.selectDevice) {
-    var path, device_found = false, device_count = 0, device_data, matched_data;
-    var d = [], a = [], m = [];
-    if (Tapjoy.selectDevicePath) {
-      path = Tapjoy.selectDevicePath;
-    }
-    else {
-      path = '/switch_device';
-    }
-    $.each(Tapjoy.selectDevice, function(i,v){
-      var device_type = v.device_type;
-      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
-        device_count++;
-        device_found = true;
-        d.push('<a href="', path ,'?data=', v.data ,'">');
-          d.push('<li class="device-item">');
-            d.push(v.name);
-          d.push('</li>');
-        d.push('</a>');
+  // Built when menu is opened the first time
+  function buildDeviceSwitcher() {
+    $("#device-select").each(function () {
+      var $this = $(this),
+          deviceList = $this.data('list'),
+          selectPath = $this.data('select-path'),
+          possibleLinks = $this.data('links');
+
+      if (deviceList) {
+        var path, device_found = false, device_count = 0, device_data, matched_data;
+        var d = [], a = [], m = [];
+        if (selectPath) {
+          path = selectPath;
+        }
+        else {
+          path = '/switch_device';
+        }
+        $.each(deviceList, function(i,v){
+          var device_type = v.device_type;
+          if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
+            device_count++;
+            device_found = true;
+            d.push('<a href="', path ,'?data=', v.data ,'">');
+              d.push('<li class="device-item">');
+                d.push(v.name);
+              d.push('</li>');
+            d.push('</a>');
+          }
+          else if (!Tapjoy.supportsTouch) { // Web
+            a.push('<a href="', path ,'?data=', v.data ,'">');
+              a.push('<li class="device-item">');
+                a.push(v.name);
+              a.push('</li>');
+            a.push('</a>');
+          }
+        });
+        if (!device_found) {
+          if (Tapjoy.device.idevice && possibleLinks.ios) {
+            link_device = '<a href="' + possibleLinks.ios + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+            m =  [
+              '<ul>',
+                link_device,
+              '</ul>'
+            ].join('');
+          }
+          else if (Tapjoy.device.android &&  possibleLinks.android) {
+            link_device = '<a href="' + possibleLinks.android + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+            m =  [
+              '<ul>',
+                link_device,
+              '</ul>'
+            ].join('');
+          }
+          else if (!Tapjoy.supportsTouch) { // Web - Allow user to select device
+            m =  [
+              '<ul>',
+                a.join(''),
+              '</ul>'
+            ].join('');
+          }
+        }
+        else {
+          var other = "";
+          if (Tapjoy.device.android &&  possibleLinks.android) {
+            other = '<a href="' +  possibleLinks.android + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+          }
+          else if (Tapjoy.device.idevice && possibleLinks.ios) {
+            other = '<a href="' +  possibleLinks.ios + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+          }
+          m =  [
+            '<ul>',
+              d.join(''),
+              other,
+            '</ul>',
+          ].join('');
+        }
+        $('#device-select-list', $this).html(m);
       }
-      else if (!Tapjoy.supportsTouch) { // Web
-        a.push('<a href="', path ,'?data=', v.data ,'">');
-          a.push('<li class="device-item">');
-            a.push(v.name);
-          a.push('</li>');
-        a.push('</a>');
-      }
+      $('.menu-grid').off('click', buildDeviceSwitcher);
     });
-    if (!device_found) {
-      if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
-        link_device = '<a href="' + Tapjoy.iosLinkDevicePath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
-        m =  [
-          '<ul>',
-            link_device,
-          '</ul>'
-        ].join('');
-      }
-      else if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
-        link_device = '<a href="' + Tapjoy.androidAppPath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
-        m =  [
-          '<ul>',
-            link_device,
-          '</ul>'
-        ].join('');
-      }
-      else if (!Tapjoy.supportsTouch) { // Web - Allow user to select device
-        m =  [
-          '<ul>',
-            a.join(''),
-          '</ul>'
-        ].join('');
-      }
-    }
-    else {
-      var other = "";
-      if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
-        other = '<a href="' +  Tapjoy.androidAppPath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
-      }
-      else if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
-        other = '<a href="' +  Tapjoy.iosLinkDevicePath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
-      }
-      m =  [
-        '<ul>',
-          d.join(''),
-          other,
-        '</ul>',
-      ].join('');
-    }
-    $('#device-select-list').html(m);
   }
+  $('.menu-grid').on('click', buildDeviceSwitcher);
 
   (function () {
     if (window._tjHtmlDone && window._tjStartTime) {
