@@ -14,7 +14,7 @@
           = f.label "View Ads"
         %td
           = link_to("Click to preview ad images", preview_app_action_offer_path(:id => @action_offer.id, :app_id => @app.id), :rel => 'facebox')
-      - f.fields_for :primary_offer do |primary_offer_form|
+      = f.fields_for :primary_offer do |primary_offer_form|
         %tr
           %th
             = primary_offer_form.label :user_enabled, 'Enable Action'
@@ -67,7 +67,7 @@
         %td
           = f.text_area :instructions, :rows => 5
           = error_message_on @action_offer, :instructions
-      - f.fields_for :primary_offer do |primary_offer_form|
+      = f.fields_for :primary_offer do |primary_offer_form|
         %tr
           %th
             = primary_offer_form.label :daily_budget, 'Daily Budget'
@@ -122,7 +122,7 @@
               .tapjoy-disabled Pending
               (your request was submitted #{@enable_request.created_at.to_s(:pub_ampm_sec)})
 
-      - f.fields_for :primary_offer do |primary_offer_form|
+      = f.fields_for :primary_offer do |primary_offer_form|
         = render('dashboard/apps/offers_shared/countries', :f => primary_offer_form)
         - if permitted_to? :edit, :dashboard_statz
           = render('dashboard/apps/offers_shared/admin_fields', :f => primary_offer_form)
