@@ -24,8 +24,7 @@ class OptimizedOfferList
       offers_json = s3_json_offer_data(key)
       Mc.distributed_delete(cache_key) and return if offers_json['enabled'] == 'false'
 
-      offers = offers_json['offers']
-      offers.collect do |offer_hash|
+      offers = offers_json['offers'].collect do |offer_hash|
         Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
           offer.rank_score = offer_hash['rank_score']
         end.for_caching

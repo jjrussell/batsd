@@ -101,7 +101,7 @@ class OfferList
     optimized_offers.each_with_index do |offer, i|
       return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
 
-      unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
+      unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
         found_offer_item_ids << offer.item_id
         found_offers += 1
@@ -184,6 +184,10 @@ class OfferList
     end
 
     all_offers + default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
+  end
+
+  def optimization_reject?(offer)
+    postcache_reject?(offer) || offer.hide_rewarded_app_installs_reject?(@hide_rewarded_app_installs)
   end
 
   def postcache_reject?(offer)
