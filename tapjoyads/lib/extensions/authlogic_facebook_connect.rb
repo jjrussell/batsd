@@ -31,15 +31,12 @@ module AuthlogicFacebookConnect
 
       def validate_by_facebook_connect
         facebook_session = controller.current_facebook_user.fetch
-        existing_user = facebook_user_class.find(
-          :first,
-          :conditions => { :gamer_profiles => { :facebook_id => facebook_session.id } },
-          :include => :gamer_profile)
+        existing_user = facebook_user_class.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => facebook_session.id }).first
 
         if existing_user
           self.attempted_record = existing_user
         else
-          matching_user = facebook_user_class.find(:first, :conditions => { :email => facebook_session.email })
+          matching_user = facebook_user_class.where(:email => facebook_session.email).first
           if matching_user
             if klass == facebook_user_class
               attributes = {

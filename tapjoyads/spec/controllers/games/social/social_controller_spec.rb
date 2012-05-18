@@ -27,19 +27,11 @@ describe Games::Social::SocialController do
       end
 
       it "ensures only one tjm account associated with that Facebook account" do
-        Gamer.count(
-          :all,
-          :conditions => { :gamer_profiles => { :facebook_id => @current_facebook_user.id } },
-          :include => :gamer_profile
-        ).should == 1
+        Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => @current_facebook_user.id }).count.should == 1
       end
 
       it "ensures current tjm account associated with that Facebook account" do
-        Gamer.find(
-          :first,
-          :conditions => { :gamer_profiles => { :facebook_id => @current_facebook_user.id } },
-          :include => :gamer_profile
-        ).should == @gamer
+        Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => @current_facebook_user.id }).first.should == @gamer
       end
     end
   end
