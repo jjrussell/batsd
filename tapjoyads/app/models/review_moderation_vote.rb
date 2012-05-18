@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: review_moderation_votes
+#
+#  id            :integer(4)      not null, primary key
+#  app_review_id :string(36)      not null
+#  gamer_id      :string(36)      not null
+#  type          :string(32)
+#  value         :integer(4)
+#  created_at    :datetime
+#  updated_at    :datetime
+#
+
 class ReviewModerationVote < ActiveRecord::Base
   include UuidPrimaryKey
   validates_uniqueness_of :gamer_id, :scope => [:app_review_id, :type], :message => "has already flagged this app"

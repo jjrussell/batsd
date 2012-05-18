@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: payouts
+#
+#  id             :string(36)      not null, primary key
+#  amount         :integer(4)      default(0), not null
+#  month          :integer(4)      not null
+#  year           :integer(4)      not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  partner_id     :string(36)      not null
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      default(1), not null
+#
+
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
 

@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: clients
+#
+#  id         :string(36)      not null, primary key
+#  name       :string(255)     not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class Client < ActiveRecord::Base
   include UuidPrimaryKey
 

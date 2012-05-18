@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: partner_changes
+#
+#  id                     :string(36)      not null, primary key
+#  item_id                :string(36)      not null
+#  item_type              :string(255)     not null
+#  source_partner_id      :string(36)      not null
+#  destination_partner_id :string(36)      not null
+#  scheduled_for          :datetime
+#  completed_at           :datetime
+#  created_at             :datetime
+#  updated_at             :datetime
+#
+
 class PartnerChange < ActiveRecord::Base
   include UuidPrimaryKey
 

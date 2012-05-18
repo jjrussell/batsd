@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: deeplink_offers
+#
+#  id          :string(36)      not null, primary key
+#  app_id      :string(36)      not null
+#  currency_id :string(36)      not null
+#  partner_id  :string(36)      not null
+#  name        :string(255)     not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 class DeeplinkOffer < ActiveRecord::Base
   include UuidPrimaryKey
 
