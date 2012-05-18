@@ -19,6 +19,14 @@ class Transfer
     define_method(attr) { @attributes[attr] }
   end
 
+  def method_missing(attr, *args)
+    if @attributes.key?(attr)
+      @attributes[attr]
+    else
+      super
+    end
+  end
+
   def to_key
     nil
   end
