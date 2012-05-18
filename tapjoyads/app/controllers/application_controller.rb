@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
   before_filter :reject_banned_ips
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
-  after_filter :store_response
+  # after_filter :store_response
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
