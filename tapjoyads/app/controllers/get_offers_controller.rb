@@ -145,7 +145,7 @@ class GetOffersController < ApplicationController
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
       :all_videos           => params[:all_videos],
-      :algorithm            => '1001',
+      :algorithm            => choose_optimization_experiment,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
@@ -165,6 +165,16 @@ class GetOffersController < ApplicationController
 
         offer.queue_impression_tracking_requests # for third party tracking vendors
       end
+    end
+  end
+
+  def choose_optimization_experiment
+    choose_experiment
+    case params[:exp]
+    when 'a_optimization' then nil
+    when 'b_optimization' then '101'
+    when 'c_optimization' then '101' #TODO change this to another experiment name that is actually in the data before going live
+    else nil
     end
   end
 

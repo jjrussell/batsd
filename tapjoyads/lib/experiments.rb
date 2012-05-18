@@ -1,12 +1,21 @@
 class Experiments
   EXPERIMENTS = {
-    :default => '0',
-    :papaya_on => '1',
-    :papaya_off => '2'
+    :default => 'a_optimization',
+    :a => 'a_optimization',
+    :b => 'b_optimization',
+    :c => 'c_optimization'
   }
 
   def self.choose(udid)
-    EXPERIMENTS[:default]
+    if udid.present?
+      udid_hash = udid.hash % 100
+      case
+      when udid_hash < 20 then EXPERIMENTS[:a]
+      when udid_hash < 40 then EXPERIMENTS[:b]
+      when udid_hash < 60 then EXPERIMENTS[:c]
+      else experiments[:default]
+      end
+    end
   end
 
   def self.report(start_time, end_time, experiment_id, control_id = EXPERIMENTS[:control])
