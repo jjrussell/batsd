@@ -39,6 +39,7 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
+  resources :offer_triggered_actions, :only => [:facebook_login]
   resources :offer_completed do
     collection do
       match :boku
