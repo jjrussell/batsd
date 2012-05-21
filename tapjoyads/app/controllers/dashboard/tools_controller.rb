@@ -51,6 +51,12 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def partner_monthly_balance
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period_from = params[:period_from].present? ? Date.parse(params[:period_from]) : most_recent_period
+    @period_from_str = @period_from.strftime("%b %Y")
+    @period_thru = params[:period_thru].present? ? Date.parse(params[:period_thru]) : most_recent_period
+    @period_thru_str = @period_thru.strftime("%b %Y")
+
     if params[:partner_id].present?
       @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
@@ -68,11 +74,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @beginning_balances = []
     @ending_balances = []
     @partners.each do |partner|
-      monthly_accounting = partner.monthly_accounting(@period.year, @period.month)
-      beginning_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
-      ending_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
-      @beginning_balances << beginning_balances
-      @ending_balances << ending_balances
+      from_monthly_accounting = partner.monthly_accounting(@period_from.year, @period_from.month)
+      thru_monthly_accounting = partner.monthly_accounting(@period_thru.year, @period_thru.month)
+      @beginning_balances << ((from_monthly_accounting.nil?) ? "N/A" : from_monthly_accounting.beginning_balance / 100.0)
+      @ending_balances << ((thru_monthly_accounting.nil?) ? "N/A" : thru_monthly_accounting.ending_balance / 100.0)
     end
   end
 
