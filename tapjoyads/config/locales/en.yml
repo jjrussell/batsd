@@ -240,6 +240,7 @@ en:
         other: "%{name} have already registered, you are now following them."
       amount_and_currency: "%{amount} %{currency}"
       amount_and_currency_earn: "Earn %{amount} %{currency}"
+      apps: Apps
       app_review_concern_reported: "Concern Reported"
       app_review_h_no: "No"
       app_review_h_yes: "Yes"
