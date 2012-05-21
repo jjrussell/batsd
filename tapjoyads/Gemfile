@@ -40,7 +40,7 @@ gem 'oauth', '0.4.5'
 gem 'patron', '0.4.4'
 gem 'plist', '3.1.0'
 gem 'rails', '~>3.0.12'
-gem 'rake', '0.8.7'
+gem 'rake'
 gem 'rcov'
 gem 'rdoc', '3.12'
 gem 'read_from_slave', '0.4.0'
@@ -62,6 +62,7 @@ gem 'uglifier', '1.2.3'
 gem 'uuidtools', '2.1.2'
 gem 'vertica', '0.9.1'
 gem 'will_paginate', '~> 3.0'
+gem 'xml-simple', :require => 'xmlsimple'
 
 # This needs to be down here to get sdb stuff
 gem 'newrelic_rpm', '3.3.0'
@@ -71,6 +72,7 @@ group :development, :staging do
 end
 
 group :development do
+  gem 'annotate'
   gem 'mongrel', '1.1.5'
   gem 'guard-spork'
   gem 'guard-rspec'

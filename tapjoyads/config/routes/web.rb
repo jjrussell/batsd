@@ -4,6 +4,7 @@ Tapjoyad::Application.routes.draw do
   match 'log_device_app' => 'connect#index'
   match 'Connect' => 'connect#index'
   match 'set_publisher_user_id' => 'set_publisher_user_id#index'
+  match 'get_ad_order' => 'get_ad_order#index'
 
   resources :apps_installed
   resource :click, :controller => :click do
@@ -18,12 +19,10 @@ Tapjoyad::Application.routes.draw do
     match :test_offer
     match :test_video_offer
   end
-  resources :display_ad, :only => [:index], :controller => :display_ad do
-    collection do
-      match :webview
-      match :image
-    end
-  end
+  # TODO: make display_ad routes better
+  match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
+  match 'display_ad/webview' => 'display_ad#webview'
+  match 'display_ad/image'   => 'display_ad#image'
   resources :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
       match :test_offer
@@ -36,11 +35,9 @@ Tapjoyad::Application.routes.draw do
       match :featured
     end
   end
-  resources :get_vg_store_items do
-    match :all
-    match :purchased
-    match :user_account
-  end
+  match 'get_vg_store_items/all' => 'get_vg_store_items#all'
+  match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
+  match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
   resources :offer_completed do
     collection do

@@ -279,7 +279,7 @@
     }
   });
 
-  $(function () {
+  $(function () {    
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }
@@ -296,7 +296,7 @@
         Tap.Social.doFbLogout();
       }
 
-      $(".post-to-facebook").click(function () {
+      $(".post-to-facebook").on('click',function () {
         var $$ = $(this),
             icon = $$.data("icon"),
             callback = $$.data("callback"),
@@ -326,7 +326,7 @@
       }
     });
 
-    $(".invite-twitter-followers").click(function (event) {
+    $(".invite-twitter-followers").on('click', function (event) {
       event.preventDefault();
       var $$ = $(this),
           redirectPath = $$.data("redirect-path");

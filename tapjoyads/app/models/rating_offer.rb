@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: rating_offers
+#
+#  id          :string(36)      not null, primary key
+#  partner_id  :string(36)      not null
+#  app_id      :string(36)      not null
+#  name        :string(255)     not null
+#  description :text
+#  created_at  :datetime
+#  updated_at  :datetime
+#  hidden      :boolean(1)      default(FALSE), not null
+#
+
 class RatingOffer < ActiveRecord::Base
   include UuidPrimaryKey
 

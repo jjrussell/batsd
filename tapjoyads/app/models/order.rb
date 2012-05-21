@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: orders
+#
+#  id             :string(36)      not null, primary key
+#  partner_id     :string(36)      not null
+#  payment_txn_id :string(36)
+#  refund_txn_id  :string(36)
+#  coupon_id      :string(36)
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      not null
+#  amount         :integer(4)      default(0), not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  note           :text
+#  invoice_id     :integer(4)
+#  description    :string(255)
+#  note_to_client :string(255)
+#
+
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
 

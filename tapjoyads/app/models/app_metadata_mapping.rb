@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: app_metadata_mappings
+#
+#  id              :string(36)      not null, primary key
+#  app_id          :string(36)      not null
+#  app_metadata_id :string(36)      not null
+#
+
 class AppMetadataMapping < ActiveRecord::Base
   include UuidPrimaryKey
 

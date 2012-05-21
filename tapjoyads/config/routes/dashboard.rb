@@ -43,6 +43,10 @@ Tapjoyad::Application.routes.draw do
           get :integrate
         end
         resources :offers, :only => [:new, :create, :edit, :update] do
+          collection do
+            post :toggle
+            post :percentile
+          end
           member do
             post :toggle
             post :percentile
@@ -75,6 +79,12 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :videos, :only => [:index]
+      end
+      resource :offer do
+        member do
+          post :toggle
+          post :percentile
+        end
       end
       resources :reengagement_rewards, :only => [:show]
       resources :offer_creatives, :only => [:show] do
@@ -198,13 +208,15 @@ Tapjoyad::Application.routes.draw do
           post :update_award_currencies
           get :sdb_metadata
           get :ses_status
+          get :view_pub_user_account
+          post :detach_pub_user_account
         end
 
 
       end
 
       namespace :tools do
-        resources :brands, :only => [:index, :new, :create, :edit, :update]
+        resources :brands
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
             post :delete

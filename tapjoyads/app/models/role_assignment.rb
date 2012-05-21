@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: role_assignments
+#
+#  id           :string(36)      not null, primary key
+#  user_id      :string(36)      not null
+#  user_role_id :string(36)      not null
+#
+
 class RoleAssignment < ActiveRecord::Base
   include UuidPrimaryKey
 
