@@ -656,7 +656,7 @@ class Offer < ActiveRecord::Base
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
 
-    unless allow_negative_balance?
+    unless allow_negative_balance? || self_promote_only?
       adjusted_balance = partner.balance
       if is_free? && adjusted_balance < 50000
         adjusted_balance = adjusted_balance / 2
