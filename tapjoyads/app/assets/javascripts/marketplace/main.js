@@ -265,6 +265,7 @@ $(document).ready(function(){
               'gamer[password]': values['gamer[password]'],
               'gamer[referrer]': values['gamer[referrer]'],
               'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+              'gamer[nickname]': values['gamer[nickname]'],
               'date[day]': values['date[day]'],
               'date[month]': values['date[month]'],
               'date[year]': values['date[year]'],
