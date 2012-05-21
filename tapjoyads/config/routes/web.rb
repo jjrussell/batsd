@@ -66,6 +66,7 @@ Tapjoyad::Application.routes.draw do
     end
   end
   resources :tools_surveys, :only => [:edit, :create]
+  resources :user_events, :only => [:create]
 
   resources :videos, :only => [:index] do
     member do
