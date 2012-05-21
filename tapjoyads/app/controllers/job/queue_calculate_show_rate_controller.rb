@@ -18,8 +18,10 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     old_show_rate = offer.show_rate
 
     now = Time.zone.now
-    start_time = offer.is_free? ? (now.beginning_of_hour - 1.hour) : (now.beginning_of_hour - 1.day)
-    appstats = Appstats.new(offer.id, { :start_time => start_time, :end_time => now, :stat_types => %w(paid_clicks paid_installs jailbroken_installs) })
+    show_rate_timeframe = offer.is_free? ? 1.hour : 1.day
+    start_time = now.beginning_of_hour - show_rate_timeframe
+    stat_types = %w(paid_clicks paid_installs jailbroken_installs)
+    appstats = Appstats.new(offer.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
     cvr_timeframe = appstats.end_time - appstats.start_time
 
     recent_clicks = appstats.stats['paid_clicks'].sum.to_f
@@ -64,12 +66,12 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
 
     # Assume all apps are CST for now.
-    end_of_cst_day = Time.parse('00:00 CST', now + 18.hours).utc
-    seconds_left_in_day = end_of_cst_day - now
-    appstats_cst = Appstats.new(offer.id, { :start_time => (end_of_cst_day - 1.day), :end_time => end_of_cst_day, :stat_types => %w(paid_installs) })
-    num_installs_today = appstats_cst.stats['paid_installs'].sum
+    end_of_day = Time.parse('00:00 CST', now + 18.hours).utc
+    start_of_day = end_of_day - 1.day
+    stat_types = %w(paid_installs)
+    appstats = Appstats.new(offer.id, :start_time => start_of_day, :end_time => end_of_day, :stat_types => stat_types)
+    num_installs_today = appstats.stats['paid_installs'].sum
 
-    Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
     Rails.logger.info "Num installs today: #{num_installs_today}"
 
     target_installs = offer.calculate_target_installs(num_installs_today)
@@ -82,6 +84,8 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     if target_clicks <= 0
       new_show_rate = 0
     else
+      seconds_left_in_day = end_of_day - now
+      Rails.logger.info "Seconds left in day: #{seconds_left_in_day}"
       new_show_rate = target_clicks / (possible_clicks_per_second * seconds_left_in_day)
       new_show_rate = 1 if new_show_rate > 1
     end
@@ -104,7 +108,9 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     end
 
     if offer.has_overall_budget?
-      appstats_overall = Appstats.new(offer.id, { :start_time => Time.zone.parse('2010-01-01'), :end_time => now, :stat_types => %w(paid_installs) })
+      start_time = Time.zone.parse('2010-01-01')
+      stat_types = %w(paid_installs)
+      appstats_overall = Appstats.new(offer.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
       total_installs = appstats_overall.stats['paid_installs'].sum
       if total_installs > offer.overall_budget
         Rails.logger.info "App over overall_budget. Overriding any calculations and setting show rate to 0."
