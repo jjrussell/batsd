@@ -20,18 +20,30 @@ class OptimizedOfferList
     end
 
     def cache_offer_list(key)
+      # TODO: New relic alerts?
       cache_key = cache_key_for_options(options_for_s3_key(key))
       offers_json = s3_json_offer_data(key)
       Mc.distributed_delete(cache_key) and return if offers_json['enabled'] == 'false'
 
       offers = offers_json['offers'].collect do |offer_hash|
-        Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
-          offer.rank_score = offer_hash['rank_score']
-        end.for_caching
-      end
+        begin
+          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
+            offer.rank_score = offer_hash['rank_score']
+          end.for_caching
+        rescue
+          puts "Error with #{offer_hash.inspect}" and next
+        end
+      end.compact
 
       Mc.distributed_put(cache_key, offers) rescue puts "saving to Memcache failed"
-      # s3_cached_optimization_bucket.objects[cache_key].write(:data => Marshal.dump(offers)) rescue puts "saving to S3 failed"
+      s3_cached_optimization_bucket.objects[cache_key].write(:data => Marshal.dump(offers)) rescue puts "saving to S3 failed"
+    end
+
+    def disable_all
+      s3_optimization_keys.each do |key|
+        cache_key = cache_key_for_options(options_for_s3_key(key))
+        Mc.distributed_delete(cache_key)
+      end
     end
 
     private
