@@ -69,5 +69,6 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
     end
 
     @partners = @partners.includes([:payout_info, {:users => [:user_roles] }])
+    @partners = @partners.where('id = ?', params[:partners_filter]) if params[:partners_filter].present?
   end
 end
