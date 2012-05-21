@@ -35,8 +35,19 @@ class OptimizedOfferList
         end
       end.compact
 
-      Mc.distributed_put(cache_key, offers) rescue puts "saving to Memcache failed"
-      s3_cached_optimization_bucket.objects[cache_key].write(:data => Marshal.dump(offers)) rescue puts "saving to S3 failed"
+      begin
+        Mc.distributed_put(cache_key, offers)
+        puts "wrote #{cache_key} to Memcache"
+      rescue
+        puts "saving to Memcache failed"
+      end
+
+      begin
+        s3_cached_optimization_bucket.objects[cache_key].write(:data => Marshal.dump(offers))
+        puts "wrote #{cache_key} to S3"
+      rescue
+        puts "saving to S3 failed"
+      end
     end
 
     def disable_all
