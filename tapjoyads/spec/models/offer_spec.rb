@@ -858,6 +858,7 @@ describe Offer do
 
   describe '#calculate_target_installs' do
     before :each do
+      @offer.daily_budget = 0
       @offer.allow_negative_balance = false
       @offer.partner.balance = 1_000_00
       @num_installs_today = 1
