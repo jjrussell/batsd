@@ -12,6 +12,7 @@
       %th Partner Email
       %th{:class => "sort #{params[:acct_mgr_sort]}"} Account Manager
       %th Bank Info Present?
+      %th Next Payout Amount
       %th Confirm
       %th Notes
   %tbody
@@ -48,6 +49,7 @@
           %td
             %span.not_present
               %strong Not Present
+        %td= number_to_currency(partner.next_payout_amount / 100.0)
         = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :dashboard_tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
 = will_paginate(@partners)
 - content_for :page_javascript do
