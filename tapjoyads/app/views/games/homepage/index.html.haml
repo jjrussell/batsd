@@ -1,7 +1,7 @@
 #content.home.current
   - if current_device.nil?
-    #noDevice.row.border.nbb
-      %h1.museo
+    #noDevice.border.nbb
+      %h1.museo.pl20.pb10.pt20
         = t('text.games.welcome_tapjoy')
       = render 'register_device'
 
