@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: video_offers
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  name       :string(255)     not null
+#  hidden     :boolean(1)      default(FALSE), not null
+#  video_url  :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable

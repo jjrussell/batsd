@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: invitations
+#
+#  id            :string(36)      not null, primary key
+#  gamer_id      :string(36)      not null
+#  noob_id       :string(36)
+#  external_info :string(255)     not null
+#  channel       :integer(4)      not null
+#  status        :integer(4)      default(0)
+#  created_at    :datetime
+#  updated_at    :datetime
+#
+
 class Invitation < ActiveRecord::Base
   include UuidPrimaryKey
 

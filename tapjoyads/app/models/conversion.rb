@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: conversions
+#
+#  id                     :string(36)      not null, primary key
+#  reward_id              :string(36)
+#  advertiser_offer_id    :string(36)
+#  publisher_app_id       :string(36)      not null
+#  advertiser_amount      :integer(4)      not null
+#  publisher_amount       :integer(4)      not null
+#  tapjoy_amount          :integer(4)      not null
+#  reward_type            :integer(4)      not null
+#  created_at             :datetime
+#  updated_at             :datetime
+#  country                :string(2)
+#  publisher_partner_id   :string(36)      not null
+#  advertiser_partner_id  :string(36)      not null
+#  publisher_reseller_id  :string(36)
+#  advertiser_reseller_id :string(36)
+#  spend_share            :float
+#
+
 class Conversion < ActiveRecord::Base
   include UuidPrimaryKey
 

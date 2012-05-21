@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: offerpal_offers
+#
+#  id          :string(36)      not null, primary key
+#  partner_id  :string(36)      not null
+#  offerpal_id :string(255)     not null
+#  name        :string(255)     not null
+#  description :text
+#  created_at  :datetime
+#  updated_at  :datetime
+#  hidden      :boolean(1)      default(FALSE), not null
+#
+
 class OfferpalOffer < ActiveRecord::Base
   include UuidPrimaryKey
 

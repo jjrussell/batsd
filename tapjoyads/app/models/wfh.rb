@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: wfhs
+#
+#  id          :string(36)      not null, primary key
+#  employee_id :string(36)      not null
+#  category    :string(255)     not null
+#  description :string(255)
+#  start_date  :date            not null
+#  end_date    :date            not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 class Wfh < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :employee

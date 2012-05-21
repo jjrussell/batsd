@@ -72,6 +72,7 @@ group :development, :staging do
 end
 
 group :development do
+  gem 'annotate'
   gem 'mongrel', '1.1.5'
   gem 'guard-spork'
   gem 'guard-rspec'
