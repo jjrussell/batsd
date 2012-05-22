@@ -130,7 +130,9 @@ class Gamer < ActiveRecord::Base
   serialized_extra_attributes_accessor :been_helpful_count
   serialized_extra_attributes_accessor :account_type
 
-  def before_connect(facebook_session, account_type = ACCOUNT_TYPE[:facebook_signup])
+  def before_connect(facebook_session, options = {})
+    account_type = options.delete(:account_type) { ACCOUNT_TYPE[:facebook_signup] }
+
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
