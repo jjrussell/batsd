@@ -3,7 +3,7 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
   current_tab :tools
   filter_access_to :all
 
-  before_filter :find_button, :only => [ :edit, :show, :update ]
+  before_filter :find_button, :only => [ :edit, :update ]
   before_filter :find_video_offer
   before_filter :handle_params, :only => [ :create, :update ]
   after_filter :save_activity_logs
@@ -17,9 +17,6 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
   end
 
   def edit
-  end
-
-  def show
   end
 
   def create
