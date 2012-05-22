@@ -134,7 +134,7 @@ authorization do
     has_permission_on :dashboard_tools_premier_partners, :to => [ :index ]
     has_permission_on :dashboard_tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_tools_video_offers, :to => [ :new, :create, :edit, :update ]
-    has_permission_on :dashboard_tools_video_buttons, :to => [ :index, :new, :create, :edit, :update, :show ]
+    has_permission_on :dashboard_tools_video_buttons, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_external_publishers, :to => [ :index, :update ]
