@@ -52,6 +52,32 @@ describe Device do
     end
   end
 
+  describe '#create_identifiers!' do
+    before :each do
+      @device = Factory(:device)
+      @device.mac_address = 'a1b2c3d4e5f6'
+      @device.android_id = 'test-android-id'
+      @device.open_udid = 'test-open-udid'
+      @device_identifier = Factory(:device_identifier)
+    end
+
+    it 'creates the device identifiers' do
+      DeviceIdentifier.expects(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).returns(@device_identifier)
+      DeviceIdentifier.expects(:new).with(:key => @device.open_udid).returns(@device_identifier)
+      DeviceIdentifier.expects(:new).with(:key => @device.android_id).returns(@device_identifier)
+      DeviceIdentifier.expects(:new).with(:key => @device.mac_address).returns(@device_identifier)
+      DeviceIdentifier.expects(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).returns(@device_identifier)
+      @device.create_identifiers!
+    end
+
+    it 'alerts new relic for remapped identifiers' do
+      @device_identifier.udid = 'old_device_udid'
+      DeviceIdentifier.stubs(:new).returns(@device_identifier)
+      Notifier.expects(:alert_new_relic).with(RuntimeError, "Overwriting identifier: #{Digest::SHA2.hexdigest(@device.key)} with a udid: #{@device.key} instead of the existing udid: #{@device_identifier.udid}")
+      @device.create_identifiers!
+    end
+  end
+
   describe '#handle_sdkless_click!' do
     before :each do
       app = FactoryGirl.create :app
