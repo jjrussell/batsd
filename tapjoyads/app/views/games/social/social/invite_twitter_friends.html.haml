@@ -48,7 +48,7 @@
               <% } %>
         .mod.friend-pagination
           = link_to(t('text.games.social_to_next', :page_size => @page_size), '#', :id => 'next')
-          = link_to(t('text.games.social_to_top'), '#', :id => 'top')
+          = link_to(t('text.games.social_to_top').html_safe, '#', :id => 'top')
         .mod.form-section.pb5
           = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"
 
