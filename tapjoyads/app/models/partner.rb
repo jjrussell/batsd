@@ -204,23 +204,19 @@ class Partner < ActiveRecord::Base
   end
 
   def remove_user(user)
-    if users.length > 1 && users.include?(user)
+    if users.include?(user)
+      handle_last_user! if users.length == 1
       user.partners.delete(self)
       if user.reseller_id?
         self.reseller_id = nil
         save!
       end
-      if user.partners.blank?
-        user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
-        user.partners << user.current_partner
-        user.save
-      elsif user.current_partner_id == id
-        user.current_partner = user.partners.first
-        user.save
-      else
-        true
-      end
+      user.clean_up_current_partner(self)
     end
+  end
+
+  def handle_last_user!
+    users << User.userless_partner_holder
   end
 
   def get_disabled_partner_ids
