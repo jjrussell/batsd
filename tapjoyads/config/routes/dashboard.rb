@@ -249,9 +249,7 @@ Tapjoyad::Application.routes.draw do
 
         end
         resources :video_offers, :only => [:new, :create, :edit, :update] do
-
-
-          resources :video_buttons
+          resources :video_buttons, :except => [:show]
         end
         resources :offers do
           resources :sales_reps
@@ -312,7 +310,6 @@ Tapjoyad::Application.routes.draw do
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
-        resources :universal_rewards, :only => [:index, :show]
         resources :network_costs, :only => [:index, :new, :create]
         resources :partner_program_statz, :only => [:index] do
           collection do
