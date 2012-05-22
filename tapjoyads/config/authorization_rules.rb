@@ -128,7 +128,7 @@ authorization do
     has_permission_on :dashboard_tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :dashboard_apps, :to => [ :unarchive ]
     has_permission_on :dashboard_offer_creatives, :to => [ :show, :create, :update, :destroy ]
-    has_permission_on :dashboard_partners_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :dashboard_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
     has_permission_on :dashboard_tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :dashboard_tools_offer_lists, :to => [ :index ]
     has_permission_on :dashboard_tools_premier_partners, :to => [ :index ]
