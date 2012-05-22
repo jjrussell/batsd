@@ -249,9 +249,7 @@ Tapjoyad::Application.routes.draw do
 
         end
         resources :video_offers, :only => [:new, :create, :edit, :update] do
-
-
-          resources :video_buttons
+          resources :video_buttons, :except => [:show]
         end
         resources :offers do
           resources :sales_reps
