@@ -108,6 +108,7 @@ class Games::GamersController < GamesController
     if gamer.new_record?
       gamer = Gamer.new
       gamer.before_connect(current_facebook_user)
+      gamer.confirmed_at = gamer.created_at
       gamer_profile = GamerProfile.new(
         :birthdate       => current_facebook_user.birthday,
         :nickname        => current_facebook_user.name,
