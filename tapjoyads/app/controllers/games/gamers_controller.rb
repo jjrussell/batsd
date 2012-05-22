@@ -18,6 +18,7 @@ class Games::GamersController < GamesController
       g.password_confirmation = params[:gamer][:password]
       g.referrer              = params[:gamer][:referrer]
       g.terms_of_service      = params[:gamer][:terms_of_service]
+      g.account_type          = params[:gamer][:account_type].to_i
     end
     begin
       birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)

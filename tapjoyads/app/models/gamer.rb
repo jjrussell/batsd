@@ -77,6 +77,11 @@ class Gamer < ActiveRecord::Base
   DAYS_BEFORE_DELETION = 3
   RUDE_BAN_LIMIT = 20
 
+  ACCOUNT_TYPE = {
+    :email_signup    => 0,
+    :facebook_signup => 1
+  }
+
   scope :to_delete, lambda {
     {
       :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
@@ -123,13 +128,14 @@ class Gamer < ActiveRecord::Base
 
   serialized_extra_attributes_accessor :been_buried_count
   serialized_extra_attributes_accessor :been_helpful_count
+  serialized_extra_attributes_accessor :account_type
 
-  def before_connect(facebook_session)
+  def before_connect(facebook_session, account_type = ACCOUNT_TYPE[:facebook_signup])
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
     self.terms_of_service      = '1'
-    self.referrer              = "NEW_SIGN_UP_WITH_FACEBOOK"
+    self.account_type          = account_type
   end
 
   def confirm!
