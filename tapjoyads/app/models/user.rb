@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
+  USERLESS_PARTNER_USER_ID = '65dc766a-d05f-45b4-9fca-1f81e3aed2d6'
+
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
@@ -121,7 +123,20 @@ class User < ActiveRecord::Base
     (super || [])
   end
 
-private
+  def clean_up_current_partner(old_partner)
+    if partners.blank?
+      partners << Partner.new(:name => email, :contact_name => email)
+      save
+    elsif current_partner_id == old_partner.id
+      self.current_partner = partners.first
+      save
+    else
+      true
+    end
+  end
+
+  private
+
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)
