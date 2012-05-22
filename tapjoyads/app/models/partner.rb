@@ -216,7 +216,7 @@ class Partner < ActiveRecord::Base
   end
 
   def handle_last_user!
-    users << User.find_by_id(USERLESS_PARTNER_USER_ID)
+    users << User.userless_partner_holder
   end
 
   def get_disabled_partner_ids

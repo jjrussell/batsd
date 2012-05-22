@@ -36,8 +36,6 @@ class User < ActiveRecord::Base
     c.merge_validates_uniqueness_of_email_field_options(:case_sensitive => true)
   end
 
-  USERLESS_PARTNER_USER_ID = '65dc766a-d05f-45b4-9fca-1f81e3aed2d6'
-
   has_many :role_assignments, :dependent => :destroy
   has_many :partner_assignments, :dependent => :destroy
   has_many :user_roles, :through => :role_assignments
@@ -121,6 +119,11 @@ class User < ActiveRecord::Base
   # Make sure nil comes back as an empty array
   def account_type
     (super || [])
+  end
+
+  USERLESS_PARTNER_USER_ID = '65dc766a-d05f-45b4-9fca-1f81e3aed2d6'
+  def self.userless_partner_holder
+    User.find(User::USERLESS_PARTNER_USER_ID)
   end
 
   def clean_up_current_partner(old_partner)
