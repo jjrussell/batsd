@@ -24,50 +24,54 @@ rescue Errno::EACCES, Errno::ENOENT
 end
 
 while true
-  out = ""
-  out << "HOST: #{hostname}\n\n"
+  begin
+    out = ""
+    out << "HOST: #{hostname}\n\n"
 
-  out << "\nUnicorn Memory Usage\n\n"
-  ps = `ps aux | grep unicorn_rails | grep -v grep | awk '{print $2 " " $10 " " $3 " " $12}'`.split("\n")
-  ps.each do |p|
-    pid, time, cpu, name = p.split
-    mem = determine_private_dirty_rss(pid).to_f/1024.0
+    out << "\nUnicorn Memory Usage\n\n"
+    ps = `ps aux | grep unicorn | grep -v unicorn_stats | grep -v grep | awk '{print $2 " " $10 " " $3 " " $12}'`.split("\n")
+    ps.each do |p|
+      pid, time, cpu, name = p.split
+      mem = determine_private_dirty_rss(pid).to_f/1024.0
 
-    line = ""
-    line << name.rjust(10) + " "
-    line << pid + ": "
-    line << "#{("%.3f" % mem).rjust(8)} MB "
-    line << cpu.rjust(5) + "% CPU"
-    line << time.rjust(6) + "h"
+      line = ""
+      line << name.rjust(10) + " "
+      line << pid + ": "
+      line << "#{("%.3f" % mem).rjust(8)} MB "
+      line << cpu.rjust(5) + "% CPU"
+      line << time.rjust(6) + "h"
 
-    line << "\n"
-    if mem >= 400
-      out << red(line)
-    elsif mem >= 300
-      out << yellow(line)
-    else
-      out << green(line)
+      line << "\n"
+      if mem >= 400
+        out << red(line)
+      elsif mem >= 300
+        out << yellow(line)
+      else
+        out << green(line)
+      end
     end
-  end
 
-  unless server_type == "dev"
-    out << "\nNGinx Status\n\n"
-    out << `ps aux | grep -v grep | grep nginx`
+    unless server_type == "dev"
+      out << "\nNGinx Status\n\n"
+      out << `ps aux | grep -v grep | grep nginx`
+      out << "\n"
+      out << `curl http://localhost/nginx_status 2>/dev/null`
+      out << "\n"
+    end
+
+    out << "\nGeneral Memory\n\n"
+    out << `free -m`
     out << "\n"
-    out << `curl http://localhost/nginx_status 2>/dev/null`
+
+    out << "\nLast ten unicorn reloads - (now: #{`date`.strip})\n"
+    out << `tail /mnt/log/unicorn_reloads.log`
     out << "\n"
+
+    puts "\e[H\e[2J"
+    puts out
+  rescue
+    # whoops
   end
-
-  out << "\nGeneral Memory\n\n"
-  out << `free -m`
-  out << "\n"
-
-  out << "\nLast ten unicorn reloads - (now: #{`date`.strip})\n"
-  out << `tail /mnt/log/unicorn_reloads.log`
-  out << "\n"
-
-  puts "\e[H\e[2J"
-  puts out
 
   sleep wait_time
 end

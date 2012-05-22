@@ -1,12 +1,23 @@
+# == Schema Information
+#
+# Table name: payouts
+#
+#  id             :string(36)      not null, primary key
+#  amount         :integer(4)      default(0), not null
+#  month          :integer(4)      not null
+#  year           :integer(4)      not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  partner_id     :string(36)      not null
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      default(1), not null
+#
+
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
 
-  STATUS_CODES = [ 0, 1 ]
-  # 0: invalid
-  # 1: normal
-  PAYMENT_METHODS = [ 1, 3 ]
-  # 1: paid
-  # 3: transfer
+  STATUS_CODES = { 0 => 'Invalid', 1 => 'Normal' }
+  PAYMENT_METHODS = { 1 => 'Paid', 3 => 'Transfer' }
 
   belongs_to :partner
 
@@ -19,28 +30,23 @@ class Payout < ActiveRecord::Base
 
   after_create :update_balance
 
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at
   end
 
   def status_string
-    case status
-    when 0; "Invalid"
-    when 1; "Normal"
-    end
+    STATUS_CODES[status]
   end
 
   def payment_method_string
-    case payment_method
-    when 1; "Paid"
-    when 3; "Transfer"
-    end
+    PAYMENT_METHODS[payment_method]
   end
+
   def is_transfer?; payment_method==3; end
 
-private
+  private
 
   def update_balance
     return true if amount == 0

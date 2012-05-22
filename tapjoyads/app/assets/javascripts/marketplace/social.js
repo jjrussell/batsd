@@ -1,7 +1,6 @@
 (function (Tap, $) {
   "use strict";
   var _t = window.i18n.t,
-    FB = window.FB,
     twitterOptions = window.twitterOptions,
     notify = function (message) {
       Tapjoy.Utils.notification({
@@ -12,6 +11,26 @@
 
   Tap.extend({
     Social: {
+      initiateFacebook: function (options, onReady) {
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId  : options.appId,
+            status : true,
+            cookie : true,
+            oauth : true,
+            xfbml : true
+          });
+
+          onReady();
+        };
+
+        (function() {
+          var e = document.createElement('script'); e.async = true;
+          e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
+          document.getElementById('fb-root').appendChild(e);
+        }());
+      },
+
       doFbLogin: function (redirect_url) {
         FB.login(function (response) {
           if (response.authResponse) {
@@ -249,28 +268,33 @@
     }
   });
 
-  $(function () {
-    if (!FB) { return; }
+  $(function () {    
+    var fbOpts = $("#fb-root").data("fb-options");
 
-    $(".login-to-facebook").click(function () {
-      var url = $(this).data("fb-url");
-      Tap.Social.doFbLogin(url);
-      return false;
-    });
+    if (!fbOpts) { return; }
 
-    if (window.location.search.match(/fb_logout/)) {
-      Tap.Social.doFbLogout();
-    }
+    Tap.Social.initiateFacebook(fbOpts, function () {
 
-    $(".post-to-facebook").click(function () {
-      var $$ = $(this),
-          icon = $$.data("icon"),
-          callback = $$.data("callback"),
-          facebookId = $$.data("fb-id"),
-          res;
+      $(".login-to-facebook").on('click', function () {
+        var url = $(this).data("fb-url");
+        Tap.Social.doFbLogin(url);
+        return false;
+      });
 
-      res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
-      return false;
+      if (window.location.search.match(/fb_logout/)) {
+        Tap.Social.doFbLogout();
+      }
+
+      $(".post-to-facebook").on('click', function () {
+        var $$ = $(this),
+            icon = $$.data("icon"),
+            callback = $$.data("callback"),
+            facebookId = $$.data("fb-id"),
+            res;
+
+        res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
+        return false;
+      });
     });
   });
 
@@ -335,7 +359,7 @@
       });
     }; // fetchTwitterFriendList
 
-    $(".invite-twitter-followers").click(function (event) {
+    $(".invite-twitter-followers").on('click', function (event) {
       event.preventDefault();
       var $$ = $(this),
           redirectPath = $$.data("redirect-path");

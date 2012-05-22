@@ -361,7 +361,7 @@ all_caps:
       report_bug: "Report Bug"
       reset_password_message: "Enter the email address associated with your account and we will send you a link to reset your password."
       reset_password_message_submit: "You should receive an email with instructions to reset your password in the next few minutes."
-      reset_password_retry: "If you are still having problems logging in, you can %{reset_password_url} or email"
+      reset_password_retry_html: "If you are still having problems logging in, you can %{reset_password_url} or email"
       reset_password_retry_url_text: "request another password reset email"
       review_app_name: "Review %{app_name}"
       review_created: "Successfully reviewed this app."
@@ -416,14 +416,14 @@ all_caps:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "CLICK HERE TO CONTINUE."
       download_action: HERE
-      download_link: "IF YOU DON'T HAVE THIS APP, CLICK %{download_action} TO DOWNLOAD IT."
-      earn_currency: "EARN %{amount_and_currency}"
+      download_link_html: "IF YOU DON'T HAVE THIS APP, CLICK %{download_action} TO DOWNLOAD IT."
+      earn_currency_html: "EARN %{amount_and_currency}"
       footer: "AFTER COMPLETING THESE STEPS, YOU WILL EARN %{amount_and_currency}."
       header: "FOLLOW THESE STEPS TO EARN %{currency}:"
       title: INSTRUCTIONS
     offerwall:
-      buy_currency: "BUY %{amount} %{currency}"
-      earn_currency: "EARN %{amount} %{currency}"
+      buy_currency_html: "BUY %{amount} %{currency}"
+      earn_currency_html: "EARN %{amount} %{currency}"
       free: FREE
       instructions: "ENGAGE IN ANY OF THE FOLLOWING ACTIONS TO RECEIVE %{currency}"
       instructions_non_rewarded: "DISCOVER WHAT'S HOT ON TAPJOY!"

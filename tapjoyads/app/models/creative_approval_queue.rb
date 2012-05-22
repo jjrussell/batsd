@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: creative_approval_queue
+#
+#  id       :integer(4)      not null, primary key
+#  offer_id :string(36)      not null
+#  user_id  :string(36)
+#  size     :text
+#
+
 class CreativeApprovalQueue < ActiveRecord::Base
   set_table_name 'creative_approval_queue'
 

@@ -1,13 +1,13 @@
 #content.home.current
   - if current_device.nil?
-    #noDevice.row.border.nbb
-      %h1.museo
+    #noDevice.border.nbb
+      %h1.museo.pl20.pb10.pt20
         = t('text.games.welcome_tapjoy')
       = render 'register_device'
 
   #tjmTopbar
     - if @featured_content.present?
-      - link_to(get_click_url(@featured_content.tracking_offer)) do
+      = link_to(get_click_url(@featured_content.tracking_offer)) do
         .banner
           .more
             .text.left.mr10
@@ -42,8 +42,8 @@
         - current_recommendations.each do |reco|
           .app
             - encrypt_app_id = ObjectEncryptor.encrypt(reco.id)
-            - link_to(games_get_app_path(:eid => encrypt_app_id)) do
-              .app-icon
+            = link_to(games_get_app_path(:eid => encrypt_app_id)) do
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => reco.icon_url }
             .details
               %span.title
@@ -56,8 +56,8 @@
         - @favorite_publishers.each do |fav_external_publisher|
           .app
             - @fav_encrypt_currency_id = ObjectEncryptor.encrypt(fav_external_publisher.currencies.first[:id])
-            - link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
-              .app-icon
+            = link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => fav_external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
             .details
               %span.title
@@ -68,7 +68,7 @@
                 -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
               %span.ui-icon-small.social.icon16
                 -# "#{@app_metadata.app_reviews.by_gamers.size}"
-            - link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
               .btn
                 = t('text.shared.earn_verb')
               .myapps-earn.ui-list-action.ui-joy-button.orange-action
@@ -83,10 +83,10 @@
         - @external_publishers.each do |external_publisher|
           - @encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
           .app
-            - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
-              .app-icon
+            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+              .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-            - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
               .details
                 %span.title
                   = external_publisher.app_name
@@ -96,7 +96,7 @@
                   -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
                 %span.ui-icon-small.social.icon16
                   -# "#{@app_metadata.app_reviews.by_gamers.size}"
-            - link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
               .btn
                 = t('text.shared.earn_verb')
               .myapps-earn.ui-list-action.ui-joy-button.orange-action
@@ -111,4 +111,3 @@
     Tapjoy.hasApps = true;
   - if current_recommendations.present?
     Tapjoy.hasRecommendations = true;
-

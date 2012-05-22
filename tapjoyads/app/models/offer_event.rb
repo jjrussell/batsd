@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: offer_events
+#
+#  id                  :string(36)      not null, primary key
+#  offer_id            :string(36)      not null
+#  daily_budget        :integer(4)
+#  user_enabled        :boolean(1)
+#  change_daily_budget :boolean(1)      default(FALSE), not null
+#  change_user_enabled :boolean(1)      default(FALSE), not null
+#  scheduled_for       :datetime        not null
+#  ran_at              :datetime
+#  disabled_at         :datetime
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+
 class OfferEvent < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -8,10 +25,10 @@ class OfferEvent < ActiveRecord::Base
   validates_inclusion_of :user_enabled, :in => [ true, false ], :if => Proc.new { |offer_event| offer_event.change_user_enabled? }
   validate :offer_is_changed, :scheduled_for_the_future
 
-  named_scope :to_run, lambda { { :conditions => [ 'scheduled_for <= ? AND ran_at IS NULL AND disabled_at IS NULL', Time.zone.now ], :order => 'scheduled_for' } }
-  named_scope :completed, :conditions => 'ran_at'
-  named_scope :disabled, :conditions => 'disabled_at'
-  named_scope :upcoming, :conditions => 'ran_at IS NULL and disabled_at IS NULL', :order => 'scheduled_for'
+  scope :to_run, lambda { { :conditions => [ 'scheduled_for <= ? AND ran_at IS NULL AND disabled_at IS NULL', Time.zone.now ], :order => 'scheduled_for' } }
+  scope :completed, :conditions => 'ran_at'
+  scope :disabled, :conditions => 'disabled_at'
+  scope :upcoming, :conditions => 'ran_at IS NULL and disabled_at IS NULL', :order => 'scheduled_for'
 
   CHANGEABLE_ATTRIBUTES = [ :user_enabled, :daily_budget ]
 

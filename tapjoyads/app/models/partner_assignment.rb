@@ -1,3 +1,12 @@
+# == Schema Information
+#
+# Table name: partner_assignments
+#
+#  id         :string(36)      not null, primary key
+#  user_id    :string(36)      not null
+#  partner_id :string(36)      not null
+#
+
 class PartnerAssignment < ActiveRecord::Base
   include UuidPrimaryKey
 

@@ -28,6 +28,13 @@ class PublisherUser < SimpledbShardedResource
     udids.length < MAX_UDIDS
   end
 
+  def remove!(udid)
+    if udids.include?(udid)
+      self.delete('udids', udid)
+      save
+    end
+  end
+
   def self.for_click(click)
     PublisherUser.new(:key => "#{click.publisher_app_id}.#{click.publisher_user_id}")
   end

@@ -4,6 +4,7 @@ describe Offer do
 
   it { should have_many :advertiser_conversions }
   it { should have_many :rank_boosts }
+  it { should have_many :sales_reps }
   it { should belong_to :partner }
   it { should belong_to :item }
 
@@ -705,7 +706,7 @@ describe Offer do
           Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
           @offer.tapjoy_enabled = true
           @offer.should_not be_valid
-          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+          @offer.errors[:tapjoy_enabled].join.should =~ /store id/i
         end
 
         it 'can be made true with store_id' do
@@ -822,8 +823,8 @@ describe Offer do
 
       it "fails if asset data not provided" do
         @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].should == "320x480 custom creative file not provided."
+        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
+        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
       end
 
       it "uploads assets to s3 when data is provided" do
@@ -857,6 +858,7 @@ describe Offer do
 
   describe '#calculate_target_installs' do
     before :each do
+      @offer.daily_budget = 0
       @offer.allow_negative_balance = false
       @offer.partner.balance = 1_000_00
       @num_installs_today = 1
@@ -892,6 +894,24 @@ describe Offer do
         expected = @offer.daily_budget - @num_installs_today
         target = @offer.calculate_target_installs(@num_installs_today)
         target.should == expected
+      end
+
+      context 'when self-promote only' do
+        before :each do
+          @offer.self_promote_only = true
+        end
+
+        it 'should be infinity' do
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should_not be_finite
+        end
+
+        it 'should be limited by daily budget' do
+          @offer.daily_budget = 100
+          expected = @offer.daily_budget - @num_installs_today
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should == expected
+        end
       end
     end
 
@@ -946,13 +966,36 @@ describe Offer do
     end
 
     it "still doesn't like long multibyte names" do
-      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
       Offer.for_display_ads.should_not include(@offer)
     end
 
     it "stops complaining about name length if the creatives are approved" do
       @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
       Offer.for_display_ads.should include(@offer)
+    end
+  end
+
+  context "third_party_tracking_url methods" do
+    describe 'impression_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.impression_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.impression_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'click_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.click_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.click_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'conversion_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.conversion_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.conversion_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
     end
   end
 
@@ -996,7 +1039,7 @@ describe Offer do
 
     context "with a provided timestamp" do
       before :each do
-        @ts = Time.zone.now + 3600;
+        @ts = 1.hour.from_now
         @urls.each do |url|
           Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
         end
@@ -1019,6 +1062,14 @@ describe Offer do
           @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
         end
       end
+    end
+  end
+
+  describe '#dashboard_statz_url' do
+    include Rails.application.routes.url_helpers
+
+    it 'matches URL for Rails statz_url helper' do
+      @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
     end
   end
 end

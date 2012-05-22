@@ -10,7 +10,7 @@
   %p
     Instructions: Please enter your email below.
 
-  - form_tag(:action => :create) do
+  = form_tag(:action => :create) do
     = hidden_field_tag(:udid, params[:udid])
     = hidden_field_tag(:click_key, params[:click_key])
     = label_tag(:email_address, 'Email:')

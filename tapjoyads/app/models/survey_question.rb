@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: survey_questions
+#
+#  id                 :string(36)      not null, primary key
+#  survey_offer_id    :string(36)
+#  text               :text            default(""), not null
+#  possible_responses :text
+#  format             :string(255)     not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#
+
 class SurveyQuestion < ActiveRecord::Base
   include UuidPrimaryKey
 
