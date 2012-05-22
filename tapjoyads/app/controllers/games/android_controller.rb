@@ -19,13 +19,13 @@ class Games::AndroidController < GamesController
     cookies[:device_type] = { :value => 'android', :expires => 1.year.from_now }
     if current_gamer.present?
       if current_gamer.devices.empty?
-        redirect_to finalize_games_gamer_device_path(:data => encrypt_data, :src => 'android_app')
+        redirect_to finalize_games_device_path(:data => encrypt_data, :src => 'android_app')
       else
         if valid_device_id(params[:udid])
           cookies[:data] = { :value => encrypt_data, :expires => 1.year.from_now }
           redirect_to games_path(:data => encrypt_data, :src => 'android_app')
         else
-          redirect_to finalize_games_gamer_device_path(:data => encrypt_data, :src => 'android_app')
+          redirect_to finalize_games_device_path(:data => encrypt_data, :src => 'android_app')
         end
       end
     else
