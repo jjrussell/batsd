@@ -38,7 +38,7 @@
         %td
           = link_to "Edit", edit_tools_rank_boost_path(rb)
           - if rb.active?
-            = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
+            = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :get, :confirm => 'Are you sure?'
 
 - content_for :page_javascript do
   :plain

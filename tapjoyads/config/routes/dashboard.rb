@@ -165,7 +165,6 @@ Tapjoyad::Application.routes.draw do
           post :stop_managing
         end
         resources :offer_discounts, :only => [:index, :new, :create] do
-
           member do
             post :deactivate
           end
@@ -285,7 +284,7 @@ Tapjoyad::Application.routes.draw do
 
         resources :rank_boosts, :except => [:show, :destroy] do
           member do
-            post :deactivate
+            get :deactivate
           end
         end
         resources :external_publishers, :only => [:index, :update]
