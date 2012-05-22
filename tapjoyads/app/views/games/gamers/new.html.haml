@@ -8,7 +8,7 @@
               = link_to(games_path) do
                 %img{ :src => BLANK_IMAGE }
 
-  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post ) do |f|
+  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post, :html => { 'data-root-url' => WEBSITE_URL } ) do |f|
     #signup-nav.signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')

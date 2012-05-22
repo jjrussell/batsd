@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: spend_shares
+#
+#  id             :string(36)      not null, primary key
+#  ratio          :float           not null
+#  effective_on   :date            not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  uncapped_ratio :float           not null
+#
+
 class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 

@@ -234,3 +234,14 @@ The pre-commit hook runs before any git commit. It automatically strips trailing
 ```
 ln -s tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
 ```
+
+.rvmrc file
+-----------
+
+If you would like to run projects with different gemsets or rubies, it can be helpful to have a .rvmrc file in the project. This will make it so whenever the folder is opened, the correct ruby + gemset will be used.
+
+Here is an example .rvmrc that uses `ruby-1.8.7p357` and a `tapjoyserver` gemset:
+
+```
+rvm ruby-1.8.7-p357@tapjoyserver
+```

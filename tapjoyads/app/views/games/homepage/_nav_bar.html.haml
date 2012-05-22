@@ -36,7 +36,10 @@
                   = t('text.games.on_my', :device_name => current_device.name)
                 %a.device-change
                   (#{t('text.games.change')})
-          #device-select.device-select.closed
+          - list = current_gamer ? current_gamer.all_device_data.to_json : [].to_json
+          - path = games_switch_device_path
+          - possible_links = { :ios => new_games_device_path, :android => GAMES_ANDROID_MARKET_URL }.to_json
+          #device-select.device-select.closed{ :data => { :list => list, 'select-path' => path, :links => possible_links } }
             #device-select-list.device-select-wrapper
           .device-form.hide
           .menu-nav
