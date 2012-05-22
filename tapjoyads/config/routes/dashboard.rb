@@ -166,7 +166,7 @@ Tapjoyad::Application.routes.draw do
         end
         resources :offer_discounts, :only => [:index, :new, :create] do
           member do
-            post :deactivate
+            get :deactivate
           end
 
         end
