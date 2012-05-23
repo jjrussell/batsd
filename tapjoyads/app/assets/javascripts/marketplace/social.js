@@ -279,13 +279,13 @@
     }
   });
 
-  $(function () {    
+  $(function () {
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }
 
     Tap.Social.initiateFacebook(fbOpts, function () {
-      $(".login-to-facebook, .log-in-with-facebook").on("click", function () {
+      $(".login-to-facebook, .log-in-with-facebook").on('click', function () {
         var url = $(this).data("fb-url");
         var submitFormId = $(this).data("submit-form-id");
         Tap.Social.doFbLogin(url, submitFormId);
@@ -296,7 +296,7 @@
         Tap.Social.doFbLogout();
       }
 
-      $(".post-to-facebook").on('click',function () {
+      $(".post-to-facebook").on('click', function () {
         var $$ = $(this),
             icon = $$.data("icon"),
             callback = $$.data("callback"),
