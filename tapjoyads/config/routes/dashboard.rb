@@ -199,6 +199,7 @@ Tapjoyad::Application.routes.draw do
           get :publisher_payout_info_changes
           get :money
           get :sanitize_users
+          post :update_user
           get :device_info
           get :failed_sdb_saves
           post :resolve_clicks
