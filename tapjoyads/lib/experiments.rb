@@ -1,20 +1,16 @@
 class Experiments
-  EXPERIMENTS = {
-    :default => 'a_optimization',
-    :a => 'a_optimization',
-    :b => 'b_optimization',
-    :c => 'c_optimization'
-  }
+  OPTIMIZATION_EXPERIMENT_IDS = [ 'a_optimization', 'b_optimization', 'c_optimization' ]
 
-  def self.choose(udid)
+  EXPERIMENTS = Hash.new(nil)
+  EXPERIMENTS[:optimization] = OPTIMIZATION_EXPERIMENT_IDS
+
+  def self.choose(udid, options = {})
     if udid.present?
-      udid_hash = udid.hash % 100
-      case
-      when udid_hash < 20 then EXPERIMENTS[:a]
-      when udid_hash < 40 then EXPERIMENTS[:b]
-      when udid_hash < 60 then EXPERIMENTS[:c]
-      else experiments[:default]
-      end
+      experiment = options[:experiment]
+      experiment_ids = EXPERIMENTS[experiment]
+      udid_index = "#{udid}#{experiment}".hash % experiment_ids.length
+
+      experiment_ids[udid_index]
     end
   end
 

@@ -1,8 +1,6 @@
 class OfferList
   PROMOTED_INVENTORY_SIZE = 3
 
-  attr_reader :offers
-
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
     @device                     = options.delete(:device)
@@ -75,7 +73,6 @@ class OfferList
   end
 
   def weighted_rand
-    offers = default_offers.clone
     while offers.any?
       weight_scale = 1 - offers.map(&:rank_score).min
       weights = offers.collect { |o| o.rank_score + weight_scale }
@@ -122,7 +119,6 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    offers = default_offers
     offers.each do |offer|
       class << offer; attr_accessor :rejections; end
       offer.rejections = rejections_for(offer)
@@ -137,6 +133,8 @@ class OfferList
   def default_offers
     @default_offers ||= get_default_offers
   end
+
+  alias_method :offers, :default_offers
 
   private
 
@@ -157,13 +155,15 @@ class OfferList
   end
 
   def get_default_offers
-    offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
+    return [] if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
+
+    default_offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
       OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
     end.value
 
-    offers.each { |o| o.postcache_rank_score(@currency, @source, false) } if @currency
+    default_offers.each { |o| o.postcache_rank_score(@currency, @source, false) } if @currency
 
-    offers
+    default_offers
   end
 
   def augmented_offer_list

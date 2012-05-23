@@ -4,8 +4,8 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup
-  before_filter :choose_papaya_experiment, :only => [:index, :webpage]
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_experiment_parameters
+  # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
@@ -145,7 +145,7 @@ class GetOffersController < ApplicationController
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
       :all_videos           => params[:all_videos],
-      :algorithm            => choose_optimization_experiment,
+      :algorithm            => @algorithm,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
@@ -168,13 +168,23 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def choose_optimization_experiment
-    choose_experiment
+  def set_experiment_parameters
+    experiment = case params[:source]
+    when 'tj_games'
+      :optimization
+    else
+      nil
+    end
+
+    choose_experiment(experiment)
+
     case params[:exp]
-    when 'a_optimization' then nil
-    when 'b_optimization' then '101'
-    when 'c_optimization' then '101' #TODO change this to another experiment name that is actually in the data before going live
-    else nil
+    when 'a_optimization'
+      @algorithm = nil
+    when 'b_optimization'
+      @algorithm = '101'
+    when 'c_optimization'
+      @algorithm = '101'      
     end
   end
 
