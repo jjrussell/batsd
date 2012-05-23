@@ -87,7 +87,8 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
   def setup_partial
     @table_partial = @conditions.fetch(:item_type) { 'table' }.downcase
     if @table_partial != 'table'
-      partial_path = Rails.root.join('app', 'views', 'tools', 'approvals', "_#{@table_partial}.html.#{view_language}")
+      view_path = self.class.to_s.underscore.gsub(/_controller$/, '')
+      partial_path = Rails.root.join('app/views', view_path, "_#{@table_partial}.html.#{view_language}")
       @table_partial = 'table' unless File.exist?(partial_path)
     end
   end
@@ -97,6 +98,6 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
   end
 
   def view_language
-    ActsAsApprovable.view_language
+    'haml'
   end
 end

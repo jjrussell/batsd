@@ -222,20 +222,21 @@ Tapjoyad::Application.routes.draw do
             post :delete
           end
         end
-        resources :approvals, :as => 'acceptance', :only => [:index] do
+        resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
           collection do
-            :history
-            :mine
+            get :history
+            get :mine
+
+            get ':type',          :action => :index,   :as => :typed
+            get ':type/history',  :action => :history, :as => :typed_history
+            get ':type/mine',     :action => :mine,    :as => :typed_mine
           end
           member do
-            :approve
-            :reject
-            :assign
+            post :approve
+            post :reject
+            post :assign
           end
         end
-        match 'acceptance/:type' => 'approvals#index'
-        match 'acceptance/:type/history' => 'approvals#history'
-        match 'acceptance/:type/mine' => 'approvals#mine'
         resources :premier_partners, :only => [:index]
         resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
         resources :orders, :only => [:new, :create] do
@@ -329,17 +330,6 @@ Tapjoyad::Application.routes.draw do
         resources :payout_freezes, :only => [:index, :create] do
           member do
             post :disable
-          end
-        end
-        resources :currency_approvals, :only => [:index] do
-          collection do
-            :mine
-            :history
-          end
-          member do
-            :approve
-            :reject
-            :assign
           end
         end
         resources :wfhs, :only => [:index, :new, :create, :edit, :update, :destroy]
