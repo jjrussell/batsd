@@ -13,8 +13,8 @@ class PartnerAssignment < ActiveRecord::Base
   belongs_to :user
   belongs_to :partner
 
-  validates_presence_of :user, :partner
-  validates_uniqueness_of :user_id, :scope => [ :partner_id ]
+  validates :user_id, :partner_id, :presence => true
+  validates :user_id, :uniqueness => { :scope => [ :partner_id ] }
 
   before_create :set_reseller
 
