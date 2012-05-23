@@ -145,6 +145,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
     transfer_params = sanitize_currency_params(params[:transfer], [:amount])
     transfer_params[:transfer_type] = transfer_params[:transfer_type].to_i
+    transfer_params[:amount] = transfer_params[:amount].to_i
     @transfer = Transfer.new(transfer_params)
 
     unless @transfer.valid?
@@ -161,7 +162,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       order.save!
 
       email = order.partner.users.first.email rescue '(no email)'
-      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount.to_i / 100.0)}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
         log_activity(marketing_order)
@@ -179,6 +180,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
   def create_dev_credit
     transfer_params = sanitize_currency_params(params[:transfer], [:amount])
     transfer_params[:transfer_type] = transfer_params[:transfer_type].to_i
+    transfer_params[:amount] = transfer_params[:amount].to_i
     @transfer = Transfer.new(transfer_params)
 
     unless @transfer.valid?
