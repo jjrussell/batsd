@@ -165,6 +165,7 @@ Tapjoyad::Application.routes.draw do
           post :stop_managing
         end
         resources :offer_discounts, :only => [:index, :new, :create] do
+
           member do
             post :deactivate
           end
@@ -210,11 +211,8 @@ Tapjoyad::Application.routes.draw do
           get :view_pub_user_account
           post :detach_pub_user_account
         end
-        resources :users, :only => :index do
-          member do
-            post :update_user
-          end
-        end
+
+
       end
 
       namespace :tools do
