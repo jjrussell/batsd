@@ -7,7 +7,7 @@
         = hidden_field_tag :path, params[:path]
       .title
         = t("text.games.log_in_tapjoy")
-      .form-error
+      .form-error.hidden
         &nbsp;
         = error_message_on gamer_session, :email
         = error_message_on gamer_session, :password

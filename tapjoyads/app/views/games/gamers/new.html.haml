@@ -7,8 +7,8 @@
             .logo
               = link_to(games_path) do
                 %img{ :src => BLANK_IMAGE }
-
-  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post, :html => { 'data-root-url' => WEBSITE_URL } ) do |f|
+  - possible_links = { :ios => new_games_device_path, :android => GAMES_ANDROID_MARKET_URL }.to_json
+  = form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post, :html => { 'data-root-url' => WEBSITE_URL, 'data-link-urls' => possible_links } ) do |f|
     #signup-nav.signup-nav
       .signup-nav-menu
         %span.title= t('text.shared.sign_up')
@@ -54,10 +54,10 @@
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
 
-    #register-progress.register-progress.hidden.clearfix
-      .register-message
+    .register-progress.clearfix
+      .register-message.hidden
         &nbsp;
-      .register-loader
+      .register-loader.hidden
         .register-text.left
           = t('text.games.registering')
         .left
