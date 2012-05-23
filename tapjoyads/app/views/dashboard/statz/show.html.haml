@@ -95,7 +95,7 @@
       %li
         #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
         = link_to('[Edit]', edit_tools_rank_boost_path(boost))
-        = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :get, :confirm => 'Are you sure?')
+        = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
 
 .clear
 
