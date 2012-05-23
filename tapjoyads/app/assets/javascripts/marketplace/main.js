@@ -849,6 +849,10 @@ $(document).ready(function(){
   }
   $('.menu-grid').on('click', buildDeviceSwitcher);
 
+  if (($('.home').length >0) && Tapjoy.device.idevice) {
+    Tapjoy.Plugins.showAddHomeDialog();
+  }
+
   (function () {
     if (window._tjHtmlDone && window._tjStartTime) {
       Tapjoy.Utils.googleLog("Page Html", "load", "Time in ms", (_tjHtmlDone - _tjStartTime));

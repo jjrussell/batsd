@@ -71,8 +71,8 @@
         }
         function setPosition () {
           var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
-          posY = TJG.vars.isIPad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
-          posX = TJG.vars.isIPad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
+          posY = Tapjoy.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+          posX = Tapjoy.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
           if (posY == matrix.m42 && posX == matrix.m41) return;
           clearInterval(theInterval);
           el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
@@ -124,10 +124,10 @@
         }
         setTimeout(function () {
           var duration;
-          startY = TJG.vars.isIPad  ? window.scrollY : window.innerHeight + window.scrollY;
-          startX = TJG.vars.isIPad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
-          el.style.top = TJG.vars.isIPad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
-          el.style.left = TJG.vars.isIPad ? startX + (TJG.vars.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
+          startY = Tapjoy.device.ipad  ? window.scrollY : window.innerHeight + window.scrollY;
+          startX = Tapjoy.device.ipad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
+          el.style.top = Tapjoy.device.ipad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
+          el.style.left = Tapjoy.device.ipad ? startX + (Tapjoy.browser.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
           switch (options.animationIn) {
             case 'drop':
             if (Tapjoy.device.ipad) {

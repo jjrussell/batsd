@@ -213,7 +213,7 @@
       },
 
       Storage: {
-        set: function(k) {
+        set: function(k,v) {
           try {
             localStorage[k] = v;
             return true;
