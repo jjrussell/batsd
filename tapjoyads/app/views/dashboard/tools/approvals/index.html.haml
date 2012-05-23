@@ -6,7 +6,7 @@
     for #{@conditions[:item_type].pluralize}
 
 - if @hide_type
-  - form_url = tools_approvals_path
+  - form_url = tools_acceptance_index_path
 - else
   - form_url = {:action => :index, :controller => params[:calling_controller] || params[:controller] }
 = form_for(:approval, :url => form_url, :html => {:method => :get}) do |f|

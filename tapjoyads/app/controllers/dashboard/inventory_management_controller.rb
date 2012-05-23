@@ -30,13 +30,13 @@ class Dashboard::InventoryManagementController < Dashboard::DashboardController
     if @app
       flash[:error] = "Unable to save the list of promoted offers" unless @app.update_promoted_offers(params[:promoted_offers] || [])
     end
-    redirect_to per_app_inventory_management_path(@app ? { :current_app => @app.id } : nil)
+    redirect_to per_app_inventory_management_index_path(@app ? { :current_app => @app.id } : nil)
   end
 
   private
 
   def init_partner_promoted_offers
-    @selected_offers = current_partner.get_promoted_offers
+    @selected_offers = current_partner.get_promoted_offers.to_a
     @available_offers = current_partner.offers_for_promotion
   end
 
@@ -49,7 +49,7 @@ class Dashboard::InventoryManagementController < Dashboard::DashboardController
     end
     return unless @app && @app.primary_currency
 
-    @currently_promoted = @app.primary_currency.get_promoted_offers
+    @currently_promoted = @app.primary_currency.get_promoted_offers.to_a
 
     app_platform = @app.platform.to_sym
     return unless app_platform

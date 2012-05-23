@@ -65,9 +65,9 @@ Dir.chdir "tapjoyads" do
   else
     `bundle install --deployment`
   end
+
+  puts "Restarting unicorn"
+  system "../server/start_or_reload_unicorn.rb"
+
+  system "../server/restart_job_daemon.rb"
 end
-
-puts "Restarting unicorn"
-system "server/start_or_reload_unicorn.rb"
-
-system "server/restart_job_daemon.rb"
