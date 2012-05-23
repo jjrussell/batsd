@@ -289,22 +289,22 @@ $(document).ready(function(){
                   else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
                     document.location.href = d.link_device_url;
                   }
-                  else if (Tapjoy.device.android && possibleLinks.android) { // if android device
+                  else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
                     $('.register-loader').hide();
                     $('#register-android').show();
                     $('#gamer_submit').click(function() {
-                      document.location.href = possibleLinks.android;
+                      document.location.href = linkDeviceUrls.android;
                     });
                   }
                   else {
                     goHome = true;
                   }
                 }
-                else if (Tapjoy.device.android && possibleLinks.android){
+                else if (Tapjoy.device.android && linkDeviceUrls.android){
                   $('.register-loader').hide();
                   $('#register-android').show();
                   $('#gamer_submit').click(function() {
-                    document.location.href = possibleLinks.android;
+                    document.location.href = linkDeviceUrls.android;
                   });
                 }
                 else if (rootUrl) {
@@ -314,8 +314,8 @@ $(document).ready(function(){
                   goHome = true;
                 }
                 if (goHome) {
-                  if (Tapjoy.rootPath) {
-                    document.location.href = Tapjoy.rootPath;
+                  if (rootUrl) {
+                    document.location.href = rootUrl;
                   }
                   else {
                     document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
