@@ -15,11 +15,12 @@
         = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
 
     #register-form.register-form.clearfix
-      .ui-joy-button.orange-action.log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }
-        %a.facebook-square
-          = t('text.games.sign_up_with_facebook')
 
-      .form-separator or
+      - if !@hide_fb_signup
+        .ui-joy-button.orange-action.log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }
+          %a.facebook-square
+            = t('text.games.sign_up_with_facebook')
+        .form-separator or
 
       .form-error
         &nbsp;
