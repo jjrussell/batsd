@@ -49,7 +49,7 @@ class Games::HomepageController < GamesController
 
   def earn
     @tour_as_guest = true
-    device_id = current_device_id
+    device_id = current_device_id || 'staz_test_udid'
     @device = Device.new(:key => device_id) if device_id.present?
     @app = App.find(params_id)
     @active_currency = @app.currencies.first

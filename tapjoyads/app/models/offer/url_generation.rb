@@ -37,7 +37,6 @@ module Offer::UrlGeneration
   end
 
   def complete_action_url(options)
-    Rails.logger.debug "WTUF   complete action_url: " + options.inspect
     udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
@@ -262,7 +261,7 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
-  def format_as_click_key(params)
+  def format_as_click_key(param s)
     if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     elsif item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
@@ -270,6 +269,6 @@ module Offer::UrlGeneration
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
-  end
-
+  e
+  nd
 end
