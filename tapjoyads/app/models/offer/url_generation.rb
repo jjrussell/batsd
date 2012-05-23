@@ -37,6 +37,7 @@ module Offer::UrlGeneration
   end
 
   def complete_action_url(options)
+    Rails.logger.debug "WTUF   complete action_url: " + options.inspect
     udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
@@ -88,10 +89,10 @@ module Offer::UrlGeneration
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
     when 'DeeplinkOffer'
-      #"#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
-      final_url = games_earn_path(:data=>ObjectEncryptor.encrypt(params))
+      params = { :udid => udid, :id => currency.id, :click_key => click_key }
+      data=ObjectEncryptor.encrypt(params)
+      final_url = "#{WEBSITE_URL}/games/earn?data=#{data}"
     end
-
     final_url
   end
 

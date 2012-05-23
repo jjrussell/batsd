@@ -102,6 +102,30 @@ describe ClickController do
     end
   end
 
+  describe '#deeplink' do
+    before :each do
+      @currency = Factory(:currency)
+      @deeplink_offer = @currency.deeplink_offer
+      @udid = '0000222200002229'
+      @offer= @deeplink_offer.primary_offer
+    end
+    it 'redirects to the correct earn page' do
+      params={ :udid => @udid, :offer_id => @offer.id,
+               :publisher_app_id => @currency.app_id,
+               :currency_id => @currency.id,
+               :viewed_at => (Time.zone.now - 1.hour).to_i }
+      data={ :data => ObjectEncryptor.encrypt(params) }
+      get(:deeplink, data)
+      response.should be_redirect
+      url_params = { :udid => @udid,
+                     :publisher_app_id => @currency.app_id,
+                     :currency => @currency,
+                     :click_key => Click.format_as_click_key(params)
+      }
+      response.should redirect_to(@offer.destination_url(url_params))
+    end
+
+  end
   describe "#app" do
     before :each do
       @offer = Factory(:app).primary_offer

@@ -85,6 +85,7 @@ class App < ActiveRecord::Base
   has_many :non_rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded"
   has_one :primary_non_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded", :order => "created_at"
   has_many :action_offers
+  has_many :deeplink_offers
   has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings

@@ -29,15 +29,15 @@ Tapjoyad::Application.routes.draw do
     root :to => 'homepage#index'
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos
-    match 'privacy' => 'homepage#privacy', :as => :privacy
+    get 'privacy' => 'homepage#privacy', :as => :privacy
     match 'help' => 'homepage#help', :as => :help
     match 'switch_device' => 'homepage#switch_device', :as => :switch_device
     match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
-    match 'earn(/:id)' => 'homepage#earn', :as => :earn
+    get 'earn(/:eid)' => 'homepage#earn', :as => :earn
     match 'more_apps' => 'homepage#index', :as => :more_apps
-    match 'get_app' => 'homepage#get_app', :as => :get_app
+    get 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
-    match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
+    get 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
     match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
     match 'translations/:filename.js' => 'homepage#translations', :as => :translations
     resources :my_apps, :only => [:show, :index]
@@ -45,9 +45,9 @@ Tapjoyad::Application.routes.draw do
     get 'login' => 'gamer_sessions#new', :as => :login
     post 'login' => 'gamer_sessions#create'
     match 'logout' => 'gamer_sessions#destroy', :as => :logout
-    match 'support' => 'support_requests#new', :type => 'contact_support'
-    match 'bugs' => 'support_requests#new', :type => 'report_bug'
-    match 'feedback' => 'support_requests#new', :type => 'feedback'
+    get 'support' => 'support_requests#new', :type => 'contact_support'
+    get 'bugs' => 'support_requests#new', :type => 'report_bug'
+    get 'feedback' => 'support_requests#new', :type => 'feedback'
     resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
       member do
         put :update_password

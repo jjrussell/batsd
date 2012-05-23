@@ -35,9 +35,7 @@ class Games::HomepageController < GamesController
       if app_reviews.blank?
         app_reviews = AppReview.where(:app_metadata_id => @app_metadata.id, :is_blank => false).includes(:author).paginate(:page => params[:app_reviews_page])
         app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
-
         review_authors_not_viewer = app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
-
         rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
         rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
         app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
@@ -50,6 +48,7 @@ class Games::HomepageController < GamesController
   end
 
   def earn
+    @tour_as_guest = true
     device_id = current_device_id
     @device = Device.new(:key => device_id) if device_id.present?
     @app = App.find(params_id)
@@ -58,7 +57,7 @@ class Games::HomepageController < GamesController
     return unless verify_records([ @active_currency, @device ])
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
-      @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
+      @mark_as_favorite = current_gamer && !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
     end
 
     respond_to do |f|

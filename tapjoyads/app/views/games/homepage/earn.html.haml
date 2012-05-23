@@ -1,3 +1,5 @@
+- @hide_login = true
+= render "login_modal"
 #earn.current
   .panel
     .page-header
@@ -46,7 +48,7 @@
       .review-area
         - @app.currencies.each_with_index do |c, i|
           .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
-            - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer.id)
+            - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer && current_gamer.id)
             = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }
       .section.dark.clearfix
         .heading
