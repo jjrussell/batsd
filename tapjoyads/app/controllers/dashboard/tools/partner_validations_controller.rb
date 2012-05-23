@@ -4,7 +4,7 @@ class Dashboard::Tools::PartnerValidationsController < Dashboard::DashboardContr
   filter_access_to :all
 
   def index
-    @filter_options = [['All',''],['Unconfirmed - Actionable', '1'],['Unconfirmed - All', '2'], ['Confirmed', '3']]
+    @filter_options = [['All',''], ['Unconfirmed - Actionable', '1'], ['Unconfirmed - All', '2'], ['Confirmed', '3']]
     @partners = Partner.to_payout
 
     @partners = @partners.includes(:payout_info, { :users => :user_roles })
