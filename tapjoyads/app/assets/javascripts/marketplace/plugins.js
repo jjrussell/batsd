@@ -6,11 +6,11 @@
 
       showAddHomeDialog : function() {
         var startY = startX = 0,
-          boldText = Tapjoy.Utils.sprintfTemplate("<span class='bold'>%s</span>"),
+          boldText = Tap.Utils.sprintfTemplate("<span class='bold'>%s</span>"),
         options = {
           message: '<div>'+
               _t('games.add_to_homescreen', {
-                tapjoy: boldText("Tapjoy")
+                tapjoy: boldText("Tap")
               })+
             '</div><div class="bookmark"><span>'+
               _t("games.tap_that", {
@@ -28,9 +28,9 @@
           iterations: 5
         },
         theInterval, closeTimeout, el, i, l,
-        expired = Tapjoy.Utils.Storage.get("tjg.bookmark.expired"),
-        shown = Tapjoy.Utils.Storage.get("tjg.bookmark.shown");
-        if (Tapjoy.Utils.isEmpty(shown)) {
+        expired = Tap.Utils.Storage.get("tjg.bookmark.expired"),
+        shown = Tap.Utils.Storage.get("tjg.bookmark.shown");
+        if (Tap.Utils.isEmpty(shown)) {
           shown = 0;
         }
         shown = parseInt(shown);
@@ -38,15 +38,15 @@
           return;
         }
         if (shown >= 4) {
-          Tapjoy.Utils.Storage.set("tjg.bookmark.expired", "true");
+          Tap.Utils.Storage.set("tjg.bookmark.expired", "true");
         }
-        Tapjoy.browser.version =  Tapjoy.browser.version ?  Tapjoy.browser.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
+        Tap.browser.version =  Tap.browser.version ?  Tap.browser.version[0].replace(/[^\d_]/g,'').replace('_','.')*1 : 0;
         expired = expired == 'null' ? 0 : expired*1;
         var div = document.createElement('div'), close;
         div.id = 'addToHome';
         div.style.cssText += 'position:absolute;-webkit-transition-property:-webkit-transform,opacity;-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);';
         div.style.left = '-9999px';
-        div.className = (Tapjoy.device.ipad ? 'ipad wide' : 'iphone');
+        div.className = (Tap.device.ipad ? 'ipad wide' : 'iphone');
         var m =  options.message;
         var a = (options.arrow ? '<span class="arrow"></span>' : '');
         var t = [
@@ -71,8 +71,8 @@
         }
         function setPosition () {
           var matrix = new WebKitCSSMatrix(window.getComputedStyle(el, null).webkitTransform),
-          posY = Tapjoy.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
-          posX = Tapjoy.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
+          posY = Tap.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+          posX = Tap.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX;
           if (posY == matrix.m42 && posX == matrix.m41) return;
           clearInterval(theInterval);
           el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
@@ -86,14 +86,14 @@
           clearTimeout(closeTimeout);
           closeTimeout = null;
           el.removeEventListener('webkitTransitionEnd', transitionEnd, false);
-          var posY = Tapjoy.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
-          posX = Tapjoy.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
+          var posY = Tap.device.ipad ? window.scrollY - startY : window.scrollY + window.innerHeight - startY,
+          posX = Tap.device.ipad ? window.scrollX - startX : window.scrollX + Math.round((window.innerWidth - el.offsetWidth)/2) - startX,
           opacity = '0.95',
           duration = '0';
           el.style.webkitTransitionProperty = '-webkit-transform,opacity';
           switch (options.animationOut) {
             case 'drop':
-            if (Tapjoy.device.ipad) {
+            if (Tap.device.ipad) {
               duration = '0.4s';
               opacity = '0';
               posY = posY + 50;
@@ -103,7 +103,7 @@
             }
             break;
             case 'bubble':
-            if (Tapjoy.device.ipad) {
+            if (Tap.device.ipad) {
               duration = '0.8s';
               posY = posY - el.offsetHeight - options.bottomOffset - 50;
             }
@@ -124,13 +124,13 @@
         }
         setTimeout(function () {
           var duration;
-          startY = Tapjoy.device.ipad  ? window.scrollY : window.innerHeight + window.scrollY;
-          startX = Tapjoy.device.ipad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
-          el.style.top = Tapjoy.device.ipad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
-          el.style.left = Tapjoy.device.ipad ? startX + (Tapjoy.browser.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
+          startY = Tap.device.ipad  ? window.scrollY : window.innerHeight + window.scrollY;
+          startX = Tap.device.ipad  ? window.scrollX : Math.round((window.innerWidth - el.offsetWidth)/2) + window.scrollX;
+          el.style.top = Tap.device.ipad ? startY + options.bottomOffset + 'px' : startY - el.offsetHeight - options.bottomOffset + 'px';
+          el.style.left = Tap.device.ipad ? startX + (Tap.browser.version >=5 ? 160 : 208) - Math.round(el.offsetWidth/2) + 'px' : startX + 'px';
           switch (options.animationIn) {
             case 'drop':
-            if (Tapjoy.device.ipad) {
+            if (Tap.device.ipad) {
               duration = '0.6s';
               el.style.webkitTransform = 'translate3d(0,' + -(window.scrollY + options.bottomOffset + el.offsetHeight) + 'px,0)';
             }
@@ -140,7 +140,7 @@
             }
             break;
             case 'bubble':
-            if (Tapjoy.device.ipad) {
+            if (Tap.device.ipad) {
               duration = '0.6s';
               el.style.opacity = '0'
               el.style.webkitTransform = 'translate3d(0,' + (startY + 50) + 'px,0)';
@@ -158,7 +158,7 @@
             el.style.webkitTransitionDuration = duration;
             el.style.opacity = '0.95';
             shown = shown + 1;
-            Tapjoy.Utils.Storage.set("tjg.bookmark.shown", shown);
+            Tap.Utils.Storage.set("tjg.bookmark.shown", shown);
             el.style.webkitTransform = 'translate3d(0,0,0)';
             el.addEventListener('webkitTransitionEnd', transitionEnd, false);
             }, 0);
@@ -169,4 +169,4 @@
 
     }
   });
-})(Tapjoy);
+})(Tap);
