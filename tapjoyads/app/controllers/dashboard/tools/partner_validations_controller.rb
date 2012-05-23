@@ -40,6 +40,6 @@ class Dashboard::Tools::PartnerValidationsController < Dashboard::DashboardContr
     partner = Partner.find(params[:partner_id])
     log_activity(partner)
     partner.confirm_for_payout(current_user)
-    render :json => { :success => partner.save, :was_confirmed =>  partner.confirmation_notes.blank?, :notes =>partner.confirmation_notes, :can_confirm => partner.can_be_confirmed?(current_user) }
+    render :json => { :success => partner.save, :was_confirmed =>  partner.confirmation_notes.blank?, :notes => partner.confirmation_notes, :can_confirm => partner.can_be_confirmed?(current_user) }
   end
 end
