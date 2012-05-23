@@ -7,6 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
+    @hide_fb_signup = UiConfig.is_fb_signup_hidden
     redirect_to games_path if current_gamer.present?
   end
 
