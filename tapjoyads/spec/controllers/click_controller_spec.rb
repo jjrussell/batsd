@@ -120,7 +120,7 @@ describe ClickController do
       url_params = { :udid => @udid,
                      :publisher_app_id => @currency.app_id,
                      :currency => @currency,
-                     :click_key => Click.format_as_click_key(params)
+                     :click_key => @offer.format_as_click_key(params)
       }
       response.should redirect_to(@offer.destination_url(url_params))
     end

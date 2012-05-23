@@ -332,7 +332,7 @@ class ClickController < ApplicationController
   end
 
   def click_key
-    @click_key ||= Click.format_as_click_key( params.merge(:item_type=>@offer.item_type) )
+    @click_key ||= @offer.format_as_click_key( params.slice(:udid, :advertiser_app_id, :gamer_id) )
   end
 
   def handle_multi_complete_video

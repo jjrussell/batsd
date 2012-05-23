@@ -261,4 +261,15 @@ module Offer::UrlGeneration
     uri = URI.parse(DASHBOARD_URL)
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
+
+  def format_as_click_key(params)
+    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    elsif item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    else
+      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
+  end
+
 end
