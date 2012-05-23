@@ -30,7 +30,7 @@ module Offer::UrlGeneration
       :language_code         => language_code,
       :display_multiplier    => display_multiplier,
       :library_version       => library_version,
-      :os_version            => os_version,
+      :os_version            => os_version
     }
 
     "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"

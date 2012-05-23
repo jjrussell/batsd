@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: gamer_devices
+#
+#  id          :string(36)      not null, primary key
+#  gamer_id    :string(36)      not null
+#  device_id   :string(255)     not null
+#  name        :string(255)     not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#  device_type :string(255)
+#
+
 class GamerDevice < ActiveRecord::Base
   include UuidPrimaryKey
 

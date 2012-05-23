@@ -25,6 +25,6 @@
   obj["TapPoints"]         = @tap_points if @tap_points.present?
   obj["MoreDataAvailable"] = @more_data_available if @more_data_available > 0
 
-= "#{params[:callback].gsub(/\W/, '')}(" if params[:callback].present?
-= obj.to_json
-= ")" if params[:callback].present?
+= raw "#{params[:callback].gsub(/\W/, '')}(" if params[:callback].present?
+= raw obj.to_json
+= raw ")" if params[:callback].present?

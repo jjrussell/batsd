@@ -111,4 +111,14 @@ class Reward < SimpledbShardedResource
     end
   end
 
+  def click
+    return nil if click_key.blank?
+
+    Click.new(:key => click_key)
+  end
+
+  def offer
+    Offer.find_by_id(offer_id)
+  end
+
 end

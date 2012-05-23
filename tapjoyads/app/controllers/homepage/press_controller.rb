@@ -2,7 +2,7 @@
 ## @description Controls press section of the website
 ## @help News entries are loaded via constructor. Press/index.html.haml contains the main press view but viewing articles uses press.html.haml as the layout
 
-class Homepage::PressController < WebsiteController
+class Homepage::PressController < Homepage::HomepageController
   layout 'press'
 
   def show

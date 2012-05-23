@@ -15,8 +15,8 @@ describe Games::Social::TwitterController do
 
   describe '#start_oauth' do
     before :each do
-      token = mock('token')
-      secret = mock('secret')
+      token = 'token'
+      secret = 'secret'
       @authorize_url = "http://#{request.host_with_port}#{games_social_twitter_finish_oauth_path}"
 
       @fake_consumer.stubs(:get_request_token).returns(@req_token)
@@ -38,8 +38,8 @@ describe Games::Social::TwitterController do
     before :each do
       access_token = mock('access_token')
       @twitter_id = 'fake_id'
-      token = "#{@twitter_id}-#{mock('rest_token')}"
-      secret = mock('secret')
+      token = "#{@twitter_id}-#{'rest_token'}"
+      secret = 'secret'
       OAuth::RequestToken.stubs(:new).returns(@req_token)
       @req_token.stubs(:get_access_token).returns(access_token)
       access_token.stubs(:token).returns(token)

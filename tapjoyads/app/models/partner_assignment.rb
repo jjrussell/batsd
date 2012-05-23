@@ -1,11 +1,20 @@
+# == Schema Information
+#
+# Table name: partner_assignments
+#
+#  id         :string(36)      not null, primary key
+#  user_id    :string(36)      not null
+#  partner_id :string(36)      not null
+#
+
 class PartnerAssignment < ActiveRecord::Base
   include UuidPrimaryKey
 
   belongs_to :user
   belongs_to :partner
 
-  validates_presence_of :user, :partner
-  validates_uniqueness_of :user_id, :scope => [ :partner_id ]
+  validates :user_id, :partner_id, :presence => true
+  validates :user_id, :uniqueness => { :scope => [ :partner_id ] }
 
   before_create :set_reseller
 

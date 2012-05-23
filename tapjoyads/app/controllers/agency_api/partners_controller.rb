@@ -64,7 +64,7 @@ class AgencyApi::PartnersController < AgencyApiController
     PartnerAssignment.create!(:user => user, :partner => partner)
     PartnerAssignment.create!(:user => @agency_user, :partner => partner)
 
-    TapjoyMailer.deliver_new_secondary_account(user.email, "#{DASHBOARD_URL}/password-reset/#{user.perishable_token}/edit")
+    TapjoyMailer.new_secondary_account(user.email, "#{DASHBOARD_URL}/password-reset/#{user.perishable_token}/edit").deliver
 
     save_activity_logs
     render_success({ :partner_id => partner.id })

@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: survey_offers
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  name       :string(255)     not null
+#  hidden     :boolean(1)      default(FALSE), not null
+#  created_at :datetime
+#  updated_at :datetime
+#  locked     :boolean(1)      default(FALSE), not null
+#
+
 class SurveyOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
@@ -21,9 +34,9 @@ class SurveyOffer < ActiveRecord::Base
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
   after_update :update_offer
-  cache_associations :survey_questions
+  set_callback :cache_associations, :before, :survey_questions
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def bid
     if @bid_price
