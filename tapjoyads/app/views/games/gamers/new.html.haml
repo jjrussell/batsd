@@ -16,7 +16,7 @@
 
     #register-form.register-form.clearfix
 
-      - if !@hide_fb_signup
+      - unless @hide_fb_signup
         .ui-joy-button.orange-action.log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }
           %a.facebook-square
             = t('text.games.sign_up_with_facebook')
