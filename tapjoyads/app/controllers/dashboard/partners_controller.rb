@@ -144,8 +144,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     end
 
     transfer_params = sanitize_currency_params(params[:transfer], [:amount])
-    transfer_params[:transfer_type] = transfer_params[:transfer_type].to_i
-    transfer_params[:amount] = transfer_params[:amount].to_i
+    transfer_params[:transfer_type] = transfer_params[:transfer_type]
     @transfer = Transfer.new(transfer_params)
 
     unless @transfer.valid?
@@ -153,7 +152,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     end
 
     Partner.transaction do
-      payout, order, marketing_order = @transfer.transfer_type == 4 ? @partner.build_recoupable_marketing_credit(@transfer.amount, @transfer.internal_notes) : @partner.build_transfer(@transfer.amount, @transfer.internal_notes)
+      payout, order, marketing_order = @transfer.transfer_type.to_i == 4 ? @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes) : @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
 
       log_activity(payout)
       payout.save!
@@ -162,7 +161,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       order.save!
 
       email = order.partner.users.first.email rescue '(no email)'
-      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
+      flash[:notice] = "The transfer of <b>$#{"%.2f" % (@transfer.amount.to_i / 100.0)}</b> to <b>#{email}</b> was successfully created."
 
       if marketing_order.present?
         log_activity(marketing_order)
