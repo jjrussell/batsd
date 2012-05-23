@@ -28,7 +28,7 @@
         %td= permitted_to?(:index, :dashboard_partners_offer_discounts) ? link_to(partner.name_or_contact_name, partner) : partner.name_or_contact_name
         %td
           .discount= partner.premier_discount
-          .sources= raw "(#{link_to('view sources', partner_offer_discounts_path(partner)) })" if permitted_to? :index, :dashboard_partners_offer_discounts
+          .sources= raw "(#{link_to('view sources', partner_offer_discounts_path(partner)) })" if permitted_to? :index, :dashboard_offer_discounts
         %td= partner.discount_expires_on.to_s :pub_ampm_sec if partner.discount_expires_on.present?
         %td
           - partner.offer_discounts.select{ |discount| discount.active? }.each do |discount|

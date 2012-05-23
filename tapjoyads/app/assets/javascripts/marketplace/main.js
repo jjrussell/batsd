@@ -61,12 +61,12 @@ $(document).ready(function(){
   // Login Validation
   if ($('form#new_gamer_session').length > 0) {
     $('form#new_gamer_session input').focus(function() {
-      $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+      errorContainer.html('&nbsp;').hide();
     });
     $('form#new_gamer_session').submit(function(e){
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
       var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
-      errorContainer.css({opacity: '0', visibility: 'hidden'});
+      errorContainer.hide();
       var inputs, email, pass, values = {};
       var emailRegex = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       inputs = $('form#new_gamer_session :input*');
@@ -81,15 +81,15 @@ $(document).ready(function(){
       email = values['gamer_session[email]'];
       pass = values['gamer_session[password]'];
       if (Tapjoy.Utils.isEmpty(email) || email == 'Email') {
-        errorContainer.html(_t('games.enter_email')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_email')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(pass) || pass == 'Password') {
-        errorContainer.html(_t('games.enter_password')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_password')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(test_cookie)) {
-        errorContainer.html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.cookies_required')).show();
         e.preventDefault();
       }
       else {
@@ -100,6 +100,9 @@ $(document).ready(function(){
 
   // Signup Validation
   if($('form#new_gamer').length > 0) {
+    $('form#new_gamer input').focus(function() {
+      errorContainer.html('&nbsp;').hide();
+    });
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
@@ -215,7 +218,7 @@ $(document).ready(function(){
 
     $('form#new_gamer input, form#new_gamer select').bind('change', function(e){
       validate();
-      errorContainer.css('opacity', 0);
+      errorContainer.hide();
 
       if(!hasError){
         $('#gamer_submit').addClass('orange-action').removeClass('soft-grey-action').removeClass('disabled').addClass('enabled').css({cursor:'pointer'});
@@ -227,13 +230,13 @@ $(document).ready(function(){
 
     function showValidationError(msg){
       hasError = true;
-      errorContainer.html(msg).css('opacity', 1);
+      errorContainer.html(msg).show();
       return false;
     }
-
     // Form Submit
     var unbindSubmit = false;
     $('form#new_gamer').bind('submit', function(e){
+      var $this = $(this), linkDeviceUrls = $this.data('link-urls'), rootUrl = $this.data('root-url');
 
       e.preventDefault();
 
@@ -248,10 +251,9 @@ $(document).ready(function(){
         }
 
         if(!hasError){
-          $(".register-form").addClass('close').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-          errorContainer.css({opacity: '0', visibility: 'hidden'});
-          $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-          $('.register-loader').css({opacity: '1', visibility: 'visible !important'});
+          $(".register-form").addClass('close').hide();
+          errorContainer.hide();
+          $('.register-loader').show();
           $.ajax({
             type: 'POST',
             url: rurl,
@@ -275,21 +277,20 @@ $(document).ready(function(){
               'default_platforms[ios]': values['default_platform_ios']
             },
             success: function(d) {
-              $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
                 if (d.redirect_url) { // redirect to link device
                   document.location.href = d.redirect_url;
                 }
-                else if (Tapjoy.rootPath) {
-                  document.location.href = Tapjoy.rootPath;
+                else if (rootUrl) {
+                  document.location.href = rootUrl;
                 }
                 else {
                   goHome = true;
                 }
                 if (goHome) {
-                  if (Tapjoy.rootPath) {
-                    document.location.href = Tapjoy.rootPath;
+                  if (rootUrl) {
+                    document.location.href = rootUrl;
                   }
                   else {
                     document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
@@ -311,14 +312,11 @@ $(document).ready(function(){
                   '<div class="error">', error ,'.</div>',
                   '<div class="try-again ui-joy-button soft-grey-action">'+_t('shared.try_again')+'</div>',
                 ].join('');
-                $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-                $('.register-message').html(msg).show().css({opacity: '1', visibility: 'visible !important'});
+                $('.register-message').html(msg).show();
               }
               $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-
+                $('.register-message').html('&nbsp;').hide();
+                $(".register-form").show();
               });
             },
             error: function() {
@@ -328,13 +326,11 @@ $(document).ready(function(){
                 '<div class="error ">', error ,'.</div>',
                 '<div class="try-again ui-joy-button orange-action">'+_t('shared.try_again')+'</div>',
               ].join('');
-              $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-              $('.register-message').html(msg).css({opacity: '1', visibility: 'visible !important'});
-              $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
+              $('.register-message').html(msg).show();
+              $('.register-loader').hide();
               $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
+                $('.register-message').html('&nbsp;').hide();
+                $(".register-form").show();
               });
             }
           });
@@ -364,7 +360,8 @@ $(document).ready(function(){
 
     if (link_device_url) { // link device url returned
       if (Tapjoy.device.idevice) { // is ios device
-        $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
+        $('.register-loader').hide();
+        $('#register-ios').show();
         $('#gamer_submit').click(function() {
           document.location.href = link_device_url;
         });
@@ -372,28 +369,33 @@ $(document).ready(function(){
       else if (Tapjoy.device.android && android) { // if coming from tjm android app
         document.location.href = link_device_url;
       }
-      else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
-        $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+      else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
+        $('.register-loader').hide();
+        $('#register-android').show();
         $('#gamer_submit').click(function() {
-          document.location.href = Tapjoy.androidAppPath;
+          document.location.href = linkDeviceUrls.android;
         });
       }
       else {
         goHome = true;
       }
     }
-    else if (Tapjoy.device.android && Tapjoy.androidAppPath){
-        $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+    else if (Tapjoy.device.android && linkDeviceUrls.android){
+      $('.register-loader').hide();
+      $('#register-android').show();
+      $('#gamer_submit').click(function() {
+        document.location.href = linkDeviceUrls.android;
+      });
     }
-    else if (Tapjoy.rootPath) {
-      document.location.href = Tapjoy.rootPath;
+    else if (rootUrl) {
+      document.location.href = rootUrl;
     }
     else {
       goHome = true;
     }
     if (goHome) {
-      if (Tapjoy.rootPath) {
-        document.location.href = Tapjoy.rootPath;
+      if (rootUrl) {
+        document.location.href = rootUrl;
       }
       else {
         document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
