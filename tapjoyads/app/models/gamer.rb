@@ -1,3 +1,44 @@
+# == Schema Information
+#
+# Table name: gamers
+#
+#  id                     :string(36)      not null, primary key
+#  email                  :string(255)     not null
+#  crypted_password       :string(255)
+#  password_salt          :string(255)
+#  persistence_token      :string(255)
+#  perishable_token       :string(255)
+#  referrer               :string(255)
+#  current_login_at       :datetime
+#  last_login_at          :datetime
+#  confirmed_at           :datetime
+#  created_at             :datetime
+#  updated_at             :datetime
+#  udid                   :string(255)
+#  confirmation_token     :string(255)     default(""), not null
+#  blocked                :boolean(1)      default(FALSE)
+#  accepted_tos_version   :integer(4)      default(0)
+#  deactivated_at         :datetime
+#  gender                 :string(255)
+#  birthdate              :date
+#  city                   :string(255)
+#  country                :string(255)
+#  favorite_game          :string(255)
+#  name                   :string(255)
+#  nickname               :string(255)
+#  postal_code            :string(255)
+#  favorite_category      :string(255)
+#  facebook_id            :string(255)
+#  fb_access_token        :string(255)
+#  referred_by            :string(36)
+#  referral_count         :integer(4)      default(0)
+#  allow_marketing_emails :boolean(1)      default(TRUE)
+#  twitter_id             :string(255)
+#  twitter_access_token   :string(255)
+#  twitter_access_secret  :string(255)
+#  extra_attributes       :text(2147483647
+#
+
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -36,7 +77,12 @@ class Gamer < ActiveRecord::Base
   DAYS_BEFORE_DELETION = 3
   RUDE_BAN_LIMIT = 20
 
-  named_scope :to_delete, lambda {
+  ACCOUNT_TYPE = {
+    :email_signup    => 0,
+    :facebook_signup => 1
+  }
+
+  scope :to_delete, lambda {
     {
       :conditions => ["deactivated_at < ?", Time.zone.now.beginning_of_day - DAYS_BEFORE_DELETION.days],
       :order => 'deactivated_at'
@@ -82,13 +128,16 @@ class Gamer < ActiveRecord::Base
 
   serialized_extra_attributes_accessor :been_buried_count
   serialized_extra_attributes_accessor :been_helpful_count
+  serialized_extra_attributes_accessor :account_type
 
-  def before_connect(facebook_session)
+  def before_connect(facebook_session, options = {})
+    account_type = options.delete(:account_type) { ACCOUNT_TYPE[:facebook_signup] }
+
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
-    self.terms_of_service      = 1
-    self.referrer              = "NEW_SIGN_UP_WITH_FACEBOOK"
+    self.terms_of_service      = '1'
+    self.account_type          = account_type
   end
 
   def confirm!

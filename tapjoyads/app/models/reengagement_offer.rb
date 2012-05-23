@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: reengagement_offers
+#
+#  id           :string(36)      not null, primary key
+#  app_id       :string(36)      not null
+#  partner_id   :string(36)      not null
+#  currency_id  :string(36)      not null
+#  instructions :text
+#  day_number   :integer(4)      not null
+#  reward_value :integer(4)      not null
+#  hidden       :boolean(1)      default(FALSE), not null
+#  created_at   :datetime
+#  updated_at   :datetime
+#
+
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
@@ -38,9 +54,9 @@ class ReengagementOffer < ActiveRecord::Base
   delegate :instructions_overridden, :to => :primary_offer
   delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
-  named_scope :order_by_day, :order => "day_number ASC"
+  scope :visible, :conditions => { :hidden => false }
+  scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }
+  scope :order_by_day, :order => "day_number ASC"
 
   def hide!
     self.hidden = true

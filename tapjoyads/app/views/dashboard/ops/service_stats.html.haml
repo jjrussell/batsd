@@ -1,0 +1,38 @@
+- @page_title = 'Service Stats'
+
+.span12
+  %h1= @page_title
+
+  %h2 HTTP Codes
+
+  %h3 Last 60 Seconds
+  = render :partial => 'rickshaw/graph', :locals => {:period => 60.seconds, :data_source => 'http_codes'}
+
+  %h3 Last 5 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 5.minutes, :data_source => 'http_codes'}
+
+  %h3 Last 15 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 15.minutes, :data_source => 'http_codes'}
+
+  %h3 Last 60 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 60.minutes, :data_source => 'http_codes'}
+
+  %h3 Last 12 Hours
+  = render :partial => 'rickshaw/graph', :locals => {:period => 12.hours, :data_source => 'http_codes'}
+
+  %h2 Bytes Sent
+
+  %h3 Last 60 Seconds
+  = render :partial => 'rickshaw/graph', :locals => {:period => 60.seconds, :data_source => 'bytes_sent', :transform => false}
+
+  %h3 Last 5 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 5.minutes, :data_source => 'bytes_sent', :transform => false}
+
+  %h3 Last 15 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 15.minutes, :data_source => 'bytes_sent', :transform => false}
+
+  %h3 Last 60 Minutes
+  = render :partial => 'rickshaw/graph', :locals => {:period => 60.minutes, :data_source => 'bytes_sent', :transform => false}
+
+  %h3 Last 12 Hours
+  = render :partial => 'rickshaw/graph', :locals => {:period => 12.hours, :data_source => 'bytes_sent', :transform => false}

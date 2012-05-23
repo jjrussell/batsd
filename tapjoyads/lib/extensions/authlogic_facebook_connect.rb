@@ -31,15 +31,12 @@ module AuthlogicFacebookConnect
 
       def validate_by_facebook_connect
         facebook_session = controller.current_facebook_user.fetch
-        existing_user = facebook_user_class.find(
-          :first,
-          :conditions => { :gamer_profiles => { :facebook_id => facebook_session.id } },
-          :include => :gamer_profile)
+        existing_user = facebook_user_class.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => facebook_session.id }).first
 
         if existing_user
           self.attempted_record = existing_user
         else
-          matching_user = facebook_user_class.find(:first, :conditions => { :email => facebook_session.email })
+          matching_user = facebook_user_class.where(:email => facebook_session.email).first
           if matching_user
             if klass == facebook_user_class
               attributes = {
@@ -67,11 +64,11 @@ module AuthlogicFacebookConnect
 
               new_user.before_connect(facebook_session) if new_user.respond_to?(:before_connect)
 
-              new_user.save_with_validation(true)
+              new_user.save!
 
               self.attempted_record = new_user
             rescue Exception => e
-              errors.add_to_base(I18n.t('error_messages.facebooker_session_expired',
+              errors.add(:base, I18n.t('error_messages.facebooker_session_expired',
                 :default => "Your Facebook Connect session has expired, please reconnect."))
             end
           end

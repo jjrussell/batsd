@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: email_offers
+#
+#  id             :string(36)      not null, primary key
+#  partner_id     :string(36)      not null
+#  name           :string(255)     not null
+#  description    :text
+#  third_party_id :string(255)
+#  created_at     :datetime
+#  updated_at     :datetime
+#  hidden         :boolean(1)      default(FALSE), not null
+#
+
 class EmailOffer < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -11,7 +25,7 @@ class EmailOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
 private
 

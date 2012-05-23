@@ -279,7 +279,7 @@
     }
   });
 
-  $(function () {
+  $(function () {    
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }
@@ -296,11 +296,11 @@
         Tap.Social.doFbLogout();
       }
 
-      $(".post-to-facebook").click(function () {
+      $(".post-to-facebook").on('click',function () {
         var $$ = $(this),
             icon = $$.data("icon"),
             callback = $$.data("callback"),
-            facebookId = $$.data("fb-id").toString(),
+            facebookId = $$.data("fb-id") ? $$.data("fb-id").toString() : '',
             res;
 
         res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
@@ -326,7 +326,7 @@
       }
     });
 
-    $(".invite-twitter-followers").click(function (event) {
+    $(".invite-twitter-followers").on('click', function (event) {
       event.preventDefault();
       var $$ = $(this),
           redirectPath = $$.data("redirect-path");

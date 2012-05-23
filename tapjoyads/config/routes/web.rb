@@ -1,20 +1,89 @@
-ActionController::Routing::Routes.draw do |map|
-  map.connect 'connect', :controller => :connect, :action => :index
-  map.resources :offer_instructions, :only => [ :index ]
-  map.resources :support_requests, :only => [ :new, :create ], :collection => { :incomplete_offers => :get }
-  map.resources :tools_surveys, :only => [ :edit, :create ]
-  map.resources :survey_results, :only => [ :new, :create ]
-  map.resources :opt_outs, :only => :create
-  map.resources :reengagement_rewards, :only => [ :index ]
-  map.resources :videos, :only => [ :index ], :member => { :complete => :get }
-  map.connect 'privacy', :controller => 'documents', :action => 'privacy'
-  map.connect 'privacy.html', :controller => 'documents', :action => 'privacy'
+Tapjoyad::Application.routes.draw do
+  match 'connect' => 'connect#index'
+  match 'healthz' => 'healthz#index'
+  match 'log_device_app' => 'connect#index'
+  match 'Connect' => 'connect#index'
+  match 'set_publisher_user_id' => 'set_publisher_user_id#index'
+  match 'get_ad_order' => 'get_ad_order#index'
 
-  map.with_options :controller => :game_state do |m|
-    m.load_game_state 'game_state/load', :action => :load
-    m.save_game_state 'game_state/save', :action => :save
+  resources :apps_installed
+  resource :click, :controller => :click do
+    match :app
+    match :reengagement
+    match :action
+    match :deeplink
+    match :generic
+    match :rating
+    match :video
+    match :survey
+    match :test_offer
+    match :test_video_offer
+  end
+  # TODO: make display_ad routes better
+  match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
+  match 'display_ad/webview' => 'display_ad#webview'
+  match 'display_ad/image'   => 'display_ad#image'
+  resources :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
+    collection do
+      match :test_offer
+      match :test_video_offer
+    end
+  end
+  resources :get_offers, :only => [:index] do
+    collection do
+      match :webpage
+      match :featured
+    end
+  end
+  match 'get_vg_store_items/all' => 'get_vg_store_items#all'
+  match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
+  match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
+  resources :offer_instructions, :only => [:index]
+  resources :offer_completed do
+    collection do
+      match :boku
+      match :gambit
+      match :paypal
+      match :socialvibe
+    end
+  end
+  resource :points do
+    collection do
+      match :award
+      match :spend
+      match :purchase_vg
+      match :consume_vg
+    end
+  end
+  resources :reengagement_rewards, :only => [:index]
+  resources :survey_results, :only => [:new, :create]
+  resources :support_requests, :only => [:new, :create] do
+    collection do
+      get :incomplete_offers
+    end
+  end
+  resources :tools_surveys, :only => [:edit, :create]
+
+  resources :videos, :only => [:index] do
+    member do
+      get :complete
+    end
+    match 'privacy' => 'documents#privacy'
+    match 'privacy.html' => 'documents#privacy'
+    match 'game_state/load' => 'game_state#load', :as => :load_game_state
+    match 'game_state/save' => 'game_state#save', :as => :save_game_state
+    match 'log_device_app/:action/:id' => 'connect#index'
+    match 'confirm_email_validation' => 'list_signup#confirm_api'
   end
 
-  map.connect 'log_device_app/:action/:id', :controller => 'connect'
-  map.connect 'confirm_email_validation', :controller => 'list_signup', :action => 'confirm_api'
+  namespace :job do
+    match 'master_calculate_next_payout' => 'master_calculate_next_payout#index'
+    resources 'master_reload_statz', :only => :index do
+      collection do
+        match :daily
+        match :partner_index
+        match :partner_daily
+      end
+    end
+  end
 end

@@ -21,9 +21,9 @@ class SupportRequestsController < ApplicationController
       click = Click.new(:key => support_request.click_id)
       device = Device.new(:key => params[:udid])
 
-      TapjoyMailer.deliver_support_request(params[:description], params[:email_address], @app, @currency, device,
+      TapjoyMailer.support_request(params[:description], params[:email_address], @app, @currency, device,
         params[:publisher_user_id], params[:device_type], params[:language_code], request.env["HTTP_USER_AGENT"], @offer,
-        support_request, click)
+        support_request, click).deliver
     end
   end
 
@@ -55,6 +55,6 @@ private
   def render_new_with_error(message)
     find_incomplete_offers
     flash.now[:error] = message
-    render(:action => :new) and return
+    render('new') and return
   end
 end

@@ -4,7 +4,7 @@
       %table
         %tr
           %td
-            - link_to @gamer.get_avatar_profile_url, :target => '_blank' do
+            = link_to @gamer.get_avatar_profile_url, :target => '_blank' do
               .large_avatar
                 = image_tag @gamer.get_avatar_url
           %td

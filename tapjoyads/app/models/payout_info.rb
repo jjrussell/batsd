@@ -1,3 +1,34 @@
+# == Schema Information
+#
+# Table name: payout_infos
+#
+#  id                  :string(36)      not null, primary key
+#  partner_id          :string(36)      not null
+#  tax_country         :string(255)
+#  account_type        :string(255)
+#  billing_name        :string(255)
+#  tax_id              :text
+#  beneficiary_name    :string(255)
+#  company_name        :string(255)
+#  address_1           :string(255)
+#  address_2           :string(255)
+#  address_city        :string(255)
+#  address_state       :string(255)
+#  address_postal_code :string(255)
+#  address_country     :string(255)
+#  bank_name           :text
+#  bank_address        :text
+#  bank_account_number :text
+#  bank_routing_number :text
+#  created_at          :datetime
+#  updated_at          :datetime
+#  payout_method       :string(255)
+#  signature           :string(255)
+#  doing_business_as   :string(255)
+#  payment_country     :string(255)
+#  paypal_email        :string(255)
+#
+
 class PayoutInfo < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -35,7 +66,7 @@ class PayoutInfo < ActiveRecord::Base
     end
   end
 
-  named_scope :recently_updated, lambda { |date|
+  scope :recently_updated, lambda { |date|
     {
       :conditions => [
         "updated_at >= ? AND updated_at < ?",

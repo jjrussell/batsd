@@ -360,7 +360,7 @@ zh:
       report_bug: 回報臭蟲
       reset_password_message: 輸入跟你帳號關聯的郵箱地址，我們便會將重置密碼的聯結發送給你
       reset_password_message_submit: 你將在幾分鐘之後收到指引你重置密碼的電子郵件
-      reset_password_retry: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
+      reset_password_retry_html: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
       reset_password_retry_url_text: 請求另一封密碼重置郵件
       review_app_name: "評論 %{app_name}"
       review_created: 成功評論此應用
@@ -415,14 +415,14 @@ zh:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 點擊這裡繼續
       download_action: 這裡
-      download_link: "如果您没有這個程序,點擊 %{download_action} 下載"
-      earn_currency: "賺 %{amount_and_currency}"
+      download_link_html: "如果您没有這個程序,點擊 %{download_action} 下載"
+      earn_currency_html: "賺 %{amount_and_currency}"
       footer: "在完成這些步驟後,您將獲得 %{amount_and_currency}."
       header: "按照這些說明來獲得 %{currency}:"
       title: 說明
     offerwall:
-      buy_currency: "買%{amount} %{currency}"
-      earn_currency: "賺 %{amount} %{currency}"
+      buy_currency_html: "買%{amount} %{currency}"
+      earn_currency_html: "賺 %{amount} %{currency}"
       free: 免費
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       instructions_non_rewarded: 發現Tapjoy的熱點!
