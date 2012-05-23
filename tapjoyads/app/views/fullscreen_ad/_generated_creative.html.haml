@@ -31,7 +31,7 @@
       skip = document.getElementById('skip');
       skip.onclick = function() {
         xmlHttpRequst = new XMLHttpRequest();
-        xmlHttpRequst.open('GET', '#{encrypt_url(fullscreen_ad_skip_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
+        xmlHttpRequst.open('GET', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
         xmlHttpRequst.send();
       }
       if (icon.getAttribute('s') && icon.src != icon.getAttribute('s')) {

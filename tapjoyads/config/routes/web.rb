@@ -23,8 +23,10 @@ Tapjoyad::Application.routes.draw do
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
-  resources :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
+  resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
+      match :index
+      get   :skip
       match :test_offer
       match :test_video_offer
     end
@@ -76,7 +78,6 @@ Tapjoyad::Application.routes.draw do
   match 'game_state/save' => 'game_state#save', :as => :save_game_state
   match 'log_device_app/:action/:id' => 'connect#index'
   match 'confirm_email_validation' => 'list_signup#confirm_api'
-  match 'fullscreen_ad/skip' => 'fullscreen_ad#skip'
 
   namespace :job do
     match 'master_calculate_next_payout' => 'master_calculate_next_payout#index'
