@@ -22,7 +22,7 @@ class UserEventsController < ApplicationController
     else
       status_code = ERROR_STATUS
     end
-    render :text => status_msg, :status => status_code
+    render :text => status_msg, :status => status_code and return
   end
 
   private
