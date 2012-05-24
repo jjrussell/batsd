@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -244,8 +245,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
     :approved_sources, :carriers, :cities
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     return super if new_record?
