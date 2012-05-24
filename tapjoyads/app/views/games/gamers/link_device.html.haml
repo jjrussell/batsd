@@ -44,5 +44,9 @@
   :plain
     window.linkDeviceOptions = {
       linkDeviceUrl : "#{params[:link_device_url]}",
-      android       : "#{params[:android]}"
+      android       : "#{params[:android]}",
+      possibleLinks : { 'ios'     : "#{new_games_device_path}",
+                        'android' : "#{GAMES_ANDROID_MARKET_URL}"
+                      },
+      rootUrl       : "#{WEBSITE_URL}"
     };

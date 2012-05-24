@@ -357,6 +357,8 @@ $(document).ready(function(){
   if($("#register-android").length > 0 || $("#register-ios").length > 0) {
     var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
     var android = window.linkDeviceOptions.android;
+    var linkDeviceUrls = window.linkDeviceOptions.possibleLinks;
+    var rootUrl = window.linkDeviceOptions.rootUrl;
 
     if (link_device_url) { // link device url returned
       if (Tapjoy.device.idevice) { // is ios device
