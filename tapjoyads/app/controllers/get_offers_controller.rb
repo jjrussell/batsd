@@ -135,6 +135,7 @@ class GetOffersController < ApplicationController
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
       :all_videos           => params[:all_videos],
       :algorithm            => @algorithm,
+      :algorithm_options    => @algorithm_options,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
@@ -174,7 +175,8 @@ class GetOffersController < ApplicationController
     when 'b_optimization'
       @algorithm = '101'
     when 'c_optimization'
-      @algorithm = '101'      
+      @algorithm = '101'
+      @algorithm_options = { :skip_currency => true }
     end
   end
 
