@@ -112,26 +112,18 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
-    if item_type == 'App' || item_type == 'EmailOffer'
-      click_url += "app"
-    elsif item_type == 'GenericOffer'
-      click_url += "generic"
-    elsif item_type == 'RatingOffer'
-      click_url += "rating"
-    elsif item_type == 'TestOffer'
-      click_url += "test_offer"
-    elsif item_type == 'TestVideoOffer'
-      click_url += "test_video_offer"
-    elsif item_type == 'ActionOffer'
-      click_url += "action"
-    elsif item_type == 'VideoOffer'
-      click_url += "video"
-    elsif item_type == 'ReengagementOffer'
-      click_url += 'reengagement'
-    elsif item_type == 'SurveyOffer'
-      click_url += "survey"
-    elsif item_type == 'DeeplinkOffer'
-      click_url += 'deeplink'
+
+    click_url += case item_type
+    when 'App','EmailOffer'   then 'app'
+    when 'GenericOffer'       then "generic"
+    when 'RatingOffer'        then "rating"
+    when 'TestOffer'          then "test_offer"
+    when 'TestVideoOffer'     then "test_video_offer"
+    when 'ActionOffer'        then "action"
+    when 'VideoOffer'         then "video"
+    when 'ReengagementOffer'  then 'reengagement'
+    when 'SurveyOffer'        then "survey"
+    when 'DeeplinkOffer'      then 'deeplink'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
