@@ -10,7 +10,3 @@ Tapjoyad::Application.load_tasks
 Dir["#{Gem.searcher.find('annotate').full_gem_path}/**/tasks/**/*.rake"].each {|ext| load ext}
 # TODO: For newer rubygems
 # Dir["#{Gem::Specification.find_by_name("annotate").full_gem_path}/**/tasks/**/*.rake"].each {|ext| load ext}
-
-ENV['position_in_class']   = "before"
-ENV['exclude_tests']       = "true"
-ENV['exclude_fixtures']    = "true"
