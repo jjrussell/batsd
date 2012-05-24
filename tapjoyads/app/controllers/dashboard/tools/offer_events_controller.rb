@@ -1,6 +1,8 @@
 class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
   current_tab :tools
+  before_filter :check_change_attributes, :only => [ :create, :update ]
   before_filter :setup
+  after_filter :save_activity_logs, :only => [ :create, :update, :destroy ]
 
   def index
     if params[:filter] == 'all'
@@ -66,6 +68,17 @@ class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
 
   def offer_events_scope
     OfferEvent
+  end
+
+  def check_change_attributes
+    if params[:daily_budget_selector] == 'Unchanged'
+      params[:offer_event][:daily_budget] = nil
+    elsif params[:daily_budget_selector] == 'Unlimited'
+      params[:offer_event][:daily_budget] = 0
+    end
+
+    params[:offer_event][:change_daily_budget] = params[:daily_budget_selector] != 'Unchanged'
+    params[:offer_event][:change_user_enabled] = !(params[:offer_event][:user_enabled] == "")
   end
 
 end
