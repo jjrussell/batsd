@@ -47,9 +47,9 @@ class SupportRequest < SimpledbResource
     clicks.sort_by { |c| c.clicked_at.to_f }.last
   end
 
-  def click
-    Click.find(click_id)
-  end
+  # def click
+  #   Click.find(click_id)
+  # end
 
   private
 
