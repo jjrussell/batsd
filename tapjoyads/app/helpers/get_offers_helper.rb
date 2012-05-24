@@ -14,7 +14,7 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_click_url(offer)
+  def get_click_url(offer, offerwall_rank = 0)
     click_url = offer.click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
@@ -31,7 +31,10 @@ module GetOffersHelper
       :library_version    => params[:library_version],
       :gamer_id           => params[:gamer_id],
       :os_version         => params[:os_version],
-      :mac_address        => params[:mac_address])
+      :mac_address        => params[:mac_address],
+      :device_type        => params[:device_type],
+      :offerwall_rank     => offerwall_rank
+      )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'
