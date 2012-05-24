@@ -9,7 +9,7 @@ class Experiments
       experiment = options[:experiment]
       experiment_ids = EXPERIMENTS[experiment]
       return nil if experiment_ids.blank?
-      udid_index = "#{udid}#{experiment}".hash % experiment_ids.length
+      udid_index = Digest::MD5.hexdigest("#{udid}#{experiment}").hex % experiment_ids.length
 
       experiment_ids[udid_index]
     end
