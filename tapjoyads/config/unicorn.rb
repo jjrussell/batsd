@@ -14,6 +14,9 @@ if big_server
 elsif server_type == "dev"
   worker_processes 2
   timeout 90
+elsif server_type == 'webserver'
+  worker_processes 8
+  timeout 90
 else
   worker_processes 10
   timeout 90
