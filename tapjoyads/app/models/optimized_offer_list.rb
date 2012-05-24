@@ -70,7 +70,7 @@ class OptimizedOfferList
       device_type = options.delete(:device_type) { |k| raise "#{k} is a required argument" }
       raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-      "s3.optimized_offer_list.#{algorithm}.#{source}.#{platform}.#{country}.#{currency_id}.#{device_type}"
+      "s3.optimized_offer_list.#{algorithm}.#{source}.#{platform}.#{country}.#{currency_id}.#{device_type}.#{Offer.acts_as_cacheable_version}"
     end
 
     def options_for_s3_key(key)
