@@ -150,7 +150,6 @@ class ClickController < ApplicationController
     if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
-      @destination_url = destination_url
       render_unavailable_offer
       return
     end
@@ -171,13 +170,11 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    if params[:source] == 'tj_games'
-      wr_path = 'tjm_offer_click'
-    elsif params[:source] == 'featured'
-      wr_path = 'featured_offer_click'
-    else
-      wr_path = 'offer_click'
-    end
+    wr_path = case params[:source]
+              when 'tj_games'      then 'tjm_offer_click'
+              when 'featured'      then 'featured_offer_click'
+              else                      'offer_click'
+              end
     build_web_request(wr_path)
   end
 
@@ -186,7 +183,6 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_currency')
       save_web_request
-      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -197,7 +193,6 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_offer')
       save_web_request
-      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
