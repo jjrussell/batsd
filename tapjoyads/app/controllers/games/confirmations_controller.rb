@@ -1,7 +1,11 @@
 class Games::ConfirmationsController < GamesController
 
   def create
-    data = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
+    begin
+      data = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
+    rescue
+      data = {}
+    end
     data[:token] = params[:token] if params[:token]
     @gamer = Gamer.find_by_confirmation_token(data[:token])
     path = games_root_path
