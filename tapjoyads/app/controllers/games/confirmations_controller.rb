@@ -1,11 +1,10 @@
 class Games::ConfirmationsController < GamesController
 
   def create
-    begin
-      data = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
-    rescue
-      data = {}
-    end
+    # remove unnecessary chars (we encountered a SendGrid bug where they were adding a '+')
+    params[:data].gsub!(/[+ ]/, '') if params[:data].present?
+
+    data = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
     data[:token] = params[:token] if params[:token]
     @gamer = Gamer.find_by_confirmation_token(data[:token])
     path = games_root_path
