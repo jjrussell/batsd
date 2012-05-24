@@ -176,7 +176,7 @@ class GetOffersController < ApplicationController
       @algorithm = '101'
     when 'c_optimization'
       @algorithm = '101'
-      @algorithm_options = { :skip_currency => true }
+      @algorithm_options = { :skip_country => true }
     end
   end
 
