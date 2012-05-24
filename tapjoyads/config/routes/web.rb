@@ -26,7 +26,7 @@ Tapjoyad::Application.routes.draw do
   resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
       match :index
-      get   :skip
+      post  :skip
       match :test_offer
       match :test_video_offer
     end
