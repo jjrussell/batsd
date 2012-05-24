@@ -23,7 +23,9 @@ class OfferList
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
     @algorithm                  = options.delete(:algorithm)
-    @algorithm_options          = options.delete(:algorithm_options) { {} }
+    @algorithm_options          = options.delete(:algorithm_options)
+
+    @algorithm_options ||= {}
 
     @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
     @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
