@@ -36,11 +36,11 @@ class GamesMarketingMailer < ActionMailer::Base
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
 
-    @detailed_email = true
+    @detailed_email = rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
-    @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}&token=#{gamer.confirmation_token}"
+    @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     mail :to => gamer.email, :from => 'Tapjoy <noreply@tapjoy.com>', :subject => 'Welcome to Tapjoy!'
