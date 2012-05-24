@@ -5,7 +5,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
-  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
+  before_filter :set_period, :only => [ :monthly_data ]
+  before_filter :set_from_thru_periods, :only => [ :partner_monthly_balance ]
   before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
 
@@ -51,12 +52,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def partner_monthly_balance
-    most_recent_period = Date.current.beginning_of_month.prev_month
-    @period_from = params[:period_from].present? ? Date.parse(params[:period_from]) : most_recent_period
-    @period_from_str = @period_from.strftime("%b %Y")
-    @period_thru = params[:period_thru].present? ? Date.parse(params[:period_thru]) : most_recent_period
-    @period_thru_str = @period_thru.strftime("%b %Y")
-
     if params[:partner_id].present?
       @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
@@ -469,14 +464,26 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     downcase_param(:udid)
   end
 
-  def set_months
+  def set_period
     most_recent_period = Date.current.beginning_of_month.prev_month
     @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
     @period_str = @period.strftime("%b %Y")
+    set_months(most_recent_period)
+  end
 
+  def set_from_thru_periods
+    most_recent_period = Date.current.beginning_of_month.prev_month
+    @period_from = params[:period_from].present? ? Date.parse(params[:period_from]) : most_recent_period
+    @period_from_str = @period_from.strftime("%b %Y")
+    @period_thru = params[:period_thru].present? ? Date.parse(params[:period_thru]) : most_recent_period
+    @period_thru_str = @period_thru.strftime("%b %Y")
+    set_months(most_recent_period)
+  end
+
+  def set_months(last_month)
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= most_recent_period
+    while date <= last_month
       @months << date.strftime('%b %Y')
       date += 1.months
     end
