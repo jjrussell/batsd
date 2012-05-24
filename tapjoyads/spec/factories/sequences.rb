@@ -19,9 +19,4 @@ FactoryGirl.define do
     n
   end
 
-  sequence :event_type_id do |n|
-    # TODO: make this work for new event types when there are more than 2
-    (Time.zone.now % n).odd? ? 1 : 0
-  end
-
 end

@@ -2,15 +2,6 @@ class UserEvent < SyslogMessage
 
   EVENT_TYPE_IDS = [ :IAP, :SHUTDOWN ]
 
-  EVENT_TYPE_DATA = {
-    :IAP => [:name, :price],
-    :SHUTDOWN => [],
-  }
-
-  EVENT_TYPE_DATA_TO_FACTORY = {
-    :price => :integer,
-  }
-
   self.define_attr :udid
   self.define_attr :app_id
   self.define_attr :type_id
@@ -19,10 +10,10 @@ class UserEvent < SyslogMessage
   def initialize(options = {})
     options.delete(:action)
     options.delete(:controller)
-    udid          = options.delete(:udid)           { |k| raise "#{k} is a required argument" }
-    app_id        = options.delete(:app_id)         { |k| raise "#{k} is a required argument" }
-    event_type_id = options.delete(:event_type_id)  { |k| raise "#{k} is a required argument" }
-    event_data    = options.delete(:data)           { |k| [] }
+    udid          = options.delete(:udid)                       { |k| raise "#{k} is a required argument" }
+    app_id        = options.delete(:app_id)                     { |k| raise "#{k} is a required argument" }
+    event_type_id = options.delete(:event_type_id).try(:to_i)   { |k| raise "#{k} is a required argument" }
+    event_data    = options.delete(:data)                       { |k| {} }
 
     super(options)
 
@@ -34,10 +25,10 @@ class UserEvent < SyslogMessage
 
   def valid?
     ### TODO temporary code follows, will change when publishers can make their own events
-    if UserEvent.EVENT_TYPE_IDS[self.type_id] == '0'   # IAP event
-      self.data.present? && self.data[:name] && price_valid?
-    elsif UserEvent.EVENT_TYPE_IDS[self.type_id] == '1'
-      self.data.blank?   # shutdown event
+    if EVENT_TYPE_IDS[self.type_id] == EVENT_TYPE_IDS.index(:IAP)
+      self.data.present? && self.data[:name].present? && price_valid?
+    elsif EVENT_TYPE_IDS[self.type_id] == EVENT_TYPE_IDS.index(:SHUTDOWN)
+      self.data.blank?
     else
       false
     end

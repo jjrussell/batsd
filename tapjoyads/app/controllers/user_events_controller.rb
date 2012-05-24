@@ -13,17 +13,25 @@ class UserEventsController < ApplicationController
       event = UserEvent.new(params)
       status_msg = ERROR_EVENT
       if event.valid?
-        status_msg = SUCCESS
+        status_msg = SUCCESS_MESSAGE
         event.save
       end
   	end
-    render :text => status_msg, :status => status_msg == SUCCESS ? SUCCESS_STATUS : ERROR_STATUS
+    if status_msg == SUCCESS_MESSAGE 
+      status_code = SUCCESS_STATUS
+    else
+      status_code = ERROR_STATUS
+    end
+    render :text => status_msg, :status => status_code
   end
 
   private
 
   def params_valid?
-    Device.new(:key => params[:udid]).has_app?(params[:app_id])
+    app           = App.find(params[:app_id]) rescue nil
+    event_type_id = params[:event_type_id].to_i rescue nil
+    device        = Device.find(params[:udid]) if app.present? && event_type_id.present?
+    device.try(:has_app?, params[:app_id])
   end
 
 end

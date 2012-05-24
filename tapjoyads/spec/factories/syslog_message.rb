@@ -6,11 +6,11 @@ FactoryGirl.define do
     event_type_id { Factory.next(:event_type_id) }
 
     after_build do |user_event|
-      event_type_hash = UserEvent.EVENT_TYPE_IDS[user_event.event_type_id]
-      data = UserEvent.EVENT_TYPE_DATA[event_type_hash]
+      event_type_hash = UserEvent::EVENT_TYPE_IDS[user_event.event_type_id]
+      data = UserEvent::EVENT_TYPE_DATA[event_type_hash]
       data.keys.each do |key|
-        if UserEvent.EVENT_TYPE_DATA_TO_FACTORY.include?(key)
-          data[key] = Factory.next(UserEvent.EVENT_TYPE_DATA_TO_FACTORY[key])
+        if UserEvent::EVENT_TYPE_DATA_TO_FACTORY.include?(key)
+          data[key] = Factory.next(UserEvent::EVENT_TYPE_DATA_TO_FACTORY[key])
         else
           data[key] = Factory.next(key)
         end
