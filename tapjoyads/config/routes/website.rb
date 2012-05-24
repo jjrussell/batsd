@@ -50,6 +50,7 @@ Tapjoyad::Application.routes.draw do
     match 'feedback' => 'support_requests#new', :type => 'feedback'
     resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'gamers#create'
         put :update_password
         put :accept_tos
         get :password
