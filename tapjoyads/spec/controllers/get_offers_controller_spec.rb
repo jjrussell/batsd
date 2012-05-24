@@ -314,8 +314,8 @@ describe GetOffersController do
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
-      web_request.offerwall_rank.should == 2
-      web_request.path.should include('offerwall_impression')
+      web_request.offerwall_rank.should == nil
+      web_request.path.should include('offers')
 
       get(:featured, @params)
       web_request = assigns(:web_request)

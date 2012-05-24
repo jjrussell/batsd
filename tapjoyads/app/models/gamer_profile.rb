@@ -1,3 +1,28 @@
+# == Schema Information
+#
+# Table name: gamer_profiles
+#
+#  id                     :string(36)      not null, primary key
+#  gamer_id               :string(36)      not null
+#  gender                 :string(255)
+#  birthdate              :date
+#  city                   :string(255)
+#  country                :string(255)
+#  favorite_game          :string(255)
+#  created_at             :datetime
+#  updated_at             :datetime
+#  name                   :string(255)
+#  nickname               :string(255)
+#  postal_code            :string(255)
+#  favorite_category      :string(255)
+#  use_gravatar           :boolean(1)      default(FALSE)
+#  facebook_id            :string(255)
+#  fb_access_token        :string(255)
+#  referred_by            :string(36)
+#  referral_count         :integer(4)      default(0)
+#  allow_marketing_emails :boolean(1)      default(TRUE)
+#
+
 class GamerProfile < ActiveRecord::Base
   include UuidPrimaryKey
 

@@ -566,8 +566,21 @@ class Offer < ActiveRecord::Base
     show_rate != 1 && (unlimited_budget? || low_balance?)
   end
 
+  def no_daily_budget?; daily_budget.zero?; end
+  def has_daily_budget?; daily_budget > 0; end
+  def no_overall_budget?; overall_budget.zero?; end
+  def has_overall_budget?; overall_budget > 0; end
+
+  def low_daily_budget?
+    has_daily_budget? && daily_budget < 5000
+  end
+
+  def over_daily_budget?(num_installs_today)
+    has_daily_budget? && num_installs_today > daily_budget
+  end
+
   def unlimited_budget?
-    daily_budget.zero? && overall_budget.zero?
+    no_daily_budget? && no_overall_budget?
   end
 
   def icon_id
@@ -655,7 +668,7 @@ class Offer < ActiveRecord::Base
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
 
-    unless allow_negative_balance?
+    unless allow_negative_balance? || self_promote_only?
       adjusted_balance = partner.balance
       if is_free? && adjusted_balance < 50000
         adjusted_balance = adjusted_balance / 2

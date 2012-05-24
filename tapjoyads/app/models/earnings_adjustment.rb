@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: earnings_adjustments
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  amount     :integer(4)      not null
+#  notes      :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class EarningsAdjustment < ActiveRecord::Base
   include UuidPrimaryKey
 
