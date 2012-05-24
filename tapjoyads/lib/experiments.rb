@@ -1,13 +1,14 @@
 class Experiments
   OPTIMIZATION_EXPERIMENT_IDS = [ 'a_optimization', 'b_optimization', 'c_optimization' ]
 
-  EXPERIMENTS = Hash.new(nil)
+  EXPERIMENTS = Hash.new([])
   EXPERIMENTS[:optimization] = OPTIMIZATION_EXPERIMENT_IDS
 
   def self.choose(udid, options = {})
     if udid.present?
       experiment = options[:experiment]
       experiment_ids = EXPERIMENTS[experiment]
+      return nil if experiment_ids.blank?
       udid_index = "#{udid}#{experiment}".hash % experiment_ids.length
 
       experiment_ids[udid_index]
