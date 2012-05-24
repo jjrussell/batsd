@@ -33,7 +33,7 @@ Tapjoyad::Application.routes.draw do
     match 'help' => 'homepage#help', :as => :help
     match 'switch_device' => 'homepage#switch_device', :as => :switch_device
     match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
-    match 'earn/:eid' => 'homepage#earn', :as => :earn
+    match 'earn(/:eid)' => 'homepage#earn', :as => :earn
     match 'more_apps' => 'homepage#index', :as => :more_apps
     match 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
