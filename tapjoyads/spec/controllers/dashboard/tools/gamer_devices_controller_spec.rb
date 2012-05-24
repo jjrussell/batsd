@@ -108,10 +108,10 @@ describe Dashboard::Tools::GamerDevicesController do
   describe "#update" do
     before :each do
       device = Factory :device
-      gamer_device = GamerDevice.new(:device => device, :gamer => @gamer)
-      gamer_device.save!
+      @gamer_device = GamerDevice.new(:device => device, :gamer => @gamer, :device_type => 'iphone')
+      @gamer_device.save!
 
-      @params = { :id => gamer_device.id }
+      @params = { :id => @gamer_device.id }
     end
 
     context "when logged in as customer service" do
@@ -120,9 +120,23 @@ describe Dashboard::Tools::GamerDevicesController do
         login_as user
       end
 
-      it "allows access adn redirects back to gamer show page" do
-        get(:update, @params)
+      it "redirects to gamer management tool for associated gamer after update" do
+        put(:update, @params)
         response.should redirect_to(tools_gamer_path(@gamer))
+      end
+
+      it "allows a gamer device's name to be updated" do
+        @params['gamer_device'] = { :name => 'New Name' }
+        put(:update, @params)
+        @gamer_device.reload
+        @gamer_device.name.should == 'New Name'
+      end
+
+      it "allows a gamer device's type to be updated" do
+        @params['gamer_device'] = { :device_type => 'ipod' }
+        put(:update, @params)
+        @gamer_device.reload
+        @gamer_device.device_type.should == 'ipod'
       end
     end
 
@@ -130,11 +144,10 @@ describe Dashboard::Tools::GamerDevicesController do
       before :each do
         user = Factory :account_mgr_user
         login_as user
-
-        get(:update, @params)
       end
 
-      it "allows access and redirects back to gamer show page" do
+      it "redirects to gamer management tool for associated gamer after update" do
+        put(:update, @params)
         response.should redirect_to(tools_gamer_path(@gamer))
       end
     end
@@ -144,7 +157,7 @@ describe Dashboard::Tools::GamerDevicesController do
         user = Factory :partner_user
         login_as user
 
-        get(:update, @params)
+        put(:update, @params)
       end
 
       it "disallows access" do
