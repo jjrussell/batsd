@@ -29,9 +29,6 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  route_filenames.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
 end
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")

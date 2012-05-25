@@ -1,6 +1,5 @@
 Tapjoyad::Application.routes.draw do
   match 'connect' => 'connect#index'
-  match 'healthz' => 'healthz#index'
   match 'log_device_app' => 'connect#index'
   match 'Connect' => 'connect#index'
   match 'set_publisher_user_id' => 'set_publisher_user_id#index'

@@ -6,6 +6,7 @@ require "action_mailer/railtie"
 require "active_resource/railtie"
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
+MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
 
 module Tapjoyad
   class Application < Rails::Application
@@ -40,19 +41,20 @@ module Tapjoyad
       g.test_framework :rspec
     end
 
-    def self.route_filenames
-      case MACHINE_TYPE
-      when 'dashboard'
-       %w( dashboard api )
-      when 'website'
-       %w( website api )
-      when 'webserver'
-       %w( web legacy )
-      when 'jobserver'
-       %w( job )
-      else
-       %w( api dashboard job website web legacy )
-      end
+    route_filenames = case MACHINE_TYPE
+                      when 'dashboard'
+                        %w( dashboard api global )
+                      when 'website'
+                        %w( website api global )
+                      when 'webserver'
+                        %w( web legacy global )
+                      when 'jobserver'
+                        %w( job global )
+                      else
+                        %w( api dashboard job website web legacy global )
+                      end
+    route_filenames.each do |route|
+      config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
     end
   end
 
