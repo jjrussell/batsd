@@ -68,6 +68,7 @@ BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAA
 TJM_SESSION_TIMEOUT = 1.hour.to_i
 
 HOSTNAME = `hostname`.strip
+COMMIT_HASH = `git show`.split(" ").second[0..6]
 
 Dir.chdir Rails.root do
   GIT_REV = `git rev-parse --verify HEAD`.strip
