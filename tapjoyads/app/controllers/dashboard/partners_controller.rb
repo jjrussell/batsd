@@ -16,6 +16,8 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     elsif params[:q]
       query = params[:q].gsub("'", '')
       @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
+    else
+      @partners = Partner.scoped(:include => [ :offers, :users ]).order('created_at desc').paginate(:page => params[:page])
     end
   end
 
