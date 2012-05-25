@@ -473,9 +473,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def set_months
+    most_recent_period = Date.current.beginning_of_month.prev_month
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
-    while date <= Date.current.beginning_of_month.prev_month
+    while date <= most_recent_period
       @months << date.strftime('%b %Y')
       date += 1.months
     end
