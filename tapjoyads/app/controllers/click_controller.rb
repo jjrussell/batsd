@@ -150,6 +150,7 @@ class ClickController < ApplicationController
     if !@offer.tracking_for_id && Time.zone.at(params[:viewed_at]) < (@now - 24.hours)
       build_web_request('expired_click')
       save_web_request
+      @destination_url = destination_url
       render_unavailable_offer
       return
     end
@@ -183,6 +184,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_currency')
       save_web_request
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
@@ -193,6 +195,7 @@ class ClickController < ApplicationController
     if disabled
       build_web_request('disabled_offer')
       save_web_request
+      @destination_url = destination_url
       render_unavailable_offer
     end
     disabled
