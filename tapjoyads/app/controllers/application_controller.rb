@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
-  around_filter :set_time_zone
+  around_filter :set_time_zone, :unless => proc { MACHINE_TYPE == 'web' }
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
