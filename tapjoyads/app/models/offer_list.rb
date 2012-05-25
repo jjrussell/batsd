@@ -141,7 +141,7 @@ def get_offers(start, max_offers)
       end
     end
 
-    all_offers = all_offers + @offers.sort { |a,b| b.rank_score <=> a.rank_score }
+    all_offers += @offers.sort { |a,b| b.rank_score <=> a.rank_score }
 
     if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
