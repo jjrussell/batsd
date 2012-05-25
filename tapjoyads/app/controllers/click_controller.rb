@@ -327,15 +327,7 @@ class ClickController < ApplicationController
   end
 
   def click_key
-    return @click_key if @click_key.present?
-
-    @click_key = if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    elsif @offer.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
-    else
-      "#{params[:udid]}.#{params[:advertiser_app_id]}"
-    end
+    @click_key ||= @offer.format_as_click_key(params.slice(:udid, :advertiser_app_id, :gamer_id))
   end
 
   def handle_multi_complete_video
