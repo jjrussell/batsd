@@ -101,6 +101,7 @@ Tapjoyad::Application.routes.draw do
           post :export_aggregate
           get :aggregate
           post :regenerate_api_key
+          post ':id' => 'reporting#export'
         end
         member do
           post :export
