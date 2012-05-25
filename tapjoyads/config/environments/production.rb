@@ -1,10 +1,4 @@
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
-
 Tapjoyad::Application.configure do
-
-  route_filenames.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
 
   # Settings specified here will take precedence over those in config/application.rb
 
