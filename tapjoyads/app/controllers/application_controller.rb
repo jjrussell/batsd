@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   helper_method :geoip_data, :downcase_param
 
   before_filter :set_readonly_db
+  before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
