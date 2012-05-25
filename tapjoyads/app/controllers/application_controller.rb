@@ -96,6 +96,10 @@ class ApplicationController < ActionController::Base
     true
   end
 
+  def set_time_zone
+    Time.zone = 'UTC'
+  end
+
   def set_locale
     language_code = params[:language_code]
     I18n.locale = nil
