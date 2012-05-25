@@ -32,5 +32,4 @@ Tapjoyad::Application.routes.draw do
   match 'sgn_data' => 'sgn_data#index'
   match 'zynga_data' => 'zynga_data#index'
   match 'tapulous_marketing' => 'tapulous_marketing#index'
-
 end

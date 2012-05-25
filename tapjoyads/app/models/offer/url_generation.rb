@@ -252,7 +252,6 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
-
   def format_as_click_key( params )
     if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
