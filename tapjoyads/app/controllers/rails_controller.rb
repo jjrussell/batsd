@@ -7,7 +7,7 @@ class RailsController < ApplicationController
       :host_name => HOSTNAME,
       :time_now => Time.now,
       :time_zone_now => Time.zone.now,
-      :time_zone => Time.zone,
+      :time_zone => Time.zone.name,
       :machine_type => MACHINE_TYPE
     }
     render :json => info
