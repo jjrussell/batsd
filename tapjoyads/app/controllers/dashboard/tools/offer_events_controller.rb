@@ -1,5 +1,7 @@
 class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
+  layout 'tabbed'
   current_tab :tools
+
   before_filter :check_change_attributes, :only => [ :create, :update ]
   before_filter :setup
   after_filter :save_activity_logs, :only => [ :create, :update, :destroy ]
