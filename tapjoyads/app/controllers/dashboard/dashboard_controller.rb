@@ -8,10 +8,10 @@ class Dashboard::DashboardController < ApplicationController
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
 
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
-  before_filter :set_time_zone
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
+  around_filter :set_time_zone
 
   NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
                     Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
@@ -109,20 +109,20 @@ class Dashboard::DashboardController < ApplicationController
     @current_user_session
   end
 
-  def set_time_zone
-    if current_user
-      Time.zone = current_user.time_zone
-    else
-      Time.zone = 'UTC'
-    end
-  end
-
   def get_stat_prefix(group)
     @platform == 'all' ? group : "#{group}-#{@platform}"
   end
 
   def set_platform
     @platform = params[:platform] || 'all'
+  end
+
+  def set_time_zone
+    old_time_zone = Time.zone
+    Time.zone = current_user.time_zone if current_user.present?
+    yield
+  ensure
+    Time.zone = old_time_zone
   end
 
   def inform_of_new_sdk
