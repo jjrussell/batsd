@@ -10,10 +10,10 @@ class ApplicationController < ActionController::Base
   helper_method :geoip_data, :downcase_param
 
   before_filter :set_readonly_db
-  before_filter :set_time_zone
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
+  around_filter :set_time_zone
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
@@ -97,7 +97,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_time_zone
-    Time.zone = 'UTC'
+    old_time_zone = Time.zone
+    Time.zone = current_user.time_zone if respond_to?(:current_user) && current_user.present?
+    yield
+  ensure
+    Time.zone = old_time_zone
   end
 
   def set_locale

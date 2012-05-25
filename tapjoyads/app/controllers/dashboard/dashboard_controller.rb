@@ -8,7 +8,6 @@ class Dashboard::DashboardController < ApplicationController
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
 
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
-  before_filter :set_time_zone
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
@@ -107,14 +106,6 @@ class Dashboard::DashboardController < ApplicationController
       @current_user_session.destroy
     end
     @current_user_session
-  end
-
-  def set_time_zone
-    if current_user
-      Time.zone = current_user.time_zone
-    else
-      Time.zone = 'UTC'
-    end
   end
 
   def get_stat_prefix(group)
