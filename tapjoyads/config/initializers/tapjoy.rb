@@ -66,7 +66,7 @@ HOSTNAME = `hostname`.strip
 
 Dir.chdir Rails.root do
   GIT_REV = `git rev-parse --verify HEAD`.strip
-  GIT_BRANCH = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`.split.last.strip
+  GIT_BRANCH = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`.split.last.strip rescue ''
 end
 
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
