@@ -224,6 +224,15 @@ Tapjoyad::Application.routes.draw do
             post :delete
           end
         end
+        resources :currency_approvals, :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals'}, :only => [:index] do
+          collection do
+            get :history
+            get :mine
+          end
+          member do
+            get :approve, :reject, :assign
+          end
+        end
         resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
           collection do
             get :history
