@@ -101,6 +101,7 @@ Tapjoyad::Application.routes.draw do
           post :export_aggregate
           get :aggregate
           post :regenerate_api_key
+          post ':id' => 'reporting#export'
         end
         member do
           post :export
@@ -199,6 +200,7 @@ Tapjoyad::Application.routes.draw do
           get :publisher_payout_info_changes
           get :money
           get :sanitize_users
+          post :update_user
           get :device_info
           get :failed_sdb_saves
           post :resolve_clicks
@@ -222,20 +224,30 @@ Tapjoyad::Application.routes.draw do
             post :delete
           end
         end
-        resources :approvals, :as => 'acceptance', :only => [:index] do
+        resources :currency_approvals, :controller => :approvals, :requirements => { :type => :currency, :calling_controller => 'tools/currency_approvals'}, :only => [:index] do
           collection do
-            :history
-            :mine
+            get :history
+            get :mine
           end
           member do
-            :approve
-            :reject
-            :assign
+            get :approve, :reject, :assign
           end
         end
-        match 'acceptance/:type' => 'approvals#index'
-        match 'acceptance/:type/history' => 'approvals#history'
-        match 'acceptance/:type/mine' => 'approvals#mine'
+        resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
+          collection do
+            get :history
+            get :mine
+
+            get ':type',          :action => :index,   :as => :typed
+            get ':type/history',  :action => :history, :as => :typed_history
+            get ':type/mine',     :action => :mine,    :as => :typed_mine
+          end
+          member do
+            post :approve
+            post :reject
+            post :assign
+          end
+        end
         resources :premier_partners, :only => [:index]
         resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
         resources :orders, :only => [:new, :create] do
@@ -249,9 +261,7 @@ Tapjoyad::Application.routes.draw do
 
         end
         resources :video_offers, :only => [:new, :create, :edit, :update] do
-
-
-          resources :video_buttons
+          resources :video_buttons, :except => [:show]
         end
         resources :offers do
           resources :sales_reps
@@ -333,17 +343,6 @@ Tapjoyad::Application.routes.draw do
             post :disable
           end
         end
-        resources :currency_approvals, :only => [:index] do
-          collection do
-            :mine
-            :history
-          end
-          member do
-            :approve
-            :reject
-            :assign
-          end
-        end
         resources :wfhs, :only => [:index, :new, :create, :edit, :update, :destroy]
         resources :clients, :only => [:index, :show, :new, :create, :edit, :update] do
           member do
@@ -370,6 +369,7 @@ Tapjoyad::Application.routes.draw do
           get :elb_deregister_instance
           get :ec2_reboot_instance
           get :as_terminate_instance
+          get :requests_per_minute
           get :service_stats
           get :elb_status
           get :http_codes

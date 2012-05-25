@@ -45,7 +45,7 @@ class Games::GamersController < GamesController
       Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
 
       if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :link_device_url => finalize_games_gamer_device_path(:data => params[:data]), :android => true })
+        render(:json => { :success => true, :link_device_url => finalize_games_device_path(:data => params[:data]), :android => true })
       else
         render(:json => { :success => true, :link_device_url => new_games_device_path })
       end

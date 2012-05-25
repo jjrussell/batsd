@@ -42,6 +42,7 @@
     @include rounded-corners(4px);
   }
   select {
+    background-color: #fff;
     border: 1px solid #bfbfbf;
     color: #a5a5a5;
     font: 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
@@ -125,14 +126,13 @@
     text-align: center;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
+    display: none;
     box-shadow: 0 1px 2px rgba(0,0,0, .1);
     background: #d84141;
     color: #fff;
     text-shadow: 0 -1px 0 #c93232;
     line-height: 1.5em;
     margin-bottom: 7px;
-    opacity: 0;
-    visibility: 0;
     @include animate(all, 0.35s, ease-in);
   }
 }

@@ -264,8 +264,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def choose_experiment
-    params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
+  def choose_experiment(experiment)
+    params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end
 
   def decrypt_data_param

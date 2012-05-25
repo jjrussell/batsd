@@ -13,7 +13,7 @@
     %tr
       %th= f.label :payment_method
       %td
-        = f.select :payment_method, '<option value="1">Billable</option><option value="2">Marketing Expense</option>'
+        = f.select :payment_method, options_for_select([[ 'Billable', '1' ], ['Marketing Expense', '2']])
         = error_message_on @order, :payment_method
     %tr
       %th= f.label :description

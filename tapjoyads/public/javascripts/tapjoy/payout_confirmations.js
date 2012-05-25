@@ -27,7 +27,11 @@ $(function($) {
                 notes.empty();
               } else {
                 disabled.show();
-                notes.find('span').html(response.notes);
+                var notesString = '';
+                for(x in response.notes) {
+                  notesString += '<li>'+response.notes[x]+'</li>';
+                }
+                notes.find('span').html(notesString);
                 if(response.can_confirm == false) {
                   disabled.find('.submit').remove();
                 }

@@ -39,14 +39,13 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
-  resources :offer_completed do
-    collection do
-      match :boku
-      match :gambit
-      match :paypal
-      match :socialvibe
-    end
-  end
+
+  match 'offer_completed' => 'offer_completed#index'
+  match 'offer_completed/boku' => 'offer_completed#boku'
+  match 'offer_completed/gambit' => 'offer_completed#gambit'
+  match 'offer_completed/paypal' => 'offer_completed#paypal'
+  match 'offer_completed/socialvibe' => 'offer_completed#socialvibe'
+
   resource :points do
     collection do
       match :award
@@ -68,13 +67,14 @@ Tapjoyad::Application.routes.draw do
     member do
       get :complete
     end
-    match 'privacy' => 'documents#privacy'
-    match 'privacy.html' => 'documents#privacy'
-    match 'game_state/load' => 'game_state#load', :as => :load_game_state
-    match 'game_state/save' => 'game_state#save', :as => :save_game_state
-    match 'log_device_app/:action/:id' => 'connect#index'
-    match 'confirm_email_validation' => 'list_signup#confirm_api'
   end
+
+  match 'privacy' => 'documents#privacy'
+  match 'privacy.html' => 'documents#privacy'
+  match 'game_state/load' => 'game_state#load', :as => :load_game_state
+  match 'game_state/save' => 'game_state#save', :as => :save_game_state
+  match 'log_device_app/:action/:id' => 'connect#index'
+  match 'confirm_email_validation' => 'list_signup#confirm_api'
 
   namespace :job do
     match 'master_calculate_next_payout' => 'master_calculate_next_payout#index'
