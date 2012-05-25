@@ -137,7 +137,7 @@
           var budget = stringToNumber($(this).val(), true);
           var installLimit = Math.floor(budget / (currentPayment/100));
           $(this).val(numberToCurrency(budget));
-          $('#offer_event_daily_budget').val(addCommaSeparators(installLimit));
+          $('#offer_event_daily_budget').val(installLimit);
           if (!checkValidBudget()) {
             $('#offer_event_daily_budget').change();
           }
