@@ -8,6 +8,7 @@ class Dashboard::DashboardController < ApplicationController
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
 
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
+  before_filter :set_time_zone
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
