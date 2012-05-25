@@ -12,12 +12,12 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
   def index
     if current_user.role_symbols.include?(:agency)
-      @partners = current_user.partners.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+      @partners = current_user.partners.order('created_at DESC').includes([ :offers, :users ]).paginate(:page => params[:page])
     elsif params[:q]
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).scoped(:include => [ :offers, :users ]).paginate(:page => params[:page]).uniq
+      @partners = Partner.search(query).includes([ :offers, :users ]).paginate(:page => params[:page]).uniq
     else
-      @partners = Partner.scoped(:include => [ :offers, :users ]).order('created_at desc').paginate(:page => params[:page])
+      @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
     end
   end
 
