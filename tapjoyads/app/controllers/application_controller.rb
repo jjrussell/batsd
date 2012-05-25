@@ -62,7 +62,7 @@ class ApplicationController < ActionController::Base
   def verify_params(required_params, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    param_missing = required_params.any? { |param| params[param].blank? }
+    param_missing = required_params.any?{ |param| params[param].blank? } || params[:udid] == 'null'
     render :text => 'missing required params', :status => 400 if render_missing_text && param_missing
     !param_missing
   end
