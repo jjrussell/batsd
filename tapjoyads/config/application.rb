@@ -6,7 +6,15 @@ require "action_mailer/railtie"
 require "active_resource/railtie"
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
+
+MACHINE_TYPE = if ENV['MACHINE_TYPE']
+  ENV['MACHINE_TYPE']
+elsif `hostname` !~ /^ip-|^domU-/
+  # TODO: This is a bad hack to detect "production" boxes (what if we don't use amazon anymore!)
+  'dev'
+else
+  `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n").reject {|g| g == "tapbase"}.first
+end
 
 module Tapjoyad
   class Application < Rails::Application
