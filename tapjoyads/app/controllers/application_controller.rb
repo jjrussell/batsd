@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
+  before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
@@ -93,6 +94,10 @@ class ApplicationController < ActionController::Base
       return false
     end
     true
+  end
+
+  def force_utc
+    Time.zone = 'UTC'
   end
 
   def set_locale

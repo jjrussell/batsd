@@ -4,6 +4,7 @@ class Dashboard::DashboardController < ApplicationController
   layout 'website'
 
   skip_before_filter :fix_params
+  skip_before_filter :force_utc
 
   helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
 
