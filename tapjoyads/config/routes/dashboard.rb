@@ -230,7 +230,7 @@ Tapjoyad::Application.routes.draw do
             get :mine
           end
           member do
-            get :approve, :reject, :assign
+            post :approve, :reject, :assign
           end
         end
         resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
