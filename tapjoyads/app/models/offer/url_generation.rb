@@ -116,29 +116,6 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
-<<<<<<< HEAD
-    if item_type == 'App' || item_type == 'EmailOffer'
-      click_url += "app"
-    elsif item_type == 'GenericOffer'
-      click_url += "generic"
-    elsif item_type == 'RatingOffer'
-      click_url += "rating"
-    elsif item_type == 'TestOffer'
-      click_url += "test_offer"
-    elsif item_type == 'TestVideoOffer'
-      click_url += "test_video_offer"
-    elsif item_type == 'ActionOffer'
-      click_url += "action"
-    elsif item_type == 'VideoOffer'
-      click_url += "video"
-    elsif item_type == 'ReengagementOffer'
-      click_url += 'reengagement'
-    elsif item_type == 'SurveyOffer'
-      click_url += "survey"
-    elsif item_type == 'DeeplinkOffer'
-      click_url += 'deeplink'
-      #"#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
-=======
 
     click_url += case item_type
     when 'App','EmailOffer'   then 'app'
@@ -151,7 +128,6 @@ module Offer::UrlGeneration
     when 'ReengagementOffer'  then 'reengagement'
     when 'SurveyOffer'        then "survey"
     when 'DeeplinkOffer'      then 'deeplink'
->>>>>>> master
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -276,25 +252,14 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
-<<<<<<< HEAD
-  def format_as_click_key(param s)
-    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    elsif item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-=======
+
   def format_as_click_key( params )
     if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
->>>>>>> master
       Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
-<<<<<<< HEAD
-  e
-  nd
-=======
   end
->>>>>>> master
 end
