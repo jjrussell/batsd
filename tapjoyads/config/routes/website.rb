@@ -50,6 +50,7 @@ Tapjoyad::Application.routes.draw do
     match 'feedback' => 'support_requests#new', :type => 'feedback'
     resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'gamers#create'
         put :update_password
         put :accept_tos
         get :password
@@ -75,8 +76,8 @@ Tapjoyad::Application.routes.draw do
     match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
-    resources :password_resets, :only => [:new, :create, :edit, :update]
-    match 'password-reset' => 'password_resets#new', :as => :password_reset
+    resources :password_reset, :only => [:new, :create, :edit, :update]
+    match 'password-reset' => 'password_reset#new', :as => :password_reset
     resources :support_requests, :only => [:new, :create] do
       collection do
         get :unresolved_clicks
