@@ -1,5 +1,6 @@
 class OfferList
   PROMOTED_INVENTORY_SIZE = 3
+  DEEPLINK_POSITION = 3  #zero-based index of where to include a Deeplink offer in the offer list
 
   attr_reader :offers
 
@@ -145,8 +146,7 @@ def get_offers(start, max_offers)
     if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
       if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
-        pos = Tapjoyad::Application.config.offer_list_deeplink_position || 3
-        all_offers.insert(pos, deeplink_offer)
+        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
       end
     end
 

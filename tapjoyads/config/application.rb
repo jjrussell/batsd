@@ -40,9 +40,6 @@ module Tapjoyad
       g.test_framework :rspec
     end
 
-    #zero-based index of where to include a Deeplink offer in the offer list
-    config.offer_list_deeplink_position = 3
-
     def self.route_filenames
       case MACHINE_TYPE
       when 'dashboard'
