@@ -171,13 +171,11 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    if params[:source] == 'tj_games'
-      wr_path = 'tjm_offer_click'
-    elsif params[:source] == 'featured'
-      wr_path = 'featured_offer_click'
-    else
-      wr_path = 'offer_click'
-    end
+    wr_path = case params[:source]
+              when 'tj_games'      then 'tjm_offer_click'
+              when 'featured'      then 'featured_offer_click'
+              else                      'offer_click'
+              end
     build_web_request(wr_path)
   end
 
@@ -332,7 +330,7 @@ class ClickController < ApplicationController
   end
 
   def click_key
-    @click_key ||= @offer.format_as_click_key( params.slice(:udid, :advertiser_app_id, :gamer_id) )
+    @click_key ||= @offer.format_as_click_key(params.slice(:udid, :advertiser_app_id, :gamer_id))
   end
 
   def handle_multi_complete_video

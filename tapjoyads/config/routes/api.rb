@@ -1,6 +1,4 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
-
   namespace :agency_api do
     resources :apps, :only => [:index, :show, :create, :update]
     resources :partners, :only => [:index, :show, :create, :update] do

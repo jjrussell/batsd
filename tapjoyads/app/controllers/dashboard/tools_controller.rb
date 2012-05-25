@@ -27,6 +27,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def monthly_data
+    @period, @period_str = get_period_str(params[:period])
     conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
@@ -51,6 +52,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def partner_monthly_balance
+    @period_from, @period_from_str = get_period_str(params[:period_from])
+    @period_thru, @period_thru_str = get_period_str(params[:period_thru])
     if params[:partner_id].present?
       @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
@@ -68,11 +71,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @beginning_balances = []
     @ending_balances = []
     @partners.each do |partner|
-      monthly_accounting = partner.monthly_accounting(@period.year, @period.month)
-      beginning_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.beginning_balance / 100.0
-      ending_balances = (monthly_accounting.nil?) ? "N/A" : monthly_accounting.ending_balance / 100.0
-      @beginning_balances << beginning_balances
-      @ending_balances << ending_balances
+      from_monthly_accounting = partner.monthly_accounting(@period_from.year, @period_from.month)
+      thru_monthly_accounting = partner.monthly_accounting(@period_thru.year, @period_thru.month)
+      @beginning_balances << ((from_monthly_accounting.nil?) ? "N/A" : from_monthly_accounting.beginning_balance / 100.0)
+      @ending_balances << ((thru_monthly_accounting.nil?) ? "N/A" : thru_monthly_accounting.ending_balance / 100.0)
     end
   end
 
@@ -464,11 +466,14 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     downcase_param(:udid)
   end
 
+  def get_period_str(period)
+    period = period.present? ? Date.parse(period) : Date.current.beginning_of_month.prev_month
+    period_str = period.strftime("%b %Y")
+    return period, period_str
+  end
+
   def set_months
     most_recent_period = Date.current.beginning_of_month.prev_month
-    @period = params[:period].present? ? Date.parse(params[:period]) : most_recent_period
-    @period_str = @period.strftime("%b %Y")
-
     @months = []
     date = Date.parse('2009-06-01') #the first month of the platform
     while date <= most_recent_period

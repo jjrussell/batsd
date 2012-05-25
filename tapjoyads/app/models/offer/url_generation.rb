@@ -54,7 +54,7 @@ module Offer::UrlGeneration
     when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        subbed_string = (os_version && os_version >= '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
+        subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
         final_url.sub!('market://search?q=', subbed_string)
       end
     when 'EmailOffer'
@@ -78,7 +78,7 @@ module Offer::UrlGeneration
     when 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    when 'VideoOffer','TestVideoOffer'
+    when 'VideoOffer', 'TestVideoOffer'
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
@@ -116,6 +116,7 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
+<<<<<<< HEAD
     if item_type == 'App' || item_type == 'EmailOffer'
       click_url += "app"
     elsif item_type == 'GenericOffer'
@@ -137,6 +138,20 @@ module Offer::UrlGeneration
     elsif item_type == 'DeeplinkOffer'
       click_url += 'deeplink'
       #"#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
+=======
+
+    click_url += case item_type
+    when 'App','EmailOffer'   then 'app'
+    when 'GenericOffer'       then "generic"
+    when 'RatingOffer'        then "rating"
+    when 'TestOffer'          then "test_offer"
+    when 'TestVideoOffer'     then "test_video_offer"
+    when 'ActionOffer'        then "action"
+    when 'VideoOffer'         then "video"
+    when 'ReengagementOffer'  then 'reengagement'
+    when 'SurveyOffer'        then "survey"
+    when 'DeeplinkOffer'      then 'deeplink'
+>>>>>>> master
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -261,14 +276,25 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
+<<<<<<< HEAD
   def format_as_click_key(param s)
     if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     elsif item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+=======
+  def format_as_click_key( params )
+    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+>>>>>>> master
       Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
+<<<<<<< HEAD
   e
   nd
+=======
+  end
+>>>>>>> master
 end
