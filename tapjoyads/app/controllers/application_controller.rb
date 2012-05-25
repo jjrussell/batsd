@@ -13,7 +13,6 @@ class ApplicationController < ActionController::Base
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
-  around_filter :set_time_zone, :unless => proc { MACHINE_TYPE == 'web' }
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
@@ -94,14 +93,6 @@ class ApplicationController < ActionController::Base
       return false
     end
     true
-  end
-
-  def set_time_zone
-    old_time_zone = Time.zone
-    Time.zone = current_user.time_zone if respond_to?(:current_user) && current_user.present?
-    yield
-  ensure
-    Time.zone = old_time_zone
   end
 
   def set_locale
