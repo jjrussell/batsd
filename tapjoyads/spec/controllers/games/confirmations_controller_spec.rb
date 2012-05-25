@@ -46,5 +46,12 @@ describe Games::ConfirmationsController do
         response.redirect_url.should == games_root_url
       end
     end
+    context 'with extra spaces in the posted data (like SendGrid, sometimes)' do
+      it 'strips the spaces and continues' do
+        Sqs.expects(:send_message)
+        data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'}).insert(5, ' ')
+        get(:create, :data => data)
+      end
+    end
   end
 end
