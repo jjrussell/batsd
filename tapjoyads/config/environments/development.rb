@@ -3,7 +3,6 @@ begin
 rescue Errno::ENOENT
   local_config = {}
 end
-MACHINE_TYPE = local_config['machine_type'] || 'development'
 
 Tapjoyad::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
