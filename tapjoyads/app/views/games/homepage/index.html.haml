@@ -81,12 +81,12 @@
       %h1.museo.row-title= t('text.games.my_apps')
       .games
         - @external_publishers.each do |external_publisher|
-          - @encrypt_currency_id = ObjectEncryptor.encrypt(external_publisher.currencies.first[:id])
+          - @encrypt_app_id = ObjectEncryptor.encrypt(external_publisher.app_id)
           .app
-            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @encrypt_app_id)) do
               .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
-            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @encrypt_app_id)) do
               .details
                 %span.title
                   = external_publisher.app_name
@@ -96,7 +96,7 @@
                   -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
                 %span.ui-icon-small.social.icon16
                   -# "#{@app_metadata.app_reviews.by_gamers.size}"
-            = link_to(games_earn_path(:eid => @encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @encrypt_app_id)) do
               .btn
                 = t('text.shared.earn_verb')
               .myapps-earn.ui-list-action.ui-joy-button.orange-action

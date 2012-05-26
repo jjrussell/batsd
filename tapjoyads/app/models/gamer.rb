@@ -37,6 +37,7 @@
 #  twitter_access_token   :string(255)
 #  twitter_access_secret  :string(255)
 #  extra_attributes       :text(2147483647
+#  reward_credits         :integer(4)      default(0)
 #
 
 class Gamer < ActiveRecord::Base
