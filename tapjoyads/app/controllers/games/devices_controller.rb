@@ -1,5 +1,7 @@
 class Games::DevicesController < GamesController
 
+  ssl_allowed :create
+
   def new
     if current_gamer.present?
       if Rails.env.staging?

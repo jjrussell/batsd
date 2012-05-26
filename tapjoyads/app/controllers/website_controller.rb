@@ -1,4 +1,6 @@
 class WebsiteController < ApplicationController
+  include SslRequirement
+
   layout 'website'
 
   skip_before_filter :fix_params
