@@ -55,8 +55,8 @@
       .games
         - @favorite_publishers.each do |fav_external_publisher|
           .app
-            - @fav_encrypt_currency_id = ObjectEncryptor.encrypt(fav_external_publisher.currencies.first[:id])
-            = link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
+            - @fav_encrypt_app_id = ObjectEncryptor.encrypt(fav_external_publisher.app_id)
+            = link_to(games_earn_path(:eid => @fav_encrypt_app_id)) do
               .app-icon.squircle
                 %img{ :src => BLANK_IMAGE, :source => fav_external_publisher.get_icon_url(:size => 114, :source => :cloudfront)}
             .details
@@ -68,7 +68,7 @@
                 -# "#{@app_metadata.positive_thumbs_percentage.floor}%"
               %span.ui-icon-small.social.icon16
                 -# "#{@app_metadata.app_reviews.by_gamers.size}"
-            = link_to(games_earn_path(:eid => @fav_encrypt_currency_id)) do
+            = link_to(games_earn_path(:eid => @fav_encrypt_app_id)) do
               .btn
                 = t('text.shared.earn_verb')
               .myapps-earn.ui-list-action.ui-joy-button.orange-action
