@@ -77,7 +77,7 @@ Tapjoyad::Application.routes.draw do
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
     resources :password_reset, :only => [:new, :create, :edit, :update]
-    match 'password-reset' => 'password_reset#new', :as => :password_reset
+    match 'password-reset' => 'password_reset#create', :as => :password_reset
     resources :support_requests, :only => [:new, :create] do
       collection do
         get :unresolved_clicks
