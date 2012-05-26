@@ -1,6 +1,4 @@
 class Dashboard::DashboardController < ApplicationController
-  include SslRequirement
-
   layout 'website'
 
   skip_before_filter :fix_params
