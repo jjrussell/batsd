@@ -6,17 +6,12 @@ class Dashboard::OfferEventsController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :create, :update, :destroy ]
 
   def index
-    if params[:filter] == 'all'
-      @event_scope = 'all'
-    elsif params[:filter] == 'completed'
-      @event_scope = 'completed'
-    elsif params[:filter] == 'disabled'
-      @event_scope = 'disabled'
-    else
-      @event_scope = 'upcoming'
+    case params[:filter]
+    when 'all' then @offer_events = offer_events.all
+    when 'completed' then @offer_events = offer_events.completed
+    when 'disabled' then @offer_events = offer_events.disabled
+    else @offer_events = offer_events.upcoming
     end
-
-    @offer_events = offer_events_scope.send(@event_scope)
   end
 
   def new
