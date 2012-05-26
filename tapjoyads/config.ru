@@ -1,14 +1,4 @@
-require 'config/environment'
+# This file is used by Rack-based servers to start the application.
 
-use Rails::Rack::LogTailer
-
-map '/' do
-  use Rails::Rack::Static
-  run ActionController::Dispatcher.new
-end
-
-if Rails.env.development?
-  map '/assets' do
-    run Sprockets::Tj.assets
-  end
-end
+require ::File.expand_path('../config/environment',  __FILE__)
+run Tapjoyad::Application

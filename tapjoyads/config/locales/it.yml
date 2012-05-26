@@ -361,7 +361,7 @@ it:
       report_bug: "Report Bug"
       reset_password_message: "Enter the email address associated with your account and we will send you a link to reset your password."
       reset_password_message_submit: "You should receive an email with instructions to reset your password in the next few minutes."
-      reset_password_retry: "If you are still having problems logging in, you can %{reset_password_url} or email"
+      reset_password_retry_html: "If you are still having problems logging in, you can %{reset_password_url} or email"
       reset_password_retry_url_text: "request another password reset email"
       review_app_name: "Review %{app_name}"
       review_created: "Successfully reviewed this app."
@@ -416,14 +416,14 @@ it:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Clicca qui per continuare."
       download_action: qui
-      download_link: "Se non hai questa app, clicca %{download_action} per scaricarla."
-      earn_currency: "Guadagna %{amount_and_currency}"
+      download_link_html: "Se non hai questa app, clicca %{download_action} per scaricarla."
+      earn_currency_html: "Guadagna %{amount_and_currency}"
       footer: "Dopo aver completato questi step guadagnerai %{amount_and_currency}."
       header: "Segui questi step per guadagnare %{currency}:"
       title: Istruzioni
     offerwall:
-      buy_currency: "Compra %{amount} %{currency}"
-      earn_currency: "Guadagna %{amount} %{currency}"
+      buy_currency_html: "Compra %{amount} %{currency}"
+      earn_currency_html: "Guadagna %{amount} %{currency}"
       free: Gratis
       instructions: "Fai/compi tutte le seguenti azioni per ricevere %{currency}"
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"

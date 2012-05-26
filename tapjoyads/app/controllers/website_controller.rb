@@ -18,9 +18,9 @@ class WebsiteController < ApplicationController
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
 
-  VIDEO_OFFERS_NOTICE = "A new iOS and Android SDK (v8.2.0) update is now available here for both Publishers and 
-                        Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting 
-                        to either Apple or Google. There are a number of important updates - please view our change 
+  VIDEO_OFFERS_NOTICE = "A new iOS and Android SDK (v8.2.0) update is now available here for both Publishers and
+                        Advertisers. Moving forward, please update the Tapjoy SDK for all apps you're submitting
+                        to either Apple or Google. There are a number of important updates - please view our change
                         log for all the details. If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>."
 
   def sanitize_currency_params(object, fields)
@@ -63,7 +63,7 @@ class WebsiteController < ApplicationController
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
     if current_user
-      destination = request.env['HTTP_REFERER'] =~ /tapjoy.com/ ? request.env['HTTP_REFERER'] : dashboard_root_path
+      destination = request.env['HTTP_REFERER'] =~ /tapjoy.com/ ? request.env['HTTP_REFERER'] : root_path
     else
       destination = login_path(:goto => request.path)
     end
@@ -114,14 +114,6 @@ class WebsiteController < ApplicationController
     @current_user_session
   end
 
-  def set_time_zone
-    if current_user
-      Time.zone = current_user.time_zone
-    else
-      Time.zone = 'UTC'
-    end
-  end
-
   def get_stat_prefix(group)
     @platform == 'all' ? group : "#{group}-#{@platform}"
   end
@@ -162,7 +154,7 @@ class WebsiteController < ApplicationController
   end
 
   def find_app(app_id)
-    if permitted_to? :edit, :statz
+    if permitted_to? :edit, :dashboard_statz
       App.find(app_id)
     else
       current_partner.apps.find(app_id)

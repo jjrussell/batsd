@@ -39,6 +39,7 @@ describe SimpledbResource do
 
   describe 'A SimpledbResource object' do
     before :each do
+      SimpledbResource.reset_connection
       load_model
     end
 
@@ -104,7 +105,7 @@ describe SimpledbResource do
 
       load_model
       @model.attributes.delete('updated-at')
-      @model.attributes.should match_hash_with_arrays attrs
+      @model.attributes.should == attrs
     end
 
     it 'converts types' do

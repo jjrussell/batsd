@@ -28,13 +28,13 @@
                           No Rating Yet
                       %td= truncate(app_review.text, :length => 20)
                       %td
-                        - link_to edit_games_app_review_path(app_review) do
+                        = link_to edit_games_app_review_path(app_review) do
                           .edit_review.left
                             .edit_review_button
                               .button.grey
                                 %span.currency
                                   Edit
-                        - link_to games_app_reviews_path(app_review), :method => :delete, :confirm => "Are you sure you want to delete this review?" do
+                        = link_to games_app_reviews_path(app_review), :method => :delete, :confirm => "Are you sure you want to delete this review?" do
                           .delete_review.left
                             .delete_review_button
                               .button.grey

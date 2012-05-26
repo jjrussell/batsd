@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -183,7 +184,7 @@ class Offer < ActiveRecord::Base
   end
 
   before_validation :update_payment
-  before_validation_on_create :set_reseller_from_partner
+  before_validation :set_reseller_from_partner, :on => :create
   before_create :set_stats_aggregation_times
   before_save :cleanup_url
   before_save :fix_country_targeting
@@ -197,38 +198,38 @@ class Offer < ActiveRecord::Base
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
-  before_cache :clear_creative_blobs
-  before_cache :update_video_button_tracking_offers
+  set_callback :cache, :before, :clear_creative_blobs
+  set_callback :cache, :before, :update_video_button_tracking_offers
 
-  named_scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type NOT IN ('RatingOffer','DeeplinkOffer','ReengagementOffer') AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
-  named_scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
-  named_scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
-  named_scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
-  named_scope :non_rewarded, :conditions => "NOT rewarded"
-  named_scope :rewarded, :conditions => "rewarded"
-  named_scope :featured, :conditions => { :featured => true }
-  named_scope :apps, :conditions => { :item_type => 'App' }
-  named_scope :free, :conditions => { :price => 0 }
-  named_scope :nonfeatured, :conditions => { :featured => false }
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
-  named_scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  named_scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  named_scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  named_scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
-  named_scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
-  named_scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
+  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
+  scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
+  scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
+  scope :for_display_ads, :conditions => "price = 0 AND conversion_rate >= 0.3 AND ((item_type = 'App' AND CHAR_LENGTH(offers.name) <= 30) OR approved_banner_creatives IS NOT NULL)"
+  scope :non_rewarded, :conditions => "NOT rewarded"
+  scope :rewarded, :conditions => "rewarded"
+  scope :featured, :conditions => { :featured => true }
+  scope :apps, :conditions => { :item_type => 'App' }
+  scope :free, :conditions => { :price => 0 }
+  scope :nonfeatured, :conditions => { :featured => false }
+  scope :visible, :conditions => { :hidden => false }
+  scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
+  scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
+  scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
+  scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :video_offers, :conditions => "item_type = 'VideoOffer'"
+  scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
+  scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
-  named_scope :papaya_app_offers,
+  scope :papaya_app_offers,
     :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
       inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
-  named_scope :papaya_action_offers,
+  scope :papaya_action_offers,
     :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
       inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
       inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
@@ -440,7 +441,7 @@ class Offer < ActiveRecord::Base
   end
 
   def save(perform_validation = true)
-    super(perform_validation)
+    super(:validate => perform_validation)
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
@@ -565,8 +566,21 @@ class Offer < ActiveRecord::Base
     show_rate != 1 && (unlimited_budget? || low_balance?)
   end
 
+  def no_daily_budget?; daily_budget.zero?; end
+  def has_daily_budget?; daily_budget > 0; end
+  def no_overall_budget?; overall_budget.zero?; end
+  def has_overall_budget?; overall_budget > 0; end
+
+  def low_daily_budget?
+    has_daily_budget? && daily_budget < 5000
+  end
+
+  def over_daily_budget?(num_installs_today)
+    has_daily_budget? && num_installs_today > daily_budget
+  end
+
   def unlimited_budget?
-    daily_budget.zero? && overall_budget.zero?
+    no_daily_budget? && no_overall_budget?
   end
 
   def icon_id
@@ -654,7 +668,7 @@ class Offer < ActiveRecord::Base
     target_installs = 1.0 / 0
     target_installs = daily_budget - num_installs_today if daily_budget > 0
 
-    unless allow_negative_balance?
+    unless allow_negative_balance? || self_promote_only?
       adjusted_balance = partner.balance
       if is_free? && adjusted_balance < 50000
         adjusted_balance = adjusted_balance / 2

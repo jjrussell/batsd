@@ -1,7 +1,7 @@
 require 'spec/spec_helper'
 
 describe ConnectController do
-  integrate_views
+  render_views
 
   before :each do
     fake_the_web

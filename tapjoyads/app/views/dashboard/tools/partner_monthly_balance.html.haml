@@ -1,0 +1,82 @@
+- @page_title = 'Partner Monthly Balance'
+
+%h1
+  Partner monthly balance
+  - if @period_from_str == @period_thru_str
+    (#{@period_from_str})
+  - elsif
+    (#{@period_from_str} ~ #{@period_thru_str})
+
+= form_tag(partner_monthly_balance_tools_path, :method => :get) do
+  %table
+    %tr
+      %td Period
+      %td
+        = select_tag(:period_from, options_for_select(@months, @period_from_str), :style => 'width: 100px')
+        = "~"
+        = select_tag(:period_thru, options_for_select(@months, @period_thru_str), :style => 'width: 100px')
+    %tr
+      %td{:colspan => 2, :height => 20}
+    %tr
+      %td Partner
+      %td= text_field_tag(:q, params[:q], :size => '40', :placeholder => 'Name or Email Address')
+    %tr
+      %td{:colspan => 2}= "--- or ---"
+    %tr
+      %td Partner ID
+      %td= text_field_tag(:partner_id, params[:partner_id], :size => '40')
+    %tr
+      %td{:colspan => 2}= submit_tag('Search')
+
+- unless @partners.nil?
+  %table.tablesorter
+    %thead
+      %tr
+        %th name
+        %th id
+        %th beginning_balance (#{@period_from_str})
+        %th ending_balance (#{@period_thru_str})
+    %tbody
+      - @partners.each_with_index do |partner, index|
+        %tr{ :class => cycle('even', 'odd') }
+          %td= partner.name
+          %td= partner.id
+          %td{ :style => "text-align:right" }= number_to_currency(@beginning_balances[index])
+          %td{ :style => "text-align:right" }= number_to_currency(@ending_balances[index])
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('#partner_id').val(ui.item.partner_id);
+        },
+      });
+      $('#q').focus(function(){
+        $('#partner_id').val('');
+      });
+      $('#partner_id').focus(function(){
+        $('#q').val('');
+      });
+      $('#period_from').change(function(){
+        var period_from = $('#period_from').val();
+        var period_thru = $('#period_thru').val();
+        var date_from = Date.parse(period_from.substr(0, 4) + '01' + period_from.substr(3));
+        var date_thru = Date.parse(period_thru.substr(0, 4) + '01' + period_thru.substr(3));
+        if (date_from > date_thru) {
+          $('#period_thru').val(period_from);
+        }
+      });
+      $('#period_thru').change(function(){
+        var period_from = $('#period_from').val();
+        var period_thru = $('#period_thru').val();
+        var date_from = Date.parse(period_from.substr(0, 4) + '01' + period_from.substr(3));
+        var date_thru = Date.parse(period_thru.substr(0, 4) + '01' + period_thru.substr(3));
+        if (date_from > date_thru) {
+          $('#period_from').val(period_thru);
+        }
+      });
+    });

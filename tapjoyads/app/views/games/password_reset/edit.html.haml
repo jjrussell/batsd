@@ -1,0 +1,46 @@
+- @hide_login = true
+#update_password.current
+  .w300.pad
+    %h1.museo
+      Update Password
+    .mt10
+      = form_for(:gamer, @gamer, :url => { :action => :update }, :html => { :method => :put }) do |f|
+        .field
+          = f.label :password, t('text.shared.new_password')
+          = f.password_field :password, :class => 'ui-joy-input'
+        .field
+          = f.label :password_confirmation, t('text.shared.new_password')
+          = f.password_field :password_confirmation, :class => 'ui-joy-input'
+        .field
+          = submit_tag(t('text.shared.submit'), :class => 'ui-joy-button orange-action mt10 mb10')
+        .field
+          = error_message_on @gamer, :password
+      .formError.form-error.hide
+        .account_error.error-msg
+
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      $('form').focus(function(e){
+        $(".formError").hide();
+      });
+      $('form').submit(function(e){
+        $(".formError").hide();
+        var inputs, pass, values = {};
+        inputs = $('form :input[type=password]');
+        inputs.each(function() {
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          pass = values['gamer[password]'];
+          if( pass == '' ) {
+            $(".account_error").html('Please enter a password');
+            $(".formError").show().removeClass('hide');
+            e.preventDefault();
+          }
+        });
+      });
+    });

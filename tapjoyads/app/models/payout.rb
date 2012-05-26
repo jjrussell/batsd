@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: payouts
+#
+#  id             :string(36)      not null, primary key
+#  amount         :integer(4)      default(0), not null
+#  month          :integer(4)      not null
+#  year           :integer(4)      not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  partner_id     :string(36)      not null
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      default(1), not null
+#
+
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -15,7 +30,7 @@ class Payout < ActiveRecord::Base
 
   after_create :update_balance
 
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at

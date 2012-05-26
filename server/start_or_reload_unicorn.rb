@@ -14,7 +14,7 @@ if pid == ''
         when "dev"       : "development"
         else               "production"
         end
-  `unicorn_rails -E #{env} -c #{base_dir}/tapjoyads/config/unicorn.rb -D`
+  `bundle exec unicorn -E #{env} -c #{base_dir}/tapjoyads/config/unicorn.rb -D`
 else
   if server_type == "dev"
     puts "Dev environment, memory management is up to you"

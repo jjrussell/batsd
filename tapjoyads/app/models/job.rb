@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: jobs
+#
+#  id              :string(36)      not null, primary key
+#  active          :boolean(1)      default(FALSE), not null
+#  job_type        :string(255)     not null
+#  controller      :string(255)     not null
+#  action          :string(255)     default("index"), not null
+#  frequency       :string(255)     not null
+#  seconds         :integer(4)      not null
+#  created_at      :datetime
+#  updated_at      :datetime
+#  max_concurrency :integer(4)      default(0), not null
+#
+
 class Job < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -19,9 +35,9 @@ class Job < ActiveRecord::Base
   end
   validate :check_job_path
 
-  named_scope :active, :conditions => 'active = true'
-  named_scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
-  named_scope :for_index, :order => "active desc, job_type, frequency, seconds"
+  scope :active, :conditions => 'active = true'
+  scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
+  scope :for_index, :order => "active desc, job_type, frequency, seconds"
 
   attr_reader :next_run_time
 

@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: orders
+#
+#  id             :string(36)      not null, primary key
+#  partner_id     :string(36)      not null
+#  payment_txn_id :string(36)
+#  refund_txn_id  :string(36)
+#  coupon_id      :string(36)
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      not null
+#  amount         :integer(4)      default(0), not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  note           :text
+#  invoice_id     :integer(4)
+#  description    :string(255)
+#  note_to_client :string(255)
+#
+
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -28,9 +48,9 @@ class Order < ActiveRecord::Base
 
   delegate :billing_email, :freshbooks_client_id, :to => :partner
 
-  named_scope :not_invoiced, :conditions => 'status = 0'
-  named_scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :not_invoiced, :conditions => 'status = 0'
+  scope :created_since, lambda { |date| { :conditions => [ "created_at > ?", date ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at

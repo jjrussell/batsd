@@ -20,9 +20,6 @@ describe OfferCompletedController do
 
   describe "#index" do
     context "with a generic offer" do
-      before :each do
-      end
-
       it "should give an error message on blank click_key" do
         get(:index, {})
         assigns(:error_message).should == "click_key required"

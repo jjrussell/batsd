@@ -1,13 +1,13 @@
 #login-form{ :class => login_form_class_name }
   .bd.clearfix
-    - form_for([ :games, gamer_session ], :url => games_login_path) do |f|
+    = form_for([ :games, gamer_session ], :url => games_login_path) do |f|
       - if params[:data].present?
         = hidden_field_tag :data, params[:data]
       - if params[:path].present?
         = hidden_field_tag :path, params[:path]
       .title
         = t("text.games.log_in_tapjoy")
-      .form-error
+      .form-error.hidden
         &nbsp;
         = error_message_on gamer_session, :email
         = error_message_on gamer_session, :password

@@ -5,6 +5,7 @@ $(function() {
         spinner = $('.spinner', this);
 
     form.ajaxForm({
+      type: 'post',
       dataType: 'json',
       beforeSubmit: function() {
         spinner.show();
@@ -36,6 +37,7 @@ $(function() {
     var verbing = ($(this).hasClass('approve') ? 'approving' : 'rejecting'),
         row = $(this).parents('tr'),
         settings = {
+          type: 'post',
           dataType: 'json',
           url: $(this).attr('href'),
           beforeSubmit: function() {

@@ -1,0 +1,65 @@
+- @hide_login = true
+:javascript
+  var noMessage = false;
+#reset_password.current
+  .w300.pad
+    - if @gamer
+      .mt10
+        = t('text.games.reset_password_message_submit')
+      .mt10
+        = t('text.games.reset_password_retry_html', :reset_password_url => link_to(t('text.games.reset_password_retry_url_text'), new_games_password_reset_path))
+        = mail_to("mobilehelp@tapjoy.com") + "."
+        :javascript
+          var noMessage = true;
+    - else
+      %h1.museo
+        = t('text.shared.reset_password')
+      .mt10
+        = t('text.games.reset_password_message')
+      .mt10
+        = form_tag(games_password_resets_path) do
+          .field
+            = label_tag(:email)
+            = email_field_tag(:email, nil, "autocorrect" => "off", "autocapitalize" => "off", :class => 'ui-joy-input')
+          .field
+            = submit_tag(t('text.shared.submit'), :class => 'ui-joy-button orange-action mt10 mb10')
+        .formError.form-error.hide
+          .email_error.error-msg
+
+- content_for :page_javascript do
+  :plain
+    $(window).load(function() {
+      if (noMessage) {
+        $("#flash_error").hide();
+      }
+      $('form').focus(function(e){
+        $(".formError").hide();
+      });
+      $('form').submit(function(e){
+        $(".formError").hide();
+        var inputs, email, values = {}, emailReg;
+        inputs = $('form :input[type=email]');
+        emailReg = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
+        inputs.each(function() {
+          if (this.type == 'checkbox' || this.type == 'radio') {
+            values[this.name] = $(this).attr("checked");
+          }
+          else {
+            values[this.name] = $(this).val();
+          }
+          email = values['email'];
+          var test = emailReg.test(email);
+          if( values['email'] == '' ) {
+            $(".email_error").html('#{t('text.games.enter_email')}');
+            $(".formError").show().removeClass('hide').css({opacity: '1', visibility: 'visible !important'});
+            e.preventDefault();
+          }
+          else if ( !emailReg.test(email) ) {
+            $(".email_error").html('#{t('text.games.enter_valid_email')}');
+            $(".formError").show().removeClass('hide').css({opacity: '1', visibility: 'visible !important'});
+            e.preventDefault();
+          }
+        });
+      });
+    });
+

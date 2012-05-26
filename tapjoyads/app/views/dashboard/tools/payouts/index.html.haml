@@ -1,0 +1,198 @@
+- content_for :included_javascripts, javascript_include_tag('jquery.form.min', 'tapjoy/payout_confirmations')
+- @page_title = 'Payouts'
+
+%h1 Payouts
+
+%h3
+  Payout Freeze Status:
+  - if @freeze_enabled
+    %span{ :class => 'enabled' } Enabled
+  - else
+    %span{ :class => 'disabled' } Disabled
+  - if permitted_to? :index, :dashboard_tools_payout_freezes
+    = link_to '[modify]', tools_payout_freezes_path
+
+- if @start_date.present?
+  %h3
+    For partners with payout info modified between
+    = @start_date.to_s(:pub)
+    and
+    = @end_date.to_s(:pub)
+
+#filtered.hidden
+  Information updated in:
+  = select_date((@start_date || Time.zone.now), :order => [:year, :month], :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = submit_tag('Update', :id => :date_submit)
+  = submit_tag('Reset', :id => :date_reset)
+#unfiltered.hidden
+  = link_to 'Filter by payout info modification', '#'
+= form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
+  = submit_tag('Export to CSV')
+
+= label_tag(:q, 'Partner:')
+= text_field_tag(:partners, @partner, :size => '40')
+= submit_tag('Clear Filters', :class => 'clear_filter')
+%table
+  %thead
+    %tr
+      %th Partner
+      %th Pending Earnings
+      %th Cutoff Date
+      %th Payout Amount
+      %th Current Payout Created
+      %th Payout Info
+      %th Action
+      %th Confirmed Status
+      %th Confirmation Notes
+  %tbody
+    - @partners.each do |partner|
+      - payout_info = partner.payout_info
+      - confirmation_notes = partner.confirmation_notes
+      %tr
+        %td
+          %strong Name:
+          - if payout_info.present?
+            = payout_info.company_name
+          - else
+            \-
+          %br/
+          %strong Partner Name:
+          = partner.name
+          - if payout_info.present? && payout_info.doing_business_as.present?
+            %br/
+            %strong d/b/a:
+            = payout_info.doing_business_as
+          %br/
+          %strong ID:
+          = link_to(partner.id, partner_path(partner.id))
+
+        %td= number_to_currency(partner.pending_earnings / 100.0)
+        %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
+        %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
+        %td= number_to_currency(partner.next_payout_amount / 100.0)
+        - if partner.completed_payout_info?
+          %td
+            %span.present
+              %strong Present
+            %br/
+            %strong Type:
+            = payout_info.payout_method
+            %br/
+            %strong Updated:
+            = payout_info.updated_at.to_s(:pub)
+        - else
+          %td
+            %span.not_present
+              %strong Not Present
+        %td
+          - if permitted_to?(:create, :dashboard_tools_payouts)
+            = form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
+              = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
+              = submit_tag 'Create Payout', :class => 'submit'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+              %span.status
+          - else
+            &nbsp;
+        = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :dashboard_tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
+
+= will_paginate(@partners)
+%div{ :class => 'popup', :style => 'display:none'}
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      if (#{@start_date.blank?}) {
+        $('#unfiltered').show();
+      } else {
+        $('#filtered').show();
+      }
+      $('#unfiltered a').click(function(){
+        $('#unfiltered').hide();
+        $('#filtered').show();
+        return false;
+      });
+      $('#date_submit').click(function(){
+        var year = $('select#date_year').val();
+        var month = $('select#date_month').val();
+        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
+      });
+      $('#date_reset').click(function(){
+        $('#filtered').hide();
+        if (#{@start_date.present?}) {
+          location.href = location.href.split('?')[0];
+        } else {
+          $('#unfiltered').show();
+        }
+      });
+
+      $('#date').datepicker();
+      $('form.json').submit(function() {
+        if (!confirm('Are you sure?')) { return false; }
+
+        var spinner = $(this).find('img.spinner');
+        var submit = $(this).find('input.submit');
+        var amount = $(this).find('input.amount');
+        var status = $(this).find('span.status');
+
+        $.ajax({
+          dataType: 'json',
+          type: $(this).attr('method'),
+          url: $(this).attr('action'),
+          data: $(this).serialize(),
+          beforeSend: function() {
+            amount.hide();
+            submit.hide();
+            spinner.show();
+          },
+          complete: function() {
+            spinner.hide();
+          },
+          success: function(response) {
+            if (response.success == true) {
+              status.html('Complete');
+            } else {
+              status.html('Error');
+            }
+          }
+        });
+        return false;
+      });
+      var options = {
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{tools_payouts_path}?partners_filter='+ ui.item.partner_id;
+        }
+      };
+      $('#partners').focus().autocomplete(options);
+      $('input.clear_filter').click(function(){
+          window.location ='#{tools_payouts_path}';
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1200px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+      font-size: 12px;
+    }
+
+    span.enabled, span.present {
+      color: green;
+    }
+
+    span.disabled, span.not_present {
+      color: red;
+    }
+
+    h3 a {
+      text-decoration: none;
+      font-size: 14px;
+    }

@@ -6,7 +6,7 @@ class Games::GamerSessionsController < GamesController
 
   def new
     if current_gamer
-      redirect_to games_root_path and return
+      redirect_to games_path and return
     end
     render_login_page
   end
@@ -21,11 +21,11 @@ class Games::GamerSessionsController < GamesController
       end
       destroy and return if current_gamer.blocked?
       if params[:data].present? && cookies[:data].blank?
-        redirect_to finalize_games_gamer_device_path(:data => params[:data])
+        redirect_to finalize_games_device_path(:data => params[:data])
       elsif params[:path]
         redirect_to params[:path]
       else
-        redirect_to games_root_path
+        redirect_to games_path
       end
     else
       render_login_page
@@ -36,7 +36,7 @@ class Games::GamerSessionsController < GamesController
     session[:current_device_id] = nil
     gamer_session = GamerSession.find
     gamer_session.destroy unless gamer_session.nil?
-    redirect_to games_root_path
+    redirect_to games_path
   end
 
 end

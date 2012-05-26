@@ -16,15 +16,15 @@
   %table{:cellspacing => 0, :cellpadding => 0, :align => "center", :style => "width: 600px; background-color: white;"}
     %tr
       %td{:style => "height: 60px;"}
-        - link_to WEBSITE_URL, :style => css[:a] do
+        = link_to WEBSITE_URL, :style => css[:a] do
           = image_tag("#{image_root}/logo.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin: 20px 0px 0px 20px;")
       %td{:style => css[:follow_us]}
         follow us:
       %td{:style => css[:social]}
-        - link_to 'https://www.facebook.com/Tapjoy', :style => css[:a] do
+        = link_to 'https://www.facebook.com/Tapjoy', :style => css[:a] do
           = image_tag("#{image_root}/fb_icon.png", :title => 'Facebook', :alt => 'Facebook', :style => "border: none;")
       %td{:style => css[:social]}
-        - link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
+        = link_to 'https://twitter.com/#!/tapjoygames', :style => css[:a] do
           = image_tag("#{image_root}/twitter_icon.png", :title => 'Twitter', :alt => 'Twitter', :style => "border: none; margin-right: 20px;")
     %tr
       %td{:colspan => 4}
@@ -34,9 +34,9 @@
         %b{:style => css[:bold_content]}= t('text.games.invite_email_greet')
     %tr
       %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
-        - t('text.games.invite_email_body', :name => @gamer_name).each do |line|
+        = t('text.games.invite_email_body', :name => @gamer_name).each do |line|
           %p{:style => css[:content]}= line
-        - link_to @link, :style => css[:a] do
+        = link_to @link, :style => css[:a] do
           = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin-bottom: 40px;")
         %br
         %b{:style => css[:bold_content]}= t('text.games.invite_email_signature')
