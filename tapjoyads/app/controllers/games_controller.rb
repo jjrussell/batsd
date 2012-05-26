@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   include Facebooker2::Rails::Controller
+  include SslRequirement
 
   layout :select_layout
 
