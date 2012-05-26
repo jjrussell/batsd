@@ -41,6 +41,8 @@
 #  negotiated_rev_share_ends_on  :date
 #  accepted_negotiated_tos       :boolean(1)      default(FALSE)
 #  cs_contact_email              :string(255)
+#  confirmed_for_payout          :boolean(1)      default(FALSE), not null
+#  payout_confirmation_notes     :string(255)
 #  discount_all_offer_types      :boolean(1)      default(FALSE), not null
 #  client_id                     :string(36)
 #  promoted_offers               :text            default(""), not null

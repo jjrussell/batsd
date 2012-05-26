@@ -3,6 +3,7 @@ begin
 rescue Errno::ENOENT
   local_config = {}
 end
+MACHINE_TYPE = local_config['machine_type'] || 'development'
 
 Tapjoyad::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
@@ -28,6 +29,9 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  route_filenames.each do |route|
+    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
+  end
 end
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
@@ -70,7 +74,7 @@ MAIL_CHIMP_PARTNERS_LIST_ID = mail_chimp['partners_list_id']
 MAIL_CHIMP_SETTINGS_KEY = mail_chimp['settings_key']
 MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 
-SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d' #'63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
+SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = '2AdufehEmUpEdrEtamaspuxasU#=De'
 
@@ -94,7 +98,3 @@ Sass::Plugin.options[:style] = :nested
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '8a9e4550-6230-40f4-bd6b-6c376fd37ac3'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
-
-ENV['position_in_class']   = "before"
-ENV['exclude_tests']       = "true"
-ENV['exclude_fixtures']    = "true"

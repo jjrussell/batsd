@@ -2,7 +2,7 @@
 #
 # Table name: review_moderation_votes
 #
-#  id            :string(36)      not null, primary key
+#  id            :integer(4)      not null, primary key
 #  app_review_id :string(36)      not null
 #  gamer_id      :string(36)      not null
 #  type          :string(32)
