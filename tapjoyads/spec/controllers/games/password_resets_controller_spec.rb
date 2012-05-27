@@ -1,18 +1,18 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::PasswordResetsController do
   describe 'going to /password-reset' do
     describe 'using GET' do
       it 'renders new' do
         path = { :controller => 'games/password_resets', :action => 'new' }
-        params_from(:get, "/games/password-reset").should == path
+        { :get => "/games/password-reset" }.should route_to path
       end
     end
 
     describe 'using POST' do
       it 'renders create' do
         path = { :controller => 'games/password_resets', :action => 'create' }
-        params_from(:post, "/games/password-reset").should == path
+        { :post => "/games/password_resets" }.should route_to path
       end
 
       it 'sends email' do

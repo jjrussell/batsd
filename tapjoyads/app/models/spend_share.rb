@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: spend_shares
+#
+#  id             :string(36)      not null, primary key
+#  ratio          :float           not null
+#  effective_on   :date            not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  uncapped_ratio :float           not null
+#
+
 class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -11,8 +23,8 @@ class SpendShare < ActiveRecord::Base
     end
   end
 
-  named_scope :effective, lambda { |date| { :conditions => { :effective_on => date.to_date } } }
-  named_scope :over_range, lambda { |start_time, end_time| { :conditions => ["effective_on >= ? AND effective_on <= ?", start_time.to_date, end_time.to_date] } }
+  scope :effective, lambda { |date| { :conditions => { :effective_on => date.to_date } } }
+  scope :over_range, lambda { |start_time, end_time| { :conditions => ["effective_on >= ? AND effective_on <= ?", start_time.to_date, end_time.to_date] } }
 
   def self.current_ratio
     Mc.distributed_get_and_put("spend_share.ratio.#{Time.now.utc.to_date}") do

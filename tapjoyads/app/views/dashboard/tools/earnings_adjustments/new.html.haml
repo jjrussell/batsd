@@ -1,0 +1,23 @@
+- @page_title = 'Earnings Adjustment'
+
+%h2 Create Earnings Adjustment
+
+= form_for([ :tools, @earnings_adjustment ], :html => { :class => 'tjform' }) do |f|
+  %table
+    %tr
+      %th= f.label :partner_id, 'Partner'
+      %td
+        = @earnings_adjustment.partner.name
+        = f.hidden_field :partner_id
+    %tr
+      %th= f.label :amount
+      %td
+        = f.currency_field :amount, {}, :class => 'allow_negative'
+        = error_message_on @earnings_adjustment, :amount
+    %tr
+      %th= f.label :notes, "Internal notes"
+      %td
+        = f.text_field :notes, :size => 50
+        = error_message_on @earnings_adjustment, :notes
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Adjustment'

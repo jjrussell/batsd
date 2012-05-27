@@ -61,12 +61,12 @@ $(document).ready(function(){
   // Login Validation
   if ($('form#new_gamer_session').length > 0) {
     $('form#new_gamer_session input').focus(function() {
-      $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+      errorContainer.html('&nbsp;').hide();
     });
     $('form#new_gamer_session').submit(function(e){
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
       var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
-      errorContainer.css({opacity: '0', visibility: 'hidden'});
+      errorContainer.hide();
       var inputs, email, pass, values = {};
       var emailRegex = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       inputs = $('form#new_gamer_session :input*');
@@ -81,15 +81,15 @@ $(document).ready(function(){
       email = values['gamer_session[email]'];
       pass = values['gamer_session[password]'];
       if (Tapjoy.Utils.isEmpty(email) || email == 'Email') {
-        errorContainer.html(_t('games.enter_email')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_email')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(pass) || pass == 'Password') {
-        errorContainer.html(_t('games.enter_password')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_password')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(test_cookie)) {
-        errorContainer.html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.cookies_required')).show();
         e.preventDefault();
       }
       else {
@@ -100,9 +100,13 @@ $(document).ready(function(){
 
   // Signup Validation
   if($('form#new_gamer').length > 0) {
+    $('form#new_gamer input').focus(function() {
+      errorContainer.html('&nbsp;').hide();
+    });
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
+    var rootUrl = $(this).data('root-url');
 
     // Detect device type auto set
     if (Tapjoy.device.idevice || Tapjoy.device.android) {
@@ -214,7 +218,7 @@ $(document).ready(function(){
 
     $('form#new_gamer input, form#new_gamer select').bind('change', function(e){
       validate();
-      errorContainer.css('opacity', 0);
+      errorContainer.hide();
 
       if(!hasError){
         $('#gamer_submit').addClass('orange-action').removeClass('soft-grey-action').removeClass('disabled').addClass('enabled').css({cursor:'pointer'});
@@ -222,17 +226,19 @@ $(document).ready(function(){
         $('#gamer_submit').removeClass('orange-action').addClass('soft-grey-action').removeClass('enabled').addClass('disabled').css({cursor:'default'});
       }
     });
-
-
     function showValidationError(msg){
       hasError = true;
-      errorContainer.html(msg).css('opacity', 1);
+      errorContainer.html(msg).show();
       return false;
     }
-
+    $('#new_gamer').on('click', '.try-again', function () {
+      $('.register-message').html('&nbsp;').hide();
+      $(".register-form").removeClass('close').show();
+     });
     // Form Submit
     var unbindSubmit = false;
     $('form#new_gamer').bind('submit', function(e){
+      var $this = $(this), linkDeviceUrls = $this.data('link-urls'), rootUrl = $this.data('root-url');
 
       e.preventDefault();
 
@@ -247,10 +253,9 @@ $(document).ready(function(){
         }
 
         if(!hasError){
-          $(".register-form").addClass('close').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-          errorContainer.css({opacity: '0', visibility: 'hidden'});
-          $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-          $('.register-loader').css({opacity: '1', visibility: 'visible !important'});
+          $(".register-form").addClass('close').hide();
+          errorContainer.hide();
+          $('.register-loader').show();
           $.ajax({
             type: 'POST',
             url: rurl,
@@ -265,6 +270,7 @@ $(document).ready(function(){
               'gamer[password]': values['gamer[password]'],
               'gamer[referrer]': values['gamer[referrer]'],
               'gamer[terms_of_service]': values['gamer[terms_of_service]'],
+              'gamer[nickname]': values['gamer[nickname]'],
               'date[day]': values['date[day]'],
               'date[month]': values['date[month]'],
               'date[year]': values['date[year]'],
@@ -272,13 +278,12 @@ $(document).ready(function(){
               'default_platforms[ios]': values['default_platform_ios']
             },
             success: function(d) {
-              $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
                 if (d.link_device_url) { // link device url returned
                   if (Tapjoy.device.idevice) { // is ios device
-                    $('.register-loader').show().css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
+                    $('.register-loader').hide();
+                    $('#register-ios').show();
                     $('#gamer_submit').click(function() {
                       document.location.href = d.link_device_url;
                     });
@@ -286,30 +291,33 @@ $(document).ready(function(){
                   else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
                     document.location.href = d.link_device_url;
                   }
-                  else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+                  else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
+                    $('.register-loader').hide();
+                    $('#register-android').show();
                     $('#gamer_submit').click(function() {
-                      document.location.href = Tapjoy.androidAppPath;
+                      document.location.href = linkDeviceUrls.android;
                     });
                   }
                   else {
                     goHome = true;
                   }
                 }
-                else if (Tapjoy.device.android && Tapjoy.androidAppPath){
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
+                else if (Tapjoy.device.android && linkDeviceUrls.android){
+                  $('.register-loader').hide();
+                  $('#register-android').show();
+                  $('#gamer_submit').click(function() {
+                    document.location.href = linkDeviceUrls.android;
+                  });
                 }
-                else if (Tapjoy.rootPath) {
-                  document.location.href = Tapjoy.rootPath;
+                else if (rootUrl) {
+                  document.location.href = rootUrl;
                 }
                 else {
                   goHome = true;
                 }
                 if (goHome) {
-                  if (Tapjoy.rootPath) {
-                    document.location.href = Tapjoy.rootPath;
+                  if (rootUrl) {
+                    document.location.href = rootUrl;
                   }
                   else {
                     document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
@@ -331,15 +339,8 @@ $(document).ready(function(){
                   '<div class="error">', error ,'.</div>',
                   '<div class="try-again ui-joy-button soft-grey-action">'+_t('shared.try_again')+'</div>',
                 ].join('');
-                $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-                $('.register-message').html(msg).show().css({opacity: '1', visibility: 'visible !important'});
+                $('.register-message').html(msg).show();
               }
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-
-              });
             },
             error: function() {
               var error = 'There was an issue';
@@ -348,14 +349,8 @@ $(document).ready(function(){
                 '<div class="error ">', error ,'.</div>',
                 '<div class="try-again ui-joy-button orange-action">'+_t('shared.try_again')+'</div>',
               ].join('');
-              $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-              $('.register-message').html(msg).css({opacity: '1', visibility: 'visible !important'});
-              $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-              });
+              $('.register-message').html(msg).show();
+              $('.register-loader').hide();
             }
           });
         }
@@ -364,7 +359,7 @@ $(document).ready(function(){
   }
 
   // Menu Grid
-  $('.menu-grid').bind('click', function(){
+  $('.menu-grid').on('click', function(){
     if ($(this).hasClass('active')) {
       $(this).removeClass('active');
       $('.menu-dropdown').removeClass('open').addClass('close');
@@ -764,76 +759,88 @@ $(document).ready(function(){
   }, 50);
 
   // Device Switcher
-  if (Tapjoy.selectDevice) {
-    var path, device_found = false, device_count = 0, device_data, matched_data;
-    var d = [], a = [], m = [];
-    if (Tapjoy.selectDevicePath) {
-      path = Tapjoy.selectDevicePath;
-    }
-    else {
-      path = '/switch_device';
-    }
-    $.each(Tapjoy.selectDevice, function(i,v){
-      var device_type = v.device_type;
-      if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
-        device_count++;
-        device_found = true;
-        d.push('<a href="', path ,'?data=', v.data ,'">');
-          d.push('<li class="device-item">');
-            d.push(v.name);
-          d.push('</li>');
-        d.push('</a>');
+  // Built when menu is opened the first time
+  function buildDeviceSwitcher() {
+    $("#device-select").each(function () {
+      var $this = $(this),
+          deviceList = $this.data('list'),
+          selectPath = $this.data('select-path'),
+          possibleLinks = $this.data('links');
+
+      if (deviceList) {
+        var path, device_found = false, device_count = 0, device_data, matched_data;
+        var d = [], a = [], m = [];
+        if (selectPath) {
+          path = selectPath;
+        }
+        else {
+          path = '/switch_device';
+        }
+        $.each(deviceList, function(i,v){
+          var device_type = v.device_type;
+          if (!Tapjoy.Utils.isEmpty(device_type) && Tapjoy.device.name && (device_type.toLowerCase() == Tapjoy.device.name.toLowerCase().replace(/simulator/,'').replace(/ /,''))) {
+            device_count++;
+            device_found = true;
+            d.push('<a href="', path ,'?data=', v.data ,'">');
+              d.push('<li class="device-item">');
+                d.push(v.name);
+              d.push('</li>');
+            d.push('</a>');
+          }
+          else if (!Tapjoy.supportsTouch) { // Web
+            a.push('<a href="', path ,'?data=', v.data ,'">');
+              a.push('<li class="device-item">');
+                a.push(v.name);
+              a.push('</li>');
+            a.push('</a>');
+          }
+        });
+        if (!device_found) {
+          if (Tapjoy.device.idevice && possibleLinks.ios) {
+            link_device = '<a href="' + possibleLinks.ios + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+            m =  [
+              '<ul>',
+                link_device,
+              '</ul>'
+            ].join('');
+          }
+          else if (Tapjoy.device.android &&  possibleLinks.android) {
+            link_device = '<a href="' + possibleLinks.android + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
+            m =  [
+              '<ul>',
+                link_device,
+              '</ul>'
+            ].join('');
+          }
+          else if (!Tapjoy.supportsTouch) { // Web - Allow user to select device
+            m =  [
+              '<ul>',
+                a.join(''),
+              '</ul>'
+            ].join('');
+          }
+        }
+        else {
+          var other = "";
+          if (Tapjoy.device.android &&  possibleLinks.android) {
+            other = '<a href="' +  possibleLinks.android + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+          }
+          else if (Tapjoy.device.idevice && possibleLinks.ios) {
+            other = '<a href="' +  possibleLinks.ios + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
+          }
+          m =  [
+            '<ul>',
+              d.join(''),
+              other,
+            '</ul>',
+          ].join('');
+        }
+        $('#device-select-list', $this).html(m);
       }
-      else if (!Tapjoy.supportsTouch) { // Web
-        a.push('<a href="', path ,'?data=', v.data ,'">');
-          a.push('<li class="device-item">');
-            a.push(v.name);
-          a.push('</li>');
-        a.push('</a>');
-      }
+      $('.menu-grid').off('click', buildDeviceSwitcher);
     });
-    if (!device_found) {
-      if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
-        link_device = '<a href="' + Tapjoy.iosLinkDevicePath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
-        m =  [
-          '<ul>',
-            link_device,
-          '</ul>'
-        ].join('');
-      }
-      else if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
-        link_device = '<a href="' + Tapjoy.androidAppPath + '"><li class="device-item">'+_t('games.connect_my_device')+'</li></a>';
-        m =  [
-          '<ul>',
-            link_device,
-          '</ul>'
-        ].join('');
-      }
-      else if (!Tapjoy.supportsTouch) { // Web - Allow user to select device
-        m =  [
-          '<ul>',
-            a.join(''),
-          '</ul>'
-        ].join('');
-      }
-    }
-    else {
-      var other = "";
-      if (Tapjoy.device.android &&  Tapjoy.androidAppPath) {
-        other = '<a href="' +  Tapjoy.androidAppPath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
-      }
-      else if (Tapjoy.device.idevice && Tapjoy.iosLinkDevicePath) {
-        other = '<a href="' +  Tapjoy.iosLinkDevicePath + '"><li class="device-item add">'+_t('shared.other')+'</li></a>';
-      }
-      m =  [
-        '<ul>',
-          d.join(''),
-          other,
-        '</ul>',
-      ].join('');
-    }
-    $('#device-select-list').html(m);
   }
+  $('.menu-grid').on('click', buildDeviceSwitcher);
 
   (function () {
     if (window._tjHtmlDone && window._tjStartTime) {
@@ -841,14 +848,4 @@ $(document).ready(function(){
       Tapjoy.Utils.googleLog("Main.js", "load", "Time in ms", (new Date().getTime() - _tjStartTime));
     }
   }());
-
-  // If on mobile device and cookie missing, prompt user to select closest matching device
-  if (Tapjoy.requireSelectDevice && Tapjoy.selectDevice.length > 0 && (Tapjoy.device.idevice || Tapjoy.device.android)) {
- //commenting out until we can talk to Van
-  //  Tapjoy.Utils.mask();
-  }
-
-  //if (Tapjoy.device.idevice) {
-  //  Tapjoy.Plugins.showAddHomeDialog();
-  //}
 });

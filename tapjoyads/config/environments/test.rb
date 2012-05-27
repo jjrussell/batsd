@@ -1,25 +1,40 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Tapjoyad::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# The test environment is used exclusively to run your application's
-# test suite.  You never need to work with it otherwise.  Remember that
-# your test database is "scratch space" for the test suite and is wiped
-# and recreated between test runs.  Don't rely on the data there!
-config.cache_classes = true
+  # The test environment is used exclusively to run your application's
+  # test suite.  You never need to work with it otherwise.  Remember that
+  # your test database is "scratch space" for the test suite and is wiped
+  # and recreated between test runs.  Don't rely on the data there!
+  config.cache_classes = true
 
-# Log error messages when you accidentally call methods on nil.
-config.whiny_nils = true
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Show full error reports and disable caching
-config.action_controller.consider_all_requests_local = true
-config.action_controller.perform_caching             = false
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = true
+  config.action_controller.perform_caching = false
 
-# Disable request forgery protection in test environment
-config.action_controller.allow_forgery_protection    = false
+  # Raise exceptions instead of rendering exception templates
+  config.action_dispatch.show_exceptions = false
 
-# Tell Action Mailer not to deliver emails to the real world.
-# The :test delivery method accumulates sent emails in the
-# ActionMailer::Base.deliveries array.
-config.action_mailer.delivery_method = :test
+  # Disable request forgery protection in test environment
+  config.action_controller.allow_forgery_protection    = false
+
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.action_mailer.delivery_method = :test
+
+  # Use SQL instead of Active Record's schema dumper when creating the test database.
+  # This is necessary if your schema can't be completely dumped by the schema dumper,
+  # like if you have constraints or database-specific column types
+  # config.active_record.schema_format = :sql
+
+  # Print deprecation notices to the stderr
+  config.active_support.deprecation = :stderr
+  config.time_zone = 'UTC'
+
+end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
@@ -77,15 +92,13 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = true
 
-twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['test']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['test']['consumer_secret']
 
 DEV_FACEBOOK_ID = '100000459598424'
 
 DEVICE_LINK_TRACKING_PIXEL = ''
-
-Sass::Plugin.options[:style] = :nested
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '8a9e4550-6230-40f4-bd6b-6c376fd37ac3'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'

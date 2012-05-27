@@ -1,55 +1,75 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Tapjoyad::Application.configure do
 
-# The production environment is meant for finished, "live" apps.
-# Code is not reloaded between requests
-config.cache_classes = true
+  # Settings specified here will take precedence over those in config/application.rb
 
-# Enable threaded mode
-# config.threadsafe!
+  # The production environment is meant for finished, "live" apps.
+  # Code is not reloaded between requests
+  config.cache_classes = true
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+  # Full error reports are disabled and caching is turned on
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-# Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
-config.action_controller.perform_caching             = true
-config.action_view.cache_template_loading            = true
+  # Specifies the header that your server uses for sending files
+  config.action_dispatch.x_sendfile_header = "X-Sendfile"
 
-# Disable request forgery protection because this is an api
-config.action_controller.allow_forgery_protection    = false
+  # For nginx:
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
-# Use a different cache store in production
-# config.cache_store = :mem_cache_store
 
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
+  # See everything in the log (default is :info)
+  # config.log_level = :debug
 
-# Disable delivery errors, bad email addresses will be ignored
-# config.action_mailer.raise_delivery_errors = false
+  # Use a different logger for distributed setups
+  # config.logger = SyslogLogger.new
 
-MEMCACHE_SERVERS             = [
-                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
-                               ]
-DISTRIBUTED_MEMCACHE_SERVERS = [
-                                 'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
-                                 'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-                                 'localhost:21211'
-                               ]
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
 
-EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
-                         'ActionController::RoutingError']
+  # Disable Rails's static asset server
+  # In production, Apache or nginx will already do this
+  # TODO: Fix this with nginx
+  config.serve_static_assets = true
+
+  # Enable serving of images, stylesheets, and javascripts from an asset server
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Disable delivery errors, bad email addresses will be ignored
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable threaded mode
+  # config.threadsafe!
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
+  # the I18n.default_locale when a translation can not be found)
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners
+  config.active_support.deprecation = :notify
+
+end
 
 begin
   local_config = YAML::load_file("#{Rails.root}/config/local.yml")
 rescue Errno::ENOENT
   local_config = {}
 end
+
+MEMCACHE_SERVERS = [
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+]
+DISTRIBUTED_MEMCACHE_SERVERS = [
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
+  'localhost:21211'
+]
 
 SPROCKETS_CONFIG = {
   :compile => true,
@@ -101,7 +121,7 @@ PAPAYA_SECRET = 'RT4oNOKx0QK2nJ51'
 
 CLEAR_MEMCACHE = false
 
-twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+twitter = YAML::load_file("#{::Rails.root.to_s}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['production']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['production']['consumer_secret']
 

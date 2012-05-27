@@ -1,0 +1,15 @@
+.panel
+  .page-header
+    .container
+      .left.ml10.pt3
+        .big-title.mt10
+          = t('text.games.invite_title')
+  .container
+    .mod
+      = form_tag games_social_send_email_invites_path, :class => "ajax-submit", "data-success-event" => "email-invite-ajax-success" do
+        .mod.pb3
+          = t('text.shared.recipients')
+        .mod.form-section
+          = text_field_tag :recipients, @recipients, :placeholder => t('text.games.recipients_label'), :class => "ui-joy-input", :required => :required, "data-validation-message" => t("text.games.provide_single_email")
+        .mod.form-section.pt20.pb20
+          = submit_tag t("text.shared.submit"), :class => "ui-joy-button primary enable-when-valid"

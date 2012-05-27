@@ -1,0 +1,83 @@
+- source = params[:source] == 'performance' ? 'performance' : 'agencies'
+%h1
+  Contact Tapjoy
+%p
+  Please fill out the form below and we'll be in touch with you as soon as possible!
+#error
+#message
+.clear
+.form
+  = form_for('info', :url => '#', :html => {:id => 'contact_form'}) do |f|
+    %table{:width => '500px;'}
+      %tbody
+        %tr
+          %td= f.label :name, 'Your name'
+          %td= f.text_field :name, :value => params[:info] && params[:info][:name]
+        %tr
+          %td= f.label :email, 'Your email'
+          %td= f.text_field :email, :value => params[:info] && params[:info][:email]
+        %tr
+          %td= f.label :phone, 'Your phone'
+          %td= f.text_field :phone, :value => params[:info] && params[:info][:phone]
+        %tr
+          %td= f.label :company, 'Your company'
+          %td= f.text_field :company, :value => params[:info] && params[:info][:company]
+        %tr
+          %td= f.label :title, 'Your title'
+          %td= f.text_field :title, :value => params[:info] && params[:info][:title]
+        %tr
+          %td= f.label :comments
+          %td= f.text_area :comments, :size => '30x5', :value => params[:info] && params[:info][:comments]
+  %p= submit_tag 'Send', :id => 'submit_button'
+= javascript_include_tag 'jquery-1.4.2.min'
+%script
+  :plain
+    $('#submit_button').click(function(){
+      var data = {
+        'info[name]':     $('#info_name').val(),
+        'info[email]':    $('#info_email').val(),
+        'info[phone]':    $('#info_phone').val(),
+        'info[company]':  $('#info_company').val(),
+        'info[title]':    $('#info_title').val(),
+        'info[comments]': $('#info_comments').val(),
+        'info[source]':   '#{source}',
+      };
+      var complete = true;
+      $.each(data, function(key, object){
+        if (!object.trim()) {
+          complete = false;
+        }
+      });
+      if (complete) {
+        var settings = {
+          url: '/site/contact',
+          type: 'POST',
+          data: data,
+          dataType: 'json',
+          complete: function(jqXHR, textStatus) {
+            if (textStatus == 'error') {
+              $('#error').text('Error: please try again.');
+              $('#error').show();
+            } else if (textStatus == 'success') {
+              var responseJson = $.parseJSON(jqXHR.response);
+              if (responseJson && responseJson.error) {
+                $('#error').text(responseJson.error);
+                $('#error').show();
+              } else {
+                $('#message').text('Your form was submitted successfully!');
+                $('#message').show();
+                $('#submit_button').hide();
+              }
+            };
+            $('#submit_button').attr('disabled', false);
+          }
+        };
+        $('#error').hide();
+        $('#submit_button').attr('disabled', 'disabled');
+        $.ajax(settings);
+      } else {
+        $('#error').text('Please fill in all the fields in the forms.');
+        $('#error').show();
+      }
+      return false;
+    });

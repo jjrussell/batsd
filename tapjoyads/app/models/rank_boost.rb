@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: rank_boosts
+#
+#  id         :string(36)      not null, primary key
+#  offer_id   :string(36)      not null
+#  start_time :datetime        not null
+#  end_time   :datetime        not null
+#  amount     :integer(4)      not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class RankBoost < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -9,8 +22,8 @@ class RankBoost < ActiveRecord::Base
 
   after_save :calculate_rank_boost_for_offer
 
-  named_scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
-  named_scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
+  scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
+  scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
 
   def partner_id
     offer.partner_id

@@ -16,7 +16,7 @@
                 = @app_metadata.app_reviews.by_gamers.size
               .left.mt1.ml3.pb1
                 = hidden_field_tag(:eapp_metadata_id, ObjectEncryptor.encrypt(@app_metadata.id))
-                = hidden_field_tag(:mark_as_fav_path, games_gamer_favorite_app_path)
+                = hidden_field_tag(:mark_as_fav_path, games_favorite_app_path)
                 #favorite_app_button.ui-joy-button.primary.smaller
                   - if @mark_as_favorite
                     = t('text.games.mark_as_favorite')
@@ -55,7 +55,7 @@
         .list-button-container.flush.nbb.big
           .list-button.ntb
             - eid = params[:eid].present? ? params[:eid] : ObjectEncryptor.encrypt(params[:id])
-            -link_to new_games_app_review_path(:eid => eid) do
+            = link_to new_games_app_review_path(:eid => eid) do
               .left.charcoal
                 = t("text.games.review_app_name", {:app_name => @app.name})
               .right.rightarrow.icon16

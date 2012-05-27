@@ -15,8 +15,8 @@ describe Games::ConfirmationsController do
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'test_campaign'})
         get(:create, :data => data)
         response.code.should == "302"
-        response.session[:flash][:notice].should == 'Email address confirmed.'
-        response.redirected_to.should == games_root_path(:utm_campaign => 'welcome_email',
+        request.session[:flash][:notice].should == 'Email address confirmed.'
+        response.redirect_url.should == games_root_url(:utm_campaign => 'welcome_email',
                              :utm_medium   => 'email',
                              :utm_source   => 'tapjoy',
                              :utm_content  => 'test_campaign',
@@ -34,16 +34,23 @@ describe Games::ConfirmationsController do
       it 'redirects to url without tracking params' do
         get(:create, :token => @gamer.confirmation_token)
         response.code.should == "302"
-        response.session[:flash][:notice].should == 'Email address confirmed.'
-        response.redirected_to.should == games_root_path
+        request.session[:flash][:notice].should == 'Email address confirmed.'
+        response.redirect_url.should == games_root_url
       end
     end
     context 'with invalid token' do
       it 'redirects with flash error' do
         get(:create, :token => 'bad_token')
         response.code.should == "302"
-        response.session[:flash][:error].should == 'Unable to confirm email address.'
-        response.redirected_to.should == games_root_path
+        request.session[:flash][:error].should == 'Unable to confirm email address.'
+        response.redirect_url.should == games_root_url
+      end
+    end
+    context 'with extra spaces in the posted data (like SendGrid, sometimes)' do
+      it 'strips the spaces and continues' do
+        Sqs.expects(:send_message)
+        data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'}).insert(5, ' ')
+        get(:create, :data => data)
       end
     end
   end

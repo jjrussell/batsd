@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::SupportRequestsController do
   before :each do
@@ -20,7 +20,7 @@ describe Games::SupportRequestsController do
 
     results = [ @click1, @click1_dupe_old, @click2 ]
     Click.stubs(:select_all).returns(results)
-    GamesMailer.stubs(:deliver_contact_support)
+    GamesMailer.stubs(:contact_support).returns(Object.new.tap { |obj| obj.stubs(:deliver) })
 
     @gamer = Factory(:gamer)
     @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
@@ -87,7 +87,8 @@ describe Games::SupportRequestsController do
       end
 
       it 'sends a customer service email' do
-        GamesMailer.expects(:deliver_contact_support).once
+        dummy_mail = Object.new.tap { |obj| obj.expects(:deliver).once }
+        GamesMailer.expects(:contact_support).once.returns(dummy_mail)
         post :create, @params
       end
     end

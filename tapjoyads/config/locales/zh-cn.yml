@@ -360,7 +360,7 @@ zh-cn:
       report_bug: 报告错误
       reset_password_message: 输入跟你账号相关联的邮箱，我们会发送重置密码的连接给你
       reset_password_message_submit: 你应该在几分钟之后就收到一封指引你重置密码的电邮
-      reset_password_retry: "如果你还是无法登入，你可以 %{reset_password_url} 或发电邮"
+      reset_password_retry_html: "如果你还是无法登入，你可以 %{reset_password_url} 或发电邮"
       reset_password_retry_url_text: 请求另一封密码重置电邮
       review_app_name: "评论 %{app_name}"
       review_created: 成功的评论了这个应用
@@ -415,14 +415,14 @@ zh-cn:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: 点击这里继续
       download_action: 这里
-      download_link: "如果您没有这个程序, 点击 %{download_action} 下载"
-      earn_currency: "赚 %{amount_and_currency}"
+      download_link_html: "如果您没有这个程序, 点击 %{download_action} 下载"
+      earn_currency_html: "赚 %{amount_and_currency}"
       footer: "在完成这些步骤后, 您将获得 %{amount_and_currency}."
       header: "按照这些步骤来赚 %{currency}："
       title: 说明
     offerwall:
-      buy_currency: "买 %{amount} %{currency}"
-      earn_currency: "赚 %{amount} %{currency}"
+      buy_currency_html: "买 %{amount} %{currency}"
+      earn_currency_html: "赚 %{amount} %{currency}"
       free: 免费
       instructions: "完成以下的要求其中之一可以得到 %{currency}"
       instructions_non_rewarded: 发现Tapjoy的热点!

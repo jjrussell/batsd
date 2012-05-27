@@ -87,12 +87,6 @@ describe AgencyApi::CurrenciesController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:show)
-
-      should_respond_with_json_error(400)
-    end
-
     it 'responds with error given bad credentials' do
       get(:show, @valid_params.merge(:api_key => 'foo'))
 
@@ -250,12 +244,6 @@ describe AgencyApi::CurrenciesController do
         :callback_url => 'http://tapjoy.com',
         :secret_key => 'bar'
       }
-    end
-
-    it 'responds with error given missing params' do
-      put(:update)
-
-      should_respond_with_json_error(400)
     end
 
     it 'responds with error given bad credentials' do

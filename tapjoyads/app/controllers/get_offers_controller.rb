@@ -4,8 +4,8 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup
-  before_filter :choose_papaya_experiment, :only => [:index, :webpage]
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_experiment_parameters
+  # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
@@ -107,18 +107,7 @@ class GetOffersController < ApplicationController
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
     if @save_web_requests
-      if params[:source] == 'tj_games'
-        wr_path = 'tjm_offers'
-      elsif params[:source] == 'featured'
-        wr_path = 'featured_offer_requested'
-      else
-        wr_path = 'offers'
-      end
-      @web_request = WebRequest.new(:time => @now)
-      @web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
-      @web_request.viewed_at = @now
-      @web_request.offerwall_start_index = @start_index
-      @web_request.offerwall_max_items = @max_items
+      @web_request = generate_web_request
     end
     @show_papaya = false
     @papaya_offers = {}
@@ -145,6 +134,8 @@ class GetOffersController < ApplicationController
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
       :all_videos           => params[:all_videos],
+      :algorithm            => @algorithm,
+      :algorithm_options    => @algorithm_options,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
@@ -155,15 +146,37 @@ class GetOffersController < ApplicationController
 
   def save_impressions
     if @save_web_requests
+      web_request = generate_web_request
       @offer_list.each_with_index do |offer, i|
-        @web_request.replace_path('offerwall_impression')
-        @web_request.offer_id = offer.id
-        @web_request.offerwall_rank = i + @start_index + 1
-        @web_request.offerwall_rank_score = offer.rank_score
-        @web_request.save
+        web_request.replace_path('offerwall_impression')
+        web_request.offer_id = offer.id
+        web_request.offerwall_rank = i + @start_index + 1
+        web_request.offerwall_rank_score = offer.rank_score
+        web_request.save
 
         offer.queue_impression_tracking_requests # for third party tracking vendors
       end
+    end
+  end
+
+  def set_experiment_parameters
+    experiment = case params[:source]
+    when 'tj_games'
+      :optimization
+    else
+      nil
+    end
+
+    choose_experiment(experiment)
+
+    case params[:exp]
+    when 'a_optimization'
+      @algorithm = nil
+    when 'b_optimization'
+      @algorithm = '101'
+    when 'c_optimization'
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
     end
   end
 
@@ -183,6 +196,27 @@ class GetOffersController < ApplicationController
       return true if params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     end
     params[:library_version] == 'server'
+  end
+
+  def queue_impression_tracking
+    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
+  end
+
+  def generate_web_request
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offers'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_requested'
+    else
+      wr_path = 'offers'
+    end
+    web_request = WebRequest.new(:time => @now)
+    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.viewed_at = @now
+    web_request.offerwall_start_index = @start_index
+    web_request.offerwall_max_items = @max_items
+
+    web_request
   end
 
 end

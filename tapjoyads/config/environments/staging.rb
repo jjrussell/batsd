@@ -1,31 +1,28 @@
-# Settings specified here will take precedence over those in config/environment.rb
+Tapjoyad::Application.configure do
+  # Settings specified here will take precedence over those in config/application.rb
 
-# The production environment is meant for finished, "live" apps.
-# Code is not reloaded between requests
-config.cache_classes = true
+  # In the development environment your application's code is reloaded on
+  # every request.  This slows down response time but is perfect for development
+  # since you don't have to restart the webserver when you make code changes.
+  config.cache_classes = false
 
-# Enable threaded mode
-# config.threadsafe!
+  # Log error messages when you accidentally call methods on nil.
+  config.whiny_nils = true
 
-# Use a different logger for distributed setups
-# config.logger = SyslogLogger.new
+  # Show full error reports and disable caching
+  config.consider_all_requests_local       = false
+  config.action_controller.perform_caching = true
 
-# Full error reports are disabled and caching is turned on
-config.action_controller.consider_all_requests_local = false
-config.action_controller.perform_caching             = true
-config.action_view.cache_template_loading            = true
+  # Don't care if the mailer can't send
+  config.action_mailer.raise_delivery_errors = false
 
-# Disable request forgery protection because this is an api
-config.action_controller.allow_forgery_protection    = false
+  # Print deprecation notices to the Rails logger
+  config.active_support.deprecation = :log
 
-# Use a different cache store in production
-# config.cache_store = :mem_cache_store
+  # Only use best-standards-support built into browsers
+  config.action_dispatch.best_standards_support = :builtin
 
-# Enable serving of images, stylesheets, and javascripts from an asset server
-# config.action_controller.asset_host                  = "http://assets.example.com"
-
-# Disable delivery errors, bad email addresses will be ignored
-# config.action_mailer.raise_delivery_errors = false
+end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
@@ -82,7 +79,7 @@ FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'
 
 CLEAR_MEMCACHE = false
 
-twitter = YAML::load_file("#{RAILS_ROOT}/config/twitter.yaml")
+twitter = YAML::load_file("#{Rails.root}/config/twitter.yaml")
 ENV['CONSUMER_KEY'] = twitter['staging']['consumer_key']
 ENV['CONSUMER_SECRET'] = twitter['staging']['consumer_secret']
 

@@ -1,0 +1,20 @@
+%table.tablesorter
+  %thead
+    %tr
+      %th Type
+      %th Record
+      %th Reviewing User (optional)
+      %th State
+      %th
+  %tbody
+    - @approvals.each do |approval|
+      %tr
+        %td= approval.item_type.classify
+        %td= approval.item.try(:to_s) || approval.item.id
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
+        %td= approval.state.gsub(/^approved$/, 'accepted')
+        %td.actions
+          - if approval.pending?
+            = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
+            = link_to('Reject', reject_tools_acceptance_path(approval.id), :class => 'reject')
+
