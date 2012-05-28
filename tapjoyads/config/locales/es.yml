@@ -479,6 +479,7 @@ es:
       new_password: "Nueva contraseña"
       nickname: Apodo
       none: Ninguno
+      offers_by:
       ok: OK
       options: Opciones
       other: Otro
