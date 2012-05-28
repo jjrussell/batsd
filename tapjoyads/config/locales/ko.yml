@@ -479,6 +479,7 @@ ko:
       new_password: "새 비밀번호 설정하기"
       nickname: 닉네임
       none: 없음
+      offers_by:
       ok: OK
       options: 옵션
       other: 기타
