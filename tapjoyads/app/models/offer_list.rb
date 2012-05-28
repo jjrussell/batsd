@@ -1,6 +1,8 @@
 class OfferList
   PROMOTED_INVENTORY_SIZE = 3
 
+  attr_reader :offers
+
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
     @device                     = options.delete(:device)
@@ -22,10 +24,6 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
-    @algorithm                  = options.delete(:algorithm)
-    @algorithm_options          = options.delete(:algorithm_options)
-
-    @algorithm_options ||= {}
 
     @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
     @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
@@ -62,20 +60,31 @@ class OfferList
     end
 
     @device ||= Device.new(:key => udid) if udid.present?
+    if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
+      @offers = []
+    else
+      @offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
+        OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
+      end.value
+    end
 
-    # TODO: Make promoted offers work with optimized offers.
-    # if @currency
-    #   promoted_offers = []
-    #   if @currency.get_promoted_offers.present? || @currency.partner_get_promoted_offers.present?
-    #     @offers.each do |o|
-    #       promoted_offers.push(o.id) if can_be_promoted?(o)
-    #     end
-    #     promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
-    #   end
-    # end
+    if @currency
+      promoted_offers = []
+      if @currency.get_promoted_offers.present? || @currency.partner_get_promoted_offers.present?
+        @offers.each do |o|
+          promoted_offers.push(o.id) if can_be_promoted?(o)
+        end
+        promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
+      end
+
+      @offers.each do |o|
+        o.postcache_rank_score(@currency, @source, promoted_offers.include?(o.id))
+      end
+    end
   end
 
   def weighted_rand
+    offers = @offers.clone
     while offers.any?
       weight_scale = 1 - offers.map(&:rank_score).min
       weights = offers.collect { |o| o.rank_score + weight_scale }
@@ -89,27 +98,17 @@ class OfferList
     end
   end
 
-  def get_offers(start, max_offers)
+def get_offers(start, max_offers)
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
 
+    all_offers = augmented_offer_list
     returned_offers = []
     found_offer_item_ids = Set.new
     offers_to_find = start + max_offers
     found_offers = 0
 
-    # TODO: dry this up.
-    optimized_offers.each_with_index do |offer, i|
-      return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
-
-      unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
-        returned_offers << offer if found_offers >= start
-        found_offer_item_ids << offer.item_id
-        found_offers += 1
-      end
-    end
-
-    augmented_offer_list.each_with_index do |offer, i|
-      return [ returned_offers, augmented_offer_list.length - i ] if found_offers >= offers_to_find
+    all_offers.each_with_index do |offer, i|
+      return [ returned_offers, all_offers.length - i ] if found_offers >= offers_to_find
 
       unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
@@ -122,52 +121,14 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    offers.each do |offer|
+    @offers.each do |offer|
       class << offer; attr_accessor :rejections; end
       offer.rejections = rejections_for(offer)
     end
-    offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
+    @offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
-
-  def optimized_offers
-    @optmized_offers ||= get_optimized_offers
-  end
-
-  def default_offers
-    @default_offers ||= get_default_offers
-  end
-
-  alias_method :offers, :default_offers
 
   private
-
-  def get_optimized_offers
-    country = @algorithm_options[:skip_country] ? nil : @geoip_data[:primary_country]
-    currency_id = @currency.id
-
-    RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@device_type}") do
-      OptimizedOfferList.get_offer_list(
-        :algorithm => @algorithm,
-        :source => @source,
-        :platform => @platform_name,
-        :country => country,
-        :currency_id => currency_id,
-        :device_type => @device_type
-      )
-    end.value
-  end
-
-  def get_default_offers
-    return [] if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
-
-    default_offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
-      OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
-    end.value
-
-    default_offers.each { |o| o.postcache_rank_score(@currency, @source, false) } if @currency
-
-    default_offers
-  end
 
   def augmented_offer_list
     all_offers = []
@@ -186,11 +147,7 @@ class OfferList
       end
     end
 
-    all_offers + default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
-  end
-
-  def optimization_reject?(offer)
-    postcache_reject?(offer) || offer.hide_rewarded_app_installs_reject?(@hide_rewarded_app_installs)
+    all_offers + @offers.sort { |a,b| b.rank_score <=> a.rank_score }
   end
 
   def postcache_reject?(offer)
