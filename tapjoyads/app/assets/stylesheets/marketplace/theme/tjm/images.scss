@@ -71,6 +71,7 @@ body {
 .rightarrow.white {
   padding-right: 20px;
   background: inline-image("#{$image_path}/right_arrow_white.png") no-repeat 98% center;
+  background-size: 16px 16px;
 }
 
 .plussign {
@@ -157,6 +158,7 @@ body {
 .list-button-container .list-button {
   .list-squircle {
     background: inline-image("#{$image_path}/app_icon_overlay_list_button_large.png") no-repeat 0 0 !important;
+    background-size: 100px 100px;
   }
 }
 .list-button-container.earn-theme {
