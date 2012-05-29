@@ -1,8 +1,9 @@
 class Games::ConfirmationsController < GamesController
 
   def create
-    # remove unnecessary chars (we encountered a SendGrid bug where they were adding a '+')
-    params[:data].gsub!(/[+ ]/, '') if params[:data].present?
+    # remove non-base64 chars (we encountered a SendGrid issue where they were adding a '+' aka space, in the url)
+    # see http://en.wikipedia.org/wiki/Base64
+    params[:data].gsub!(/[^A-Za-z0-9+\/]/, '') if params[:data].present?
 
     data = params[:data] ? ObjectEncryptor.decrypt(params[:data]) : {}
     data[:token] = params[:token] if params[:token]

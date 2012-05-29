@@ -43,7 +43,7 @@ class Games::GamerProfilesController < GamesController
   def update_prefs
     @gamer_profile.allow_marketing_emails = params[:gamer_profile][:allow_marketing_emails]
     if @gamer_profile.save
-      redirect_to edit_games_gamer_path
+      redirect_to edit_games_gamer_profile_path
     else
       flash[:error] = 'Error updating preferences'
       redirect_to :controller => '/games/gamers', :action => :prefs

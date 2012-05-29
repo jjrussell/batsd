@@ -138,20 +138,20 @@ describe OfferList do
 
         it 'returns the deeplink offer in the offerwall' do
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == [@deeplink.primary_offer] + @offers[0..1]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
         end
 
         it 'skips the deeplink offer when not on the offerwall' do
           list = OfferList.new({:source => 'featured'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == @offers[0..2]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..4]
         end
 
         it 'skips the deeplink offer on android' do
           list = OfferList.new({:device_type => 'android'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == @offers[0..2]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..4]
         end
       end
 
@@ -198,21 +198,21 @@ describe OfferList do
 
         it 'skips the special offers' do
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(3, 3)
-          #first page should have been: deeplink, rating, offers[0]
-          #so, second page should be: offers[1], offers[2], offers[3]
+          offers, remaining = list.get_offers(5, 5)
+          #first page should have been: rating, offers[0], offers[1], deeplink, offers[2]
+          #so, second page should be: offers[3], offers[4], offers[5], offers[6], offers[7]
           #EXCEPT there is a defect that always skips rating offers (see above), so:
-          #first page is: deeplink, offers[0], offers[1]
-          #second page is: offers[2..4]
-          offers.should == @offers[2..4]
+          #first page is: offers[0], offers[1], offers[2], deeplink, offers[3]
+          #second page is: offers[4..8]
+          offers.should == @offers[4..8]
         end
       end
 
       context 'with no special offers' do
         it 'returns the correct range of offers' do
           list = OfferList.new(@base_params)
-          offers, remaining = list.get_offers(3, 3)
-          offers.should == @offers[3..5]
+          offers, remaining = list.get_offers(5, 5)
+          offers.should == @offers[5..9]
         end
       end
     end

@@ -48,8 +48,9 @@ Tapjoyad::Application.routes.draw do
     match 'support' => 'support_requests#new', :type => 'contact_support'
     match 'bugs' => 'support_requests#new', :type => 'report_bug'
     match 'feedback' => 'support_requests#new', :type => 'feedback'
-    resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
+    resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'devices#create'
         put :update_password
         put :accept_tos
         get :password

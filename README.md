@@ -232,7 +232,7 @@ Set git pre-commit hook to run
 The pre-commit hook runs before any git commit. It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
 
 ```
-ln -s tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
+ln -s tapjoyserver/.pre-commit tapjoyserver/.git/hooks/
 ```
 
 .rvmrc file

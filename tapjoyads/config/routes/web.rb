@@ -1,6 +1,5 @@
 Tapjoyad::Application.routes.draw do
   match 'connect' => 'connect#index'
-  match 'healthz' => 'healthz#index'
   match 'log_device_app' => 'connect#index'
   match 'Connect' => 'connect#index'
   match 'set_publisher_user_id' => 'set_publisher_user_id#index'
@@ -8,16 +7,16 @@ Tapjoyad::Application.routes.draw do
 
   resources :apps_installed
   resource :click, :controller => :click do
-    match :app
-    match :reengagement
-    match :action
-    match :deeplink
-    match :generic
-    match :rating
-    match :video
-    match :survey
-    match :test_offer
-    match :test_video_offer
+    get :app
+    get :reengagement
+    get :action
+    get :deeplink
+    get :generic
+    get :rating
+    get :video
+    get :survey
+    get :test_offer
+    get :test_video_offer
   end
   # TODO: make display_ad routes better
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}

@@ -31,9 +31,6 @@ class VideoButton < ActiveRecord::Base
   has_tracking_offers
   delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
 
-  has_tracking_offers
-  delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
-
   def xml_for_offer
     builder = Builder::XmlMarkup.new
     xml = builder.Button do |button|

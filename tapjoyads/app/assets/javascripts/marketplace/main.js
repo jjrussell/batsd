@@ -226,13 +226,15 @@ $(document).ready(function(){
         $('#gamer_submit').removeClass('orange-action').addClass('soft-grey-action').removeClass('enabled').addClass('disabled').css({cursor:'default'});
       }
     });
-
-
     function showValidationError(msg){
       hasError = true;
       errorContainer.html(msg).show();
       return false;
     }
+    $('#new_gamer').on('click', '.try-again', function () {
+      $('.register-message').html('&nbsp;').hide();
+      $(".register-form").removeClass('close').show();
+     });
     // Form Submit
     var unbindSubmit = false;
     $('form#new_gamer').bind('submit', function(e){
@@ -314,10 +316,6 @@ $(document).ready(function(){
                 ].join('');
                 $('.register-message').html(msg).show();
               }
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').hide();
-                $(".register-form").show();
-              });
             },
             error: function() {
               var error = 'There was an issue';
@@ -328,10 +326,6 @@ $(document).ready(function(){
               ].join('');
               $('.register-message').html(msg).show();
               $('.register-loader').hide();
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').hide();
-                $(".register-form").show();
-              });
             }
           });
         }

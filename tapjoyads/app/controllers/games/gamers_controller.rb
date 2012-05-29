@@ -3,7 +3,7 @@ class Games::GamersController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :show, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
 
   def new
     @gamer = Gamer.new
@@ -46,17 +46,6 @@ class Games::GamersController < GamesController
       errors = @gamer.errors.reject { |k,v| k == :gamer_profile }
       errors.merge!(@gamer_profile.errors)
       render_json_error(errors) and return
-    end
-  end
-
-  def edit
-    if @gamer_profile.country.blank?
-      @gamer_profile.country = Countries.country_code_to_name[geoip_data[:country]]
-    end
-
-    if @gamer_profile.facebook_id.present?
-      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
-      current_facebook_user.fetch
     end
   end
 

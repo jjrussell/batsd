@@ -46,7 +46,7 @@
       $('#show_offers').click(function() {
 
         // Disable and hide button; show loading indicator; then do AJAX request
-        $(this).attr("disabled", "disabled");
+        $(this).attr("disabled", true);
         $(this).fadeOut('fast', function() {
           $('#tapjoy_loader').fadeIn('fast', function() {
             $("#offer_dropdown").load('#{unresolved_clicks_games_support_requests_url(offer_dropdown_params)}', function() {
