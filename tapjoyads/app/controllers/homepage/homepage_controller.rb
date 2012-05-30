@@ -32,7 +32,7 @@ class Homepage::HomepageController < ApplicationController
   end
 
   def sdk_redirect
-    redirect_to "#{DASHBOARD_URL}/sdk"
+    redirect_to "#{DASHBOARD_URL}/sdk", :status => :moved_permanently
   end
 
   def events
