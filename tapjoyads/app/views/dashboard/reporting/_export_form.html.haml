@@ -1,4 +1,4 @@
-= form_tag(@export_link, :id => 'download', :class => 'tjform') do
+= form_tag(export_link, :id => 'download', :class => 'tjform') do
   = hidden_field_tag(:date, @start_time.to_date.to_s(:mdy), { :id => :download_date } )
   = hidden_field_tag(:end_date, @end_time.to_date.to_s(:mdy), { :id => :download_end_date })
   = hidden_field_tag(:granularity, @granularity, { :id => :download_granularity })
