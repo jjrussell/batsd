@@ -59,7 +59,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def new_secondary_account(user_email, reset_link)
     @reset_link = reset_link
-    mail :to => user_email, :from => 'Tapjoy Support <support@tapjoy.com', :subject => "New Account Created - Tapjoy.com"
+    mail :to => user_email, :from => 'Tapjoy Support <support@tapjoy.com>', :subject => "New Account Created - Tapjoy.com"
   end
 
   def whitepaper_request(info)
