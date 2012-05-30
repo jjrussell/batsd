@@ -31,8 +31,8 @@ class Homepage::HomepageController < ApplicationController
     redirect_to WEBSITE_URL
   end
 
-  def careers
-    redirect_to '/careers' and return
+  def sdk_redirect
+    redirect_to "#{DASHBOARD_URL}/sdk"
   end
 
   def events
