@@ -43,7 +43,13 @@ module AuthlogicFacebookConnect
                 :facebook_id => facebook_session.id,
                 :fb_access_token => facebook_session.client.access_token
               }
-              matching_user.gamer_profile.update_attributes(attributes)
+              if matching_user.gamer_profile
+                matching_user.gamer_profile.update_attributes(attributes)
+              else
+                gamer_profile = GamerProfile.new(attributes)
+                matching_user.gamer_profile = gamer_profile
+                matching_user.save
+              end
             end
 
             self.attempted_record = matching_user
