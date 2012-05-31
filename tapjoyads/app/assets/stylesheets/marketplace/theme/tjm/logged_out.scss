@@ -258,7 +258,8 @@ span.gill {
     }
   }
   .register-progress {
-    padding-top: 150px;
+    margin: 0 auto;
+    width: 300px;
     @include animate(all, 0.35s, ease-in);
 
     .register-message {
@@ -267,8 +268,6 @@ span.gill {
     .register-loader {
       width: 180px;
       margin: 0 auto;
-      opacity: 0;
-      visibility: hidden;
 
       #tapjoy_loader {
         padding: 6px 0;

@@ -15,6 +15,7 @@ Tapjoyad::Application.routes.draw do
     match 'careers' => 'careers#index'
     match 'careers/:id' => 'careers#show'
     match 'glu' => 'press#glu'
+    match 'sdk' => 'homepage#sdk_redirect'
     match 'publishing' => 'homepage#publishers'
     match 'androidfund' => 'androidfund#index'
     match 'AndroidFund' => 'androidfund#index'
@@ -33,7 +34,7 @@ Tapjoyad::Application.routes.draw do
     match 'help' => 'homepage#help', :as => :help
     match 'switch_device' => 'homepage#switch_device', :as => :switch_device
     match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
-    match 'earn/:eid' => 'homepage#earn', :as => :earn
+    match 'earn(/:id)' => 'homepage#earn', :as => :earn
     match 'more_apps' => 'homepage#index', :as => :more_apps
     match 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
@@ -49,8 +50,9 @@ Tapjoyad::Application.routes.draw do
     match 'bugs' => 'support_requests#new', :type => 'report_bug'
     match 'feedback' => 'support_requests#new', :type => 'feedback'
     match 'partners/:id' => 'partners#show', :as => :show
-    resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
+    resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'devices#create'
         put :update_password
         put :accept_tos
         get :password

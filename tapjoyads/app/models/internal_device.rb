@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: internal_devices
+#
+#  id               :string(36)      not null, primary key
+#  user_id          :string(36)      not null
+#  description      :string(255)
+#  status           :string(255)
+#  verification_key :integer(4)
+#  created_at       :datetime
+#  updated_at       :datetime
+#
+
 class InternalDevice < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :user

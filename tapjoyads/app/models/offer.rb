@@ -244,8 +244,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
     :approved_sources, :carriers, :cities
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     return super if new_record?
@@ -567,8 +565,21 @@ class Offer < ActiveRecord::Base
     show_rate != 1 && (unlimited_budget? || low_balance?)
   end
 
+  def no_daily_budget?; daily_budget.zero?; end
+  def has_daily_budget?; daily_budget > 0; end
+  def no_overall_budget?; overall_budget.zero?; end
+  def has_overall_budget?; overall_budget > 0; end
+
+  def low_daily_budget?
+    has_daily_budget? && daily_budget < 5000
+  end
+
+  def over_daily_budget?(num_installs_today)
+    has_daily_budget? && num_installs_today > daily_budget
+  end
+
   def unlimited_budget?
-    daily_budget.zero? && overall_budget.zero?
+    no_daily_budget? && no_overall_budget?
   end
 
   def icon_id

@@ -480,6 +480,7 @@ nl:
       new_password: "New Password"
       nickname: Nickname
       none: None
+      offers_by:
       ok: OK
       options: Options
       other: Other

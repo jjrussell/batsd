@@ -263,7 +263,7 @@
     }
   });
 
-  $(function () {    
+  $(function () {
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }
@@ -284,7 +284,7 @@
         var $$ = $(this),
             icon = $$.data("icon"),
             callback = $$.data("callback"),
-            facebookId = $$.data("fb-id"),
+            facebookId = $$.data("fb-id") ? $$.data("fb-id").toString() : '',
             res;
 
         res = facebookId ? Tap.Social.checkAndPost(facebookId, callback, icon) : Tap.Social.postToFeed(callback, icon);
