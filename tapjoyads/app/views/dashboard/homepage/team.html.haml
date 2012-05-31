@@ -1,0 +1,12 @@
+- @employees.each do |employee|
+  - user = employee.user
+  - badges = @badges[employee.email] || []
+  .employee
+    = image_tag(employee.get_photo_url, :size => '78x78')
+    = employee.full_name
+    = user.email
+    - badges.each do |badge|
+      %span.earned_badge
+        - image_url = badge['badge_image']['image']['url']
+        = image_tag(image_url, :size => '50x50')
+        = badge['badge_name']
