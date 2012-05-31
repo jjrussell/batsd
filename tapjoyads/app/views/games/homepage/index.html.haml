@@ -104,10 +104,11 @@
                   .earn-text.ui-list-action-label
                     = t('text.shared.earn_verb')
 
-- content_for :page_javascript do
-  - if @favorite_publishers.present?
-    Tapjoy.hasFavorites = true;
-  - if @external_publishers.present?
-    Tapjoy.hasApps = true;
-  - if current_recommendations.present?
-    Tapjoy.hasRecommendations = true;
+- content_for :page_tracking_js do
+  :javascript
+    var axel = Math.random() + "";
+    var a = axel * 10000000000000;
+    document.write('<iframe src="http://fls.doubleclick.net/activityi;src=3509778;type=conve639;cat=thank283;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+
+- content_for :page_tracking do
+  %iframe{ :src => "http://fls.doubleclick.net/activityi;src=3509778;type=conve639;cat=thank283;ord=1?", :width => "1", :height => "1", :frameborder => "0", :style => "display:none" }
