@@ -88,7 +88,8 @@ class Currency < ActiveRecord::Base
   before_update :reset_to_pending_if_rejected
   after_create :create_deeplink_offer
   after_update  :approve_on_tapjoy_enabled
-  set_callback :cache, :after, :cache_by_app_id
+  after_commit :cache_by_app_id, :on => :create
+  after_commit :cache_by_app_id, :on => :update
   set_callback :cache_clear, :after, :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group

@@ -517,6 +517,7 @@ describe Currency do
       dl.currency.should == @currency
     end
   end
+
   describe '#dashboard_app_currency_url' do
     before :each do
       @currency = Factory :currency
@@ -524,6 +525,17 @@ describe Currency do
 
     it 'matches URL for Rails app_currency_url helper' do
       @currency.dashboard_app_currency_url.should ==  "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@currency.app_id}/currencies/#{@currency.id}"
+    end
+  end
+  
+  describe '#cache_by_app_id' do
+    before :each do
+      @currency = Factory :currency
+    end
+
+    it 'caches currencies before saving them' do
+      Currency.any_instance.expects(:run_callbacks).with(:cache)
+      @currency.send(:cache_by_app_id)
     end
   end
 end
