@@ -263,7 +263,7 @@
     }
   });
 
-  $(function () {    
+  $(function () {
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }

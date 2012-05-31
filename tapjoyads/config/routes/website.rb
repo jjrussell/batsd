@@ -49,6 +49,7 @@ Tapjoyad::Application.routes.draw do
     match 'support' => 'support_requests#new', :type => 'contact_support'
     match 'bugs' => 'support_requests#new', :type => 'report_bug'
     match 'feedback' => 'support_requests#new', :type => 'feedback'
+    match 'partners/:id' => 'partners#show', :as => :show
     resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
         match 'device' => 'devices#create'
