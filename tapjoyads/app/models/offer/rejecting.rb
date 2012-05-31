@@ -99,7 +99,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device) ||
+    show_rate_reject?(device, type) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
