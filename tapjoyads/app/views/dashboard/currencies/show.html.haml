@@ -117,7 +117,7 @@
         %tbody
           %tr
             %th= label_tag :udid, "Device ID"
-            %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids)
+            %td= select_tag 'udid', options_for_select(@currency.get_test_device_ids.to_a)
           %tr
             %th
               = label_tag :reset_balance, "Reset Balance"
