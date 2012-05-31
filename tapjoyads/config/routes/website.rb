@@ -15,6 +15,7 @@ Tapjoyad::Application.routes.draw do
     match 'careers' => 'careers#index'
     match 'careers/:id' => 'careers#show'
     match 'glu' => 'press#glu'
+    match 'sdk' => 'homepage#sdk_redirect'
     match 'publishing' => 'homepage#publishers'
     match 'androidfund' => 'androidfund#index'
     match 'AndroidFund' => 'androidfund#index'
