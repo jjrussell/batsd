@@ -274,11 +274,11 @@ class Currency < ActiveRecord::Base
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c }
+      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
     end
   end
