@@ -360,6 +360,7 @@ en:
       load_more: "Load More"
       loading: Loading...
       log_in_tapjoy: "Log in to Tapjoy"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -412,6 +413,7 @@ en:
       share_on_twitter: "Share on Twitter"
       share_with_everyone: "Share with everyone"
       share_with_your_friends: "Share with your friends"
+      sign_up_with_facebook: "Sign up with Facebook"
       social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
       social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: "Social Networks"

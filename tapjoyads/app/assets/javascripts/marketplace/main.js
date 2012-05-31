@@ -271,6 +271,7 @@ $(document).ready(function(){
               'gamer[referrer]': values['gamer[referrer]'],
               'gamer[terms_of_service]': values['gamer[terms_of_service]'],
               'gamer[nickname]': values['gamer[nickname]'],
+              'gamer[account_type]': values['gamer[account_type]'],
               'date[day]': values['date[day]'],
               'date[month]': values['date[month]'],
               'date[year]': values['date[year]'],
@@ -280,34 +281,8 @@ $(document).ready(function(){
             success: function(d) {
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
-                if (d.link_device_url) { // link device url returned
-                  if (Tapjoy.device.idevice) { // is ios device
-                    $('.register-loader').hide();
-                    $('#register-ios').show();
-                    $('#gamer_submit').click(function() {
-                      document.location.href = d.link_device_url;
-                    });
-                  }
-                  else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
-                    document.location.href = d.link_device_url;
-                  }
-                  else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
-                    $('.register-loader').hide();
-                    $('#register-android').show();
-                    $('#gamer_submit').click(function() {
-                      document.location.href = linkDeviceUrls.android;
-                    });
-                  }
-                  else {
-                    goHome = true;
-                  }
-                }
-                else if (Tapjoy.device.android && linkDeviceUrls.android){
-                  $('.register-loader').hide();
-                  $('#register-android').show();
-                  $('#gamer_submit').click(function() {
-                    document.location.href = linkDeviceUrls.android;
-                  });
+                if (d.redirect_url) { // redirect to link device
+                  document.location.href = d.redirect_url;
                 }
                 else if (rootUrl) {
                   document.location.href = rootUrl;
@@ -356,6 +331,72 @@ $(document).ready(function(){
         }
       }
     });
+  }
+
+  // Facebook sign up/login
+  if ($("#log-in-with-facebook-form").length > 0) {
+    if (Tapjoy.device.idevice) {
+      var default_platform = 'ios';
+    } else if (Tapjoy.device.android) {
+      var default_platform = 'android';
+    }
+    var action = $("#log-in-with-facebook-form").attr('action');
+    var joint = action.indexOf('?') == -1 ? '?' : '&';
+    if (default_platform !== undefined) {
+      $("#log-in-with-facebook-form").attr('action', action + joint + "default_platform=" + default_platform);
+    }
+  }
+
+  // Link device
+  if($("#register-android").length > 0 || $("#register-ios").length > 0) {
+    var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
+    var android = window.linkDeviceOptions.android;
+    var linkDeviceUrls = window.linkDeviceOptions.possibleLinks;
+    var rootUrl = window.linkDeviceOptions.rootUrl;
+
+    if (link_device_url) { // link device url returned
+      if (Tapjoy.device.idevice) { // is ios device
+        $('.register-loader').hide();
+        $('#register-ios').show();
+        $('#gamer_submit').click(function() {
+          document.location.href = link_device_url;
+        });
+      }
+      else if (Tapjoy.device.android && android) { // if coming from tjm android app
+        document.location.href = link_device_url;
+      }
+      else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
+        $('.register-loader').hide();
+        $('#register-android').show();
+        $('#gamer_submit').click(function() {
+          document.location.href = linkDeviceUrls.android;
+        });
+      }
+      else {
+        goHome = true;
+      }
+    }
+    else if (Tapjoy.device.android && linkDeviceUrls.android){
+      $('.register-loader').hide();
+      $('#register-android').show();
+      $('#gamer_submit').click(function() {
+        document.location.href = linkDeviceUrls.android;
+      });
+    }
+    else if (rootUrl) {
+      document.location.href = rootUrl;
+    }
+    else {
+      goHome = true;
+    }
+    if (goHome) {
+      if (rootUrl) {
+        document.location.href = rootUrl;
+      }
+      else {
+        document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+      }
+    }
   }
 
   // Menu Grid
