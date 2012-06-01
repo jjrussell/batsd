@@ -54,9 +54,11 @@ module Offer::Rejecting
     # Cool Savings
     [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ] => [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ],
     # Card Ace Casino HD
-    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7' ] => [ '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ],
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ] =>
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ],
     # Card Ace Casino
-    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da' ] => [ '495234c6-4b83-442b-ac2a-78205e9e4064' ],
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ] =>
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ],
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
