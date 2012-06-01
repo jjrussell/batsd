@@ -15,6 +15,13 @@
         = f.submit t('text.games.next'), :class => "ui-joy-button soft-grey-action next-btn disabled"
 
     #register-form.register-form.clearfix
+
+      - unless @hide_fb_signup
+        .ui-joy-button.orange-action.log-in-with-facebook{ 'data-submit-form-id' => 'log-in-with-facebook-form' }
+          %a.facebook-square
+            = t('text.games.sign_up_with_facebook')
+        .form-separator or
+
       .form-error
         &nbsp;
         = error_message_on @gamer, :nickname
@@ -53,6 +60,7 @@
               :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
           = f.hidden_field :referrer, :value => params[:referrer]
+          = f.hidden_field :account_type, :value => Gamer::ACCOUNT_TYPE[:email_signup]
 
     .register-progress.clearfix
       .register-message.hidden
@@ -66,33 +74,18 @@
             #loader_a.loader_letter
             #loader_p.loader_letter
 
-    = link_to(GAMES_ANDROID_MARKET_URL) do
-      #register-android.hidden.clearfix
-        .title
-          = t('text.games.almost_done')
-        .message
-          = t('text.games.install_android_app')
-        #link-android.install
-          .install-btn.ui-joy-button.orange-action
-            = t('text.games.download_now')
-
-    = link_to(new_games_device_path) do
-      #register-ios.hidden.clearfix
-        .title
-          = t('text.games.almost_done')
-        .message
-          = t('text.games.install_profile')
-        #link-ios.install
-          %img{ :src => BLANK_IMAGE }
-
   .container.mt20.center
     = render '/shared/truste'
+
+= form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer], :src => params[:src])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
   %meta{ :name => 'keywords', :content => t('text.games.meta_keywords')}
 
   - css_cache 'marketplace/theme/tjm/logged_out', true
+
+- @load_facebook = true
 
 - content_for :page_tracking_js do
   :javascript

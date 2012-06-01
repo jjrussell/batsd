@@ -93,7 +93,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue

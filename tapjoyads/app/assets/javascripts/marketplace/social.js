@@ -31,16 +31,32 @@
         }());
       },
 
-      doFbLogin: function (redirect_url) {
+      doFbLogin: function (redirect_url, submitFormId) {
         FB.login(function (response) {
           if (response.authResponse) {
             FB.api('/me', function (response) {
-              window.location = redirect_url;
+              if (redirect_url != undefined) {
+                Tap.Social.checkPermission(function () {
+                  window.location = redirect_url.replace(/&amp;/g, "&");
+                });
+              } else if (submitFormId != undefined) {
+                Tap.Social.checkPermission(function () {
+                  $("#" + submitFormId).submit();
+                });
+              }
             });
           } else {
             notify(_t('games.grant_us_access'));
           }
-        }, {scope: 'offline_access,publish_stream'});
+        }, {scope: 'offline_access,publish_stream,email,user_birthday'});
+      },
+
+      checkPermission: function (withPerm) {
+        FB.api('/me/permissions', function (response) {
+          if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
+            withPerm();
+          }
+        });
       },
 
       doFbLogout: function () {
@@ -263,16 +279,16 @@
     }
   });
 
-  $(function () {    
+  $(function () {
     var fbOpts = $("#fb-root").data("fb-options");
 
     if (!fbOpts) { return; }
 
     Tap.Social.initiateFacebook(fbOpts, function () {
-
-      $(".login-to-facebook").on('click', function () {
+      $(".login-to-facebook, .log-in-with-facebook").on('click', function () {
         var url = $(this).data("fb-url");
-        Tap.Social.doFbLogin(url);
+        var submitFormId = $(this).data("submit-form-id");
+        Tap.Social.doFbLogin(url, submitFormId);
         return false;
       });
 
@@ -296,8 +312,8 @@
   $(function () {
     var loadFriendsOptions = window.loadFriendsOptions;
     $("#twitter-friends").bind("ajax-loader-success", function (ev, data) {
-      if(data.success === false){
-        if(data.error) {
+      if (data.success === false) {
+        if (data.error) {
           notify(data.error);
         }
 

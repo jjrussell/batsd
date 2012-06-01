@@ -99,7 +99,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device) ||
+    show_rate_reject?(device, type) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -220,7 +220,8 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device)
+  def show_rate_reject?(device, type)
+    return false if type == Offer::VIDEO_OFFER_TYPE
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand

@@ -15,7 +15,7 @@ authorization do
     has_permission_on :dashboard_support, :to => [ :index ]
     has_permission_on :dashboard_premier, :to => [ :edit, :update ]
     has_permission_on :dashboard_inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
-    has_permission_on :dashboard_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_videos, :to => [:index]
   end
