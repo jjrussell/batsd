@@ -7,6 +7,7 @@ class Games::GamersController < GamesController
 
   def new
     @gamer = Gamer.new
+    @hide_fb_signup = UiConfig.is_fb_signup_hidden
     redirect_to games_path if current_gamer.present?
   end
 
@@ -18,6 +19,7 @@ class Games::GamersController < GamesController
       g.password_confirmation = params[:gamer][:password]
       g.referrer              = params[:gamer][:referrer]
       g.terms_of_service      = params[:gamer][:terms_of_service]
+      g.account_type          = params[:gamer][:account_type].to_i
     end
     begin
       birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
@@ -33,21 +35,12 @@ class Games::GamersController < GamesController
     @gamer.gamer_profile = @gamer_profile
 
     if @gamer.save
-      params[:default_platforms] ||= {}
-      message = {
-        :gamer_id => @gamer.id,
-        :accept_language_str => request.accept_language,
-        :user_agent_str => request.user_agent,
-        :device_type => device_type,
-        :selected_devices => params[:default_platforms].reject { |k, v| v != '1' }.keys,
-        :geoip_data => geoip_data,
-        :os_version => os_version }
-      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
+      @gamer.send_welcome_email(request, device_type, params[:default_platforms] || {}, geoip_data, os_version)
 
       if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :link_device_url => finalize_games_device_path(:data => params[:data]), :android => true })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_device_path(:data => params[:data]), :android => true) })
       else
-        render(:json => { :success => true, :link_device_url => new_games_device_path })
+        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => new_games_device_path) })
       end
     else
       errors = @gamer.errors.reject { |k,v| k == :gamer_profile }
@@ -65,7 +58,6 @@ class Games::GamersController < GamesController
       :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
   end
-
 
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
@@ -92,6 +84,9 @@ class Games::GamersController < GamesController
     else
       render_json_error(@gamer.errors) and return
     end
+  end
+
+  def link_device
   end
 
   private
