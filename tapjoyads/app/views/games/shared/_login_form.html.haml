@@ -33,6 +33,6 @@
   .container.mt20.center
     = render '/shared/truste'
 
-= form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer])}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
+= form_tag "#{games_gamer_sessions_path(:path => params[:path], :data => params[:data], :referrer => params[:referrer], :facebook => true)}", :method => :post, :id => 'log-in-with-facebook-form', :authenticity_token => "#{form_authenticity_token}"
 
 - @load_facebook = true

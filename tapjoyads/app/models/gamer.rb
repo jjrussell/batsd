@@ -132,12 +132,14 @@ class Gamer < ActiveRecord::Base
 
   def before_connect(facebook_session, options = {})
     account_type = options.delete(:account_type) { ACCOUNT_TYPE[:facebook_signup] }
+    referrer     = options.delete(:referrer)     { nil }
 
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
     self.terms_of_service      = '1'
     self.account_type          = account_type
+    self.referrer              = referrer
   end
 
   def confirm!

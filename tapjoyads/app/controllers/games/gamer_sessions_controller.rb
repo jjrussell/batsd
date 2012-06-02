@@ -14,10 +14,10 @@ class Games::GamerSessionsController < GamesController
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
     @gamer_session.remember_me = true
+    @gamer_session.referrer = params[:referrer] if params[:referrer].present?
     if @gamer_session.save
-      unless params[:gamer_session] && params[:gamer_session][:email].present?
+      if params[:facebook]
         if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup]
-          current_gamer.referrer     = params[:referrer] if params[:referrer].present?
           current_gamer.confirmed_at = current_gamer.created_at
           current_gamer.save
 
