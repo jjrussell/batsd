@@ -459,22 +459,37 @@ en:
       header: "Follow these steps to earn %{currency}:"
       title: Instructions
     offerwall:
+      actions:
+        download: Download and run this app.
+        steps: Complete a series of steps.
+        video: Watch this video.
       buy_currency_html: "Buy %{amount} %{currency}"
+      earn_currency: "Earn %{amount} %{currency}"
+      earn: Earn
+      earn_more: Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations
+      deep_link_part_1: Tap here to visit 
+      deep_link_part_2: for more free offers!
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
-      instructions: "Engage in any of the following actions to receive %{currency}"
+      instructions: "Engage in any of the following actions to receive %{currency}."
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       load_error: "Please try again."
-      load_more: "Load some more!"
+      load_more: "Load More Offers"
       loading: Loading...
-      missing_currency: "Missing %{currency}?"
+      missing_currency: "Missing %{currency}?" 
+      missing_credits: Missing Contract Credits
       more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
       next: "Next %{items}"
+      offers_by: Offers by
+      points: Points
       popular_apps: "Popular Apps"
+      powered: Powered By Tapjoy
       previous: "Previous %{items}"
+      privacy: Privacy Policy
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
+      visit: Visit Tapjoy
     shared:
       about_link: "About Tapjoy"
       ads_by: "Powered by"

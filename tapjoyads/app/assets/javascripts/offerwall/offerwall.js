@@ -15,6 +15,7 @@
       start = 25,
       url = fetchURL;
 
+console.log(i18n)
   var $ = {
     blank: 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     addEvent: (/msie/i).test(agent) ? 'attachEvent' : 'addEventListener',
@@ -27,10 +28,6 @@
         video: i18n.t("actions.video")
       },
       text: {
-        deeplink: {
-          first: i18n.t("deep_link_part_1"),
-          last: i18n.t("deep_link_part_2")
-        },
         offersby: i18n.t("offers_by"),
         earn: i18n.t("earn"),
         error: i18n.t("load_error"),
@@ -250,11 +247,7 @@
      */
     configLayout: function(){
 
-      if($.data.deepLink){
-        $.banner.innerHTML = '<div class="text">' + $.labels.text.deeplink.first + ' </div><div class="logo"><img src="' + $.blank + '" /></div><div class="text">' + $.labels.text.deeplink.last + '</div>'; 
-      }else{
-        $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>'; 
-      }
+      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>'; 
         
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
