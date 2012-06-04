@@ -179,7 +179,7 @@
     $(function($){
       var originalBidValue = stringToNumber($('#action_offer_primary_offer_attributes_bid').val());
 
-      $('#request_app_enable').attr('disabled', '');
+      $('#request_app_enable').attr('disabled', false);
       requestAppEnable = function() {
         $('#new_enable_offer_request').submit();
       };

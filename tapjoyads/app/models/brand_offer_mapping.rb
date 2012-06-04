@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: brand_offer_mappings
+#
+#  id         :string(36)      not null, primary key
+#  offer_id   :string(36)      not null
+#  brand_id   :string(36)      not null
+#  allocation :integer(4)      not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class BrandOfferMapping < ActiveRecord::Base
   include UuidPrimaryKey
 

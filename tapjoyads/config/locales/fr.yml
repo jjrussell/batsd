@@ -479,6 +479,7 @@ fr:
       new_password: "Nouveau mot de passe"
       nickname: Pseudo
       none: Aucun
+      offers_by:
       ok: OK
       options: Options
       other: Autre

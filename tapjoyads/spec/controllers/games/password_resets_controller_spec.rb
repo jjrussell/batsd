@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::PasswordResetsController do
   describe 'going to /password-reset' do

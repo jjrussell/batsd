@@ -1,3 +1,24 @@
+# == Schema Information
+#
+# Table name: employees
+#
+#  id            :string(36)      not null, primary key
+#  active        :boolean(1)      default(TRUE), not null
+#  first_name    :string(255)     not null
+#  last_name     :string(255)     not null
+#  title         :string(255)     not null
+#  email         :string(255)     not null
+#  superpower    :string(255)
+#  current_games :string(255)
+#  weapon        :string(255)
+#  biography     :text
+#  created_at    :datetime
+#  updated_at    :datetime
+#  display_order :integer(4)
+#  desk_location :string(255)
+#  department    :string(255)
+#
+
 class Employee < ActiveRecord::Base
   include UuidPrimaryKey
 

@@ -20,16 +20,20 @@ if File.exists?('deploy.lock')
   exit
 end
 
+system "git checkout deploy"
+
 server_type = `server/server_type.rb`
 current_version = YAML::load_file('server/version.yaml')['current']
 deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout deploy"
 system "git pull --quiet"
 system "git pull --tags origin deploy"
 system "git checkout #{deploy_version}"
+if deploy_version == 'master'
+  system "git pull --tags origin master"
+end
 
 if server_type == 'jobserver' || server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
@@ -61,9 +65,9 @@ Dir.chdir "tapjoyads" do
   else
     `bundle install --deployment`
   end
+
+  puts "Restarting unicorn"
+  system "../server/start_or_reload_unicorn.rb"
+
+  system "../server/restart_job_daemon.rb"
 end
-
-puts "Restarting unicorn"
-system "server/start_or_reload_unicorn.rb"
-
-system "server/restart_job_daemon.rb"

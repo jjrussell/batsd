@@ -34,23 +34,24 @@ class GamesMarketingMailer < ActionMailer::Base
   end
 
   def welcome_email(gamer, device_info = {})
-    subject "Welcome to Tapjoy!"
     setup_emails(gamer, device_info)
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}"
-    @detailed_email = rand(2) == 1
+    @detailed_email = @facebook_signup ? true : rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
+
+    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
+    mail :to => gamer.email, :from => 'Tapjoy <noreply@tapjoy.com>', :subject => 'Welcome to Tapjoy!'
   end
 
   def post_confirm_email(gamer, device_info = {})
-    subject "Get Started with Tapjoy!"
     setup_emails(gamer, device_info)
-    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
+
     @detailed_email = true
-    @template = 'welcome_email'
+
+    sendgrid_category "Secondary Welcome Email , #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
+    mail :to => gamer.email, :from => 'Tapjoy <noreply@tapjoy.com>', :subject => 'Get Started with Tapjoy!', :template_name => 'welcome_email'
   end
 
   def invite(gamer_name, recipients_email, link)
@@ -65,8 +66,6 @@ class GamesMarketingMailer < ActionMailer::Base
 
   private
   def setup_emails(gamer, device_info = {})
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients gamer.email
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
     @offer_data = {}
     device, @gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
@@ -84,12 +83,12 @@ class GamesMarketingMailer < ActionMailer::Base
     selected_devices = device_info[:selected_devices] || []
     @linked = @gamer_device.present?
     @android_device = @linked ? (@gamer_device.device_type == 'android') : !selected_devices.include?('ios')
-    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{CGI.escape(gamer.confirmation_token)}"
 
     device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+    @facebook_signup = gamer.facebook_id.present?
+    @gamer_email = gamer.email if @facebook_signup
 
-    sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}"
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
   end
 end

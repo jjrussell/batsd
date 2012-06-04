@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: featured_contents
+#
+#  id                 :string(36)      not null, primary key
+#  offer_id           :string(36)
+#  author_id          :string(36)
+#  featured_type      :string(255)     not null
+#  platforms          :text            default(""), not null
+#  subtitle           :text            default(""), not null
+#  title              :text            default(""), not null
+#  description        :text            default(""), not null
+#  main_icon_url      :text
+#  secondary_icon_url :text
+#  button_text        :text
+#  button_url         :text
+#  start_date         :date            not null
+#  end_date           :date            not null
+#  weight             :integer(4)      default(0), not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#
+
 class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
   has_tracking_offers

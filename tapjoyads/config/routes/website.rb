@@ -15,6 +15,7 @@ Tapjoyad::Application.routes.draw do
     match 'careers' => 'careers#index'
     match 'careers/:id' => 'careers#show'
     match 'glu' => 'press#glu'
+    match 'sdk' => 'homepage#sdk_redirect'
     match 'publishing' => 'homepage#publishers'
     match 'androidfund' => 'androidfund#index'
     match 'AndroidFund' => 'androidfund#index'
@@ -33,7 +34,7 @@ Tapjoyad::Application.routes.draw do
     match 'help' => 'homepage#help', :as => :help
     match 'switch_device' => 'homepage#switch_device', :as => :switch_device
     match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
-    match 'earn/:eid' => 'homepage#earn', :as => :earn
+    match 'earn(/:id)' => 'homepage#earn', :as => :earn
     match 'more_apps' => 'homepage#index', :as => :more_apps
     match 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
@@ -48,13 +49,16 @@ Tapjoyad::Application.routes.draw do
     match 'support' => 'support_requests#new', :type => 'contact_support'
     match 'bugs' => 'support_requests#new', :type => 'report_bug'
     match 'feedback' => 'support_requests#new', :type => 'feedback'
-    resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
+    match 'partners/:id' => 'partners#show', :as => :show
+    resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'devices#create'
         put :update_password
         put :accept_tos
         get :password
         get :confirm_delete
         get :prefs
+        get :link_device
         resource :device, :only => [:new, :create] do
           member do
             get :finalize
@@ -90,7 +94,7 @@ Tapjoyad::Application.routes.draw do
     end
     # TODO: Fix this legacy namespacing weirdness
     namespace :social, :path => '' do
-      root :to => 'social#index'
+      match 'social' => 'social#index', :as => :root
       match 'invite_email_friends' => 'social#invite_email_friends', :as => :invite_email_friends
       match 'social/connect_facebook_account' => 'social#connect_facebook_account', :as => :connect_facebook_account
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
