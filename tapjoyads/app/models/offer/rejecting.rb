@@ -48,13 +48,18 @@ module Offer::Rejecting
     # Gamefly
     [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ] => [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ],
     # Zillow
-    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ] => [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ],
+    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53', 'a9ef5dfe-4182-4208-ba75-dd93e18d32be' ] =>
+    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53', 'a9ef5dfe-4182-4208-ba75-dd93e18d32be' ],
     # Mobile Xpression
     [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ] => [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ],
     # Cool Savings
     [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ] => [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ],
     # Card Ace Casino HD
-    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7' ] => [ '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ],
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ] =>
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ],
+    # Card Ace Casino
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ] =>
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ],
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -99,7 +104,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device) ||
+    show_rate_reject?(device, type) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -151,10 +156,6 @@ module Offer::Rejecting
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
-  end
-
-  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   private
@@ -224,7 +225,8 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device)
+  def show_rate_reject?(device, type)
+    return false if type == Offer::VIDEO_OFFER_TYPE
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -293,6 +295,10 @@ module Offer::Rejecting
     return true if screen_layout_size.blank?
 
     !get_screen_layout_sizes.include?(screen_layout_size)
+  end
+
+  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)

@@ -240,6 +240,7 @@ en:
         other: "%{name} have already registered, you are now following them."
       amount_and_currency: "%{amount} %{currency}"
       amount_and_currency_earn: "Earn %{amount} %{currency}"
+      apps: Apps
       app_review_concern_reported: "Concern Reported"
       app_review_h_no: "No"
       app_review_h_yes: "Yes"
@@ -362,6 +363,7 @@ en:
       log_in_title: "Log In"
       log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
       log_in_not_a_member: "Not a member? Sign Up"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -414,6 +416,7 @@ en:
       share_on_twitter: "Share on Twitter"
       share_with_everyone: "Share with everyone"
       share_with_your_friends: "Share with your friends"
+      sign_up_with_facebook: "Sign up with Facebook"
       social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
       social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: "Social Networks"
@@ -517,6 +520,7 @@ en:
       new_password: "New Password"
       nickname: Nickname
       none: None
+      offers_by: "Offers by Tapjoy"
       ok: OK
       options: Options
       other: Other
