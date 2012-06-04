@@ -11,6 +11,8 @@ class Games::Social::SocialController < GamesController
   before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :get_twitter_friends ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
   before_filter :set_show_nav_bar_quad_menu
+  before_filter :set_exclude_social_from_submenu
+
 
   def invites
     if current_gamer.twitter_id.blank?

@@ -4,8 +4,10 @@ class Games::HomepageController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations, :get_app, :earn, :help ]
-  #before_filter :set_show_nav_bar_login_button, :except =>[ :index, :tos, :privacy, :translations, :get_app, :earn, :help ]
   before_filter :set_show_nav_bar_quad_menu, :only => [ :get_app, :earn, :help ]
+  before_filter :set_exclude_social_from_submenu, :only => [ :help ]
+  before_filter :set_exclude_help_from_submenu, :only => [ :help ]
+
   prepend_before_filter :decrypt_data_param
 
   skip_before_filter :setup_tjm_request, :only => :translations

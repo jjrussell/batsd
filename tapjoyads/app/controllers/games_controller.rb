@@ -12,6 +12,14 @@ class GamesController < ApplicationController
 
   protected
 
+  def set_exclude_social_from_submenu
+    @exclude_social_from_submenu = true
+  end
+
+  def set_exclude_help_from_submenu
+    @exclude_help_from_submenu = true
+  end
+
   def set_show_nav_bar_quad_menu
     @show_nav_bar_quad_menu = true
   end
