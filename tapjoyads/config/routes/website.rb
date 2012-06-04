@@ -15,6 +15,7 @@ Tapjoyad::Application.routes.draw do
     match 'careers' => 'careers#index'
     match 'careers/:id' => 'careers#show'
     match 'glu' => 'press#glu'
+    match 'sdk' => 'homepage#sdk_redirect'
     match 'publishing' => 'homepage#publishers'
     match 'androidfund' => 'androidfund#index'
     match 'AndroidFund' => 'androidfund#index'
@@ -48,7 +49,8 @@ Tapjoyad::Application.routes.draw do
     match 'support' => 'support_requests#new', :type => 'contact_support'
     match 'bugs' => 'support_requests#new', :type => 'report_bug'
     match 'feedback' => 'support_requests#new', :type => 'feedback'
-    resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
+    match 'partners/:id' => 'partners#show', :as => :show
+    resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
         match 'device' => 'devices#create'
         put :update_password
@@ -56,6 +58,7 @@ Tapjoyad::Application.routes.draw do
         get :password
         get :confirm_delete
         get :prefs
+        get :link_device
         resource :device, :only => [:new, :create] do
           member do
             get :finalize
@@ -76,8 +79,8 @@ Tapjoyad::Application.routes.draw do
     match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
-    resources :password_reset, :only => [:new, :create, :edit, :update]
-    match 'password-reset' => 'password_reset#new', :as => :password_reset
+    resources :password_resets, :only => [:new, :create, :edit, :update]
+    match 'password-reset' => 'password_resets#new', :as => :password_reset
     resources :support_requests, :only => [:new, :create] do
       collection do
         get :unresolved_clicks

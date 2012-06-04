@@ -14,6 +14,7 @@ class Downloader
 
     sess = Patron::Session.new
     sess.timeout = timeout
+    sess.insecure = true
 
     if internal_authenticate
       sess.username = 'internal'

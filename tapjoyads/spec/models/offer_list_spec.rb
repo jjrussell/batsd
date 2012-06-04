@@ -44,7 +44,7 @@ describe OfferList do
 
     it 'overwrites the platform_name parameter with the app platform name' do
       OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, 'Windows', anything, anything)
-      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE).offers
+      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE)
     end
 
     context 'called with a null device_type' do
@@ -56,7 +56,7 @@ describe OfferList do
         ['android', 'windows'].each do |platform|
           @app.platform = platform
           OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, platform)
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
         end
       end
 
@@ -65,7 +65,7 @@ describe OfferList do
         OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').times(other_platforms.count)
         other_platforms.each do |platform|
           @app.platform = platform
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
         end
       end
     end
@@ -77,7 +77,7 @@ describe OfferList do
 
       it 'uses the parameter value, rather than the app platform' do
         OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'android')
-        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE).offers
+        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE)
       end
     end
   end
@@ -95,7 +95,7 @@ describe OfferList do
         Offer::DISPLAY_OFFER_TYPE => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       }.each do |type,nonrew_equiv|
         OfferCacher.expects(:get_unsorted_offers_prerejected).with(nonrew_equiv, anything, anything, anything).returns([])
-        OfferList.new(:currency => @currency, :type => type).offers
+        OfferList.new(:currency => @currency, :type => type)
       end
     end
   end
@@ -104,7 +104,7 @@ describe OfferList do
     before :each do
       @offers = []
       10.times { @offers << Factory(:video_offer).primary_offer }
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns(@offers)
+      RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new(@offers))
       @currency = Factory(:currency)
       @app = @currency.app
       @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
@@ -133,26 +133,25 @@ describe OfferList do
         before :each do
           @deeplink = @currency.deeplink_offer
           @deeplink.partner.balance = 100
-          OptimizedOfferList.stubs(:get_offer_list).returns([])
           Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
         end
 
         it 'returns the deeplink offer in the offerwall' do
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == [@deeplink.primary_offer] + @offers[0..1]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
         end
 
         it 'skips the deeplink offer when not on the offerwall' do
           list = OfferList.new({:source => 'featured'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == @offers[0..2]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..4]
         end
 
         it 'skips the deeplink offer on android' do
           list = OfferList.new({:device_type => 'android'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 3)
-          offers.should == @offers[0..2]
+          offers, remaining = list.get_offers(0, 5)
+          offers.should == @offers[0..4]
         end
       end
 
@@ -199,21 +198,21 @@ describe OfferList do
 
         it 'skips the special offers' do
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(3, 3)
-          #first page should have been: deeplink, rating, offers[0]
-          #so, second page should be: offers[1], offers[2], offers[3]
+          offers, remaining = list.get_offers(5, 5)
+          #first page should have been: rating, offers[0], offers[1], deeplink, offers[2]
+          #so, second page should be: offers[3], offers[4], offers[5], offers[6], offers[7]
           #EXCEPT there is a defect that always skips rating offers (see above), so:
-          #first page is: deeplink, offers[0], offers[1]
-          #second page is: offers[2..4]
-          offers.should == @offers[2..4]
+          #first page is: offers[0], offers[1], offers[2], deeplink, offers[3]
+          #second page is: offers[4..8]
+          offers.should == @offers[4..8]
         end
       end
 
       context 'with no special offers' do
         it 'returns the correct range of offers' do
           list = OfferList.new(@base_params)
-          offers, remaining = list.get_offers(3, 3)
-          offers.should == @offers[3..5]
+          offers, remaining = list.get_offers(5, 5)
+          offers.should == @offers[5..9]
         end
       end
     end

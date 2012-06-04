@@ -1,11 +1,14 @@
 class Games::DevicesController < GamesController
 
+  ssl_allowed :create
+
   def new
     if current_gamer.present?
       if Rails.env.staging?
         send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
       else
-        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
+        redirect_to 'http://assets.tapjoy.com/mobileconfig/TapjoyProfile.mobileconfig'
+        #send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
       end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."

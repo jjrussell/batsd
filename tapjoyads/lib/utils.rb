@@ -1,7 +1,9 @@
 class Utils
 
   def self.check_syntax
-    Rails::Initializer.run(:load_application_classes)
+    # TODO: Find a rails 3 compatible way to do this
+    # Or fuck it... maybe it's bad code somewhere
+    #Rails::Initializer.run(:load_application_classes)
 
     # haml
     Dir.glob("app/views/**/*.haml").each do |f|

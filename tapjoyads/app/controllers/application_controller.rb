@@ -82,14 +82,18 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     language_code = params[:language_code]
-    I18n.locale = nil
-    if I18n.available_locales.include?(language_code)
-      I18n.locale = language_code
-    elsif language_code.present? && language_code['-']
-      language_code = language_code.split('-').first
-      if I18n.available_locales.include?(language_code)
+    if language_code
+      I18n.locale = nil
+      if I18n.available_locales.collect(&:to_s).include?(language_code)
         I18n.locale = language_code
+      elsif language_code.present? && language_code['-']
+        language_code = language_code.split('-').first
+        if I18n.available_locales.collect(&:to_s).include?(language_code)
+          I18n.locale = language_code
+        end
       end
+    else
+      I18n.locale = I18n.default_locale
     end
   end
 
@@ -249,8 +253,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def choose_experiment(experiment)
-    params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
+  def choose_experiment
+    params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
   end
 
   def decrypt_data_param

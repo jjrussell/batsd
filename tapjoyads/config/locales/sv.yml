@@ -479,6 +479,7 @@ sv:
       new_password: "Nytt Lösenord"
       nickname: Smeknamn
       none: Ingen
+      offers_by:
       ok: OK
       options: Intällningar
       other: Andra

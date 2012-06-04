@@ -30,7 +30,7 @@
         = f.label :platforms
         #help_platforms.help ?
       %td
-        = f.chosen_select(:platforms, options_for_select(Offer::ALL_DEVICES, @featured_content.get_platforms), {}, :multiple => true)
+        = f.chosen_select(:platforms, options_for_select(Offer::ALL_DEVICES, @featured_content.get_platforms.to_a), {}, :multiple => true)
         = error_message_on @featured_content, :platforms
     %tr
       %th
