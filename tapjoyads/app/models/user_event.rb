@@ -25,10 +25,9 @@ class UserEvent < SyslogMessage
 
   def valid?
     ### TODO temporary code follows, will change when publishers can make their own events
-    binding.pry
-    if EVENT_TYPE_IDS[self.type_id] == EVENT_TYPE_IDS.index(:IAP)
+    if self.type_id == EVENT_TYPE_IDS.index(:IAP)
       self.data.present? && self.data[:name].present? && price_valid?
-    elsif EVENT_TYPE_IDS[self.type_id] == EVENT_TYPE_IDS.index(:SHUTDOWN)
+    elsif self.type_id == EVENT_TYPE_IDS.index(:SHUTDOWN)
       self.data.blank?
     else
       false
