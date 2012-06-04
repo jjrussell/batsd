@@ -22,7 +22,7 @@ include GetOffersHelper
       hash["payout"]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
       hash["redirectURL"]       = get_click_url(offer)
       hash["requiresWiFi"]      = offer.wifi_only? if @show_wifi_only
-      hash["title"]             = offer.name #'I-Bit Ninja And This Title Wraps Around 3 Lines Lorem Ipsum Title Wraps Around 3 Lines Lorem Ipsum'
+      hash["title"]             = offer.name
       hash["type"]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
       offer_array << hash
     end

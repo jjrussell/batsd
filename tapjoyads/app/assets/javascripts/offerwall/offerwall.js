@@ -15,8 +15,7 @@
       start = 25,
       url = fetchURL;
 
-console.log(i18n)
-  var $ = {
+ var $ = {
     blank: 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     addEvent: (/msie/i).test(agent) ? 'attachEvent' : 'addEventListener',
     empty: function(){},
