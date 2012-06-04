@@ -47,7 +47,7 @@
 
   %script{ :type => 'text/javascript'}
     :plain
-      //#{render 'shared/translations.js',  :filter => 'offerwall'}
+      #{render 'shared/translations.js',  :filter => 'offerwall'}
       var page = #{@webpage_link.to_json},
           fetchURL = #{get_next_link_json_redesign.to_json},
           data = #{@final.to_json};
