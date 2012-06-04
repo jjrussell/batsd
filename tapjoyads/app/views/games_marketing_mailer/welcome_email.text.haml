@@ -2,10 +2,10 @@
 - blank_line = "\n"
 
 :plain
-  Thanks for creating a Tapjoy account! Now you can start discovering cool new apps while also earning currency in apps you already play.
+  Thanks for creating a Tapjoy account! Now you can start discovering cool new apps while also earning rewards in apps you already play.
 
   Getting started
-- if @confirmation_link
+- if @confirmation_link && !@facebook_signup
   #{step_number+=1}.) Confirm your email address here: #{@confirmation_link}
 = blank_line
 
@@ -25,7 +25,7 @@
       - external_publisher = offers[:external_publisher]
 
       :plain
-        #{step_number+=1}.) Perform actions to earn more currency in your favorite apps. See below for examples of how you can start earning #{offers['CurrencyName']} in #{external_publisher.app_name}:
+        #{step_number+=1}.) Perform actions to earn more rewards in your favorite apps. See below for examples of how you can start earning #{offers['CurrencyName']} in #{external_publisher.app_name}:
       = blank_line
 
       - offers['OfferArray'][0..2].each do |offer|
@@ -39,7 +39,7 @@
 
   - if @recommendations.any?
     :plain
-      #{step_number+=1}.) Check out Recommended Apps personal to you. Here are a few examples:
+      #{step_number+=1}.) Check out Recommended Apps just for you. Here are a few examples:
     = blank_line
 
     - @recommendations[0..2].each do |cached_app|
@@ -49,6 +49,12 @@
     = blank_line
     :plain
       See more here: #{WEBSITE_URL}/more_apps
+    = blank_line
+
+  - if @facebook_signup
+    :plain
+      Your account email address is: #{@gamer_email}
+      You can set your password on your profile page.
     = blank_line
 
 :plain

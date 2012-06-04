@@ -217,7 +217,7 @@
         });
 
         $(document).click(function(e){
-          var element = $(e.srcElement || e.originalTarget);
+          var element = $(e.srcElement || e.originalTarget || e.target);
           if (element.attr('id') != 'selected_app' &&
             element.parents('#filter_box').length == 0 &&
             element.parents('#selected_app').length == 0) {

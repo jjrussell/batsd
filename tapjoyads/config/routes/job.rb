@@ -1,5 +1,4 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
   namespace :job do
     match 'internal_update_cloudwatch_rpm(/index)' => 'internal_update_cloudwatch_rpm#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'

@@ -35,8 +35,7 @@ class GamesMarketingMailer < ActionMailer::Base
 
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
-
-    @detailed_email = rand(2) == 1
+    @detailed_email = @facebook_signup ? true : rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
@@ -87,6 +86,8 @@ class GamesMarketingMailer < ActionMailer::Base
 
     device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+    @facebook_signup = gamer.facebook_id.present?
+    @gamer_email = gamer.email if @facebook_signup
 
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
   end

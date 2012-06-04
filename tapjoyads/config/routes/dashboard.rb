@@ -1,5 +1,6 @@
 Tapjoyad::Application.routes.draw do
   root :to => 'dashboard/homepage#index'
+  resources :survey_results, :only => [:new, :create]
 
   [ 'dashboard', '' ].each do |s|
     namespace :dashboard, :as => nil, :path => s do
@@ -101,6 +102,7 @@ Tapjoyad::Application.routes.draw do
           post :export_aggregate
           get :aggregate
           post :regenerate_api_key
+          post ':id' => 'reporting#export'
         end
         member do
           post :export
@@ -201,6 +203,7 @@ Tapjoyad::Application.routes.draw do
           get :publisher_payout_info_changes
           get :money
           get :sanitize_users
+          post :update_user
           get :device_info
           get :failed_sdb_saves
           post :resolve_clicks
@@ -222,6 +225,15 @@ Tapjoyad::Application.routes.draw do
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
             post :delete
+          end
+        end
+        resources :currency_approvals, :controller => :approvals, :defaults => { :type => 'currency' }, :only => [:index] do
+          collection do
+            get :history
+            get :mine
+          end
+          member do
+            post :approve, :reject, :assign
           end
         end
         resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
@@ -360,6 +372,7 @@ Tapjoyad::Application.routes.draw do
           get :elb_deregister_instance
           get :ec2_reboot_instance
           get :as_terminate_instance
+          get :requests_per_minute
           get :service_stats
           get :elb_status
           get :http_codes

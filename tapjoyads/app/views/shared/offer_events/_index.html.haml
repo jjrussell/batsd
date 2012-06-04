@@ -30,7 +30,7 @@
         %td= event.ran_at? ? event.ran_at.to_s(:mdy_ampm) : ""
         - if [ 'all', 'disabled' ].include?(@event_scope)
           %td= event.disabled_at? ? event.disabled_at.to_s(:mdy_ampm) : ""
-        %td= offer_event_changes(event)
+        %td= offer_event_changes(event).html_safe
         - unless [ 'disabled', 'completed' ].include?(@event_scope)
           %td
             - if event.editable?

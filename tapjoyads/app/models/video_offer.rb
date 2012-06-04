@@ -22,7 +22,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  set_callback :cache, :before, :cache_video_buttons_and_tracking_offers
+  set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?

@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
+  before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
@@ -59,52 +60,40 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def verify_params(required_params, options = {})
+  def verify_params(required_params, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
-      render :text => "missing required params", :status => 400 if render_missing_text
-      return false
-    end
-
-    all_params = true
-    required_params.each do |param|
-      if params[param].blank?
-        all_params = false
-        break
-      end
-    end
-
-    if render_missing_text && !all_params
-      render :text => "missing required params", :status => 400
-    end
-    return all_params
+    param_missing = required_params.any?{ |param| params[param].blank? } || params[:udid] == 'null'
+    render :text => 'missing required params', :status => 400 if render_missing_text && param_missing
+    !param_missing
   end
 
-  def verify_records(required_records, options = {})
+  def verify_records(required_records, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    record_missing = required_records.any?( &:nil? )
+    render :text => 'record not found', :status => 400 if render_missing_text && record_missing
+    !record_missing
+  end
 
-    required_records.each do |record|
-      next unless record.nil?
-
-      render :text => "record not found", :status => 500 if render_missing_text
-      return false
-    end
-    true
+  def force_utc
+    Time.zone = 'UTC'
   end
 
   def set_locale
     language_code = params[:language_code]
-    I18n.locale = nil
-    if I18n.available_locales.include?(language_code)
-      I18n.locale = language_code
-    elsif language_code.present? && language_code['-']
-      language_code = language_code.split('-').first
-      if I18n.available_locales.include?(language_code)
+    if language_code
+      I18n.locale = nil
+      if I18n.available_locales.collect(&:to_s).include?(language_code)
         I18n.locale = language_code
+      elsif language_code.present? && language_code['-']
+        language_code = language_code.split('-').first
+        if I18n.available_locales.collect(&:to_s).include?(language_code)
+          I18n.locale = language_code
+        end
       end
+    else
+      I18n.locale = I18n.default_locale
     end
   end
 

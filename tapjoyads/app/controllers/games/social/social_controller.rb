@@ -36,6 +36,9 @@ class Games::Social::SocialController < GamesController
 
   def connect_facebook_account
     flash[:notice] = t 'text.games.connected_to_facebook'
+    Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => current_gamer.facebook_id }).each do |gamer|
+      gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK) if gamer.id != current_gamer.id
+    end
     redirect_to games_social_root_path
   end
 

@@ -195,8 +195,8 @@
       var originalBidValue = stringToNumber($('#offer_bid').val());
       var bidWarningCleared = true;
       var valueChangeAccepted = false;
-      $('#offer_submit_button').attr('disabled', '');
-      $('#request_app_enable').attr('disabled', '');
+      $('#offer_submit_button').attr('disabled', false);
+      $('#request_app_enable').attr('disabled', false);
       $('#offer_bid').keypress(function(e){
         if (e.keyCode == 13) { return false;}
       });

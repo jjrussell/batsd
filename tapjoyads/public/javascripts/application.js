@@ -89,7 +89,7 @@ $(function($){
         if (result.error) {
           $('#flash_warning').text('Error - please try again');
           $('#flash_warning').fadeIn();
-          checkbox.attr('disabled', '');
+          checkbox.attr('disabled', false);
           checkbox.attr('checked', true);
           checkbox.show();
           loadingImage.remove();
