@@ -1,4 +1,5 @@
 class Games::GamerSessionsController < GamesController
+  before_filter :set_show_nav_bar_login_button, :only => [:new]
 
   def index
     redirect_to games_login_path

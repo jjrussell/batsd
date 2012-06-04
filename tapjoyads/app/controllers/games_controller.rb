@@ -12,6 +12,14 @@ class GamesController < ApplicationController
 
   protected
 
+  def set_show_nav_bar_quad_menu
+    @show_nav_bar_quad_menu = true
+  end
+
+  def set_show_nav_bar_login_button
+    @show_nav_bar_login_button = true
+  end
+
   def get_friends_info(ids)
     Gamer.find_all_by_id(ids).map do |friend|
       {

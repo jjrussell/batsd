@@ -1,6 +1,7 @@
 class Games::GamerProfilesController < GamesController
 
   before_filter :set_profile, :only => [ :show, :edit, :update, :update_birthdate, :update_prefs, :dissociate_account ]
+  before_filter :set_show_nav_bar_quad_menu
 
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])

@@ -1,5 +1,6 @@
 class Games::SupportRequestsController < GamesController
   before_filter :set_tracking_param
+  before_filter :set_show_nav_bar_quad_menu
 
   def new
     current_gamer

@@ -1,5 +1,5 @@
 .container
-  - if current_gamer.nil? && !@hide_login
+  - if @show_nav_bar_login_button
     .right
       #login.header-button
         %span= t('text.shared.login_verb')
@@ -8,7 +8,7 @@
           %span= t('text.shared.login_verb')
 
   .nav
-    - if current_gamer.present? or @tour_as_guest
+    - if @show_nav_bar_quad_menu
       .menu
         .menu-grid.clearfix
           .box
@@ -20,22 +20,23 @@
     .logo
       = link_to(games_path) do
         %img{ :src => BLANK_IMAGE }
-    - if current_gamer.present? or @tour_as_guest
+    - if @show_nav_bar_quad_menu
       .menu-dropdown
         .menu-dropdown-wrapper
-          .device
-            .device-profile
-              .device-toggle.up.hide
-              - if current_gamer && current_gamer.get_avatar_url.present?
-                .user-icon
-                  = image_tag current_gamer.get_avatar_url
-              .device-info
-                - if current_device.nil?
-                  = t('text.games.no_device')
-                - else
-                  = t('text.games.on_my', :device_name => current_device.name)
-                %a.device-change
-                  (#{t('text.games.change')})
+          - unless current_gamer.nil?
+            .device
+              .device-profile
+                .device-toggle.up.hide
+                - if current_gamer && current_gamer.get_avatar_url.present?
+                  .user-icon
+                    = image_tag current_gamer.get_avatar_url
+                .device-info
+                  - if current_device.nil?
+                    = t('text.games.no_device')
+                  - else
+                    = t('text.games.on_my', :device_name => current_device.name)
+                  %a.device-change
+                    (#{t('text.games.change')})
           - list = current_gamer ? current_gamer.all_device_data.to_json : [].to_json
           - path = games_switch_device_path
           - possible_links = { :ios => new_games_device_path, :android => GAMES_ANDROID_MARKET_URL }.to_json
@@ -53,16 +54,17 @@
               = link_to(games_gamer_path, :class => 'req-login') do
                 .profile
                   %span= t('text.games.profile')
-          .menu-subnav.clearfix
-            .menu-subnav-wrapper
-              - link_to(games_help_path) do
-                .help{ :class=> current_gamer.nil? && @tour_as_guest ? 'fullwidth':'' }
-                  %span= t('text.shared.help')
-              = current_gamer && link_to(games_logout_path) do
-                .logout
-                  %span= t('text.shared.logout')
+          - unless current_gamer.nil?
+            .menu-subnav.clearfix
+              .menu-subnav-wrapper
+                - link_to(games_help_path) do
+                  .help
+                    %span= t('text.shared.help')
+                = link_to(games_logout_path) do
+                  .logout
+                    %span= t('text.shared.logout')
 
-- if current_gamer.nil? && !@hide_login
+- if @show_nav_bar_login_button
   .header-h-split
     &nbsp;
   .container.mt2
@@ -72,3 +74,5 @@
       = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
         #signup.header-button
           = t('text.shared.sign_up')
+
+= render "games/homepage/login_modal"

@@ -3,7 +3,9 @@ class Games::HomepageController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations, :get_app, :earn ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations, :get_app, :earn, :help ]
+  #before_filter :set_show_nav_bar_login_button, :except =>[ :index, :tos, :privacy, :translations, :get_app, :earn, :help ]
+  before_filter :set_show_nav_bar_quad_menu, :only => [ :get_app, :earn, :help ]
   prepend_before_filter :decrypt_data_param
 
   skip_before_filter :setup_tjm_request, :only => :translations
@@ -55,7 +57,7 @@ class Games::HomepageController < GamesController
     return unless verify_records([ @active_currency, @device ])
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
-      @mark_as_favorite = current_gamer && !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
+      @mark_as_favorite = !(current_gamer && current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id))
     end
 
     respond_to do |f|
@@ -67,8 +69,10 @@ class Games::HomepageController < GamesController
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
+      set_show_nav_bar_login_button
       render_login_page and return
     end
+    set_show_nav_bar_quad_menu
     @require_select_device = current_device_id_cookie.nil?
     device_id = current_device_id
     @gamer = current_gamer
@@ -125,6 +129,17 @@ class Games::HomepageController < GamesController
   end
 
   private
+
+  #def set_show_nav_bar_login
+  #  @hide_login =
+  #end
+  #
+  #def set_show_nav_bar_quad_menu
+  #  @tour_as_guest = true
+  #end
+  #
+  #def set_allow_guest
+  #end
 
   def params_id
     if params[:eid].present?

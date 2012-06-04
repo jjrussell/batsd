@@ -4,6 +4,7 @@ class Games::GamersController < GamesController
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
   before_filter :set_profile, :only => [ :show, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
+  before_filter :set_show_nav_bar_quad_menu
 
   def new
     @gamer = Gamer.new
