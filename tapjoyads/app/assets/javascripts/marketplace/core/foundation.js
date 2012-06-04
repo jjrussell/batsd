@@ -258,30 +258,10 @@
       constructor: _Tapjoy,
       extend: Tap.extend,
       foreach: arrayPrototype.forEach,
-      selector: function(selector, context){
-        var query;
-
-        try{
-          if(selector[0] === '#' && selector.indexOf(' ') === -1){
-            if(context === document)
-              query = context.getElementById(selector.replace('#', ''));
-            else
-              query = slice.call(context.querySelectorAll(selector));
-            }else{
-              query = slice.call(context.querySelectorAll(selector));
-          }
-        }catch(error){}
-
-        return query;
-      },
-
-      ready: function(fn){
-        if((/complete|loaded/).test(document.readyState))
-          fn.call();
-
-        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
-
-        return this;
+      addClass: function(cls){
+        if(!this.hasClass(cls)) {
+          this.className = [this.className, a].join('');
+        }
       },
       each: function(fn){
         this.foreach(function(obj, index) {
@@ -289,6 +269,21 @@
         });
 
         return this;
+      },
+      hasClass: function(cls){
+        return new RegExp("(?:^|\\s+)" + cls + "(?:\\s+|$)").test(this.className);
+      },
+      removeClass: function(cls){
+        var $t = this;
+
+        if($t.hasClass(cls)){
+          var str = $t.className;
+          $t.className = str.replace(new RegExp('(?:^|\\s+)' + cls + '(?:\\s+|$)', 'g'), ' ');
+        }
+      },
+      toggleClass: function(cls){
+        var $t = this;
+        $t[$t.hasClass(a) ? 'removeClass' : 'addClass'](cls);
       },
       find: function(el){
         var collection = [],
@@ -305,7 +300,31 @@
         }
 
         return Tap(Tap.isUnique(collection));
-      }
+      },
+      ready: function(fn){
+        if((/complete|loaded/).test(document.readyState))
+          fn.call();
+
+        document[($.browser.msie ? 'attachEvent' : 'addEventListener')]('DOMContentLoaded', fn, false);
+
+        return this;
+      },
+      selector: function(selector, context){
+        var query;
+
+        try{
+          if(selector[0] === '#' && selector.indexOf(' ') === -1){
+            if(context === document)
+              query = context.getElementById(selector.replace('#', ''));
+            else
+              query = slice.call(context.querySelectorAll(selector));
+            }else{
+              query = slice.call(context.querySelectorAll(selector));
+          }
+        }catch(error){}
+
+        return query;
+      }      
     });
 
     Tap.apply(Tap, {
