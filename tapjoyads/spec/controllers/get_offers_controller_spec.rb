@@ -293,7 +293,7 @@ describe GetOffersController do
       @currency = Factory(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = Factory(:app).primary_offer
       controller.stub(:ip_address).and_return('208.90.212.38')
-      fake_cache_object = mock()
+      fake_cache_object = double('fake_cache_object')
       fake_cache_object.stub(:value).and_return([@offer])
       RailsCache.stub(:get_and_put).and_return(fake_cache_object)
       @params = {
