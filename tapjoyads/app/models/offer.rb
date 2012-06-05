@@ -478,7 +478,19 @@ class Offer < ActiveRecord::Base
     CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
   end
 
-  def save_icon!(icon_src_blob, override = false, remove = false)
+  def remove_icon!
+    guid = icon_id
+
+    # only allow removing of offer-specific, manually-uploaded icons
+    return if guid == item_id || guid == app_id
+
+    Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
+
+    icon_id_override = item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
+    self.update_attributes!(:icon_id_override => icon_id_override)
+  end
+
+  def save_icon!(icon_src_blob, override = false)
     # Here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
     # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
@@ -492,10 +504,7 @@ class Offer < ActiveRecord::Base
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
     guid = icon_id
 
-    if remove
-      # only allow removing of offer-specific, manually-uploaded icons
-      return if guid == item_id || guid == app_id
-    elsif override
+    if override
       if primary?
         guid = UUIDTools::UUID.random_create.to_s # in this case, we need to generate a guid
       else
@@ -503,21 +512,9 @@ class Offer < ActiveRecord::Base
       end
     end
 
-    video_offer = (item_type == 'VideoOffer')
-    if remove
-      Offer.remove_icon!(guid, video_offer)
-    else
-      Offer.upload_icon!(icon_src_blob, guid, video_offer)
-    end
+    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
 
-    if (guid != item_id) || remove
-      icon_id_override =  if remove
-                            item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
-                          else
-                            guid
-                          end
-      self.update_attributes!(:icon_id_override => icon_id_override)
-    end
+    self.update_attributes!(:icon_id_override => guid) if (guid != item_id)
   end
 
   def save(perform_validation = true)
