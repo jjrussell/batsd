@@ -15,7 +15,7 @@ function showLoginModal(){
     var $login = $('#login_modal .action-login');
     $('.menu-grid').trigger('menu-close');
     var signup_href=$signup.attr('href').replace(/\?.*/,'')+ '?path=' + path;
-    var login_href=$login.attr('href').replace(/\?.*/,'')+ '?path=' + path;
+    var login_href=$login.attr('href').replace(/\?.*/,'')+ '?path=' + path + '&immediate=true';
     $signup.attr('href', signup_href);
     $login.attr('href', login_href);
     $overlay.height($(document).height());

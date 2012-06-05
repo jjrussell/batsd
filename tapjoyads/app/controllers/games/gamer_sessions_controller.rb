@@ -9,6 +9,7 @@ class Games::GamerSessionsController < GamesController
     if current_gamer
       redirect_to games_path and return
     end
+    @login_form_class_name = "show" if params[:immediate]
     render_login_page
   end
 
