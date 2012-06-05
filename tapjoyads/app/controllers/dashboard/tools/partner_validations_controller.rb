@@ -4,8 +4,8 @@ class Dashboard::Tools::PartnerValidationsController < Dashboard::DashboardContr
   filter_access_to :all
 
   def index
-    @filter_options = [['All',''], ['Unconfirmed - Actionable', '1'], ['Unconfirmed - All', '2'], ['Confirmed', '3']]
-    @partners = Partner.to_payout
+    @filter_options = [['All',''], ['Unconfirmed - Actionable', '1'], ['Unconfirmed - No Payout Info','2'], ['Unconfirmed - All', '3'], ['Confirmed', '4']]
+    @partners = Partner.to_payout.where("#{Partner.quoted_table_name}.next_payout_amount >= 25000")
 
     @partners = @partners.includes(:payout_info, { :users => :user_roles })
     if params[:acct_mgr_filter].present?
@@ -18,6 +18,8 @@ class Dashboard::Tools::PartnerValidationsController < Dashboard::DashboardContr
       if params[:confirm_filter] == '1'
         @partners = @partners.where(:payout_threshold_confirmation => 0)
       elsif params[:confirm_filter] == '2'
+        @partners = @partners.where("#{PayoutInfo.quoted_table_name}.id is null")
+      elsif params[:confirm_filter] == '3'
         @partners = @partners.where("#{Partner.quoted_table_name}.payout_threshold_confirmation = 0 OR #{Partner.quoted_table_name}.payout_info_confirmation = 0 OR #{PayoutInfo.quoted_table_name}.id is null") #should be unconfirmed
       else
         @partners = @partners.where(:payout_threshold_confirmation => 1, :payout_info_confirmation => 1).where("#{PayoutInfo.quoted_table_name}.id is not null")
