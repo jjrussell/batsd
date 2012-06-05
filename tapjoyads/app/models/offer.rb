@@ -404,13 +404,35 @@ class Offer < ActiveRecord::Base
     save_icon!(nil, true, true)
   end
 
-  def self.upload_icon!(icon_src_blob, guid, video_offer = false, remove = false)
+  def self.remove_icon!(guid, video_offer = false)
+    icon_id = Offer.hashed_icon_id(guid)
+    bucket  = S3.bucket(BucketNames::TAPJOY)
+    src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
+
+    src_obj.delete if remove && src_obj.exists?
+
+    paths = if video_offer
+              ["icons/200/#{icon_id}.jpg"]
+            else
+              ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+            end
+
+    paths.each do |path|
+      obj = bucket.objects[path]
+      obj.delete if obj.exists?
+    end
+
+    Mc.delete("icon.s3.#{guid}")
+    CloudFront.invalidate(guid, paths)
+  end
+
+  def self.upload_icon!(icon_src_blob, guid, video_offer = false)
     icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
-    if !remove && Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+    if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
       return
     end
 
@@ -418,49 +440,42 @@ class Offer < ActiveRecord::Base
 
     if video_offer
       paths = ["icons/200/#{icon_id}.jpg"]
-      unless remove
-        icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
-        corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
-        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
-        icon_200.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-        icon_200 = icon_200.opaque('#ffffff00', 'white')
-        icon_200.alpha(Magick::OpaqueAlphaChannel)
 
-        icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
-        bucket.objects[paths.first].write(:data => icon_200_blob, :acl => :public_read)
-        src_obj.write(:data => icon_src_blob, :acl => :public_read)
-      end
+      icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
+      corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
+      icon_200.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      icon_200 = icon_200.opaque('#ffffff00', 'white')
+      icon_200.alpha(Magick::OpaqueAlphaChannel)
+
+      icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
+      bucket.objects[paths.first].write(:data => icon_200_blob, :acl => :public_read)
+      src_obj.write(:data => icon_src_blob, :acl => :public_read)
     else
       paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-      if remove
-        paths.each do |path|
-          obj = bucket.objects[path]
-          obj.delete if obj.exists?
-        end
-      else
-        icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
 
-        corner_mask_blob = bucket.objects["display/round_mask.png"].read
-        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-        icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-        icon_256 = icon_256.opaque('#ffffff00', 'white')
-        icon_256.alpha(Magick::OpaqueAlphaChannel)
+      icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
 
-        icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-        icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-        icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-        icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
+      corner_mask_blob = bucket.objects["display/round_mask.png"].read
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+      icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      icon_256 = icon_256.opaque('#ffffff00', 'white')
+      icon_256.alpha(Magick::OpaqueAlphaChannel)
 
-        bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-        bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-        bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-        bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-        src_obj.write(:data => icon_src_blob, :acl => :public_read)
-      end
+      icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+      icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+      icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+      icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
+
+      bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
+      bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
+      src_obj.write(:data => icon_src_blob, :acl => :public_read)
     end
 
     Mc.delete("icon.s3.#{guid}")
-    CloudFront.invalidate(guid, paths) if (remove || existing_icon_blob.present?)
+    CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
   end
 
   def save_icon!(icon_src_blob, override = false, remove = false)
@@ -488,7 +503,12 @@ class Offer < ActiveRecord::Base
       end
     end
 
-    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'), remove)
+    video_offer = (item_type == 'VideoOffer')
+    if remove
+      Offer.remove_icon!(guid, video_offer)
+    else
+      Offer.upload_icon!(icon_src_blob, guid, video_offer)
+    end
 
     if (guid != item_id) || remove
       icon_id_override =  if remove
