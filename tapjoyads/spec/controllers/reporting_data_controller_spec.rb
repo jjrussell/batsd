@@ -116,14 +116,14 @@ describe ReportingDataController do
 
     context 'with cache param' do
       it 'calls Mc.get_and_put' do
-        Mc.expects(:get_and_put).once
+        Mc.should_receive(:get_and_put).once
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :cache => '1')
       end
     end
 
     context 'without cache param' do
       it 'does not call Mc.get_and_put' do
-        Mc.expects(:get_and_put).never
+        Mc.should_receive(:get_and_put).never
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
       end
     end
@@ -136,8 +136,8 @@ describe ReportingDataController do
       @partner.users << @user
       @offer = Factory(:app).primary_offer
       @partner.offers << @offer
-      UdidReports.stubs(:get_daily_report).returns('a,b,c')
-      UdidReports.stubs(:get_monthly_report).returns('a,b,c')
+      UdidReports.stub(:get_daily_report).and_return('a,b,c')
+      UdidReports.stub(:get_monthly_report).and_return('a,b,c')
     end
 
     context 'with missing params' do

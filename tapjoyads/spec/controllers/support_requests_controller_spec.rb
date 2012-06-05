@@ -11,10 +11,10 @@ describe SupportRequestsController do
   describe '#incomplete_offers' do
     it 'should perform the proper SimpleDB query' do
       now = Time.zone.now
-      Time.stubs(:now).returns(now)
+      Time.stub(:now).and_return(now)
       conditions = ["udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", @udid, @currency.id, 30.days.ago.to_f]
 
-      Click.expects(:select_all).with({ :conditions => conditions }).once.returns([])
+      Click.should_receive(:select_all).with({ :conditions => conditions }).once.and_return([])
       get(:incomplete_offers, :app_id => @app.id, :currency_id => @currency.id, :udid => @udid)
     end
   end

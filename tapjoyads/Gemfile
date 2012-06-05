@@ -92,7 +92,6 @@ group :test do
   gem 'factory_girl', '2.1.2'
   gem 'factory_girl_rails', '~>1'
   gem 'launchy'
-  gem 'mocha', '0.9.12'
   gem 'spork'
   gem 'timecop'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git'
@@ -101,7 +100,6 @@ end
 group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
-  gem 'rspec-rails-mocha'
   gem 'shoulda-matchers'
 end
 
