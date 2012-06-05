@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: resellers
+#
+#  id                 :string(36)      not null, primary key
+#  name               :string(255)
+#  reseller_rev_share :decimal(8, 6)   not null
+#  rev_share          :decimal(8, 6)   not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#
+
 class Reseller < ActiveRecord::Base
   include UuidPrimaryKey
 

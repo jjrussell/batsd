@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: app_reviews
+#
+#  id                  :string(36)      not null, primary key
+#  app_id              :string(36)
+#  author_id           :string(36)      not null
+#  author_type         :string(255)     not null
+#  text                :text            default(""), not null
+#  created_at          :datetime
+#  updated_at          :datetime
+#  platform            :string(255)
+#  user_rating         :integer(4)      default(0)
+#  app_metadata_id     :string(36)      not null
+#  helpful_votes_count :integer(4)      default(0)
+#  bury_votes_count    :integer(4)      default(0)
+#  helpful_values_sum  :integer(4)      default(0)
+#  is_blank            :boolean(1)      default(FALSE)
+#
+
 class AppReview < ActiveRecord::Base
   BURY_LIMIT = 20
   include UuidPrimaryKey

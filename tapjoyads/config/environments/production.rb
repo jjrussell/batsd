@@ -1,23 +1,4 @@
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
-
 Tapjoyad::Application.configure do
-
-  routes = case MACHINE_TYPE
-           when 'dashboard'
-             %w( dashboard api )
-           when 'website'
-             %w( website api )
-           when 'webserver'
-             %w( web legacy )
-           when 'jobserver'
-             %w( job )
-           else
-             %w( api dashboard website web legacy )
-           end
-
-  routes.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
 
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -86,7 +67,6 @@ DISTRIBUTED_MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
   'localhost:21211'
 ]
 

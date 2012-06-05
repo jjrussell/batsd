@@ -1,3 +1,56 @@
+# == Schema Information
+#
+# Table name: partners
+#
+#  id                            :string(36)      not null, primary key
+#  contact_name                  :string(255)
+#  contact_phone                 :string(255)
+#  balance                       :integer(4)      default(0), not null
+#  pending_earnings              :integer(4)      default(0), not null
+#  created_at                    :datetime
+#  updated_at                    :datetime
+#  payout_frequency              :string(255)     default("monthly"), not null
+#  next_payout_amount            :integer(4)      default(0), not null
+#  name                          :string(255)
+#  calculated_advertiser_tier    :integer(4)
+#  calculated_publisher_tier     :integer(4)
+#  custom_advertiser_tier        :integer(4)
+#  custom_publisher_tier         :integer(4)
+#  account_manager_notes         :text
+#  disabled_partners             :text            default(""), not null
+#  premier_discount              :integer(4)      default(0), not null
+#  exclusivity_level_type        :string(255)
+#  exclusivity_expires_on        :date
+#  transfer_bonus                :decimal(8, 6)   default(0.0), not null
+#  rev_share                     :decimal(8, 6)   default(0.5), not null
+#  direct_pay_share              :decimal(8, 6)   default(1.0), not null
+#  apsalar_username              :string(255)
+#  apsalar_api_secret            :string(255)
+#  apsalar_url                   :text
+#  offer_whitelist               :text            default(""), not null
+#  use_whitelist                 :boolean(1)      default(FALSE), not null
+#  approved_publisher            :boolean(1)      default(FALSE), not null
+#  apsalar_sharing_adv           :boolean(1)      default(FALSE), not null
+#  apsalar_sharing_pub           :boolean(1)      default(FALSE), not null
+#  reseller_id                   :string(36)
+#  billing_email                 :string(255)
+#  freshbooks_client_id          :integer(4)
+#  accepted_publisher_tos        :boolean(1)
+#  sales_rep_id                  :string(36)
+#  max_deduction_percentage      :decimal(8, 6)   default(1.0), not null
+#  negotiated_rev_share_ends_on  :date
+#  accepted_negotiated_tos       :boolean(1)      default(FALSE)
+#  cs_contact_email              :string(255)
+#  confirmed_for_payout          :boolean(1)      default(FALSE), not null
+#  payout_confirmation_notes     :string(255)
+#  discount_all_offer_types      :boolean(1)      default(FALSE), not null
+#  client_id                     :string(36)
+#  promoted_offers               :text            default(""), not null
+#  payout_threshold              :integer(4)      default(5000000), not null
+#  payout_info_confirmation      :boolean(1)      default(FALSE), not null
+#  payout_threshold_confirmation :boolean(1)      default(FALSE), not null
+#
+
 class Partner < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -80,7 +133,8 @@ class Partner < ActiveRecord::Base
   @@per_page = 20
 
   scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
+  scope :to_payout, :conditions => 'pending_earnings != 0',
+        :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
   scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
@@ -151,23 +205,19 @@ class Partner < ActiveRecord::Base
   end
 
   def remove_user(user)
-    if users.length > 1 && users.include?(user)
+    if users.include?(user)
+      handle_last_user! if users.length == 1
       user.partners.delete(self)
       if user.reseller_id?
         self.reseller_id = nil
         save!
       end
-      if user.partners.blank?
-        user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
-        user.partners << user.current_partner
-        user.save
-      elsif user.current_partner_id == id
-        user.current_partner = user.partners.first
-        user.save
-      else
-        true
-      end
+      user.clean_up_current_partner(self)
     end
+  end
+
+  def handle_last_user!
+    users << User.userless_partner_holder
   end
 
   def get_disabled_partner_ids

@@ -1,5 +1,6 @@
 class OfferList
   PROMOTED_INVENTORY_SIZE = 3
+  DEEPLINK_POSITION = 3  #zero-based index of where to include a Deeplink offer in the offer list
 
   attr_reader :offers
 
@@ -98,7 +99,7 @@ class OfferList
     end
   end
 
-def get_offers(start, max_offers)
+  def get_offers(start, max_offers)
     return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
 
     all_offers = augmented_offer_list
@@ -133,13 +134,6 @@ def get_offers(start, max_offers)
   def augmented_offer_list
     all_offers = []
 
-    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
-      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
-        all_offers << deeplink_offer
-      end
-    end
-
     if @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id) #BUG: should be @publisher_app.enabled_rating_offer_id
       if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
@@ -147,7 +141,16 @@ def get_offers(start, max_offers)
       end
     end
 
-    all_offers + @offers.sort { |a,b| b.rank_score <=> a.rank_score }
+    all_offers += @offers.sort { |a,b| b.rank_score <=> a.rank_score }
+
+    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
+        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
+      end
+    end
+
+    all_offers.compact
   end
 
   def postcache_reject?(offer)

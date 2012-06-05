@@ -7,7 +7,7 @@ Your API Key:
 %span.code
   #{current_user.api_key}
 
-= form_tag(regenerate_api_key_reporting_path) do
+= form_tag(regenerate_api_key_reporting_index_path) do
   = submit_tag('Regenerate', :id => 'regenerate')
 
 %hr

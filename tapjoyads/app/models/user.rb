@@ -1,3 +1,30 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id                      :string(36)      not null, primary key
+#  username                :string(255)     not null
+#  email                   :string(255)
+#  crypted_password        :string(255)
+#  password_salt           :string(255)
+#  persistence_token       :string(255)
+#  created_at              :datetime
+#  updated_at              :datetime
+#  current_partner_id      :string(36)
+#  perishable_token        :string(255)     default(""), not null
+#  current_login_at        :datetime
+#  last_login_at           :datetime
+#  time_zone               :string(255)     default("UTC"), not null
+#  can_email               :boolean(1)      default(TRUE)
+#  receive_campaign_emails :boolean(1)      default(TRUE), not null
+#  api_key                 :string(255)     not null
+#  auth_net_cim_id         :string(255)
+#  reseller_id             :string(36)
+#  state                   :string(255)
+#  country                 :string(255)
+#  account_type            :string(255)
+#
+
 class User < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -94,7 +121,25 @@ class User < ActiveRecord::Base
     (super || [])
   end
 
-private
+  USERLESS_PARTNER_USER_ID = '65dc766a-d05f-45b4-9fca-1f81e3aed2d6'
+  def self.userless_partner_holder
+    User.find(User::USERLESS_PARTNER_USER_ID)
+  end
+
+  def clean_up_current_partner(old_partner)
+    if partners.blank?
+      partners << Partner.new(:name => email, :contact_name => email)
+      save
+    elsif current_partner_id == old_partner.id
+      self.current_partner = partners.first
+      save
+    else
+      true
+    end
+  end
+
+  private
+
   def update_auth_net_cim_profile
     if auth_net_cim_id.present? && (email_changed? || id_changed?)
       Billing.update_customer_profile(self)

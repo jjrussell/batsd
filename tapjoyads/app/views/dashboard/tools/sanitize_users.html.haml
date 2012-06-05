@@ -13,7 +13,8 @@
         %td.nobr
           - partner.users.each do |user|
             - if user.partners.length == 1
-              = form_tag('/tools/update_user/' + user.id) do |f|
+              = form_tag(update_user_tools_path) do |f|
+                = hidden_field_tag 'user_id', user.id, :class => 'user_id'
                 = check_box_tag 'user[can_email]', user.can_email, user.can_email, :id => "user_#{user.id}_can_email", :class => "can_email"
                 = text_field_tag 'user[email]', user.email, :id => "user_#{user.id}_email", :class => "email", :initial => user.email
                 = image_tag 'load-circle.gif', :class => 'hidden'
@@ -76,9 +77,10 @@
           $(this).siblings('img').show();
           var form = $(this).parents('form');
           var url = form.attr('action');
+          var user_id = form.children('input.user_id').val();
           var can_email = form.children('input.can_email').attr('checked');
           var email = form.children('input.email').val();
-          var data = { "user[can_email]": can_email, "user[email]": email };
+          var data = { "id": user_id, "user[can_email]": can_email, "user[email]": email };
           $.ajax({
             data: data,
             error: function() {

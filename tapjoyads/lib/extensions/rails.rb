@@ -116,18 +116,6 @@ module ActiveRecord
 
   class Base
 
-    # See https://rails.lighthouseapp.com/projects/8994/tickets/2919
-    # allows [attribute]_changed? to behave as expected after cloning a model instance
-    if Rails.version == "2.3.14"
-      def clone
-        attrs = clone_attributes(:read_attribute_before_type_cast)
-        attrs.delete(self.class.primary_key)
-        record = self.class.new
-        attrs.each { |k,v| record.write_attribute(k,v) } # original version is 'record.send :instance_variable_set, '@attributes', attrs'
-        record
-      end
-    end
-
     def self.remove_column(table_name, column_name)
       check_table_size(table_name) do
         super(table_name, column_name)
@@ -201,7 +189,7 @@ module ActionView
         html_classes = options[:class].nil? ? [] : options[:class].split(' ')
         html_classes << 'currency_field' unless html_classes.include?('currency_field')
         options.merge!({ :class => html_classes.join(' ') })
-        options.merge!({ :value => ::NumberHelper.number_to_currency(object.send(field) / 100.0, number_options) }) unless object.send(field).nil?
+        options.merge!({ :value => ::NumberHelper.number_to_currency(object.send(field).to_f / 100.0, number_options) }) unless object.send(field).nil?
         text_field(field, options)
       end
 

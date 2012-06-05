@@ -17,7 +17,7 @@ test:
   oauth2: true
 
 staging:
-  app_id: '281461335227331'
-  secret: 'c2338efd83e1abe81f3ef798837a6a91'
-  api_key: '281461335227331'
+  app_id: '369713256411141'
+  secret: '81ed2cc345333ed633d3bf42b22035a9'
+  api_key: '369713256411141'
   oauth2: true

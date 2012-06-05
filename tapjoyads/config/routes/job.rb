@@ -1,5 +1,4 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
   namespace :job do
     match 'internal_update_cloudwatch_rpm(/index)' => 'internal_update_cloudwatch_rpm#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'
@@ -49,7 +48,9 @@ Tapjoyad::Application.routes.draw do
     match 'queue_calculate_show_rate(/index)' => 'queue_calculate_show_rate#index'
     match 'queue_change_partners(/index)' => 'queue_change_partners#index'
     match 'queue_conversion_tracking(/index)' => 'queue_conversion_tracking#index'
+    match 'queue_conversion_tracking/run_job' => 'queue_conversion_tracking#run_job'
     match 'queue_create_conversions(/index)' => 'queue_create_conversions#index'
+    match 'queue_create_conversions/run_job' => 'queue_create_conversions#run_job'
     match 'queue_create_device_identifiers(/index)' => 'queue_create_device_identifiers#index'
     match 'queue_create_invoices(/index)' => 'queue_create_invoices#index'
     match 'queue_daily_app_stats(/index)' => 'queue_daily_app_stats#index'
@@ -66,6 +67,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_sdb_backups(/index)' => 'queue_sdb_backups#index'
     match 'queue_select_vg_items(/index)' => 'queue_select_vg_items#index'
     match 'queue_send_currency(/index)' => 'queue_send_currency#index'
+    match 'queue_send_currency/run_job' => 'queue_send_currency#run_job'
     match 'queue_send_failed_emails(/index)' => 'queue_send_failed_emails#index'
     match 'queue_send_welcome_emails(/index)' => 'queue_send_welcome_emails#index'
     match 'queue_suspicious_gamer_emails(/index)' => 'queue_suspicious_gamer_emails#index'

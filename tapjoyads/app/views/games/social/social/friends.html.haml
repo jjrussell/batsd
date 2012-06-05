@@ -27,5 +27,5 @@
                   - most_recent = ExternalPublisher.most_recently_run_for_gamer(f)[2]
                   - if most_recent.present?
                     - encrypt_app_id = ObjectEncryptor.encrypt(most_recent.app_id)
-                    .app-link= t('text.games.last_played', :game => link_to(most_recent.app_name, games_get_app_path(:eid => encrypt_app_id)))
+                    .app-link= t('text.games.last_played', :game => link_to(most_recent.app_name, games_get_app_path(:eid => encrypt_app_id))).html_safe
     = render :partial => 'find_more_friends'

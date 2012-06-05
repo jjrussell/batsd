@@ -20,10 +20,7 @@ public/stylesheets/*/*.css
 .sass-cache
 public/assets/*
 **.orig
-<<<<<<< HEAD
 .rspec
-=======
->>>>>>> master
 public/translations
 
 # Bundler

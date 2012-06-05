@@ -1,6 +1,4 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
-
   namespace :agency_api do
     resources :apps, :only => [:index, :show, :create, :update]
     resources :partners, :only => [:index, :show, :create, :update] do
@@ -34,6 +32,4 @@ Tapjoyad::Application.routes.draw do
   match 'sgn_data' => 'sgn_data#index'
   match 'zynga_data' => 'zynga_data#index'
   match 'tapulous_marketing' => 'tapulous_marketing#index'
-
-  match ':controller(/:action(/:id))'
 end

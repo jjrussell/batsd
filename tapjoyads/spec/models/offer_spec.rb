@@ -1020,6 +1020,7 @@ describe Offer do
 
   describe '#calculate_target_installs' do
     before :each do
+      @offer.daily_budget = 0
       @offer.allow_negative_balance = false
       @offer.partner.balance = 1_000_00
       @num_installs_today = 1
@@ -1055,6 +1056,24 @@ describe Offer do
         expected = @offer.daily_budget - @num_installs_today
         target = @offer.calculate_target_installs(@num_installs_today)
         target.should == expected
+      end
+
+      context 'when self-promote only' do
+        before :each do
+          @offer.self_promote_only = true
+        end
+
+        it 'should be infinity' do
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should_not be_finite
+        end
+
+        it 'should be limited by daily budget' do
+          @offer.daily_budget = 100
+          expected = @offer.daily_budget - @num_installs_today
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should == expected
+        end
       end
     end
 

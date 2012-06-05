@@ -1,4 +1,3 @@
----
 zh:
   activerecord:
     errors:
@@ -7,30 +6,30 @@ zh:
       messages:
         accepted: "必須接受"
         blank: "不可以空白"
-        confirmation: "與確認內容不匹配"
+        confirmation: "與確認內容不符"
         empty: "不可以空白"
-        equal_to: "必須等於 %{count}"
+        equal_to: "必須等於%{count}"
         even: "必須是偶數"
         exclusion: "被保留了"
         greater_than: "必須大於%{count}"
         greater_than_or_equal_to: "必須大於或等於%{count}"
-        inclusion: "未包括在本列表中"
-        invalid: 是無效的
+        inclusion: "不在本列表中"
+        invalid: "無效"
         less_than: "必須小於%{count}"
         less_than_or_equal_to: "必須小於或等於%{count}"
-        not_a_number: "不是個數字"
-        not_an_integer: "必須是個整數"
+        not_a_number: "並非數字"
+        not_an_integer: "必須是整數"
         odd: "必須是奇數"
-        record_invalid: "認定失敗:%{errors}"
+        record_invalid: "認定失敗：%{errors}"
         taken: "已經被占用了"
-        too_long: "太長了 (最大長度是 %{count} 字元"
+        too_long: "太長了 (最大長度是 %{count} 字元)"
         too_short: "太短了 (最小長度是 %{count} 字元)"
         wrong_length: "的長度錯誤 (應該是 %{count} 字元)"
       models:
         gamer_sessions:
           attributes:
-            email: 電子郵件
-            password: 密碼
+            email: "電子郵件"
+            password: "密碼"
       template:
         body: "以下的欄位有問題:"
         header:
@@ -41,80 +40,109 @@ zh:
       login_not_found: "無效的電子郵件"
       password_invalid: "無效的密碼"
   date:
-    abbr_day_names: ~
-    abbr_month_names: ~
-    day_names: ~
+    abbr_day_names: "日 一 二 三 四 五 六"
+    abbr_month_names:
+    - !!null "null"
+    - "一月"
+    - "二月"
+    - "三月"
+    - "四月"
+    - "五月"
+    - "六月"
+    - "七月"
+    - "八月"
+    - "九月"
+    - "十月"
+    - "十一月"
+    - "十二月"
+    day_names: "星期天 星期一 星期二 星期三 星期四 星期五 星期六"
     formats:
-      default: ~
-      long: ~
-      short: ~
-    month_names: ~
-    order: ~
+      default: "%Y-%m-%d"
+      long: "%B %d, %Y"
+      short: "%b %d"
+    month_names:
+    - !!null "null"
+    - "一月"
+    - "二月"
+    - "三月"
+    - "四月"
+    - "五月"
+    - "六月"
+    - "七月"
+    - "八月"
+    - "九月"
+    - "十月"
+    - "十一月"
+    - "十二月"
+    order:
+    - "年"
+    - "月"
+    - "日"
   datetime:
     distance_in_words:
       about_x_hours:
-        one: ~
-        other: ~
+        one: "約1小時"
+        other: "約%{count}小時"
       about_x_months:
-        one: ~
-        other: ~
+        one: "約1個月"
+        other: "約%{count}個月"
       about_x_years:
-        one: ~
-        other: ~
+        one: "約1年"
+        other: "約%{count}年"
       almost_x_years:
-        one: ~
-        other: ~
-      half_a_minute: ~
+        one: "幾乎1年"
+        other: "幾乎%{count}年"
+      half_a_minute: "半分鐘"
       less_than_x_minutes:
-        one: ~
-        other: ~
+        one: "不到一分鐘"
+        other: "不到 %{count} 分鐘"
       less_than_x_seconds:
-        one: ~
-        other: ~
+        one: "不到 1 秒鐘"
+        other: "不到 %{count} 秒鐘"
       over_x_years:
-        one: ~
-        other: ~
+        one: "超過 1 年"
+        other: "超過 %{count} 年"
       x_days:
-        one: ~
-        other: ~
+        one: "1 天"
+        other: "%{count} 天"
       x_minutes:
-        one: ~
-        other: ~
+        one: "1 分鐘"
+        other: "%{count} 分鐘"
       x_months:
-        one: ~
-        other: ~
+        one: "1 個月"
+        other: "%{count} 個月"
       x_seconds:
-        one: ~
-        other: ~
+        one: "1 秒"
+        other: "%{count} 秒"
     prompts:
-      day: ~
-      hour: ~
-      minute: ~
-      month: ~
-      second: ~
-      year: ~
+      day: "日"
+      hour: "小時"
+      minute: "分鐘"
+      month: "月"
+      second: "秒"
+      year: "年"
   errors:
     format: "%{attribute} %{message}"
     messages:
       accepted: "必須接受"
       blank: "不可以空白"
-      confirmation: "與確認內容不匹配"
+      confirmation: "與確認內容不符"
       empty: "不可以空白"
       equal_to: "必須等於%{count}"
       even: "必須是偶數"
       exclusion: "被保留了"
       greater_than: "必須大於%{count}"
       greater_than_or_equal_to: "必須大於或等於%{count}"
-      inclusion: "未包括在本列表中"
-      invalid: 是無效的
+      inclusion: "不在本列表中"
+      invalid: "無效"
       less_than: "必須小於%{count}"
       less_than_or_equal_to: "必須小於或等於%{count}"
-      not_a_number: "不是個數字"
-      not_an_integer: "必須是個整數"
+      not_a_number: "非數字"
+      not_an_integer: "必須是整數"
       odd: "必須是奇數"
-      too_long: "太長了 (最大長度是 %{count} 字元)"
-      too_short: "太短了 (最小長度是 %{count} 字元)"
-      wrong_length: "的長度錯誤 (應該是 %{count} 字元)"
+      too_long: "太長了(最多%{count}字)"
+      too_short: "太短了(最少%{count} 字)"
+      wrong_length: "長度不符(應為%{count} 字元)"
   helpers:
     select:
       prompt: "請選擇"
@@ -125,419 +153,446 @@ zh:
   number:
     currency:
       format:
-        delimiter: ~
-        format: ~
-        precision: ~
-        separator: ~
-        significant: ~
-        strip_insignificant_zeros: ~
-        unit: ~
+        delimiter: ","
+        format: "%u%n"
+        precision: "2"
+        separator: "."
+        significant: "false"
+        strip_insignificant_zeros: "false"
+        unit: "$"
     format:
-      delimiter: ~
-      precision: ~
-      separator: ~
-      significant: ~
-      strip_insignificant_zeros: ~
+      delimiter: ","
+      precision: "3"
+      separator: "."
+      significant: "false"
+      strip_insignificant_zeros: "false"
     human:
       decimal_units:
-        format: ~
+        format: "%n%u"
         units:
-          billion: ~
-          million: ~
-          quadrillion: ~
-          thousand: ~
-          trillion: ~
-          unit: ~
+          billion: "0 億"
+          million: "00 萬"
+          quadrillion: "0 京"
+          thousand: "千"
+          trillion: "兆"
+          unit: {}
       format:
-        delimiter: ~
-        precision: ~
-        significant: ~
-        strip_insignificant_zeros: ~
+        delimiter: {}
+        precision: "3"
+        significant: "true"
+        strip_insignificant_zeros: "true"
       storage_units:
-        format: ~
+        format: "%n %u"
         units:
           byte:
-            one: ~
-            other: ~
-          gb: ~
-          kb: ~
-          mb: ~
-          tb: ~
+            one: "位元"
+            other: "位元組"
+          gb: "GB"
+          kb: "KB"
+          mb: "MB"
+          tb: "TB"
     percentage:
       format:
-        delimiter: ~
+        delimiter: {}
     precision:
       format:
-        delimiter: ~
+        delimiter: {}
   support:
     array:
-      last_word_connector: ", 與"
-      two_words_connector: " 與 "
+      last_word_connector: ", 與 "
+      two_words_connector: "與 "
       words_connector: ", "
     select:
       prompt: "請選擇"
   text:
     featured:
-      download: 下載
-      download_and_run: 請下載與安裝。
-      earn_currency: "赚 %{amount_and_currency}"
-      earn_now: 賺金幣。
-      show_more_apps: 看下一個
-      skip: 跳過
+      download: "下載"
+      download_and_run: "請下載與安裝。"
+      earn_currency: "賺 %{amount_and_currency}"
+      earn_now: "賺金幣。"
+      show_more_apps: "看下一個"
+      skip: "跳過"
       title: "賺 %{currency}"
-      try_out: 試一試
+      try_out: "試一試"
     footer:
       about: "關於Tapjoy"
-      advertisers: 廣告主
-      blog: 部落格
-      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
-      developers: Developers
+      advertisers: "廣告商"
+      blog: "部落格"
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. 版權所有。Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      developers: "開發者"
       privacy: "隱私政策"
     games:
-      about_body: 愛您擁有的，覓您喜歡的
-      about_title: "\"真有意思，它就是知道我喜歡什麼應用。 \""
-      account_created_body: "您的Tapjoy 帳戶已成功創建！"
-      account_created_title: 成功了！
-      action_required: 請開始！
-      active_gamers_text: "%{count} 人正在玩"
-      add: 新增
-      add_to_homescreen: "把 %{tapjoy} 加到你的首頁"
-      advertisers_body: 讓您的產品深入百萬用戶，家喻戶曉！
-      advertisers_title: 廣告商
-      allow_marketing_emails: 允許Tapjoy向我發送市場營銷電子郵件
-      almost_done: 就快好了!
+      apps: "App"
+      about_body: "愛你擁有的，覓你喜歡的"
+      about_title: "\"它真的知道我喜歡什麼App。&nbsp;\""
+      account_created_body: "你已經成功創建Tapjoy帳戶！"
+      account_created_title: "成功!"
+      action_required: "開始行動！"
+      active_gamers_text: "%{count}人正在使用"
+      add: "新增"
+      add_to_homescreen: "把%{tapjoy}設為你的首頁"
+      advertisers_body: "讓你的產品深入百萬用戶，家喻戶曉！"
+      advertisers_title: "廣告商"
+      allow_marketing_emails: "允許Tapjoy向我發送市場營銷電子郵件"
+      almost_done: "就快好了!"
       already_registered:
-        one: "%{name} 已註冊。您現在關注他/她."
-        other: "%{name} 已註冊。您現在關注他們."
-      amount_and_currency: "%{amount} %{currency}"
+        one: "%{name} 已註冊。你現在開始追蹤他/她。"
+        other: "%{name} 已註冊。你現在開始追蹤他們。"
+      amount_and_currency: "%{amount} %{currency}。"
+      amount_and_currency_earn: "賺 %{amount} %{currency}"
       app_review_concern_reported: "意見已回報"
       app_review_h_no: "否"
       app_review_h_yes: "是"
-      app_review_more: 更多...
+      app_review_more: "更多..."
+      app_review_num_voters: "從 %{count} 投票者"
       app_review_report_concern: "回報意見"
-      app_review_thanks_for_feedback: "多謝你的反饋"
+      app_review_thanks_for_feedback: "多謝你的回覆"
       app_review_was_helpful: "這個評論有幫助嗎?"
-      back_to_top: 返回頁首
-      birthdate: 生日
-      browse_offers: 瀏覽廣告要求
-      call_to_action_body: 愛您擁有的，覓您喜歡的
-      call_to_action_title: "解放Mobile Joy"
-      cant_fetch_offers: 獲取更多廣告要求時遇到了問題。請再試.
-      change: 變更
-      change_linked_account: 變更連接帳戶
-      choose_section: 功能選擇
-      close: 關閉
-      collect: 收集
-      collect_rewards: 收集獎勵
-      connect_my_device: 連接我的終端
-      connect_to_facebook: 點擊以連結到Facebook
-      connect_your_android: 請連接您的Andr​​oid終端
-      connect_your_device: 請連接您的終端
+      back_to_top: "返回頂端"
+      birthdate: "生日"
+      browse_offers: "瀏覽優惠"
+      call_to_action_body: "愛你擁有的，覓你喜歡的"
+      call_to_action_title: "解放行動歡樂"
+      cant_fetch_offers: "取得更多優惠時遇到了問題。請再試一次。"
+      change: "變更"
+      change_linked_account: "變更連接帳戶"
+      choose_section: "功能選擇"
+      close: "關閉"
+      collect: "收集"
+      collect_rewards: "收集獎勵"
+      connect_my_device: "連接我的設備"
+      connect_to_facebook: "點擊以連結到Facebook"
+      connect_your_android: "請連接你的Android設備"
+      connect_your_device: "請連接你的設備"
       connected_to_facebook: "連結到Facebook"
       connected_to_twitter: "連結到Twitter"
-      contact_support: 客戶支持
-      contact_us: 聯繫我們
-      cookies_required: 請打開瀏覽器的cookie設定
-      deactivate: 停用
-      del_acct_confirm: "請點擊下面的按鈕來停用您的帳戶。帳戶停用%{days_before_deletion}天後將被徹底刪除。您的帳戶一旦刪除就無法恢復。"
-      delete_my_account: 刪除我的帳戶
-      developers_body: 用我們的增值工具為您的應用創造可觀收益
-      developers_title: 開發者
-      discover_apps: "一同加入這個有數百萬行動應用愛好者的Tapjoy園地，來探索評價最好的應用。今天就開始吧!"
+      contact_support_incomplete_offers_label: "無法取得特定的優惠？"
+      contact_support_no_incomplete_offers_label: "在你所用的設備上查無任何優惠。"
+      contact_support_page_title: "與支援部門連繫"
+      contact_support_select_offer_button: "選取一項優惠"
+      contact_support_thanks: "多謝你連繫支援部門。  我們的專員會盡快回覆。"
+      contact_us: "聯繫我們"
+      cookies_required: "請啟用瀏覽器的Cookie設定"
+      try_again_with_cookies: "請登錄後再試一次。你必須啟用Cookie功能。"
+      deactivate: "停用"
+      del_acct_confirm: "點選下面的按鈕，即可中止你的帳號。一旦帳號中止超過%{days_before_deletion}天，就會永久刪除。我們無法回復刪除後的帳號。"
+      delete_my_account: "刪除我的帳戶"
+      developers_body: "用我們的增值工具為你的App創造可觀收益"
+      developers_title: "開發者"
+      discover_apps: "一同加入這個有數百萬行動App愛好者的Tapjoy園地，來探索評價最好的App。今天就開始吧！"
       download_now: "馬上下載"
-      earn: "賺取%{currency} "
-      earn_rewards: 賺取獎勵
-      earn_title: "請完成以下任何廣告要求為您的%{app_name}賺取%{currency} "
-      earning_rewards: Tapjoy提供賺取你所有喜愛的行動應用的獎勵的一站式服務
-      edit: 編輯
-      email_device_link: "把聯結發給裝置"
-      email_notification: 電郵通知
-      enable_javascript: 請在瀏覽器設置菜單中啟用JavaScript以便繼續使用Tapjoy。
-      enter_birthdate: 請輸入您的生日
-      enter_email: 請輸入你的電子郵件地址
-      enter_message: 請輸入一道訊息
+      earn: "賺%{currency}"
+      earn_rewards: "賺取獎勵"
+      earn_title: "請完成以下任何優惠項目為你的%{app_name}賺取%{currency}"
+      earning_rewards: "Tapjoy是幫你在喜愛行動App上，一次賺取所有獎勵的整合服務。"
+      edit: "編輯"
+      email_device_link: "以電子郵件把連結寄到設備上"
+      email_notification: "電子郵件通知"
+      enable_javascript: "請在瀏覽器設定選單啟用JavaScript以便繼續使用Tapjoy。"
+      enter_birthdate: "請輸入你的生日"
+      enter_email: "請輸入你的電子郵件地址"
+      enter_message: "請輸入一道訊息"
       enter_name: "請輸入姓名"
-      enter_password: 請輸入密碼
-      enter_platform: 請選擇iOS或Android
-      enter_tos: 請接受上述條款與條件
-      enter_valid_email: 請輸入有效的電子郵件地址
-      errno_error: "發生了聯結問題，請稍候再試。"
-      error_mark_as_favorite: "將應用標為最愛時發生錯誤"
-      error_unmark_as_favorite: "將應用取消最愛時發生錯誤"
-      facebook_connect_failed: "與你Facebook 個人檔案連結時發生錯誤"
-      failed_to_change_linked: "切換聯結帳戶時發生錯誤"
-      favorite_app: 最喜歡的應用
-      favorite_apps: 最喜歡的應用
-      favorite_category: 最喜歡的類型
-      favorites: 我的最愛
-      feedback: 反饋
-      find_and_invite_friends: 尋找並邀請朋友
-      find_friends_from_facebook: "在Facebook上找朋友"
-      find_friends_from_twitter: "在Twitter上找朋友"
-      find_friends_on_tapjoy: 尋找在其他網路中使用Tapjoy的朋友
-      find_more_friends: 尋找更多朋友
-      find_new_apps: 找新應用
-      follow_us: 關注我們
-      forgot_pass: 忘記密碼了？
-      free: 免費！
+      enter_password: "請輸入密碼"
+      enter_platform: "請選擇iOS或Android"
+      enter_tos: "請接受上述條款與條件"
+      enter_valid_email: "請輸入有效的電子郵件地址"
+      errno_error: "出現連線問題。請稍後再試一次。"
+      error_mark_as_favorite: "將App標為最愛時出錯"
+      error_unmark_as_favorite: "將App從最愛中移除時出錯"
+      facebook_connect_failed: "與Facebook個人檔連結時出錯"
+      failed_to_change_linked: "切換聯結帳戶時出錯"
+      favorite_app: "最喜歡的App"
+      favorite_apps: "最喜歡的App"
+      favorite_category: "最喜歡的類型"
+      favorites: "我的最愛"
+      feedback: "回應"
+      find_and_invite_friends: "尋找並邀請朋友"
+      find_friends_from_facebook: "從Facebook找朋友"
+      find_friends_from_twitter: "從Twitter找朋友"
+      find_friends_on_tapjoy: "透過其他網路尋找已經使用Tapjoy的朋友"
+      find_more_friends: "尋找更多朋友"
+      find_new_apps: "找新App"
+      follow_us: "追蹤我們"
+      forgot_pass: "忘記密碼？"
+      free: "免費！"
       friend_filter_label: "開始輸入姓名"
-      generic_issue: 有問題了。請再試。
-      get_app: 獲取應用
-      get_it: 下載！
-      grant_permissions_for_invite: "請在送出邀請前授權我們。"
-      grant_us_access: 在發送邀請前請給予我們相應的授權/許可。
-      how_it_works_body: 您的所有遊戲如下所列。按應用旁的按鈕開始賺取虛擬貨幣。
-      how_it_works_title: 它的原理？
-      install_and_run: "安裝並運行 %{name}"
-      install_android_app: "在你的Android裝置上下載Tapjoy應用以便開始"
-      install_profile: 在下一頁登錄你的資料就可以開始探索你喜愛的應用！
+      generic_issue: "出現問題。請再試一次"
+      get_app: "取得App"
+      get_it: "下載！"
+      grant_permissions_for_invite: "請在送出邀請前為我們提供授權。"
+      grant_us_access: "在發送邀請前請為我們提供授權/許可。"
+      how_it_works_body: "你的所有遊戲均列在下面。按App旁的按鈕開始賺取虛擬貨幣。"
+      how_it_works_title: "如何運作？"
+      install_and_run: "安裝並執行"
+      install_android_app: "在Android設備下載Tapjoy的App以便開始"
+      install_profile: "在下一頁安裝你的個人檔就可以開始探索你喜愛的App！"
       invalid_emails: "提供的電子郵件無效"
-      invalid_fields: 輸入無效
-      invite: 邀請好友！
-      invite_by_email: 用電郵邀請
-      invite_email_body: |-
-          %{name}已邀請您加入Tapjoy，這是發現最熱門新應用的絕佳所在。免費註冊後您就能發現針對iOS 和Android系統的最好應用，而且您可以在自己最喜愛的應用中賺取現金。
-
-           無需在App Store 或Google Play 中的成千上萬應用堆裡艱難跋涉才能找到您的下一個下載。 Tapjoy 在乎您，會向您推薦您喜歡的應用。
-
-           請在此創建您的帳戶，然後開始吧。
-      invite_email_greet: 你好
-      invite_email_signature: Tapjoy團隊
+      invalid_fields: "輸入無效"
+      invite: "邀請好友！"
+      invite_by_email: "用電子郵件邀請"
+      invite_email_body: "%{name} 已經邀請你加入Tapjoy，尋找全新熱門App最棒的地方。註冊完全免費，而且你可以找到iOS與Android上最棒的App，還可以在你喜歡的App上面賺虛擬幣。\n\n再也不需要去App Store或是Google Play閱覽上千個項目，就可以找到下個想下載的東西。Tapjoy幫你處理這一切，並推薦你會喜歡的App。\n\n第一步就是由此建立帳號："
+      invite_email_greet: "你好，"
+      invite_email_signature: "Tapjoy團隊"
       invite_friends:
-        one: 邀請
-        other: "邀請 %{count} 個朋友"
-      invite_title: 發送一封電子郵件邀請
-      invite_twitter_followers: "邀請Twitter關注者!"
+        one: "邀請"
+        other: "邀請%{count}個朋友"
+      invite_title: "發送一封電子郵件邀請"
+      invite_twitter_followers: "邀請Twitter追蹤者！"
       invites_sent_to:
-        one: "一個Tapjoy 邀請已發送給了%{name}"
-        other: "Tapjoy 邀請已發送給了%{name}"
-      issue_registering: 註冊帳戶發生問題
-      join_the_community: 加入社群
-      join_the_community_blurb: 透過Tapjoy社群的應用評分與評論來探索更多的應用，今天就開始並親自參與！
-      last_played: "最後進行: %{game}"
-      link_account_header: Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的裝置
-      link_account_messaging: "Tapjoy提供你一面賺取正在進行的應用的貨幣，一面探索最熱門iOS與Android應用的一站式服務。為了感受完整的Tapjoy體驗，你必須連結你的iOS或Android裝置。只要在你的iOS裝置上回訪 %{tjm_url} 或在你的Android裝置上回訪 %{android_market_url} 就可以開始了。同時，請隨性瀏覽本網站，創造你的個人檔案，以便我們提供你個性化的推薦。"
-      link_account_messaging_android_href: "下載Android應用"
-      link_account_messaging_tjm_href: www.tapjoy.com
-      link_my_facebook: 請連接到我的Facebook
-      load_more: 請加載更多
-      loading: 加載中...
-      log_in_tapjoy: 登錄到Tapjoy
-      mark_as_favorite: 加到我的最愛
-      member_since: "會員從%{date}起"
-      meta_description: "Tapjoy：針對Android、iPhone 和iPad 上移動應用的一站式服務"
-      meta_keywords: 遊戲、移動遊戲、移動應用、ios、Android、iPhone、iPad、iTouch
-      mogli_reach_limit_error: "你已經到達上限了，請稍後再試"
-      more_apps: 更多應用
-      more_the_merrier: 獨戲樂不如眾戲樂
-      my_apps: 我的應用
-      next: 下一頁
-      no_device: 沒有裝置
-      no_javascript: 請在瀏覽器設置菜單中啟用JavaScript以便繼續使用Tapjoy。
-      none_selected: 沒有選中
+        one: "已經把一個Tapjoy邀請發給%{name}"
+        other: "已經把Tapjoy邀請送給%{name}"
+      issue_registering: "註冊帳號發生問題"
+      join_the_community: "加入社群"
+      join_the_community_blurb: "透過Tapjoy社群的App評分與評論進一步探索。今天就開始並親自參與！"
+      last_played: "最後開啟：%{game}"
+      link_account_header: "Tapjoy可以讓你賺取已使用的App貨幣，同時探索最熱門App整合服務。為了獲得完整的Tapjoy體驗，你必須連結你的設備。"
+      link_account_messaging: "Tapjoy提供你在iOS與Android上，一面賺取正在使用的App貨幣，同時探索最熱門App的整合服務。為了獲得完整的Tapjoy體驗，你必須連結到你的iOS或Android設備。只要回到iOS的%{tjm_url}或是Andriud%{android_market_url}就可以開始。同時，請到網站中四處逛逛並建立你的個人檔，我們才能夠為你提供個人化的建議。"
+      link_account_messaging_android_href: "下載Android版App"
+      link_account_messaging_tjm_href: "www.tapjoy.com"
+      link_my_facebook: "連接到我的Facebook"
+      load_more: "載入更多"
+      loading: "載入中...."
+      log_in_tapjoy: "登錄Tapjoy"
+      log_in_title: "登錄"
+      log_in_text: "靠著Tapjoy幫你取得更多App。  今天就可以贏得獎勵並探索更多App。  請登入Tapjoy繼續"
+      log_in_not_a_member: "尚未成為會員？註冊"
+      mark_as_favorite: "加到我的最愛"
+      member_since: "從%{date}起成為會員"
+      meta_description: "Tapjoy：針對Android、iPhone和iPad上行動App的終極站"
+      meta_keywords: "遊戲、行動遊戲、行動App、iOS、Android、iPhone、iPad、iTouch"
+      mogli_reach_limit_error: "已經達到上限。請稍後再試一次。"
+      more_apps: "更多App"
+      more_the_merrier: "獨遊樂不如眾遊樂"
+      my_apps: "我的App"
+      next: "下一頁"
+      no_device: "找不到設備"
+      no_javascript: "請在瀏覽器設定選單中啟用JavaScript以便繼續使用Tapjoy。"
+      none_selected: "未選取"
+      offer_complete_detail: "你已經在完成%{offer_name}優惠之後，贏得了%{app_name}的%{amount_and_currency} 點選下面的按鈕，就可以在%{app_name}中繼續賺取更多獎勵"
+      offer_compelete_earned: "已賺取"
+      offer_complete_earn_more: "贏得更多%{currency_name}"
       on_my: "在我的 %{device_name} 上"
-      oops: 哦！
+      oops: "唉喲！"
       or_learn_more: "或者了解更多"
-      other_options: 其他選項
-      our_tos_changed: "我們的%{terms_of_use}已經修訂。請查閱後接受。"
-      password_changed: 你的密碼已經變更了
-      password_non_match: "密碼與確認內容不匹配"
+      other_options: "其他選項"
+      our_tos_changed: "我們的%{terms_of_use}已經修訂。請在下面閱覽並接受。"
+      password_changed: "你的密碼已經變更了。"
+      password_non_match: "密碼與確認內容不符"
       please_connect_facebook: "請連結到你的Facebook帳號"
-      post_to_facebook: "貼文到Facebook!"
-      post_to_facebook_content: "造訪Tapjoy來發現最好的應用與遊戲，還可以在你喜愛的應用中賺取虛擬貨幣。加入完全免費，所以現在就來造訪 tapjoy.com，獲得為你量身訂做的應用推薦"
-      privacy_policy_href: 隱私政策
-      profile: 我
-      profile_error: "在更新你的個人檔案時發生問題"
-      profile_update: 你的資料已經更新了
-      provide_other_email: 請提供另一個電子郵件地址
+      post_to_facebook: "在Facebook發佈！"
+      post_to_facebook_content: "快來Tapjoy看看如何找到最棒全新的App與遊戲，同時還可以在喜愛的App中賺取貨幣。今天加入完全免費，快來tapjoy.com，看看為你推薦什麼App。"
+      privacy_policy_href: "隱私政策"
+      profile: "我"
+      profile_error: "更新你的個人檔出錯"
+      profile_update: "你的個人檔更新完成"
+      provide_other_email: "請提供另一個電子郵件地址"
       provide_single_email: "請至少提供一個電子郵件地址"
-      reactivated_account: "你的帳號已經被激活了!"
-      recipients_label: 請使用逗號區隔各電子郵件
-      recommend_apps: "Tapjoy會根據你喜愛使用的應用內容，對你作個人化的智能推薦"
-      recommendations: 智能推薦
-      recommendations_smart: 智能推薦
-      registering: 註冊中
-      report_bug: 回報臭蟲
-      reset_password_message: 輸入跟你帳號關聯的郵箱地址，我們便會將重置密碼的聯結發送給你
-      reset_password_message_submit: 你將在幾分鐘之後收到指引你重置密碼的電子郵件
-      reset_password_retry: "如果你還是無法登入，可以 %{reset_password_url} 或發送電子郵件"
-      reset_password_retry_url_text: 請求另一封密碼重置郵件
-      review_app_name: "評論 %{app_name}"
-      review_created: 成功評論此應用
-      review_issue: 有點問題，請稍後重試
-      review_updated: 應用評論已成功更新
-      reviewed_already: 你已經評論過這個應用了
-      scheduled_for_deletion: "你的帳號已被關閉並進入刪除排程!"
-      select_current_device: 請選擇您當前使用的終端
-      select_device: 請選擇您的終端
-      select_friend: 請選擇至少一位朋友，然後才能發送邀請
-      share_on_facebook: 在Facebook上分享
-      share_on_twitter: 在Twitter上分享
-      share_with_everyone: 跟所有人分享
-      share_with_your_friends: 跟朋友分享
-      social_invite_friend_error: "在邀請你的朋友時發生問題，請稍後再試。"
-      social_need_authorize_error: "在送出邀請前，請授權我們"
-      social_networks: 社交網絡
-      social_settings: 社交化設置
-      social_to_next: "往後 %{page_size}"
-      social_to_prev: "往前 %{page_size}"
-      social_to_top: "回頁首 &#8679;"
-      spread_mobile_joy: "散布行動娛樂"
-      start_discovering: "現在就開始免費與Tapjoy一同探索吧 "
-      tap_that: "輕觸%{icon} 選擇%{button}"
-      tapjoy_picks: "Tapjoy 精選"
-      terms_of_use_href: 使用條款
-      thanks_contact_support: 感謝你聯繫我們的客戶支持，我們的專員會盡快回覆你。
-      thanks_contact_us: 感謝你跟我們聯繫，我們會盡快回覆你。
-      thanks_feedback: 感謝你的反饋!
-      thanks_report_bug: 感謝你回報臭蟲，我們會盡快測試並確認。
-      thats_you: 那是你
-      tos_acknowledge_html: "選中此框，確定自己接受%{terms_of_use} 及%{privacy_policy}"
-      tos_change_acknowledge: 選中此框，確定自己接受服務條款。
+      reactivated_account: "你的帳號已經啟用了！"
+      recipients_label: "請使用逗號來分隔電子郵件地址"
+      recommend_apps: "Tapjoy會根據你喜愛使用的App內容，對你提出個人化的App推薦"
+      recommendations: "推薦"
+      recommendations_smart: "智慧推薦"
+      registering: "註冊中"
+      report_bug: "回報程式錯誤"
+      reset_password_message: "輸入帳號相關的郵箱地址，我們會寄出重設密碼的聯結。"
+      reset_password_message_submit: "你將在幾分鐘之後收到重設密碼的電子郵件。"
+      reset_password_retry_html: "如果你還是無法登入，可以前往%{reset_password_url}或寄出電子郵件"
+      reset_password_retry_url_text: "要求另寄重設密碼的郵件"
+      review_app_name: "%{app_name}評論"
+      review_created: "成功對此App發表評論"
+      review_issue: "出現問題。請稍後再試一次。"
+      review_updated: "App評論成功更新"
+      reviewed_already: "你已經評論過這個App。"
+      scheduled_for_deletion: "你的帳號已被中止，並排入定期刪除中！"
+      select_current_device: "請選擇你當前使用的設備"
+      select_device: "請選擇你的設備"
+      select_friend: "請至少選擇一位朋友才能發送邀請"
+      share_on_facebook: "在Facebook上分享"
+      share_on_twitter: "在Twitter上分享"
+      share_with_everyone: "跟所有人分享"
+      share_with_your_friends: "跟朋友分享"
+      social_invite_friend_error: "在邀請朋友時發生問題，請稍後再試。"
+      social_need_authorize_error: "在送出邀請前，請為我們提供授權"
+      social_networks: "社交網絡"
+      social_settings: "社交設定"
+      social_to_next: "下一頁 %{page_size}"
+      social_to_prev: "上一頁 %{page_size}"
+      social_to_top: "頂端 &#8679;"
+      spread_mobile_joy: "散播行動娛樂"
+      start_discovering: "開始與Tapjoy一同免費探索"
+      tap_that: "輕觸%{icon}並選擇%{button}"
+      tapjoy_picks: "Tapjoy精選"
+      terms_of_use_href: "使用條款"
+      thanks_contact_support: "多謝你連繫支援部門。我們的專員會盡快回覆。"
+      thanks_contact_us: "感謝你與我們連繫。我們會盡快回覆。"
+      thanks_feedback: "感謝你的回覆！"
+      thanks_report_bug: "感謝你回報程式錯誤。我們會儘快查閱並檢驗。"
+      thats_you: "那是你"
+      tos_acknowledge_html: "勾選這個方框，表示我同意接受%{terms_of_use} 及%{privacy_policy}"
+      tos_change_acknowledge: "勾選這個方框，我示我同意接受服務條款。"
       twitter_at_least_one_friend_error: "在送出邀請前，請至少選擇一名朋友"
-      twitter_authenticate_error: "透過TWITTER取得授權時發生錯誤，服務並未傳回有效的資料"
-      twitter_forbidden_error: "由於更新限制，要求已經被否決"
-      twitter_general_error: " Twitter那邊有點問題，請稍後再試"
-      twitter_internal_error: " Twitter那邊有點問題，請稍後再試"
-      twitter_invite_msg: "已經邀請你加入Tapjoy，尋找熱門應用的最佳場所，現在就免費加入!"
+      twitter_authenticate_error: "透過TWITTER認證時出現錯誤。這項服務並未回傳有效資料。"
+      twitter_forbidden_error: "由於更新限制，要求已經被拒決"
+      twitter_general_error: "Twitter出現問題。請稍後再試一次。"
+      twitter_internal_error: "Twitter出現問題。請稍後再試一次。"
+      twitter_invite_msg: "@%{name} 已經邀請你加入Tapjoy！在你的App中賺取獎勵並找到你喜愛的全新App，一切免費！"
       twitter_invite_title: "請選擇Twitter朋友，以便用直接訊息邀請他們"
-      unable_to_process: 抱歉，我們無法處理您的請求
-      unlock_mobile_joy: "解放Mobile Joy"
+      unable_to_process: "抱歉，我們無法處理你的請求"
+      unlock_mobile_joy: "解放行動歡樂"
       unmark_as_favorite: "從最愛中移除"
-      welcome_tapjoy: "歡迎來到Tapjoy!"
-      wifi_required: "需要Wifi 連接"
-      wrong_device: 裝置不對?
-      you_are_following: "你正在關注(%{count})"
+      welcome_tapjoy: "歡迎來到Tapjoy！"
+      wifi_required: "需要WIFI連線"
+      wrong_device: "設備不對?"
+      you_are_following: "你正在追蹤(%{count})"
       your_followers:
-        one: "你的關注者"
-        other: "你的關注者(%{count})"
+        one: "你的追蹤者"
+        other: "你的追蹤者(%{count})"
     instructions:
       amount_and_currency: "%{amount} %{currency}"
-      continue_link: 點擊這裡繼續
-      download_action: 這裡
-      download_link_html: "如果您没有這個程序,點擊 %{download_action} 下載"
-      earn_currency_html: "賺 %{amount_and_currency}"
-      footer: "在完成這些步驟後,您將獲得 %{amount_and_currency}."
-      header: "按照這些說明來獲得 %{currency}:"
-      title: 說明
+      continue_link: "點擊這裡繼續。"
+      download_action: "這裡"
+      download_link_html: "如果你没有這個App，點選%{download_action}來下載"
+      earn_currency_html: "賺%{amount_and_currency}"
+      footer_html: "在完成這些步驟之後，你會賺到%{amount_and_currency}。"
+      header: "按照這些步驟來獲得%{currency}："
+      title: "說明"
     offerwall:
+      actions:
+        download: "下載並執行這個App。"
+        steps: "完成一連串步驟。"
+        video: "觀看影片。"
+        TJM_link: "點擊造訪%{Tapjoy}查看更多免費優惠！"
+      buy_currency: "買%{amount} %{currency}"
+      earn_currency: "賺 %{amount} %{currency}"
       buy_currency_html: "買%{amount} %{currency}"
+      earn_currency: "賺 %{amount} %{currency}"
+      earn: "賺取"
+      earn_more: "想要查看更多優惠？快來Tapjoy獲得更多獎勵與個人化App推薦！"
+      deep_link_part_1: "輕點此處造訪"
+      deep_link_part_2: "以取得更多免費優惠！"
       earn_currency_html: "賺 %{amount} %{currency}"
-      free: 免費
-      instructions: "完成以下的要求其中之一可以得到 %{currency}"
-      instructions_non_rewarded: 發現Tapjoy的熱點!
-      load_error: 請再試一次。
-      load_more: 下一頁！
-      loading: 載入中。。。。
-      missing_currency: "没得到 %{currency}?"
-      more_offers: "想要看更多廣告要求? 造訪 Tapjoy 來獲得更多獎勵與個性化的應用推薦!"
-      next: "下頁 %{items}"
-      popular_apps: 最流行的軟體
-      previous: "上頁 %{items}"
+      free: "免費"
+      instructions: "完成下列任何動作即可獲得%{currency}"
+      instructions_non_rewarded: "看看Tapjoy上的熱門消息！"
+      load_error: "請再試一次。"
+      load_more: "載入更多優惠"
+      loading: "載入中..."
+      missing_currency: "找不到%{currency}？"
+      missing_credits: "找不到合約點數"
+      more_offers: "想要查看更多優惠？造訪Tapjoy獲得獎勵與個人化App推薦！"
+      next: "下一項%{items}"
+      offers_by: "優惠提供自"
+      points: "點數"
+      popular_apps: "最流行的軟體"
+      powered: "由 Tapjoy 改良"
+      previous: "上一項%{items}"
+      privacy: "隱私政策"
       title: "賺 %{currency}"
-      wifi_required: 需要Wifi
-      wifi_warning: 下載本軟體需要連結wifi。
+      wifi_required: "需要WIFI"
+      wifi_warning: "下載本軟體需要連結wifi。"
+      visit: "造訪 Tapjoy"
     shared:
-      about_link: 關於Tapjoy
-      ads_by: 廣告提供
-      android: Android
-      back: 返回
-      blog: 部落格
-      cancel: 取消
-      change_password: 更改密碼
-      city: 城市
-      collect: 收集
-      comment: 意見
-      confirm_password: 確認密碼
-      continue: 繼續
-      copyright: "版權宣告; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
-      country: 國家
-      day: 日
-      earn_verb: 賺取
-      email: 電子郵件
-      facebook_profile: "Facebook 個人資料"
-      favorites: 我的最愛
-      female: 女性
-      followers: 被關注
-      following: 關注
-      friends: 朋友
-      gender: 性別
-      help: 幫助
-      invite: 邀請
-      ios: iOS
-      join: 加入
-      location: 地點
-      login_noun: 登錄
-      login_verb: 登錄
-      logout: 登出
-      male: 男性
-      month: 月
-      my_account: 我的帳戶
-      my_profile: 我的個人資料
-      my_reviews: 我的評論
-      name: 名字
-      new_password: 新密碼
-      nickname: 暱稱
-      none: 沒有
-      ok: OK
-      options: 選項
-      other: 其它
-      password: 密碼
+      about_link: "關於Tapjoy"
+      ads_by: "提供改良"
+      android: "Android"
+      back: "返回"
+      blog: "部落格"
+      cancel: "取消"
+      change_password: "更改密碼"
+      city: "城市"
+      collect: "收集"
+      comment: "意見"
+      confirm_password: "確認密碼"
+      continue: "繼續"
+      copyright: "Copyright &copy; %{year} Tapjoy, Inc. 版權所有。Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
+      country: "國家"
+      day: "日"
+      earn_verb: "賺取"
+      email: "電子郵件"
+      facebook_profile: "Facebook個人資料"
+      favorites: "我的最愛"
+      female: "女性"
+      followers: "追蹤者"
+      following: "追蹤中"
+      friends: "朋友"
+      gender: "性別"
+      help: "說明"
+      invite: "邀請"
+      ios: "iOS"
+      join: "加入"
+      location: "地點"
+      login_noun: "登錄"
+      login_verb: "登錄"
+      logout: "登出"
+      male: "男性"
+      month: "月"
+      my_account: "我的帳戶"
+      my_profile: "我的個人檔"
+      my_reviews: "我的評論"
+      name: "名字"
+      new_password: "新密碼"
+      nickname: "暱稱"
+      none: "無"
+      ok: "確定"
+      options: "選項"
+      other: "其它"
+      password: "密碼"
       please_try_again: "請再試一次"
-      preferences: 首選
-      privacy: 隱私
-      privacy_policy: 隱私政策
-      profile: 簡介
-      rate_and_review: 評價與評論
-      recipients: 收件人
-      reset_password: 重置密碼
-      reviews: 評論
-      save: 保存
-      send: 發送
-      sending: 發送中
-      sent: 已發送
-      share: 共享
-      sign_in: 註冊
-      sign_up: 註冊
-      submit: 提交
-      submit_review: 提交評論
-      success: 成功!
-      title_noun: 標題
-      try_again: 再試
-      unknown: 未明
-      update_review: 更新評論
-      updating: 更新中
-      view_all: "看全部"
-      write_review: 撰寫評論
-      year: 年
-      zip_postal: 郵政編碼
+      preferences: "首選"
+      privacy: "隱私"
+      privacy_policy: "隱私政策"
+      profile: "簡介"
+      rate_and_review: "評價與評論"
+      recipients: "收件人"
+      reset_password: "重設密碼"
+      reviews: "評論"
+      save: "保存"
+      send: "發送"
+      sending: "發送中"
+      sent: "已發送"
+      share: "共享"
+      sign_in: "登錄"
+      sign_up: "註冊"
+      submit: "提交"
+      submit_review: "提交評論"
+      success: "成功！"
+      title_noun: "標題"
+      try_again: "重試"
+      unknown: "不明"
+      update_review: "更新評論"
+      updating: "更新中"
+      view_all: "瀏覽全部"
+      write_review: "撰寫評論"
+      year: "年"
+      zip_postal: "郵遞區號"
     support:
-      abuse_warning: 本表格僅供那些完成廣告但未獲得獎勵的用戶使用，濫用本頁可能導致你的帳戶未來無法與廣告互動
+      abuse_warning: "這項表格是供完成優惠，但未獲得任何獎勵的使用者專用。濫用這個頁面，有可能導致你的帳號遭到禁用，日後再也無法獲得優惠。"
       description_label: "描述:"
-      email_address_label: "電郵地址:"
-      instructions_1: "請選擇你完成要求但未獲得%{currency}的廣告並輸入你的電子郵件地址"
-      instructions_2: 如果你提交申請的資料不完整，可能延誤你問題的解決速度。我們會優先處理資料完整的要求
-      invalid_email: 請輸入真實的電郵地址
-      missing_description: 請描述你完成的廣告要求
-      missing_offer: 你必須指出你完成的廣告要求
-      no_incomplete_offers_label: 我們沒找到合適的廣告要求
-      select_offer: 選擇廣告要求
-      specify_offer_label: "指出要求:"
-      submit_support_request: 提交客戶支持請求
-      support_request_submitted: 客戶支持請求已提交
-      thanks: "感謝你提交客戶支持請求! 等我們核實你已經完成廣告要求之後，你就可以收到你的 %{currency}"
-      title: "沒收到 %{currency}?"
+      email_address_label: "電子郵件地址:"
+      instructions_1: "請選擇你完成要求但未獲得%{currency}的優惠項目，並輸入你的電子郵件地址。"
+      instructions_2: "如果你提交回報單的資料不全，可能會延誤問題的解決速度。我們會優先處理資料完整的回報單。"
+      invalid_email: "請輸入真實的電郵地址"
+      missing_description: "請描述你完成的優惠項目"
+      missing_offer: "你必須指明你完成的優惠項目"
+      no_incomplete_offers_label: "查無合適的優惠項目"
+      select_offer: "選擇優惠項目"
+      specify_offer_label: "指定優惠："
+      submit_support_request: "提出支持請求"
+      support_request_submitted: "支持請求已提交"
+      thanks: "多謝你提出的支援請求！在我們確認你完成優惠的內容之後，你將會獲得%{currency}。"
+      title: "沒收到%{currency}?"
     unavailable_offer:
-      message: "很抱歉，但 %{offer} 已經失效了，你可以回到前一頁並更新，來觀看最新的廣告列表"
-      optional_message: "或者，還是點擊這裡來下載 %{offer}"
+      message: "我們很抱歉，但已經不再提供%{offer}了。你可以回到上一個頁面並加以更新，以取得最近的優惠列表。"
+      optional_message: "或者，也可以點擊這裡來下載%{offer}"
   time:
-    am: ~
+    am: "上午"
     formats:
-      classic_short: ~
-      day: ~
-      day_long: ~
-      day_short: ~
-      default: ~
-      long: ~
-      short: ~
-    pm: ~
+      classic_short: "%m/%d/%y"
+      day: "%B %d, %Y"
+      day_long: "%B %d, %Y"
+      day_short: "%b %d"
+      default: "%a, %d %b %Y %H:%M:%S %z"
+      long: "%B %d, %Y %I:%M %p %Z"
+      short: "%d %b %H:%M"
+    pm: "下午"

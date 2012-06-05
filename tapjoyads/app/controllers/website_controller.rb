@@ -114,14 +114,6 @@ class WebsiteController < ApplicationController
     @current_user_session
   end
 
-  def set_time_zone
-    if current_user
-      Time.zone = current_user.time_zone
-    else
-      Time.zone = 'UTC'
-    end
-  end
-
   def get_stat_prefix(group)
     @platform == 'all' ? group : "#{group}-#{@platform}"
   end

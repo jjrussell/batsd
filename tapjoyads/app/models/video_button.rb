@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: video_buttons
+#
+#  id             :string(36)      not null, primary key
+#  video_offer_id :string(36)      not null
+#  name           :string(255)     not null
+#  url            :string(255)
+#  ordinal        :integer(4)
+#  enabled        :boolean(1)      default(TRUE)
+#  created_at     :datetime
+#  updated_at     :datetime
+#  item_id        :string(36)
+#  item_type      :string(255)
+#
+
 class VideoButton < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -11,9 +27,6 @@ class VideoButton < ActiveRecord::Base
 
   scope :ordered, :order => "enabled DESC, ordinal"
   scope :enabled, :conditions => { :enabled => true }
-
-  has_tracking_offers
-  delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
 
   has_tracking_offers
   delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true

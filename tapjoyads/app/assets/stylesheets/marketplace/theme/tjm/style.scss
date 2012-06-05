@@ -588,6 +588,14 @@ p {
   padding-bottom: 4px;
 }
 
+.mod {
+  .message-content {
+    .register-btn {
+      margin: 12px auto;
+    }
+  }
+}
+
 .review.line-item {
 
   clear:     left;
@@ -1869,6 +1877,9 @@ div.app {
   }
   .field, .form-error {
     padding: 12px 0;
+  }
+  .form-error {
+    display: none;
   }
 }
 
