@@ -93,25 +93,25 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer3]
+      assigns(:offer_list).should == [@offer, @offer3, @deeplink]
       controller.stubs(:geoip_data).returns({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer2]
+      assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
     it 'ignores country_code if IP is in China' do
       controller.stubs(:ip_address).returns('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
+      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
+      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
     end
 
     it 'renders json with correct fields' do
       get(:index, @params.merge(:json => '1'))
       json = JSON.parse(response.body)
 
-      json_offer = json['OfferArray'][1]
+      json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
