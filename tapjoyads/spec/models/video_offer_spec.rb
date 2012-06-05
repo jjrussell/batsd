@@ -70,7 +70,7 @@ describe VideoOffer do
         button.name     = "button #{i}"
         button.url      = 'http://www.tapjoy.com'
         button.ordinal  = i
-        button.stubs(:update_tracking_offer).returns(true)
+        button.stub(:update_tracking_offer).and_return(true)
         button.save!
       end
       subject.video_buttons
@@ -95,7 +95,7 @@ describe VideoOffer do
       let(:button) {buttons.last}
       before(:each) do
         button.enabled = false
-        button.stubs(:update_tracking_offer).returns(true)
+        button.stub(:update_tracking_offer).and_return(true)
         button.save!
         subject.reload
       end

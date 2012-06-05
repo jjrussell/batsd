@@ -5,7 +5,7 @@ describe AppsInstalledController do
 
   before :each do
     fake_the_web
-    Sqs.stubs(:send_message)
+    Sqs.stub(:send_message)
   end
 
   context '#index' do
@@ -38,8 +38,8 @@ describe AppsInstalledController do
                   :verifier         => 'verifier',
                 }
 
-      controller.stubs(:generate_verifier).returns('verifier')
-      Device.stubs(:new).returns(@device)
+      controller.stub(:generate_verifier).and_return('verifier')
+      Device.stub(:new).and_return(@device)
     end
 
     context 'without required parameter values' do
@@ -106,18 +106,18 @@ describe AppsInstalledController do
 
       it "creates click models only for sdkless clicks stored on device model" do
         mock_click1 = mock()
-        mock_click1.expects(:key).returns("#{@device.key}.#{@offer1.id}")
+        mock_click1.should_receive(:key).and_return("#{@device.key}.#{@offer1.id}")
         mock_click2 = mock()
-        mock_click2.expects(:key).returns("#{@device.key}.#{@offer2.id}")
+        mock_click2.should_receive(:key).and_return("#{@device.key}.#{@offer2.id}")
 
-        Click.expects(:new).with(:key => "#{@device.key}.#{@offer1.id}").returns(mock_click1)
-        Click.expects(:new).with(:key => "#{@device.key}.#{@offer2.id}").returns(mock_click2)
-        Click.expects(:new).with(:key => "#{@device.key}.#{@offer3.id}").never
+        Click.should_receive(:new).with(:key => "#{@device.key}.#{@offer1.id}").and_return(mock_click1)
+        Click.should_receive(:new).with(:key => "#{@device.key}.#{@offer2.id}").and_return(mock_click2)
+        Click.should_receive(:new).with(:key => "#{@device.key}.#{@offer3.id}").never
         get(:index, @params)
       end
 
       it "adds sdkless clicks to SQS conversion queue" do
-        Sqs.expects(:send_message).twice
+        Sqs.should_receive(:send_message).twice
         get(:index, @params)
       end
 

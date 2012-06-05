@@ -4,7 +4,7 @@ describe AppStore do
 =begin
   context "Fetching Windows Phone 7 App Details" do
     before :each do
-      AppStore.stubs(:request).returns(stubbed_response('app_store_windows_fetch.xml'))
+      AppStore.stub(:request).and_return(stubbed_response('app_store_windows_fetch.xml'))
     end
 
     it "parses app details" do
@@ -29,8 +29,8 @@ describe AppStore do
     path = File.expand_path("../../fixtures/#{fixture_name}", __FILE__)
 
     fake_response = Object.new
-    fake_response.stubs(:status).returns(200)
-    fake_response.stubs(:body).returns(File.read(path))
+    fake_response.stub(:status).and_return(200)
+    fake_response.stub(:body).and_return(File.read(path))
 
     fake_response
   end
