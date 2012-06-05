@@ -28,7 +28,7 @@ describe Games::GamersController do
     end
 
     it 'creates a new gamer' do
-      Sqs.expects(:send_message).once
+      Sqs.should_receive(:send_message).once
       post(:create, @options)
 
       should_respond_with_json_success(200)
@@ -121,7 +121,7 @@ describe Games::GamersController do
   describe '#destroy' do
     before :each do
       @gamer = Factory(:gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
+      @controller.stub(:current_gamer).and_return(@gamer)
     end
 
     it 'displays confirmation page' do

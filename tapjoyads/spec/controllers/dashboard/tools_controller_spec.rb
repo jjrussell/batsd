@@ -62,7 +62,7 @@ describe Dashboard::ToolsController do
       @device2 = Factory(:device)
       @pub_user.update!(@device1.key)
       @pub_user.update!(@device2.key)
-      PublisherUser.stubs(:new).returns(@pub_user)
+      PublisherUser.stub(:new).and_return(@pub_user)
     end
 
     describe '#view_pub_user_account' do

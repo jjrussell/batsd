@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Games::HomepageController, :type=>:controller do
+  before :each do
+    fake_the_web
+  end
   describe '#get_language_code' do
 
     before :each do
@@ -112,7 +115,7 @@ describe Games::HomepageController, :type=>:controller do
       activate_authlogic
       @gamer = Factory(:gamer)
       login_as(@gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
+      @controller.stub!(:current_gamer=>@gamer)
     end
 
     it 'creates a valid tjm_request' do
@@ -198,13 +201,13 @@ describe Games::HomepageController, :type=>:controller do
       activate_authlogic
       login_as(@gamer)
       #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
-      AppReview.stubs(:where).returns(AppReview)
-      AppReview.stubs(:includes).returns(AppReview)
-      AppReview.stubs(:paginate).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      AppReview.stub!(:where=>AppReview)
+      AppReview.stub!(:includes=>AppReview)
+      AppReview.stub!(:paginate=>[@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do
-        controller.stubs(:current_gamer).returns(@troll_author)
+        controller.stub!(:current_gamer=>@troll_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
@@ -214,7 +217,7 @@ describe Games::HomepageController, :type=>:controller do
     end
     context 'good author viewer ' do
       before :each do
-        controller.stubs(:current_gamer).returns(@good_author)
+        controller.stub!(:current_gamer=>@good_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
@@ -224,7 +227,7 @@ describe Games::HomepageController, :type=>:controller do
     end
     context 'unassociated gamer viewer' do
       before :each do
-        controller.stubs(:current_gamer).returns(@gamer)
+        controller.stub!(:current_gamer=>@gamer)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do

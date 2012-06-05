@@ -185,8 +185,8 @@ describe Device do
 
       @jb_device = Factory(:device)
       @jb_device.is_jailbroken = true
-      @jb_device.stubs(:save)
-      @jb_device.stubs(:save!)
+      @jb_device.stub(:save)
+      @jb_device.stub(:save!)
 
       @app = Factory(:app)
     end
