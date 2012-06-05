@@ -13,6 +13,7 @@ function showLoginModal(){
     var $floaty  = $('#login_modal .floaty');
     var $signup = $('#login_modal .action-signup');
     var $login = $('#login_modal .action-login');
+    $('.menu-grid').trigger('menu-close');
     var signup_href=$signup.attr('href').replace(/\?.*/,'')+ '?path=' + path;
     var login_href=$login.attr('href').replace(/\?.*/,'')+ '?path=' + path;
     $signup.attr('href', signup_href);

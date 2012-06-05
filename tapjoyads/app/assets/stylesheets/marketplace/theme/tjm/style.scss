@@ -1128,6 +1128,13 @@ body.modal-overlay-enabled{
   overflow:hidden;
 }
 
+@media (orientation : landscape){
+#login_modal .floaty{ margin: 15% auto; }
+  }
+@media (orientation : portrait){
+  #login_modal .floaty{ margin: 25% auto; }
+}
+
 #login_modal{
   display:none;
   .overlay{
@@ -1138,7 +1145,6 @@ body.modal-overlay-enabled{
     top:0;
     z-index:200;
     .floaty{
-      margin: 25% auto;
       min-width: 280px;
       width: 90%;
       position: relative;
