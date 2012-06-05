@@ -143,7 +143,7 @@ describe OfferList do
         end
 
         it 'correctly inserts deeplink offers in small lists' do
-          RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new([]))
+          RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
           offers, remaining = list.get_offers(0,5)
           offers.should == [@deeplink.primary_offer]
