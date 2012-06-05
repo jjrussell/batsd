@@ -50,7 +50,7 @@ class Games::HomepageController < GamesController
   end
 
   def earn
-    device_id = current_device_id || 'staz_test_udid'
+    device_id = current_device_id || 'statz_test_udid'
     @device = Device.new(:key => device_id) if device_id.present?
     @app = App.find(params_id)
     @active_currency = @app.currencies.first
