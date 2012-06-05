@@ -3,14 +3,14 @@ require 'spec/spec_helper'
 describe Job::QueueSendCurrencyController do
   before :each do
     SimpledbResource.reset_connection
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
-    @mock_response.stubs(:status).returns('OK')
+    @mock_response.stub(:status).and_return('OK')
 
     # prevents any callback_urls from actually getting called
-    Downloader.stubs(:get).returns(@mock_response)
-    Resolv.expects(:getaddress).at_least_once.returns(true)
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    Downloader.stub(:get).and_return(@mock_response)
+    Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
+    Time.zone.stub(:now).and_return(Time.zone.parse('2011-02-15'))
 
     @currency = Factory(:currency, :callback_url => 'http://www.whatwhat.com')
 
@@ -25,7 +25,7 @@ describe Job::QueueSendCurrencyController do
   describe 'with ExpectedAttributeError' do
     it 'should raise if reward has not already been updated' do
       Reward.
-        any_instance.expects(:save!).
+        any_instance.should_receive(:save!).
         with(
           :expected_attr => {'sent_currency' => nil}
         ).
@@ -52,7 +52,7 @@ describe Job::QueueSendCurrencyController do
   describe 'with Downloader errors' do
     before :each do
       class TestingError < RuntimeError; end
-      Downloader.expects(:get_strict).at_least_once.raises(TestingError)
+      Downloader.should_receive(:get_strict).at_least(:once).raises(TestingError)
 
       @mc_time = Time.zone.now.to_i / 1.hour
       @fail_count_key = "send_currency_failure.#{@currency.id}.#{@mc_time}"
@@ -154,7 +154,7 @@ describe Job::QueueSendCurrencyController do
 
   describe 'without errors' do
     before :each do
-      Downloader.expects(:get_strict).returns(@mock_response)
+      Downloader.should_receive(:get_strict).and_return(@mock_response)
     end
 
     it 'should save the reward' do
@@ -176,7 +176,7 @@ describe Job::QueueSendCurrencyController do
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == Time.zone.now
 
-      Currency.expects(:find_in_cache).never
+      Currency.should_receive(:find_in_cache).never
       get(:run_job, :message => reward.id)
     end
   end
@@ -243,7 +243,7 @@ describe Job::QueueSendCurrencyController do
       @currency.update_attribute(:id, app.id)
       @currency.update_attribute(:send_offer_data, true)
 
-      Currency.expects(:find_in_cache).returns(@currency)
+      Currency.should_receive(:find_in_cache).and_return(@currency)
 
       @reward.currency_id = @currency.id
       @reward.offer_id = offer.id
@@ -277,7 +277,7 @@ describe Job::QueueSendCurrencyController do
       @currency.callback_url << '?'
       @currency.save!
 
-      Currency.expects(:find_in_cache).returns(@currency)
+      Currency.should_receive(:find_in_cache).and_return(@currency)
 
       url_params = [
         "snuid=#{@reward.publisher_user_id}",

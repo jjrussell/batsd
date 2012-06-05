@@ -4,40 +4,40 @@ describe ToolsHelper do
   describe '#click_tr_class' do
     before :each do
       @reward = mock()
-      @reward.stubs(:successful?).returns(true)
+      @reward.stub(:successful?).and_return(true)
       @click = mock()
-      @click.stubs(:installed_at?).returns(true)
-      @click.stubs(:type).returns('install')
-      @click.stubs(:key).returns(Factory.next(:guid))
-      @click.stubs(:block_reason?).returns(false)
-      @click.stubs(:block_reason).returns(nil)
+      @click.stub(:installed_at?).and_return(true)
+      @click.stub(:type).and_return('install')
+      @click.stub(:key).and_return(Factory.next(:guid))
+      @click.stub(:block_reason?).and_return(false)
+      @click.stub(:block_reason).and_return(nil)
     end
 
     it 'checks rewarded click' do
       helper.click_tr_class(@click, @reward).should == 'rewarded'
       helper.click_tr_class(@click, nil).should == 'rewarded-failed'
-      @click.stubs(:installed_at?).returns(false)
+      @click.stub(:installed_at?).and_return(false)
       helper.click_tr_class(@click, nil).should == ''
     end
 
     it 'checks jailbroken' do
-      @click.stubs(:type).returns('install_jailbroken')
+      @click.stub(:type).and_return('install_jailbroken')
       helper.click_tr_class(@click, @reward).should == 'rewarded jailbroken'
     end
 
     it 'checks param click key' do
-      helper.stubs(:params).returns({:click_key => @click.key})
+      helper.stub(:params).and_return({:click_key => @click.key})
       helper.click_tr_class(@click, @reward).should == 'rewarded click-key-match'
     end
 
     it 'checks block_reason' do
-      @click.stubs(:installed_at?).returns(false)
-      @click.stubs(:block_reason?).returns(true)
-      @click.stubs(:block_reason).returns('Banned')
+      @click.stub(:installed_at?).and_return(false)
+      @click.stub(:block_reason?).and_return(true)
+      @click.stub(:block_reason).and_return('Banned')
       helper.click_tr_class(@click, nil).should == 'blocked'
-      @click.stubs(:block_reason).returns('TooManyUdidsForPublisherUserId')
+      @click.stub(:block_reason).and_return('TooManyUdidsForPublisherUserId')
       helper.click_tr_class(@click, nil).should == 'blocked'
-      @click.stubs(:block_reason).returns('SomeOtherReason')
+      @click.stub(:block_reason).and_return('SomeOtherReason')
       helper.click_tr_class(@click, nil).should == 'not-rewarded'
     end
   end
@@ -45,8 +45,8 @@ describe ToolsHelper do
   describe '#install_td_class' do
     before :each do
       @click = mock()
-      @click.stubs(:block_reason?).returns(false)
-      @click.stubs(:resolved_too_fast?).returns(false)
+      @click.stub(:block_reason?).and_return(false)
+      @click.stub(:resolved_too_fast?).and_return(false)
     end
 
     it 'assigns class small' do
@@ -55,7 +55,7 @@ describe ToolsHelper do
 
     context 'blocked_click' do
       before :each do
-        @click.stubs(:block_reason?).returns(true)
+        @click.stub(:block_reason?).and_return(true)
       end
 
       it 'assigns class bad' do
@@ -65,7 +65,7 @@ describe ToolsHelper do
 
     context 'resolved too fast' do
       before :each do
-        @click.stubs(:resolved_too_fast?).returns(true)
+        @click.stub(:resolved_too_fast?).and_return(true)
       end
 
       it 'assigns class bad' do

@@ -15,7 +15,7 @@ describe AppMetadata do
     context 'when AppStore returns no data' do
       it 'raises an error' do
         app_metadata = Factory(:app_metadata)
-        AppStore.expects(:fetch_app_by_id).raises(Exception, "Invalid response from app store.")
+        AppStore.should_receive(:fetch_app_by_id).raises(Exception, "Invalid response from app store.")
         expect { app_metadata.update_from_store }.to raise_error
       end
     end
@@ -24,7 +24,7 @@ describe AppMetadata do
       it 'updates metadata name' do
         app_metadata = Factory(:app_metadata, :name => 'MyApp', :store_id => "abcdefg")
 
-        AppStore.expects(:fetch_app_by_id).returns({:title => 'SomeOtherApp', :price => 0, :categories => []})
+        AppStore.should_receive(:fetch_app_by_id).and_return({:title => 'SomeOtherApp', :price => 0, :categories => []})
         app_metadata.update_from_store
 
         app_metadata.name.should == 'SomeOtherApp'
@@ -36,7 +36,7 @@ describe AppMetadata do
         app = Factory(:app, :name => 'MyApp')
         app.primary_app_metadata.update_attributes({ :name => 'MyApp', :store_id => 'abcdefg' })
 
-        AppStore.expects(:fetch_app_by_id).returns({:title => 'SomeOtherApp', :price => 0, :categories => []})
+        AppStore.should_receive(:fetch_app_by_id).and_return({:title => 'SomeOtherApp', :price => 0, :categories => []})
         app.primary_app_metadata.update_from_store
         app.reload
 

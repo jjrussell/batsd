@@ -41,7 +41,7 @@ describe SupportRequest do
 
       context 'with a click association' do
         before :each do
-          @support_request.stubs(:get_last_click).returns(@click)
+          @support_request.stub(:get_last_click).and_return(@click)
         end
 
         it "stores the click's id" do
@@ -52,7 +52,7 @@ describe SupportRequest do
 
       context 'without a click association' do
         before :each do
-          @support_request.stubs(:get_last_click).returns(nil)
+          @support_request.stub(:get_last_click).and_return(nil)
         end
 
         it "leaves click_id blank" do
@@ -258,7 +258,7 @@ describe SupportRequest do
       udid, offer = 'test udid', Factory(:app).primary_offer
       conditions = ["udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id]
 
-      Click.expects(:select_all).with({ :conditions => conditions }).once.returns([])
+      Click.should_receive(:select_all).with({ :conditions => conditions }).once.and_return([])
       @support_request.get_last_click(udid, offer)
     end
   end

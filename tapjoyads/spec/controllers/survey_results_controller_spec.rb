@@ -34,17 +34,17 @@ describe SurveyResultsController do
         @survey_question.id => 'a',
       }
 
-      Device.stubs(:new)
-      Downloader.stubs(:get_with_retry)
+      Device.stub(:new)
+      Downloader.stub(:get_with_retry)
       @mock_click = mock()
-      @mock_click.stubs(:installed_at?).returns(true)
-      @mock_click.stubs(:currency_id).returns(5)
-      Click.expects(:find).with('5', :consistent => true).returns(@mock_click)
-      Currency.stubs(:find_in_cache).with(5).returns('fake currency')
+      @mock_click.stub(:installed_at?).and_return(true)
+      @mock_click.stub(:currency_id).and_return(5)
+      Click.should_receive(:find).with('5', :consistent => true).and_return(@mock_click)
+      Currency.stub(:find_in_cache).with(5).and_return('fake currency')
     end
 
     it 'renders error for invalid currency' do
-      Currency.expects(:find_in_cache).with(5).returns(nil)
+      Currency.should_receive(:find_in_cache).with(5).and_return(nil)
       post(:create, :click_key => '5')
       response.body.should == 'record not found'
     end
@@ -55,12 +55,12 @@ describe SurveyResultsController do
     end
 
     it 'does not reward if click is already complete' do
-      Offer.expects(:find_in_cache).never
+      Offer.should_receive(:find_in_cache).never
       post(:create, :click_key => '5')
     end
 
     it "renders new if all questions aren't answered" do
-      @mock_click.expects(:installed_at?).returns(false)
+      @mock_click.should_receive(:installed_at?).and_return(false)
       post(:create, :click_key => '5', :id => @offer.id)
       assigns(:missing_params).should be_true
       response.should render_template('new')
