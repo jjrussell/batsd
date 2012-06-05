@@ -14,7 +14,7 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_click_url(offer, offerwall_rank = nil)
+  def get_click_url(offer, options = {})
     click_url = offer.click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
@@ -33,7 +33,7 @@ module GetOffersHelper
       :os_version         => params[:os_version],
       :mac_address        => params[:mac_address],
       :device_type        => params[:device_type],
-      :offerwall_rank     => offerwall_rank
+      :offerwall_rank     => options.delete(:offerwall_rank) { nil }
       )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'

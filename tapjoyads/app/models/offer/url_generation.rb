@@ -112,7 +112,7 @@ module Offer::UrlGeneration
     os_version         = options.delete(:os_version)         { nil }
     mac_address        = options.delete(:mac_address)        { nil }
     device_type        = options.delete(:device_type)        { nil }
-    offerwall_rank     = options.delete(:offerwall_rank)     { 0 }
+    offerwall_rank     = options.delete(:offerwall_rank)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
