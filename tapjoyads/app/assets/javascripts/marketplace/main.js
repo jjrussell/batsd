@@ -231,6 +231,11 @@ $(document).ready(function(){
       errorContainer.html(msg).show();
       return false;
     }
+    function conversionTracking() {
+      var axel = Math.random() + "";
+      var a = axel * 10000000000000;
+      document.write('<iframe src="http://fls.doubleclick.net/activityi;src=3509778;type=conve639;cat=thank283;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+    }
     $('#new_gamer').on('click', '.try-again', function () {
       $('.register-message').html('&nbsp;').hide();
       $(".register-form").removeClass('close').show();
@@ -281,6 +286,7 @@ $(document).ready(function(){
             success: function(d) {
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
+                conversionTracking();
                 if (d.redirect_url) { // redirect to link device
                   document.location.href = d.redirect_url;
                 }
