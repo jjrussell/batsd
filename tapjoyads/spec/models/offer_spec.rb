@@ -38,7 +38,7 @@ describe Offer do
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
-        Offer.any_instance.stub(:app_offer?).returns true
+        Offer.any_instance.stub(:app_offer?).and_return true
         @offer.partner.premier_discount = 10
       end
 
@@ -62,7 +62,7 @@ describe Offer do
 
     context "to a non app offer item" do
       before :each do
-        Offer.any_instance.stub(:app_offer?).returns false
+        Offer.any_instance.stub(:app_offer?).and_return false
         @offer.partner.premier_discount = 10
       end
 
