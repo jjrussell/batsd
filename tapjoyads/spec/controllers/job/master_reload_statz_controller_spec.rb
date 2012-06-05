@@ -407,16 +407,16 @@ def stub_vertica(start_time = nil, end_time = nil)
   end
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', :select => 'max(time)').
-    returns([{ :max => Time.zone.now }])
+    and_return([{ :max => Time.zone.now }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', money_options(start_time, end_time)).
-    returns([{
+    and_return([{
       :count => 1,
       :adv_amount => 1,
       :pub_amount => 1,
@@ -425,16 +425,16 @@ def stub_vertica(start_time = nil, end_time = nil)
     }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', advertiser_options(start_time, end_time)).
-    returns(adv_stats)
+    and_return(adv_stats)
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', publisher_options(start_time, end_time)).
-    returns(pub_stats)
+    and_return(pub_stats)
 end
 
 def query_conditions(start_time, end_time)
@@ -491,24 +491,24 @@ def percentage(value)
 end
 
 def stub_appstats(granularity = :hourly)
-  Appstats.should_receive(:new).
-    times(4).
+    Appstats.should_receive(:new).
+    exactly(4).times.
     with(@partner.id, has_entry(:granularity, granularity)).
-    returns(@mock_appstats)
+    and_return(@mock_appstats)
 end
 
 def stub_conversions(start_time = nil, end_time = nil)
   start_time ||= @start_time
   end_time ||= @end_time
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('publisher', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('advertiser', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 end

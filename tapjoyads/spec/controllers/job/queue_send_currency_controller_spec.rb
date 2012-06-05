@@ -29,7 +29,7 @@ describe Job::QueueSendCurrencyController do
         with(
           :expected_attr => {'sent_currency' => nil}
         ).
-        raises(Simpledb::ExpectedAttributeError)
+        and_raise(Simpledb::ExpectedAttributeError)
 
       expect {
         get(:run_job, :message => @reward.id)
@@ -42,8 +42,8 @@ describe Job::QueueSendCurrencyController do
 
       Reward.
         any_instance.
-        expects(:save).
-        raises(Simpledb::ExpectedAttributeError)
+        should_receive(:save).
+        and_raise(Simpledb::ExpectedAttributeError)
 
       get(:run_job, :message => @reward.id)
     end
@@ -159,9 +159,9 @@ describe Job::QueueSendCurrencyController do
 
     it 'should save the reward' do
       Currency.
-        expects(:find_in_cache).
+        should_receive(:find_in_cache).
         with(@currency.id, true).
-        returns(@currency)
+        and_return(@currency)
 
       get(:run_job, :message => @reward.id)
 
@@ -229,9 +229,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -261,14 +261,14 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       Offer.
-        expects(:find_in_cache).
+        should_receive(:find_in_cache).
         with(offer.id, true).
-        returns(offer)
+        and_return(offer)
 
       get(:run_job, :message => @reward.id)
     end
@@ -287,9 +287,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}&#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -310,9 +310,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}facebook#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -324,9 +324,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}myspace#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -338,9 +338,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}myspace#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
