@@ -2,6 +2,9 @@ class Job::QueueDownloadsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::DOWNLOADS
+
+    # One download failure shouldn't negatively affect all the others, that's not very nice.
+    @raise_on_error = false
   end
 
   private

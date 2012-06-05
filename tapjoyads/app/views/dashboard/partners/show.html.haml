@@ -25,7 +25,7 @@
   |
   = link_to('Dev Credits', new_dev_credit_partner_path(@partner))
   |
-  = link_to('TJM Partner Specific Page', games_show_path(ObjectEncryptor.encrypt(@partner.id)))
+  = link_to('TJM Partner Specific Page', "#{WEBSITE_URL}/partners/#{ObjectEncryptor.encrypt(@partner.id)}")
   %br
 = render 'make_current_button', :partner => @partner
 
