@@ -2,19 +2,7 @@ require 'spec_helper'
 
 
 describe Games::HomepageController , :type=>:controller do
-  #describe '#index' do
-  #  it 'checks that it gets param[:udid]' do
-  #    @gamer =  Factory(:gamer)
-  #    activate_authlogic
-  #    fake_the_web
-  #    games_login_as @gamer
-  #    num = @gamer.devices.count
-  #    ExternalPublisher.stubs(:load_all).returns([])
-  #    get(:index, :udid=>'MY_TEST_UDID')
-  #    @gamer.devices.count.should == num+1
-  #    @gamer.gamer_devices.find_by_device_id('MY_TEST_UDID').should_not == nil
-  #  end
-  #end
+
   before :each do
     fake_the_web
   end
