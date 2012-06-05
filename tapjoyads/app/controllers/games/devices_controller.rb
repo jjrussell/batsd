@@ -60,38 +60,36 @@ class Games::DevicesController < GamesController
       cookies[:data] = { :value => params[:data], :expires => 1.year.from_now } if params[:data].present?
 
       new_device = current_gamer.devices.new(:device => device)
-      if device.new_record?
-        if new_device.save
-          click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
-          if click.rewardable?
-            current_gamer.reward_click(click)
-          else
-            device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
-          end
+      if new_device.save
+        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
+        if click.rewardable?
+          current_gamer.reward_click(click)
+        else
+          device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        end
 
-          session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
+        session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
 
-          if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
-            devices = GamerDevice.find_all_by_device_id(data[:udid])
-            if devices.size == 1 && devices[0].gamer_id == current_gamer.id
-              invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
-              advertiser_app_id = TAPJOY_GAMES_INVITATION_OFFER_ID if advertiser_app_id.blank?
-              referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
-              if advertiser_app_id && referred_by_gamer
-                click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}", :consistent => true)
-                unless click.new_record?
-                  new_referral_count = referred_by_gamer.referral_count + 1
-                  referred_by_gamer.gamer_profile.update_attributes!(:referral_count => new_referral_count)
-                  create_sub_click(click, new_referral_count)
-                end
+        if current_gamer.referrer.present? && !current_gamer.referrer.starts_with?('tjreferrer:')
+          devices = GamerDevice.find_all_by_device_id(data[:udid])
+          if devices.size == 1 && devices[0].gamer_id == current_gamer.id
+            invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(current_gamer.referrer).split(',')
+            advertiser_app_id = TAPJOY_GAMES_INVITATION_OFFER_ID if advertiser_app_id.blank?
+            referred_by_gamer = Gamer.find_by_id(current_gamer.referred_by)
+            if advertiser_app_id && referred_by_gamer
+              click = Click.new(:key => "#{current_gamer.referred_by}.#{advertiser_app_id}", :consistent => true)
+              unless click.new_record?
+                new_referral_count = referred_by_gamer.referral_count + 1
+                referred_by_gamer.gamer_profile.update_attributes!(:referral_count => new_referral_count)
+                create_sub_click(click, new_referral_count)
               end
             end
           end
-        else
-          flash[:error] = "Error linking device. Please try again."
         end
-      else
+      elsif Device.find(device.key)
         session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
+      else
+        flash[:error] = "Error linking device. Please try again."
       end
 
       redirect_to games_path, :flash => { :register_device => true }
