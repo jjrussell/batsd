@@ -407,7 +407,7 @@ class Offer < ActiveRecord::Base
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
-    src_obj.delete if remove && src_obj.exists?
+    src_obj.delete if src_obj.exists?
 
     paths = if video_offer
               ["icons/200/#{icon_id}.jpg"]
@@ -433,8 +433,6 @@ class Offer < ActiveRecord::Base
     if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
       return
     end
-
-    src_obj.delete if remove && src_obj.exists?
 
     if video_offer
       paths = ["icons/200/#{icon_id}.jpg"]
