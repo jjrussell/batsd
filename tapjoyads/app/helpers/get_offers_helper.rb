@@ -14,7 +14,7 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_click_url(offer, offerwall_rank = 0)
+  def get_click_url(offer, offerwall_rank = nil)
     click_url = offer.click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
