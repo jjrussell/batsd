@@ -263,7 +263,7 @@ GEM
       activesupport (>= 3.0.0)
     simple_oauth (0.1.5)
     slop (2.4.4)
-    spork (0.9.1)
+    spork (0.9.2)
     sprockets (2.3.1)
       hike (~> 1.2)
       multi_json (~> 1.0)
