@@ -25,7 +25,7 @@ describe Currency do
 
     context 'when not tapjoy-managed' do
       it 'validates callback url' do
-        Resolv.stub(:getaddress).raises(URI::InvalidURIError)
+        Resolv.stub(:getaddress).and_raise(URI::InvalidURIError)
         @currency.callback_url = 'http://tapjoy' # invalid url
         @currency.save
         @currency.errors[:callback_url].join.should == 'is not a valid url'

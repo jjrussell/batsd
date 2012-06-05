@@ -52,7 +52,7 @@ describe Job::QueueSendCurrencyController do
   describe 'with Downloader errors' do
     before :each do
       class TestingError < RuntimeError; end
-      Downloader.should_receive(:get_strict).at_least(:once).raises(TestingError)
+      Downloader.should_receive(:get_strict).at_least(:once).and_raise(TestingError)
 
       @mc_time = Time.zone.now.to_i / 1.hour
       @fail_count_key = "send_currency_failure.#{@currency.id}.#{@mc_time}"

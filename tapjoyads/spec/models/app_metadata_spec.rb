@@ -15,7 +15,7 @@ describe AppMetadata do
     context 'when AppStore returns no data' do
       it 'raises an error' do
         app_metadata = Factory(:app_metadata)
-        AppStore.should_receive(:fetch_app_by_id).raises(Exception, "Invalid response from app store.")
+        AppStore.should_receive(:fetch_app_by_id).and_raise(Exception.new "Invalid response from app store.")
         expect { app_metadata.update_from_store }.to raise_error
       end
     end

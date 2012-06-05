@@ -62,7 +62,7 @@ describe OfferList do
 
       it 'uses itouch for any other platform' do
         other_platforms = App::PLATFORMS.keys - ['android', 'windows']
-        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').times(other_platforms.count)
+        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').exactly(other_platforms.count).times
         other_platforms.each do |platform|
           @app.platform = platform
           OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)

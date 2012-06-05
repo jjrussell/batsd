@@ -187,7 +187,7 @@ describe Job::QueueConversionTrackingController do
 
     context 'a reward already exists in the system' do
       before :each do
-        Reward.any_instance.should_receive(:save!).raises(Simpledb::ExpectedAttributeError, 'test error')
+        Reward.any_instance.should_receive(:save!).and_raise(Simpledb::ExpectedAttributeError.new 'test error')
       end
 
       it 'ignores the expectation failure and stops' do
@@ -221,7 +221,7 @@ describe Job::QueueConversionTrackingController do
 
     context 'updating the reward stats fails' do
       before :each do
-        Reward.any_instance.should_receive(:update_realtime_stats).raises(RuntimeError, 'Test error')
+        Reward.any_instance.should_receive(:update_realtime_stats).and_raise(RuntimeError.new 'Test error')
       end
 
       it 'notifies via NewRelic' do
