@@ -23,7 +23,7 @@
   |
   = link_to('Reporting Graphs', reporting_partner_path(@partner))
   |
-  = link_to('TJM Partner Specific Page', "#{WEBSITE_URL}/games/partners/#{ObjectEncryptor.encrypt(@partner.id)}")
+  = link_to('TJM Partner Specific Page', "#{WEBSITE_URL}/partners/#{ObjectEncryptor.encrypt(@partner.id)}")
   %br
 = render 'make_current_button', :partner => @partner
 
