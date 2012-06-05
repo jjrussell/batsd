@@ -50,7 +50,6 @@ class Games::HomepageController < GamesController
   end
 
   def earn
-    @tour_as_guest = true
     device_id = current_device_id || 'staz_test_udid'
     @device = Device.new(:key => device_id) if device_id.present?
     @app = App.find(params_id)
@@ -61,7 +60,6 @@ class Games::HomepageController < GamesController
     if @app_metadata
       @mark_as_favorite = !(current_gamer && current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id))
     end
-
     respond_to do |f|
       f.html
       f.js { render :layout => false }
@@ -131,17 +129,6 @@ class Games::HomepageController < GamesController
   end
 
   private
-
-  #def set_show_nav_bar_login
-  #  @hide_login =
-  #end
-  #
-  #def set_show_nav_bar_quad_menu
-  #  @tour_as_guest = true
-  #end
-  #
-  #def set_allow_guest
-  #end
 
   def params_id
     if params[:eid].present?
