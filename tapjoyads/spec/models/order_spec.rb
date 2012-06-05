@@ -20,8 +20,8 @@ describe Order do
 
   describe 'an invoice' do
     it 'is created if the client exists in freshbooks' do
-      FreshBooks.expects(:get_client_id).returns(5)
-      FreshBooks.expects(:create_invoice).returns(7)
+      FreshBooks.should_receive(:get_client_id).and_return(5)
+      FreshBooks.should_receive(:create_invoice).and_return(7)
 
       @order.status.should == 1
       @order.invoice_id.should == nil
@@ -35,8 +35,8 @@ describe Order do
     end
 
     it 'is not created if there is not a freshbooks client' do
-      FreshBooks.expects(:get_client_id).returns(nil)
-      FreshBooks.expects(:create_invoice).never
+      FreshBooks.should_receive(:get_client_id).and_return(nil)
+      FreshBooks.should_receive(:create_invoice).never
 
       @order.status.should == 1
       @order.create_freshbooks_invoice!
@@ -44,8 +44,8 @@ describe Order do
     end
 
     it 'deals if the client disappears from freshbooks' do
-      FreshBooks.expects(:get_client_id).times(2).returns(2, nil)
-      FreshBooks.expects(:create_invoice).once
+      FreshBooks.should_receive(:get_client_id).exactly(2).times.and_return(2, nil)
+      FreshBooks.should_receive(:create_invoice).once
 
       @order.status.should == 1
       @order.create_freshbooks_invoice!

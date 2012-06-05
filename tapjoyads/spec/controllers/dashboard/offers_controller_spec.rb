@@ -84,28 +84,28 @@ describe Dashboard::OffersController do
   describe '#new' do
     context "when 'rewarded_featured'" do
       it 'is rewarded and featured' do
-        Offer.stubs(:new).with( { :featured => true, :rewarded => true } ).once
+        Offer.stub(:new).with( { :featured => true, :rewarded => true } ).once
         get(:new, :app_id => @app.id, :offer_type => 'rewarded_featured')
       end
     end
 
     context "when 'non_rewarded_featured'" do
       it 'is not rewarded, but featured' do
-        Offer.stubs(:new).with( { :featured => true, :rewarded => false } ).once
+        Offer.stub(:new).with( { :featured => true, :rewarded => false } ).once
         get(:new, :app_id => @app.id, :offer_type => 'non_rewarded_featured')
       end
     end
 
     context "when 'non_rewarded'" do
       it 'is not rewarded and not featured' do
-        Offer.stubs(:new).with( { :featured => false, :rewarded => false } ).once
+        Offer.stub(:new).with( { :featured => false, :rewarded => false } ).once
         get(:new, :app_id => @app.id, :offer_type => 'non_rewarded')
       end
     end
 
     context 'when offer type not specified' do
       it 'is rewarded, but not featured' do
-        Offer.stubs(:new).with( { :featured => false, :rewarded => true } ).once
+        Offer.stub(:new).with( { :featured => false, :rewarded => true } ).once
         get(:new, :app_id => @app.id)
       end
     end
@@ -115,15 +115,15 @@ describe Dashboard::OffersController do
     context 'when app offer is enabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => true)
-        @controller.stubs(:find_app).with(@app.id).returns(@app)
-        @controller.stubs(:log_activity).with(@offer)
+        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
-        mock_find.stubs(:find).with('oid').returns(@offer)
-        @app.stubs(:offers).returns(mock_find)
+        mock_find.stub(:find).with('oid').and_return(@offer)
+        @app.stub(:offers).and_return(mock_find)
       end
 
       it 'will proceed to the view' do
-        @offer.expects(:rewarded?).never
+        @offer.should_receive(:rewarded?).never
         get(:edit, :app_id => @app.id, :id => 'oid')
       end
     end
@@ -131,26 +131,26 @@ describe Dashboard::OffersController do
     context 'when app offer is disabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => false)
-        @controller.stubs(:find_app).with(@app.id).returns(@app)
-        @controller.stubs(:log_activity).with(@offer)
+        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
-        mock_find.stubs(:find).with('oid').returns(@offer)
-        @app.stubs(:offers).returns(mock_find)
+        mock_find.stub(:find).with('oid').and_return(@offer)
+        @app.stub(:offers).and_return(mock_find)
       end
 
       context 'when offer is rewarded and not featured' do
         before :each do
-          @offer.stubs(:rewarded?).returns(true)
-          @offer.stubs(:featured?).returns(false)
+          @offer.stub(:rewarded?).and_return(true)
+          @offer.stub(:featured?).and_return(false)
           mock_pending_list = mock('pending_list')
-          mock_pending_list.stubs(:pending).returns([mock('some_junk')])
-          @offer.stubs(:enable_offer_requests).returns(mock_pending_list)
-          @controller.instance_eval{flash.stubs(:sweep)}
+          mock_pending_list.stub(:pending).and_return([mock('some_junk')])
+          @offer.stub(:enable_offer_requests).and_return(mock_pending_list)
+          @controller.instance_eval{flash.stub(:sweep)}
         end
 
         context 'when offer is integrated' do
           it 'flashes a notice' do
-            @offer.stubs(:integrated?).returns(true)
+            @offer.stub(:integrated?).and_return(true)
             get(:edit, :app_id => @app.id, :id => 'oid')
             flash.now[:notice].should be_present
           end
@@ -158,8 +158,8 @@ describe Dashboard::OffersController do
 
         context 'when offer is not integrated' do
           it 'flashes a warning' do
-            @offer.stubs(:integrated?).returns(false)
-            @offer.stubs(:item).returns(mock('item', :sdk_url => 'some_junk'))
+            @offer.stub(:integrated?).and_return(false)
+            @offer.stub(:item).and_return(mock('item', :sdk_url => 'some_junk'))
 
             get(:edit, :app_id => @app.id, :id => 'oid')
             flash.now[:warning].should be_present
@@ -169,17 +169,17 @@ describe Dashboard::OffersController do
 
       context 'when offer is not rewarded' do
         before :each do
-          @offer.stubs(:rewarded?).returns(false)
-          @controller.instance_eval{flash.stubs(:sweep)}
+          @offer.stub(:rewarded?).and_return(false)
+          @controller.instance_eval{flash.stub(:sweep)}
         end
 
         context 'when no enable offer requests pending' do
           before :each do
             @mock_pending_list = mock('pending_list', :pending => nil)
-            @offer.stubs(:enable_offer_requests).returns(@mock_pending_list)
+            @offer.stub(:enable_offer_requests).and_return(@mock_pending_list)
           end
           it 'will build a new enable offer request' do
-            @mock_pending_list.stubs(:build).once
+            @mock_pending_list.stub(:build).once
             get(:edit, :app_id => @app.id, :id => 'oid')
           end
         end
@@ -191,15 +191,15 @@ describe Dashboard::OffersController do
     before :each do
         @offer = mock('mock offer', :user_enabled= => true)
         mock_offers = mock('get_offer')
-        mock_offers.stubs(:find).with(@offer.object_id).returns(@offer)
-        @controller.stubs(:set_recent_partners)
-        @controller.stubs(:current_partner).returns(mock('offers', :offers => mock_offers))
-        @controller.stubs(:log_activity).with(@offer)
+        mock_offers.stub(:find).with(@offer.object_id).and_return(@offer)
+        @controller.stub(:set_recent_partners)
+        @controller.stub(:current_partner).and_return(mock('offers', :offers => mock_offers))
+        @controller.stub(:log_activity).with(@offer)
       end
 
     context 'when user_enabled is saved properly' do
       it 'will render nothing' do
-        @offer.stubs(:save).returns(true)
+        @offer.stub(:save).and_return(true)
         post(:toggle, :id => @offer.object_id, :user_enabled => true)
         response.body.should_not be_present
       end
@@ -207,7 +207,7 @@ describe Dashboard::OffersController do
 
     context 'when user_enabled is not saved properly' do
       it 'will render json error' do
-        @offer.stubs(:save).returns(false)
+        @offer.stub(:save).and_return(false)
         post(:toggle, :id => @offer.object_id, :user_enables => true)
         response.body.should == {:error => true}.to_json
       end
@@ -225,10 +225,10 @@ describe Dashboard::OffersController do
     context 'when percentile is returned properly' do
       it 'returns percentile and ordinalized percentiles in a json response' do
         offer = mock('offer', :percentile => 24)
-        offer.stubs(:bid=)
-        @controller.stubs(:find_app).with(@app.id).returns(@app)
-        @controller.stubs(:log_activity).with(offer)
-        @app.stubs(:primary_offer).returns(offer)
+        offer.stub(:bid=)
+        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:log_activity).with(offer)
+        @app.stub(:primary_offer).and_return(offer)
 
         get(:percentile, :app_id => @app.id, :bid => '24')
         response.body.should == {:percentile => 24, :ordinalized_percentile => 24.ordinalize }.to_json
@@ -239,24 +239,24 @@ describe Dashboard::OffersController do
   describe '#update' do
     context 'when not permitted to edit->dashboard_statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(false)
+        @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(false)
         @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
 
-        @controller.stubs(:find_app).with(@app.id).returns(@app)
+        @controller.stub(:find_app).with(@app.id).and_return(@app)
         @offer = mock('offer')
-        @controller.stubs(:log_activity).with(@offer)
-        @app.stubs(:primary_offer).returns(@offer)
+        @controller.stub(:log_activity).with(@offer)
+        @app.stub(:primary_offer).and_return(@offer)
       end
 
       it 'will call with base attributes' do
-        @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).once.returns(true)
+        @offer.stub(:safe_update_attributes).with({}, @safe_attributes).once.and_return(true)
         post(:update, :app_id => @app.id, :offer => {})
       end
 
       context 'when it updates properly' do
         it 'flashes a success notice' do
-          @controller.instance_eval{flash.stubs(:sweep)}
-          @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).returns(true)
+          @controller.instance_eval{flash.stub(:sweep)}
+          @offer.stub(:safe_update_attributes).with({}, @safe_attributes).and_return(true)
           post(:update, :app_id => @app.id, :offer => {})
           flash[:notice].should == 'Your offer was successfully updated.'
         end
@@ -265,12 +265,12 @@ describe Dashboard::OffersController do
       context 'when the update fails' do
         context 'when offer has pending enable_offer_requests' do
           before :each do
-            @controller.instance_eval{flash.now.stubs(:sweep)}
-            @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).returns(false)
+            @controller.instance_eval{flash.now.stub(:sweep)}
+            @offer.stub(:safe_update_attributes).with({}, @safe_attributes).and_return(false)
             mock_enable_requests = mock('enable_requests')
-            mock_enable_requests.stubs(:pending).returns(['test'])
-            @controller.instance_eval{flash.stubs(:sweep)}
-            @offer.stubs(:enable_offer_requests).returns(mock_enable_requests)
+            mock_enable_requests.stub(:pending).and_return(['test'])
+            @controller.instance_eval{flash.stub(:sweep)}
+            @offer.stub(:enable_offer_requests).and_return(mock_enable_requests)
           end
 
           it 'assigns the first pending enable offer' do
@@ -286,13 +286,13 @@ describe Dashboard::OffersController do
 
         context 'when offer does not have pending enable_offer_requests' do
           before :each do
-            @controller.instance_eval{flash.now.stubs(:sweep)}
-            @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).returns(false)
+            @controller.instance_eval{flash.now.stub(:sweep)}
+            @offer.stub(:safe_update_attributes).with({}, @safe_attributes).and_return(false)
             mock_enable_requests = mock('enable_requests')
-            mock_enable_requests.stubs(:pending).returns(nil)
-            mock_enable_requests.stubs(:build).returns('test')
-            @controller.instance_eval{flash.stubs(:sweep)}
-            @offer.stubs(:enable_offer_requests).returns(mock_enable_requests)
+            mock_enable_requests.stub(:pending).and_return(nil)
+            mock_enable_requests.stub(:build).and_return('test')
+            @controller.instance_eval{flash.stub(:sweep)}
+            @offer.stub(:enable_offer_requests).and_return(mock_enable_requests)
           end
 
           it 'assigns the built enable offer' do
@@ -310,20 +310,20 @@ describe Dashboard::OffersController do
 
     context 'when permitted to edit->dashboard_statz' do
       before :each do
-        @controller.stubs(:permitted_to?).with(:edit, :dashboard_statz).returns(true)
+        @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(true)
         @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
           :min_os_version, :screen_layout_sizes, :countries, :tapjoy_enabled,
           :allow_negative_balance, :pay_per_click, :name, :name_suffix, :show_rate,
           :min_conversion_rate, :device_types, :publisher_app_whitelist, :overall_budget,
           :min_bid_override, :dma_codes, :regions, :carriers, :cities ]
-        @controller.stubs(:find_app).with(@app.id).returns(@app)
+        @controller.stub(:find_app).with(@app.id).and_return(@app)
         @offer = mock('offer')
-        @controller.stubs(:log_activity).with(@offer)
-        @app.stubs(:primary_offer).returns(@offer)
+        @controller.stub(:log_activity).with(@offer)
+        @app.stub(:primary_offer).and_return(@offer)
       end
 
       it 'will call with expanded attributes' do
-        @offer.stubs(:safe_update_attributes).with({}, @safe_attributes).once.returns(true)
+        @offer.stub(:safe_update_attributes).with({}, @safe_attributes).once.and_return(true)
         post(:update, :app_id => @app.id, :offer => {})
       end
     end

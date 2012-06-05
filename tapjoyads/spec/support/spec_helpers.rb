@@ -24,9 +24,9 @@ module SpecHelpers
   end
 
   def fake_the_web
-    Resolv.stubs(:getaddress).returns('1.1.1.1')
-    RightAws::SdbInterface.stubs(:new).returns(FakeSdb.new)
+    Resolv.stub!(:getaddress=>'1.1.1.1')
+    RightAws::SdbInterface.stub!(:new=>FakeSdb.new)
     SimpledbResource.reset_connection
-    AWS::S3.stubs(:new).returns(FakeS3.new)
+    AWS::S3.stub!(:new=>FakeS3.new)
   end
 end
