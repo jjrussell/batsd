@@ -18,8 +18,7 @@ class Games::GamerSessionsController < GamesController
     if @gamer_session.save
       if params[:facebook]
         if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup]
-          current_gamer.confirmed_at = current_gamer.created_at
-          current_gamer.save
+          current_gamer.confirm!
 
           @tjm_request.replace_path("tjm_facebook_signup")
           default_platforms = {}
