@@ -86,7 +86,7 @@ class Games::DevicesController < GamesController
             end
           end
         end
-      elsif Device.find(device.key)
+      elsif current_gamer.gamer_devices.find_by_device_id(device.key) && Device.find(device.key)
         session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
       else
         flash[:error] = "Error linking device. Please try again."
