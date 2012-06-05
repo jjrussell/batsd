@@ -845,11 +845,11 @@ describe Offer do
         @offer.stub(:banner_creative_s3_object).with("480x320").and_return(S3Object.new)
         @offer.stub(:banner_creative_s3_object).with("320x480").and_return(S3Object.new)
 
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+
         clone = @offer.clone
         clone.bid = clone.min_bid
-
-        clone.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        clone.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
 
         clone.save!
       end
