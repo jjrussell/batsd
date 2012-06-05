@@ -15,7 +15,9 @@ describe Games::HomepageController , :type=>:controller do
   #    @gamer.gamer_devices.find_by_device_id('MY_TEST_UDID').should_not == nil
   #  end
   #end
-
+  before :each do
+    fake_the_web
+  end
   describe '#get_language_code' do
 
     before :each do
