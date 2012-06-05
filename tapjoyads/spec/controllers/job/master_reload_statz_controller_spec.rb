@@ -493,7 +493,7 @@ end
 def stub_appstats(granularity = :hourly)
     Appstats.should_receive(:new).
     exactly(4).times.
-    with(@partner.id, has_entry(:granularity, granularity)).
+    with(@partner.id, hash_including(:granularity=>granularity)).
     and_return(@mock_appstats)
 end
 
