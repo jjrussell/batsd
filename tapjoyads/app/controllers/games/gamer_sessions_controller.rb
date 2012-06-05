@@ -16,7 +16,7 @@ class Games::GamerSessionsController < GamesController
     @gamer_session.remember_me = true
     if @gamer_session.save
       unless params[:gamer_session] && params[:gamer_session][:email].present?
-        if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup]
+        if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup] && !current_gamer.confirmed_at
           current_gamer.referrer     = params[:referrer] if params[:referrer].present?
           current_gamer.confirmed_at = current_gamer.created_at
           current_gamer.save
