@@ -1,15 +1,21 @@
 - @page_title = 'Survey Complete!'
 
-.container
-  #main
-    #survey_complete
-      - currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
-      - currency_name = testing? ? 'credits' : @currency.name
-      Thank you for completing the survey. You will receive your #{currency_reward} #{currency_name} shortly.
-  #footer
-    .privacy
-      = link_to t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'
-    = render '/shared/truste'
+#panel.ui-joy-panel
+  .header
+    .heading
+      Survey Complete!
+  .instructions
+    #error.message_error{ :style => (@missing_params ? '' : 'display: none;') }
+      Please complete all questions!
+
+    #survey
+      #survey_complete
+        - currency_reward = @click.currency_reward.present? ? @click.currency_reward : ''
+        - currency_name = testing? ? 'credits' : @currency.name
+        Thank you for completing the survey. You will receive your #{currency_reward} #{currency_name} shortly.
+        
+#trust
+  = render '/shared/truste'
 
 - content_for :page_styles do
   = stylesheet_link_tag("survey_results/style")
