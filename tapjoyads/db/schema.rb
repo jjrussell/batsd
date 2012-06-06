@@ -69,9 +69,9 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
-    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
   end
 
@@ -135,7 +135,6 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
-    t.string   "primary_currency_id",           :limit => 36
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -241,8 +240,8 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -699,25 +698,25 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.string   "reseller_id",                       :limit => 36
     t.boolean  "rewarded",                                                                      :default => true
+    t.string   "reseller_id",                       :limit => 36
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.text     "regions",                                                                                          :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.text     "banner_creatives"
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
-    t.text     "approved_sources",                                                                                 :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
-    t.text     "carriers",                                                                                         :null => false
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
@@ -814,9 +813,9 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.boolean  "approved_publisher",                                                        :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                       :default => false,     :null => false
+    t.string   "reseller_id",                   :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
-    t.string   "reseller_id",                   :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                  :limit => 36
     t.decimal  "max_deduction_percentage",                    :precision => 8, :scale => 6, :default => 1.0,       :null => false
