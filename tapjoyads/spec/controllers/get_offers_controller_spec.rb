@@ -23,9 +23,9 @@ describe GetOffersController do
       @offer4.save
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns(offers)
-      RailsCache.stubs(:get).returns(nil)
-      controller.stubs(:ip_address).returns('208.90.212.38')
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(offers)
+      RailsCache.stub(:get).and_return(nil)
+      controller.stub(:ip_address).and_return('208.90.212.38')
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -36,7 +36,7 @@ describe GetOffersController do
     end
 
     it 'should queue up tracking url calls' do
-      @offer.expects(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).once
 
       get(:index, @params)
     end
@@ -52,14 +52,14 @@ describe GetOffersController do
         @offer4 = Factory(:app, :partner => @partner).primary_offer
         @offer5 = Factory(:app, :partner => @partner).primary_offer
 
-        App.stubs(:find_in_cache).returns(@app)
-        Currency.stubs(:find_in_cache).returns(@currency)
+        App.stub(:find_in_cache).and_return(@app)
+        Currency.stub(:find_in_cache).and_return(@currency)
       end
 
       it "favors the promoted inventory" do
-        @currency.stubs(:partner_get_promoted_offers).returns([@offer2.id])
-        @currency.stubs(:get_promoted_offers).returns([@offer3.id])
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+        @currency.stub(:partner_get_promoted_offers).and_return([@offer2.id])
+        @currency.stub(:get_promoted_offers).and_return([@offer3.id])
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
 
         get(:index, @params)
         offer_list = assigns(:offer_list)
@@ -67,9 +67,9 @@ describe GetOffersController do
       end
 
       it "restricts the number of slots used for promotion" do
-        @offer3.stubs(:rank_score).returns(1004)
-        @currency.stubs(:get_promoted_offers).returns([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer1, @offer2, @offer3, @offer4, @offer5])
+        @offer3.stub(:rank_score).and_return(1004)
+        @currency.stub(:get_promoted_offers).and_return([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
 
         get(:index, @params)
         assigns(:offer_list)[3].rank_score.should == 1004
@@ -93,25 +93,25 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer3]
-      controller.stubs(:geoip_data).returns({ :primary_country => 'GB' })
+      assigns(:offer_list).should == [@offer, @offer3, @deeplink]
+      controller.stub(:geoip_data).and_return({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer2]
+      assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
     it 'ignores country_code if IP is in China' do
-      controller.stubs(:ip_address).returns('60.0.0.1')
+      controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
+      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@deeplink, @offer, @offer4]
+      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
     end
 
     it 'renders json with correct fields' do
       get(:index, @params.merge(:json => '1'))
       json = JSON.parse(response.body)
 
-      json_offer = json['OfferArray'][1]
+      json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
@@ -157,21 +157,21 @@ describe GetOffersController do
     end
 
     it 'should queue up tracking url calls' do
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
-      @offer.expects(:queue_impression_tracking_requests).once
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      @offer.should_receive(:queue_impression_tracking_requests).once
 
       get(:webpage, @params)
     end
 
     it 'assigns test offer for test devices' do
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       get(:webpage, @params.merge(:udid => @device.id))
       assigns(:test_offers).should_not be_nil
     end
 
     it 'does not log impressions when there are no offers' do
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
-      RailsCache.stubs(:get).returns(nil)
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+      RailsCache.stub(:get).and_return(nil)
       @currency.deeplink_offer.primary_offer.tapjoy_enabled = false
       @currency.deeplink_offer.primary_offer.save!
       get(:webpage, @params)
@@ -181,13 +181,13 @@ describe GetOffersController do
 
   describe '#featured' do
     before :each do
-      RailsCache.stubs(:get).returns(nil)
+      RailsCache.stub(:get).and_return(nil)
       @device = Factory(:device)
       @currency = Factory(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = Factory(:app).primary_offer
-      controller.stubs(:ip_address).returns('208.90.212.38')
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([@offer])
+      controller.stub(:ip_address).and_return('208.90.212.38')
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -227,8 +227,8 @@ describe GetOffersController do
           device_type,
         ]
 
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).with(*stub_args_1).once.returns([])
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).with(*stub_args_2).once.returns([@offer])
+        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_1).once.and_return([])
+        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
 
         get(:featured, @params)
       end
@@ -245,8 +245,8 @@ describe GetOffersController do
 
     context 'without an offer' do
       before :each do
-        OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
-        RailsCache.stubs(:get).returns(nil)
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+        RailsCache.stub(:get).and_return(nil)
         get(:featured, @params)
       end
 
@@ -292,10 +292,10 @@ describe GetOffersController do
       @device = Factory(:device)
       @currency = Factory(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = Factory(:app).primary_offer
-      controller.stubs(:ip_address).returns('208.90.212.38')
-      fake_cache_object = mock()
-      fake_cache_object.stubs(:value).returns([@offer])
-      RailsCache.stubs(:get_and_put).returns(fake_cache_object)
+      controller.stub(:ip_address).and_return('208.90.212.38')
+      fake_cache_object = double('fake_cache_object')
+      fake_cache_object.stub(:value).and_return([@offer])
+      RailsCache.stub(:get_and_put).and_return(fake_cache_object)
       @params = {
         :udid => @device.id,
         :publisher_user_id => 'more_stuff',

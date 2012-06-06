@@ -84,7 +84,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       else
         Notifier.alert_new_relic(e.class, e.message, request, params.merge(:reward_id => reward.id))
-        raise e
+        redis.sadd 'queue:send_currency:failures', reward.key
+        return
       end
     end
 
@@ -129,6 +130,12 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     end
 
     reward.save
+  end
+
+  # TODO: I know this isn't very DRY, but need to get this in asap
+  # Look for a PR later
+  def redis
+    @redis ||= Redis.new(:host => 'redis.tapjoy.net', :port => 6379)
   end
 
 end

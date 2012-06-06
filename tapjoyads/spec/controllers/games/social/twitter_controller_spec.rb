@@ -9,7 +9,7 @@ describe Games::Social::TwitterController do
 
     @fake_consumer = mock('consumer')
     @req_token = mock('req_token')
-    OAuth::Consumer.stubs(:new).returns(@fake_consumer)
+    OAuth::Consumer.stub(:new).and_return(@fake_consumer)
     consumer = OAuth::Consumer.new('a','b',{ :site=>"http://twitter.com" })
   end
 
@@ -19,10 +19,10 @@ describe Games::Social::TwitterController do
       secret = 'secret'
       @authorize_url = "http://#{request.host_with_port}#{games_social_twitter_finish_oauth_path}"
 
-      @fake_consumer.stubs(:get_request_token).returns(@req_token)
-      @req_token.stubs(:token).returns(token)
-      @req_token.stubs(:secret).returns(secret)
-      @req_token.stubs(:authorize_url).returns(@authorize_url)
+      @fake_consumer.stub(:get_request_token).and_return(@req_token)
+      @req_token.stub(:token).and_return(token)
+      @req_token.stub(:secret).and_return(secret)
+      @req_token.stub(:authorize_url).and_return(@authorize_url)
 
       get 'start_oauth'
     end
@@ -40,10 +40,10 @@ describe Games::Social::TwitterController do
       @twitter_id = 'fake_id'
       token = "#{@twitter_id}-#{'rest_token'}"
       secret = 'secret'
-      OAuth::RequestToken.stubs(:new).returns(@req_token)
-      @req_token.stubs(:get_access_token).returns(access_token)
-      access_token.stubs(:token).returns(token)
-      access_token.stubs(:secret).returns(secret)
+      OAuth::RequestToken.stub(:new).and_return(@req_token)
+      @req_token.stub(:get_access_token).and_return(access_token)
+      access_token.stub(:token).and_return(token)
+      access_token.stub(:secret).and_return(secret)
 
       get 'finish_oauth'
     end

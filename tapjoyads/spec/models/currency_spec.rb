@@ -25,7 +25,7 @@ describe Currency do
 
     context 'when not tapjoy-managed' do
       it 'validates callback url' do
-        Resolv.stubs(:getaddress).raises(URI::InvalidURIError)
+        Resolv.stub(:getaddress).and_raise(URI::InvalidURIError)
         @currency.callback_url = 'http://tapjoy' # invalid url
         @currency.save
         @currency.errors[:callback_url].join.should == 'is not a valid url'
@@ -34,7 +34,7 @@ describe Currency do
 
     context 'when test devices are not valid' do
       before :each do
-        @currency.stubs(:has_invalid_test_devices?).returns(true)
+        @currency.stub(:has_invalid_test_devices?).and_return(true)
       end
 
       it 'is false' do
@@ -416,7 +416,7 @@ describe Currency do
 
         app = Factory(:app)
         original_currency.promoted_offers = @promoted_offer_list
-        app.stubs(:currencies).returns([original_currency])
+        app.stub(:currencies).and_return([original_currency])
 
         @currency.app = app
         @currency.callback_url = 'http://example.com/foo'
@@ -463,9 +463,9 @@ describe Currency do
     context 'when rejected then updated' do
       it 'should be pending' do
         approval = mock()
-        approval.expects(:destroy).at_least_once
-        @currency.stubs(:approval).returns(approval)
-        @currency.stubs(:rejected?).returns(true)
+        approval.should_receive(:destroy).at_least(:once)
+        @currency.stub(:approval).and_return(approval)
+        @currency.stub(:rejected?).and_return(true)
         @currency.run_callbacks :update
       end
     end
@@ -483,8 +483,8 @@ describe Currency do
   describe '#approve_on_tapjoy_enabled' do
     context 'when tapjoy_enabled is toggled true' do
       it 'will call approve!' do
-        @currency.stubs(:approval).returns(stub('approval', :state => 'pending'))
-        @currency.expects(:approve!).once
+        @currency.stub(:approval).and_return(stub('approval', :state => 'pending'))
+        @currency.should_receive(:approve!).once
         @currency.tapjoy_enabled = true
         @currency.run_callbacks :update
       end
@@ -492,8 +492,8 @@ describe Currency do
 
     context 'when approvals are not present' do
       it 'will do nothing' do
-        @currency.stubs(:approval).returns(nil)
-        @currency.expects(:approve!).never
+        @currency.stub(:approval).and_return(nil)
+        @currency.should_receive(:approve!).never
         @currency.tapjoy_enabled = true
         @currency.run_callbacks :update
       end
@@ -503,8 +503,8 @@ describe Currency do
   describe '#approve!' do
     it 'calls approve!(true) on approval attribute' do
       mock_approval = mock('approval')
-      mock_approval.expects(:approve!).with(true).once
-      @currency.stubs(:approval).returns(mock_approval)
+      mock_approval.should_receive(:approve!).with(true).once
+      @currency.stub(:approval).and_return(mock_approval)
       @currency.approve!
     end
   end
