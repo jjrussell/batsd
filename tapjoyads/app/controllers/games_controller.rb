@@ -32,7 +32,7 @@ class GamesController < ApplicationController
   end
 
   def get_locale_filename
-    dev_bust = Rails.env.development? || Rails.env.test? ? Time.now.to_i : ""
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
     "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
