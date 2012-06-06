@@ -1,12 +1,81 @@
-- @employees.each do |employee|
-  - user = employee.user
-  - badges = @badges[employee.email] || []
-  .employee
-    = image_tag(employee.get_photo_url, :size => '78x78')
-    = employee.full_name
-    = user.email
-    - badges.each do |badge|
-      %span.earned_badge
-        - image_url = badge['badge_image']['image']['url']
-        = image_tag(image_url, :size => '50x50')
-        = badge['badge_name']
+%h1 Team Tapjoy
+
+- if permitted_to? :new, :dashboard_tools_employees
+  = link_to 'new employee', new_tools_employee_path
+
+%table#employees.table.table-bordered
+  %thead
+    %tr
+      %th Pic
+      %th Bio
+      %th
+        = link_to 'Badjrr', 'http://www.badjrr.com'
+  %tbody
+    - @employees.each do |employee|
+      %tr.employee{:id => employee.dom_id}
+        %td.icon
+          = photo_for(employee)
+        %td
+          .right
+            %span.label
+              %span.office{:class => "office-#{employee.office.downcase}"}
+                = employee.office
+              %i.icon-home.show-all
+              %span.department{:class => "department-#{employee.department.downcase}"}
+                = employee.department.titleize
+          %h2
+            = name_for(employee)
+            - if employee.is_user?(current_user)
+              %span#edit_self= link_to '[ edit ]', edit_tools_employee_path(employee)
+            %span.small.email
+              = mail_to employee.email
+          %p
+            %span.label.label-important= employee.title
+          %p
+            - if employee.biography.blank?
+              .muted
+                I have not filled this out yet.
+            - elsif employee.biography.length > 140
+              %span.bio-short
+                = truncate(employee.biography, :length => 140)
+              %span.bio-long.hidden
+                = employee.biography
+            - else
+              = employee.biography
+        %td.badges
+          - (@badges[employee.email] || []).each do |badge|
+            = image_tag(badge['badge_image']['image']['url'], :size => '50x50', :title => badge['badge_name'])
+
+- content_for :page_javascript do
+  :plain
+    var scrollToEmployee = function($this) {
+      scrollTo(0, $this.offset().top - 55);
+    };
+    var showParentsOfSameClass = function($this) {
+      var classes = $this.attr('class').split(' ');
+      $('.' + classes.join('.')).parents('tr').show();
+    };
+    $('.department').click(function(){
+      $('.department').parents('tr').hide();
+      showParentsOfSameClass($(this));
+      scrollToEmployee($(this));
+    });
+    $('.office').click(function(){
+      $('.office').parents('tr').hide();
+      showParentsOfSameClass($(this));
+      scrollToEmployee($(this))
+    });
+    $('.show-all').click(function(){
+      $('tr').show();
+    });
+    $('.employee').click(function(){
+      var long = $(this).find('.bio-long');
+      var short = $(this).find('.bio-short');
+      if (long.is(':hidden')) {
+        long.show();
+        short.hide();
+      } else {
+        long.hide();
+        short.show();
+      }
+    });

@@ -14,7 +14,7 @@ class Dashboard::HomepageController < Dashboard::DashboardController
   end
 
   def team
-    @employees = Employee.includes([:user]).active_by_first_name.select(&:with_user?)
+    @employees = Employee.active_by_first_name
     url = 'http://www.badjrr.com/api.json?api_key=business1'
     @badges = {}
 
@@ -23,11 +23,10 @@ class Dashboard::HomepageController < Dashboard::DashboardController
       badges = JSON.load(Downloader.get(url))
     rescue
       tries += 1
-      raise if tries > 5
-      retry
+      retry unless tries > 5
     end
 
-    badges.each do |badge|
+    (badges || []).each do |badge|
       @badges[badge['user_email']] ||= []
       @badges[badge['user_email']] << badge
     end

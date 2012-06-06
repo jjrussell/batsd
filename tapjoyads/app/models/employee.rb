@@ -22,17 +22,18 @@
 class Employee < ActiveRecord::Base
   include UuidPrimaryKey
 
-  DEPARTMENTS = %w( products marketing sales )
-
+  DEPARTMENTS = %w( products marketing sales finance devrel bizdev exec cs analytics )
+  OFFICES = %w( SF ATL NYC Chicago London Seoul Beijing Tokyo )
   has_many :app_reviews, :as => :author
 
   validates_presence_of :first_name, :last_name, :title, :email
   validates_uniqueness_of :email
   validates_uniqueness_of :desk_location, :allow_blank => true
   validates_inclusion_of :department, :in => DEPARTMENTS, :allow_nil => true
+  validates_inclusion_of :office, :in => OFFICES, :allow_nil => true
 
   scope :active_only, :conditions => 'active = true', :order => 'display_order desc, last_name, first_name'
-  scope :active_by_first_name, :conditions => 'active = true', :order => 'first_name, last_name'
+  scope :active_by_first_name, :conditions => {:active => true}, :order => 'first_name, last_name'
   scope :all_ordered, :order => 'display_order desc, last_name, first_name'
   scope :products_team, :conditions => [ 'active = ? and department = ?', true, 'products' ]
 
@@ -54,12 +55,16 @@ class Employee < ActiveRecord::Base
     self.desk_location = array.map(&:to_i).join(',')
   end
 
-  def is_user?(user)
-    email == user.email
+  def department
+    super || 'unknown'
   end
 
-  def with_user?
-    user.present?
+  def office
+    super || 'SF'
+  end
+
+  def is_user?(user)
+    email == user.email
   end
 
   def full_name

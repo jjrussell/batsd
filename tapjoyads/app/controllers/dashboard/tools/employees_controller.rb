@@ -5,6 +5,7 @@ class Dashboard::Tools::EmployeesController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :find_employee, :only => [ :edit, :update, :wfhs ]
+  after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def index
     @employees = Employee.all_ordered
@@ -19,6 +20,8 @@ class Dashboard::Tools::EmployeesController < Dashboard::DashboardController
 
   def create
     @employee = Employee.new(params[:employee])
+    log_activity(@employee)
+
     if @employee.save
       if params[:upload_photo].blank?
         clear_photo(@employee)
@@ -33,7 +36,8 @@ class Dashboard::Tools::EmployeesController < Dashboard::DashboardController
   end
 
   def update
-    if @employee.update_attributes(params[:employee])
+    log_activity(@employee)
+    if @employee.update_attributes(valid_params)
       unless params[:upload_photo].blank?
         @employee.save_photo!(params[:upload_photo].read)
       end
@@ -64,6 +68,27 @@ class Dashboard::Tools::EmployeesController < Dashboard::DashboardController
   end
 
   def find_employee
+    unless permitted_to?(:create, :dashboard_tools_employees)
+      my_employee_id = current_user.employee.id
+      redirect_to :id => my_employee_id unless params[:id] == my_employee_id
+    end
     @employee = Employee.find(params[:id])
+  end
+
+  def valid_params
+    if permitted_to?(:create, :dashboard_tools_employees)
+      params[:employee]
+    else
+      safe_attributes = %w(
+        first_name
+        last_name
+        title
+        superpower
+        current_games
+        weapon
+        biography
+      )
+      params[:employee].slice(*safe_attributes)
+    end
   end
 end

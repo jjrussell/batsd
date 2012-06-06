@@ -7,7 +7,6 @@
 #  app_metadata_id :string(36)      not null
 #  created_at      :datetime
 #  updated_at      :datetime
-#  hidden          :boolean(1)
 #
 
 class FavoriteApp < ActiveRecord::Base

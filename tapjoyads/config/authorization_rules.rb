@@ -150,6 +150,7 @@ authorization do
     has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
     has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
+    has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
   end
 
