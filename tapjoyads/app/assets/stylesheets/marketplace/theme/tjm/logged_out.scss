@@ -308,6 +308,10 @@ span.gill {
   @include fade-in(0.2s);
 }
 
+#signup-form.show-now {
+  display: block;
+}
+
 .register-form {
   height: auto;
   opacity: 1;

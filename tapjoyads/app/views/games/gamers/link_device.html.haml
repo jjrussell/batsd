@@ -1,19 +1,9 @@
-#signup-form.show
-  #header-signup.header-signup
-    .headerwrap
-      .wrap
-        .container
-          .nav
-            .logo
-              = link_to(games_root_path) do
-                %img{ :src => BLANK_IMAGE }
-
-  #signup-nav.signup-nav
-    .signup-nav-menu
-      %span.title= t('text.shared.sign_up')
-
-  .container.mt20.center
-    = render '/shared/truste'
+#link-device
+  .link-device-progress.hidden.clearfix
+    #tapjoy_loader
+      #loader_t.loader_letter
+      #loader_a.loader_letter
+      #loader_p.loader_letter
 
   = link_to(GAMES_ANDROID_MARKET_URL) do
     #register-android.hidden.clearfix
