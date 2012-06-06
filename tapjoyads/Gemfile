@@ -101,6 +101,7 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
+  gem "fakeredis", :require => "fakeredis/rspec"
 end
 
 group :ops do
