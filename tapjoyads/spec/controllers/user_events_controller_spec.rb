@@ -89,14 +89,15 @@ describe UserEventsController do
           before :each do
             @app    = Factory(:app)
             @device = Factory(:device)
+            @device.set_last_run_time!(@app.id)
             @params = {
               :app_id         => @app.id,
               :udid           => @device.key,
-              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:SHUTDOWN),
+              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:IAP),
             }
           end
 
-          it 'renders ERROR_EVENT when data is present' do
+          it 'renders ERROR_EVENT' do
             post(:create, @params)
             response.status.should  == UserEventsController::ERROR_STATUS
             response.body.should    == UserEventsController::ERROR_EVENT
@@ -107,10 +108,11 @@ describe UserEventsController do
           before :each do
             @app    = Factory(:app)
             @device = Factory(:device)
+            @device.set_last_run_time!(@app.id)
             @params = {
               :app_id         => @app.id,
               :udid           => @device.key,
-              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:SHUTDOWN),
+              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:IAP),
               :data           => {
                 :name   => Factory.next(:name),
                 :price  => Factory.next(:integer),
@@ -129,10 +131,11 @@ describe UserEventsController do
           before :each do
             @app    = Factory(:app)
             @device = Factory(:device)
+            @device.set_last_run_time!(@app.id)
             @params = {
               :app_id         => @app.id,
               :udid           => @device.key,
-              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:SHUTDOWN),
+              :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:IAP),
               :data           => {
                 :name   => Factory.next(:name),
                 :price  => "invalid_price!@!@",
