@@ -32,8 +32,9 @@
         stash.require("#{path_for('marketplace/helpers/html5', 'js', false)}");
 
     /[if IE 8]
-      = css_tag('marketplace/theme/tjm/ie.css')
-
+      :javascript
+        stash.require("#{path_for('marketplace/theme/tjm/ie', 'css', false)}");
+        
     = yield :page_head
 
     :javascript
