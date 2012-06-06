@@ -20,7 +20,7 @@ class BrandOfferMapping < ActiveRecord::Base
   validates_numericality_of :allocation, :greater_than => 0, :less_than_or_equal_to => 100
   validates_uniqueness_of :offer_id, :scope => :brand_id
   before_validation :get_new_allocation
-  after_commit  :redistribute_allocation, :on => [ :create, :destroy ]
+  after_commit  :redistribute_allocation
 
   scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
 
@@ -33,6 +33,7 @@ class BrandOfferMapping < ActiveRecord::Base
   end
 
   def redistribute_allocation
+    return unless transaction_include_action?(:create) || transaction_include_action?(:destroy)
     offer_mappings = BrandOfferMapping.mappings_by_offer(offer)
     cardinality = offer_mappings.count
     return true if cardinality == 0

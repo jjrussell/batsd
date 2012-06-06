@@ -23,8 +23,10 @@ Tapjoyad::Application.routes.draw do
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
-  resources :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
+  resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
+      match :index
+      post  :skip
       match :test_offer
       match :test_video_offer
     end
