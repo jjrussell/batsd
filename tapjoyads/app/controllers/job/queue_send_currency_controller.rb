@@ -84,9 +84,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       else
         Notifier.alert_new_relic(e.class, e.message, request, params.merge(:reward_id => reward.id))
-        reward.send_currency_status = 'SENT_CURRENCY_FAILURE'
-        reward.save
-
         redis.sadd 'queue:send_currency:failures', reward.key
         return
       end
