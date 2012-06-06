@@ -22,6 +22,7 @@ Tapjoyad::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
+  config.i18n_js_cache = true
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']

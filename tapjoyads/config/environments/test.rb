@@ -34,6 +34,7 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :stderr
   config.time_zone = 'UTC'
 
+  config.i18n_js_cache = false
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
