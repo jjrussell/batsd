@@ -119,8 +119,8 @@ describe DisplayAdController do
         obj_icon_shadow.stub(:read).and_return(icon_shadow)
 
         ad_bg = read_asset('self_ad_bg_640x100.png', 'display')
+        @bucket.stub(:objects).and_return({ "display/self_ad_bg_640x100.png" => 'file' })
         obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
-        @bucket.stub(:objects).and_return({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
         obj_ad_bg.stub(:read).and_return(ad_bg)
       end
 
@@ -150,11 +150,11 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in json' do
-          object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          custom_banner = read_asset('custom_320x50.png')
-          object.stub(:read).and_return(custom_banner)
-          bucket_objects = { @offer.banner_creative_path('320x50') => object }
+          bucket_objects = { @offer.banner_creative_path('320x50') => 'file' }
           @bucket.stub(:objects).and_return(bucket_objects)
+          s3_object = @bucket.objects[@offer.banner_creative_path('320x50')]
+          custom_banner = read_asset('custom_320x50.png')
+          s3_object.stub(:read).and_return(custom_banner)
 
           get(:index, @params.merge(:format => 'json'))
 
@@ -164,11 +164,11 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in xml' do
-          object = @bucket.objects[@offer.banner_creative_path('640x100')]
-          custom_banner = read_asset('custom_640x100.png')
-          object.stub(:read).and_return(custom_banner)
-          bucket_objects = { @offer.banner_creative_path('640x100') => object }
+          bucket_objects = { @offer.banner_creative_path('640x100') => 'file' }
           @bucket.stub(:objects).and_return(bucket_objects)
+          s3_object = @bucket.objects[@offer.banner_creative_path('640x100')]
+          custom_banner = read_asset('custom_640x100.png')
+          s3_object.stub(:read).and_return(custom_banner)
 
           get(:index, @params)
           response.content_type.should == 'application/xml'
@@ -179,9 +179,9 @@ describe DisplayAdController do
       context 'with generated ad' do
         it 'returns proper image data in json' do
           ad_bg = read_asset('self_ad_bg_320x50.png', 'display')
-          obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
-          bucket_objects = { "display/self_ad_bg_320x50.png" => obj_ad_bg }
+          bucket_objects = { "display/self_ad_bg_320x50.png" => 'some_file' }
           @bucket.stub(:objects).and_return(bucket_objects)
+          obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
           obj_ad_bg.stub(:read).and_return(ad_bg)
 
           get(:index, @params.merge(:format => 'json'))
