@@ -95,6 +95,7 @@ group :test do
   gem 'spork'
   gem 'timecop'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git'
+  gem "fakeredis", :require => "fakeredis/rspec"
 end
 
 group :development, :test do
