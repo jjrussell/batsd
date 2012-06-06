@@ -26,7 +26,8 @@ class UserEvent < SyslogMessage
   def valid?
     ### TODO temporary code follows, will change when publishers can make their own events
     if self.type_id == EVENT_TYPE_IDS.index(:IAP)
-      self.data.present? && self.data[:name].present? && price_valid?
+      local_data = to_hash_from_json(data)
+      local_data.present? && local_data[:name].present? && price_valid?(local_data[:price])
     elsif self.type_id == EVENT_TYPE_IDS.index(:SHUTDOWN)
       self.data.blank?
     else
@@ -37,9 +38,17 @@ class UserEvent < SyslogMessage
 
   private
 
-  def price_valid?
+  def to_hash_from_json(data)
+    hashed_data = {}
+    data.to_hash.each do |key, val|
+      hashed_data[key.to_sym] = val
+    end
+    hashed_data
+  end
+
+  def price_valid?(price)
     # this could be module-ized and used as a general #numeric? method
-    true if Float(self.data[:price]) rescue false
+    true if Float(price) rescue false
   end
 
 
