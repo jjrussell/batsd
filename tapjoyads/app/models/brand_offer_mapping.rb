@@ -25,6 +25,7 @@ class BrandOfferMapping < ActiveRecord::Base
   scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
 
   private
+
   def get_new_allocation
     unless self.allocation
       cardinality = BrandOfferMapping.mappings_by_offer(offer).count + 1
@@ -33,7 +34,6 @@ class BrandOfferMapping < ActiveRecord::Base
   end
 
   def redistribute_allocation
-    return unless transaction_include_action?(:create) || transaction_include_action?(:destroy)
     offer_mappings = BrandOfferMapping.mappings_by_offer(offer)
     cardinality = offer_mappings.count
     return true if cardinality == 0
@@ -43,8 +43,7 @@ class BrandOfferMapping < ActiveRecord::Base
 
     offer_mappings.each do |brand_offer|
       next if brand_offer.id == self.id
-      brand_offer.allocation = base_allocation + ( (excess -= 1) >= 0 ? 1 : 0 )
-      brand_offer.save!
+      brand_offer.update_attribute(:allocation, base_allocation + ( (excess -= 1) >= 0 ? 1 : 0 ))
     end
   end
 end

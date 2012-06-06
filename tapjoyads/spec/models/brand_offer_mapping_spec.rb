@@ -80,7 +80,7 @@ describe BrandOfferMapping do
         it 'will distribute allocation to the other mapping' do
           @other_brand_offer_mapping = mock()
           @other_brand_offer_mapping.stub(:id).and_return('other_test')
-          @other_brand_offer_mapping.stub(:allocation=).with(50).once
+          @other_brand_offer_mapping.stub(:update_attribute).with(:allocation, 50).once
           @other_brand_offer_mapping.stub(:save!)
           @offer_mappings = [@brand_offer_mapping, @other_brand_offer_mapping]
           @offer_mappings.stub(:count).and_return(2)
@@ -93,11 +93,11 @@ describe BrandOfferMapping do
         it 'will distribute allocation to other mappings roughly evenly' do
           @other_brand_offer_mapping = mock()
           @other_brand_offer_mapping.stub(:id).and_return('other_test')
-          @other_brand_offer_mapping.should_receive(:allocation=).with(34).once
+          @other_brand_offer_mapping.should_receive(:update_attribute).with(:allocation, 34).once
           @other_brand_offer_mapping.stub(:save!)
           @another_brand_offer_mapping = mock()
           @another_brand_offer_mapping.stub(:id).and_return('other_test')
-          @another_brand_offer_mapping.should_receive(:allocation=).with(33).once
+          @another_brand_offer_mapping.should_receive(:update_attribute).with(:allocation, 33).once
           @another_brand_offer_mapping.stub(:save!)
           @offer_mappings = [@brand_offer_mapping, @other_brand_offer_mapping, @another_brand_offer_mapping]
           @offer_mappings.stub(:count).and_return(3)
@@ -111,6 +111,8 @@ describe BrandOfferMapping do
           @brand_offer_mapping = BrandOfferMapping.new
           @brand_offer_mapping.offer = @offer
           @brand_offer_mapping.id = 'test'
+          @brand_offer_mapping.should_receive(:update_attribute).exactly(4).times.with(:allocation, 17)
+          @brand_offer_mapping.should_receive(:update_attribute).with(:allocation, 16)
           @other1 = @brand_offer_mapping.clone
           @other2 = @other1.clone
           @other3 = @other2.clone
@@ -119,9 +121,7 @@ describe BrandOfferMapping do
           @brand_offer_mapping.allocation = 16
           @offer_mappings = [@brand_offer_mapping, @other1, @other2, @other3, @other4, @other5]
           BrandOfferMapping.stub(:mappings_by_offer).with(@offer).and_return(@offer_mappings)
-          BrandOfferMapping.any_instance.stub(:save!).and_return(nil)
           @brand_offer_mapping.send(:redistribute_allocation)
-          @offer_mappings.inject(0) { |sum, x| sum + x.allocation }.should == 100
         end
       end
     end
