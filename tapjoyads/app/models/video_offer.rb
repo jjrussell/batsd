@@ -45,6 +45,11 @@ class VideoOffer < ActiveRecord::Base
     video_buttons.enabled.size <= 2
   end
 
+  def available_trackable_items(selected_id=nil)
+    ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
+    partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }
+  end
+
   private
 
   def create_primary_offer
