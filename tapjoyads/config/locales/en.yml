@@ -390,6 +390,7 @@ en:
       post_to_facebook: "Post to Facebook!"
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
+      privacy_tos: "Privacy Policy"
       profile: Me
       profile_error: "There was an error updating your profile."
       profile_update: "Your profile has been updated."
@@ -432,6 +433,7 @@ en:
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
+      terms_of_use_tos: "Terms of Use"
       thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
       thanks_contact_us: "Thank you for contacting us. We'll get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
@@ -439,6 +441,7 @@ en:
       thats_you: "that's you"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      tos_survey_html: "I agree to the %{terms_of_use} and %{privacy_policy}"
       twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
       twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
       twitter_forbidden_error: "Requests are being denied due to update limits."

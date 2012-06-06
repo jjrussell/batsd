@@ -1,38 +1,55 @@
 - @page_title = @survey_offer.name
 
-.container
-  .message
-    Instructions: Fill out this short survey
+#panel.ui-joy-panel
+  .header
+    .heading
+      Instructions: Fill out this short survey
+  .instructions
+    #error.message_error{ :style => (@missing_params ? '' : 'display: none;') }
+      Please complete all questions!
 
-  #error.message_error{ :style => (@missing_params ? '' : 'display: none;') }
-    Please complete all questions!
+    #survey
+      = form_tag(survey_results_path) do
+        = hidden_field_tag(:udid, params[:udid])
+        = hidden_field_tag(:click_key, params[:click_key])
+        = hidden_field_tag(:id, params[:id])
 
-  #main
-    = form_tag(survey_results_path) do
-      = hidden_field_tag(:udid, params[:udid])
-      = hidden_field_tag(:click_key, params[:click_key])
-      = hidden_field_tag(:id, params[:id])
+        - @survey_questions.each_with_index do |survey_question, i|
+          .field.clearfix
+            %span.question
+              %span.number
+                = i + 1
+              %label{ :for => 'question' }= survey_question.text
+            %span.response
+              = render survey_question.format,
+                :question => survey_question
+        %div.center.m15.terms
+          %label=t("text.games.tos_survey_html",
+              :terms_of_use => link_to(t("text.games.terms_of_use_tos"), '/games/tos', :target => '_blank'),
+              :privacy_policy => link_to(t("text.games.privacy_tos"), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'))
+          %input{:type => 'checkbox', :id => 'terms'}
 
-      - @survey_questions.each_with_index do |survey_question, i|
-        .field.clearfix
-          %span.question
-            %span.question_number
-              = i + 1
-            %label{ :for => 'question' }= survey_question.text
-          %span.answer
-            = render survey_question.format,
-              :question => survey_question
-      = submit_tag("Submit", :class => 'button')
-  #footer
-    .privacy
-      = link_to t('text.footer.privacy'), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'
-    = render '/shared/truste'
+        = submit_tag('Submit', :class => 'button disabled')
+#trust
+  = render '/shared/truste'
 
 - content_for :page_styles do
   = stylesheet_link_tag("survey_results/style")
 
 - content_for :page_javascript do
   :plain
+    var submit = $('input[name="commit"]');
+
+    $('#terms').bind('click', function(){
+      submit[this.checked ? 'removeClass' : 'addClass']('disabled');
+    });
+
+    $('form').submit(function(e){
+      if(submit.hasClass('disabled')){
+        e.preventDefault();
+      }
+    });
+
     $(window).load(function() {
       if ($("select option")) {
         $("select option").each(function() {
