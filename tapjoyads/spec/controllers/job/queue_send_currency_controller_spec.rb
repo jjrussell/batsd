@@ -31,7 +31,7 @@ describe Job::QueueSendCurrencyController do
         ).
         and_raise(Simpledb::ExpectedAttributeError)
 
-      REDIS.should_receive(:sadd).with('queue:send_currency:failures', @reward.id)
+      $redis.should_receive(:sadd).with('queue:send_currency:failures', @reward.id)
       get(:run_job, :message => @reward.id)
     end
 
