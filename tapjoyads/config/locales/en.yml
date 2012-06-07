@@ -473,14 +473,9 @@ en:
         download: Download and run this app.
         steps: Complete a series of steps.
         video: Watch this video.
-        TJM_link: Tap here to visit %{Tapjoy} for more free offers!
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
-      buy_currency_html: "Buy %{amount} %{currency}"
-      earn_currency: "Earn %{amount} %{currency}"
-      earn: Earn
-      earn_more: Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations
-      deep_link_part_1: Tap here to visit
+      deep_link_part_1: Tap here to visit 
       deep_link_part_2: for more free offers!
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
