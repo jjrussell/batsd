@@ -138,7 +138,7 @@ class Games::HomepageController < GamesController
         @tjm_request.action = path[:action]
         @tjm_request.update_path
       rescue ActionController::RoutingError
-        render_json_error(['unable to find corresponding controller/action'], status = 400) and return
+        render_json_error(['unable to find corresponding controller/action'], 400) and return
       end
     end
 
