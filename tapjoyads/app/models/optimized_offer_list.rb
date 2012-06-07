@@ -1,14 +1,15 @@
 class OptimizedOfferList
 
   ORDERED_KEY_ELEMENTS = %w(algorithm source platform country currency_id device_type).map(&:to_sym)
+  GROUP_SIZE = 200
 
   class << self
 
     def get_offer_list(options)
-      offers = Mc.distributed_get(cache_key_for_options(options))
-      offers = Mc.distributed_get(cache_key_for_options(options.merge({ :country => nil }))) if offers.nil?
-      offers = Mc.distributed_get(cache_key_for_options(options.merge({ :currency_id => nil }))) if offers.nil?
-      offers = Mc.distributed_get(cache_key_for_options(options.merge({ :currency_id => nil, :country => nil }))) if offers.nil?
+      offers = get_offer_list(options)
+      offers = get_offer_list(options.merge({ :country => nil })) if offers.nil?
+      offers = get_offer_list(options.merge({ :currency_id => nil })) if offers.nil?
+      offers = get_offer_list(options.merge({ :currency_id => nil, :country => nil })) if offers.nil?
 
       offers || []
     end
@@ -17,6 +18,23 @@ class OptimizedOfferList
       s3_optimization_keys.each do |key|
         cache_offer_list(key)
       end
+    end
+
+    def get_offer_list(options = {})
+      cache_key = cache_key_for_options(options)
+      group = 0
+      offers = []
+
+      loop do
+        offer_group = Mc.distributed_get_and_put("#{cache_key}.#{group}", false, 1.day) do
+          Marshal.restore(s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].read)
+        end
+        offers |= offer_group
+        break unless offer_group.length == GROUP_SIZE
+        group += 1
+      end
+
+      offers
     end
 
     def cache_offer_list(key)
@@ -35,19 +53,32 @@ class OptimizedOfferList
         end
       end.compact
 
-      begin
-        Mc.distributed_put(cache_key, offers)
+      group = 0
+      puts "saving #{cache_key} to Memcache"
+      begin        
+        offers.each_slice(GROUP_SIZE) do |offer_group|
+          Mc.distributed_put("#{cache_key}.#{group}", offer_group, false, 1.day)
+          group += 1
+        end
         puts "wrote #{cache_key} to Memcache"
       rescue
-        puts "saving to Memcache failed"
+        puts "saving #{cache_key} to Memcache failed"
       end
 
-      begin
-        s3_cached_optimization_bucket.objects[cache_key].write(:data => Marshal.dump(offers))
+      group = 0
+      puts "saving #{cache_key} to S3"
+      begin        
+        offers.each_slice(GROUP_SIZE) do |offer_group|
+          s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump(offer_group))
+          group += 1          
+        end
         puts "wrote #{cache_key} to S3"
       rescue
-        puts "saving to S3 failed"
+        puts "saving #{cache_key} to S3 failed"
       end
+
+      Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
+      s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump([]))
     end
 
     def disable_all

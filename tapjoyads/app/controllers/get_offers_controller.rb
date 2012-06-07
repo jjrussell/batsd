@@ -4,7 +4,7 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_experiment_parameters
+  before_filter :lookup_udid, :set_publisher_user_id, :set_experiment_parameters, :setup
   # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request
