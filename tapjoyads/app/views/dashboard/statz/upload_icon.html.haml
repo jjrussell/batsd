@@ -1,8 +1,8 @@
 - url = upload_icon_statz_path(:id => @offer.id)
 - if @has_icon
-  - form_tag(url, :method => :delete, :id => "remove_icon", :class => "hidden") {}
+  = form_tag(url, :method => :delete, :id => "remove_icon", :class => "hidden") {}
 
-- form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@has_icon ? :put : :post), :multipart => true }) do |f|
+= form_for(@offer, :url => url, :html => { :id => 'upload_form', :class => 'tjform', :method => (@has_icon ? :put : :post), :multipart => true }) do |f|
   %table
     %tbody
       %tr

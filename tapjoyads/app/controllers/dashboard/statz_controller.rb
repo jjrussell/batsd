@@ -76,7 +76,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def upload_icon
-    if [:put, :post].include? request.method
+    if request.post? || request.put?
       image_data = params[:offer][:upload_icon].try(:read)
       begin
         @offer.save_icon!(image_data, true)
@@ -86,7 +86,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
       end
     end
 
-    if request.method == :delete
+    if request.delete?
       begin
         @offer.remove_icon!
         @success_message = "Icon removed successfully."

@@ -154,7 +154,7 @@ Tapjoyad::Application.routes.draw do
           get :support_request_reward_ratio
           get :show_rate_reasons
           get :download_udids
-          match :upload_icon, :via => [:get, :put, :delete]
+          match :upload_icon
         end
 
       end
