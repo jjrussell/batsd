@@ -7,6 +7,13 @@ module GetOffersHelper
     "/get_offers?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
+  def get_next_link_json_redesign
+    return nil if @more_data_available < 1
+    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params['json'] = "1"
+    "/get_offers/webpage_redesign?data=#{ObjectEncryptor.encrypt(tmp_params)}"
+  end
+
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
