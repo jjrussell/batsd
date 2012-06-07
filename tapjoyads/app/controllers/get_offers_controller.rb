@@ -4,7 +4,7 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :set_experiment_parameters, :setup
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm
   # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request
@@ -106,6 +106,8 @@ class GetOffersController < ApplicationController
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
+    set_offerwall_experiment
+
     if @save_web_requests
       @web_request = generate_web_request
     end
@@ -159,7 +161,7 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def set_experiment_parameters
+  def set_offerwall_experiment
     experiment = case params[:source]
     when 'tj_games'
       :optimization
@@ -168,7 +170,9 @@ class GetOffersController < ApplicationController
     end
 
     choose_experiment(experiment)
+  end
 
+  def set_algorithm
     case params[:exp]
     when 'a_optimization'
       @algorithm = nil
