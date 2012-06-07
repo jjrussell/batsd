@@ -14,7 +14,7 @@ describe DisplayAdController do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
       @bucket = FakeBucket.new
-      S3.stubs(:bucket).with(BucketNames::TAPJOY).and_returns(@bucket)
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
       @currency = Factory(:currency)
       @params = {
