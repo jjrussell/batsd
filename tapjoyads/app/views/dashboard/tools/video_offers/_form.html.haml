@@ -1,0 +1,27 @@
+= form_for [ :tools, @video_offer ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= label_tag 'Partner'
+      %td
+        = @video_offer.partner.name
+        = f.hidden_field :partner_id
+    %tr
+      %th= f.label :name
+      %td
+        = f.text_field :name, :size => 50
+        = error_message_on @video_offer, :name
+    %tr
+      %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
+      %td= file_field_tag :video
+    - if !@video_offer.new_record?
+      %tr
+        %th= label_tag "Current Icon", "Current Icon"
+        %td= image_tag @video_offer.primary_offer.video_icon_url, :size => '200x125'
+    %tr
+      %th= label_tag :icon, @video_offer.new_record? ? 'Upload Icon' : 'Upload New Icon'
+      %td= file_field_tag :icon
+    - if !@video_offer.new_record?
+      %tr
+        %td{ :colspan => 2 }= link_to("View/Edit Video Button", tools_video_offer_video_buttons_path(@video_offer.id))
+    %tr
+      %td{ :colspan => 2 }= f.submit @video_offer.new_record? ? 'Create Video Offer' : 'Update Video Offer'

@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: user_roles
+#
+#  id         :string(36)      not null, primary key
+#  name       :string(255)     not null
+#  created_at :datetime
+#  updated_at :datetime
+#  employee   :boolean(1)
+#
+
 class UserRole < ActiveRecord::Base
   include UuidPrimaryKey
 

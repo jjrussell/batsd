@@ -1,0 +1,43 @@
+:ruby
+  @page_title = "#{controller.action_name.titleize} Press Release"
+  today_link_id = Time.zone.now.strftime('%Y%m%d0')
+  link_href = @press_release.link_href.present? ? @press_release.link_href : "#{today_link_id}-press-release-title-with-dashes"
+
+%h1= @page_title
+
+= form_for [ :tools, @press_release ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %th= f.label :published_at
+      %td= f.text_field :published_at, :value => (@press_release.published_at || Time.zone.now).to_date
+      %td= error_message_on(@press_release, :published_at) if @press_release.errors.on :published_at
+    %tr
+      %th= f.label :link_id, 'Link ID (date + order)'
+      %td= f.text_field :link_id, :value => @press_release.link_id || today_link_id
+      %td= error_message_on(@press_release, :link_id) if @press_release.errors.on :link_id
+    %tr
+      %th= f.label :link_text
+      %td= f.text_field :link_text, :size => 80
+      %td= error_message_on(@press_release, :link_text) if @press_release.errors.on :link_text
+    %tr
+      %th= f.label :link_href
+      %td= f.text_field :link_href, :value => link_href, :size => 80
+      %td= error_message_on(@press_release, :link_href) if @press_release.errors.on :link_href
+    %tr
+      %th= f.label :content_title
+      %td= f.text_field :content_title, :size => 80
+      %td= error_message_on(@press_release, :content_title) if @press_release.errors.on :content_title
+    %tr
+      %th= f.label :content_subtitle
+      %td= f.text_field :content_subtitle, :size => 80
+      %td= error_message_on(@press_release, :content_subtitle) if @press_release.errors.on :content_subtitle
+    %tr
+      %th= f.label :content_body
+      %td= f.text_area :content_body, :size => '80x40'
+      %td= error_message_on(@press_release, :content_body) if @press_release.errors.on :content_body
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Done'
+
+- content_for :page_javascript do
+  :plain
+    $('#press_release_published_at').datepicker();

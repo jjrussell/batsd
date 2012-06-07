@@ -33,7 +33,7 @@ module WebsiteHelper
     var palette_#{element_suffix} = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
 
     var wrapper_#{element_suffix} = new Rickshaw.Graph.Ajax( {
-      element: document.getElementById("chart_#{element_suffix}"),
+      element: document.getElementById('chart_#{element_suffix}'),
       dataURL: '#{json_source}',
       width: 820,
       height: 250,
@@ -158,10 +158,12 @@ EOJS
         />
       </object>
     EOF
+
+    html.html_safe
   end
 
   def link_to_offer(offer)
-    if permitted_to?(:show, :statz)
+    if permitted_to?(:show, :dashboard_statz)
       link_to(offer.name_with_suffix, statz_path(offer.id))
     else
       offer.name_with_suffix
@@ -204,7 +206,7 @@ EOJS
   end
 
   def link_to_statz(body, object, options={})
-    if permitted_to?(:show, :statz)
+    if permitted_to?(:show, :dashboard_statz)
       link_to(body, statz_path(object), options)
     else
       body
@@ -234,7 +236,7 @@ EOJS
   end
 
   def decrypt_if_permitted(object, field_name, decrypt=false)
-    if decrypt || permitted_to?(:payout_info, :tools)
+    if decrypt || permitted_to?(:payout_info, :dashboard_tools)
       field_name = "decrypt_#{field_name}"
     end
     object.send(field_name)
@@ -243,6 +245,24 @@ EOJS
   def encrypted_field(form, object, field_name)
     value = decrypt_if_permitted(object, field_name, object.changed.include?(field_name.to_s))
     form.text_field(field_name, :value => value)
+  end
+
+  def photo_for(employee)
+    if permitted_to?(:edit, :dashboard_tools_employees)
+      link_to edit_tools_employee_path(employee) do
+        image_tag(employee.get_photo_url, :size => '78x78')
+      end
+    else
+      image_tag(employee.get_photo_url, :size => '78x78')
+    end
+  end
+
+  def name_for(employee)
+    if permitted_to?(:show, :dashboard_tools_users)
+      link_to employee.full_name, [:tools, employee.user]
+    else
+      employee.full_name
+    end
   end
 end
 

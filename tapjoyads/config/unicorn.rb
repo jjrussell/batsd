@@ -14,6 +14,9 @@ if big_server
 elsif server_type == "dev"
   worker_processes 2
   timeout 90
+elsif server_type == 'webserver'
+  worker_processes 8
+  timeout 90
 else
   worker_processes 10
   timeout 90
@@ -87,7 +90,5 @@ after_fork do |server, worker|
   defined?(Mc) and Mc.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
-
-  # Redis and Memcached would go here but their connections are established
-  # on demand, so the master never opens a socket
+  $redis.client.reconnect
 end

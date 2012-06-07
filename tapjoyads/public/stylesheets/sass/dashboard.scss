@@ -192,11 +192,11 @@ div.flash {
   color: #F31;
   font-size: 18px;
 }
-#flash_notice, .flash.notice {
+#flash_notice.flash, .flash.notice {
   border: 2px solid #328F0D;
   color: #328F0D;
 }
-#flash_error {
+#flash_error.flash {
   border: 2px solid #F31;
   color: #F31;
 }
@@ -377,4 +377,33 @@ select.chosen {
 }
 .sidebar-nav {
   padding: 9px 0;
+}
+.navbar .brand {
+  padding: {
+    top: 6px;
+    bottom: 6px;
+  }
+}
+#employees {
+  span#edit_self {
+    display: none;
+  }
+  span.department, span.office, i.show-all {
+    cursor: pointer;
+    &:hover {
+      color: #ff0;
+    }
+  }
+  tr:hover span#edit_self {
+    display: inline-block;
+  }
+  span.email {
+    font-family: Andale Mono, Courier New, courier;
+  }
+  td.icon {
+    width: 78px;
+  }
+  td.badges {
+    width: 160px;
+  }
 }

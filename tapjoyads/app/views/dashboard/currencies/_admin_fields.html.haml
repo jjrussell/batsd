@@ -1,0 +1,165 @@
+%tr.admin
+  %td{:colspan => 2} Admin-only fields:
+%tr.admin
+  %th
+    = f.label :tapjoy_enabled, 'Tapjoy enabled'
+    #help_tapjoy_enabled.help ?
+  %td
+    = f.check_box :tapjoy_enabled
+    = link_to ' Publisher Form', 'https://docs.google.com/a/tapjoy.com/spreadsheet/viewform?formkey=dGZkcE9zR3FJWmxIMUtaYVRvcnZWZXc6MQ', :popup => true
+    = error_message_on(@currency, :tapjoy_enabled)
+%tr.admin
+  %th
+    = f.label :hide_rewarded_app_installs
+    #help_hide_rewarded_app_installs.help ?
+  %td
+    = f.check_box :hide_rewarded_app_installs
+    = error_message_on(@currency, :hide_rewarded_app_installs)
+%tr.admin.hide_rewarded_app_installs{:class => @currency.hide_rewarded_app_installs? ? '' : 'hidden' }
+  %th
+    = f.label :minimum_hide_rewarded_app_installs_version, 'Min hide rewarded app installs version'
+    #help_minimum_hide_rewarded_app_installs_version.help ?
+  %td
+    = f.text_field :minimum_hide_rewarded_app_installs_version
+    = error_message_on(@currency, :minimum_hide_rewarded_app_installs_version)
+%tr.admin
+  %th
+    = f.label :disabled_offers, 'Disabled offers'
+    #help_disabled_offers.help ?
+  %td
+    = f.text_area :disabled_offers
+    = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
+%tr.admin
+  %th
+    = f.label :max_age_rating, 'Max age rating'
+    #help_max_age_rating.help ?
+  %td
+    = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s)
+%tr.admin
+  %th
+    = f.label :only_free_offers, 'Only free offers'
+    #help_only_free_offers.help ?
+  %td
+    = f.check_box :only_free_offers
+%tr.admin
+  %th
+    = f.label :send_offer_data, 'Send offer data'
+    #help_send_offer_data.help ?
+  %td
+    = f.check_box :send_offer_data
+%tr.admin
+  %th
+    = f.label :ordinal, 'Ordinal'
+    #help_ordinal.help ?
+  %td
+    = f.text_field :ordinal
+%tr.admin
+  %th
+    = f.label :rev_share_override, 'Rev share override'
+    #help_rev_share_override.help ?
+  %td
+    = f.text_field :rev_share_override
+%tr.admin
+  %th
+    Spend share
+    #help_spend_share.help ?
+  %td
+    = @currency.spend_share
+%tr.admin
+  %th
+    Direct-pay share
+    #help_direct_pay_share.help ?
+    .msg
+      = link_to('Edit partner', edit_partner_path(@app.partner_id))
+  %td
+    = @currency.direct_pay_share
+%tr.admin
+  %th
+    Disabled partners
+    #help_disabled_partners.help ?
+    .msg
+      = link_to('Edit partner', edit_partner_path(@app.partner_id))
+  %td
+    = raw(@currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', '))
+%tr.admin
+  %th
+    Show Deeplink on Offerwall?
+    #help_show_deeplink.help ?
+  %td
+    %input{:type => "checkbox", :disabled => 'disabled', :checked => @currency.deeplink_offer.present? && @currency.deeplink_offer.user_enabled && @currency.deeplink_offer.tapjoy_enabled }
+    = link_to('Edit deeplink offer', statz_path(@currency.deeplink_offer))
+%tr.admin
+  %th
+    Encrypted ID
+    #help_encrypted_id.help ?
+  %td
+    = truncate(ObjectEncryptor.encrypt(@currency.id), :length => 30)
+    = clippy(ObjectEncryptor.encrypt(@currency.id))
+
+.hidden
+  #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
+    Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.
+  #help_disabled_offers_content{:name => 'Disabled offers'}
+    A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
+    this app's offerwall.
+  #help_disabled_partners_content{:name => 'Disabled partners'}
+    Offers belonging to partners that are in this list will not be shown in this app's offerwall.
+    To edit these values, you must edit the associated partner.
+  #help_max_age_rating_content{:name => 'Max age rating'}
+    The maximum age-rating of offers to show.
+    %ul
+      %li 17+: No age-rating restrictions
+      %li 12+: Only show offers rated 12 and below
+      %li 9+: Only show offers rated 9 and below
+      %li 4+: Only show offers rated 4 and below
+  #help_only_free_offers_content{:name => 'Only free offers'}
+    If true, only free offers will be shown in this app's offerwall.
+  #help_send_offer_data_content{:name => 'Send offer data'}
+    If true, we will send additional parameters to the publisher when hitting their callback url after an offer has been completed.
+    The additional parameters are:
+    %ul
+      %li
+        %b rev
+        The revenue earned from the offer, in dollars.
+      %li
+        %b storeId
+        The advertiser storeId (if the offer is an app offer).
+      %li
+        %b application
+        The offer name.
+  #help_ordinal_content{:name => 'Ordinal'}
+    Determines the order of the currency selector buttons on the offer wall webpage.
+  #help_rev_share_override_content{:name => 'Rev share override'}
+    Override the partner's rev share for this currency only. Should be a decimal between 0 and 1 or blank.
+  #help_spend_share_content{:name => 'Spend share'}
+    The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
+  #help_direct_pay_share_content{:name => 'Direct-pay share'}
+    The percent share of direct-pay revenue that this publisher gets.
+  #help_hide_rewarded_app_installs_content{:name => 'Hide rewarded app installs'}
+    Do not display pay-per-install offers on this publisher's offer wall.
+  #help_minimum_hide_rewarded_app_installs_version_content{:name => 'Min hide rewarded installs version'}
+    Pay-per-install offers will only be hidden for versions of this publisher app higher than this value.
+    Leaving this field blank will disable pay-per-install offers for all versions of this publisher app.
+  #help_show_deeplink_content{:name => 'Show Deeplink'}
+    The in-app offerwall will, by default, display a rewarded link to the Tapjoy Marketplace as the first offer. To disable this functionality, disable the associated offer through the provided link.
+  #help_encrypted_id_content{:name => 'Encrypted ID'}
+    Encrypted Currency ID for use in building URLs
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+     $('#currency_hide_rewarded_app_installs').click(function() {
+        $('.hide_rewarded_app_installs').toggle($(this).attr('checked'));
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    .admin td {
+      width: 400px;
+    }
+
+    .admin .msg {
+      font-size: 85%;
+      margin-right: 20px;
+    }

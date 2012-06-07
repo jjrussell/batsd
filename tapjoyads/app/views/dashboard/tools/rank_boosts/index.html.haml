@@ -1,0 +1,84 @@
+- @page_title = 'Rank Boosts'
+
+%h1 Offer Rank Boosts
+
+.filters
+  = form_tag('', :class => 'tjform', :method => :get, :id => 'filter-form') do
+    %table
+      %tr
+        %th= label_tag 'filter', 'View:'
+        %td= select_tag 'filter', options_for_select([ ['All', 'all'], ['Active', 'active'] ], params[:filter])
+      %tr
+        %th= label_tag 'search_box', 'Offer Name:'
+        %td
+          = text_field_tag('search_box', @offer.present? ? @offer.search_result_name : '', :size => '40')
+          = hidden_field_tag('offer_id', @offer.present? ? @offer.id : '')
+          = link_to('[Reset]', tools_rank_boosts_path)
+
+= link_to('New Rank Boost', new_tools_rank_boost_path)
+
+%table#rank_boosts.tablesorter
+  %thead
+    %tr
+      %th Offer
+      %th Start Time
+      %th End Time
+      %th Amount
+      %th &nbsp;
+  %tbody
+    - if @rank_boosts.empty?
+      %tr
+        %td{ :colspan => 5 }= "No rank boosts to display."
+    - @rank_boosts.each do |rb|
+      %tr
+        %td= link_to_offer(rb.offer)
+        %td= rb.start_time.to_s :mdy_ampm
+        %td= rb.end_time.to_s :mdy_ampm
+        %td= rb.amount
+        %td
+          = link_to "Edit", edit_tools_rank_boost_path(rb)
+          - if rb.active?
+            = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('select#filter').change(function() {
+        $('#filter-form').submit();
+      });
+
+      $('#search_box').autocomplete({
+        source: '#{search_offers_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('input#offer_id').val(ui.item.id);
+          $('#filter-form').submit();
+        }
+      });
+
+      $.tablesorter.addParser({
+        id: 'date-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return new Date(s).getTime();
+        }
+      });
+
+      $("#rank_boosts").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          1: { sorter: 'date-column' },
+          2: { sorter: 'date-column' },
+          4: { sorter: false }
+        },
+        sortList: [ [2, 1] ]
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    .filters {
+      padding-bottom: 20px;
+    }

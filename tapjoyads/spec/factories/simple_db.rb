@@ -12,6 +12,10 @@ FactoryGirl.define do
     key { Factory.next(:udid) }
   end
 
+  factory :publisher_user do
+    key { "#{Factory(:app).id}.#{Factory.next(:name)}" }
+  end
+
   factory :email_signup do
     email_address { Factory.next(:email) }
   end

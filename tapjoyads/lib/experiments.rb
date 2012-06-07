@@ -6,9 +6,7 @@ class Experiments
   }
 
   def self.choose(udid)
-    if udid.present?
-      udid.hash % 2 == 0 ? EXPERIMENTS[:papaya_on] : EXPERIMENTS[:papaya_off]
-    end
+    EXPERIMENTS[:default]
   end
 
   def self.report(start_time, end_time, experiment_id, control_id = EXPERIMENTS[:control])

@@ -1,0 +1,129 @@
+- @page_title = 'Add funds'
+= render :partial => 'actions'
+
+.left-indented
+  %h2 Add funds
+
+  %p
+    Enter your credit card information and the amount you would like to add to your balance.
+    We accept Visa, MasterCard, Discover and American Express cards.
+
+  %p
+    If you would like to use alternate forms of payment,
+    please email #{ mail_to 'support@tapjoy.com' }.
+
+  %p
+    Pre-paid account balances are non-refundable.
+    = link_to 'Tapjoy Advertising Terms and Conditions', '/tos-advertiser.html', :target => '_blank'
+
+  %h3 Current Balance: #{number_to_currency(current_partner.balance / 100.0)}
+
+  = form_for(@credit_card, :as => :credit_card, :url => { :action => :create_order }, :html => { :class => 'tjform' }) do |f|
+    %table
+      %tr
+        %th
+          = label_tag :payment_profile, 'Credit Card'
+          #help_credit_card.help ?
+        %td
+          = select_tag(:payment_profile, options_for_select(@payment_profiles, @selected_profile))
+        %td#forget{ :class => @selected_profile == 'new_card' ? 'hidden' : '' }
+          = button_to_function 'Forget this card', 'forget_card()'
+      %tr{ :class => @hideable_row_class }
+        %th
+          = f.label :first_name, 'First Name'
+          #help_first_name.help ?
+        %td
+          = f.text_field :first_name
+          = error_message_on @credit_card, :first_name
+      %tr{ :class => @hideable_row_class }
+        %th
+          = f.label :last_name, 'Last Name'
+          #help_last_name.help ?
+        %td
+          = f.text_field :last_name
+          = error_message_on @credit_card, :last_name
+      %tr{ :class => @hideable_row_class }
+        %th
+        %td= image_tag('credit_card_logos.gif', :class => 'logos')
+      %tr{ :class => @hideable_row_class }
+        %th
+          = f.label :number, 'Card Number'
+          #help_card_number.help ?
+        %td
+          = f.text_field :number
+          = error_message_on @credit_card, :number
+      %tr{ :class => @hideable_row_class }
+        %th
+          = f.label :verification_value, 'CVV Code'
+          #help_cvv_code.help ?
+        %td
+          = f.text_field :verification_value, :size => 6
+          = error_message_on @credit_card, :verification_value
+      %tr{ :class => @hideable_row_class }
+        %th
+          = f.label :expiration, 'Expiration'
+          #help_expiration.help ?
+        %td
+          = f.select :month, (1..12).to_a
+          = f.select :year, (Date.today.year..(Date.today.year + 8)).to_a
+          = error_message_on @credit_card, :month
+          = error_message_on @credit_card, :year
+      %tr{ :class => @hideable_row_class }
+        %th
+          = label_tag :save_card, 'Save Card'
+          #help_save_card.help ?
+        %td= check_box_tag :save_card
+      %tr
+        %th
+          = f.label :amount, 'Amount'
+          #help_amount.help ?
+        %td
+          = f.currency_field :amount, {}, :size => 12
+          = error_message_on @credit_card, :amount
+      %tr
+        %td{ :colspan => 2 }= f.submit 'Add Funds'
+
+.hidden
+  #help_credit_card_content{ :name => 'Credit Card' } The credit card you wish you use.
+  #help_first_name_content{ :name => 'First Name' } The first name as it appears on the credit card.
+  #help_last_name_content{ :name => 'Last Name' } The last name as it appears on the credit card.
+  #help_card_number_content{ :name => 'Card Number' } The credit card number.
+  #help_cvv_code_content{ :name => 'CVV Code' } For Visa, MasterCard and Discover this is the 3 digit code on the back of the card. For American Express it is the 4 digit code on the front of the card.
+  #help_expiration_content{ :name => 'Expiration' } The expiration date of the credit card.
+  #help_save_card_content{ :name => 'Save Card' } Check this box if you would like to save your credit card information for future deposits.
+  #help_amount_content{ :name => 'Amount' } The amount you would like added to your balance. Your card will be charged this amount.
+
+.hidden
+  = form_tag forget_credit_card_billing_index_path, :id => 'forget_form' do
+    = hidden_field_tag(:payment_profile_id)
+
+- content_for :page_javascript do
+  :plain
+    $(function($) {
+      $('#payment_profile').change(function() {
+        if ($('#payment_profile').val() == 'new_card') {
+          $('.hideable').show();
+          $('#forget').hide();
+        } else {
+          $('.hideable').hide();
+          $('#forget').show();
+        }
+      });
+    });
+
+    function forget_card() {
+      if (confirm('Are you sure you want to remove this credit card?')) {
+        var profile = $('#payment_profile').val();
+        if (profile != 'new_card') {
+          $('#payment_profile_id').val(profile);
+          $('#forget_form').submit();
+        }
+      }
+      return false;
+    }
+
+- content_for :page_styles do
+  :plain
+    img.logos {
+      padding-left: 3px;
+    }

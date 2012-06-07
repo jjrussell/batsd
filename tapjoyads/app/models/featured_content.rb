@@ -1,3 +1,26 @@
+# == Schema Information
+#
+# Table name: featured_contents
+#
+#  id                 :string(36)      not null, primary key
+#  offer_id           :string(36)
+#  author_id          :string(36)
+#  featured_type      :string(255)     not null
+#  platforms          :text            default(""), not null
+#  subtitle           :text            default(""), not null
+#  title              :text            default(""), not null
+#  description        :text            default(""), not null
+#  main_icon_url      :text
+#  secondary_icon_url :text
+#  button_text        :text
+#  button_url         :text
+#  start_date         :date            not null
+#  end_date           :date            not null
+#  weight             :integer(4)      default(0), not null
+#  created_at         :datetime
+#  updated_at         :datetime
+#
+
 class FeaturedContent < ActiveRecord::Base
   include UuidPrimaryKey
   has_tracking_offers
@@ -27,12 +50,12 @@ class FeaturedContent < ActiveRecord::Base
 
   before_save :create_offer
 
-  named_scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
-  named_scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
-  named_scope :expired,  lambda { |date| { :conditions => [ "end_date < ?", date.to_date ], :order => "end_date ASC" } }
-  named_scope :active, lambda { |date| { :conditions => [ "start_date <= ? AND end_date >= ?", date.to_date, date.to_date ] } }
-  named_scope :for_platform, lambda { |platform| { :conditions => [ "platforms LIKE ?", "%#{platform}%" ] } }
-  named_scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
+  scope :ordered_by_date, :order => "start_date DESC, end_date DESC"
+  scope :upcoming,  lambda { |date| { :conditions => [ "start_date > ?", date.to_date ], :order => "start_date ASC" } }
+  scope :expired,  lambda { |date| { :conditions => [ "end_date < ?", date.to_date ], :order => "end_date ASC" } }
+  scope :active, lambda { |date| { :conditions => [ "start_date <= ? AND end_date >= ?", date.to_date, date.to_date ] } }
+  scope :for_platform, lambda { |platform| { :conditions => [ "platforms LIKE ?", "%#{platform}%" ] } }
+  scope :for_featured_type, lambda { |featured_type| { :conditions => [ "featured_type = ?", featured_type ] } }
 
   json_set_field :platforms
 

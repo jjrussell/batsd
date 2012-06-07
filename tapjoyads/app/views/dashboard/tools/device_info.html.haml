@@ -1,0 +1,226 @@
+- @page_title = 'Device Info'
+
+%h1 Device info &amp; Unresolved clicks
+= form_tag({}, { :method => :get, :class => 'tjform' }) do
+  %table
+    %tbody
+      %tr
+        %th UDID:
+        %td= text_field_tag 'udid', params[:udid], :size => '55'
+      %tr
+        %th Click key:
+        %td= text_field_tag 'click_key', params[:click_key], :size => '55'
+      %tr
+        %th Email:
+        %td= text_field_tag 'email_address', params[:email_address], :size => '55'
+      %tr
+        %th MAC Address:
+        %td= text_field_tag 'mac_address', params[:mac_address], :size => '55'
+      %tr
+        %td{ :colspan => 2 }= submit_tag 'Find'
+
+- if @all_udids.present?
+  %h3 Please choose the udid for this email
+  %table
+    %tbody
+      - @all_udids.each do |udid|
+        %tr
+          %td
+            = link_to udid, device_info_tools_path(:udid => udid, :email_address => params[:email_address])
+
+- if @device.present?
+  %h3 Device
+  = form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
+    %table
+      %tbody
+        %tr
+          %th Device ID
+          %td= params[:udid]
+        %tr
+          %th MAC address
+          %td
+            - if @device.mac_address?
+              = @device.mac_address
+            - else
+              %i unknown
+        %tr
+          %th Jailbroken?
+          %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
+        %tr
+          %th TJM Gamers
+          - if @device.gamers.any?
+            %td
+              = raw(@device.gamers.collect { |g| link_to(g.email, tools_gamer_path(g)) }.join(', '))
+          - else
+            %td= 'Not connected to any Tapjoy Marketplace Gamer'
+        - if @device.country.present?
+          %tr
+            %th Country
+            %td= @device.country
+        - if @device.survey_answers.present?
+          %tr
+            %th Survey Answers
+            %td
+              - @device.survey_answers.each do |k,v|
+                %b= k.humanize
+                \:
+                = v
+                %br/
+        %tr
+          %th
+            Opted Out?
+          %td
+            = check_box_tag 'opted_out', '1', @device.opted_out?
+        %tr
+          %th
+            Opt Out Selective Offer Types
+            #help_opt_out_offer_types.help ?
+          %td
+            = select_tag :opt_out_offer_types, options_for_select(Offer::ALL_OFFER_TYPES, @device.opt_out_offer_types), {:multiple => true, :class => 'chosen'}
+        %tr
+          %th
+            Banned?
+          %td
+            = check_box_tag 'banned', '1', @device.banned?
+        %tr
+          %th
+            Total Support Requests Filed
+          %td
+            = @support_requests_created
+        %tr
+          %th
+            Internal Notes
+          %td
+            = text_area_tag 'internal_notes', @device.internal_notes, :size => '50x4'
+        %tr
+          %td{ :colspan => 2 }
+            = submit_tag 'Update'
+
+  %h3 Installed Apps (#{@apps.length})
+  %table.with-border
+    %thead
+      %tr
+        %td App Name
+        %td Last run time
+        %td Pub User ID
+        - if permitted_to? :award_currencies, :dashboard_tools
+          %td Award Currency
+    %tbody.show-five
+      - @apps.each_with_index do |pair, i|
+        - last_run_time, app = pair
+        - pub_id = @device.publisher_user_ids[app.id]
+        %tr.last_run_app
+          %td
+            %strong
+              = link_to_statz(app.name, app)
+          %td= last_run_time.to_s(:pub_ampm_sec)
+          %td
+            - if pub_id != @device.key
+              = pub_id
+          - if permitted_to? :award_currencies, :dashboard_tools
+            %td
+              - if app.is_publisher_offer?
+                - app.item.currencies .each do |currency|
+                  = form_tag award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid]) do
+                    = submit_tag currency.name
+  - if @apps.length > 5
+    = link_to('(show all)', '#', { :id => 'show_more_apps' })
+
+  %h3
+    Clicks (#{@clicks.length})
+    +
+    %span.rewarded Rewards (#{@rewarded_clicks_count})
+    +
+    %span.rewarded-failed Rewards Failed (#{@rewarded_failed_clicks_count})
+    +
+    %span.jailbroken Jailbroken (#{@jailbroken_count})
+    +
+    %span.not-rewarded Won't reward (#{@not_rewarded_count})
+    +
+    %span.blocked Blocked (#{@blocked_count})
+  Showing
+  %b #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date).to_s(:pub)}
+  %table.with-border
+    %thead
+      %tr
+        %td Clicked
+        %td Installed
+        %td Adv.
+        %td Pub.
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
+          %td User
+        %td Resolve
+        %td Details
+        %td Click ID
+    %tbody
+      - @clicks.each do |click|
+        - reward = @rewards[click.reward_key]
+        %tr{ :class => click_tr_class(click, reward) }
+          %td.small
+            %nobr= click_timestamp(click, :clicked_at)
+          %td{ :class => install_td_class(click) }
+            - if click.block_reason?
+              = click.block_reason
+            - else
+              = click_timestamp(click, :installed_at)
+          %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
+          %td= link_app_to_statz(@click_apps[click.publisher_app_id])
+          - if permitted_to? :view_pub_user_account, :dashboard_tools
+            %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
+          %td
+            - if click.manually_resolved_at? && click.installed_at?
+              Manually awarded
+            - elsif click.installed_at? || click.type =~ /install_jailbroken/
+              Already awarded
+            - elsif click.block_reason?
+              - if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+                Blocked device
+              - else
+                Won't reward
+            - else
+              = form_tag resolve_clicks_tools_path(:click_id => click.id) do
+                = submit_tag 'Award'
+          %td.small
+            %ul.nobr
+              %li= "Click ID: #{click.key}"
+              - if reward
+                %li= "Reward ID: #{reward.key}"
+              %li= link_to('show more', '#', :class => 'show-click-detail')
+              - click_info_ul(click, reward)
+          %td
+            = clippy(click.key)
+      %tr
+        %td{:colspan => 7}
+          - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
+          = button_to text, '#', :class => 'next-clicks'
+          * Please note that there may not be more clicks.
+
+.hidden
+  #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
+
+- content_for :page_head, stylesheet_link_tag('tools')
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#show_more_apps').click(function(){
+        $(this).hide();
+        $('.last_run_app').show();
+        return false;
+      });
+      $('.show-click-detail').click(function(){
+        $(this).parent().hide();
+        details = $(this).parent().next();
+        $(this).parent().after(details.html());
+        details.remove();
+        return false;
+      });
+    });
+  - if @device && @cut_off_date
+    :plain
+      $(function($){
+        $('.next-clicks').click(function(){
+          location.href = '#{device_info_tools_path(:udid => @device.key, :cut_off_date => @cut_off_date - 1.month)}';
+          return false;
+        });
+      });

@@ -1,0 +1,152 @@
+class Dashboard::SearchController < Dashboard::DashboardController
+
+  filter_access_to :all
+
+  def offers
+    term = params[:term]
+
+    if term =~ UUID_REGEX
+      conditions = [ "id = ?", term ]
+    elsif params[:app_offers_only]
+      conditions = [ "name LIKE ? AND item_type = ?", "%#{term}%", 'app' ]
+    elsif params[:selected_offers]
+      conditions = [ "name LIKE ? AND id NOT IN (?)", "%#{term}%", params[:selected_offers] ]
+    else
+      conditions = [ "name LIKE ?", "%#{term}%" ]
+    end
+
+    results = Offer.find(:all,
+      :conditions => conditions,
+      :order => 'hidden ASC, active DESC, name ASC',
+      :limit => 10
+    ).collect do |o|
+      if params[:more_details]
+        result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
+        if o.item_type == 'GenericOffer' || o.item_type == 'SurveyOffer'
+          result[:click_url] = o.url
+        elsif o.item_type == 'VideoOffer'
+          result[:click_url] = o.item.video_url
+        elsif o.item_type == 'App'
+          app = App.find_by_id(o.item_id)
+          result[:description] = app.description
+          extra_path = Rails.env.production? ? '' : '/games'
+          result[:click_url]   = "#{WEBSITE_URL}#{extra_path}/get_app?eid=#{ObjectEncryptor.encrypt(o.item_id)}"
+        elsif o.item_type == 'ActionOffer'
+          action = ActionOffer.find_by_id(o.item_id)
+          result[:click_url] = Linkshare.add_params(action.app.store_url)
+        end
+        result
+      else
+        { :label => o.search_result_name, :url => statz_path(o), :id => o.id, :user_enabled => o.user_enabled, :daily_budget => o.daily_budget, :bid => o.bid, :payment => o.payment}
+      end
+    end
+
+    render(:json => results.to_json)
+  end
+
+  def users
+    conditions = [ "email LIKE ?", "#{params[:term]}%" ]
+    if params[:tapjoy_only] == 'true'
+      tapjoy_email = "#{params[:term].split('@').first}%@tapjoy.com"
+      offerpal_email = "#{params[:term].split('@').first}%@offerpal.com"
+      conditions = [ "(email LIKE ? OR email LIKE ?) AND email NOT LIKE ?",
+        tapjoy_email, offerpal_email, "%+%" ]
+    end
+    results = User.find(:all,
+      :conditions => conditions,
+      :order => 'email ASC',
+      :limit => 30
+    ).collect do |user|
+      { :label => user.email, :user_id => user.id }
+    end
+
+    render(:json => results.to_json)
+  end
+
+  def partners
+    term = params[:term].to_s.strip
+
+    if term =~ UUID_REGEX
+      conditions = [ "id = ?", term ]
+      results = Partner.find(:all,
+        :conditions => conditions,
+        :include => ['offers', 'users'],
+        :limit => 1
+      )
+    end
+
+    if results.blank?
+      term = "#{term}%"
+      results = Partner.find_by_sql(
+        [ 'select * from partners as p where name like ?' +
+          ' order by (select count(*) from offers where partner_id = p.id) desc' +
+          ' limit 20',
+          term]
+      )
+    end
+
+    results = results.collect do |partner|
+      name    = partner.name || 'no name'
+      offers  = partner.offers.count
+      users   = partner.users.count
+      label   = "#{name} (#{offers} offers, #{users} users)"
+      { :label => label, :partner_id => partner.id, :partner_name => name }
+    end
+
+    render(:json => results.to_json)
+  end
+
+  def gamers
+    term = params[:term].to_s.strip
+
+    if term.size >= 2
+      conditions = [ "email LIKE ?", "#{term}%" ]
+      @gamers = Gamer.find(:all,
+        :conditions => conditions,
+        :order => 'email ASC',
+        :limit => 100
+      )
+    else
+      @gamers = []
+    end
+
+    render :partial => 'gamers'
+  end
+
+  def brands
+    conditions = [ "name LIKE ?", "%#{params[:term]}%" ]
+    results = Brand.find(:all,
+        :conditions => conditions,
+        :order => 'name ASC',
+        :limit => 20).collect do |b|
+          {:id => b.id, :label => b.name, :name => b.name, :url => ''}
+        end
+    results = [{:id => '0', :label => "Add: #{params[:term]}", :url => ''}] if results.empty?
+    render(:json => results.to_json)
+  end
+
+  def currencies
+    term = params[:term].to_s.strip
+
+    if term =~ UUID_REGEX
+      conditions = [ "id = ? OR app_id = ?", term, term ]
+      find_options = {
+        :conditions => conditions,
+        :include => [ :app, :partner ],
+        :limit => 1,
+      }
+      @currencies = Currency.find(:all, find_options)
+    end
+
+    if @currencies.blank?
+      term = "%#{term}%".gsub(' ', '%')
+      find_options = { :include => [ :app, :partner ], :limit => 20 }
+
+      @currencies  = Currency.search_name(term).find(:all, find_options)
+      @currencies |= Currency.search_app_name(term).find(:all, find_options)
+      @currencies |= Currency.search_partner_name(term).find(:all, find_options)
+    end
+
+    render :partial => 'currencies'
+  end
+end

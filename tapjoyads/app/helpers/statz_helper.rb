@@ -1,10 +1,10 @@
 module StatzHelper
   def property_row(key, value, default_value = nil, value_css_class = '')
     return if value == default_value
-    concat("<tr>")
-    concat("<td>#{key}</td>")
-    concat("<td class = '#{value_css_class}'>#{value}</td>")
-    concat("</tr>")
+    concat("<tr>".html_safe)
+    concat("<td>#{key}</td>".html_safe)
+    concat("<td class = '#{value_css_class}'>#{value}</td>".html_safe)
+    concat("</tr>".html_safe)
   end
 
   def filter_options(filter_type)

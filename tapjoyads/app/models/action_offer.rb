@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: action_offers
+#
+#  id                    :string(36)      not null, primary key
+#  partner_id            :string(36)      not null
+#  app_id                :string(36)      not null
+#  name                  :string(255)     not null
+#  instructions          :text
+#  hidden                :boolean(1)      default(FALSE), not null
+#  created_at            :datetime
+#  updated_at            :datetime
+#  variable_name         :string(255)     not null
+#  prerequisite_offer_id :string(36)
+#  price                 :integer(4)      default(0)
+#
+
 class ActionOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_trackable :device_types => lambda { app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { app.store_url }
@@ -15,7 +32,7 @@ class ActionOffer < ActiveRecord::Base
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   accepts_nested_attributes_for :primary_offer
 

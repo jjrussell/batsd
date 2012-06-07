@@ -1,13 +1,13 @@
 :ruby
   offer_array = []
-  @offer_list.each do |offer|
+  @offer_list.each_with_index do |offer, index|
     hash                    = {}
     hash["Cost"]            = visual_cost(offer)
     hash["Amount"]          = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
     hash["IconURL"]         = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
     hash["IconURLMedium"]   = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '114')
     hash["Name"]            = offer.name
-    hash["RedirectURL"]     = get_click_url(offer)
+    hash["RedirectURL"]     = get_click_url(offer, :offerwall_rank => (index + 1))
     hash["StoreID"]         = offer.store_id_for_feed
     hash["Payout"]          = @currency.get_publisher_amount(offer)
     hash["Type"]            = offer.item_type
@@ -25,6 +25,6 @@
   obj["TapPoints"]         = @tap_points if @tap_points.present?
   obj["MoreDataAvailable"] = @more_data_available if @more_data_available > 0
 
-= "#{params[:callback].gsub(/\W/, '')}(" if params[:callback].present?
-= obj.to_json
-= ")" if params[:callback].present?
+= raw "#{params[:callback].gsub(/\W/, '')}(" if params[:callback].present?
+= raw obj.to_json
+= raw ")" if params[:callback].present?

@@ -1,0 +1,17 @@
+= breadcrumb link_to("Tools", tools_path), link_to(@offer, statz_path(@offer)), "Sales reps"
+%h1 Sales reps for #{ @offer }
+.row-fluid
+  .span8
+    %table.table.table-bordered.table-striped
+      %tr
+        %th Sales rep
+        %th Start date
+        %th End date
+        %th
+      - @offer.sales_reps.each do |sales_rep|
+        %tr
+          %td= sales_rep
+          %td= sales_rep.start_date.strftime('%m/%d/%Y')
+          %td= sales_rep.end_date.strftime('%m/%d/%Y') if sales_rep.end_date
+          %td= link_to "Edit", edit_tools_offer_sales_rep_path(@offer, sales_rep), :class => 'btn btn-mini'
+    = link_to "Add sales rep", new_tools_offer_sales_rep_path(@offer), :class => 'btn btn-primary'

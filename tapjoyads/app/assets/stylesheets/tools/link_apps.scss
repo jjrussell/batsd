@@ -1,0 +1,17 @@
+#app-list {
+  padding: 0;
+}
+
+.each-app {
+  padding: 10px;
+  margin: 3px 0px;
+  list-style-type: none;
+  height: 30px;
+
+  .app-name {
+    margin-left: 20px;
+    line-height: 30px;
+    color: #000;
+    text-decoration: none;
+  }
+}

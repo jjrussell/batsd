@@ -1,11 +1,23 @@
 require 'spec/spec_helper'
 
 describe Job::MasterReloadStatzController do
+  let(:stats_hash) do
+    hash = Hash.new([100,200,300])
+    hash['arpdau'] = nil
+    hash
+  end
+
   before :each do
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    time = Time.zone.today + 1.day
+    Timecop.freeze(time.to_time(:utc))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
+    Mc.flush('totally_serious')
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe '#index' do
@@ -140,7 +152,7 @@ describe Job::MasterReloadStatzController do
       @partner = Factory(:partner)
 
       @mock_appstats = mock()
-      @mock_appstats.stubs(:stats).returns(stats_hash)
+      @mock_appstats.stub(:stats).and_return(stats_hash)
     end
 
     it 'saves partner values' do
@@ -181,7 +193,7 @@ describe Job::MasterReloadStatzController do
         "rev_share"                 => "50.0%",
         "sales_rep"                 => "",
         "sessions"                  => "600",
-        "spend"                     => "$-6.00",
+        "spend"                     => "-$6.00",
         "total_revenue"             => "$6.00",
         "arpdau"                    => "-",
       }
@@ -214,7 +226,7 @@ describe Job::MasterReloadStatzController do
       zero_hash = {}
       zero_keys.each { |key| zero_hash[key] = [0] }
 
-      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      @mock_appstats.stub(:stats).and_return(stats_hash.merge(zero_hash))
       stub_appstats
 
       zero_keys = [
@@ -255,7 +267,7 @@ describe Job::MasterReloadStatzController do
       stub_appstats
 
       admin_user = Factory(:admin)
-      admin_user2 = Factory(:admin)
+      admin_user2 = Factory(:admin, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user
@@ -280,7 +292,7 @@ describe Job::MasterReloadStatzController do
       Mc.get('statz.partner.cached_stats.24_hours').should be_nil
 
       hash = stats_hash.merge('paid_installs' => [0])
-      @mock_appstats.stubs(:stats).returns(hash)
+      @mock_appstats.stub(:stats).and_return(hash)
       stub_appstats
 
       get :partner_index
@@ -301,7 +313,7 @@ describe Job::MasterReloadStatzController do
         'display_conversions' => [0],
       }
 
-      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      @mock_appstats.stub(:stats).and_return(stats_hash.merge(zero_hash))
       stub_appstats
 
       get :partner_index
@@ -395,16 +407,16 @@ def stub_vertica(start_time = nil, end_time = nil)
   end
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', :select => 'max(time)').
-    returns([{ :max => Time.zone.parse('2011-02-15') }])
+    and_return([{ :max => Time.zone.now }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', money_options(start_time, end_time)).
-    returns([{
+    and_return([{
       :count => 1,
       :adv_amount => 1,
       :pub_amount => 1,
@@ -413,16 +425,16 @@ def stub_vertica(start_time = nil, end_time = nil)
     }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', advertiser_options(start_time, end_time)).
-    returns(adv_stats)
+    and_return(adv_stats)
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', publisher_options(start_time, end_time)).
-    returns(pub_stats)
+    and_return(pub_stats)
 end
 
 def query_conditions(start_time, end_time)
@@ -431,15 +443,6 @@ def query_conditions(start_time, end_time)
     "time >= '#{start_time.to_s(:db)}'",
     "time < '#{end_time.to_s(:db)}'",
   ]
-end
-
-def stats_hash
-  return @hash if @hash
-  @hash = {}
-  stats_keys.each do |key|
-    @hash[key] = [100,200,300]
-  end
-  @hash
 end
 
 def stats_keys
@@ -488,24 +491,24 @@ def percentage(value)
 end
 
 def stub_appstats(granularity = :hourly)
-  Appstats.expects(:new).
-    times(4).
-    with(@partner.id, has_entry(:granularity, granularity)).
-    returns(@mock_appstats)
+    Appstats.should_receive(:new).
+    exactly(4).times.
+    with(@partner.id, hash_including(:granularity=>granularity)).
+    and_return(@mock_appstats)
 end
 
 def stub_conversions(start_time = nil, end_time = nil)
   start_time ||= @start_time
   end_time ||= @end_time
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('publisher', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('advertiser', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 end

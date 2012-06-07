@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: internal_devices
+#
+#  id               :string(36)      not null, primary key
+#  user_id          :string(36)      not null
+#  description      :string(255)
+#  status           :string(255)
+#  verification_key :integer(4)
+#  created_at       :datetime
+#  updated_at       :datetime
+#
+
 class InternalDevice < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :user
@@ -7,12 +20,12 @@ class InternalDevice < ActiveRecord::Base
   attr_accessible :description, :verifier
   attr_reader :verifier
 
-  before_validation_on_create :generate_verification_key, :set_status
+  before_validation :generate_verification_key, :set_status, :on => :create
 
   validates_inclusion_of :status, :in => STATUSES
   validates_presence_of :verification_key
 
-  named_scope :approved, :conditions => "status = 'approved'"
+  scope :approved, :conditions => "status = 'approved'"
 
   def generate_verification_key
     self.verification_key ||= (0..7).map{ rand(9) + 1 }.join.to_i

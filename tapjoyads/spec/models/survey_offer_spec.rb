@@ -23,7 +23,7 @@ describe SurveyOffer do
   it 'validates presence of bid_price on create' do
     survey_offer = SurveyOffer.new(:name => 'bob')
     survey_offer.save.should be_false
-    survey_offer.errors.on(:bid_price).should == "can't be blank"
+    survey_offer.errors[:bid_price].join.should == "can't be blank"
   end
 
   describe 'callbacks' do
@@ -57,7 +57,7 @@ describe SurveyOffer do
 
     it 'creates the offer icon' do
       #fake_object = FakeObject.new('icons/checkbox.jpg')
-      #Offer.any_instance.expects(:save_icon!).with(fake_object.read)
+      #Offer.any_instance.should_receive(:save_icon!).with(fake_object.read)
       #survey_offer = SurveyOffer.new(:name => 'bob', :bid_price => 0)
       #survey_offer.save
     end

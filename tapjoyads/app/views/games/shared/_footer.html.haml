@@ -17,6 +17,6 @@
         %li>= link_to(t('text.footer.privacy'),     'http://info.tapjoy.com/about-tapjoy/privacy-policy/')
         %li>= link_to(t('text.footer.blog'),        'http://blog.tapjoy.com/')
       %small
-        = t('text.footer.copyright', :year => Time.now.year)
+        = t('text.footer.copyright', :year => Time.now.year).html_safe
   .container.center
     = render '/shared/truste'

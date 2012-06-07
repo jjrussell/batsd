@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: rating_offers
+#
+#  id          :string(36)      not null, primary key
+#  partner_id  :string(36)      not null
+#  app_id      :string(36)      not null
+#  name        :string(255)     not null
+#  description :text
+#  created_at  :datetime
+#  updated_at  :datetime
+#  hidden      :boolean(1)      default(FALSE), not null
+#
+
 class RatingOffer < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -15,7 +29,7 @@ class RatingOffer < ActiveRecord::Base
 
   delegate :get_offer_device_types, :platform, :store_url, :to => :app
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def get_id_with_app_version(app_version)
     RatingOffer.get_id_with_app_version(id, app_version)

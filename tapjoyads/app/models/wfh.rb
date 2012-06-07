@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: wfhs
+#
+#  id          :string(36)      not null, primary key
+#  employee_id :string(36)      not null
+#  category    :string(255)     not null
+#  description :string(255)
+#  start_date  :date            not null
+#  end_date    :date            not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 class Wfh < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :employee
@@ -11,14 +25,14 @@ class Wfh < ActiveRecord::Base
   ]
   validates_inclusion_of :category, :in => CATEGORIES.map(&:last)
 
-  named_scope :today_and_after, lambda {
+  scope :today_and_after, lambda {
     { :conditions => [ 'end_date >= ?', Time.zone.today ] }
   }
-  named_scope :today, lambda {
+  scope :today, lambda {
     today = Time.zone.today
     { :conditions => [ 'start_date <= ? AND end_date >= ?', today, today ] }
   }
-  named_scope :upcoming_week, lambda {
+  scope :upcoming_week, lambda {
     start_date = Time.zone.today + 1.day
     end_date   = start_date + 7.days
     {

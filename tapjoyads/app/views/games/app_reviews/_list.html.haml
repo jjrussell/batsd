@@ -1,7 +1,7 @@
 - @app_reviews.each do |app_review|
   .mod.line-item.image-caption.review.fixed-height
     .hd
-      .app-icon
+      .app-icon.squircle
         - if app_review.author.present?
           = image_tag(app_review.author.get_avatar_url)
     .bd

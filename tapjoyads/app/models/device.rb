@@ -22,6 +22,10 @@ class Device < SimpledbShardedResource
   self.sdb_attr :all_packages, :type => :json, :default_value => []
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
+  self.sdb_attr :recent_skips, :type => :json, :default_value => []
+
+  SKIP_TIMEOUT = 4.hours
+  MAX_SKIPS    = 100
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
@@ -198,6 +202,7 @@ class Device < SimpledbShardedResource
   end
 
   def save(options = {})
+    remove_old_skips
     return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
     @create_device_identifiers = false
@@ -261,6 +266,35 @@ class Device < SimpledbShardedResource
       @retry_save_on_fail = true
       save
     end
+  end
+
+  def self.device_type_to_platform(type)
+    case type
+    when 'iphone', 'ipad', 'ipod' then 'ios'
+    else type
+    end
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.key}"
+  end
+
+  def recently_skipped?(offer_id)
+    longest_time = Time.zone.now - Device::SKIP_TIMEOUT
+    self.recent_skips.any? { |skip| (skip[0] == offer_id) && (Time.zone.parse(skip[1]).to_i  >= longest_time.to_i)}
+  end
+
+  def add_skip(offer_id)
+    temp = recent_skips
+    temp.unshift([offer_id, Time.zone.now])
+    self.recent_skips = temp.first(Device::MAX_SKIPS)
+  end
+
+  def remove_old_skips(time = Device::SKIP_TIMEOUT)
+    temp = self.recent_skips
+    self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
   private

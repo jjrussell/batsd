@@ -1,0 +1,132 @@
+- @page_title = "Activity log"
+
+%h1 Activity log
+
+= form_tag(activities_path, :method => :get, :id => 'form', :class => 'tjform') do
+  = label_tag(:user)
+  = text_field_tag(:user, params[:user], :size => 15)
+  = label_tag(:object_id)
+  = text_field_tag(:object_id, params[:object_id], :size => 15)
+  = label_tag(:request_id)
+  = text_field_tag(:request_id, params[:request_id], :size => 15)
+  = label_tag(:partner_id)
+  = text_field_tag(:partner_id, params[:partner_id], :size => 15)
+  = submit_tag("Change")
+
+%table#activities_table.tablesorter
+  %thead
+    %tr
+      %th User
+      %th Object
+      %th Partner
+      %th Diff
+      %th Created
+      %th Controller
+      %th Action
+      %th Request id
+  %tbody
+    - @activities.each do |activity|
+      - next if activity.object.nil?
+      %tr
+        %td= link_to_function(activity.user, "setValue('user', '#{activity.user}')")
+        %td
+          #{activity.object_type}:
+          = link_to_function(activity.object_name, "setValue('object_id', '#{activity.object_id}')")
+        %td
+          - unless activity.partner_id.blank?
+            = link_to_function(truncate(activity.partner_id, :length => 9), "setValue('partner_id', '#{activity.partner_id}')")
+        %td.diff
+          - keys = activity.diff_keys
+          - keys.each do |key|
+            %p
+              %span.diff_key #{key}:
+              %span.diff_value #{activity.diff_value(key)}
+        %td= activity.created_at.to_s(:pub_ampm_sec)
+        %td= activity.controller
+        %td= activity.action
+        %td
+          = link_to_function(truncate(activity.request_id, :length => 9), "setValue('request_id', '#{activity.request_id}')")
+
+= link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :partner_id => params[:partner_id], :next_token => @next_token), :class => 'next') if @next_token
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'date-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return new Date(s.replace(/PT/, '')).getTime();
+        }
+      });
+      $("#activities_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          3: { sorter: false },
+          4: { sorter: false },
+          5: { sorter: 'date-column' }
+        },
+        sortList: [ [5, 1] ]
+      });
+
+      var formY = $('#form').position()['top'];
+      $(window).scroll(function(event) {
+        if ($(window).scrollTop() > formY) {
+          $('#form').css({position: 'fixed', top: 0});
+        } else {
+          $('#form').css({position: 'absolute', top: 'auto'});
+        }
+      });
+
+    });
+
+    function setValue(id, value) {
+      $('#' + id).val(value);
+    }
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      margin-top: 40px;
+    }
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    form#form {
+      background: white;
+      border: 1px solid black;
+      padding: 3px;
+      position: absolute;
+    }
+
+    .next {
+      float: right;
+    }
+
+    .tjform input[type=submit] {
+      margin: 0;
+      float: none;
+    }
+
+    td.diff {
+      max-width: 300px;
+      overflow-x: auto;
+    }
+    .diff .diff_value {
+      font-family: Andale Mono, Courier New, courier;
+    }
+    .diff .diff_key {
+      font-weight: bold;
+    }
+    .diff ins {
+      text-decoration: none;
+    }
+    .diff del {
+      background-color: #faa;
+    }
+    .diff ins {
+      background-color: #afa;
+    }

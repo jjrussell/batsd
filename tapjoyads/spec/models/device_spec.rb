@@ -138,6 +138,76 @@ describe Device do
     end
   end
 
+  describe '#recently_skipped?' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    context 'an offer has just been skipped' do
+      it 'returns true' do
+        @device.recent_skips = [['a', Time.zone.now]]
+        @device.recently_skipped?('a').should be_true
+      end
+    end
+
+    context 'an offer has been skipped up to max time ago' do
+      it 'returns true' do
+        now = Time.zone.now
+        @device.recent_skips = [['a', now - (Device::SKIP_TIMEOUT)]]
+        Time.zone.should_receive(:now).twice.and_return(now)
+        @device.recently_skipped?('a').should be_true
+      end
+    end
+
+    context 'an offer has not been recently been skipped' do
+      it 'returns false' do
+        @device.recent_skips = [['a', Time.zone.now - (Device::SKIP_TIMEOUT + 1.second)]]
+        @device.recently_skipped?('a').should be_false
+      end
+    end
+  end
+
+  describe '#add_skip' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+    it 'adds offer to recent_skips' do
+      now = Time.zone.now
+      @device.add_skip('a');
+      Time.zone.should_receive(:now).and_return(now)
+      @device.recent_skips[0][0].should == 'a'
+      Time.zone.parse(@device.recent_skips[0][1]).to_i.should == now.to_i
+    end
+    it 'retains only 100 skips' do
+      105.times { |num| @device.add_skip(num) }
+      @device.recent_skips.length.should == 100
+    end
+  end
+
+  describe '#remove_old_skips' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    it 'removes all skips more than specfied time ago' do
+      a = []
+      100.times do
+        a << [rand(1000).to_s, Time.zone.now - rand(200).seconds]
+      end
+      a = a.sort_by {|item| item[1] }
+      @device.recent_skips = a
+      @device.recent_skips.length.should == 100
+      @device.remove_old_skips(50.seconds)
+      @device.recent_skips.should == []
+    end
+  end
+
   context 'A Device' do
     before :each do
      @device = Device.new
@@ -185,8 +255,8 @@ describe Device do
 
       @jb_device = Factory(:device)
       @jb_device.is_jailbroken = true
-      @jb_device.stubs(:save)
-      @jb_device.stubs(:save!)
+      @jb_device.stub(:save)
+      @jb_device.stub(:save!)
 
       @app = Factory(:app)
     end
@@ -234,6 +304,17 @@ describe Device do
       # second time around, should not mark as jb again
       @non_jb_device.handle_connect!('e96062c5-45f0-43ba-ae8f-32bc71b72c99', {})
       @non_jb_device.is_jailbroken?.should be_false
+    end
+  end
+
+  describe '#dashboard_device_info_tool_url' do
+    include Rails.application.routes.url_helpers
+    before :each do
+      @device = Factory :device
+    end
+
+    it 'matches URL for Rails device_info_tools_url helper' do
+      @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
     end
   end
 end

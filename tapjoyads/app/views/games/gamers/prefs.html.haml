@@ -3,7 +3,7 @@
     %h1.museo
       = t('text.games.email_notification')
     .content-box
-      - form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+      = form_for([ :games, :gamer, @gamer_profile ], :url => update_prefs_games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
         .field
           = f.check_box :allow_marketing_emails
           = f.label :allow_marketing_emails, t('text.games.allow_marketing_emails')
@@ -13,5 +13,5 @@
             = f.submit t('text.shared.save'), :class => 'button'
     .content-box
       #account_options.content-box.clearfix
-        - link_to confirm_delete_games_gamer_path do
+        = link_to confirm_delete_games_gamer_path do
           .label= t('text.games.delete_my_account')

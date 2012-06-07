@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: monthly_accountings
+#
+#  id                         :string(36)      not null, primary key
+#  partner_id                 :string(36)      not null
+#  month                      :integer(4)      not null
+#  year                       :integer(4)      not null
+#  beginning_balance          :integer(4)      not null
+#  ending_balance             :integer(4)      not null
+#  website_orders             :integer(4)      not null
+#  invoiced_orders            :integer(4)      not null
+#  marketing_orders           :integer(4)      not null
+#  transfer_orders            :integer(4)      not null
+#  spend                      :integer(4)      not null
+#  beginning_pending_earnings :integer(4)      not null
+#  ending_pending_earnings    :integer(4)      not null
+#  payment_payouts            :integer(4)      not null
+#  transfer_payouts           :integer(4)      not null
+#  earnings                   :integer(4)      not null
+#  created_at                 :datetime
+#  updated_at                 :datetime
+#  earnings_adjustments       :integer(4)      not null
+#  bonus_orders               :integer(4)      default(0), not null
+#
+
 class MonthlyAccounting < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -8,8 +34,8 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
-  named_scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
-  named_scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
+  scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
+  scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
 
   def self.expected_count
     now = Time.zone.now

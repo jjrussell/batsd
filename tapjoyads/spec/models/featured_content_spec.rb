@@ -33,7 +33,7 @@ describe FeaturedContent do
 
       it "sets an error message" do
         @featured_content.valid?
-        @featured_content.errors.on(:platforms).should == "can't be blank"
+        @featured_content.errors[:platforms].join.should == "can't be blank"
       end
     end
 
@@ -53,7 +53,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:author).should == "Please select an author."
+          @featured_content.errors[:author].join.should == "Please select an author."
         end
       end
 
@@ -78,7 +78,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:author).should == "Please select an author."
+          @featured_content.errors[:author].join.should == "Please select an author."
         end
       end
 
@@ -93,7 +93,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:author).should == "Please select an author."
+          @featured_content.errors[:author].join.should == "Please select an author."
         end
       end
     end
@@ -117,7 +117,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:tracking_offer).should == "Please select an offer/app."
+          @featured_content.errors[:tracking_offer].join.should == "Please select an offer/app."
         end
       end
 
@@ -132,7 +132,7 @@ describe FeaturedContent do
 
         it "sets an error message" do
           @featured_content.valid?
-          @featured_content.errors.on(:tracking_offer).should == "Please select an offer/app."
+          @featured_content.errors[:tracking_offer].join.should == "Please select an offer/app."
         end
       end
 

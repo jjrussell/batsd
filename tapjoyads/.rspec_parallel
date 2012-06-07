@@ -1,0 +1,5 @@
+--no-drb
+--format ParallelTests::RSpec::RuntimeLogger --out tmp/parallel_runtime_rspec.log
+--color
+--require rspec/instafail
+--format RSpec::Instafail

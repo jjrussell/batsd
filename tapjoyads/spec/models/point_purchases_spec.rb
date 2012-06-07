@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PointPurchases do
   before :each do
-    #fake_the_web
+    SimpledbResource.reset_connection
   end
 
   context "A Point Purchase" do

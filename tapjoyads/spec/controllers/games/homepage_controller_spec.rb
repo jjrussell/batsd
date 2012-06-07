@@ -1,11 +1,11 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::HomepageController do
   before :each do
     fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
-    @controller.stubs(:current_gamer).returns(@gamer)
+    @controller.stub(:current_gamer).and_return(@gamer)
   end
 
   describe '#get_language_code' do
@@ -14,9 +14,28 @@ describe Games::HomepageController do
       I18n.locale = :en
     end
 
+    after :each do
+      I18n.locale = :en
+      request.env["HTTP_ACCEPT_LANGUAGE"] = nil
+    end
+
+    it 'has hashes for each locale' do
+      I18n.available_locales.each do |locale|
+        I18n.t('hash', :locale => locale).should_not =~ /translation missing/
+      end
+    end
+
     it 'sets locale based on language code' do
       get(:index, :language_code => "de")
       I18n.locale.should == :de
+    end
+
+    it 'sets locale_filename to include hash of locale file and default locale file, for cache-busting' do
+      get(:index, :language_code => "de")
+      locale_filename = controller.send( :get_locale_filename )
+      locale_filename.should =~ Regexp.new( I18n.t('hash').to_s + '$' )
+      locale_filename.should =~ Regexp.new( I18n.t('hash', I18n.default_locale).to_s )
+      locale_filename.should =~ Regexp.new( '^'+ I18n.locale.to_s + '-' )
     end
 
     it 'checks prefix of provided language code' do
@@ -100,7 +119,7 @@ describe Games::HomepageController do
       activate_authlogic
       @gamer = Factory(:gamer)
       login_as(@gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
+      @controller.stub!(:current_gamer=>@gamer)
     end
 
     it 'creates a valid tjm_request' do
@@ -185,11 +204,14 @@ describe Games::HomepageController do
       @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
       activate_authlogic
       login_as(@gamer)
-      AppReview.expects(:paginate_all_by_app_metadata_id_and_is_blank).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
+      AppReview.stub!(:where=>AppReview)
+      AppReview.stub!(:includes=>AppReview)
+      AppReview.stub!(:paginate=>[@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do
-        controller.stubs(:current_gamer).returns(@troll_author)
+        controller.stub!(:current_gamer=>@troll_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
@@ -199,7 +221,7 @@ describe Games::HomepageController do
     end
     context 'good author viewer ' do
       before :each do
-        controller.stubs(:current_gamer).returns(@good_author)
+        controller.stub!(:current_gamer=>@good_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
@@ -209,7 +231,7 @@ describe Games::HomepageController do
     end
     context 'unassociated gamer viewer' do
       before :each do
-        controller.stubs(:current_gamer).returns(@gamer)
+        controller.stub!(:current_gamer=>@gamer)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
@@ -228,7 +250,7 @@ describe Games::HomepageController do
       get(:record_local_request, @params)
       response.response_code.should == 200
       tjm_request = assigns(:tjm_request)
-      tjm_request.path.should include('tjm_games/gamer_sessions_destroy')
+      tjm_request.path.should include('tjm_logout')
       tjm_request.controller.should == 'games/gamer_sessions'
       tjm_request.action.should == 'destroy'
       tjm_request.is_ajax.should be_true

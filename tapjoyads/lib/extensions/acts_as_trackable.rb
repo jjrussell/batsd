@@ -23,7 +23,7 @@ module ActsAsTrackable
         :bid              => 0,
         :min_bid_override => 0,
         :rewarded         => false,
-        :name_suffix      => 'tracking',
+        :name_suffix      => "tracking for #{tracked_for.class.to_s.titleize.downcase}",
         :url_overridden   => false,
         :tapjoy_enabled   => true,
       }
@@ -58,7 +58,7 @@ module ActsAsTracking
       belongs_to :tracking_for, :polymorphic => true
       validates_presence_of :tracking_for, :if => Proc.new { |offer| offer.tracking_for_id? || offer.tracking_for_type? }
       after_save :disable_other_tracking_offers
-      named_scope :tracked_for, lambda { |tracking_for| { :conditions => [ "tracking_for_type = ? and tracking_for_id = ?", tracking_for.class.name, tracking_for.id ] } }
+      scope :tracked_for, lambda { |tracking_for| { :conditions => [ "tracking_for_type = ? and tracking_for_id = ?", tracking_for.class.name, tracking_for.id ] } }
     end
   end
 

@@ -60,11 +60,6 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:show)
-      should_respond_with_json_error(400)
-    end
-
     it 'responds with error given bad credentials' do
       get(:show, @valid_params.merge(:api_key => 'foo'))
       should_respond_with_json_error(403)
@@ -195,11 +190,6 @@ describe AgencyApi::PartnersController do
         :api_key => agency_user.api_key,
         :name => 'partner_rename',
       }
-    end
-
-    it 'responds with error given missing params' do
-      put(:update)
-      should_respond_with_json_error(400)
     end
 
     it 'responds with error given bad credentials' do

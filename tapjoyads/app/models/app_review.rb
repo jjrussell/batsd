@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: app_reviews
+#
+#  id                  :string(36)      not null, primary key
+#  app_id              :string(36)
+#  author_id           :string(36)      not null
+#  author_type         :string(255)     not null
+#  text                :text            default(""), not null
+#  created_at          :datetime
+#  updated_at          :datetime
+#  platform            :string(255)
+#  user_rating         :integer(4)      default(0)
+#  app_metadata_id     :string(36)      not null
+#  helpful_votes_count :integer(4)      default(0)
+#  bury_votes_count    :integer(4)      default(0)
+#  helpful_values_sum  :integer(4)      default(0)
+#  is_blank            :boolean(1)      default(FALSE)
+#
+
 class AppReview < ActiveRecord::Base
   BURY_LIMIT = 20
   include UuidPrimaryKey
@@ -8,6 +28,7 @@ class AppReview < ActiveRecord::Base
   has_many :helpful_votes
   has_many :bury_votes
 
+  before_validation :set_is_blank
   after_save :update_app_metadata_rating_counts
   before_destroy :reset_app_metadata_rating_counts
 
@@ -15,9 +36,9 @@ class AppReview < ActiveRecord::Base
   validates_presence_of :author, :app_metadata
   validates_inclusion_of :user_rating, :in => [-1, 0, 1]
 
-  named_scope :by_employees, :conditions => { :author_type => 'Employee' }
-  named_scope :by_gamers, :conditions => { :author_type => 'Gamer' }
-  named_scope :ordered_by_date, :order => "updated_at DESC"
+  scope :by_employees, :conditions => { :author_type => 'Employee' }
+  scope :by_gamers, :conditions => { :author_type => 'Gamer' }
+  scope :ordered_by_date, :order => "created_at DESC"
 
   delegate :name, :to => :app_metadata, :prefix => true
 
@@ -53,7 +74,7 @@ class AppReview < ActiveRecord::Base
     end
   end
 
-  def before_validation
+  def set_is_blank
     is_blank = text.blank?
     true
   end

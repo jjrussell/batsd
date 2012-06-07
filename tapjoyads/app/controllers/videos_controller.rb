@@ -21,13 +21,17 @@ class VideosController < ApplicationController
       @video_offer = VideoOffer.find_in_cache(params[:id])
       @offer       = Offer.find_in_cache(params[:offer_id])
     end
+
     return unless verify_records([ @video_offer, @offer ])
+
+    @video_buttons = @video_offer.video_buttons.reject { |button| !button.enabled? }.sort_by(&:ordinal)[0..1]
   end
 
   private
 
   def setup
     params[:currency_id] ||= params[:app_id]
+    params[:source] ||= 'video'
     return unless verify_params([ :app_id, :udid, :currency_id, :publisher_user_id ])
 
     @device = Device.new(:key => params[:udid])

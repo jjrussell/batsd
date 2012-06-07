@@ -1,0 +1,19 @@
+#app-section
+  %h2
+    Add Apps to Device
+  %ul#app-list
+    - @apps.to_a.shuffle.each_with_index do |app, i|
+      - if i < 30
+        %li.each-app
+          - link_to "#{API_URL}/connect?app_id=#{app[1].app_id}", :class => 'app-link' do
+            .left.screw-spinner
+              .screw
+            .app-name.left= app[1].app_name
+
+- content_for :page_head do
+  = css_tag 'lib/screw-spinner'
+  = css_tag 'tools/link_apps'
+
+- content_for :included_javascripts do
+  = js_tag 'lib/screw-spinner'
+  = js_tag 'tools/link-apps'

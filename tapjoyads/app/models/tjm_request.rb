@@ -2,7 +2,7 @@ class TjmRequest < SyslogMessage
 
   PATH_MAP = {
     'homepage' => {
-      'index    '                   => 'home',
+      'index'                       => 'home',
       'show'                        => 'my_profile',
       'send_device_link'            => 'email_device_link',
       'switch_device'               => 'switch_device',
@@ -42,6 +42,9 @@ class TjmRequest < SyslogMessage
       'show'                        => 'view_account',
       'edit'                        => 'edit_account',
       'update'                      => 'account_info_changed',
+      'dissociate_account'          => 'dissociate_social_account',
+      'update_prefs'                => 'update_preferences',
+      'update_birthdate'            => 'update_birthdate',
     },
     'password_resets' => {
       'new'                         => 'forgot_password',
@@ -87,6 +90,8 @@ class TjmRequest < SyslogMessage
   self.define_attr :display_path
   self.define_attr :outbound_click_url
 
+  attr_accessor :tracking_param
+
   def initialize(options = {})
     session    = options.delete(:session)    { |k| raise "#{k} is a required argument" }
     request    = options.delete(:request)    { |k| raise "#{k} is a required argument" }
@@ -125,14 +130,21 @@ class TjmRequest < SyslogMessage
           self.social_source          = social_referrer[1]
           self.social_action          = social_referrer[2]
           self.social_referrer_gamer  = social_referrer[3]
-        else
+        elsif referrer.include?(',')
           self.replace_path('tjm_invite_referrer')
           invitation_or_gamer_id, advertiser_app_id = referrer.split(',')
           self.social_invitation_or_gamer_id  = invitation_or_gamer_id
           self.social_advertiser_app_id       = advertiser_app_id
+        else
+          return true
         end
       end
     end
+
+    if @tracking_param.present?
+      self.replace_path("#{self.path}_#{@tracking_param}")
+    end
+
     super
   end
 
@@ -155,6 +167,7 @@ class TjmRequest < SyslogMessage
   end
 
   def lookup_path
-    PATH_MAP.include?(controller) && PATH_MAP[controller].include?(action) ? "tjm_#{PATH_MAP[controller][action]}" : "tjm_#{controller}_#{action}"
+    subbed_controller = controller.sub(/^games\//, '')
+    PATH_MAP.include?(subbed_controller) && PATH_MAP[subbed_controller].include?(action) ? "tjm_#{PATH_MAP[subbed_controller][action]}" : "tjm_#{controller}_#{action}"
   end
 end

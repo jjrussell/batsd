@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: video_offers
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  name       :string(255)     not null
+#  hidden     :boolean(1)      default(FALSE), not null
+#  video_url  :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
@@ -9,7 +22,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :cache_video_buttons_and_tracking_offers
+  set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -19,7 +32,7 @@ class VideoOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def update_buttons
     offers.each do |offer|

@@ -6,7 +6,7 @@
       - elsif params[:type] === "report_bug"
         = t('text.games.report_bug')
       - elsif params[:type] === "contact_support"
-        = t('text.games.contact_support')
+        = t('text.games.contact_support_page_title')
       - else
         = t('text.games.contact_us')
     .support-form.pillow.big-msg.mb30
@@ -15,8 +15,6 @@
       - elsif params[:type] === "report_bug"
         = t('text.games.thanks_report_bug')
       - elsif params[:type] === "contact_support"
-        = t('text.games.thanks_contact_support')
+        = t('text.games.contact_support_thanks')
       - else
         = t('text.games.thanks_contact_us')
-
-

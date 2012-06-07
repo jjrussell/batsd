@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :get_local_tracking_url
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :get_local_tracking_url
 
   protected
 
@@ -28,7 +28,12 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
+    I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+  end
+
+  def get_locale_filename
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
   def get_language_codes
@@ -89,7 +94,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue
@@ -160,7 +168,7 @@ class GamesController < ApplicationController
   def require_gamer
     unless current_gamer
       path = url_for(params.merge(:only_path => true))
-      options = { :path => path } unless path == games_root_path
+      options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
       if request.xhr?
         render :json=> "Unauthorized", :status => 401
@@ -186,7 +194,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{games_social_index_path}"
+    "#{WEBSITE_URL}#{games_social_root_path}"
   end
 
   def current_gamer
@@ -240,14 +248,6 @@ class GamesController < ApplicationController
 
   def has_multiple_devices?
     current_gamer.devices.size > 1
-  end
-
-  def device_type
-    @device_type ||= HeaderParser.device_type(request.user_agent)
-  end
-
-  def os_version
-    @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
   def select_layout

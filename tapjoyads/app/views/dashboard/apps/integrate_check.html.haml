@@ -1,0 +1,53 @@
+- @page_title = 'Check Integration Status'
+- @dropdown_options = { :with_new_app_button => true }
+
+%h3 Integration status
+
+%p
+  - if @device
+    - if @matched
+      .flash#flash_notice
+        %strong Success:
+        %span.message
+          Device with UDID/IMEI
+          %strong "#{h(params[:udid])}"
+          and MAC address of
+          %strong "#{h(params[:mac_address])}"
+          was found!
+    - else
+      .flash#flash_error
+        %strong Failure:
+        %span.message
+          Device with UDID/IMEI
+          %strong "#{h(params[:udid])}"
+          and MAC address of
+          %strong "#{h(params[:mac_address])}"
+          was NOT found!
+
+%p
+  You can check the integration status of your app here by typing in the
+  UDID/IMEI and MAC address of the device you are testing.
+
+%p
+  = form_for '', :html => { :method => :get } do
+    Device ID (UDID/IMEI):
+    %br/
+    = text_field_tag :udid, params[:udid]
+
+    %br/
+    MAC Address:
+    %br/
+    = text_field_tag :mac_address, params[:mac_address]
+    %br/
+    = submit_tag 'Look up'
+
+%p
+  Need help?
+  Please refer to our #{link_to('Knowledge Center', KNOWLEDGE_CENTER_URL)},
+  check out our #{link_to('Developer Forum', DEV_FORUM_URL)},
+  or contact our #{mail_to('support@tapjoy.com', 'support team')}.
+
+%p
+  .left.download_link
+    - sdk_link 'Advertiser Library Download', "#{@app.platform}-adv"
+  .clear

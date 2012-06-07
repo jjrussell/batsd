@@ -2,7 +2,7 @@ class SprocketController < ApplicationController
   caches_page :show
 
   def show
-    full_filename = params[:filename].join("/")
+    full_filename = params[:filename]
     extension = full_filename.split(/\./).last
 
     full_filename.sub! /^(.*)-.*$/, '\1'

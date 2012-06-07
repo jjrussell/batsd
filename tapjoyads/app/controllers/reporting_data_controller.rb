@@ -1,4 +1,4 @@
-class ReportingDataController < WebsiteController
+class ReportingDataController < ApplicationController
   include Curbit::Controller
 
   layout false

@@ -18,7 +18,7 @@
           .box
           .box
     .logo
-      - link_to(games_root_path) do
+      = link_to(games_path) do
         %img{ :src => BLANK_IMAGE }
     - if current_gamer.present?
       .menu-dropdown
@@ -36,26 +36,29 @@
                   = t('text.games.on_my', :device_name => current_device.name)
                 %a.device-change
                   (#{t('text.games.change')})
-          #device-select.device-select.closed
+          - list = current_gamer ? current_gamer.all_device_data.to_json : [].to_json
+          - path = games_switch_device_path
+          - possible_links = { :ios => new_games_device_path, :android => GAMES_ANDROID_MARKET_URL }.to_json
+          #device-select.device-select.closed{ :data => { :list => list, 'select-path' => path, :links => possible_links } }
             #device-select-list.device-select-wrapper
           .device-form.hide
           .menu-nav
             .menu-nav-wrapper
-              - link_to(games_root_path) do
+              = link_to(games_path) do
                 .my_apps
                   %span= t('text.games.my_apps')
-              - link_to(games_more_games_editor_picks_path) do
+              = link_to(games_more_games_editor_picks_path) do
                 .more_apps
                   %span= t('text.games.more_apps')
-              - link_to(games_gamer_path) do
+              = link_to(games_gamer_path) do
                 .profile
                   %span= t('text.games.profile')
           .menu-subnav.clearfix
             .menu-subnav-wrapper
-              - link_to(games_help_path) do
+              = link_to(games_help_path) do
                 .help
                   %span= t('text.shared.help')
-              - link_to(games_logout_path) do
+              = link_to(games_logout_path) do
                 .logout
                   %span= t('text.shared.logout')
 
@@ -66,6 +69,6 @@
     .left.phraseThatPays
       = t('text.games.about_body')
     .right
-      - link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
+      = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
         #signup.header-button
           = t('text.shared.sign_up')

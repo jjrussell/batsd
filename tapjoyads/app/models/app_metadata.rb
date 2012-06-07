@@ -1,4 +1,31 @@
+# == Schema Information
+#
+# Table name: app_metadatas
+#
+#  id                  :string(36)      not null, primary key
+#  name                :string(255)
+#  description         :text
+#  price               :integer(4)      default(0)
+#  store_name          :string(255)     not null
+#  store_id            :string(255)     not null
+#  age_rating          :integer(4)
+#  file_size_bytes     :integer(4)
+#  supported_devices   :string(255)
+#  released_at         :datetime
+#  user_rating         :float
+#  categories          :string(255)
+#  created_at          :datetime
+#  updated_at          :datetime
+#  papaya_user_count   :integer(4)
+#  thumbs_up           :integer(4)      default(0)
+#  thumbs_down         :integer(4)      default(0)
+#  countries_blacklist :text
+#
+
 class AppMetadata < ActiveRecord::Base
+  def self.table_name
+    "app_metadatas"
+  end
   include UuidPrimaryKey
   json_set_field :countries_blacklist
 

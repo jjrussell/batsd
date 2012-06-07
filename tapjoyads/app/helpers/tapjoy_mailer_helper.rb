@@ -1,5 +1,8 @@
 module TapjoyMailerHelper
   def support_request_field(name, value)
-    "<p><b>#{name.to_s.humanize}: </b>#{value.present? ? value : "N/A"}</p>"
+    content_tag :p do
+      content_tag(:strong, "#{name.to_s.humanize}: ") +
+      "#{value.present? ? value : "N/A"}"
+    end
   end
 end

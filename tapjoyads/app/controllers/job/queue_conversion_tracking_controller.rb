@@ -36,8 +36,9 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     device = Device.new(:key => click.udid)
     other_devices = (publisher_user.udids - [ click.udid ]).map { |udid| Device.new(:key => udid) }
 
-    if (other_devices + [ device ]).any?(&:banned?)
-      click.block_reason = "Banned"
+    banned_devices = (other_devices + [ device ]).select(&:banned?)
+    if banned_devices.present?
+      click.block_reason = "Banned (UDID=#{banned_devices.map(&:key).join ', '})"
       click.save
       return
     end

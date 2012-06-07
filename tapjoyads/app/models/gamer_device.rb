@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: gamer_devices
+#
+#  id          :string(36)      not null, primary key
+#  gamer_id    :string(36)      not null
+#  device_id   :string(255)     not null
+#  name        :string(255)     not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#  device_type :string(255)
+#
+
 class GamerDevice < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -82,6 +95,12 @@ class GamerDevice < ActiveRecord::Base
       :device_type => device_type,
       :data        => ObjectEncryptor.encrypt(data),
     }
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.device_id}"
   end
 
   private
