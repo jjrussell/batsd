@@ -24,13 +24,8 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
     log_activity(@video_button)
 
     if @video_button.save
-      unless @video_offer.valid_for_update_buttons?
-        flash.now[:warning] = 'Support at most 2 enabled buttons.'
-        render :action => :new
-      else
-        flash[:notice] = 'Successfully created Video Button'
-        redirect_to :action => :index
-      end
+      flash[:notice] = 'Successfully created Video Button'
+      redirect_to :action => :index
     else
       render :action => :new
     end
@@ -40,13 +35,8 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
     log_activity(@video_button)
 
     if @video_button.update_attributes(params[:video_button])
-      unless @video_offer.valid_for_update_buttons?
-        flash.now[:warning] = 'Support at most 2 enabled buttons.'
-        render :action => :edit
-      else
-        flash[:notice] = 'Successfully updated Video Button'
-        redirect_to :action => :index
-      end
+      flash[:notice] = 'Successfully updated Video Button'
+      redirect_to :action => :index
     else
       render :action => :edit
     end

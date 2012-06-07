@@ -81,10 +81,6 @@ describe VideoOffer do
       it 'makes buttons enabled by default' do
         subject.video_buttons.enabled.size.should == 3
       end
-
-      it 'is not valid for update buttons' do
-        subject.should_not be_valid_for_update_buttons
-      end
     end
 
     context 'given two enabled buttons (one of which was formerly enabled)' do
@@ -98,10 +94,6 @@ describe VideoOffer do
 
       it 'correctly tracks disabled buttons' do
         subject.video_buttons.enabled.size.should == 2
-      end
-
-      it 'is valid for update buttons' do
-        subject.should be_valid_for_update_buttons
       end
     end
 

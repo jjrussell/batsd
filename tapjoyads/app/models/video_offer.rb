@@ -36,13 +36,9 @@ class VideoOffer < ActiveRecord::Base
 
   def update_buttons
     offers.each do |offer|
-      offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
+      offer.third_party_data = xml_for_buttons
       offer.save! if offer.changed?
     end
-  end
-
-  def valid_for_update_buttons?
-    video_buttons.enabled.size <= 2
   end
 
   def available_trackable_items(selected_id=nil)
