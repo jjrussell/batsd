@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Device do
-  before :each do
-    enable_sdb
-  end
-
   describe '.normalize_device_type' do
     context 'type is iPhone' do
       it 'returns iphone' do
