@@ -236,7 +236,8 @@ $(document).ready(function(){
     function conversionTracking() {
       var axel = Math.random() + "";
       var a = axel * 10000000000000;
-      //document.write('<iframe src="http://fls.doubleclick.net/activityi;src=3509778;type=conve639;cat=thank283;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+      document.write('<iframe src="https://fls.doubleclick.net/activityi;src=3509778;type=conve639;cat=thank283;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+      alert('register-success');
     }
     
     $('#new_gamer').on('click', '.try-again', function () {
