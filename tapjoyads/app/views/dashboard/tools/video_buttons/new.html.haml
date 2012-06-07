@@ -2,4 +2,9 @@
 
 %h1= "Create #{@page_title}"
 
+- if @video_offer.video_buttons.enabled.count >= 2
+  .flash{ :id => "flash_notice", :title => "Click to dismiss this message", :style => 'margin-bottom: 1em' }
+    %strong Notice:
+    Only 2 buttons will be displayed on the completion screen. You may add more than 2 to account for different device types.
+
 = render 'form'
