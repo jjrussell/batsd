@@ -31,6 +31,9 @@
         = error_message_on @video_button, :enabled
     %tr
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
+
+%p{ :style => 'clear: left' }
+  = link_to 'Back to Buttons', tools_video_offer_video_buttons_path(@video_offer.id)
 .hidden
   #help_name_content{ :name => 'Name' } The text appearing on the button. Maximum 20 characters.
   #help_item_content{ :name => 'Item' } The offer this button uses for link generation and tracking.
