@@ -97,15 +97,17 @@ class OfferList
     found_offer_item_ids = Set.new
     offers_to_find = start + max_offers
     found_offers = 0
+    
+    unless @algorithm.blank?
+      # TODO: dry this up.
+      optimized_offers.each_with_index do |offer, i|
+        return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
 
-    # TODO: dry this up.
-    optimized_offers.each_with_index do |offer, i|
-      return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
-
-      unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
-        returned_offers << offer if found_offers >= start
-        found_offer_item_ids << offer.item_id
-        found_offers += 1
+        unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
+          returned_offers << offer if found_offers >= start
+          found_offer_item_ids << offer.item_id
+          found_offers += 1
+        end
       end
     end
 

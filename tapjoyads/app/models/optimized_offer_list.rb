@@ -6,10 +6,10 @@ class OptimizedOfferList
   class << self
 
     def get_offer_list(options)
-      offers = get_offer_list(options)
-      offers = get_offer_list(options.merge({ :country => nil })) if offers.nil?
-      offers = get_offer_list(options.merge({ :currency_id => nil })) if offers.nil?
-      offers = get_offer_list(options.merge({ :currency_id => nil, :country => nil })) if offers.nil?
+      offers = get_cached_offer_list(options)
+      offers = get_cached_offer_list(options.merge({ :country => nil })) if offers.blank?
+      offers = get_cached_offer_list(options.merge({ :currency_id => nil })) if offers.blank?
+      offers = get_cached_offer_list(options.merge({ :currency_id => nil, :country => nil })) if offers.blank?
 
       offers || []
     end
@@ -24,7 +24,7 @@ class OptimizedOfferList
       end
     end
 
-    def get_offer_list(options = {})
+    def get_cached_offer_list(options = {})
       cache_key = cache_key_for_options(options)
       group = 0
       offers = []
