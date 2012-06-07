@@ -17,8 +17,8 @@ class Dashboard::Tools::PartnerAssignmentsController < Dashboard::DashboardContr
   end
 
   def destroy
-    if @partner.users.length == 1
-      flash[:error] = "Last user cannot be removed with this tool"
+    if @user.id == User::USERLESS_PARTNER_USER_ID
+      flash[:error] = "Invalid user for this action"
     elsif @partner.remove_user(@user)
       flash[:notice] = "<b>#{@user.email}</b> no longer has access to <b>#{@partner.name}</b>."
     else

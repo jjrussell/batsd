@@ -32,7 +32,8 @@ class GamesController < ApplicationController
   end
 
   def get_locale_filename
-    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}"
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
   def get_language_codes
@@ -93,7 +94,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue

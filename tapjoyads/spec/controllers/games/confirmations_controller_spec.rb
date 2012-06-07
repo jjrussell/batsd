@@ -25,7 +25,7 @@ describe Games::ConfirmationsController do
     end
     context 'with valid data for confirm only message' do
       it 'queues post confirm message' do
-        Sqs.expects(:send_message)
+        Sqs.should_receive(:send_message)
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
         get(:create, :data => data)
       end
@@ -44,6 +44,13 @@ describe Games::ConfirmationsController do
         response.code.should == "302"
         request.session[:flash][:error].should == 'Unable to confirm email address.'
         response.redirect_url.should == games_root_url
+      end
+    end
+    context 'with extra spaces in the posted data (like SendGrid, sometimes)' do
+      it 'strips the spaces and continues' do
+        Sqs.should_receive(:send_message)
+        data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'}).insert(5, ' ')
+        get(:create, :data => data)
       end
     end
   end

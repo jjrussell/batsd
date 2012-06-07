@@ -203,10 +203,10 @@ span.gill {
 
     .signup-nav-menu {
       color: #fff;
-      height: 60px;
       margin: 0 auto;
-      padding-top: 24px;
+      padding: 15px 0;
       width: 300px;
+      overflow: auto;
 
       #gamer_submit {
         position: relative;
@@ -216,11 +216,12 @@ span.gill {
       .title {
         font: 500 22px "Museo Slab";
         color: #fff;
+        float: left;
+        padding-top: 5px;
       }
       .next-btn {
         cursor: default;
         float: right;
-        display: inline-block;
         padding: 10px 24px;
         position: relative;
         top: 12px;
@@ -258,7 +259,8 @@ span.gill {
     }
   }
   .register-progress {
-    padding-top: 150px;
+    margin: 0 auto;
+    width: 300px;
     @include animate(all, 0.35s, ease-in);
 
     .register-message {
@@ -267,8 +269,6 @@ span.gill {
     .register-loader {
       width: 180px;
       margin: 0 auto;
-      opacity: 0;
-      visibility: hidden;
 
       #tapjoy_loader {
         padding: 6px 0;

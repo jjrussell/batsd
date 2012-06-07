@@ -55,7 +55,7 @@
         - partner = partner_assignment.partner
         %tr
           %td
-            - if partner.users.length > 1
+            - if @user.id != User::USERLESS_PARTNER_USER_ID
               - path = tools_user_partner_assignment_path(:user_id => @user.id, :id => partner_assignment.id)
               = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
             - else

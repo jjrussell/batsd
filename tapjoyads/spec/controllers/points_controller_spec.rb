@@ -18,7 +18,7 @@ describe PointsController do
         :timestamp => Time.zone.now
       }
       @params[:verifier] = verifier(@params)
-      Sqs.stubs(:send_message)
+      Sqs.stub(:send_message)
     end
 
     it 'renders error for bad verifier' do
@@ -35,9 +35,9 @@ describe PointsController do
     end
 
     it 'awards points and renders user_account' do
-      Sqs.expects(:send_message)
-      controller.expects(:check_success).with('award_points')
-      Reward.any_instance.expects(:save!).with(:expected_attr => { 'type' => nil })
+      Sqs.should_receive(:send_message)
+      controller.should_receive(:check_success).with('award_points')
+      Reward.any_instance.should_receive(:save!).with(:expected_attr => { 'type' => nil })
       get(:award, @params)
       should render_template('get_vg_store_items/user_account')
       assigns(:success).should be_true
@@ -90,7 +90,7 @@ describe PointsController do
       p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
       p.points += 100
       p.save!
-      controller.expects(:check_success).with('spend_points')
+      controller.should_receive(:check_success).with('spend_points')
       get(:spend, @params)
       assigns(:success).should be_true
       assigns(:point_purchases).should_not be_nil
@@ -121,7 +121,7 @@ describe PointsController do
       p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
       p.points += 100
       p.save!
-      controller.expects(:check_success).with('purchased_vg')
+      controller.should_receive(:check_success).with('purchased_vg')
       get(:purchase_vg, @params)
       should render_template('get_vg_store_items/user_account')
       assigns(:success).should be_true
@@ -164,7 +164,7 @@ describe PointsController do
       p.points += 100
       p.save!
       PointPurchases.purchase_virtual_good(p.key, @vg.key, 3)
-      controller.expects(:check_success).with('consumed_vg')
+      controller.should_receive(:check_success).with('consumed_vg')
       get(:consume_vg, @params)
       should render_template('get_vg_store_items/user_account')
       assigns(:success).should be_true
@@ -178,7 +178,7 @@ describe PointsController do
       p.points += 100
       p.save!
       PointPurchases.purchase_virtual_good(p.key, @vg.key, 3)
-      controller.expects(:check_success).with('consumed_vg')
+      controller.should_receive(:check_success).with('consumed_vg')
       get(:consume_vg, @params.merge(:quantity => 2))
       should render_template('get_vg_store_items/user_account')
       assigns(:success).should be_true

@@ -45,7 +45,7 @@ describe Dashboard::BillingController do
       @payout_info = Factory(:payout_info, :partner => @partner)
       @partner.payout_info_confirmation = true
       @partner.save!
-      @partner.payout_info.stubs(:safe_update_attributes).returns(true)
+      @partner.payout_info.stub(:safe_update_attributes).and_return(true)
       post(:update_payout_info, :payout_info => {})
       @partner.reload
     end

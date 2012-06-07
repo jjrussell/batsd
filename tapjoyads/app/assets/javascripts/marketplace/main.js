@@ -61,12 +61,12 @@ $(document).ready(function(){
   // Login Validation
   if ($('form#new_gamer_session').length > 0) {
     $('form#new_gamer_session input').focus(function() {
-      $('form#new_gamer_session .form-error').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
+      errorContainer.html('&nbsp;').hide();
     });
     $('form#new_gamer_session').submit(function(e){
       Tapjoy.Utils.Cookie.set('cookies_enabled', 'test', 1);
       var test_cookie = Tapjoy.Utils.Cookie.get('cookies_enabled');
-      errorContainer.css({opacity: '0', visibility: 'hidden'});
+      errorContainer.hide();
       var inputs, email, pass, values = {};
       var emailRegex = /^([\w-\.+]+@([\w-]+\.)+[\w-]{2,4})?$/;
       inputs = $('form#new_gamer_session :input*');
@@ -81,15 +81,15 @@ $(document).ready(function(){
       email = values['gamer_session[email]'];
       pass = values['gamer_session[password]'];
       if (Tapjoy.Utils.isEmpty(email) || email == 'Email') {
-        errorContainer.html(_t('games.enter_email')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_email')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(pass) || pass == 'Password') {
-        errorContainer.html(_t('games.enter_password')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.enter_password')).show();
         e.preventDefault();
       }
       else if (Tapjoy.Utils.isEmpty(test_cookie)) {
-        errorContainer.html(_t('games.cookies_required')).css({opacity: '1', visibility: 'visible !important'});
+        errorContainer.html(_t('games.cookies_required')).show();
         e.preventDefault();
       }
       else {
@@ -100,6 +100,9 @@ $(document).ready(function(){
 
   // Signup Validation
   if($('form#new_gamer').length > 0) {
+    $('form#new_gamer input').focus(function() {
+      errorContainer.html('&nbsp;').hide();
+    });
     var values = {}, tempVal = {}, data, preSelected = false, hasError = false, cookieError = false;
     var activeState = 'orange-action', inactiveState = 'grey-action';
     var rurl = $('form#new_gamer').attr('action');
@@ -215,7 +218,7 @@ $(document).ready(function(){
 
     $('form#new_gamer input, form#new_gamer select').bind('change', function(e){
       validate();
-      errorContainer.css('opacity', 0);
+      errorContainer.hide();
 
       if(!hasError){
         $('#gamer_submit').addClass('orange-action').removeClass('soft-grey-action').removeClass('disabled').addClass('enabled').css({cursor:'pointer'});
@@ -223,17 +226,19 @@ $(document).ready(function(){
         $('#gamer_submit').removeClass('orange-action').addClass('soft-grey-action').removeClass('enabled').addClass('disabled').css({cursor:'default'});
       }
     });
-
-
     function showValidationError(msg){
       hasError = true;
-      errorContainer.html(msg).css('opacity', 1);
+      errorContainer.html(msg).show();
       return false;
     }
-
+    $('#new_gamer').on('click', '.try-again', function () {
+      $('.register-message').html('&nbsp;').hide();
+      $(".register-form").removeClass('close').show();
+     });
     // Form Submit
     var unbindSubmit = false;
     $('form#new_gamer').bind('submit', function(e){
+      var $this = $(this), linkDeviceUrls = $this.data('link-urls'), rootUrl = $this.data('root-url');
 
       e.preventDefault();
 
@@ -248,10 +253,9 @@ $(document).ready(function(){
         }
 
         if(!hasError){
-          $(".register-form").addClass('close').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-          errorContainer.css({opacity: '0', visibility: 'hidden'});
-          $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-          $('.register-loader').css({opacity: '1', visibility: 'visible !important'});
+          $(".register-form").addClass('close').hide();
+          errorContainer.hide();
+          $('.register-loader').show();
           $.ajax({
             type: 'POST',
             url: rurl,
@@ -267,6 +271,7 @@ $(document).ready(function(){
               'gamer[referrer]': values['gamer[referrer]'],
               'gamer[terms_of_service]': values['gamer[terms_of_service]'],
               'gamer[nickname]': values['gamer[nickname]'],
+              'gamer[account_type]': values['gamer[account_type]'],
               'date[day]': values['date[day]'],
               'date[month]': values['date[month]'],
               'date[year]': values['date[year]'],
@@ -274,44 +279,20 @@ $(document).ready(function(){
               'default_platforms[ios]': values['default_platform_ios']
             },
             success: function(d) {
-              $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
               var msg, goHome = false, unbindSubmit = true;
               if (d.success) {
-                if (d.link_device_url) { // link device url returned
-                  if (Tapjoy.device.idevice) { // is ios device
-                    $('.register-loader').show().css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-ios').show().css({opacity: '1', visibility: 'visible !important'});
-                    $('#gamer_submit').click(function() {
-                      document.location.href = d.link_device_url;
-                    });
-                  }
-                  else if (Tapjoy.device.android && d.android) { // if coming from tjm android app
-                    document.location.href = d.link_device_url;
-                  }
-                  else if (Tapjoy.device.android && Tapjoy.androidAppPath) { // if android device
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
-                    $('#gamer_submit').click(function() {
-                      document.location.href = Tapjoy.androidAppPath;
-                    });
-                  }
-                  else {
-                    goHome = true;
-                  }
+                if (d.redirect_url) { // redirect to link device
+                  document.location.href = d.redirect_url;
                 }
-                else if (Tapjoy.device.android && Tapjoy.androidAppPath){
-                    $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-                    $('#register-android').show().css({opacity: '1', visibility: 'visible !important'});
-                }
-                else if (Tapjoy.rootPath) {
-                  document.location.href = Tapjoy.rootPath;
+                else if (rootUrl) {
+                  document.location.href = rootUrl;
                 }
                 else {
                   goHome = true;
                 }
                 if (goHome) {
-                  if (Tapjoy.rootPath) {
-                    document.location.href = Tapjoy.rootPath;
+                  if (rootUrl) {
+                    document.location.href = rootUrl;
                   }
                   else {
                     document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
@@ -333,15 +314,8 @@ $(document).ready(function(){
                   '<div class="error">', error ,'.</div>',
                   '<div class="try-again ui-joy-button soft-grey-action">'+_t('shared.try_again')+'</div>',
                 ].join('');
-                $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-                $('.register-message').html(msg).show().css({opacity: '1', visibility: 'visible !important'});
+                $('.register-message').html(msg).show();
               }
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-
-              });
             },
             error: function() {
               var error = 'There was an issue';
@@ -350,19 +324,79 @@ $(document).ready(function(){
                 '<div class="error ">', error ,'.</div>',
                 '<div class="try-again ui-joy-button orange-action">'+_t('shared.try_again')+'</div>',
               ].join('');
-              $('.register-progress').show().css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-              $('.register-message').html(msg).css({opacity: '1', visibility: 'visible !important'});
-              $('.register-loader').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'});
-              $('.try-again').click(function(){
-                $('.register-message').html('&nbsp;').css({opacity: '0', visibility: 'hidden'});
-                $('.register-progress').css({opacity: '0', visibility: 'hidden', height: '0', overflow : 'hidden'}).hide();
-                $(".register-form").removeClass('close').css({opacity: '1', visibility: 'visible !important', height: 'auto'});
-              });
+              $('.register-message').html(msg).show();
+              $('.register-loader').hide();
             }
           });
         }
       }
     });
+  }
+
+  // Facebook sign up/login
+  if ($("#log-in-with-facebook-form").length > 0) {
+    if (Tapjoy.device.idevice) {
+      var default_platform = 'ios';
+    } else if (Tapjoy.device.android) {
+      var default_platform = 'android';
+    }
+    var action = $("#log-in-with-facebook-form").attr('action');
+    var joint = action.indexOf('?') == -1 ? '?' : '&';
+    if (default_platform !== undefined) {
+      $("#log-in-with-facebook-form").attr('action', action + joint + "default_platform=" + default_platform);
+    }
+  }
+
+  // Link device
+  if($("#register-android").length > 0 || $("#register-ios").length > 0) {
+    var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
+    var android = window.linkDeviceOptions.android;
+    var linkDeviceUrls = window.linkDeviceOptions.possibleLinks;
+    var rootUrl = window.linkDeviceOptions.rootUrl;
+
+    if (link_device_url) { // link device url returned
+      if (Tapjoy.device.idevice) { // is ios device
+        $('.register-loader').hide();
+        $('#register-ios').show();
+        $('#gamer_submit').click(function() {
+          document.location.href = link_device_url;
+        });
+      }
+      else if (Tapjoy.device.android && android) { // if coming from tjm android app
+        document.location.href = link_device_url;
+      }
+      else if (Tapjoy.device.android && linkDeviceUrls.android) { // if android device
+        $('.register-loader').hide();
+        $('#register-android').show();
+        $('#gamer_submit').click(function() {
+          document.location.href = linkDeviceUrls.android;
+        });
+      }
+      else {
+        goHome = true;
+      }
+    }
+    else if (Tapjoy.device.android && linkDeviceUrls.android){
+      $('.register-loader').hide();
+      $('#register-android').show();
+      $('#gamer_submit').click(function() {
+        document.location.href = linkDeviceUrls.android;
+      });
+    }
+    else if (rootUrl) {
+      document.location.href = rootUrl;
+    }
+    else {
+      goHome = true;
+    }
+    if (goHome) {
+      if (rootUrl) {
+        document.location.href = rootUrl;
+      }
+      else {
+        document.location.href = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '')
+      }
+    }
   }
 
   // Menu Grid
@@ -547,23 +581,6 @@ $(document).ready(function(){
   $(".submit-child-form").click(function () {
     $("form", this).submit();
     return false;
-  });
-
-  $(".login-to-facebook").click(function () {
-    var scope = 'offline_access,publish_stream',
-      $$ = $(this),
-      FB = window.FB;
-    FB.login(function (response, scope) {
-      if (response.authResponse) {
-        FB.api('/me', function (response) {
-          window.location = $$.data("fb-url");
-        });
-      } else {
-        Tapjoy.Utils.notification({
-          message: _t('games.grant_us_access')
-        });
-      }
-    }, {scope: scope});
   });
 
   /*

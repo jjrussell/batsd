@@ -133,7 +133,8 @@ class Partner < ActiveRecord::Base
   @@per_page = 20
 
   scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
-  scope :to_payout, :conditions => 'pending_earnings != 0', :order => 'name ASC, contact_name ASC'
+  scope :to_payout, :conditions => 'pending_earnings != 0',
+        :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
   scope :search, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
@@ -204,23 +205,19 @@ class Partner < ActiveRecord::Base
   end
 
   def remove_user(user)
-    if users.length > 1 && users.include?(user)
+    if users.include?(user)
+      handle_last_user! if users.length == 1
       user.partners.delete(self)
       if user.reseller_id?
         self.reseller_id = nil
         save!
       end
-      if user.partners.blank?
-        user.current_partner = Partner.new(:name => user.email, :contact_name => user.email)
-        user.partners << user.current_partner
-        user.save
-      elsif user.current_partner_id == id
-        user.current_partner = user.partners.first
-        user.save
-      else
-        true
-      end
+      user.clean_up_current_partner(self)
     end
+  end
+
+  def handle_last_user!
+    users << User.userless_partner_holder
   end
 
   def get_disabled_partner_ids

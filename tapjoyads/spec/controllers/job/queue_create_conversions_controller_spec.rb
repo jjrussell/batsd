@@ -3,12 +3,12 @@ require 'spec/spec_helper'
 describe Job::QueueCreateConversionsController do
   before :each do
     fake_the_web
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
 
     publisher_app = Factory(:app)
     advertiser_app = Factory(:app)
     @offer = advertiser_app.primary_offer
-    Offer.stubs(:find).returns(@offer)
+    Offer.stub(:find).and_return(@offer)
     @reward = Factory(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
@@ -19,11 +19,11 @@ describe Job::QueueCreateConversionsController do
       :publisher_amount => 1,
       :advertiser_amount => 1,
       :tapjoy_amount => 1)
-    Reward.expects(:find).with('reward_key', :consistent => true).returns(@reward)
+    Reward.should_receive(:find).with('reward_key', :consistent => true).and_return(@reward)
   end
 
   it 'enqueues conversion tracking GET requests properly' do
-    @offer.expects(:queue_conversion_tracking_requests).with(@reward.created.to_i.to_s).once
+    @offer.should_receive(:queue_conversion_tracking_requests).with(@reward.created.to_i.to_s).once
 
     get(:run_job, :message => 'reward_key')
   end

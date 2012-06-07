@@ -5,8 +5,8 @@ describe 'dashboard/apps/show.html.haml' do
     before :each do
       @app = assigns[:app] = Factory(:app)
       user = Factory :admin
-      controller.stubs(:current_user).returns(user)
-      view.stubs(:current_user).returns(user)
+      controller.stub(:current_user).and_return(user)
+      view.stub(:current_user).and_return(user)
       render
     end
 
@@ -19,8 +19,8 @@ describe 'dashboard/apps/show.html.haml' do
     before :each do
       @app = assigns[:app] = Factory(:app)
       user = Factory :partner_user
-      controller.stubs(:current_user).returns(user)
-      view.stubs(:current_user).returns(user)
+      controller.stub(:current_user).and_return(user)
+      view.stub(:current_user).and_return(user)
       render
     end
 
@@ -32,8 +32,8 @@ describe 'dashboard/apps/show.html.haml' do
   context 'with an admin user' do
     before :each do
       user = Factory :admin
-      controller.stubs(:current_user).returns(user)
-      view.stubs(:current_user).returns(user)
+      controller.stub(:current_user).and_return(user)
+      view.stub(:current_user).and_return(user)
     end
 
     context 'for an iOS app' do

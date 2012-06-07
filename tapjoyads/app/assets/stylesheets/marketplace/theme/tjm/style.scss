@@ -1878,6 +1878,9 @@ div.app {
   .field, .form-error {
     padding: 12px 0;
   }
+  .form-error {
+    display: none;
+  }
 }
 
 #footer {

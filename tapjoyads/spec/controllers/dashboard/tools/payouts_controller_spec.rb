@@ -30,18 +30,18 @@ describe Dashboard::Tools::PayoutsController do
         @user = Factory(:payout_manager_user)
         @partner = Factory(:partner, :users => [@user])
         login_as(@user)
-        Partner.stubs(:find).with(@partner.id).returns(@partner)
+        Partner.stub(:find).with(@partner.id).and_return(@partner)
       end
 
       context 'when partner is confirmed' do
         it 'succeeds' do
-          @partner.stubs(:confirm_for_payout).returns(true)
+          @partner.stub(:confirm_for_payout).and_return(true)
           post(:confirm_payouts, :partner_id => @partner.id)
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.expects(:confirm_for_payout).once
+          @partner.should_receive(:confirm_for_payout).once
           post(:confirm_payouts, :partner_id => @partner.id)
         end
       end
@@ -72,10 +72,10 @@ describe Dashboard::Tools::PayoutsController do
       context 'when payout not saved properly' do
         before :each do
           payout = Factory(:payout, :partner => @partner)
-          payout.stubs(:save).returns(false)
+          payout.stub(:save).and_return(false)
           payouts = mock('build',:build => payout)
-          @partner.stubs(:payouts).returns(payouts)
-          Partner.stubs(:find).with('faux').returns(@partner)
+          @partner.stub(:payouts).and_return(payouts)
+          Partner.stub(:find).with('faux').and_return(@partner)
         end
 
         it 'will fail' do

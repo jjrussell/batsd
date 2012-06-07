@@ -3,7 +3,7 @@
 
 .left-indented
   .box-full
-    = form_tag(promoted_offers_inventory_management_path, { :method => :get, :class => 'tjform', :id => :app_promoted_offer}) do
+    = form_tag(promoted_offers_inventory_management_index_path, { :method => :post, :class => 'tjform', :id => :app_promoted_offer}) do
       = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
       %p
         You can customize offers that may be promoted on a Per-App basis. These offers are promoted in addition to the globally promoted offers.

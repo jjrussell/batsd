@@ -189,7 +189,7 @@ describe AgencyApi::AppsController do
       end
 
       it 'assigns store id' do
-        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
+        Sqs.should_receive(:send_message).with(QueueNames::GET_STORE_INFO, /(\w+-){4}\w+/)
         post(:create, @valid_params.merge(:store_id => 'wah!'))
         result = JSON.parse(response.body)
         result['success'].should be_true
@@ -198,8 +198,8 @@ describe AgencyApi::AppsController do
       end
 
       it 'saves activity logs' do
-        controller.expects :log_activity
-        controller.expects :save_activity_logs
+        controller.should_receive :log_activity
+        controller.should_receive :save_activity_logs
         post(:create, @valid_params)
       end
     end
@@ -279,13 +279,13 @@ describe AgencyApi::AppsController do
       end
 
       it 'saves activity logs' do
-        controller.expects :log_activity
-        controller.expects :save_activity_logs
+        controller.should_receive :log_activity
+        controller.should_receive :save_activity_logs
         put(:update, @valid_params)
       end
 
       it 'changes store id' do
-        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
+        Sqs.should_receive(:send_message).with(QueueNames::GET_STORE_INFO, /(\w+-){4}\w+/)
         put(:update, @valid_params.merge(:store_id => 'wah!'))
         result = JSON.parse(response.body)
         result['success'].should be_true

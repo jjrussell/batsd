@@ -171,14 +171,14 @@
         = f.label(:device_types)
         #help_device_types.help ?
       %td
-        = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
+        = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types.to_a), {}, :multiple => true)
         = error_message_on @offer, :device_types
     %tr
       %th
         = f.label(:approved_sources)
         #help_approved_sources.help ?
       %td
-        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources), {}, :multiple => true)
+        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources.to_a), {}, :multiple => true)
         = error_message_on @offer, :approved_sources
     %tr
       %th
@@ -273,7 +273,7 @@
           = f.label(:screen_layout_sizes)
           #help_screen_layout_sizes.help ?
         %td
-          = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+          = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes.to_a), {}, :multiple => true)
           = error_message_on @offer, :screen_layout_sizes
     - if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
       %tr

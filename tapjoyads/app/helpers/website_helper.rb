@@ -33,7 +33,7 @@ module WebsiteHelper
     var palette_#{element_suffix} = new Rickshaw.Color.Palette( { scheme: 'httpStatus' } );
 
     var wrapper_#{element_suffix} = new Rickshaw.Graph.Ajax( {
-      element: document.getElementById("chart_#{element_suffix}"),
+      element: document.getElementById('chart_#{element_suffix}'),
       dataURL: '#{json_source}',
       width: 820,
       height: 250,

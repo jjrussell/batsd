@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Job::MasterCacheOffersController do
   before :each do
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
   end
 
   describe '#index' do

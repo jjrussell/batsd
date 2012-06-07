@@ -29,6 +29,9 @@
 = form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
   = submit_tag('Export to CSV')
 
+= label_tag(:q, 'Partner:')
+= text_field_tag(:partners, @partner, :size => '40')
+= submit_tag('Clear Filters', :class => 'clear_filter')
 %table
   %thead
     %tr
@@ -152,6 +155,18 @@
           }
         });
         return false;
+      });
+      var options = {
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{tools_payouts_path}?partners_filter='+ ui.item.partner_id;
+        }
+      };
+      $('#partners').focus().autocomplete(options);
+      $('input.clear_filter').click(function(){
+          window.location ='#{tools_payouts_path}';
       });
     });
 

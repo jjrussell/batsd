@@ -31,8 +31,8 @@ describe Partner do
   describe 'A Partner' do
     before :each do
       mock_slave = mock()
-      mock_slave.stubs(:execute)
-      Partner.stubs(:slave_connection).returns(mock_slave)
+      mock_slave.stub(:execute)
+      Partner.stub(:slave_connection).and_return(mock_slave)
       @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
       @app = Factory(:app, :partner => @partner)
       cutoff_date = @partner.payout_cutoff_date
@@ -249,7 +249,7 @@ describe Partner do
         @offer2 = Factory(:app, :partner => @partner).primary_offer
         @offer3 = Factory(:app, :partner => @partner, :platform => 'android').primary_offer
         @offer4 = Factory(:app, :partner => @partner).primary_offer
-        Offer.any_instance.stubs(:can_be_promoted?).returns(true)
+        Offer.any_instance.stub(:can_be_promoted?).and_return(true)
       end
 
       it "returns available offers with correct platform" do
@@ -265,7 +265,7 @@ describe Partner do
     describe '#discount_expires_on' do
       context 'when no applied_offer_discounts' do
         before :each do
-          @partner.stubs(:applied_offer_discounts).returns([])
+          @partner.stub(:applied_offer_discounts).and_return([])
         end
 
         it 'will be nil' do
@@ -280,7 +280,7 @@ describe Partner do
                                stub('expiration2', :expires_on => @one_day),
                                stub('expiration3', :expires_on => 3.days.ago)]
 
-          @partner.stubs(:applied_offer_discounts).returns(applied_discounts)
+          @partner.stub(:applied_offer_discounts).and_return(applied_discounts)
         end
 
         it 'will be the most recent expiration' do
@@ -295,8 +295,8 @@ describe Partner do
         second = mock('second', :active? => true, :amount => 2)
         third = mock('third', :active? => true, :amount => 5)
         offer_discounts = [first, second, third]
-        @partner.stubs(:premier_discount).returns(5)
-        @partner.stubs(:offer_discounts).returns(offer_discounts)
+        @partner.stub(:premier_discount).and_return(5)
+        @partner.stub(:offer_discounts).and_return(offer_discounts)
         @partner.applied_offer_discounts.should == [third]
       end
     end
@@ -304,29 +304,29 @@ describe Partner do
     describe '#sales_rep_is_employee' do
       before :each do
         @sales_rep = mock('sales_rep')
-        @partner.stubs(:sales_rep).returns(@sales_rep)
+        @partner.stub(:sales_rep).and_return(@sales_rep)
       end
 
       context 'when sales rep is an employee' do
         before :each do
-          @sales_rep.stubs(:employee?).returns(true)
+          @sales_rep.stub(:employee?).and_return(true)
         end
 
         it 'has no errors' do
-          @partner.stubs(:errors).never
+          @partner.stub(:errors).never
           @partner.send(:sales_rep_is_employee)
         end
       end
 
       context 'when sales rep is not an employee' do
         before :each do
-          @sales_rep.stubs(:employee?).returns(false)
+          @sales_rep.stub(:employee?).and_return(false)
         end
 
         it 'has an error' do
           errors = mock('errors')
-          errors.stubs(:add).with(:sales_rep, 'must be an employee').once
-          @partner.stubs(:errors).returns(errors)
+          errors.stub(:add).with(:sales_rep, 'must be an employee').once
+          @partner.stub(:errors).and_return(errors)
           @partner.send(:sales_rep_is_employee)
         end
       end
@@ -335,28 +335,28 @@ describe Partner do
     describe '.verify_balances' do
       context 'when alert on mismatch' do
         before :each do
-          Partner.stubs(:find).with(@partner.id).returns(@partner)
+          Partner.stub(:find).with(@partner.id).and_return(@partner)
         end
 
         context 'when partner balance changed' do
           it 'notifies of balance change' do
-            @partner.stubs(:balance_was).returns(10000)
-            @partner.stubs(:balance).returns(0)
-            @partner.stubs(:balance_changed?).returns(true)
-            @partner.stubs(:pending_earnings_changed?).returns(false)
-            Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Balance mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            @partner.stub(:balance_was).and_return(10000)
+            @partner.stub(:balance).and_return(0)
+            @partner.stub(:balance_changed?).and_return(true)
+            @partner.stub(:pending_earnings_changed?).and_return(false)
+            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Balance mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
             p = Partner.verify_balances(@partner.id, true)
           end
         end
 
         context 'when partner pending earnings changed' do
           it 'notifies of a pending earnings change' do
-            @partner.stubs(:pending_earnings_was).returns(10000)
-            @partner.stubs(:pending_earnings).returns(0)
-            @partner.stubs(:balance_changed?).returns(false)
-            @partner.stubs(:pending_earnings_changed?).returns(true)
-            @partner.stubs(:add_payout_confirmations)
-            Notifier.stubs(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            @partner.stub(:pending_earnings_was).and_return(10000)
+            @partner.stub(:pending_earnings).and_return(0)
+            @partner.stub(:balance_changed?).and_return(false)
+            @partner.stub(:pending_earnings_changed?).and_return(true)
+            @partner.stub(:add_payout_confirmations)
+            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
             p = Partner.verify_balances(@partner.id, true)
           end
         end
