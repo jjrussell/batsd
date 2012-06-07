@@ -28,5 +28,6 @@ module SpecHelpers
     RightAws::SdbInterface.stub!(:new=>FakeSdb.new)
     SimpledbResource.reset_connection
     AWS::S3.stub!(:new=>FakeS3.new)
+    Sqs.stub(:send_message)
   end
 end
