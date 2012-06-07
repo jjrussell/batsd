@@ -38,7 +38,7 @@ describe Dashboard::Tools::BrandOffersController do
       end
 
       it 'will not call find on Brand' do
-        Brand.expects(:find).with('123').never
+        Brand.should_receive(:find).with('123').never
         post(:create, :brand => '123')
       end
 
@@ -59,16 +59,16 @@ describe Dashboard::Tools::BrandOffersController do
           @offer = Factory(:app).primary_offer
           @brand = Factory(:brand)
           @brand_offer_mapping = mock()
-          BrandOfferMapping.stubs(:new).with(:brand_id => @brand.id, :offer_id => @offer.id).returns(@brand_offer_mapping)
+          BrandOfferMapping.stub(:new).with(:brand_id => @brand.id, :offer_id => @offer.id).and_return(@brand_offer_mapping)
         end
 
         it 'will add the offer' do
-          @brand_offer_mapping.expects(:save).once.returns(true)
+          @brand_offer_mapping.should_receive(:save).once.and_return(true)
           post(:create, :brand => @brand.id, :offer => @offer.id)
         end
 
         it 'will succeed' do
-          @brand_offer_mapping.stubs(:save).returns(true)
+          @brand_offer_mapping.stub(:save).and_return(true)
           post(:create, :brand => @brand.id, :offer => @offer.id)
           JSON.parse(response.body)['success'].should be_true
         end
@@ -84,7 +84,7 @@ describe Dashboard::Tools::BrandOffersController do
       end
 
       it 'will not call find on Brand' do
-        BrandOfferMapping.expects(:find_by_brand_id_and_offer_id).with('123', '456').never
+        BrandOfferMapping.should_receive(:find_by_brand_id_and_offer_id).with('123', '456').never
         post(:delete, :brand => '123', :offer => '456')
       end
 
@@ -105,16 +105,16 @@ describe Dashboard::Tools::BrandOffersController do
           @offer = Factory(:app).primary_offer
           @brand = Factory(:brand)
           @brand_offer_mapping = mock()
-          BrandOfferMapping.stubs(:find_by_brand_id_and_offer_id).with(@brand.id, @offer.id).returns(@brand_offer_mapping)
+          BrandOfferMapping.stub(:find_by_brand_id_and_offer_id).with(@brand.id, @offer.id).and_return(@brand_offer_mapping)
         end
 
         it 'will remove the offer' do
-          @brand_offer_mapping.expects(:destroy).once.returns(true)
+          @brand_offer_mapping.should_receive(:destroy).once.and_return(true)
           post(:delete, :brand => @brand.id, :offer => @offer.id)
         end
 
         it 'will succeed' do
-          @brand_offer_mapping.stubs(:destroy).returns(true)
+          @brand_offer_mapping.stub(:destroy).and_return(true)
           post(:delete, :brand => @brand.id, :offer => @offer.id)
           JSON.parse(response.body)['success'].should be_true
         end

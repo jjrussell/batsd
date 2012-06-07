@@ -27,14 +27,14 @@ describe Gamer do
         end
 
         it 'should alert suspicious behavior' do
-          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          Sqs.should_receive(:send_message).with(@queue, @json.to_json)
           @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
         end
 
         context 'when gamer has already been blocked' do
           it 'should not alert suspicious behavior' do
             @gamer.update_attributes(:blocked => true)
-            Sqs.expects(:send_message).never
+            Sqs.should_receive(:send_message).never
             @gamer.gamer_profile.update_attributes(:referral_count => @threshold_count)
           end
         end
@@ -55,7 +55,7 @@ describe Gamer do
         end
 
         it 'should alert suspicious behavior' do
-          Sqs.expects(:send_message).with(@queue, @json.to_json)
+          Sqs.should_receive(:send_message).with(@queue, @json.to_json)
           options = {
             :device_id => Factory.next(:guid),
             :name => Factory.next(:name),
@@ -66,7 +66,7 @@ describe Gamer do
         context 'when gamer has already been blocked' do
           it 'should not alert suspicious behavior' do
             @gamer.update_attributes(:blocked => true)
-            Sqs.expects(:send_message).never
+            Sqs.should_receive(:send_message).never
             options = {
               :device_id => Factory.next(:guid),
               :name => Factory.next(:name),
@@ -106,10 +106,10 @@ describe Gamer do
                                               :channel => Invitation::FACEBOOK,
                                               :external_info => '0')
 
-      Friendship.expects(:establish_friendship).with(@new_gamer.id, @referring_gamer.id).once
-      Friendship.expects(:establish_friendship).with(@referring_gamer.id, @new_gamer.id).once
-      Friendship.expects(:establish_friendship).with(@stalker_gamer.id, @new_gamer.id).once
-      Friendship.expects(:establish_friendship).with(@new_gamer.id, @stalker_gamer.id).never
+      Friendship.should_receive(:establish_friendship).with(@new_gamer.id, @referring_gamer.id).once
+      Friendship.should_receive(:establish_friendship).with(@referring_gamer.id, @new_gamer.id).once
+      Friendship.should_receive(:establish_friendship).with(@stalker_gamer.id, @new_gamer.id).once
+      Friendship.should_receive(:establish_friendship).with(@new_gamer.id, @stalker_gamer.id).never
 
       @new_gamer.referrer = accepted_invitation.encrypted_referral_id
       @new_gamer.send :check_referrer
@@ -244,7 +244,7 @@ describe Gamer do
         end
 
         it "updates invitations' status" do
-          Invitation.expects(:reconcile_pending_invitations).with(@gamer3, :external_info => @authhash[:twitter_id])
+          Invitation.should_receive(:reconcile_pending_invitations).with(@gamer3, :external_info => @authhash[:twitter_id])
           @gamer3.update_twitter_info!(@authhash)
         end
       end

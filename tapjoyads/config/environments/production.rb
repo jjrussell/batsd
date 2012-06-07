@@ -47,6 +47,7 @@ Tapjoyad::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  config.i18n_js_cache = true
 end
 
 begin

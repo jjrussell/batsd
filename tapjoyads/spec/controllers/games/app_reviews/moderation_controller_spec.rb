@@ -6,7 +6,7 @@ describe Games::AppReviews::FlagModerationController do
     activate_authlogic
     @gamer = Factory(:gamer)
     @other_gamer = Factory(:gamer)
-    controller.stubs(:current_gamer).returns(@gamer)
+    controller.stub(:current_gamer).and_return(@gamer)
     app = Factory(:app)
     @app_metadata = app.app_metadatas.first
     @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
@@ -62,7 +62,7 @@ describe Games::AppReviews::FlagModerationController do
     end
     it "refuses to undo a flag that the user doesn't own'" do
       post(:create, { :app_review_id => @troll_review.id, :vote => 'flag' })
-      controller.stubs(:current_gamer).returns(@other_gamer)
+      controller.stub(:current_gamer).and_return(@other_gamer)
       delete(:destroy, { :app_review_id => @troll_review.id, :vote => 'flag' })
       should respond_with_content_type :json
       should respond_with(404)
@@ -76,7 +76,7 @@ describe Games::AppReviews::FaveModerationController do
     activate_authlogic
     @gamer = Factory(:gamer)
     @other_gamer = Factory(:gamer)
-    controller.stubs(:current_gamer).returns(@gamer)
+    controller.stub(:current_gamer).and_return(@gamer)
     app = Factory(:app)
     @app_metadata = app.app_metadatas.first
     @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)

@@ -3,11 +3,11 @@ require 'spec/spec_helper'
 describe Job::MasterCalculateNextPayoutController do
   before :each do
     @partner = Factory(:partner)
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
   end
 
   before :each do
-    Partner.stubs(:to_calculate_next_payout_amount).returns([@partner])
+    Partner.stub(:to_calculate_next_payout_amount).and_return([@partner])
     @partner.payout_threshold = 50_000_00
   end
 
@@ -20,7 +20,7 @@ describe Job::MasterCalculateNextPayoutController do
 
       context 'when payout greater than threshold' do
         before :each do
-          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
+          Partner.stub(:calculate_next_payout_amount).with(@partner.id).and_return(50_000_01)
           get(:index)
           @partner.reload
         end
@@ -36,7 +36,7 @@ describe Job::MasterCalculateNextPayoutController do
 
       context 'when payout less than threshold' do
         before :each do
-          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(40_000_01)
+          Partner.stub(:calculate_next_payout_amount).with(@partner.id).and_return(40_000_01)
           get(:index)
           @partner.reload
         end
@@ -59,7 +59,7 @@ describe Job::MasterCalculateNextPayoutController do
 
       context 'when payout greater than threshold' do
         before :each do
-          Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(50_000_01)
+          Partner.stub(:calculate_next_payout_amount).with(@partner.id).and_return(50_000_01)
           get(:index)
           @partner.reload
         end
@@ -77,7 +77,7 @@ describe Job::MasterCalculateNextPayoutController do
     context 'when payout greater than non-standard threshold' do
       before :each do
         @partner.payout_threshold_confirmation = true
-        Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(65_000_01)
+        Partner.stub(:calculate_next_payout_amount).with(@partner.id).and_return(65_000_01)
         @partner.payout_threshold = 65_000_00
         get(:index)
         @partner.reload
@@ -94,7 +94,7 @@ describe Job::MasterCalculateNextPayoutController do
 
     context 'when payout less than non-standard threshold' do
       before :each do
-        Partner.stubs(:calculate_next_payout_amount).with(@partner.id).returns(55_000_01)
+        Partner.stub(:calculate_next_payout_amount).with(@partner.id).and_return(55_000_01)
         @partner.payout_threshold = 65_000_00
         @partner.payout_threshold_confirmation = true
         @partner.save!
