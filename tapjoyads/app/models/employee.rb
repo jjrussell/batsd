@@ -17,6 +17,7 @@
 #  display_order :integer(4)
 #  desk_location :string(255)
 #  department    :string(255)
+#  office        :string(255)
 #
 
 class Employee < ActiveRecord::Base
