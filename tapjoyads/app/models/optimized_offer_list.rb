@@ -16,7 +16,11 @@ class OptimizedOfferList
 
     def cache_all
       s3_optimization_keys.each do |key|
-        cache_offer_list(key)
+        begin
+          cache_offer_list(key)
+        rescue
+          puts "failed to cache #{key}"
+        end
       end
     end
 
@@ -26,9 +30,8 @@ class OptimizedOfferList
       offers = []
 
       loop do
-        offer_group = Mc.distributed_get_and_put("#{cache_key}.#{group}", false, 1.day) do
-          Marshal.restore(s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].read)
-        end
+        offer_group = Mc.distributed_get("#{cache_key}.#{group}")
+        break if offer_group.nil?
         offers |= offer_group
         break unless offer_group.length == GROUP_SIZE
         group += 1
@@ -65,20 +68,21 @@ class OptimizedOfferList
         puts "saving #{cache_key} to Memcache failed"
       end
 
-      group = 0
-      puts "saving #{cache_key} to S3"
-      begin        
-        offers.each_slice(GROUP_SIZE) do |offer_group|
-          s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump(offer_group))
-          group += 1          
-        end
-        puts "wrote #{cache_key} to S3"
-      rescue
-        puts "saving #{cache_key} to S3 failed"
-      end
+      # TODO: Cache stuff into S3
+      # group = 0
+      # puts "saving #{cache_key} to S3"
+      # begin        
+      #   offers.each_slice(GROUP_SIZE) do |offer_group|
+      #     s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump(offer_group))
+      #     group += 1          
+      #   end
+      #   puts "wrote #{cache_key} to S3"
+      # rescue
+      #   puts "saving #{cache_key} to S3 failed"
+      # end
 
       Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
-      s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump([]))
+      # s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump([]))
     end
 
     def disable_all
