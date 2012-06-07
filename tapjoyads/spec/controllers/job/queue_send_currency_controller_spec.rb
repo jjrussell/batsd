@@ -31,9 +31,8 @@ describe Job::QueueSendCurrencyController do
         ).
         and_raise(Simpledb::ExpectedAttributeError)
 
-      expect {
-        get(:run_job, :message => @reward.id)
-      }.to raise_error(Simpledb::ExpectedAttributeError)
+      $redis.should_receive(:sadd).with('queue:send_currency:failures', @reward.id)
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should return if reward is already updated' do

@@ -20,11 +20,12 @@ class BrandOfferMapping < ActiveRecord::Base
   validates_numericality_of :allocation, :greater_than => 0, :less_than_or_equal_to => 100
   validates_uniqueness_of :offer_id, :scope => :brand_id
   before_validation :get_new_allocation
-  after_commit  :redistribute_allocation, :on => [ :create, :destroy ]
+  after_commit  :redistribute_allocation, :on => [:create, :destroy]
 
   scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
 
   private
+
   def get_new_allocation
     unless self.allocation
       cardinality = BrandOfferMapping.mappings_by_offer(offer).count + 1
@@ -42,8 +43,7 @@ class BrandOfferMapping < ActiveRecord::Base
 
     offer_mappings.each do |brand_offer|
       next if brand_offer.id == self.id
-      brand_offer.allocation = base_allocation + ( (excess -= 1) >= 0 ? 1 : 0 )
-      brand_offer.save!
+      brand_offer.update_attribute(:allocation, base_allocation + ( (excess -= 1) >= 0 ? 1 : 0 ))
     end
   end
 end

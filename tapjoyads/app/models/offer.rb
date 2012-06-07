@@ -713,7 +713,7 @@ class Offer < ActiveRecord::Base
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
-      4
+      2
     else
       0
     end

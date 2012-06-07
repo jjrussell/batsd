@@ -292,6 +292,8 @@ class ClickController < ApplicationController
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
     click.mac_address            = params[:mac_address]
+    click.offerwall_rank         = params[:offerwall_rank]
+    click.device_type            = params[:device_type]
 
     click.save
 
