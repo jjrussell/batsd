@@ -42,7 +42,7 @@ describe Dashboard::Tools::BrandsController do
       end
 
       it 'will not create new brand name' do
-        Brand.expects(:new).with(:name => 'test').never
+        Brand.should_receive(:new).with(:name => 'test').never
         post(:create, :brand => { :name => 'test'}, :format => 'json')
       end
       it 'will not succeed' do
@@ -59,7 +59,7 @@ describe Dashboard::Tools::BrandsController do
 
       context 'when a brand name is supplied' do
         it 'will succeed' do
-          Brand.expects(:new).with(:name => 'test').once.returns(@brand)
+          Brand.should_receive(:new).with(:name => 'test').once.and_return(@brand)
           post(:create, :brand => { :name => 'test'}, :format => 'json')
           JSON.parse(response.body)['success'].should be_true
         end
@@ -68,8 +68,8 @@ describe Dashboard::Tools::BrandsController do
       context 'when a brand name is not supplied' do
         it 'will not succeed' do
           @brand.name = ''
-          @brand.stubs(:save).returns(false)
-          Brand.expects(:new).with( :name => '').once.returns(@brand)
+          @brand.stub(:save).and_return(false)
+          Brand.should_receive(:new).with( :name => '').once.and_return(@brand)
           post(:create, :brand => { :name => ''}, :format => 'json')
           JSON.parse(response.body)['success'].should be_false
         end
@@ -87,7 +87,7 @@ describe Dashboard::Tools::BrandsController do
       end
 
       it 'will not call find on Brand' do
-        Brand.expects(:find).with(:id => '123').never
+        Brand.should_receive(:find).with(:id => '123').never
         get(:show, :id => '123')
       end
 
@@ -103,12 +103,12 @@ describe Dashboard::Tools::BrandsController do
         login_as(@user)
         @brand = Factory(:brand)
         @offer = Factory(:app).primary_offer
-        @brand.stubs(:offers).returns([@offer])
+        @brand.stub(:offers).and_return([@offer])
       end
 
       context 'when brand id is valid' do
         before :each do
-          Brand.stubs(:find).with(@brand.id).returns(@brand)
+          Brand.stub(:find).with(@brand.id).and_return(@brand)
         end
 
         it 'will list associated offers' do
