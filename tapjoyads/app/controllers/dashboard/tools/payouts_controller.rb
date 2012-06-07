@@ -7,6 +7,20 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
 
 
   def index
+    #TODO Plan to DRY this code with the similar functionality in PartnerValidationsController in the next feature implmentation(PDF export) around this code
+    @filter_options = [['All',''], ['Unconfirmed - Actionable', '1'], ['Unconfirmed - No Payout Info','2'], ['Unconfirmed - All', '3'], ['Confirmed', '4']]
+    if params[:confirm_filter].present?
+      if params[:confirm_filter] == '1'
+        @partners = @partners.where("#{Partner.quoted_table_name}.payout_threshold_confirmation = 0 OR #{Partner.quoted_table_name}.payout_info_confirmation = 0")
+      elsif params[:confirm_filter] == '2'
+        @partners = @partners.where("#{PayoutInfo.quoted_table_name}.id is null")
+      elsif params[:confirm_filter] == '3'
+        @partners = @partners.where("#{Partner.quoted_table_name}.payout_threshold_confirmation = 0 OR #{Partner.quoted_table_name}.payout_info_confirmation = 0 OR #{PayoutInfo.quoted_table_name}.id is null") #should be unconfirmed
+      else
+        @partners = @partners.where(:payout_threshold_confirmation => 1, :payout_info_confirmation => 1).where("#{PayoutInfo.quoted_table_name}.id is not null")
+      end
+    end
+
     @partners = @partners.paginate(:page => params[:page])
     @freeze_enabled = PayoutFreeze.enabled?
   end

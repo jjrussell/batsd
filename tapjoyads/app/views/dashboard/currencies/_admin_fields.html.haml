@@ -29,6 +29,7 @@
   %td
     = f.text_area :disabled_offers
     = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
+    = raw(@currency.get_disabled_offers.map { |o| link_to(o.name, statz_path(o)) }.join(', '))
 %tr.admin
   %th
     = f.label :max_age_rating, 'Max age rating'

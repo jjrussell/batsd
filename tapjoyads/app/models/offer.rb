@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -787,7 +788,7 @@ class Offer < ActiveRecord::Base
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
-      4
+      2
     else
       0
     end

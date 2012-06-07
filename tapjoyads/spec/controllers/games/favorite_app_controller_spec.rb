@@ -6,7 +6,7 @@ describe Games::FavoriteAppController do
     @app_metadata = Factory(:app_metadata)
 
     @gamer = Factory(:gamer)
-    @controller.stubs(:current_gamer).returns(@gamer)
+    @controller.stub(:current_gamer).and_return(@gamer)
 
     @params = {
       :eapp_metadata_id => ObjectEncryptor.encrypt(@app_metadata.id)
@@ -36,7 +36,7 @@ describe Games::FavoriteAppController do
 
     context 'when unable to save' do
       before :each do
-        FavoriteApp.any_instance.stubs(:save).returns(false)
+        FavoriteApp.any_instance.stub(:save).and_return(false)
         post('create', @params)
       end
 

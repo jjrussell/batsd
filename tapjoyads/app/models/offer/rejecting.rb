@@ -127,7 +127,8 @@ module Offer::Rejecting
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
-    sdkless_reject?(library_version)
+    sdkless_reject?(library_version) ||
+    recently_skipped?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -156,6 +157,10 @@ module Offer::Rejecting
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
+  end
+
+  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   private
@@ -219,6 +224,10 @@ module Offer::Rejecting
     end
 
     device.has_app?(app_id_for_device)
+  end
+
+  def recently_skipped?(device)
+    device.recently_skipped?(id)
   end
 
   def selective_opt_out_reject?(device)
@@ -295,10 +304,6 @@ module Offer::Rejecting
     return true if screen_layout_size.blank?
 
     !get_screen_layout_sizes.include?(screen_layout_size)
-  end
-
-  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)
