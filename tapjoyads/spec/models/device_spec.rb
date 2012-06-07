@@ -62,18 +62,18 @@ describe Device do
     end
 
     it 'creates the device identifiers' do
-      DeviceIdentifier.expects(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).returns(@device_identifier)
-      DeviceIdentifier.expects(:new).with(:key => @device.open_udid).returns(@device_identifier)
-      DeviceIdentifier.expects(:new).with(:key => @device.android_id).returns(@device_identifier)
-      DeviceIdentifier.expects(:new).with(:key => @device.mac_address).returns(@device_identifier)
-      DeviceIdentifier.expects(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).returns(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
       @device.create_identifiers!
     end
 
     it 'alerts new relic for remapped identifiers' do
       @device_identifier.udid = 'old_device_udid'
-      DeviceIdentifier.stubs(:new).returns(@device_identifier)
-      Notifier.expects(:alert_new_relic).with(RuntimeError, "Overwriting identifier: #{Digest::SHA2.hexdigest(@device.key)} with a udid: #{@device.key} instead of the existing udid: #{@device_identifier.udid}")
+      DeviceIdentifier.stub(:new).and_return(@device_identifier)
+      Notifier.should_receive(:alert_new_relic).with(RuntimeError, "Overwriting identifier: #{Digest::SHA2.hexdigest(@device.key)} with a udid: #{@device.key} instead of the existing udid: #{@device_identifier.udid}")
       @device.create_identifiers!
     end
   end
