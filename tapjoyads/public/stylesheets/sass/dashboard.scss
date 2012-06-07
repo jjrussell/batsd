@@ -384,3 +384,26 @@ select.chosen {
     bottom: 6px;
   }
 }
+#employees {
+  span#edit_self {
+    display: none;
+  }
+  span.department, span.office, i.show-all {
+    cursor: pointer;
+    &:hover {
+      color: #ff0;
+    }
+  }
+  tr:hover span#edit_self {
+    display: inline-block;
+  }
+  span.email {
+    font-family: Andale Mono, Courier New, courier;
+  }
+  td.icon {
+    width: 78px;
+  }
+  td.badges {
+    width: 160px;
+  }
+}
