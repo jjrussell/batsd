@@ -362,9 +362,6 @@ $(document).ready(function(){
     if (Tapjoy.Utils.isEmpty(window.linkDeviceOptions)) {
       return;
     }
-    if ($('#link-device').length > 0) {
-      $('.link-device-progress').show();
-    }
     var rootUrl = window.linkDeviceOptions.rootUrl;
     var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
     var android = window.linkDeviceOptions.android;
