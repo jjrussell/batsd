@@ -41,6 +41,12 @@ class VideoOffer < ActiveRecord::Base
     end
   end
 
+  def video_buttons_for_device(device_type, limit=2)
+    video_buttons.enabled.ordered.reject do |button|
+      device_type.present? && !button.tracking_offer.get_device_types.include?(device_type)
+    end.slice(0, limit)
+  end
+
   def available_trackable_items(selected_id=nil)
     ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
     partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }

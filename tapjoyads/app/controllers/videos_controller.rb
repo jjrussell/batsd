@@ -24,7 +24,7 @@ class VideosController < ApplicationController
 
     return unless verify_records([ @video_offer, @offer ])
 
-    @video_buttons = @video_offer.video_buttons.enabled.ordered.limit(2)
+    @video_buttons = @video_offer.video_buttons_for_device(device_type)
   end
 
   private
