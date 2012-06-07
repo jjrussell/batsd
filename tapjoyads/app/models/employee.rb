@@ -24,7 +24,7 @@ class Employee < ActiveRecord::Base
   include UuidPrimaryKey
 
   DEPARTMENTS = %w( products marketing sales finance devrel bizdev exec cs analytics )
-  OFFICES = %w( SF ATL NYC Chicago London Seoul Beijing Tokyo )
+  OFFICES = %w( SF ATL NYC SB LA Chicago London Seoul Beijing Tokyo )
   has_many :app_reviews, :as => :author
 
   validates_presence_of :first_name, :last_name, :title, :email
