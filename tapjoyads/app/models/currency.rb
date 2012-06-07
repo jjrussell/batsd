@@ -198,7 +198,11 @@ class Currency < ActiveRecord::Base
   memoize :get_offer_whitelist
 
   def get_disabled_partners
-    Partner.find_all_by_id(disabled_partners.split(';'))
+    find_all_in_string(Partner, disabled_partners)
+  end
+
+  def get_disabled_offers
+    find_all_in_string(Offer, disabled_offers)
   end
 
   def get_test_device_ids
@@ -327,5 +331,9 @@ class Currency < ActiveRecord::Base
     if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
       self.approve!
     end
+  end
+
+  def find_all_in_string(model, str_list)
+    model.find_all_by_id(str_list.split(';'))
   end
 end
