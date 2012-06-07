@@ -10,16 +10,20 @@ describe Job::QueueSendCurrencyController do
     # prevents any callback_urls from actually getting called
     Downloader.stub(:get).and_return(@mock_response)
     Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
-    Time.zone.stub(:now).and_return(Time.zone.parse('2011-02-15'))
 
     @currency = Factory(:currency, :callback_url => 'http://www.whatwhat.com')
 
     @reward = FactoryGirl.build(
       :reward,
       :currency_id => @currency.id,
-      :publisher_app_id => @currency.id
+      :publisher_app_id => @currency.id,
+      :created => Time.zone.parse('2011-02-15')
     )
     @reward.save
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe 'with ExpectedAttributeError' do
@@ -165,7 +169,7 @@ describe Job::QueueSendCurrencyController do
       get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.sent_currency.should == Time.zone.now
+      reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
       reward.send_currency_status.should == 'OK'
     end
 
@@ -173,7 +177,7 @@ describe Job::QueueSendCurrencyController do
       get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.sent_currency.should == Time.zone.now
+      reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
 
       Currency.should_receive(:find_in_cache).never
       get(:run_job, :message => reward.id)

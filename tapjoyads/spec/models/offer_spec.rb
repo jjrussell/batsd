@@ -1004,11 +1004,15 @@ describe Offer do
       Sqs.stub(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
       now = Time.zone.now
-      Time.zone.stub(:now).and_return(now)
+      Timecop.freeze(now)
 
       @offer.impression_tracking_urls = @urls
       @offer.click_tracking_urls = @urls
       @offer.conversion_tracking_urls = @urls
+    end
+
+    after(:each) do
+      Timecop.return
     end
 
     context "without a provided timestamp" do
