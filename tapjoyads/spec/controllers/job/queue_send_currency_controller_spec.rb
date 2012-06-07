@@ -10,7 +10,7 @@ describe Job::QueueSendCurrencyController do
     # prevents any callback_urls from actually getting called
     Downloader.stub(:get).and_return(@mock_response)
     Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
-    Time.zone.stub(:now).and_return(Time.zone.parse('2011-02-15'))
+    Timecop.freeze(Time.zone.parse('2011-02-15'))
 
     @currency = Factory(:currency, :callback_url => 'http://www.whatwhat.com')
 
@@ -20,6 +20,10 @@ describe Job::QueueSendCurrencyController do
       :publisher_app_id => @currency.id
     )
     @reward.save
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe 'with ExpectedAttributeError' do
