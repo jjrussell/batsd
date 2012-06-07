@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
