@@ -35,7 +35,7 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-  describe ".save_icon!" do
+  describe "#save_icon!" do
     before :each do
       @image_data = "fake image data"
       @icon_id = "icon_id"
@@ -1192,19 +1192,19 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests
         end
@@ -1219,19 +1219,19 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests(@ts.to_i.to_s)
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests(@ts.to_i.to_s)
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
         end
