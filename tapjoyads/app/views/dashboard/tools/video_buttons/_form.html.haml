@@ -17,6 +17,12 @@
         = error_message_on @video_button, :item_id
     %tr
       %th
+        = f.label :rewarded
+        #help_rewarded.help ?
+      %td
+        = f.check_box :rewarded
+    %tr
+      %th
         = f.label :ordinal
         #help_ordinal.help ?
       %td
@@ -37,5 +43,6 @@
 .hidden
   #help_name_content{ :name => 'Name' } The text appearing on the button. Maximum 20 characters.
   #help_item_content{ :name => 'Item' } The offer this button uses for link generation and tracking.
+  #help_rewarded_content{ :name => 'Rewarded' } Mark this button as a Rewarded Install action. These actions will not display on iOS devices.
   #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)
   #help_enabled_content{ :name => 'Enabled' } Only enabled button will be shown by the end of the video. Permit at most 2 enabled buttons.
