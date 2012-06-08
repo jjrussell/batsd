@@ -92,6 +92,42 @@ describe VideoOffer do
       end
     end
 
+    describe '#video_buttons_for_device' do
+      before(:each) do
+        buttons
+        subject.reload
+
+        types = [%w(iphone android), %w(iphone), %w(android)]
+        subject.video_buttons.each do |button|
+          button.tracking_offer.update_attribute(:device_types, types.shift.to_json)
+        end
+      end
+
+      context 'with an iphone device' do
+        let(:device) { 'iphone' }
+        let(:filtered_out) { subject.video_buttons.last }
+
+        it 'filters out non-iphone offers' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with an android device' do
+        let(:device) { 'android' }
+        let(:filtered_out) { subject.video_buttons[1] }
+
+        it 'filters out non-android offers' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with a non-mobile device' do
+        it 'does not filter any buttons out' do
+          subject.video_buttons_for_device(nil).length.should == 3
+        end
+      end
+    end
+
     #   @video_offer = FactoryGirl.create(:video_offer)
     #   @video_button_1 = @video_offer.video_buttons.build
     #   @video_button_1.name = "button 1"
