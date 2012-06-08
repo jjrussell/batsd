@@ -41,10 +41,10 @@ class VideoOffer < ActiveRecord::Base
     end
   end
 
-  def video_buttons_for_device(device_type, limit=2)
+  def video_buttons_for_device(device_type)
     video_buttons.enabled.ordered.reject do |button|
       device_type.present? && !button.tracking_offer.get_device_types.include?(device_type)
-    end.slice(0, limit)
+    end
   end
 
   def available_trackable_items(selected_id=nil)
