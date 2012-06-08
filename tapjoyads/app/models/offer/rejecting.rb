@@ -128,7 +128,8 @@ module Offer::Rejecting
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
-    recently_skipped?(device)
+    recently_skipped?(device) ||
+    partner_has_no_funds?
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -161,6 +162,10 @@ module Offer::Rejecting
 
   def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
     hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
+  end
+
+  def partner_has_no_funds?
+    partner_balance < 0
   end
 
   private
