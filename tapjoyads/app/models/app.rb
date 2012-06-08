@@ -151,7 +151,7 @@ class App < ActiveRecord::Base
     5.times do
       results = VirtualGood.select(options)
 
-      vgs.push(results[:items])
+      vgs += (results[:items])
       options[:next_token] = results[:next_token]
       break if results[:next_token].nil?
     end
