@@ -133,6 +133,12 @@ class OfferCacher
       end
     end
 
+    def cache_reengagement_offers
+      ReengagementOffer.visible.select('app_id').group('app_id').each do |reengagement_offer|
+        ReengagementOffer.cache_by_app_id(reengagement_offer.app_id)
+      end
+    end
+
     def cache_papaya_offers
       papaya_offers = {}
       Offer.enabled_offers.papaya_app_offers.each do |o|

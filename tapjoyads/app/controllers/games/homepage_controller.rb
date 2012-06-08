@@ -124,6 +124,33 @@ class Games::HomepageController < GamesController
     render(:json => { :success => true })
   end
 
+  def record_local_request
+    decrypt_data_param
+    @tjm_request.is_ajax = true
+
+    @tjm_request.controller = params[:request_controller] if params[:request_controller].present?
+    @tjm_request.action = params[:request_action] if params[:request_action].present?
+
+    if params[:request_url].present?
+      begin
+        path = Rails.application.routes.recognize_path(params[:request_url])
+        @tjm_request.controller = path[:controller]
+        @tjm_request.action = path[:action]
+        @tjm_request.update_path
+      rescue ActionController::RoutingError
+        render_json_error(['unable to find corresponding controller/action'], 400) and return
+      end
+    end
+
+    if params[:request_path].present?
+      @tjm_request.replace_path(params[:request_path])
+    else
+      @tjm_request.update_path
+    end
+
+    render(:json => { :success => true }, :status => 200)
+  end
+
   private
 
   def params_id

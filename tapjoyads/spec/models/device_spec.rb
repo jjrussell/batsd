@@ -156,8 +156,9 @@ describe Device do
       it 'returns true' do
         now = Time.zone.now
         @device.recent_skips = [['a', now - (Device::SKIP_TIMEOUT)]]
-        Time.zone.should_receive(:now).twice.and_return(now)
-        @device.recently_skipped?('a').should be_true
+        Timecop.freeze(now) do
+          @device.recently_skipped?('a').should be_true
+        end
       end
     end
 
@@ -177,10 +178,11 @@ describe Device do
     end
     it 'adds offer to recent_skips' do
       now = Time.zone.now
-      @device.add_skip('a');
-      Time.zone.should_receive(:now).and_return(now)
-      @device.recent_skips[0][0].should == 'a'
-      Time.zone.parse(@device.recent_skips[0][1]).to_i.should == now.to_i
+      @device.add_skip('a')
+      Timecop.freeze(now) do
+        @device.recent_skips[0][0].should == 'a'
+        Time.zone.parse(@device.recent_skips[0][1]).to_i.should == now.to_i
+      end
     end
     it 'retains only 100 skips' do
       105.times { |num| @device.add_skip(num) }
