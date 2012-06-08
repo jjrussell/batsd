@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe ReportingDataController do
-  before :each do
-    fake_the_web
-  end
-
   describe '#index' do
     before :each do
       @partner = Factory(:partner)

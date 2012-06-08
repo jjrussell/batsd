@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Dashboard::Tools::BrandOffersController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 

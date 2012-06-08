@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Dashboard::DashboardController do
   before :each do
     activate_authlogic
-    fake_the_web
     @admin = Factory(:admin)
     @user  = Factory(:user)
     @admin_partner = Factory(:partner, :users => [ @admin ])

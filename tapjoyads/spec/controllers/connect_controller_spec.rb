@@ -3,11 +3,6 @@ require 'spec/spec_helper'
 describe ConnectController do
   render_views
 
-  before :each do
-    fake_the_web
-    Sqs.stub(:send_message)
-  end
-
   describe '#index' do
     context 'with required parameters' do
       before :each do

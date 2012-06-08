@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Dashboard::ReportingController do
-  before :each do
-    fake_the_web
-  end
-
   context 'with a non-logged in user' do
     it 'responds with redirect' do
       get(:index)
