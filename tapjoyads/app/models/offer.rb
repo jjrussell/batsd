@@ -216,7 +216,12 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  scope :client_facing_app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :app_offers, lambda { |*args|
+    only_client_facing = args.empty? ? true : args.first
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    { :conditions => ["item_type IN (?)", item_types] }
+  }
   scope :video_offers, :conditions => "item_type = 'VideoOffer'"
   scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
@@ -258,26 +263,24 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def client_facing_app_offer?
-    %w(App ActionOffer).include? item_type
-  end
-
-  def app_offer?
-    client_facing_app_offer? || %w(RatingOffer ReengagementOffer).include?(item_type)
+  def app_offer?(only_client_facing = true)
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    item_types.include?(item_type)
   end
 
   def app_id
-    return unless app_offer?
+    return unless app_offer?(false)
     return item_id if item_type == 'App'
     item.app_id
   end
 
   def missing_app_store_id?
-    client_facing_app_offer? && !url_overridden? && item.store_id.blank?
+    app_offer? && !url_overridden? && item.store_id.blank?
   end
 
   def countries_blacklist
-    if client_facing_app_offer?
+    if app_offer?
       item.get_countries_blacklist || []
     else
       []
@@ -598,7 +601,7 @@ class Offer < ActiveRecord::Base
 
   def update_payment(force_update = false)
     if partner && (force_update || bid_changed? || new_record?)
-      if partner.discount_all_offer_types? || client_facing_app_offer?
+      if partner.discount_all_offer_types? || app_offer?
         self.payment = bid == 0 ? 0 : [ bid * (100 - partner.premier_discount) / 100, 1 ].max
       else
         self.payment = bid

@@ -233,7 +233,7 @@
       %tr
         %th= f.label(:third_party_data)
         %td= f.text_area(:third_party_data)
-    - if @offer.client_facing_app_offer? || @offer.item_type == 'GenericOffer'
+    - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
       %tr
         %th
           = f.label(:url_overridden, 'Override Default Destination URL')
@@ -367,7 +367,7 @@
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
 
-- if @offer.client_facing_app_offer? || @offer.item_type == 'GenericOffer'
+- if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
     :plain
       $(function($){
