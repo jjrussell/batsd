@@ -146,16 +146,7 @@ class App < ActiveRecord::Base
   end
 
   def virtual_goods
-    vgs = []
-    options = { :where => "app_id = '#{self.id}'", :limit => 200 }
-    5.times do
-      results = VirtualGood.select(options)
-
-      vgs += (results[:items])
-      options[:next_token] = results[:next_token]
-      break if results[:next_token].nil?
-    end
-    vgs
+    VirtualGood.select(:where => "app_id = '#{self.id}'", :limit => 1000)[:items]
   end
 
   def has_virtual_goods?
