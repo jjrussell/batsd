@@ -63,6 +63,7 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -262,5 +263,9 @@ module Offer::UrlGeneration
     else
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
+  end
+
+  def source_token(publisher_app_id)
+    ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
   end
 end
