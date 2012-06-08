@@ -101,7 +101,6 @@ Tapjoyad::Application.routes.draw do
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
       match 'invite_twitter_friends' => 'social#invite_twitter_friends', :as => :invite_twitter_friends
       match 'send_twitter_invites' => 'social#send_twitter_invites', :as => :send_twitter_invites
-      match 'get_twitter_friends' => 'social#get_twitter_friends', :as => :get_twitter_friends
       match 'social/invites' => 'social#invites', :as => :invites
       match 'social/friends' => 'social#friends', :as => :friends
       scope :twitter do
