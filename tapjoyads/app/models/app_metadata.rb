@@ -75,6 +75,7 @@ class AppMetadata < ActiveRecord::Base
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, PLATFORMS[store_name])
+    self.languages           = data[:languages]
   end
 
   def total_thumbs_count
