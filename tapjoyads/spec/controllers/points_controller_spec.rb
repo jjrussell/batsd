@@ -1,12 +1,9 @@
 require 'spec_helper'
 
 describe PointsController do
-  before :each do
-    fake_the_web
-  end
-
   describe '#award' do
     before :each do
+      enable_sdb
       @app = Factory(:app)
       @currency = Factory(:currency, :id => @app.id)
       @params = {
@@ -18,7 +15,6 @@ describe PointsController do
         :timestamp => Time.zone.now
       }
       @params[:verifier] = verifier(@params)
-      Sqs.stub(:send_message)
     end
 
     it 'renders error for bad verifier' do

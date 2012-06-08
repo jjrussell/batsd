@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Games::HomepageController do
   before :each do
-    fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
     @controller.stub(:current_gamer).and_return(@gamer)

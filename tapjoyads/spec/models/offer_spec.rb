@@ -24,7 +24,6 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    fake_the_web
     @app = Factory :app
     @offer = @app.primary_offer
   end
@@ -1001,7 +1000,6 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      Sqs.stub(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
       now = Time.zone.now
       Timecop.freeze(now)

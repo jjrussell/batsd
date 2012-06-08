@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe PointPurchases do
   before :each do
-    SimpledbResource.reset_connection
+    enable_sdb
   end
 
   context "A Point Purchase" do

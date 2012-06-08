@@ -4,7 +4,6 @@ describe Dashboard::Tools::SurveyOffersController do
   render_views
 
   before :each do
-    fake_the_web
     flash.stub(:sweep)
     activate_authlogic
     user = Factory(:admin)

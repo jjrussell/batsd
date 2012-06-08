@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Games::ConfirmationsController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 

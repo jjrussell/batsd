@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe "Android marketplace" do
-  before :each do
-    fake_the_web
-  end
-
   let(:testapp) { Factory(:app) }
   let(:udid) { 'testudid' }
 

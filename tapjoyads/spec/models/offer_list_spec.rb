@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe OfferList do
   before :each do
-    fake_the_web
     RailsCache.flush
   end
 

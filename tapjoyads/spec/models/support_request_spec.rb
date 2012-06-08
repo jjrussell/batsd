@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe SupportRequest do
   before :each do
-    fake_the_web
     @support_request = SupportRequest.new
 
     @app = Factory(:app)
