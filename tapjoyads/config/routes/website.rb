@@ -38,6 +38,7 @@ Tapjoyad::Application.routes.draw do
     match 'more_apps' => 'homepage#index', :as => :more_apps
     match 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
+    match 'record_local_request' => 'homepage#record_local_request', :as => :record_local_request
     match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
     match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
     match 'translations/:filename.js' => 'homepage#translations', :as => :translations
