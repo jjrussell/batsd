@@ -146,7 +146,7 @@ class App < ActiveRecord::Base
   end
 
   def virtual_goods
-    VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
+    VirtualGood.select(:where => "app_id = '#{self.id}'", :limit => 1000)[:items]
   end
 
   def has_virtual_goods?
