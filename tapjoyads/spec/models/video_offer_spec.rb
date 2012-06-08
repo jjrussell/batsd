@@ -94,18 +94,21 @@ describe VideoOffer do
 
     describe '#video_buttons_for_device' do
       before(:each) do
-        buttons
-        subject.reload
+        @buttons = {}
 
         types = [%w(iphone android), %w(iphone), %w(android)]
-        subject.video_buttons.each do |button|
-          button.tracking_offer.update_attribute(:device_types, types.shift.to_json)
+        buttons.each do |button|
+          type = types.shift
+          button.tracking_offer.update_attribute(:device_types, type.to_json)
+          @buttons[type.join(',')] = button
         end
+
+        subject.reload
       end
 
       context 'with an iphone device' do
         let(:device) { 'iphone' }
-        let(:filtered_out) { subject.video_buttons.last }
+        let(:filtered_out) { @buttons['android'] }
 
         it 'filters out non-iphone offers' do
           subject.video_buttons_for_device(device).should_not include(filtered_out)
@@ -114,7 +117,7 @@ describe VideoOffer do
 
       context 'with an android device' do
         let(:device) { 'android' }
-        let(:filtered_out) { subject.video_buttons[1] }
+        let(:filtered_out) { @buttons['iphone'] }
 
         it 'filters out non-android offers' do
           subject.video_buttons_for_device(device).should_not include(filtered_out)
