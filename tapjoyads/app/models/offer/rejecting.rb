@@ -60,6 +60,9 @@ module Offer::Rejecting
     # Card Ace Casino
     [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ] =>
     [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ],
+    # MeetMoi
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a) =>
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
