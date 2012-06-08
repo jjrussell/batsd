@@ -4,7 +4,6 @@ describe VideosController do
   render_views
 
   before(:each) do
-    fake_the_web
     OfferCacher.stub(:get_offer_list).and_return([])
     @currency = Factory(:currency)
     @params = {

@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Click do
-  before :each do
-    SimpledbResource.reset_connection
-  end
-
   describe "#url_to_resolve" do
     before :each do
       @click = Factory(:click)

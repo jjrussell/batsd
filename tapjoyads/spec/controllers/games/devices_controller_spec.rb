@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Games::DevicesController do
   before :each do
     activate_authlogic
-    fake_the_web
   end
 
   context 'when linking device' do

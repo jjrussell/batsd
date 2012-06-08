@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Dashboard::Tools::AppReviewsController do
   before :each do
-    fake_the_web
     activate_authlogic
     admin = Factory(:admin)
     partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)

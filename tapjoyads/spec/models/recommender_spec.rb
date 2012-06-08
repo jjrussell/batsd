@@ -56,7 +56,6 @@ end
 def recommender_instance_spec(recommender)
   describe recommender.class do
     before :each do
-      fake_the_web
       recommender.cache_all
       @app = "003333af-df6f-4a03-80dd-082e35237d12"
       @udid = "statz_test_udid"

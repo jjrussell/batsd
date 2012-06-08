@@ -10,8 +10,6 @@ describe SurveyOffer do
   it { should validate_presence_of :name }
 
   before :each do
-    fake_the_web
-
     @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
     @survey_offer = Factory(:survey_offer)
   end

@@ -3,10 +3,6 @@ require 'spec/spec_helper'
 describe GetOffersController do
   render_views
 
-  before :each do
-    fake_the_web
-  end
-
   describe '#index' do
     before :each do
       @currency = Factory(:currency)
