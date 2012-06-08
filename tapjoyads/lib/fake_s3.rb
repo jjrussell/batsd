@@ -41,7 +41,8 @@ class FakeObject
     'most_popular.txt',
     'app_app_matrix.txt',
     'daily/udid_apps_reco.dat',
-    'daily/udid_apps_reco_src.gz'
+    'daily/udid_apps_reco_src.gz',
+    '101.1.Android.US..android'
   ]
 
   def initialize(key)
