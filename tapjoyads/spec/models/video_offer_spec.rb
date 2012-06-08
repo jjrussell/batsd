@@ -100,7 +100,8 @@ describe VideoOffer do
         buttons.each do |button|
           type = types.shift
           button.tracking_offer.update_attribute(:device_types, type.to_json)
-          @buttons[type.join(',')] = button
+          button.update_attribute(:rewarded, true) if type.size > 1
+          @buttons[type.size > 1 ? 'rewarded' : type] = button
         end
 
         subject.reload
@@ -115,15 +116,29 @@ describe VideoOffer do
         end
 
         context 'and a rewarded button' do
-          let(:filtered_out) { @buttons['iphone,android'] }
-          before(:each) do
-            filtered_out.update_attribute(:rewarded, true)
-            subject.reload
-          end
+          let(:filtered_out) { @buttons['rewarded'] }
 
           it 'filters out the rewarded install offer' do
             subject.video_buttons_for_device(device).should_not include(filtered_out)
           end
+        end
+      end
+
+      context 'with an itouch device and a rewarded install offer' do
+        let(:device) { 'itouch' }
+        let(:filtered_out) { @buttons['rewarded'] }
+
+        it 'filters out the rewarded install offer' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with an ipad device and a rewarded install offer' do
+        let(:device) { 'ipad' }
+        let(:filtered_out) { @buttons['rewarded'] }
+
+        it 'filters out the rewarded install offer' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
         end
       end
 
