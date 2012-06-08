@@ -113,6 +113,18 @@ describe VideoOffer do
         it 'filters out non-iphone offers' do
           subject.video_buttons_for_device(device).should_not include(filtered_out)
         end
+
+        context 'and a rewarded button' do
+          let(:filtered_out) { @buttons['iphone,android'] }
+          before(:each) do
+            filtered_out.update_attribute(:rewarded, true)
+            subject.reload
+          end
+
+          it 'filters out the rewarded install offer' do
+            subject.video_buttons_for_device(device).should_not include(filtered_out)
+          end
+        end
       end
 
       context 'with an android device' do
