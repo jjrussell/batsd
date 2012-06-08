@@ -41,10 +41,10 @@ describe Offer do
       @icon_id = "icon_id"
 
       img = Magick::Image.from_blob(read_asset('round_mask.png', 'display'))
-      Magick::Image.stubs(:from_blob).returns(img)
+      Magick::Image.stub(:from_blob).and_return(img)
 
       bucket = FakeBucket.new
-      S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(bucket)
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
       @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
 
       @secondary_offer = @offer.clone
@@ -53,12 +53,12 @@ describe Offer do
 
     context "given only image data" do
       before :each do
-        @s3object.expects(:write).with(:data => @image_data, :acl => :public_read).once
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
       end
 
       context "for a primary offer" do
         it "uses id for guid" do
-          Offer.expects(:hashed_icon_id).with(@offer.id).once.returns(@icon_id)
+          Offer.should_receive(:hashed_icon_id).with(@offer.id).once.and_return(@icon_id)
           @offer.save_icon!(@image_data)
 
           @offer.icon_id_override.should be_nil
@@ -67,7 +67,7 @@ describe Offer do
 
       context "for a secondary offer" do
         it "uses item_id for guid" do
-          Offer.expects(:hashed_icon_id).with(@secondary_offer.item_id).once.returns(@icon_id)
+          Offer.should_receive(:hashed_icon_id).with(@secondary_offer.item_id).once.and_return(@icon_id)
           @secondary_offer.save_icon!(@image_data)
 
           @secondary_offer.icon_id_override.should be_nil
@@ -78,7 +78,7 @@ describe Offer do
         it "uses icon_id_override for guid" do
           guid = "guid"
           @offer.update_attributes!(:icon_id_override => guid)
-          Offer.expects(:hashed_icon_id).with(guid).once.returns(@icon_id)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
           @offer.save_icon!(@image_data)
 
           @offer.icon_id_override.should == guid
@@ -88,14 +88,14 @@ describe Offer do
 
     context "with override = true" do
       before :each do
-        @s3object.expects(:write).with(:data => @image_data, :acl => :public_read).once
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
       end
 
       context "for a primary offer" do
         it "uses new guid for icon_id_override" do
           guid = "guid"
-          UUIDTools::UUID.expects(:random_create).once.returns(guid)
-          Offer.expects(:hashed_icon_id).with(guid).once.returns(@icon_id)
+          UUIDTools::UUID.should_receive(:random_create).once.and_return(guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
           @offer.save_icon!(@image_data, true)
 
           @offer.icon_id_override.should == guid
@@ -105,7 +105,7 @@ describe Offer do
 
       context "for a secondary offer" do
         it "uses id for icon_id_override" do
-          Offer.expects(:hashed_icon_id).with(@secondary_offer.id).once.returns(@icon_id)
+          Offer.should_receive(:hashed_icon_id).with(@secondary_offer.id).once.and_return(@icon_id)
           @secondary_offer.save_icon!(@image_data, true)
 
           @secondary_offer.icon_id_override.should == @secondary_offer.id
@@ -113,87 +113,95 @@ describe Offer do
         end
       end
     end
+  end
 
-    context "with remove = true" do
-      context "for a direct-parent offer" do
-        context "without icon_id_override set" do
-          it "does nothing" do
-            @s3object.expects(:delete).never
-            @offer.save_icon!(nil, false, true)
-          end
-        end
+  describe '.remove_icon!' do
+    before :each do
+      @icon_id = 'icon_id'
 
-        context "with icon_id_override set" do
-          before :each do
-            guid = "guid"
-            @offer.update_attributes!(:icon_id_override => guid)
-            Offer.expects(:hashed_icon_id).with(guid).once.returns(@icon_id)
-          end
+      bucket = FakeBucket.new
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
+    end
 
-          context "with pre-existing image" do
-            it "removes image" do
-              @s3object.write("pre-existing image data")
-              @s3object.expects(:delete).once
-              @offer.save_icon!(nil, false, true)
-
-              @offer.icon_id_override.should be_nil
-              @offer.changed?.should be_false # offer was saved
-            end
-          end
-
-          context "without pre-existing image" do
-            it "still unsets icon_id_override" do
-              @s3object.expects(:delete).never
-              @offer.save_icon!(nil, false, true)
-
-              @offer.icon_id_override.should be_nil
-              @offer.changed?.should be_false # offer was saved
-            end
-          end
+    context "for a direct-parent offer" do
+      context "without icon_id_override set" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
         end
       end
 
-      context "for an indirect-parent App offer" do
+      context "with icon_id_override set" do
         before :each do
-          parent = Factory :action_offer
-          @action_offer = parent.primary_offer
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
         end
 
-        context "with icon_id_override_set to app_id" do
-          it "does nothing" do
-            @s3object.expects(:delete).never
-            @offer.save_icon!(nil, false, true)
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+
+        context "without pre-existing image" do
+          it "still unsets icon_id_override" do
+            @s3object.should_receive(:delete).never
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+      end
+    end
+
+    context "for an indirect-parent App offer" do
+      before :each do
+        parent = Factory :action_offer
+        @action_offer = parent.primary_offer
+      end
+
+      context "with icon_id_override_set to app_id" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
+
+          @action_offer.icon_id_override.should == @action_offer.app_id
+        end
+      end
+
+      context "with icon_id_override != app_id" do
+        before :each do
+          guid = "guid"
+          @action_offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        end
+
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @action_offer.remove_icon!
 
             @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
           end
         end
 
-        context "with icon_id_override != app_id" do
-          before :each do
-            guid = "guid"
-            @action_offer.update_attributes!(:icon_id_override => guid)
-            Offer.expects(:hashed_icon_id).with(guid).once.returns(@icon_id)
-          end
+        context "without pre-existing image" do
+          it "still resets icon_id_override to app_id" do
+            @s3object.should_receive(:delete).never
+            @action_offer.remove_icon!
 
-          context "with pre-existing image" do
-            it "removes image" do
-              @s3object.write("pre-existing image data")
-              @s3object.expects(:delete).once
-              @action_offer.save_icon!(nil, false, true)
-
-              @action_offer.icon_id_override.should == @action_offer.app_id
-              @action_offer.changed?.should be_false # offer was saved
-            end
-          end
-
-          context "without pre-existing image" do
-            it "still resets icon_id_override to app_id" do
-              @s3object.expects(:delete).never
-              @action_offer.save_icon!(nil, false, true)
-
-              @action_offer.icon_id_override.should == @action_offer.app_id
-              @action_offer.changed?.should be_false # offer was saved
-            end
+            @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
           end
         end
       end
