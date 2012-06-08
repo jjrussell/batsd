@@ -399,10 +399,6 @@ class Offer < ActiveRecord::Base
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
 
-  def remove_icon!
-    save_icon!(nil, true, true)
-  end
-
   def self.remove_icon!(guid, video_offer = false)
     icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
