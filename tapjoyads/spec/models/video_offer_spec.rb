@@ -62,13 +62,9 @@ describe VideoOffer do
 
     let(:buttons) do
       3.times do |i|
-        button = subject.video_buttons.build
-        button.name     = "button #{i}"
-        button.url      = 'http://www.tapjoy.com'
-        button.ordinal  = i
-        button.stub(:update_tracking_offer).and_return(true)
-        button.save!
+        Factory(:video_button, :video_offer => subject, :ordinal => i)
       end
+      subject.reload
       subject.video_buttons
     end
 
@@ -87,7 +83,6 @@ describe VideoOffer do
       let(:button) {buttons.last}
       before(:each) do
         button.enabled = false
-        button.stub(:update_tracking_offer).and_return(true)
         button.save!
         subject.reload
       end
