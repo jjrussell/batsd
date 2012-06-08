@@ -273,11 +273,11 @@ class Offer < ActiveRecord::Base
   end
 
   def missing_app_store_id?
-    app_offer? && !url_overridden? && item.store_id.blank?
+    client_facing_app_offer? && !url_overridden? && item.store_id.blank?
   end
 
   def countries_blacklist
-    if app_offer?
+    if client_facing_app_offer?
       item.get_countries_blacklist || []
     else
       []
