@@ -1,5 +1,5 @@
 #footer
-  - if current_gamer.blank?
+  - if @show_partners_bar_in_footer
     .partners
       %img{ :src => BLANK_IMAGE, :usemap => '#partnersmap' }
       %map{ :name => 'partnersmap' }

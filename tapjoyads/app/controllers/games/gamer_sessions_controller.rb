@@ -10,6 +10,7 @@ class Games::GamerSessionsController < GamesController
       redirect_to games_path and return
     end
     @login_form_class_name = "show" if params[:immediate]
+    set_show_partners_bar_in_footer
     render_login_page
   end
 

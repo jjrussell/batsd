@@ -12,6 +12,10 @@ class GamesController < ApplicationController
 
   protected
 
+  def set_show_partners_bar_in_footer
+    @show_partners_bar_in_footer = true
+  end
+
   def set_exclude_social_from_submenu
     @exclude_social_from_submenu = true
   end

@@ -29,14 +29,13 @@ $(document).ready(function(){
   $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
 
   // Login Modal
+  $('#login-form').css({ 'height':$(document).height() });
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
       $('#login-form').removeClass('show');
     }
     else {
-      $('#login-form').addClass('show').css({
-        'height' : $(document).height()
-      });
+      $('#login-form').addClass('show');
     }
   });
   $('#signup, #signup-btn').bind('click', function() {
