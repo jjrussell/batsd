@@ -57,7 +57,6 @@ describe OptimizedOfferList do
 
   describe ".s3_json_offer_data" do
     it "returns the data of a bucket in json with a list of offers and their rank score" do
-      fake_the_web
       json = OptimizedOfferList.send(:s3_json_offer_data, @s3_key)
       json["key"].should == @s3_key
       json["enabled"].should == "true"
