@@ -11,7 +11,8 @@
     %span{ :class => 'disabled' } Disabled
   - if permitted_to? :index, :dashboard_tools_payout_freezes
     = link_to '[modify]', tools_payout_freezes_path
-
+= label_tag(:confirm_filter, 'Filter on confirmation status')
+= select_tag('confirm_filter', options_for_select(@filter_options, params[:confirm_filter]))
 - if @start_date.present?
   %h3
     For partners with payout info modified between
@@ -167,6 +168,11 @@
       $('#partners').focus().autocomplete(options);
       $('input.clear_filter').click(function(){
           window.location ='#{tools_payouts_path}';
+      });
+      $('select#confirm_filter').change(function() {
+        var location = '#{tools_payouts_path}?'
+        location += 'confirm_filter=' + $(this).val();
+        window.location = location;
       });
     });
 

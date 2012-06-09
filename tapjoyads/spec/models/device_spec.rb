@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Device do
   before :each do
-    SimpledbResource.reset_connection
+    enable_sdb
   end
 
   describe '.normalize_device_type' do
@@ -135,6 +135,78 @@ describe Device do
       it "doesn't add anything to the sdkless_clicks column of the device model" do
         @device.sdkless_clicks.should_not have_key @offer.third_party_data
       end
+    end
+  end
+
+  describe '#recently_skipped?' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    context 'an offer has just been skipped' do
+      it 'returns true' do
+        @device.recent_skips = [['a', Time.zone.now]]
+        @device.recently_skipped?('a').should be_true
+      end
+    end
+
+    context 'an offer has been skipped up to max time ago' do
+      it 'returns true' do
+        now = Time.zone.now
+        @device.recent_skips = [['a', now - (Device::SKIP_TIMEOUT)]]
+        Timecop.freeze(now) do
+          @device.recently_skipped?('a').should be_true
+        end
+      end
+    end
+
+    context 'an offer has not been recently been skipped' do
+      it 'returns false' do
+        @device.recent_skips = [['a', Time.zone.now - (Device::SKIP_TIMEOUT + 1.second)]]
+        @device.recently_skipped?('a').should be_false
+      end
+    end
+  end
+
+  describe '#add_skip' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+    it 'adds offer to recent_skips' do
+      now = Time.zone.now
+      @device.add_skip('a')
+      Timecop.freeze(now) do
+        @device.recent_skips[0][0].should == 'a'
+        Time.zone.parse(@device.recent_skips[0][1]).to_i.should == now.to_i
+      end
+    end
+    it 'retains only 100 skips' do
+      105.times { |num| @device.add_skip(num) }
+      @device.recent_skips.length.should == 100
+    end
+  end
+
+  describe '#remove_old_skips' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    it 'removes all skips more than specfied time ago' do
+      a = []
+      100.times do
+        a << [rand(1000).to_s, Time.zone.now - rand(200).seconds]
+      end
+      a = a.sort_by {|item| item[1] }
+      @device.recent_skips = a
+      @device.recent_skips.length.should == 100
+      @device.remove_old_skips(50.seconds)
+      @device.recent_skips.should == []
     end
   end
 

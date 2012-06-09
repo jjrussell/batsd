@@ -21,7 +21,7 @@
             = f.label :offer_name
             #help_offer.help ?
           %td
-            = @offer_event.offer.name
+            = @offer_event.offer.name_with_suffix
             #current
               = render('shared/offer_events/offer_info')
       %tr

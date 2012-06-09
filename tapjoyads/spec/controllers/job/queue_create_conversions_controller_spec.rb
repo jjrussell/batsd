@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Job::QueueCreateConversionsController do
   before :each do
-    fake_the_web
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
 
     publisher_app = Factory(:app)

@@ -3,7 +3,6 @@ require 'spec/spec_helper'
 describe ClickController do
 
   before :each do
-    fake_the_web
     @currency = Factory(:currency)
   end
 

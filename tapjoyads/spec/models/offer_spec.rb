@@ -24,7 +24,6 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    fake_the_web
     @app = Factory :app
     @offer = @app.primary_offer
   end
@@ -363,8 +362,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 4" do
-      @offer.min_bid.should == 4
+    it "has a min_bid of 2" do
+      @offer.min_bid.should == 2
     end
   end
 
@@ -1001,14 +1000,17 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      Sqs.stub(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
       now = Time.zone.now
-      Time.zone.stub(:now).and_return(now)
+      Timecop.freeze(now)
 
       @offer.impression_tracking_urls = @urls
       @offer.click_tracking_urls = @urls
       @offer.conversion_tracking_urls = @urls
+    end
+
+    after(:each) do
+      Timecop.return
     end
 
     context "without a provided timestamp" do

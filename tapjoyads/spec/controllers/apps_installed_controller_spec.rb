@@ -3,11 +3,6 @@ require 'spec/spec_helper'
 describe AppsInstalledController do
   render_views
 
-  before :each do
-    fake_the_web
-    Sqs.stub(:send_message)
-  end
-
   context '#index' do
     before :each do
       app = Factory(:app)

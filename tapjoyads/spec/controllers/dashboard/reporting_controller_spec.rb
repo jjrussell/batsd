@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Dashboard::ReportingController do
-  before :each do
-    fake_the_web
-  end
-
   context 'with a non-logged in user' do
     it 'responds with redirect' do
       get(:index)
@@ -92,9 +88,10 @@ describe Dashboard::ReportingController do
       before :each do
         @end_time = Time.parse('2011-02-15')
         @start_time = @end_time - 23.hours
-        Time.zone.stub(:now).and_return(@end_time)
-        Appstats.any_instance.stub(:to_csv).and_return(['a','b'])
-        post(:export, :id => @app.id)
+        Timecop.freeze(@end_time) do
+          Appstats.any_instance.stub(:to_csv).and_return(['a','b'])
+          post(:export, :id => @app.id)
+        end
       end
 
 
@@ -189,8 +186,9 @@ describe Dashboard::ReportingController do
         Appstats.any_instance.stub(:to_csv).and_return(['a','b'])
         @end_time = Time.zone.parse('2011-02-15')
         @start_time = @end_time - 23.hours
-        Time.zone.stub(:now).and_return(@end_time)
-        post(:export_aggregate)
+        Timecop.freeze(@end_time) do
+          post(:export_aggregate)
+        end
       end
 
 

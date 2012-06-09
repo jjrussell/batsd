@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Games::AppReviews::FlagModerationController do
   before :each do
-    fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
     @other_gamer = Factory(:gamer)
@@ -72,7 +71,6 @@ end
 
 describe Games::AppReviews::FaveModerationController do
   before :each do
-    fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
     @other_gamer = Factory(:gamer)

@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Dashboard::AppsController do
   before :each do
-    fake_the_web
     activate_authlogic
     @user = Factory(:user)
     @partner = Factory(:partner,
