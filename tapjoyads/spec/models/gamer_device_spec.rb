@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe GamerDevice do
-  before :each do
-    fake_the_web
-  end
-
   describe '#dashboard_device_info_tool_url' do
     before :each do
       device = Factory :device

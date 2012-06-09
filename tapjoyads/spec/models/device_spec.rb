@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Device do
   before :each do
-    SimpledbResource.reset_connection
+    enable_sdb
   end
 
   describe '.normalize_device_type' do

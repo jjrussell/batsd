@@ -16,8 +16,6 @@ end
 
 describe Job::QueueConversionTrackingController do
   before :each do
-    fake_the_web
-    Sqs.stub(:send_message)
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
   end
 

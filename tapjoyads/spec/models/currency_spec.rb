@@ -4,7 +4,6 @@ describe Currency do
 
   before :each do
     @currency = Factory.build(:currency)
-    fake_the_web
   end
 
   describe '.belongs_to' do

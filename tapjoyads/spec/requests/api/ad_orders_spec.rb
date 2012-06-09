@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe "Ad orders" do
-  before :each do
-    fake_the_web
-  end
-
   let(:testapp) { Factory(:app) }
 
   describe "GET /get_ad_order" do

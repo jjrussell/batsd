@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe AgencyApi::CurrenciesController do
   before :each do
-    fake_the_web
     @agency_user = Factory(:agency_user)
     @partner = Factory(:partner)
     @agency_user.partners << @partner
