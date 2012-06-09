@@ -66,7 +66,7 @@
       .noscript_msg
         = t('text.games.no_javascript')
 
-    #tapjoy{:style => 'display: none;'}
+    #tapjoy{:style => 'display: none; position:relative;'}
       = render :partial => 'games/shared/header'
 
       - flash.each do |name, msg|
