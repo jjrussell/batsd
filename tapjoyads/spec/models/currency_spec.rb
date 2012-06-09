@@ -533,7 +533,8 @@ describe Currency do
     end
 
     it 'caches currencies before saving them' do
-      Currency.any_instance.expects(:run_callbacks).with(:cache)
+      Currency.any_instance.should_receive(:run_callbacks).with(:cache)
+      Mc.should_receive(:distributed_put)
       @currency.send(:cache_by_app_id)
     end
   end
