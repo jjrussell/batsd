@@ -17,7 +17,7 @@ describe DisplayAdController do
       @bucket = S3.bucket(BucketNames::TAPJOY)
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
-      @currency = Factory(:currency)
+      @currency = Factory(:currency, :conversion_rate => 0)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
