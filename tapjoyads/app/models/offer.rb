@@ -44,7 +44,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
-  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
+                                    active
                                     allow_negative_balance
                                     created_at
                                     daily_budget
