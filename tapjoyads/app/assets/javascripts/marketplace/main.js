@@ -28,7 +28,7 @@ $(document).ready(function(){
   }
   $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
 
-  $(window).load(function(){$('#login-form').css({ 'height':$(document).height() });});
+  $(window).load(setTimeout(function(){$('#login-form').css({ 'height':$(document).height() });},1));
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
