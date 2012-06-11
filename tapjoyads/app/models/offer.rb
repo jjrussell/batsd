@@ -263,6 +263,25 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def clone_and_save!
+    new_offer = clone
+    new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+
+    yield new_offer if block_given?
+
+    transaction do
+      new_offer.save!
+      new_offer.save_icon!(icon_s3_object.read, true) if icon_id_override.present?
+    end
+
+    new_offer
+  end
+
+  def icon_s3_object
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
+  end
+
   def app_offer?(only_client_facing = true)
     item_types = %w(App ActionOffer)
     item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
@@ -881,17 +900,13 @@ class Offer < ActiveRecord::Base
     featured = options[:featured]
     rewarded = options[:rewarded]
 
-    offer = self.clone
-    offer.attributes = {
-      :created_at => nil,
-      :updated_at => nil,
-      :featured   => !featured.nil? ? featured : self.featured,
-      :rewarded   => !rewarded.nil? ? rewarded : self.rewarded,
-      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
-      :tapjoy_enabled => false }
-    offer.bid = offer.min_bid
-    offer.save!
-    offer
+    clone_and_save! do |new_offer|
+      new_offer.attributes = {
+        :featured    => !featured.nil? ? featured : self.featured,
+        :rewarded    => !rewarded.nil? ? rewarded : self.rewarded,
+        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
+        :bid         => offer.min_bid }
+    end
   end
 
   def lock_survey_offer
