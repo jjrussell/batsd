@@ -77,13 +77,14 @@ class OfferList
   end
 
   def weighted_rand
-    while offers.any?
-      weight_scale = 1 - offers.map(&:rank_score).min
-      weights = offers.collect { |o| o.rank_score + weight_scale }
-      offer = offers.weighted_rand(weights)
+    selectable_offers = offers.clone
+    while selectable_offers.any?
+      weight_scale = 1 - selectable_offers.map(&:rank_score).min
+      weights = selectable_offers.collect { |o| o.rank_score + weight_scale }
+      offer = selectable_offers.weighted_rand(weights)
       return offer if offer.nil?
       if postcache_reject?(offer)
-        offers.delete(offer)
+        selectable_offers.delete(offer)
       else
         return offer
       end
