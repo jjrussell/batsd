@@ -31,12 +31,12 @@ $(document).ready(function(){
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
-        $('#login-form').removeClass('show');
+      $('#login-form').removeClass('show');
     }
     else {
-        $('#login-form').addClass('show').css({
-            'height':$(document).height()
-        });
+      $('#login-form').addClass('show').css({
+          'height':$(document).height()
+      });
     }
   });
     $('#signup, #signup-btn').bind('click', function() {
