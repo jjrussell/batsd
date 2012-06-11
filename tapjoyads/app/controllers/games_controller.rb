@@ -8,7 +8,7 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :get_local_tracking_url
 
   protected
 
@@ -32,7 +32,8 @@ class GamesController < ApplicationController
   end
 
   def get_locale_filename
-    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}"
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
   def get_language_codes
@@ -136,8 +137,8 @@ class GamesController < ApplicationController
       render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
-      redirect_to games_social_get_twitter_friends_path
+      render :json => { :success => false, :errorRedirectPath => games_social_twitter_start_oauth_path } and return if params[:ajax].present?
+      redirect_to games_social_twitter_start_oauth_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
       flash[:error] = t('text.games.twitter_internal_error')
@@ -289,6 +290,15 @@ class GamesController < ApplicationController
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
+  def get_local_tracking_url(path, controller=nil, action=nil, url=nil)
+    request_params = {}
+    request_params[:request_path] = path if path.present?
+    request_params[:request_controller] = controller if controller.present?
+    request_params[:request_action] = action if action.present?
+    request_params[:request_url] = url if url.present?
+    request_params.empty? ? nil : "#{games_record_local_request_path}?data=#{ObjectEncryptor.encrypt(request_params)}"
   end
 
   def record_recommended_apps

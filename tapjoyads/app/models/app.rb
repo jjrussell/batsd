@@ -119,7 +119,7 @@ class App < ActiveRecord::Base
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
-    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
+    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist, :languages,
     :to => :primary_app_metadata, :allow_nil => true
   delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
 
@@ -146,7 +146,7 @@ class App < ActiveRecord::Base
   end
 
   def virtual_goods
-    VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
+    VirtualGood.select(:where => "app_id = '#{self.id}'", :limit => 1000)[:items]
   end
 
   def has_virtual_goods?

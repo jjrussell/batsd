@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120430164535) do
+ActiveRecord::Schema.define(:version => 20120607175902) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -73,6 +73,7 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
     t.text     "countries_blacklist"
+    t.text     "languages"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -343,6 +344,7 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.integer  "display_order"
     t.string   "desk_location"
     t.string   "department"
+    t.string   "office"
   end
 
   add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
@@ -721,6 +723,7 @@ ActiveRecord::Schema.define(:version => 20120430164535) do
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
+    t.text     "account_manager_notes"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true

@@ -69,7 +69,7 @@ module AuthlogicFacebookConnect
                   new_user.gamer_profile = new_gamer_profile
                 end
 
-                new_user.before_connect(facebook_session) if new_user.respond_to?(:before_connect)
+                new_user.before_connect(facebook_session, :referrer => referrer) if new_user.respond_to?(:before_connect)
 
                 new_user.save!
 

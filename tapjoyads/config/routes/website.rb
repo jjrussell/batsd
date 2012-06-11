@@ -38,6 +38,7 @@ Tapjoyad::Application.routes.draw do
     match 'more_apps' => 'homepage#index', :as => :more_apps
     match 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
+    match 'record_local_request' => 'homepage#record_local_request', :as => :record_local_request
     match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
     match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
     match 'translations/:filename.js' => 'homepage#translations', :as => :translations
@@ -100,7 +101,6 @@ Tapjoyad::Application.routes.draw do
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
       match 'invite_twitter_friends' => 'social#invite_twitter_friends', :as => :invite_twitter_friends
       match 'send_twitter_invites' => 'social#send_twitter_invites', :as => :send_twitter_invites
-      match 'get_twitter_friends' => 'social#get_twitter_friends', :as => :get_twitter_friends
       match 'social/invites' => 'social#invites', :as => :invites
       match 'social/friends' => 'social#friends', :as => :friends
       scope :twitter do

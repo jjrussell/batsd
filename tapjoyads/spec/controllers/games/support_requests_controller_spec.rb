@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Games::SupportRequestsController do
   before :each do
     activate_authlogic
-    fake_the_web
 
     @device = Factory(:device)
 

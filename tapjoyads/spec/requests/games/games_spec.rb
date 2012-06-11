@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe "Games requests", :type => :request do
-  before :each do
-    fake_the_web
-  end
-
   let(:testapp) { Factory(:app) }
 
   describe "GET /games" do

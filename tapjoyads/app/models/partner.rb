@@ -130,7 +130,7 @@ class Partner < ActiveRecord::Base
 
   @@per_page = 20
 
-  scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
+  scope :to_calculate_next_payout_amount, :conditions => ['pending_earnings >= 10000 or pending_earnings > 0 and reseller_id is not ?', nil]
   scope :to_payout, :conditions => 'pending_earnings != 0',
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
