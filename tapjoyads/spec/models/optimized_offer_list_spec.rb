@@ -63,7 +63,7 @@ describe OptimizedOfferList do
       offers = json["offers"]
       offers.should be_an Array
       offers.first.should be_a Hash
-      offers.first.keys.should == ["rank_score", "offer_id"]
+      offers.first.keys.should =~ ["rank_score", "offer_id"]
     end
   end
 
