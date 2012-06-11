@@ -19,14 +19,13 @@ class DisplayAdController < ApplicationController
 
   def image
     params[:currency_id] = params[:publisher_app_id] if params[:currency_id].blank?
-    return unless verify_params([ :advertiser_app_id, :size, :publisher_app_id, :currency_id ])
-    params[:offer_id] = params.delete(:advertiser_app_id)
+    return unless verify_params([:advertiser_app_id, :size, :publisher_app_id, :currency_id])
+    offer_id = params.delete(:advertiser_app_id)
     width, height = parse_size(params[:size])
     size = "#{width}x#{height}"
 
-    hash = params[:key].present? ? params[:key] : nil
-    keys = [image_key_from_hash(params[:currency_id], params[:offer_id], width, height, params[:display_multiplier], hash)]
-    keys << image_key_from_hash(params[:currency_id], params[:offer_id], width, height, params[:display_multiplier]) if hash
+    keys = [image_key_from_hash(params[:currency_id], offer_id, width, height, params[:display_multiplier], params[:key])]
+    keys << image_key_from_hash(params[:currency_id], offer_id, width, height, params[:display_multiplier]) if params[:key].present?
     # always be up to date for previews
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
@@ -38,10 +37,10 @@ class DisplayAdController < ApplicationController
       if params[:offer_type] == "TestOffer"
         offer = publisher.test_offer
       else
-        offer = Offer.find_in_cache(params[:offer_id])
+        offer = Offer.find_in_cache(offer_id)
       end
 
-      return unless verify_records([ publisher, currency, offer ])
+      return unless verify_records([publisher, currency, offer])
 
       data.merge!({
         :publisher          => publisher,
@@ -59,7 +58,7 @@ class DisplayAdController < ApplicationController
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([ :app_id, :udid, :currency_id ])
+    return unless verify_params([:app_id, :udid, :currency_id])
 
     now = Time.zone.now
 
@@ -76,7 +75,8 @@ class DisplayAdController < ApplicationController
     @publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
     currency = nil if currency.present? && currency.app_id != params[:app_id]
-    return unless verify_records([ @publisher_app, currency ], :render_missing_text => false)
+
+    return unless verify_records([@publisher_app, currency], :render_missing_text => false)
 
     params[:publisher_app_id] = @publisher_app.id
     params[:displayer_app_id] = @publisher_app.id
@@ -134,7 +134,7 @@ class DisplayAdController < ApplicationController
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
-          return unless verify_records([ advertiser_app ])
+          return unless verify_records([advertiser_app])
           @categories = advertiser_app.categories
         else
           @categories = []
@@ -307,7 +307,7 @@ class DisplayAdController < ApplicationController
     display_multiplier = (display_multiplier || 1).to_f
     size = "#{width}x#{height}"
     key = "display_ad.#{currency_id}.#{offer_id}.#{size}.#{display_multiplier}"
-    key << ".#{hash}" if !hash.blank?
+    key << ".#{hash}" unless hash.blank?
     key
   end
 end

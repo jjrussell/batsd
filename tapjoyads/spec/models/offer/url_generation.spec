@@ -26,7 +26,7 @@ describe Offer::UrlGeneration do
     end
   end
 
-  describe '.preiview_display_ad_image_url' do
+  describe '.preview_display_ad_image_url' do
     it 'should add key param to url ' do
       url = @offer.preview_display_ad_image_url(@app.id, 320, 50)
       params = CGI::parse(URI(url).query)
