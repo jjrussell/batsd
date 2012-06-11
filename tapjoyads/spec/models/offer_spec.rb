@@ -416,7 +416,7 @@ describe Offer do
     end
 
     describe "url generation" do
-      describe ".complete_action_url" do
+      describe '#complete_action_url' do
         it "should substitute tokens in the URL" do
           @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
           source = @offer.source_token('12345')
