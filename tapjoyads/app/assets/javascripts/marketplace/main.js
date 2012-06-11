@@ -32,13 +32,15 @@ $(document).ready(function(){
   $('#login-form').css({ 'height':$(document).height() });
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
-      $('#login-form').removeClass('show');
+        $('#login-form').removeClass('show');
     }
     else {
-      $('#login-form').addClass('show');
+        $('#login-form').addClass('show').css({
+            'height':$(document).height()
+        });
     }
   });
-  $('#signup, #signup-btn').bind('click', function() {
+    $('#signup, #signup-btn').bind('click', function() {
     if ($('#signup-form').hasClass('show')) {
       $('#signup-form').removeClass('show');
     }
