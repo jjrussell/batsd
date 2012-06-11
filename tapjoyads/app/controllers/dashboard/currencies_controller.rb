@@ -18,7 +18,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       [id, last_run_time]
     end
     unless @currency.tapjoy_enabled?
-      flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:support+enable@tapjoy.com'>support+enable@tapjoy.com</a> with your app ID to have it enabled. If your application is currently not live, please provide a brief explanation of how you intend to use virtual currency your app."
+      flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:support+enable@tapjoy.com?subject=reenable+currency+ID+#{@currency.id}'>support+enable@tapjoy.com</a> with your app ID to have it enabled. If your application is currently not live, please provide a brief explanation of how you intend to use virtual currency your app."
     end
   end
 
