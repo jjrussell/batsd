@@ -2,7 +2,6 @@ require 'spec/spec_helper'
 
 describe Games::AppReviewsController do
   before :each do
-    fake_the_web
     activate_authlogic
     @gamer = Factory(:gamer)
     login_as(@gamer)

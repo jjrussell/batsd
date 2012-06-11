@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Dashboard::Account::WhitelistController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 

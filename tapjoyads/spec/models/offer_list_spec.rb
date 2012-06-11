@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe OfferList do
   before :each do
-    fake_the_web
     RailsCache.flush
   end
 
@@ -44,7 +43,7 @@ describe OfferList do
 
     it 'overwrites the platform_name parameter with the app platform name' do
       OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, 'Windows', anything, anything)
-      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE)
+      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE).offers
     end
 
     context 'called with a null device_type' do
@@ -56,7 +55,7 @@ describe OfferList do
         ['android', 'windows'].each do |platform|
           @app.platform = platform
           OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, platform)
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
         end
       end
 
@@ -65,7 +64,7 @@ describe OfferList do
         OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').exactly(other_platforms.count).times
         other_platforms.each do |platform|
           @app.platform = platform
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
         end
       end
     end
@@ -77,7 +76,7 @@ describe OfferList do
 
       it 'uses the parameter value, rather than the app platform' do
         OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'android')
-        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE)
+        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE).offers
       end
     end
   end
@@ -95,7 +94,7 @@ describe OfferList do
         Offer::DISPLAY_OFFER_TYPE => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       }.each do |type,nonrew_equiv|
         OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(nonrew_equiv, anything, anything, anything).and_return([])
-        OfferList.new(:currency => @currency, :type => type)
+        OfferList.new(:currency => @currency, :type => type).offers
       end
     end
   end
@@ -104,7 +103,7 @@ describe OfferList do
     before :each do
       @offers = []
       10.times { @offers << Factory(:video_offer).primary_offer }
-      RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new(@offers))
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(@offers)
       @currency = Factory(:currency)
       @app = @currency.app
       @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
@@ -133,6 +132,7 @@ describe OfferList do
         before :each do
           @deeplink = @currency.deeplink_offer
           @deeplink.partner.balance = 100
+          OptimizedOfferList.stub(:get_offer_list).and_return([])
           Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
         end
 

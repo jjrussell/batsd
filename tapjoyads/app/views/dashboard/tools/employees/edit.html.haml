@@ -1,7 +1,8 @@
 - @page_title = 'Edit Employee'
 
 %br
-= link_to '[Return to List]', tools_employees_path
+- if permitted_to?(:index, :dashboard_tools_employees)
+  = link_to '[Return to List]', tools_employees_path
 
 %h1= @employee.email
 

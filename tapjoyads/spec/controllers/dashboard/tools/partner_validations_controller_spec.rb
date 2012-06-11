@@ -5,7 +5,6 @@ describe Dashboard::Tools::PartnerValidationsController do
 
   before :each do
     activate_authlogic
-    fake_the_web
     @user = Factory(:admin)
     @partner = Factory(:partner, :users => [@user])
     login_as(@user)

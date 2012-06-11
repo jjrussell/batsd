@@ -318,6 +318,7 @@ FactoryGirl.define do
     current_games 'current_games'
     weapon        'weapon'
     biography     'biography'
+    department    'products'
   end
 
   factory :employee_review, :parent => :app_review do

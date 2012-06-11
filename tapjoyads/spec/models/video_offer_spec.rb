@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe VideoOffer do
-  before :each do
-    fake_the_web
-  end
-
   context 'when associating' do
     it 'has many' do
       should have_many :offers

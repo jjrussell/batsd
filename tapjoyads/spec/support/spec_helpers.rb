@@ -23,10 +23,8 @@ module SpecHelpers
     result['error'].should_not be_present
   end
 
-  def fake_the_web
-    Resolv.stub!(:getaddress=>'1.1.1.1')
-    RightAws::SdbInterface.stub!(:new=>FakeSdb.new)
+  def enable_sdb
+    RightAws::SdbInterface.unstub!(:new)
     SimpledbResource.reset_connection
-    AWS::S3.stub!(:new=>FakeS3.new)
   end
 end

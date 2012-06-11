@@ -84,7 +84,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         return
       else
         Notifier.alert_new_relic(e.class, e.message, request, params.merge(:reward_id => reward.id))
-        raise e
+        $redis.sadd 'queue:send_currency:failures', reward.key
+        return
       end
     end
 
