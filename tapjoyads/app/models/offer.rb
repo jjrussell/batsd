@@ -700,6 +700,14 @@ class Offer < ActiveRecord::Base
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
+  # We want a consistent "app id" to report to partners/3rd parties,
+  # but we don't want to reveal internal IDs. We also want to make
+  # the values unique between partners so that no 'collusion' can
+  # take place.
+  def source_token(publisher_app_id)
+    ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
+  end
+
   private
 
   def calculated_min_bid

@@ -264,8 +264,4 @@ module Offer::UrlGeneration
       "#{params[:udid]}.#{params[:advertiser_app_id]}"
     end
   end
-
-  def source_token(publisher_app_id)
-    ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
-  end
 end
