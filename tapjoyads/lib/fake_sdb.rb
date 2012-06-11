@@ -1,3 +1,5 @@
+# TODO: Missing functionality
+# Deleting multiple values
 class FakeSdb
 
   def put_attributes(domain, key, attrs_to_put, attrs_to_replace = {}, expected_attrs = {})
