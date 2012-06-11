@@ -517,18 +517,8 @@ class Offer < ActiveRecord::Base
     # What this allows for is one icon file to be shared between offers with the same parent.
     #
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
-    guid = icon_id
-
-    if override
-      if primary?
-        guid = UUIDTools::UUID.random_create.to_s # in this case, we need to generate a guid
-      else
-        guid = id # use already-generated guid ('id'), if possible
-      end
-    end
-
+    guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
     Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
-
     self.update_attributes!(:icon_id_override => guid) if (guid != item_id)
   end
 
