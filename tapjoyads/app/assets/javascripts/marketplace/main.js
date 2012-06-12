@@ -28,18 +28,26 @@ $(document).ready(function(){
   }
   $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
 
+
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
       $('#login-form').removeClass('show');
+      $('#content').addClass('hide');
+      $('#footer').addClass('hide');
+      $('#benefits').addClass('hide');
+
     }
     else {
       $('#login-form').addClass('show').css({
-        'height' : $(document).height()
+          'height':$(document).height()
       });
+      $('#content').removeClass('hide');
+      $('#footer').removeClass('hide');
+      $('#benefits').removeClass('hide');
     }
   });
-  $('#signup, #signup-btn').bind('click', function() {
+    $('#signup, #signup-btn').bind('click', function() {
     if ($('#signup-form').hasClass('show')) {
       $('#signup-form').removeClass('show');
     }
@@ -52,6 +60,9 @@ $(document).ready(function(){
 
   $('#login-form .cancel-btn').bind('click', function() {
     $('#login-form').removeClass('show');
+    $('#content').removeClass('hide');
+    $('#footer').removeClass('hide');
+    $('#benefits').removeClass('hide');
   });
 
   $('#signup-form .cancel-btn').bind('click', function() {
@@ -412,16 +423,22 @@ $(document).ready(function(){
   }
 
   // Menu Grid
-  $('.menu-grid').on('click', function(){
-    if ($(this).hasClass('active')) {
-      $(this).removeClass('active');
-      $('.menu-dropdown').removeClass('open').addClass('close');
-    }
-    else {
-      $(this).addClass('active');
-      $('.menu-dropdown').removeClass('close').addClass('open');
-    }
-  });
+    $('.menu-grid').on('menu-close', function () {
+        $(this).removeClass('active');
+        $('.menu-dropdown').removeClass('open').addClass('close');
+    });
+    $('.menu-grid').on('menu-open', function () {
+        $(this).addClass('active');
+        $('.menu-dropdown').removeClass('close').addClass('open');
+    });
+    $('.menu-grid').on('click', function () {
+        if ($(this).hasClass('active')) {
+            $(this).trigger('menu-close');
+        }
+        else {
+            $(this).trigger('menu-open');
+        }
+    });
 
   // Menu - Device Toggle
   $('.device-toggle').bind('click', function(){

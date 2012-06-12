@@ -126,6 +126,12 @@ FactoryGirl.define do
     day_number { Factory.next(:integer) }
   end
 
+  factory :deeplink_offer do
+    association :currency
+    app     { currency.app }
+    partner { currency.partner }
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }
@@ -350,5 +356,10 @@ FactoryGirl.define do
 
   factory :client do
     name  { Factory.next(:name) }
+  end
+
+  factory :short_url do
+    token Authlogic::Random.friendly_token
+    long_url 'https://www.tapjoy.com/' + UUIDTools::UUID.random_create.to_s
   end
 end
