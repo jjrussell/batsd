@@ -7,15 +7,15 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :create, :update, :deactivate ]
 
   def index
+    boosts = RankBoost.includes([:offer])
     if params[:filter] == 'active' && @offer.present?
-      @rank_boosts = RankBoost.active.find_all_by_offer_id(@offer.id)
+      boosts = boosts.active.find_all_by_offer_id(@offer.id)
     elsif params[:filter] == 'active'
-      @rank_boosts = RankBoost.active
+      boosts = boosts.active
     elsif @offer.present?
-      @rank_boosts = RankBoost.find_all_by_offer_id(@offer.id)
-    else
-      @rank_boosts = RankBoost.all
+      boosts = boosts.find_all_by_offer_id(@offer.id)
     end
+    @rank_boosts = boosts.paginate(:page => params[:page], :per_page => 200)
   end
 
   def new
