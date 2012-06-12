@@ -351,9 +351,4 @@ FactoryGirl.define do
   factory :client do
     name  { Factory.next(:name) }
   end
-
-  factory :short_url do
-    token  Authlogic::Random.friendly_token
-    long_url    'https://www.tapjoy.com/' + UUIDTools::UUID.random_create.to_s
-  end
 end

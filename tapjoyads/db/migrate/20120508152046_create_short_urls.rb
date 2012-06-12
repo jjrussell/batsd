@@ -3,8 +3,8 @@ class CreateShortUrls < ActiveRecord::Migration
     create_table :short_urls, :id => false do |t|
       t.guid   :id,          :null => false
       t.string :token,       :null => false
-      t.text   :long_url,    :null => false
-      t.date   :expiry
+      t.text :url,         :null => false
+      t.date :expiry
 
       t.timestamps
     end

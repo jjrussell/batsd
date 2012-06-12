@@ -1003,18 +1003,6 @@ ActiveRecord::Schema.define(:version => 20120607232707) do
   add_index "sales_reps", ["offer_id"], :name => "index_sales_reps_on_offer_id"
   add_index "sales_reps", ["sales_rep_id"], :name => "index_sales_reps_on_sales_rep_id"
 
-  create_table "short_urls", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "token",                    :null => false
-    t.text     "long_url",                 :null => false
-    t.date     "expiry"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "short_urls", ["id"], :name => "index_short_urls_on_id", :unique => true
-  add_index "short_urls", ["token"], :name => "index_short_urls_on_token", :unique => true
-
   create_table "spend_shares", :id => false, :force => true do |t|
     t.string   "id",             :limit => 36, :null => false
     t.float    "ratio",                        :null => false

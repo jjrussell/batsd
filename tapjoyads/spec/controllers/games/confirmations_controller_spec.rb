@@ -18,7 +18,8 @@ describe Games::ConfirmationsController do
         response.redirect_url.should == games_root_url(:utm_campaign => 'welcome_email',
                              :utm_medium   => 'email',
                              :utm_source   => 'tapjoy',
-                             :utm_content  => 'test_campaign')
+                             :utm_content  => 'test_campaign',
+                             :data         => data)
       end
     end
     context 'with valid data for confirm only message' do
@@ -49,32 +50,6 @@ describe Games::ConfirmationsController do
         Sqs.should_receive(:send_message)
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'}).insert(5, ' ')
         get(:create, :data => data)
-      end
-    end
-  end
-
-  describe '#redirect' do
-    before :each do
-      @gamer = Factory(:gamer)
-    end
-    context 'with invalid token' do
-      it 'redirect to confirm path' do
-        token = 'bad'
-        get(:redirect, :token => token)
-        response.redirected_to.should == games_confirm_path(:token => token)
-      end
-    end
-    context 'with no token' do
-      it 'redirect to confirm path' do
-        get(:redirect)
-        response.redirected_to.should == games_confirm_path
-      end
-    end
-    context 'with valid token' do
-      it 'redirect to new url' do
-        short_url = Factory(:short_url)
-        get(:redirect, :token => short_url.token)
-        response.redirected_to.should == short_url.long_url
       end
     end
   end

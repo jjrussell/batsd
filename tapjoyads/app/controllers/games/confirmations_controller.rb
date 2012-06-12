@@ -33,7 +33,7 @@ class Games::ConfirmationsController < GamesController
 
   def redirect
     short_url = ShortUrl.find_by_token(params[:token])
-    redirect_to short_url.long_url and return if short_url.present?
-    redirect_to games_confirm_path(:token => params[:token])
+    redirect_to short_url.url and return if short_url.present?
+    redirect_to  games_confirm_path(:token => params[:token])
   end
 end
