@@ -14,8 +14,6 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
       boosts = boosts.active
     elsif @offer.present?
       boosts = boosts.find_all_by_offer_id(@offer.id)
-    else
-      bosts = boosts
     end
     @rank_boosts = boosts.paginate(:page => params[:page], :per_page => 200)
   end
