@@ -10,7 +10,7 @@
         options = {
           message: '<div>'+
               _t('games.add_to_homescreen', {
-                tapjoy: boldText("Tap")
+                tapjoy: boldText("Tapjoy")
               })+
             '</div><div class="bookmark"><span>'+
               _t("games.tap_that", {

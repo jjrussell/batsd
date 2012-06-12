@@ -156,7 +156,6 @@
       },
 
       basicTemplate: function(tpl, object) {
-        var that = this;
         object = object || {};
         return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
           // undefined is bad m'kay
