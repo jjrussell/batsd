@@ -201,7 +201,8 @@ class GamesController < ApplicationController
 
   def render_login_page
     @gamer_session ||= GamerSession.new
-    @login_form_class_name = 'show' if params[:immediate]=="login"
+    @login_form_class_name = "show" if params[:state]=='login-form'
+    @non_login_form_class_name = "hide" if params[:state]=='login-form'
     render 'games/gamer_sessions/new'
   end
 
