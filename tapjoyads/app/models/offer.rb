@@ -511,7 +511,7 @@ class Offer < ActiveRecord::Base
     # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
     # The icon_id_override field will be used, however, if it is not nil.
     #
-    # This method ('save_icon!') will therefore use item_id by default when uploading the icon,
+    # This method ('save_icon!') will therefore use icon_id by default when uploading the icon,
     # and icon_id_override only if override == true
     #
     # What this allows for is one icon file to be shared between offers with the same parent.
@@ -522,8 +522,8 @@ class Offer < ActiveRecord::Base
     self.update_attributes!(:icon_id_override => guid) if (guid != item_id)
   end
 
-  def save(perform_validation = true)
-    super(:validate => perform_validation)
+  def save(*)
+    super
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
@@ -894,8 +894,8 @@ class Offer < ActiveRecord::Base
       new_offer.attributes = {
         :featured    => !featured.nil? ? featured : self.featured,
         :rewarded    => !rewarded.nil? ? rewarded : self.rewarded,
-        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
-        :bid         => offer.min_bid }
+        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}" }
+      new_offer.bid = new_offer.min_bid
     end
   end
 

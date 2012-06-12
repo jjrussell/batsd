@@ -87,30 +87,16 @@ describe Offer do
     end
 
     context "with override = true" do
-      before :each do
+      it "uses new guid for icon_id_override" do
         @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
-      end
 
-      context "for a primary offer" do
-        it "uses new guid for icon_id_override" do
-          guid = "guid"
-          UUIDTools::UUID.should_receive(:random_create).once.and_return(guid)
-          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
-          @offer.save_icon!(@image_data, true)
+        guid = "guid"
+        UUIDTools::UUID.should_receive(:random_create).once.and_return(guid)
+        Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        @offer.save_icon!(@image_data, true)
 
-          @offer.icon_id_override.should == guid
-          @offer.changed?.should be_false # offer was saved
-        end
-      end
-
-      context "for a secondary offer" do
-        it "uses id for icon_id_override" do
-          Offer.should_receive(:hashed_icon_id).with(@secondary_offer.id).once.and_return(@icon_id)
-          @secondary_offer.save_icon!(@image_data, true)
-
-          @secondary_offer.icon_id_override.should == @secondary_offer.id
-          @secondary_offer.changed?.should be_false # offer was saved
-        end
+        @offer.icon_id_override.should == guid
+        @offer.changed?.should be_false # offer was saved
       end
     end
   end
@@ -978,6 +964,31 @@ describe Offer do
           end
         end
       end
+    end
+  end
+
+  describe '#clone_and_save!' do
+    it 'uses fresh created_at, updated_at, and tapjoy_enabled values' do
+      new_offer = @offer.clone_and_save!
+      new_offer.created_at.should_not == @offer.created_at
+      new_offer.updated_at.should_not == @offer.updated_at
+      new_offer.tapjoy_enabled.should be_false
+    end
+
+    it 'copies overridden icon' do
+      @offer = @offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+
+      @offer.icon_id_override = UUIDTools::UUID.random_create.to_s
+
+      new_offer = @offer.clone
+      new_offer.should_receive(:save_icon!).with("image_data", true).and_return(nil)
+      @offer.stub(:clone).and_return(new_offer)
+
+      s3object = FakeObject.new("")
+      s3object.write("image_data")
+      @offer.stub(:icon_s3_object).and_return(s3object)
+
+      @offer.clone_and_save!
     end
   end
 
