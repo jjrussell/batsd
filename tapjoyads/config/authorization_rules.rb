@@ -15,7 +15,7 @@ authorization do
     has_permission_on :dashboard_support, :to => [ :index ]
     has_permission_on :dashboard_premier, :to => [ :edit, :update ]
     has_permission_on :dashboard_inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
-    has_permission_on :dashboard_offers_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_videos, :to => [:index]
   end
@@ -129,6 +129,7 @@ authorization do
     has_permission_on :dashboard_apps, :to => [ :unarchive ]
     has_permission_on :dashboard_offer_creatives, :to => [ :show, :create, :update, :destroy ]
     has_permission_on :dashboard_offer_discounts, :to => [ :index, :new, :create, :deactivate ]
+    has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :dashboard_tools_offer_lists, :to => [ :index ]
     has_permission_on :dashboard_tools_premier_partners, :to => [ :index ]
@@ -149,6 +150,8 @@ authorization do
     has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
     has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
     has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
+    has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
+    has_permission_on :dashboard_homepage, :to => [ :team ]
   end
 
   role :games_editor do

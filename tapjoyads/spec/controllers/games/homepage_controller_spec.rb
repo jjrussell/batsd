@@ -1,6 +1,12 @@
 require 'spec_helper'
 
-describe Games::HomepageController, :type=>:controller do
+describe Games::HomepageController do
+  before :each do
+    activate_authlogic
+    @gamer = Factory(:gamer)
+    @controller.stub(:current_gamer).and_return(@gamer)
+  end
+
   describe '#get_language_code' do
 
     before :each do
@@ -112,7 +118,7 @@ describe Games::HomepageController, :type=>:controller do
       activate_authlogic
       @gamer = Factory(:gamer)
       login_as(@gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
+      @controller.stub!(:current_gamer=>@gamer)
     end
 
     it 'creates a valid tjm_request' do
@@ -197,14 +203,11 @@ describe Games::HomepageController, :type=>:controller do
       @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
       activate_authlogic
       login_as(@gamer)
-      #TODO(isingh): We need to move this to integration test or find a way to use stub_chain
-      AppReview.stubs(:where).returns(AppReview)
-      AppReview.stubs(:includes).returns(AppReview)
-      AppReview.stubs(:paginate).returns([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      AppReview.stub_chain(:where, :includes, :paginate).and_return([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do
-        controller.stubs(:current_gamer).returns(@troll_author)
+        controller.stub!(:current_gamer=>@troll_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
@@ -214,7 +217,7 @@ describe Games::HomepageController, :type=>:controller do
     end
     context 'good author viewer ' do
       before :each do
-        controller.stubs(:current_gamer).returns(@good_author)
+        controller.stub!(:current_gamer=>@good_author)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
@@ -224,7 +227,7 @@ describe Games::HomepageController, :type=>:controller do
     end
     context 'unassociated gamer viewer' do
       before :each do
-        controller.stubs(:current_gamer).returns(@gamer)
+        controller.stub!(:current_gamer=>@gamer)
         get(:get_app, :id=>@offer.id)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
@@ -233,6 +236,62 @@ describe Games::HomepageController, :type=>:controller do
       it 'sees stellar review before good review' do
         assigns[:app_reviews].should == [@stellar_review, @good_review]
         assigns[:app_reviews].should_not == [@good_review, @stellar_review]
+      end
+    end
+  end
+
+  describe '#record_local_request' do
+    it 'logs the request from the url provided' do
+      @params = { :request_url => games_logout_path }
+      get(:record_local_request, @params)
+      response.response_code.should == 200
+      tjm_request = assigns(:tjm_request)
+      tjm_request.path.should include('tjm_logout')
+      tjm_request.controller.should == 'games/gamer_sessions'
+      tjm_request.action.should == 'destroy'
+      tjm_request.is_ajax.should be_true
+    end
+
+    it 'logs from supplied controller/action' do
+      @params = { :request_controller => 'test_controller', :request_action => 'test_action' }
+      get(:record_local_request, @params)
+      response.response_code.should == 200
+      tjm_request = assigns(:tjm_request)
+      tjm_request.path.should include('tjm_test_controller_test_action')
+      tjm_request.controller.should == 'test_controller'
+      tjm_request.action.should == 'test_action'
+      tjm_request.is_ajax.should be_true
+    end
+
+    it 'logs from supplied path' do
+      @params = { :request_path => 'test_path', :request_controller => 'controller_test', :request_action => 'action_for_test'}
+      get(:record_local_request, @params)
+      response.response_code.should == 200
+      tjm_request = assigns(:tjm_request)
+      tjm_request.path.should include('test_path')
+      tjm_request.controller.should == 'controller_test'
+      tjm_request.action.should == 'action_for_test'
+      tjm_request.is_ajax.should be_true
+    end
+
+    context 'with invalid arguments' do
+      it 'returns an error' do
+        @params = { :request_url => '/test_invalid'}
+        get(:record_local_request, @params)
+        should_respond_with_json_error(400)
+      end
+    end
+
+    context 'with encrypted data param' do
+      it 'records the correct path' do
+        @params = { :request_path => 'test_path', :request_controller => 'controller_test', :request_action => 'action_for_test'}
+        get(:record_local_request, { :data => ObjectEncryptor.encrypt(@params) })
+        response.response_code.should == 200
+        tjm_request = assigns(:tjm_request)
+        tjm_request.path.should include('test_path')
+        tjm_request.controller.should == 'controller_test'
+        tjm_request.action.should == 'action_for_test'
+        tjm_request.is_ajax.should be_true
       end
     end
   end

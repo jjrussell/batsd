@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Dashboard::ReportingController do
-  before :each do
-    fake_the_web
-  end
-
   context 'with a non-logged in user' do
     it 'responds with redirect' do
       get(:index)
@@ -47,7 +43,7 @@ describe Dashboard::ReportingController do
 
     describe '#show' do
       it 'renders html' do
-        UdidReports.expects(:get_available_months).with(@app.id).returns(['stuff'])
+        UdidReports.should_receive(:get_available_months).with(@app.id).and_return(['stuff'])
         get(:show, :id => @app.id)
         response.should be_success
         assigns(:udids).should_not be_nil
@@ -70,14 +66,14 @@ describe Dashboard::ReportingController do
       end
 
       it 'renders json' do
-        Appstats.any_instance.expects(:graph_data).with(:offer => @app.primary_offer, :admin => false).returns('data!')
+        Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin => false).and_return('data!')
         get(:show, :id => @app.id, :format => 'json')
         response.should be_success
         JSON.parse(response.body)['data'].should_not be_nil
       end
 
       it 'renders with custom parameters' do
-        Appstats.any_instance.expects(:graph_data).with(:offer => @app.primary_offer, :admin => false).returns('data!')
+        Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin => false).and_return('data!')
         start_time = Time.zone.parse('2011-02-15').beginning_of_day
         end_time = Time.zone.parse('2011-02-18').end_of_day
         get(:show, :id => @app.id, :format => 'json', :date => '2011-02-15', :end_date => '2011-02-18', :granularity => 'daily')
@@ -92,9 +88,10 @@ describe Dashboard::ReportingController do
       before :each do
         @end_time = Time.parse('2011-02-15')
         @start_time = @end_time - 23.hours
-        Time.zone.stubs(:now).returns(@end_time)
-        Appstats.any_instance.stubs(:to_csv).returns(['a','b'])
-        post(:export, :id => @app.id)
+        Timecop.freeze(@end_time) do
+          Appstats.any_instance.stub(:to_csv).and_return(['a','b'])
+          post(:export, :id => @app.id)
+        end
       end
 
 
@@ -121,7 +118,7 @@ describe Dashboard::ReportingController do
     describe '#download_udids' do
       before :each do
         @date = Time.zone.now.to_s(:yyyy_mm_dd)
-        UdidReports.expects(:get_monthly_report).with(@app.id, @date).returns('yay,udids')
+        UdidReports.should_receive(:get_monthly_report).with(@app.id, @date).and_return('yay,udids')
         post(:download_udids, :id => @app.id, :date => @date)
       end
 
@@ -165,7 +162,7 @@ describe Dashboard::ReportingController do
       end
 
       it 'renders json' do
-        Appstats.any_instance.expects(:graph_data).returns('yup')
+        Appstats.any_instance.should_receive(:graph_data).and_return('yup')
         get(:aggregate, :format => 'json')
         assigns(:appstats).should_not be_nil
         appstats = assigns(:appstats)
@@ -186,11 +183,12 @@ describe Dashboard::ReportingController do
 
     describe '#export_aggregate' do
       before :each do
-        Appstats.any_instance.stubs(:to_csv).returns(['a','b'])
+        Appstats.any_instance.stub(:to_csv).and_return(['a','b'])
         @end_time = Time.zone.parse('2011-02-15')
         @start_time = @end_time - 23.hours
-        Time.zone.stubs(:now).returns(@end_time)
-        post(:export_aggregate)
+        Timecop.freeze(@end_time) do
+          post(:export_aggregate)
+        end
       end
 
 

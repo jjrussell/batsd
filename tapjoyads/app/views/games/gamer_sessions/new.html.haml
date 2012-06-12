@@ -2,7 +2,7 @@
   - @login_form_class_name = "show"
   - content_for :page_javascript do
     :plain
-      $(".form-error").css({opacity: '1', visibility: 'visible !important'});
+      $(".form-error").show();
 
 = render '/games/shared/login_form', :gamer_session => @gamer_session, :login_form_class_name => @login_form_class_name
 
@@ -73,7 +73,7 @@
             %span#arrow.darrow.l10
               %img{ :src => BLANK_IMAGE }
       .left
-        = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
+        = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer], :src => params[:src])) do
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
 
@@ -126,3 +126,12 @@
         '/images/marketplace/themes/tjm/logged_out/share-friends-retina.png'
       ]);
     });
+
+- content_for :page_tracking_js do
+  :javascript
+    var axel = Math.random() + "";
+    var a = axel * 10000000000000;
+    document.write('<iframe src="http://fls.doubleclick.net/activityi;src=3509778;type=hpret685;cat=tapjo020;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+
+- content_for :page_tracking do
+  %iframe{ :src => "http://fls.doubleclick.net/activityi;src=3509778;type=hpret685;cat=tapjo020;ord=1?", :width => "1", :height => "1", :frameborder => "0", :style => "display:none" }

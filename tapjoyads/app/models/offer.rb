@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -17,6 +18,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer DeeplinkOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -43,7 +45,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
-  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
+                                    active
                                     allow_negative_balance
                                     created_at
                                     daily_budget
@@ -244,8 +247,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
     :approved_sources, :carriers, :cities
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     return super if new_record?
@@ -701,6 +702,14 @@ class Offer < ActiveRecord::Base
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
+  # We want a consistent "app id" to report to partners/3rd parties,
+  # but we don't want to reveal internal IDs. We also want to make
+  # the values unique between partners so that no 'collusion' can
+  # take place.
+  def source_token(publisher_app_id)
+    ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
+  end
+
   private
 
   def calculated_min_bid
@@ -715,7 +724,7 @@ class Offer < ActiveRecord::Base
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
     elsif item_type == 'VideoOffer'
-      4
+      2
     else
       0
     end

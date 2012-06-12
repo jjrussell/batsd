@@ -41,8 +41,6 @@
 #  negotiated_rev_share_ends_on  :date
 #  accepted_negotiated_tos       :boolean(1)      default(FALSE)
 #  cs_contact_email              :string(255)
-#  confirmed_for_payout          :boolean(1)      default(FALSE), not null
-#  payout_confirmation_notes     :string(255)
 #  discount_all_offer_types      :boolean(1)      default(FALSE), not null
 #  client_id                     :string(36)
 #  promoted_offers               :text            default(""), not null
@@ -132,7 +130,7 @@ class Partner < ActiveRecord::Base
 
   @@per_page = 20
 
-  scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
+  scope :to_calculate_next_payout_amount, :conditions => ['pending_earnings >= 10000 or pending_earnings > 0 and reseller_id is not ?', nil]
   scope :to_payout, :conditions => 'pending_earnings != 0',
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'

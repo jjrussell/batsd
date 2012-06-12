@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Dashboard::Tools::ClientsController do
   before :each do
-    fake_the_web
     activate_authlogic
     login_as(Factory(:account_mgr_user))
     @client = Factory(:client, :name => 'BBB')

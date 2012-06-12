@@ -1,3 +1,4 @@
+
 Tapjoyad::Application.routes.draw do
   match 'connect' => 'connect#index'
   match 'healthz' => 'healthz#index'
@@ -23,8 +24,10 @@ Tapjoyad::Application.routes.draw do
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
-  resources :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
+  resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
+      match :index
+      post  :skip
       match :test_offer
       match :test_video_offer
     end
@@ -32,6 +35,7 @@ Tapjoyad::Application.routes.draw do
   resources :get_offers, :only => [:index] do
     collection do
       match :webpage
+      match :webpage_redesign
       match :featured
     end
   end
@@ -39,14 +43,13 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
-  resources :offer_completed do
-    collection do
-      match :boku
-      match :gambit
-      match :paypal
-      match :socialvibe
-    end
-  end
+
+  match 'offer_completed' => 'offer_completed#index'
+  match 'offer_completed/boku' => 'offer_completed#boku'
+  match 'offer_completed/gambit' => 'offer_completed#gambit'
+  match 'offer_completed/paypal' => 'offer_completed#paypal'
+  match 'offer_completed/socialvibe' => 'offer_completed#socialvibe'
+
   resource :points do
     collection do
       match :award
@@ -63,6 +66,7 @@ Tapjoyad::Application.routes.draw do
     end
   end
   resources :tools_surveys, :only => [:edit, :create]
+  resources :user_events, :only => [:create]
 
   resources :videos, :only => [:index] do
     member do

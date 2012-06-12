@@ -26,5 +26,4 @@
                   .right{:class => has_fb ? "checkmark" : "plussign"}
                     &nbsp;
 
-- content_for :page_head do
-  = fb_connect_async_js
+- @load_facebook = true

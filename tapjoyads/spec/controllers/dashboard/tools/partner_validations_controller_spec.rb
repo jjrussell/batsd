@@ -5,7 +5,6 @@ describe Dashboard::Tools::PartnerValidationsController do
 
   before :each do
     activate_authlogic
-    fake_the_web
     @user = Factory(:admin)
     @partner = Factory(:partner, :users => [@user])
     login_as(@user)
@@ -23,7 +22,7 @@ describe Dashboard::Tools::PartnerValidationsController do
 
   describe '#confirm_payouts' do
     before :each do
-      @controller.stubs(:set_recent_partners)
+      @controller.stub(:set_recent_partners)
     end
 
     context 'when not payout manager' do
@@ -31,7 +30,7 @@ describe Dashboard::Tools::PartnerValidationsController do
         @partner = Factory(:partner, :users => [@user])
         @user = Factory(:payout_manager_user)
         login_as(@user)
-        Partner.stubs(:find).with(@partner.id).returns(@partner)
+        Partner.stub(:find).with(@partner.id).and_return(@partner)
       end
 
       it 'does not succeed' do
@@ -44,19 +43,19 @@ describe Dashboard::Tools::PartnerValidationsController do
       before :each do
         @partner = Factory(:partner, :users => [@user])
         login_as(@user)
-        Partner.stubs(:find).with(@partner.id).returns(@partner)
-        @controller.stubs(:log_activity)
+        Partner.stub(:find).with(@partner.id).and_return(@partner)
+        @controller.stub(:log_activity)
       end
 
       context 'when partner is confirmed' do
         it 'succeeds' do
-          @partner.stubs(:confirm_for_payout).returns(true)
+          @partner.stub(:confirm_for_payout).and_return(true)
           get(:confirm_payouts, :partner_id => @partner.id)
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.expects(:confirm_for_payout).once
+          @partner.should_receive(:confirm_for_payout).once
           get(:confirm_payouts, :partner_id => @partner.id)
         end
       end

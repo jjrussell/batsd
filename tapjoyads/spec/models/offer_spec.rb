@@ -24,7 +24,6 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    fake_the_web
     @app = Factory :app
     @offer = @app.primary_offer
   end
@@ -38,7 +37,7 @@ describe Offer do
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns true
+        Offer.any_instance.stub(:app_offer?).and_return true
         @offer.partner.premier_discount = 10
       end
 
@@ -62,7 +61,7 @@ describe Offer do
 
     context "to a non app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns false
+        Offer.any_instance.stub(:app_offer?).and_return false
         @offer.partner.premier_discount = 10
       end
 
@@ -363,8 +362,8 @@ describe Offer do
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 4" do
-      @offer.min_bid.should == 4
+    it "has a min_bid of 2" do
+      @offer.min_bid.should == 2
     end
   end
 
@@ -413,6 +412,17 @@ describe Offer do
 
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
+    end
+
+    describe "url generation" do
+      describe '#complete_action_url' do
+        it "should substitute tokens in the URL" do
+          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
+          source = @offer.source_token('12345')
+          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+        end
+      end
     end
   end
 
@@ -703,14 +713,14 @@ describe Offer do
     context 'with store_id missing' do
       context 'when tapjoy-enabling' do
         it 'is false' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.tapjoy_enabled = true
           @offer.should_not be_valid
           @offer.errors[:tapjoy_enabled].join.should =~ /store id/i
         end
 
         it 'can be made true with store_id' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(false)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(false)
           @offer.should be_valid
         end
       end
@@ -719,14 +729,14 @@ describe Offer do
         it 'is true' do
           @offer.tapjoy_enabled = true
           @offer.save!
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.should be_valid
         end
       end
 
       context 'when not tapjoy-enabling' do
         it 'is true' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.should be_valid
         end
       end
@@ -778,7 +788,7 @@ describe Offer do
   describe '#missing_app_store_id?' do
     context 'with non app-related item' do
       it 'is false' do
-        @offer.stubs(:app_offer?).returns(false)
+        @offer.stub(:app_offer?).and_return(false)
         @offer.should_not be_missing_app_store_id
       end
     end
@@ -786,7 +796,7 @@ describe Offer do
     context 'with App item' do
       context 'and overridden url' do
         it 'is false' do
-          @offer.stubs(:url_overridden).returns(true)
+          @offer.stub(:url_overridden).and_return(true)
           @offer.should_not be_missing_app_store_id
         end
       end
@@ -794,14 +804,14 @@ describe Offer do
       context 'and url not overridden' do
         context 'with App with store_id' do
           it 'is false' do
-            @offer.item.stubs(:store_id).returns('foo')
+            @offer.item.stub(:store_id).and_return('foo')
             @offer.should_not be_missing_app_store_id
           end
         end
 
         context 'with App with missing store_id' do
           it 'is true' do
-            @offer.item.stubs(:store_id).returns(nil)
+            @offer.item.stub(:store_id).and_return(nil)
             @offer.should be_missing_app_store_id
           end
         end
@@ -811,7 +821,7 @@ describe Offer do
 
   context "An App Offer for a free app" do
     before :each do
-      Offer.any_instance.stubs(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
+      Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
       @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
     end
 
@@ -831,8 +841,8 @@ describe Offer do
         @offer.banner_creative_480x320_blob = "image_data"
         @offer.banner_creative_320x480_blob = "image_data"
 
-        @offer.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
-        @offer.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
 
         @offer.save!
       end
@@ -842,14 +852,14 @@ describe Offer do
           def read; return "image_data"; end
         end
 
-        @offer.stubs(:banner_creative_s3_object).with("480x320").returns(S3Object.new)
-        @offer.stubs(:banner_creative_s3_object).with("320x480").returns(S3Object.new)
+        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(S3Object.new)
+        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(S3Object.new)
+
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
 
         clone = @offer.clone
         clone.bid = clone.min_bid
-
-        clone.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
-        clone.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
 
         clone.save!
       end
@@ -1001,20 +1011,23 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      Sqs.stubs(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
       now = Time.zone.now
-      Time.zone.stubs(:now).returns(now)
+      Timecop.freeze(now)
 
       @offer.impression_tracking_urls = @urls
       @offer.click_tracking_urls = @urls
       @offer.conversion_tracking_urls = @urls
     end
 
+    after(:each) do
+      Timecop.return
+    end
+
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
+          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
         end
       end
 
@@ -1041,7 +1054,7 @@ describe Offer do
       before :each do
         @ts = 1.hour.from_now
         @urls.each do |url|
-          Downloader.expects(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
+          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', @ts.to_i.to_s)).once
         end
       end
 

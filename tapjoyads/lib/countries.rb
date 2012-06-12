@@ -30,25 +30,25 @@ class Countries
     countries
   end
 
-  def self.contintent_code_to_country_codes
-    @@contintent_code_to_country_codes ||= get_contintent_code_to_country_codes
+  def self.continent_code_to_country_codes
+    @@continent_code_to_country_codes ||= get_continent_code_to_country_codes
   end
 
-  def self.get_contintent_code_to_country_codes
-    @@contintent_code_to_country_codes = {}
+  def self.get_continent_code_to_country_codes
+    @@continent_code_to_country_codes = {}
     GeoIP::CountryContinent.each_with_index do |continent_code, i|
       next if GeoIP::CountryCode[i] == 'KP'
-      @@contintent_code_to_country_codes[continent_code] ||= []
-      @@contintent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
+      @@continent_code_to_country_codes[continent_code] ||= []
+      @@continent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
     end
 
     CONTINENT_CODES.each do |continent_code|
-      @@contintent_code_to_country_codes[continent_code].sort! do |c1, c2|
+      @@continent_code_to_country_codes[continent_code].sort! do |c1, c2|
         country_code_to_name[c1] <=> country_code_to_name[c2]
       end
     end
 
-    @@contintent_code_to_country_codes
+    @@continent_code_to_country_codes
   end
 
 end

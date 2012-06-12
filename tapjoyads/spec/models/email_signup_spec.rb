@@ -3,7 +3,7 @@ require 'spec_helper'
 describe EmailSignup do
 
   before :each do
-    SimpledbResource.reset_connection
+    enable_sdb
     @email_signup = Factory(:email_signup)
     @email_address = @email_signup.email_address
   end

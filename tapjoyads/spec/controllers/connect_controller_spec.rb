@@ -3,11 +3,6 @@ require 'spec/spec_helper'
 describe ConnectController do
   render_views
 
-  before :each do
-    fake_the_web
-    Sqs.stubs(:send_message)
-  end
-
   describe '#index' do
     context 'with required parameters' do
       before :each do
@@ -19,7 +14,7 @@ describe ConnectController do
         @params = { :app_id => 'test_app',
                     :udid   => 'test_device' }
 
-        Device.stubs(:new).returns(device)
+        Device.stub(:new).and_return(device)
       end
 
       it "returns an XML response" do
@@ -41,7 +36,7 @@ describe ConnectController do
 
       context 'with SDK-less parameters' do
         before :each do
-          controller.stubs(:sdkless_supported?).returns(true)
+          controller.stub(:sdkless_supported?).and_return(true)
         end
 
         it "returns SDK-less click package names" do

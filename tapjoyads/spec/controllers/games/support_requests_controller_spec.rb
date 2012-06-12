@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Games::SupportRequestsController do
   before :each do
     activate_authlogic
-    fake_the_web
 
     @device = Factory(:device)
 
@@ -19,15 +18,15 @@ describe Games::SupportRequestsController do
                                         :clicked_at => 2.hours.ago)
 
     results = [ @click1, @click1_dupe_old, @click2 ]
-    Click.stubs(:select_all).returns(results)
-    GamesMailer.stubs(:contact_support).returns(Object.new.tap { |obj| obj.stubs(:deliver) })
+    Click.stub(:select_all).and_return(results)
+    GamesMailer.stub(:contact_support).and_return(Object.new.tap { |obj| obj.stub(:deliver) })
 
     @gamer = Factory(:gamer)
     @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
     @gamer.devices << GamerDevice.new(:device => @device)
 
     login_as(@gamer)
-    flash.stubs(:sweep)
+    flash.stub(:sweep)
   end
 
   describe '#create' do
@@ -57,14 +56,14 @@ describe Games::SupportRequestsController do
       context 'with a click selected' do
         before :each do
           @params[:click_id] = @click1.id
-          Click.stubs(:new).returns(@click1)
+          Click.stub(:new).and_return(@click1)
         end
 
         it 'associates the click with the support request' do
           mock_support_request = mock();
-          mock_support_request.expects(:fill_from_click).with(is_a(Click), anything, anything, anything, anything)
-          mock_support_request.expects(:save)
-          SupportRequest.stubs(:new).returns(mock_support_request);
+          mock_support_request.should_receive(:fill_from_click).with(kind_of(Click), anything, anything, anything, anything)
+          mock_support_request.should_receive(:save)
+          SupportRequest.stub(:new).and_return(mock_support_request);
 
           post :create, @params
         end
@@ -73,9 +72,9 @@ describe Games::SupportRequestsController do
       context 'without a click selected' do
         it "doesn't associate a click with the support request" do
           mock_support_request = mock();
-          mock_support_request.expects(:fill_from_click).with(nil, anything, anything, anything, anything)
-          mock_support_request.expects(:save)
-          SupportRequest.stubs(:new).returns(mock_support_request);
+          mock_support_request.should_receive(:fill_from_click).with(nil, anything, anything, anything, anything)
+          mock_support_request.should_receive(:save)
+          SupportRequest.stub(:new).and_return(mock_support_request);
 
           post :create, @params
         end
@@ -87,8 +86,8 @@ describe Games::SupportRequestsController do
       end
 
       it 'sends a customer service email' do
-        dummy_mail = Object.new.tap { |obj| obj.expects(:deliver).once }
-        GamesMailer.expects(:contact_support).once.returns(dummy_mail)
+        dummy_mail = Object.new.tap { |obj| obj.should_receive(:deliver).once }
+        GamesMailer.should_receive(:contact_support).once.and_return(dummy_mail)
         post :create, @params
       end
     end
@@ -138,7 +137,7 @@ describe Games::SupportRequestsController do
         it "limits the number of clicks in the list to 20" do
           results = [ @click1, @click1_dupe_old, @click2 ]
           20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
-          Click.stubs(:select_all).returns(results) # results.size is 23
+          Click.stub(:select_all).and_return(results) # results.size is 23
 
           get :unresolved_clicks, @params
           assigns(:unresolved_clicks).size.should == 20

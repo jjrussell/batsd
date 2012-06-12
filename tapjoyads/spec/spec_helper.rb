@@ -6,7 +6,6 @@ Spork.prefork do
   ENV["RAILS_ENV"] ||= 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
-  require 'rspec/rails/mocha'
   require 'rspec/autorun'
   require 'capybara/rspec'
   require 'factory_girl'
@@ -22,6 +21,13 @@ Spork.prefork do
     config.include(SpecHelpers)
     config.include(DashboardHelpers)
     config.include(Authlogic::TestCase)
+    config.before(:each) do
+      Resolv.stub!(:getaddress=>'1.1.1.1')
+      RightAws::SdbInterface.stub!(:new => FakeSdb.new)
+      SimpledbResource.reset_connection
+      AWS::S3.stub!(:new => FakeS3.new)
+      Sqs.stub(:send_message)
+    end
   end
 end
 
