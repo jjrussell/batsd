@@ -84,7 +84,6 @@
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
 
-
     - js_cache 'tjm', true
     - js_cache! games_translations_path(:filename => get_locale_filename), true
 
@@ -92,6 +91,9 @@
       stash.require(#{js_requires.to_json}, function (stash) {
         #{yield :page_javascript}
       });
+    
+    = yield :page_tracking_js
+    = yield :page_tracking
 
     - if Rails.env.production?
       :javascript
@@ -104,7 +106,6 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
-
 
     -# keep this as the last call in the file
     :javascript
