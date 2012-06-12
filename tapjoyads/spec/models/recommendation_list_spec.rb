@@ -3,7 +3,7 @@ require 'spec_helper'
 describe RecommendationList do
   context '#recommendation_reject' do
     before :each do
-      @device = Factory(:device)
+      @device = FactoryGirl.create(:device)
       @options = {
         :device => @device,
         :device_type => 'iphone',
@@ -15,7 +15,7 @@ describe RecommendationList do
 
     context 'when store id is blank' do
       it 'returns true' do
-        offer = Factory(:app).primary_offer
+        offer = FactoryGirl.create(:app).primary_offer
         offer.stub(:store_id_for_feed).and_return(nil)
         RecommendationList.new(@options).send(:recommendation_reject?, :offer => offer).should be_true
       end

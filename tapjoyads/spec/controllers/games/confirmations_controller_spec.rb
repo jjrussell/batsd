@@ -7,7 +7,7 @@ describe Games::ConfirmationsController do
 
   describe '#create' do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
     end
     context 'with valid data' do
       it 'redirects to url with tracking params' do
@@ -55,7 +55,7 @@ describe Games::ConfirmationsController do
 
   describe '#redirect' do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
     end
     context 'with invalid token' do
       it 'redirect to confirm path' do
@@ -67,7 +67,7 @@ describe Games::ConfirmationsController do
 
     context 'with valid token' do
       it 'redirect to new url' do
-        short_url = Factory(:short_url)
+        short_url = FactoryGirl.create(:short_url)
         get(:redirect, :token => short_url.token)
         response.redirect_url.should == short_url.long_url
       end

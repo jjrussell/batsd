@@ -15,7 +15,7 @@ describe OfferDiscount do
 
   context 'An Admin OfferDiscount' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @offer = @app.primary_offer
       @partner = @app.partner
     end

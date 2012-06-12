@@ -6,9 +6,9 @@ describe Dashboard::OffersController do
   end
 
   before :each do
-    @user = Factory :admin
-    @partner = Factory(:partner, :users => [@user])
-    @app = Factory(:app, :partner => @partner)
+    @user = FactoryGirl.create :admin
+    @partner = FactoryGirl.create(:partner, :users => [@user])
+    @app = FactoryGirl.create(:app, :partner => @partner)
     login_as @user
   end
 

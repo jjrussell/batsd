@@ -2,7 +2,7 @@ require 'spec/spec_helper'
 
 describe Job::MasterCalculateNextPayoutController do
   before :each do
-    @partner = Factory(:partner)
+    @partner = FactoryGirl.create(:partner)
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
   end
 

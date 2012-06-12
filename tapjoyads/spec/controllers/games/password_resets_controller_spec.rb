@@ -16,7 +16,7 @@ describe Games::PasswordResetsController do
       end
 
       it 'sends email' do
-        gamer = Factory(:gamer)
+        gamer = FactoryGirl.create(:gamer)
         GamesMailer.should_receive(:deliver_password_reset).once
         post(:create, :email => gamer.email)
 

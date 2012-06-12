@@ -46,7 +46,7 @@ describe Device do
 
     context 'type is something else' do
       it 'returns nil' do
-        param = Factory.next(:name)
+        param = FactoryGirl.generate(:name)
         Device.normalize_device_type(param).should be_nil
       end
     end
@@ -54,9 +54,9 @@ describe Device do
 
   describe '#handle_sdkless_click!' do
     before :each do
-      app = Factory :app
+      app = FactoryGirl.create :app
       @offer = app.primary_offer
-      @device = Factory :device
+      @device = FactoryGirl.create :device
       @now = Time.zone.now
     end
 
@@ -249,14 +249,14 @@ describe Device do
 
   context 'Jailbreak detection' do
     before :each do
-      @non_jb_device = Factory(:device)
+      @non_jb_device = FactoryGirl.create(:device)
 
-      @jb_device = Factory(:device)
+      @jb_device = FactoryGirl.create(:device)
       @jb_device.is_jailbroken = true
       @jb_device.stub(:save)
       @jb_device.stub(:save!)
 
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
     end
 
     it 'marks as not jb when lad is 0' do
@@ -308,7 +308,7 @@ describe Device do
   describe '#dashboard_device_info_tool_url' do
     include Rails.application.routes.url_helpers
     before :each do
-      @device = Factory :device
+      @device = FactoryGirl.create :device
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do

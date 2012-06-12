@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe UserEventsController do
 
-  let(:app) { Factory(:app) }
-  let(:device) { Factory(:device) }
+  let(:app) { FactoryGirl.create(:app) }
+  let(:device) { FactoryGirl.create(:device) }
 
   before(:each) do
     Device.stub(:find).and_return(device)
@@ -115,8 +115,8 @@ describe UserEventsController do
               :udid           => device.key,
               :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:IAP),
               :data           => {
-                :name   => Factory.next(:name),
-                :price  => Factory.next(:integer),
+                :name   => FactoryGirl.generate(:name),
+                :price  => FactoryGirl.generate(:integer),
               },
             }
           end
@@ -137,7 +137,7 @@ describe UserEventsController do
               :udid           => device.key,
               :event_type_id  => UserEvent::EVENT_TYPE_IDS.index(:IAP),
               :data           => {
-                :name   => Factory.next(:name),
+                :name   => FactoryGirl.generate(:name),
                 :price  => "invalid_price!@!@",
               },
             }

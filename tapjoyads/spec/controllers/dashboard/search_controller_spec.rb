@@ -15,7 +15,7 @@ describe Dashboard::SearchController do
 
     context 'with an unauthorized user' do
       before :each do
-        @user = Factory(:agency_user)
+        @user = FactoryGirl.create(:agency_user)
         login_as(@user)
       end
 
@@ -29,8 +29,8 @@ describe Dashboard::SearchController do
 
     context 'with an admin user' do
       before :each do
-        @user = Factory(:admin)
-        partner = Factory(:partner, :users => [@user])
+        @user = FactoryGirl.create(:admin)
+        partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
       end
 
@@ -50,8 +50,8 @@ describe Dashboard::SearchController do
 
       context 'with a valid search query' do
         before :each do
-          @good_gamer = Factory(:gamer, :email => "user@now.com")
-          @bad_gamer = Factory(:gamer, :email => "abuser@now.com")
+          @good_gamer = FactoryGirl.create(:gamer, :email => "user@now.com")
+          @bad_gamer = FactoryGirl.create(:gamer, :email => "abuser@now.com")
 
           @params = { :term => 'user' }
         end
@@ -69,7 +69,7 @@ describe Dashboard::SearchController do
         it 'limits result count to 100' do
           # This will result in 101 matching records (since we already had one match)
           100.times do
-            Factory(:gamer)
+            FactoryGirl.create(:gamer)
           end
 
           get :gamers, @params

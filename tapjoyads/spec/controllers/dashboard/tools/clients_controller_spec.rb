@@ -3,11 +3,11 @@ require 'spec_helper'
 describe Dashboard::Tools::ClientsController do
   before :each do
     activate_authlogic
-    login_as(Factory(:account_mgr_user))
-    @client = Factory(:client, :name => 'BBB')
-    @client2 = Factory(:client, :name => 'AAA')
-    @partner = Factory(:partner, :client => @client)
-    @partner2 = Factory(:partner)
+    login_as(FactoryGirl.create(:account_mgr_user))
+    @client = FactoryGirl.create(:client, :name => 'BBB')
+    @client2 = FactoryGirl.create(:client, :name => 'AAA')
+    @partner = FactoryGirl.create(:partner, :client => @client)
+    @partner2 = FactoryGirl.create(:partner)
   end
 
   describe '#index' do

@@ -6,9 +6,9 @@ describe Dashboard::EnableOfferRequestsController do
   end
 
   it 'is not able to submit a request' do
-    user = Factory(:user)
-    partner = Factory(:partner, :users => [ user ])
-    app = Factory(:app, :partner => partner)
+    user = FactoryGirl.create(:user)
+    partner = FactoryGirl.create(:partner, :users => [ user ])
+    app = FactoryGirl.create(:app, :partner => partner)
     offer = app.primary_offer
     login_as(user)
 

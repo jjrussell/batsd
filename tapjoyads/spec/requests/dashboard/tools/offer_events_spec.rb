@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'offer_events' do
   before :each do
     capybara_dashboard_admin_login
-    @offer_event = Factory(:offer_event)
-    @account_manager = Factory(:account_mgr_user)
+    @offer_event = FactoryGirl.create(:offer_event)
+    @account_manager = FactoryGirl.create(:account_mgr_user)
     click_link "Schedule Offer Events"
   end
 

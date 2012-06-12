@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ShortUrl do
-  subject { Factory(:short_url) }
+  subject { FactoryGirl.create(:short_url) }
 
   describe '#valid?' do
     it { should validate_uniqueness_of(:token) }

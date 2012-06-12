@@ -16,8 +16,8 @@ describe Dashboard::Tools::GenericOffersController do
 
   context "with an unauthorized user" do
     before :each do
-      @user = Factory(:agency_user)
-      @partner = Factory(:partner, :users => [@user])
+      @user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner, :users => [@user])
       login_as(@user)
     end
 
@@ -31,9 +31,9 @@ describe Dashboard::Tools::GenericOffersController do
 
   context "with an admin user" do
     before :each do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :users => [@user])
-      @generic_offer = Factory(:generic_offer, :partner => @partner)
+      @user = FactoryGirl.create(:admin)
+      @partner = FactoryGirl.create(:partner, :users => [@user])
+      @generic_offer = FactoryGirl.create(:generic_offer, :partner => @partner)
       login_as(@user)
     end
 

@@ -5,10 +5,10 @@ describe AppsInstalledController do
 
   context '#index' do
     before :each do
-      app = Factory(:app)
-      app1 = Factory(:app)
-      app2 = Factory(:app)
-      app3 = Factory(:app)
+      app = FactoryGirl.create(:app)
+      app1 = FactoryGirl.create(:app)
+      app2 = FactoryGirl.create(:app)
+      app3 = FactoryGirl.create(:app)
 
       @offer1 = app1.primary_offer
       @offer1.third_party_data = 'package.name.1'
@@ -20,7 +20,7 @@ describe AppsInstalledController do
       @offer3.third_party_data = 'package.name.3'
       @offer3.save
 
-      @device = Factory(:device)
+      @device = FactoryGirl.create(:device)
       @device.sdkless_clicks = { @offer1.third_party_data => { 'click_time' => (Time.zone.now - 1.hour).to_i, 'item_id' => @offer1.id },
                                  @offer2.third_party_data => { 'click_time' => (Time.zone.now - 2.hours).to_i, 'item_id' => @offer2.id },
                                  @offer3.third_party_data => { 'click_time' => (Time.zone.now - 3.hours).to_i, 'item_id' => @offer3.id }}
