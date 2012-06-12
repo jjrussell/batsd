@@ -61,15 +61,20 @@ describe Games::ConfirmationsController do
       it 'redirect to confirm path' do
         token = 'bad'
         get(:redirect, :token => token)
-        response.redirect_url.should == games_confirm_url(:token => token)
+        response.redirected_to.should == games_confirm_path(:token => token)
       end
     end
-
+    context 'with no token' do
+      it 'redirect to confirm path' do
+        get(:redirect)
+        response.redirected_to.should == games_confirm_path
+      end
+    end
     context 'with valid token' do
       it 'redirect to new url' do
         short_url = Factory(:short_url)
         get(:redirect, :token => short_url.token)
-        response.redirect_url.should == short_url.long_url
+        response.redirected_to.should == short_url.long_url
       end
     end
   end
