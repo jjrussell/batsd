@@ -126,6 +126,12 @@ FactoryGirl.define do
     day_number { Factory.next(:integer) }
   end
 
+  factory :deeplink_offer do
+    association :currency
+    app     { currency.app }
+    partner { currency.partner }
+  end
+
   factory :app do
     association :partner
     name { Factory.next(:name) }

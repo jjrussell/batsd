@@ -364,6 +364,7 @@ en:
       log_in_title: "Log In"
       log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
       log_in_not_a_member: "Not a member? Sign Up"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."

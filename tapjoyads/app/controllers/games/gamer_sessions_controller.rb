@@ -1,4 +1,5 @@
 class Games::GamerSessionsController < GamesController
+  before_filter :set_show_nav_bar_login_button, :only => [:new]
 
   def index
     redirect_to games_login_path
@@ -8,6 +9,8 @@ class Games::GamerSessionsController < GamesController
     if current_gamer
       redirect_to games_path and return
     end
+
+    set_show_partners_bar_in_footer
     render_login_page
   end
 
