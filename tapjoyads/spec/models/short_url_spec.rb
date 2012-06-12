@@ -15,21 +15,21 @@ describe ShortUrl do
     end
     context 'given a url' do
       it 'returns a ShortUrl Object with same long url' do
-        s_url = ShortUrl.create!({ :long_url => @long_url })
+        s_url = ShortUrl.shorten(@long_url)
         s_url.is_a?(ShortUrl).should == true
         s_url.long_url.should == @long_url
       end
     end
     context 'given a token' do
       it 'returns a ShortUrl Object with same token' do
-        s_url = ShortUrl.create!({ :long_url => @long_url, :token => @token })
+        s_url = ShortUrl.shorten(@long_url, nil, @token)
         s_url.is_a?(ShortUrl).should == true
         s_url.token.should == @token
       end
     end
     context 'given an expiration' do
       it 'returns a ShortUrl Object with proper expiration' do
-        s_url = ShortUrl.create!({ :long_url => @long_url, :expiry => @expiry })
+        s_url = ShortUrl.shorten(@long_url, @expiry)
         s_url.is_a?(ShortUrl).should == true
         s_url.expiry.should == @expiry
       end

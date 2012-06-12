@@ -8,6 +8,12 @@ class ShortUrl < ActiveRecord::Base
 
   BASE_PATH = "#{WEBSITE_URL}/confirm/redirect/"
 
+  def self.shorten(long_url, expiry = nil, token = nil)
+    short_url = self.new(:long_url => long_url, :expiry => expiry, :token => token)
+    short_url.save
+    short_url
+  end
+
   def generate_token
     self.token = Authlogic::Random.friendly_token if self.new_record? and self.token.nil?
   end

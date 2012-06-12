@@ -353,7 +353,7 @@ FactoryGirl.define do
   end
 
   factory :short_url do
-    token Authlogic::Random.friendly_token
-    long_url 'https://www.tapjoy.com/' + UUIDTools::UUID.random_create.to_s
+    token  Authlogic::Random.friendly_token
+    long_url    'https://www.tapjoy.com/' + UUIDTools::UUID.random_create.to_s
   end
 end
