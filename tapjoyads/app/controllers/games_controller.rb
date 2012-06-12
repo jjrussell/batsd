@@ -190,7 +190,7 @@ class GamesController < ApplicationController
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
-      options[:immediate] = params[:immediate] if params[:immediate].present?
+      options[:state] = params[:state] if params[:state].present?
       if request.xhr?
         render :json=> "Unauthorized", :status => 401
       else

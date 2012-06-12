@@ -70,6 +70,7 @@ class Games::HomepageController < GamesController
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
+
       set_show_nav_bar_login_button
       set_show_partners_bar_in_footer
       render_login_page and return

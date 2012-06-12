@@ -28,17 +28,23 @@ $(document).ready(function(){
   }
   $(window).bind('resize orientationchange', Tapjoy.Utils.debounce(adjustWidth));
 
-//  $(window).load(setTimeout(function(){$('#login-form').css({ 'height':$(document).height() });},1));
 
   // Login Modal
   $('#login, #login-web').bind('click', function() {
     if ($('#login-form').hasClass('show')) {
       $('#login-form').removeClass('show');
+      $('#content').addClass('hide');
+      $('#footer').addClass('hide');
+      $('#benefits').addClass('hide');
+
     }
     else {
       $('#login-form').addClass('show').css({
           'height':$(document).height()
       });
+      $('#content').removeClass('hide');
+      $('#footer').removeClass('hide');
+      $('#benefits').removeClass('hide');
     }
   });
     $('#signup, #signup-btn').bind('click', function() {
@@ -54,6 +60,9 @@ $(document).ready(function(){
 
   $('#login-form .cancel-btn').bind('click', function() {
     $('#login-form').removeClass('show');
+    $('#content').removeClass('hide');
+    $('#footer').removeClass('hide');
+    $('#benefits').removeClass('hide');
   });
 
   $('#signup-form .cancel-btn').bind('click', function() {

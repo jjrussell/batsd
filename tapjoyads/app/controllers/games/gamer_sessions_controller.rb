@@ -9,7 +9,9 @@ class Games::GamerSessionsController < GamesController
     if current_gamer
       redirect_to games_path and return
     end
-    @login_form_class_name = "show" if params[:immediate]
+    @login_form_class_name = "show" if params[:state]='login-form'
+    @non_login_form_class_name = "hide" if params[:state]='login-form'
+
     set_show_partners_bar_in_footer
     render_login_page
   end
