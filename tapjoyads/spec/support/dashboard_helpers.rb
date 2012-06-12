@@ -12,9 +12,9 @@ module DashboardHelpers
   end
 
   def capybara_dashboard_login
-    partner = Factory(:partner)
-    app = Factory(:app, :partner => partner)
-    user = Factory(:user, :partners => [partner])
+    partner = FactoryGirl.create(:partner)
+    app = FactoryGirl.create(:app, :partner => partner)
+    user = FactoryGirl.create(:user, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username
@@ -23,9 +23,9 @@ module DashboardHelpers
   end
 
   def capybara_dashboard_admin_login
-    partner = Factory(:partner)
-    app = Factory(:app, :partner => partner)
-    user = Factory(:admin, :partners => [partner])
+    partner = FactoryGirl.create(:partner)
+    app = FactoryGirl.create(:app, :partner => partner)
+    user = FactoryGirl.create(:admin, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username

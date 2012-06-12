@@ -10,14 +10,14 @@ describe DisplayAdController do
   describe 'hitting display ad controller' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
       @bucket = S3.bucket(BucketNames::TAPJOY)
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
-      @currency = Factory(:currency, :conversion_rate => 0)
+      @currency = FactoryGirl.create(:currency, :conversion_rate => 0)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',

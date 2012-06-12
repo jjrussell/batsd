@@ -3,13 +3,13 @@ require 'spec/spec_helper'
 describe ClickController do
 
   before :each do
-    @currency = Factory(:currency)
+    @currency = FactoryGirl.create(:currency)
   end
 
   describe "#generic" do
     context "for the TJM invitation offer" do
       before :each do
-        @offer = Factory(:generic_offer).primary_offer
+        @offer = FactoryGirl.create(:generic_offer).primary_offer
         @offer.tapjoy_enabled = true
         @offer.payment = 1
         @offer.user_enabled = true
@@ -43,7 +43,7 @@ describe ClickController do
 
     context "for the TJM registration offer" do
       before :each do
-        @offer = Factory(:generic_offer).primary_offer
+        @offer = FactoryGirl.create(:generic_offer).primary_offer
         @offer.tapjoy_enabled = true
         @offer.payment = 1
         @offer.user_enabled = true
@@ -69,7 +69,7 @@ describe ClickController do
 
     context "for regular generic offers" do
       before :each do
-        @offer = Factory(:generic_offer).primary_offer
+        @offer = FactoryGirl.create(:generic_offer).primary_offer
         @offer.tapjoy_enabled = true
         @offer.payment = 1
         @offer.user_enabled = true
@@ -103,7 +103,7 @@ describe ClickController do
 
   describe '#deeplink' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @deeplink_offer = @currency.deeplink_offer
       @udid = '0000222200002229'
       @offer= @deeplink_offer.primary_offer
@@ -127,7 +127,7 @@ describe ClickController do
   end
   describe "#app" do
     before :each do
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @offer.tapjoy_enabled = true
       @offer.payment = 1
       @offer.user_enabled = true

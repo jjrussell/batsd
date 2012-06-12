@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Android marketplace" do
-  let(:testapp) { Factory(:app) }
+  let(:testapp) { FactoryGirl.create(:app) }
   let(:udid) { 'testudid' }
 
   describe "GET /games" do

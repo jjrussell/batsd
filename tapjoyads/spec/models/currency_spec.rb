@@ -45,7 +45,7 @@ describe Currency do
 
   describe '#has_invalid_test_devices?' do
     before :each do
-      @currency.test_devices = Factory.next(:guid) * 5
+      @currency.test_devices = FactoryGirl.generate(:guid) * 5
     end
 
     context 'when one test device key is too long' do
@@ -57,7 +57,7 @@ describe Currency do
     context 'fixing bad list' do
       it 'returns false' do
         @currency.get_test_device_ids # load once
-        @currency.test_devices = Factory.next(:guid)
+        @currency.test_devices = FactoryGirl.generate(:guid)
         @currency.has_invalid_test_devices?.should be_false
       end
     end
@@ -98,7 +98,7 @@ describe Currency do
   describe '#get_publisher_amount' do
     context 'when given a rating offer' do
       before :each do
-        @offer = Factory(:rating_offer).primary_offer
+        @offer = FactoryGirl.create(:rating_offer).primary_offer
       end
 
       it 'returns the correct amount' do
@@ -108,7 +108,7 @@ describe Currency do
 
     context 'when given an offer from the same partner' do
       before :each do
-        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer = FactoryGirl.create(:app, :partner => @currency.partner).primary_offer
         @offer.update_attribute(:payment, 25)
       end
 
@@ -119,7 +119,7 @@ describe Currency do
 
     context 'when given any other offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -130,9 +130,9 @@ describe Currency do
 
     context 'when given a 3-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
-        @displayer_app = Factory(:app)
+        @displayer_app = FactoryGirl.create(:app)
       end
 
       it 'returns the correct amount' do
@@ -142,7 +142,7 @@ describe Currency do
 
     context 'when given a 2-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
@@ -154,7 +154,7 @@ describe Currency do
 
     context 'when given a direct-pay offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.payment = 100
         @offer.reward_value = 50
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
@@ -169,7 +169,7 @@ describe Currency do
   describe '#get_advertiser_amount' do
     context 'when given a RatingOffer' do
       before :each do
-        @offer = Factory(:rating_offer).primary_offer
+        @offer = FactoryGirl.create(:rating_offer).primary_offer
       end
 
       it 'returns the correct amount' do
@@ -179,7 +179,7 @@ describe Currency do
 
     context 'when given an offer from the same partner' do
       before :each do
-        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer = FactoryGirl.create(:app, :partner => @currency.partner).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -190,7 +190,7 @@ describe Currency do
 
     context 'when given any other offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -201,9 +201,9 @@ describe Currency do
 
     context 'when given a 3-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
-        @displayer_app = Factory(:app)
+        @displayer_app = FactoryGirl.create(:app)
       end
 
       it 'returns the correct amount' do
@@ -213,7 +213,7 @@ describe Currency do
 
     context 'when given a 2-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
@@ -225,7 +225,7 @@ describe Currency do
 
     context 'when given a direct-pay offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.payment = 100
         @offer.reward_value = 50
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
@@ -240,7 +240,7 @@ describe Currency do
   describe '#get_tapjoy_amount' do
     context 'when given a RatingOffer' do
       before :each do
-        @offer = Factory(:rating_offer).primary_offer
+        @offer = FactoryGirl.create(:rating_offer).primary_offer
       end
 
       it 'returns the correct amount' do
@@ -250,7 +250,7 @@ describe Currency do
 
     context 'when given an offer from the same partner' do
       before :each do
-        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer = FactoryGirl.create(:app, :partner => @currency.partner).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -261,7 +261,7 @@ describe Currency do
 
     context 'when given any other offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -272,9 +272,9 @@ describe Currency do
 
     context 'when given a 3-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
-        @displayer_app = Factory(:app)
+        @displayer_app = FactoryGirl.create(:app)
       end
 
       it 'returns the correct amount' do
@@ -284,7 +284,7 @@ describe Currency do
 
     context 'when given a 2-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
@@ -296,7 +296,7 @@ describe Currency do
 
     context 'when given a direct-pay offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.payment = 100
         @offer.reward_value = 50
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
@@ -311,7 +311,7 @@ describe Currency do
   describe '#get_reward_amount' do
     context 'when given a RatingOffer' do
       before :each do
-        @offer = Factory(:rating_offer).primary_offer
+        @offer = FactoryGirl.create(:rating_offer).primary_offer
       end
 
       it 'returns the correct amount' do
@@ -321,7 +321,7 @@ describe Currency do
 
     context 'when given an offer from the same partner' do
       before :each do
-        @offer = Factory(:app, :partner => @currency.partner).primary_offer
+        @offer = FactoryGirl.create(:app, :partner => @currency.partner).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -332,7 +332,7 @@ describe Currency do
 
     context 'when given any other offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
       end
 
@@ -343,9 +343,9 @@ describe Currency do
 
     context 'when given a 3-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
-        @displayer_app = Factory(:app)
+        @displayer_app = FactoryGirl.create(:app)
       end
 
       it 'returns the correct amount' do
@@ -355,7 +355,7 @@ describe Currency do
 
     context 'when given a 2-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
@@ -367,7 +367,7 @@ describe Currency do
 
     context 'when given a direct-pay offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.payment = 100
         @offer.reward_value = 50
         @offer.direct_pay = Offer::DIRECT_PAY_PROVIDERS.first
@@ -382,9 +382,9 @@ describe Currency do
   describe '#get_displayer_amount' do
     context 'when given a 3-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
-        @displayer_app = Factory(:app)
+        @displayer_app = FactoryGirl.create(:app)
       end
 
       it 'returns the correct amount' do
@@ -394,7 +394,7 @@ describe Currency do
 
     context 'when given a 2-party displayer offer' do
       before :each do
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @offer.update_attributes({:payment => 25})
         @displayer_app = @currency.app
       end
@@ -408,12 +408,12 @@ describe Currency do
   describe '#set_promoted_offers' do
     context 'before create' do
       before :each do
-        offer1 = Factory(:app).primary_offer
-        offer2 = Factory(:app).primary_offer
-        original_currency = Factory(:currency)
+        offer1 = FactoryGirl.create(:app).primary_offer
+        offer2 = FactoryGirl.create(:app).primary_offer
+        original_currency = FactoryGirl.create(:currency)
         @promoted_offer_list = [ offer1.id, offer2.id ]
 
-        app = Factory(:app)
+        app = FactoryGirl.create(:app)
         original_currency.promoted_offers = @promoted_offer_list
         app.stub(:currencies).and_return([original_currency])
 
@@ -431,7 +431,7 @@ describe Currency do
   describe '#set_values_from_partner_and_reseller' do
     context 'before create' do
       before :each do
-        partner = Factory(:partner)
+        partner = FactoryGirl.create(:partner)
         partner.rev_share = 0.42
         partner.direct_pay_share = 0.8
         partner.disabled_partners = 'foo'
@@ -519,7 +519,7 @@ describe Currency do
 
   describe '#dashboard_app_currency_url' do
     before :each do
-      @currency = Factory :currency
+      @currency = FactoryGirl.create :currency
     end
 
     it 'matches URL for Rails app_currency_url helper' do
@@ -529,7 +529,7 @@ describe Currency do
   
   describe '#cache_by_app_id' do
     before :each do
-      @currency = Factory :currency
+      @currency = FactoryGirl.create :currency
     end
 
     it 'caches currencies before saving them' do

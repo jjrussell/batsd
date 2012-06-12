@@ -7,8 +7,8 @@ describe PointPurchases do
 
   context "A Point Purchase" do
     before :each do
-      app = Factory(:app, :id => '01234567-89ab-cdef-0123-456789abcdef')
-      currency = Factory(:currency, :id => '01234567-89ab-cdef-0123-456789abcdef', :app => app)
+      app = FactoryGirl.create(:app, :id => '01234567-89ab-cdef-0123-456789abcdef')
+      currency = FactoryGirl.create(:currency, :id => '01234567-89ab-cdef-0123-456789abcdef', :app => app)
       @pp = PointPurchases.new(:key => "0123456789abcdef0123456789abcdef01234567.01234567-89ab-cdef-0123-456789abcdef")
     end
 
@@ -21,11 +21,11 @@ describe PointPurchases do
 
   context "A Point Purchase" do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id, :app => app)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id, :app => app)
       @pp = PointPurchases.new(:key => "udid.#{app.id}")
-      @vg = Factory(:virtual_good, :price => 1, :max_purchases => 1)
-      @vg2 = Factory(:virtual_good, :price => 2, :max_purchases => 3)
+      @vg = FactoryGirl.create(:virtual_good, :price => 1, :max_purchases => 1)
+      @vg2 = FactoryGirl.create(:virtual_good, :price => 2, :max_purchases => 3)
     end
 
     after :each do

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe UserRole do
 
-  subject { Factory(:user_role) }
+  subject { FactoryGirl.create(:user_role) }
 
   describe '#valid?' do
     it { should validate_uniqueness_of(:name) }
@@ -17,7 +17,7 @@ describe UserRole do
 
     context 'when name is not admin' do
       it 'is not true' do
-        @not_admin = Factory(:user_role).should_not be_admin
+        @not_admin = FactoryGirl.create(:user_role).should_not be_admin
       end
     end
   end

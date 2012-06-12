@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Games::HomepageController do
   before :each do
     activate_authlogic
-    @gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
     @controller.stub(:current_gamer).and_return(@gamer)
   end
 
@@ -116,7 +116,7 @@ describe Games::HomepageController do
   describe "#index" do
     before :each do
       activate_authlogic
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
       login_as(@gamer)
       @controller.stub!(:current_gamer=>@gamer)
     end
@@ -167,9 +167,9 @@ describe Games::HomepageController do
   describe "#record_click" do
     before :each do
       activate_authlogic
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
       login_as(@gamer)
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
 
       @params = {
         :eid          => ObjectEncryptor.encrypt(@app.id),
@@ -193,32 +193,32 @@ describe Games::HomepageController do
   context "#get_app" do
     before :each do
 
-      @good_author = Factory(:gamer)
-      @another_good_author = Factory(:gamer)
-      @stellar_author = Factory(:gamer)
-      @troll_author = Factory(:gamer, :been_buried_count => 100)
-      @gamer = Factory(:gamer)
-      @offer = Factory(:app).primary_offer
-      @app_metadata = @offer.app.primary_app_metadata #Factory(:app_metadata)
-      @good_review = Factory(:app_review,
+      @good_author = FactoryGirl.create(:gamer)
+      @another_good_author = FactoryGirl.create(:gamer)
+      @stellar_author = FactoryGirl.create(:gamer)
+      @troll_author = FactoryGirl.create(:gamer, :been_buried_count => 100)
+      @gamer = FactoryGirl.create(:gamer)
+      @offer = FactoryGirl.create(:app).primary_offer
+      @app_metadata = @offer.app.primary_app_metadata #FactoryGirl.create(:app_metadata)
+      @good_review = FactoryGirl.create(:app_review,
                              :bury_votes_count => 0,
                              :helpful_votes_count => 10,
                              :text => "A good review",
                              :author => @good_author,
                              :app_metadata => @app_metadata)
-      @stellar_review = Factory(:app_review,
+      @stellar_review = FactoryGirl.create(:app_review,
                                 :bury_votes_count => 0,
                                 :helpful_votes_count => 100,
                                 :author => @stellar_author,
                                 :text => "A stellar review",
                                 :app_metadata => @app_metadata)
-      @good_review_by_troll_author = Factory(:app_review,
+      @good_review_by_troll_author = FactoryGirl.create(:app_review,
                                              :bury_votes_count => 0,
                                              :helpful_votes_count => 1,
                                              :author => @troll_author,
                                              :text => "A good review by a troll",
                                              :app_metadata => @app_metadata)
-      @troll_review_by_another_good_author = Factory(:app_review,
+      @troll_review_by_another_good_author = FactoryGirl.create(:app_review,
                                                      :bury_votes_count => 100,
                                                      :text => "A troll review by a good author",
                                                      :author => @another_good_author,

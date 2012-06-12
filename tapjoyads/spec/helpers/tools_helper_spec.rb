@@ -8,7 +8,7 @@ describe ToolsHelper do
       @click = mock()
       @click.stub(:installed_at?).and_return(true)
       @click.stub(:type).and_return('install')
-      @click.stub(:key).and_return(Factory.next(:guid))
+      @click.stub(:key).and_return(FactoryGirl.generate(:guid))
       @click.stub(:block_reason?).and_return(false)
       @click.stub(:block_reason).and_return(nil)
     end

@@ -5,8 +5,8 @@ describe Dashboard::Tools::PartnerValidationsController do
 
   before :each do
     activate_authlogic
-    @user = Factory(:admin)
-    @partner = Factory(:partner, :users => [@user])
+    @user = FactoryGirl.create(:admin)
+    @partner = FactoryGirl.create(:partner, :users => [@user])
     login_as(@user)
   end
 
@@ -27,8 +27,8 @@ describe Dashboard::Tools::PartnerValidationsController do
 
     context 'when not payout manager' do
       before :each do
-        @partner = Factory(:partner, :users => [@user])
-        @user = Factory(:payout_manager_user)
+        @partner = FactoryGirl.create(:partner, :users => [@user])
+        @user = FactoryGirl.create(:payout_manager_user)
         login_as(@user)
         Partner.stub(:find).with(@partner.id).and_return(@partner)
       end
@@ -41,7 +41,7 @@ describe Dashboard::Tools::PartnerValidationsController do
 
     context 'when admin' do
       before :each do
-        @partner = Factory(:partner, :users => [@user])
+        @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
         Partner.stub(:find).with(@partner.id).and_return(@partner)
         @controller.stub(:log_activity)

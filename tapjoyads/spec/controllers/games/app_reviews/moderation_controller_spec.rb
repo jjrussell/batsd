@@ -3,14 +3,14 @@ require 'spec/spec_helper'
 describe Games::AppReviews::FlagModerationController do
   before :each do
     activate_authlogic
-    @gamer = Factory(:gamer)
-    @other_gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
+    @other_gamer = FactoryGirl.create(:gamer)
     controller.stub(:current_gamer).and_return(@gamer)
-    app = Factory(:app)
+    app = FactoryGirl.create(:app)
     @app_metadata = app.app_metadatas.first
-    @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @good_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @user_owned_review = Factory(:gamer_review, :author => @gamer, :user_rating => 0)
+    @troll_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @good_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @user_owned_review = FactoryGirl.create(:gamer_review, :author => @gamer, :user_rating => 0)
   end
 
   context 'when flagging a message as inappropriate' do
@@ -72,14 +72,14 @@ end
 describe Games::AppReviews::FaveModerationController do
   before :each do
     activate_authlogic
-    @gamer = Factory(:gamer)
-    @other_gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
+    @other_gamer = FactoryGirl.create(:gamer)
     controller.stub(:current_gamer).and_return(@gamer)
-    app = Factory(:app)
+    app = FactoryGirl.create(:app)
     @app_metadata = app.app_metadatas.first
-    @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @good_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @user_owned_review = Factory(:gamer_review, :author => @gamer, :user_rating => 0)
+    @troll_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @good_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @user_owned_review = FactoryGirl.create(:gamer_review, :author => @gamer, :user_rating => 0)
   end
   context 'when upvoting a message' do
     it 'upvotes a good review' do

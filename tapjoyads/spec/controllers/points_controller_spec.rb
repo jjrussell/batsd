@@ -4,8 +4,8 @@ describe PointsController do
   describe '#award' do
     before :each do
       enable_sdb
-      @app = Factory(:app)
-      @currency = Factory(:currency, :id => @app.id)
+      @app = FactoryGirl.create(:app)
+      @currency = FactoryGirl.create(:currency, :id => @app.id)
       @params = {
         :app_id => @app.id,
         :udid => 'stuff',
@@ -65,8 +65,8 @@ describe PointsController do
 
   describe '#spend' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
@@ -103,9 +103,9 @@ describe PointsController do
 
   describe '#purchase_vg' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
-      @vg = Factory(:virtual_good)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
+      @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
@@ -145,9 +145,9 @@ describe PointsController do
 
   describe '#consume_vg' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
-      @vg = Factory(:virtual_good)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
+      @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',

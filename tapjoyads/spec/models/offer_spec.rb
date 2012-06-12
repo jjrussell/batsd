@@ -24,7 +24,7 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    @app = Factory :app
+    @app = FactoryGirl.create :app
     @offer = @app.primary_offer
   end
 
@@ -278,7 +278,7 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 150})
       @offer = @app.primary_offer
     end
@@ -318,7 +318,7 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 0})
       @offer = @app.primary_offer
     end
@@ -358,7 +358,7 @@ describe Offer do
 
   context "with a video item" do
     before :each do
-      @video = Factory(:video_offer)
+      @video = FactoryGirl.create(:video_offer)
       @offer = @video.primary_offer
     end
 
@@ -369,7 +369,7 @@ describe Offer do
 
   context "with an action offer item" do
     before :each do
-      @action = Factory(:action_offer)
+      @action = FactoryGirl.create(:action_offer)
       @offer = @action.primary_offer
     end
 
@@ -406,7 +406,7 @@ describe Offer do
 
   context "with a generic offer item" do
     before :each do
-      @generic = Factory(:generic_offer)
+      @generic = FactoryGirl.create(:generic_offer)
       @offer = @generic.primary_offer
     end
 
@@ -682,9 +682,9 @@ describe Offer do
       @offer.banner_creatives = ['320x50', '640x100', '768x90']
       @offer.approved_banner_creatives = ['320x50', '1x1']
 
-      @valid_remove   = @offer.add_banner_approval(Factory(:user), '320x50')
-      @valid_keep     = @offer.add_banner_approval(Factory(:user), '640x100')
-      @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
+      @valid_remove   = @offer.add_banner_approval(FactoryGirl.create(:user), '320x50')
+      @valid_keep     = @offer.add_banner_approval(FactoryGirl.create(:user), '640x100')
+      @invalid_remove = @offer.add_banner_approval(FactoryGirl.create(:user), '2x2')
 
       @offer.send(:sync_creative_approval)
       @offer.approvals.reload
@@ -822,7 +822,7 @@ describe Offer do
   context "An App Offer for a free app" do
     before :each do
       Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
     end
 
     context "with banner_creatives" do
