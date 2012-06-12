@@ -394,4 +394,41 @@ describe App do
       @app.dashboard_app_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@app.id}"
     end
   end
+
+
+  describe '#os_versions' do
+    before :each do
+      @app = Factory :app
+    end
+
+    context 'android' do
+      before :each do
+        @app.platform = 'android'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0 )).should be_empty
+      end
+    end
+
+    context 'iphone' do
+      before :each do
+        @app.platform = 'iphone'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 2.0 2.1 2.2 3.0 3.1 3.2 4.0 4.1 4.2 4.3 5.0 5.1 6.0 )).should be_empty
+      end
+    end
+
+    context 'windows' do
+      before :each do
+        @app.platform = 'windows'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 7.0 )).should be_empty
+      end
+    end
+  end
 end
