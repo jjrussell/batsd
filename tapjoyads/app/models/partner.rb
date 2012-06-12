@@ -123,7 +123,7 @@ class Partner < ActiveRecord::Base
 
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers, :recache_currencies
+  after_save :update_currencies, :update_offers, :recache_currencies, :recache_offers
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
@@ -449,6 +449,11 @@ class Partner < ActiveRecord::Base
 
   def recache_currencies
     currencies.each { |c| c.cache }
+  end
+
+  def recache_offers
+    clear_association_cache
+    offers.each { |o| o.cache }
   end
 
   def update_rev_share

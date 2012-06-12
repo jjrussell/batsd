@@ -74,6 +74,13 @@ private
       notify_and_render_error(true) and return
     end
 
+    if offer.partner_use_server_whitelist?
+      unless ServerWhitelist.ip_whitelist_includes? ip_address
+        @error_message = "originating IP (#{ip_address}) not on server whitelist (#{click.key})"
+        notify_and_render_error(false) and return
+      end
+    end
+
     if offer.has_variable_payment?
       if params[:payment].blank?
         @error_message = "payment required (#{click.key})"
