@@ -1,6 +1,7 @@
 class Dashboard::Tools::RecommendersController < Dashboard::DashboardController
   layout 'tabbed'
   current_tab :tools
+  filter_access_to :all
 
   def index
     @recommenders = Recommender::ACTIVE_RECOMMENDERS
