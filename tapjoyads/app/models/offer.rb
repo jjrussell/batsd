@@ -18,6 +18,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer DeeplinkOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -44,7 +45,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
-  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
+                                    active
                                     allow_negative_balance
                                     created_at
                                     daily_budget

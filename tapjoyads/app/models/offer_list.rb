@@ -98,7 +98,7 @@ class OfferList
     found_offer_item_ids = Set.new
     offers_to_find = start + max_offers
     found_offers = 0
-    
+
     unless @algorithm.blank?
       # TODO: dry this up.
       optimized_offers.each_with_index do |offer, i|

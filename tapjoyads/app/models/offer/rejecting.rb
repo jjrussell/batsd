@@ -133,7 +133,7 @@ module Offer::Rejecting
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
     partner_has_no_funds? ||
-    rewarded_offerwall_non_rewarded_reject?(currency)
+    rewarded_offerwall_non_rewarded_reject?(currency, source)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -165,7 +165,7 @@ module Offer::Rejecting
   end
 
   def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
+    hide_rewarded_app_installs && rewarded? && REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
   def partner_has_no_funds?
@@ -337,8 +337,8 @@ module Offer::Rejecting
     currency && !currency.rewarded? && rewarded? && item_type != 'App'
   end
 
-  def rewarded_offerwall_non_rewarded_reject?(currency)
-    currency && currency.rewarded? && !rewarded?
+  def rewarded_offerwall_non_rewarded_reject?(currency, source)
+    currency && currency.rewarded? && !rewarded? && (source == 'offerwall' || source == 'tj_games')
   end
 
   def recommendable_types_reject?
