@@ -62,44 +62,14 @@
   .wrapper
     .content-box
       .left
-        .container.mt15
+        .container.mt20
           .left
             %span.text.started
               = t('text.games.start_discovering')
-        .container
-          .left
-            %span.text.small
-              = t('text.games.or_learn_more')
-            %span#arrow.darrow.l10
-              %img{ :src => BLANK_IMAGE }
       .left
         = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer], :src => params[:src])) do
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
-
-#benefits{:class=>@non_login_form_class_name}
-  .wrapper
-    .left.box
-      .collect.center
-        %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.earn_rewards')
-      %p
-        = t('text.games.earning_rewards')
-    .left.box
-      .findapps.center
-        %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.find_new_apps')
-      %p
-        = t('text.games.recommend_apps')
-    .left.box
-      .sharefriends.center
-        %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.join_the_community')
-      %p
-        = t('text.games.join_the_community_blurb')
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }
