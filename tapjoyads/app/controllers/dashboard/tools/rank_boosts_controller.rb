@@ -9,11 +9,11 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   def index
     boosts = RankBoost.includes([:offer])
     if params[:filter] == 'active' && @offer.present?
-      boosts = boosts.active.find_all_by_offer_id(@offer.id)
+      boosts = boosts.active.where(:offer_id => @offer.id)
     elsif params[:filter] == 'active'
       boosts = boosts.active
     elsif @offer.present?
-      boosts = boosts.find_all_by_offer_id(@offer.id)
+      boosts = boosts.where(:offer_id => @offer.id)
     end
     @rank_boosts = boosts.paginate(:page => params[:page], :per_page => 200)
   end
