@@ -51,6 +51,7 @@
       %th Rewarded
       %th Offer type
       %th Sales rep
+      %th Live date
     %tr.total
       %td.total#total{:colspan => 3} Total
       %td.total.total_spend
@@ -71,6 +72,7 @@
       %td.total.total_publisher_revenue
       %td.total.total_publisher_total_revenue
       %td.total.total_publisher_pending_earnings
+      %td
       %td
       %td
       %td
@@ -101,6 +103,7 @@
       %td.filter= select_tag('featured_filter', options_for_select(filter_options(:featured)))
       %td.filter= select_tag('rewarded_filter', options_for_select(filter_options(:rewarded)))
       %td.filter= select_tag('offer_type_filter', options_for_select(filter_options(:offer_type)))
+      %td
       %td
   %tbody#apps_tbody
     - @partner_program_stats.each do |offer_id, stats|
@@ -136,6 +139,7 @@
         %td= metadata['rewarded']
         %td= metadata['offer_type']
         %td= metadata['sales_rep']
+        %td= metadata['live_date'].nil? ? '' : metadata['live_date'].to_s(:yyyy_mm_dd)
   %thead
     %tr.total
       %td.total#total{:colspan => 3} Total
@@ -157,6 +161,7 @@
       %td.total.total_publisher_revenue
       %td.total.total_publisher_total_revenue
       %td.total.total_publisher_pending_earnings
+      %td
       %td
       %td
       %td
