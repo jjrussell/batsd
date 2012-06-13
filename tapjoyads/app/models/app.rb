@@ -1,7 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { get_offer_device_types.to_json }, :url => :store_url
+  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { |ctx| get_offer_device_types.to_json }, :url => :store_url
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}

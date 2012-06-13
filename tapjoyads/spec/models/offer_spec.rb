@@ -105,7 +105,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.countries = ["GB"].to_json
-    @offer.get_countries(true)
+    @offer.get_countries
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :primary_country => "GB" }
@@ -141,7 +141,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.regions = ["CA"].to_json
-    @offer.get_regions(true)
+    @offer.get_regions
     geoip_data = { :region => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :region => "CA" }
@@ -159,7 +159,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.dma_codes = ["123"].to_json
-    @offer.get_dma_codes(true)
+    @offer.get_dma_codes
     geoip_data = { :dma_code => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :dma_code => "123" }
@@ -177,7 +177,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.cities = ["San Francisco"].to_json
-    @offer.get_cities(true)
+    @offer.get_cities
     geoip_data = { :city => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :city => "San Francisco" }
