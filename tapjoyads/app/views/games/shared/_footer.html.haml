@@ -1,5 +1,5 @@
-#footer
-  - if current_gamer.blank?
+#footer{:class=>@non_login_form_class_name}
+  - if @show_partners_bar_in_footer
     .partners
       %a{ :href => 'https://www.kabam.com', :target => '_blank' }
         .kabam

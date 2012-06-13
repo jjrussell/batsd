@@ -10,10 +10,10 @@ describe Dashboard::ReportingController do
 
   context 'with a logged in user' do
     before :each do
-      @user = Factory(:user)
-      @partner = Factory(:partner)
+      @user = FactoryGirl.create(:user)
+      @partner = FactoryGirl.create(:partner)
       @user.partners << @partner
-      @app = Factory(:app, :partner => @partner)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       activate_authlogic
       login_as(@user)
     end
@@ -28,7 +28,7 @@ describe Dashboard::ReportingController do
 
       context 'with offers' do
         it 'redirects to reporting path' do
-          @app2 = Factory(:app, :partner => @partner)
+          @app2 = FactoryGirl.create(:app, :partner => @partner)
           get(:index)
           response.should redirect_to(reporting_path(@app.primary_offer))
           session[:last_shown_app] = @app2.id
@@ -57,7 +57,7 @@ describe Dashboard::ReportingController do
       end
 
       it "does not change last_shown_app if offer isn't app" do
-        video_offer = Factory(:video_offer)
+        video_offer = FactoryGirl.create(:video_offer)
         primary_offer = Offer.new(:item => video_offer)
         @partner.offers << primary_offer
         get(:show, :id => @app.id)

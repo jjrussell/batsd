@@ -8,9 +8,9 @@ describe EnableOfferRequest do
   end
 
   before :each do
-    @enable_offer_request = Factory(:enable_offer_request)
-    @user = Factory(:user)
-    @account_mgr = Factory(:account_mgr_user)
+    @enable_offer_request = FactoryGirl.create(:enable_offer_request)
+    @user = FactoryGirl.create(:user)
+    @account_mgr = FactoryGirl.create(:account_mgr_user)
   end
 
   it "allows account managers to be assignees" do

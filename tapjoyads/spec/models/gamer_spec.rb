@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Gamer do
-  subject { Factory(:user) }
+  subject { FactoryGirl.create(:user) }
 
   context "Gamer" do
     before :each do
-      @gamer = Factory(:gamer, :twitter_id => '1')
+      @gamer = FactoryGirl.create(:gamer, :twitter_id => '1')
       @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
     end
 
@@ -43,8 +43,8 @@ describe Gamer do
           @json[:behavior_result] = threshold_count
           (threshold_count - 1).times do
             options = {
-              :device_id => Factory.next(:guid),
-              :name => Factory.next(:name),
+              :device_id => FactoryGirl.generate(:guid),
+              :name => FactoryGirl.generate(:name),
             }
             @gamer.gamer_devices.build(options).save
           end
@@ -53,8 +53,8 @@ describe Gamer do
         it 'should alert suspicious behavior' do
           Sqs.should_receive(:send_message).with(@queue, @json.to_json)
           options = {
-            :device_id => Factory.next(:guid),
-            :name => Factory.next(:name),
+            :device_id => FactoryGirl.generate(:guid),
+            :name => FactoryGirl.generate(:name),
           }
           @gamer.gamer_devices.build(options).save
         end
@@ -64,8 +64,8 @@ describe Gamer do
             @gamer.update_attributes(:blocked => true)
             Sqs.should_receive(:send_message).never
             options = {
-              :device_id => Factory.next(:guid),
-              :name => Factory.next(:name),
+              :device_id => FactoryGirl.generate(:guid),
+              :name => FactoryGirl.generate(:name),
             }
             @gamer.gamer_devices.build(options).save
           end
@@ -78,7 +78,7 @@ describe Gamer do
         :channel => Invitation::FACEBOOK,
         :external_info => '0')
 
-      new_gamer = Factory(:gamer)
+      new_gamer = FactoryGirl.create(:gamer)
       new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => new_gamer)
       new_gamer.referrer = ObjectEncryptor.encrypt("#{@gamer.id},#{invitation.id}")
       new_gamer.send :check_referrer
@@ -88,11 +88,11 @@ describe Gamer do
     end
 
     it 'sets up friendships' do
-      @new_gamer = Factory(:gamer)
+      @new_gamer = FactoryGirl.create(:gamer)
       @new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @new_gamer)
-      @referring_gamer = Factory(:gamer)
+      @referring_gamer = FactoryGirl.create(:gamer)
       @referring_gamer.gamer_profile = GamerProfile.create(:facebook_id => '1', :gamer => @referring_gamer)
-      @stalker_gamer = Factory(:gamer)
+      @stalker_gamer = FactoryGirl.create(:gamer)
       @stalker_gamer.gamer_profile = GamerProfile.create(:facebook_id => '2', :gamer => @stalker_gamer)
 
       accepted_invitation = Invitation.create(:gamer_id => @referring_gamer.id,
@@ -145,10 +145,10 @@ describe Gamer do
       context 'when channel == Invitation::FACEBOOK' do
         before :each do
           @facebook_id = '2'
-          gamer1 = Factory(:gamer)
+          gamer1 = FactoryGirl.create(:gamer)
           gamer1.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer1)
 
-          gamer2 = Factory(:gamer)
+          gamer2 = FactoryGirl.create(:gamer)
           gamer2.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer2)
         end
         it 'returns gamers based on facebook_id' do
@@ -159,8 +159,8 @@ describe Gamer do
       context 'when channel == Invitation::TWITTER' do
         before :each do
           @twitter_id = '2'
-          Factory(:gamer, :twitter_id => @twitter_id)
-          Factory(:gamer, :twitter_id => @twitter_id)
+          FactoryGirl.create(:gamer, :twitter_id => @twitter_id)
+          FactoryGirl.create(:gamer, :twitter_id => @twitter_id)
         end
         it 'returns gamers based on twitter_id' do
           Gamer.find_all_gamer_based_on_channel(Invitation::TWITTER, @twitter_id).size.should == 2
@@ -170,7 +170,7 @@ describe Gamer do
 
     describe '#follow_gamer' do
       before :each do
-        @gamer2 = Factory(:gamer)
+        @gamer2 = FactoryGirl.create(:gamer)
         @gamer.follow_gamer(@gamer2)
       end
 
@@ -181,7 +181,7 @@ describe Gamer do
 
     describe '#invitation_for' do
       before :each do
-        @gamer2 = Factory(:gamer, :twitter_id => '2')
+        @gamer2 = FactoryGirl.create(:gamer, :twitter_id => '2')
       end
 
       context 'when invitation not exist' do
@@ -196,7 +196,7 @@ describe Gamer do
 
       context 'when invitation exist' do
         before :each do
-          @invitation = Factory(:invitation, :gamer => @gamer, :channel => Invitation::TWITTER, :external_info => @gamer2.twitter_id)
+          @invitation = FactoryGirl.create(:invitation, :gamer => @gamer, :channel => Invitation::TWITTER, :external_info => @gamer2.twitter_id)
         end
         it 'returns an invitation' do
           @gamer.invitation_for(@gamer2.twitter_id, Invitation::TWITTER).class.should == Invitation
@@ -215,12 +215,12 @@ describe Gamer do
           :twitter_access_token  => 'twitter_access_token',
           :twitter_access_secret => 'twitter_access_secret'
         }
-        @gamer2 = Factory(:gamer)
-        @gamer3 = Factory(:gamer)
+        @gamer2 = FactoryGirl.create(:gamer)
+        @gamer3 = FactoryGirl.create(:gamer)
         @gamer3.gamer_profile = GamerProfile.create(:gamer => @gamer3, :referred_by => @gamer.id)
 
-        @invitation = Factory(:invitation, :gamer => @gamer, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
-        @invitation2 = Factory(:invitation, :gamer => @gamer2, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
+        @invitation = FactoryGirl.create(:invitation, :gamer => @gamer, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
+        @invitation2 = FactoryGirl.create(:invitation, :gamer => @gamer2, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
       end
 
       context 'when twitter_id different' do
@@ -265,25 +265,25 @@ describe Gamer do
 
   context "Deleting Gamers" do
     it 'only deletes users deactivated 3 days ago' do
-      5.times.each { Factory(:gamer) }
-      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now) }
-      5.times.each { Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day) }
+      5.times.each { FactoryGirl.create(:gamer) }
+      5.times.each { FactoryGirl.create(:gamer, :deactivated_at => Time.zone.now) }
+      5.times.each { FactoryGirl.create(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day) }
       Gamer.count.should == 15
       Gamer.to_delete.each(&:destroy)
       Gamer.count.should == 10
     end
 
     it 'also deletes friendships' do
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
+      gamer = FactoryGirl.create(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
 
-      stalker = Factory(:gamer)
+      stalker = FactoryGirl.create(:gamer)
 
       friendship = Friendship.new
       friendship.gamer_id  = stalker.id
       friendship.following_id = gamer.id
       friendship.save
 
-      friend = Factory(:gamer)
+      friend = FactoryGirl.create(:gamer)
 
       friendship = Friendship.new
       friendship.gamer_id  = gamer.id
@@ -301,12 +301,12 @@ describe Gamer do
     end
 
     it 'also deletes invitations' do
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
+      gamer = FactoryGirl.create(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       3.times do
         Invitation.create({
           :gamer_id => gamer.id,
           :channel => Invitation::EMAIL,
-          :external_info => Factory.next(:name),
+          :external_info => FactoryGirl.generate(:name),
         })
       end
       Invitation.count.should == 3
@@ -316,11 +316,11 @@ describe Gamer do
 
     it 'does not error out when deleted invitations are fulfilled' do
 
-      gamer = Factory(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
+      gamer = FactoryGirl.create(:gamer, :deactivated_at => Time.zone.now - Gamer::DAYS_BEFORE_DELETION.days - 1.day)
       invitation = Invitation.create({
         :gamer_id => gamer.id,
         :channel => Invitation::EMAIL,
-        :external_info => Factory.next(:name),
+        :external_info => FactoryGirl.generate(:name),
       })
       referrer = invitation.encrypted_referral_id
 
@@ -341,7 +341,7 @@ describe Gamer do
 
   context ".serialized_extra_attributes_accessor" do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
       Gamer::serialized_extra_attributes_accessor :completed_offer_count
     end
 
