@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'sales_reps' do
   before :each do
     capybara_dashboard_admin_login
-    @offer = Factory(:app).primary_offer
-    @account_manager = Factory(:account_mgr_user)
+    @offer = FactoryGirl.create(:app).primary_offer
+    @account_manager = FactoryGirl.create(:account_mgr_user)
     visit statz_path(@offer)
     click_link "[Sales Reps]"
   end

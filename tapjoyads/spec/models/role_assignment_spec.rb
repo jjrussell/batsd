@@ -3,8 +3,8 @@ require 'spec_helper'
 describe RoleAssignment do
   describe '#<=>' do
     before :each do
-      user = Factory(:user)
-      5.times { user.user_roles << Factory(:user_role) }
+      user = FactoryGirl.create(:user)
+      5.times { user.user_roles << FactoryGirl.create(:user_role) }
       @assignments = user.role_assignments
     end
 

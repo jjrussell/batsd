@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Click do
   describe "#url_to_resolve" do
     before :each do
-      @click = Factory(:click)
+      @click = FactoryGirl.create(:click)
     end
 
     context "when generic click" do
@@ -31,7 +31,7 @@ describe Click do
   describe '#dashboard_device_info_tool_url' do
     include Rails.application.routes.url_helpers
     before :each do
-      @click = Factory(:click)
+      @click = FactoryGirl.create(:click)
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do

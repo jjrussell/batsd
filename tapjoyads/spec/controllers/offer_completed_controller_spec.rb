@@ -10,7 +10,7 @@ describe OfferCompletedController do
     @click.stub(:installed_at).and_return(nil)
     @device = mock()
     @device.stub(:set_last_run_time!)
-    @offer = Factory(:app).primary_offer
+    @offer = FactoryGirl.create(:app).primary_offer
     @offer.tapjoy_enabled = true
     @offer.payment = 1
     @offer.user_enabled = true

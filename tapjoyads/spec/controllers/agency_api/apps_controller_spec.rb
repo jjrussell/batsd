@@ -4,10 +4,10 @@ describe AgencyApi::AppsController do
 
   describe '#index' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
-      @app = Factory(:app, :partner => @partner)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       @valid_params = {
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key,
@@ -37,7 +37,7 @@ describe AgencyApi::AppsController do
 
     context 'with an invalid partner_id' do
       before :each do
-        partner2 = Factory(:partner)
+        partner2 = FactoryGirl.create(:partner)
         get(:index, @valid_params.merge(:partner_id => partner2.id))
       end
 
@@ -61,10 +61,10 @@ describe AgencyApi::AppsController do
 
   describe '#show' do
     before :each do
-      agency_user = Factory(:agency_user)
-      partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => partner)
-      @app = Factory(:app, :partner => partner)
+      @app = FactoryGirl.create(:app, :partner => partner)
       @valid_params = {
         :id => @app.id,
         :agency_id => agency_user.id,
@@ -94,7 +94,7 @@ describe AgencyApi::AppsController do
 
     context 'with an app_id belonging to an invalid partner' do
       before :each do
-        app2 = Factory(:app)
+        app2 = FactoryGirl.create(:app)
         get(:show, @valid_params.merge(:id => app2.id))
       end
 
@@ -123,8 +123,8 @@ describe AgencyApi::AppsController do
 
   describe '#create' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
       @valid_params = {
         :agency_id => agency_user.id,
@@ -155,7 +155,7 @@ describe AgencyApi::AppsController do
     end
     context 'with an invalid partner_id' do
       before :each do
-        partner2 = Factory(:partner)
+        partner2 = FactoryGirl.create(:partner)
         post(:create, @valid_params.merge(:partner_id => partner2.id))
       end
 
@@ -207,10 +207,10 @@ describe AgencyApi::AppsController do
 
   describe '#update' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
-      @app = Factory(:app, :partner => @partner)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       @valid_params = {
         :id => @app.id,
         :agency_id => agency_user.id,
@@ -243,7 +243,7 @@ describe AgencyApi::AppsController do
 
     context 'with an id belonging to an invalid partner' do
       before :each do
-        app2 = Factory(:app)
+        app2 = FactoryGirl.create(:app)
         put(:update, @valid_params.merge(:id => app2.id))
       end
 

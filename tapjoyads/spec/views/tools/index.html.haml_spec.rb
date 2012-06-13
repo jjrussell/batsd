@@ -4,7 +4,7 @@
 #describe 'tools/index.html.haml' do
   #context 'with a customer service user' do
     #before :each do
-      #user = Factory :customer_service_user
+      #user = FactoryGirl.create :customer_service_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
@@ -22,7 +22,7 @@
 
   #context 'with an account manager user' do
     #before :each do
-      #user = Factory :account_mgr_user
+      #user = FactoryGirl.create :account_mgr_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
@@ -40,7 +40,7 @@
 
   #context 'with a partner user' do
     #before :each do
-      #user = Factory :partner_user
+      #user = FactoryGirl.create :partner_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(false)
@@ -58,7 +58,7 @@
 
   #context 'with a role manager user' do
     #before :each do
-      #user = Factory :role_mgr_user
+      #user = FactoryGirl.create :role_mgr_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
@@ -77,7 +77,7 @@
 
   #context 'with an admin user' do
     #before :each do
-      #user = Factory :admin
+      #user = FactoryGirl.create :admin
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #render

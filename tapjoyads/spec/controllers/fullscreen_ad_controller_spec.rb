@@ -6,12 +6,12 @@ describe FullscreenAdController do
   describe '#index' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @offer.name = "Consistent Name"
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
 
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',

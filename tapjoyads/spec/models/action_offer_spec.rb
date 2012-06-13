@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ActionOffer do
-  subject { Factory :action_offer }
+  subject { FactoryGirl.create :action_offer }
   it { should have_many :offers }
   it { should have_one :primary_offer }
   it { should belong_to :partner }

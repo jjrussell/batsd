@@ -1,4 +1,7 @@
 module Offer::UrlGeneration
+  def router
+    Rails.application.routes.url_helpers
+  end
 
   def destination_url(options)
     if item_type != 'VideoOffer' && instructions.present?
@@ -63,6 +66,7 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -88,8 +92,11 @@ module Offer::UrlGeneration
         :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+    when 'DeeplinkOffer'
+      params = { :udid => udid, :id => currency.id, :click_key => click_key }
+      data=ObjectEncryptor.encrypt(params)
+      final_url = router.games_earn_url(:data=>data, :host=>WEBSITE_URL)
     end
-
     final_url
   end
 

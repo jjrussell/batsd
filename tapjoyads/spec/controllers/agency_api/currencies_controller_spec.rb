@@ -2,10 +2,10 @@ require 'spec/spec_helper'
 
 describe AgencyApi::CurrenciesController do
   before :each do
-    @agency_user = Factory(:agency_user)
-    @partner = Factory(:partner)
+    @agency_user = FactoryGirl.create(:agency_user)
+    @partner = FactoryGirl.create(:partner)
     @agency_user.partners << @partner
-    @app = Factory(:app, :partner => @partner)
+    @app = FactoryGirl.create(:app, :partner => @partner)
   end
 
   describe '#index' do
@@ -36,14 +36,14 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'responds with error given app_id from invalid partner' do
-      app2 = Factory(:app)
+      app2 = FactoryGirl.create(:app)
       get(:index, @valid_params.merge(:app_id => app2.id))
 
       should_respond_with_json_error(403)
     end
 
     it 'responds with success given valid params' do
-      currency = Factory(:currency,
+      currency = FactoryGirl.create(:currency,
         :app => @app,
         :partner => @partner,
         :name => 'foo',
@@ -74,7 +74,7 @@ describe AgencyApi::CurrenciesController do
 
   describe '#show' do
     before :each do
-      @currency = Factory(:currency,
+      @currency = FactoryGirl.create(:currency,
         :id => @app.id,
         :app => @app,
         :partner => @partner)
@@ -99,7 +99,7 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'responds with error given currency_id from an invalid partner' do
-      currency2 = Factory(:currency)
+      currency2 = FactoryGirl.create(:currency)
 
       get(:show, @valid_params.merge(:id => currency2.id))
 
@@ -156,15 +156,15 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'responds with error given app_id from an invalid partner' do
-      partner2 = Factory(:partner)
-      app2 = Factory(:app, :partner => partner2)
+      partner2 = FactoryGirl.create(:partner)
+      app2 = FactoryGirl.create(:app, :partner => partner2)
       post(:create, @valid_params.merge(:app_id => app2.id))
 
       should_respond_with_json_error(403)
     end
 
     it 'responds with error when an app already has a currency' do
-      Factory(:currency, :id => @app.id, :app => @app, :partner => @partner)
+      FactoryGirl.create(:currency, :id => @app.id, :app => @app, :partner => @partner)
 
       post(:create, @valid_params)
 
@@ -227,7 +227,7 @@ describe AgencyApi::CurrenciesController do
 
   describe '#update' do
     before :each do
-      @currency = Factory(:currency,
+      @currency = FactoryGirl.create(:currency,
         :id => @app.id,
         :app => @app,
         :partner => @partner)
@@ -258,7 +258,7 @@ describe AgencyApi::CurrenciesController do
     end
 
     it 'responds with error given id from an invalid partner' do
-      currency2 = Factory(:currency)
+      currency2 = FactoryGirl.create(:currency)
 
       put(:update, @valid_params.merge(:id => currency2.id))
 

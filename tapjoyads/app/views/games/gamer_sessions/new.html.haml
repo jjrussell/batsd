@@ -6,7 +6,7 @@
 
 = render '/games/shared/login_form', :gamer_session => @gamer_session, :login_form_class_name => @login_form_class_name
 
-#content
+#content{:class=>@non_login_form_class_name}
   #wrapper
     .wrapper
       #body-title
@@ -77,7 +77,7 @@
           %span{ :class => 'signup', :id => 'signup' }
             = t('text.shared.sign_up')
 
-#benefits
+#benefits{:class=>@non_login_form_class_name}
   .wrapper
     .left.box
       .collect.center
