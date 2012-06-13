@@ -57,7 +57,7 @@
           - unless current_gamer.nil?
             .menu-subnav.clearfix
               .menu-subnav-wrapper
-                - link_to(games_help_path) do
+                = link_to(games_help_path) do
                   .help
                     %span= t('text.shared.help')
                 = link_to(games_logout_path) do
