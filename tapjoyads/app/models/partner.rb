@@ -47,6 +47,7 @@
 #  payout_threshold              :integer(4)      default(5000000), not null
 #  payout_info_confirmation      :boolean(1)      default(FALSE), not null
 #  payout_threshold_confirmation :boolean(1)      default(FALSE), not null
+#  live_date                     :datetime
 #
 
 class Partner < ActiveRecord::Base

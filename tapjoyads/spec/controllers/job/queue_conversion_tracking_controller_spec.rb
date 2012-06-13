@@ -282,6 +282,12 @@ describe Job::QueueConversionTrackingController do
       end
     end
 
+    it 'does not blow up if Click#update_partner_live_dates! fails' do
+      @click.stub(:update_partner_live_dates!).and_raise(RuntimeError)
+      expect_request_completes
+      do_get
+    end
+
     it 'creates a WebRequest object' do
       expect_request_completes
       do_get
