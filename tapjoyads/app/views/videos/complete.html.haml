@@ -10,7 +10,13 @@
       font-size: 100%/16px;
       font-family: "Helvetica", Arial, Helvetica, sans-serif;
       font-weight: normal;
-      padding: 10px;
+    }
+
+    html{
+      height: 100%;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
     }
 
     .container {
@@ -26,7 +32,7 @@
     }
 
     .nbb {
-    border-bottom: 0 !important;
+      border-bottom: 0 !important;
     }
 
     .center {
@@ -51,12 +57,16 @@
     .ui-joy-panel {
       background: #f4f4f4;
       border-radius: 8px 8px 8px 8px;
+      box-sizing: border-box;
       box-shadow: 0 0 8px rgba(0,0,0, .5);
       font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
-      margin: 15px auto;
-      position: relative;
+      height: 100%;
+      overflow: auto;
+      position: absolute;
       width: 100%;
       z-index: 100;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
     }
 
     .ui-joy-panel .header {
@@ -278,7 +288,7 @@
       color: #fff;
       font-family: "Gill Sans", "Helvetica", arial;
       font-size: 50%;
-      margin: 1px 0 0 13px;
+      margin: 8px 0 0 13px;
       padding: 4px 5px;
       text-align: center;
       width: 20px;
