@@ -253,6 +253,7 @@ describe Partner do
       end
 
       it "returns available offers with correct platform" do
+        @partner.reload
         available_offers = @partner.offers_for_promotion
         available_offers[:windows].should == []
         available_offers[:android].should == [ @offer3 ]
