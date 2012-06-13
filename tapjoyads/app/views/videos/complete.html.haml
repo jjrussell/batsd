@@ -12,7 +12,7 @@
       font-weight: normal;
     }
 
-    html{
+    html {
       height: 100%;
     }
 
@@ -29,7 +29,7 @@
     }
 
     .nbb {
-      border-bottom: 0 !important;
+    border-bottom: 0 !important;
     }
 
     .center {
@@ -42,15 +42,15 @@
 
     @font-face {
       font-family: 'Museo Slab';
-      src: url('fonts/museo_slab_500-webfont.eot');
-      src: url('fonts/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
-      url('fonts/museo_slab_500-webfont.woff') format('woff'),
-      url('fonts/museo_slab_500-webfont.ttf') format('truetype'),
-      url('fonts/museo_slab_500-webfont.svg#MuseoSlab500') format('svg');
+      src: url('/fonts/marketplace/museo_slab_500-webfont.eot');
+      src: url('/fonts/marketplace/museo_slab_500-webfont.eot?#iefix') format('embedded-opentype'),
+           url('/fonts/marketplace/museo_slab_500-webfont.woff') format('woff'),
+           url('/fonts/marketplace/museo_slab_500-webfont.ttf') format('truetype'),
+           url('/fonts/marketplace/museo_slab_500-webfont.svg') format('svg');
       font-weight: normal;
       font-style: normal;
     }
-
+   
     .ui-joy-panel {
       background: #f4f4f4;
       border-radius: 8px 8px 8px 8px;
@@ -148,7 +148,9 @@
       margin: 0;
       padding: 0;
       list-style: none;
+      border-top: 1px solid #ccc;
     }
+
 
     ul#offers li {
       background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(247,247,247,1) 50%, rgba(242,242,242,1) 85%, rgba(240,240,240,1) 100%);
@@ -170,6 +172,7 @@
       text-decoration: none;
       width: inherit;
     }
+
     ul#offers li .reward,
     ul#offers li .offer {
       height: inherit;
@@ -181,10 +184,10 @@
 
     ul#offers li .reward {
       position: absolute;
-      left: 0;
+      right: 0;
       top: 0;
     }
-
+    
     ul#offers li .offer {
       margin-left: 8px;
       overflow: hidden;
@@ -243,6 +246,8 @@
       top: 0;
       z-index: 10;
     }
+
+
 
     ul#offers li .offer .rounded {
       border-radius: 6px 6px 6px 6px;
@@ -441,30 +446,30 @@
       You've earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name} in {app} by completing #{@video_offer.name}!
   %ul#offers
     %li
-      .reward
-        %span.earn=t('text.games.shared.earn_verb');
-        %span.big
-          3233
-        %span.points=t('text.games.offerwall.points');
-        %span.free=t('text.games.offerwall.free');
+      %a{:href => 'click_thru_url'}
+        .reward
+          %span.earn=t('text.games.shared.earn');
+          %span.big
+            3233
+          %span.points=t('text.games.offerwall.points');
+          %span.free=t('text.games.offerwall.free');
 
-      .offer
-        .icon.mtn
-          .rounded
-          %img.cover{:src => ''}
-          .wifi
-            WiFi
-      .about
-        .title
-          I-Bit Ninja And This Title Wraps Around 2 Lines
-        .desc
-          Lorem ipsum de colour. Lorem ipsum de colour.
-        .action.download
-          =t('text.games.offerwall.actions.download');
-
+        .offer
+          .icon.mtn
+            .rounded
+            %img.cover{:src => ''}
+            .wifi
+              WiFi
+          .about
+            .title
+              I-Bit Ninja And This Title Wraps Around 2 Lines
+            .desc
+              Lorem ipsum de colour. Lorem ipsum de colour.
+            .action.download
+              =t('text.games.offerwall.actions.download');
     %li
       .reward
-        %span.earn=t('text.games.shared.earn_verb');
+        %span.earn=t('text.games.shared.earn');
         %span.big
           1823
         %span.points=t('text.games.offerwall.points');
@@ -474,13 +479,13 @@
         .icon
           .rounded
           %img.cover{:src => ''}
-      .about
-        .title
-          I-Bit Ninja And This Title Wraps Around 2 Lines
-        .desc
-          Lorem ipsum de colour. Lorem ipsum de colour.
-        .action.series
-          =t('text.games.offerwall.actions.steps');
+        .about
+          .title
+            I-Bit Ninja And This Title Wraps Around 2 Lines
+          .desc
+            Lorem ipsum de colour. Lorem ipsum de colour.
+          .action.series
+            =t('text.games.offerwall.actions.steps');
 
   .container
     .button-wrapper
