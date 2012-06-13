@@ -14,9 +14,6 @@
 
     html{
       height: 100%;
-      box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
     }
 
     .container {
@@ -59,11 +56,16 @@
       border-radius: 8px 8px 8px 8px;
       box-sizing: border-box;
       box-shadow: 0 0 8px rgba(0,0,0, .5);
+      bottom: 0;      
+      display: block;
       font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
-      height: 100%;
+      height: auto;
+      left: 0;
+      margin: 5px;
       overflow: auto;
       position: absolute;
-      width: 100%;
+      right: 0;
+      top: 0;
       z-index: 100;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -408,6 +410,26 @@
       display: block;
       font-size: 85%;
       margin-top: 5px;
+    }
+
+    @media (max-width:360px){
+      .button {
+        font-size: 110%;
+      }
+
+      ul#offers li .offer .icon {
+        width: 60px;
+      }
+
+      ul#offers li .offer .about {
+        font-size: 80%;
+        margin-left: 0;
+        width: 70%;
+      }
+
+      ul#offers li .offer .about .action {
+        line-height: 150%;
+      }
     }
 
 #panel.ui-joy-panel.video
