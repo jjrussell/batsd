@@ -95,7 +95,7 @@ module Offer::UrlGeneration
     when 'DeeplinkOffer'
       params = { :udid => udid, :id => currency.id, :click_key => click_key }
       data=ObjectEncryptor.encrypt(params)
-      final_url = router.games_earn_url(:data=>data, :host=>WEBSITE_URL)
+      final_url = "#{WEBSITE_URL}/games/earn?data=#{data}"
     end
     final_url
   end
