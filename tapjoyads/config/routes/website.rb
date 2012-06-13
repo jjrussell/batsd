@@ -81,7 +81,6 @@ Tapjoyad::Application.routes.draw do
     match 'register' => 'gamers#new', :as => :register
     resources :confirmations, :only => [:create]
     match 'confirm' => 'confirmations#create', :as => :confirm
-    match 'confirm/redirect/:token' => 'confirmations#redirect'
     resources :password_resets, :only => [:new, :create, :edit, :update]
     match 'password-reset' => 'password_resets#new', :as => :password_reset
     resources :support_requests, :only => [:new, :create] do
