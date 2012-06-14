@@ -40,7 +40,7 @@
           - keys.each do |key|
             %p
               %span.diff_key #{key}:
-              %span.diff_value #{activity.diff_value(key)}
+              %span.diff_value!= activity.diff_value(key)
         %td= activity.created_at.to_s(:pub_ampm_sec)
         %td= activity.controller
         %td= activity.action
