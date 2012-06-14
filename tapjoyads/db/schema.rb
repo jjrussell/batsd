@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120607232707) do
+ActiveRecord::Schema.define(:version => 20120614023145) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -831,8 +831,8 @@ ActiveRecord::Schema.define(:version => 20120607232707) do
     t.integer  "payout_threshold",                                                          :default => 5000000,   :null => false
     t.boolean  "payout_info_confirmation",                                                  :default => false,     :null => false
     t.boolean  "payout_threshold_confirmation",                                             :default => false,     :null => false
-    t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
     t.datetime "live_date"
+    t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
