@@ -164,7 +164,11 @@ class Games::HomepageController < GamesController
 
   def params_id
     if params[:eid].present?
-      ObjectEncryptor.decrypt(params[:eid])
+      if params[:eid] =~ UUID_REGEX
+        params[:eid]
+      else
+        ObjectEncryptor.decrypt(params[:eid])
+      end
     elsif params[:id].present?
       params[:id]
     end
