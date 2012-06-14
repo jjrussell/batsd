@@ -35,11 +35,13 @@ class Games::HomepageController < GamesController
     @click_url = games_record_click_path( { :redirect_url => ObjectEncryptor.encrypt(@offer.url),
                                             :eid => ObjectEncryptor.encrypt(@app.id)})
     return unless @app_metadata
+    @app_reviews = []
     app_reviews = @app_metadata.app_reviews.find_all_by_id(params[:app_review_id]) if params[:app_review_id].present?
     if app_reviews.blank?
       app_reviews = AppReview.where(:app_metadata_id => @app_metadata.id, :is_blank => false).includes(:author).paginate(:page => params[:app_reviews_page])
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
-      review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
+      return if app_reviews.empty?
+      review_authors_not_viewer = app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
       rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
       rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
       app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
