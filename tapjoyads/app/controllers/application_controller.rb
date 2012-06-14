@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = nil
+    I18n.locale = I18n.default_locale
     language_code = params[:language_code]
     if language_code.present?
       language_code.downcase!
@@ -90,7 +90,6 @@ class ApplicationController < ActionController::Base
         I18n.locale = language_code
       end
     end
-    I18n.locale ||= I18n.default_locale
   end
 
   def lookup_udid
