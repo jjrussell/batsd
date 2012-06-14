@@ -34,6 +34,6 @@
 
   .container
     .button-wrapper
-      %input{:type => 'submit', :class => 'button', :value => 'View More Offers'}
+      %a{:class => 'button', :href => '/offer_wall'} View More Offers
     .button-wrapper
-      %input{:type => 'submit', :class => 'button', :value => 'Replay'}
+      %a{:class => 'button', :href => get_click_url(@offer)} Replay
