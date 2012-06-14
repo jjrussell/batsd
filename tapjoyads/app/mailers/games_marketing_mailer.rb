@@ -77,7 +77,7 @@ class GamesMarketingMailer < ActionMailer::Base
 
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
-      raise "Error getting offerwall data" unless response.status == 200
+      raise "Error getting offerwall data HTTP code: #{ response.status }" unless response.status == 200
       @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
