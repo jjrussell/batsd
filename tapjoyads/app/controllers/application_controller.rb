@@ -83,6 +83,7 @@ class ApplicationController < ActionController::Base
   def set_locale
     language_code = params[:language_code]
     if language_code
+      language_code.downcase!
       I18n.locale = nil
       if I18n.available_locales.collect(&:to_s).include?(language_code)
         I18n.locale = language_code
