@@ -3,6 +3,8 @@ require 'spec_helper'
 describe Gamer do
   subject { FactoryGirl.create(:user) }
 
+  it { should validate_uniqueness_of :email }
+
   context "Gamer" do
     before :each do
       @gamer = FactoryGirl.create(:gamer, :twitter_id => '1')

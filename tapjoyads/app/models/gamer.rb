@@ -60,7 +60,7 @@ class Gamer < ActiveRecord::Base
            :referred_by, :referred_by=, :referred_by?, :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create
-  validates_presence_of :email
+  validates :email, :presence => true, :uniqueness => true
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
 
