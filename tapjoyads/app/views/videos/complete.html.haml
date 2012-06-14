@@ -441,23 +441,29 @@
       in #{@publisher_app.name} by completing #{@video_offer.name}!
   %ul#offers
     - @video_buttons.each do |button|
+      - offer = button.tracking_item.primary_offer
       %li
         %a{:href => get_click_url(button.tracking_offer)}
           .reward
-            %span.earn= t('text.shared.earn_verb');
-            %span.big= @currency.get_visual_reward_amount(button.tracking_item.primary_offer, params[:display_multiplier])
-            %span.points= t('text.offerwall.points');
-            %span.free= t('text.offerwall.free');
+            %span.earn= t('text.shared.earn_verb')
+            %span.big= @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+            %span.points= t('text.offerwall.points')
+            %span.free= visual_cost(offer)
 
           .offer
             .icon.mtn
               .rounded
-              %img.cover{:src => button.tracking_offer.get_icon_url(:source => :cloudfront, :size => '57')}
-              .wifi WiFi
+              %img.cover{:src => offer.get_icon_url(:source => :cloudfront, :size => '57')}
+              - if offer.wifi_only?
+                .wifi WiFi
             .about
               .title= button.name
-              .desc Lorem ipsum de colour. Lorem ipsum de colour.
-              .action.download= t('text.offerwall.actions.download');
+              - if button.item_type == 'App'
+                .action.download= t('text.offerwall.actions.download')
+              - elsif button.item_type == 'VideoOffer'
+                .action.video= t('text.offerwall.actions.video')
+              - elsif %w(ActionOffer GenericOffer).include?(button.item_type)
+                .action.series= t('text.offerwall.actions.steps')
 
   .container
     .button-wrapper
