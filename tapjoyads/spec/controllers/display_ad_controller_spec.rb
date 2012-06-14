@@ -1,7 +1,11 @@
 require 'spec/spec_helper'
 
 def read_asset(name, directory='banner_ads')
-  File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+  if RUBY_VERSION < '1.9'
+    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+  else
+    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}", :encoding => "BINARY")
+  end
 end
 
 describe DisplayAdController do
