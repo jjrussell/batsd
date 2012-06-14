@@ -48,7 +48,7 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+    I18n.locale = (get_language_codes.concat(http_accept_language).push(I18n.default_locale.to_s) & I18n.available_locales.map(&:to_s)).first
   end
 
   def get_locale_filename
@@ -58,7 +58,6 @@ class GamesController < ApplicationController
 
   def get_language_codes
     return [] unless params[:language_code]
-
     code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
