@@ -1,5 +1,5 @@
 #TODO: rails3 replace with BDD
-#require 'spec/spec_helper'
+#require 'spec_helper'
 
 #describe 'tools/index.html.haml' do
   #context 'with a customer service user' do

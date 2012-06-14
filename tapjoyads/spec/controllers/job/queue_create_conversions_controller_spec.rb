@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::QueueCreateConversionsController do
   before :each do
