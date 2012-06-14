@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 def read_asset(name, directory='banner_ads')
   File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")

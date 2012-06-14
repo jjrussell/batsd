@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::MasterReloadStatzController do
   let(:stats_hash) do
