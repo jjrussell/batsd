@@ -12,7 +12,7 @@ module UuidPrimaryKey
     end
   end
 
-private
+  private
 
   # ensures that each new record has a UUID assigned to the 'id' field.
   def set_primary_key
