@@ -78,6 +78,7 @@ describe Games::HomepageController do
     end
 
     it 'sets default_locale when language_code values are invalid' do
+      I18n.default_locale = :de
       get(:index, :language_code => "honey badger don't care about locale")
       I18n.locale.should == I18n.default_locale
     end
