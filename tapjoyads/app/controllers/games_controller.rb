@@ -155,6 +155,45 @@ class GamesController < ApplicationController
     redirect_to social_feature_redirect_path
   end
 
+  def fetch_facebook_friends
+    facebook_friends = Rails.cache.fetch("facebook_friends.#{current_gamer.id}", :expires_in => 4.hour) do
+      if current_gamer.fb_access_token
+        begin
+          client = Mogli::Client.new(current_gamer.fb_access_token)
+          query = "SELECT uid, name FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = me())".gsub(" ", "+")
+          fb_friendlist = client.get_and_map_url(client.api_path("fql?q=#{query}&access_token=#{current_gamer.fb_access_token}"))
+
+          fb_friends = fb_friendlist.map do |fb_friend|
+            friend = Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => fb_friend['uid'].to_s }).first
+            if friend
+              is_tjm_gamer = true
+              friendship = Friendship.new(:key => "#{current_gamer.id}.#{friend.id}")
+              unless friendship.new_record?
+                is_tjm_friend = true
+              end
+
+              friendship = Friendship.new(:key => "#{friend.id}.#{current_gamer.id}")
+              unless friendship.new_record?
+                is_tjm_friend = true
+              end
+            end
+
+            {
+              :id            => fb_friend['uid'].to_s,
+              :name          => fb_friend['name'],
+              :is_tjm_gamer  => is_tjm_gamer || false,
+              :is_tjm_friend => is_tjm_friend || false
+            }
+          end
+        rescue Exception => e
+          flash[:error] = t('text.games.generic_issue')
+        end
+      end
+
+      fb_friends ||= nil
+    end
+  end
+
   private
 
   def render_json_error(errors, status = 403)
