@@ -63,6 +63,9 @@ module Offer::Rejecting
     # MeetMoi
     %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a) =>
     %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a),
+    # US interactive
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2) =>
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -165,7 +168,7 @@ module Offer::Rejecting
   end
 
   def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
+    hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
   def partner_has_no_funds?
