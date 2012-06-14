@@ -165,7 +165,7 @@ module Offer::Rejecting
   end
 
   def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
+    hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
   def partner_has_no_funds?
