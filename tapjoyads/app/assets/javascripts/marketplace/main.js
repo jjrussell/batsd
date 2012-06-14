@@ -372,6 +372,7 @@ $(document).ready(function(){
     if (Tapjoy.Utils.isEmpty(window.linkDeviceOptions)) {
       return;
     }
+    var goHome = false;
     var rootUrl = window.linkDeviceOptions.rootUrl;
     var link_device_url = window.linkDeviceOptions.linkDeviceUrl;
     var android = window.linkDeviceOptions.android;
