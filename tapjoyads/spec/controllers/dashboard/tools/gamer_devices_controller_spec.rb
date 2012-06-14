@@ -1,26 +1,23 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Dashboard::Tools::GamerDevicesController do
+  let(:gamer) { FactoryGirl.create(:gamer) }
   before :each do
     activate_authlogic
-    ExternalPublisher.stubs(:load_all).returns(nil)
-
-    @gamer = Factory :gamer
+    ExternalPublisher.stub(:load_all).and_return(nil)
   end
 
   describe "#new" do
-    before :each do
-      @params = { :gamer_id => @gamer.id }
-    end
+    let(:params) { { :gamer_id => gamer.id } }
 
     context "when logged in as customer service" do
       before :each do
-        user = Factory :customer_service_user
+        user = FactoryGirl.create(:customer_service_user)
         login_as user
       end
 
       it "allows access" do
-        get(:new, @params)
+        get(:new, params)
         response.should be_success
       end
 
@@ -34,11 +31,10 @@ describe Dashboard::Tools::GamerDevicesController do
       before :each do
         user = Factory :account_mgr_user
         login_as user
-
-        get(:new, @params)
       end
 
       it "allows access" do
+        get(:new, params)
         response.should be_success
       end
     end
@@ -47,46 +43,41 @@ describe Dashboard::Tools::GamerDevicesController do
       before :each do
         user = Factory :partner_user
         login_as user
-
-        get(:new, @params)
       end
 
       it "disallows access" do
+        get(:new, params)
         response.should_not be_success
       end
     end
   end
 
   describe "#edit" do
-    before :each do
-      device = Factory :device
-      gamer_device = GamerDevice.new(:device => device, :gamer => @gamer)
-      gamer_device.save!
-
-      @params = { :id => gamer_device.id }
-    end
+    let(:params) { device = FactoryGirl.create(:device)
+                   gamer_device = GamerDevice.new(:device => device, :gamer => gamer)
+                   gamer_device.save!
+                   { :id => gamer_device.id } }
 
     context "when logged in as customer service" do
       before :each do
-        user = Factory :customer_service_user
+        user = FactoryGirl.create(:customer_service_user)
         login_as user
       end
 
       it "allows access" do
-        get(:edit, @params)
+        get(:edit, params)
         response.should be_success
       end
     end
 
     context "when logged in as an account manager" do
       before :each do
-        user = Factory :account_mgr_user
+        user = FactoryGirl.create(:account_mgr_user)
         login_as user
-
-        get(:edit, @params)
       end
 
       it "allows access" do
+        get(:edit, params)
         response.should be_success
       end
     end
@@ -95,60 +86,60 @@ describe Dashboard::Tools::GamerDevicesController do
       before :each do
         user = Factory :partner_user
         login_as user
-
-        get(:edit, @params)
       end
 
       it "disallows access" do
+        get(:edit, params)
         response.should_not be_success
       end
     end
   end
 
   describe "#update" do
-    before :each do
-      device = Factory :device
-      @gamer_device = GamerDevice.new(:device => device, :gamer => @gamer, :device_type => 'iphone')
-      @gamer_device.save!
-
-      @params = { :id => @gamer_device.id }
-    end
+    let(:gamer_device) {
+      device = FactoryGirl.create(:device)
+      gamer_device = GamerDevice.new(:device => device, :gamer => gamer, :device_type => 'iphone')
+      gamer_device.save!
+      gamer_device
+    }
+    
+    let(:params) { { :id => gamer_device.id } }
 
     context "when logged in as customer service" do
       before :each do
-        user = Factory :customer_service_user
+        user = FactoryGirl.create(:customer_service_user)
         login_as user
       end
 
       it "redirects to gamer management tool for associated gamer after update" do
-        put(:update, @params)
-        response.should redirect_to(tools_gamer_path(@gamer))
+        put(:update, params)
+        response.should redirect_to(tools_gamer_path(gamer))
       end
 
       it "allows a gamer device's name to be updated" do
-        @params['gamer_device'] = { :name => 'New Name' }
-        put(:update, @params)
-        @gamer_device.reload
-        @gamer_device.name.should == 'New Name'
+        params['gamer_device'] = { :name => 'New Name' }
+        put(:update, params)
+        gamer_device.reload
+        gamer_device.name.should == 'New Name'
       end
 
       it "allows a gamer device's type to be updated" do
-        @params['gamer_device'] = { :device_type => 'ipod' }
-        put(:update, @params)
-        @gamer_device.reload
-        @gamer_device.device_type.should == 'ipod'
+        params['gamer_device'] = { :device_type => 'ipod' }
+        put(:update, params)
+        gamer_device.reload
+        gamer_device.device_type.should == 'ipod'
       end
     end
 
     context "when logged in as an account manager" do
       before :each do
-        user = Factory :account_mgr_user
+        user = FactoryGirl.create(:account_mgr_user)
         login_as user
       end
 
       it "redirects to gamer management tool for associated gamer after update" do
-        put(:update, @params)
-        response.should redirect_to(tools_gamer_path(@gamer))
+        put(:update, params)
+        response.should redirect_to(tools_gamer_path(gamer))
       end
     end
 
@@ -157,7 +148,7 @@ describe Dashboard::Tools::GamerDevicesController do
         user = Factory :partner_user
         login_as user
 
-        put(:update, @params)
+        put(:update, params)
       end
 
       it "disallows access" do
