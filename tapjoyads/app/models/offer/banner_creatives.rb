@@ -102,7 +102,7 @@ module Offer::BannerCreatives
 
   def banner_creative_url(size, format = nil, bust_cache = false)
     url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size, format)}"
-    url << "&ts=#{Time.now.to_i}" if bust_cache
+    url << "?ts=#{Time.now.to_i}" if bust_cache
     url
   end
 
