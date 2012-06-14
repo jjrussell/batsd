@@ -3,7 +3,13 @@ class Games::HomepageController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations ]
+  before_filter :require_gamer, :except => [ :index, :tos, :privacy, :translations, :get_app, :earn, :help, :record_click  ]
+  before_filter :set_show_nav_bar_quad_menu, :only => [ :get_app, :earn, :help ]
+  before_filter :set_exclude_social_from_submenu, :only => [ :help ]
+  before_filter :set_exclude_help_from_submenu, :only => [ :help ]
+
+  prepend_before_filter :decrypt_data_param
+
   skip_before_filter :setup_tjm_request, :only => :translations
 
   def translations
@@ -26,37 +32,37 @@ class Games::HomepageController < GamesController
     @offer = Offer.find(params_id)
     @app = @offer.app
     @app_metadata = @app.primary_app_metadata
-    @click_url = "#{games_record_click_path}?redirect_url=#{ObjectEncryptor.encrypt(@offer.url)}&eid=#{ObjectEncryptor.encrypt(@app.id)}"
-    if @app_metadata
+    @click_url = games_record_click_path( { :redirect_url => ObjectEncryptor.encrypt(@offer.url),
+                                            :eid => ObjectEncryptor.encrypt(@app.id)})
+    return unless @app_metadata
+    @app_reviews = []
+    app_reviews = @app_metadata.app_reviews.find_all_by_id(params[:app_review_id]) if params[:app_review_id].present?
+    if app_reviews.blank?
       app_reviews = AppReview.where(:app_metadata_id => @app_metadata.id, :is_blank => false).includes(:author).paginate(:page => params[:app_reviews_page])
       app_reviews.reject! { |x| x.bury_by_author?(current_gamer && current_gamer.id) || x.text.blank? }
-      review_authors_not_viewer =  app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
-
+      return if app_reviews.empty?
+      review_authors_not_viewer = app_reviews.map(&:author_id) - [current_gamer && current_gamer.id].compact
       rude_buried_list = Gamer.all(:conditions => ["id IN(?) ", review_authors_not_viewer], :select => "id, extra_attributes")
       rude_buried_ids = rude_buried_list.select { |x| (x.been_buried_count || 0) > Gamer::RUDE_BAN_LIMIT }.map(&:id)
       app_reviews.reject! { |x| rude_buried_ids.include? x.author_id }
-
-      @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
-      ar_ids = app_reviews.map &:id
-      @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
-      @viewer_faved = current_gamer && current_gamer.helpful_review_votes.find_all_by_app_review_id(ar_ids) || []
     end
+    @app_reviews = app_reviews.sort { |a, b| b.moderation_rating <=> a.moderation_rating }
+    ar_ids = app_reviews.map &:id
+    @viewer_flagged = current_gamer && current_gamer.bury_review_votes.find_all_by_app_review_id(ar_ids) || []
+    @viewer_faved = current_gamer && current_gamer.helpful_review_votes.find_all_by_app_review_id(ar_ids) || []
   end
 
   def earn
-    device_id = current_device_id
+    device_id = current_device_id || 'statz_test_udid'
     @device = Device.new(:key => device_id) if device_id.present?
-    @app = App.find(params_id)
+    @app = App.includes(:currencies).joins(:currencies).where(:currencies => {:id => params_id}).first
     @active_currency = @app.currencies.first
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
-
-    @offerwall_url = @external_publisher.get_offerwall_url(@device, @external_publisher.currencies.first, request.accept_language, request.user_agent, current_gamer.id)
     @app_metadata = @app.primary_app_metadata
     if @app_metadata
-      @mark_as_favorite = !current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id)
+      @mark_as_favorite = !(current_gamer && current_gamer.favorite_apps.map(&:app_metadata_id).include?(@app_metadata.id))
     end
-
     respond_to do |f|
       f.html
       f.js { render :layout => false }
@@ -66,9 +72,12 @@ class Games::HomepageController < GamesController
   def index
     unless current_gamer
       params[:path] = url_for(params.merge(:only_path => true))
+
+      set_show_nav_bar_login_button
+      set_show_partners_bar_in_footer
       render_login_page and return
     end
-
+    set_show_nav_bar_quad_menu
     @require_select_device = current_device_id_cookie.nil?
     device_id = current_device_id
     @gamer = current_gamer
@@ -124,11 +133,42 @@ class Games::HomepageController < GamesController
     render(:json => { :success => true })
   end
 
+  def record_local_request
+    decrypt_data_param
+    @tjm_request.is_ajax = true
+
+    @tjm_request.controller = params[:request_controller] if params[:request_controller].present?
+    @tjm_request.action = params[:request_action] if params[:request_action].present?
+
+    if params[:request_url].present?
+      begin
+        path = Rails.application.routes.recognize_path(params[:request_url])
+        @tjm_request.controller = path[:controller]
+        @tjm_request.action = path[:action]
+        @tjm_request.update_path
+      rescue ActionController::RoutingError
+        render_json_error(['unable to find corresponding controller/action'], 400) and return
+      end
+    end
+
+    if params[:request_path].present?
+      @tjm_request.replace_path(params[:request_path])
+    else
+      @tjm_request.update_path
+    end
+
+    render(:json => { :success => true }, :status => 200)
+  end
+
   private
 
   def params_id
     if params[:eid].present?
-      ObjectEncryptor.decrypt(params[:eid])
+      if params[:eid] =~ UUID_REGEX
+        params[:eid]
+      else
+        ObjectEncryptor.decrypt(params[:eid])
+      end
     elsif params[:id].present?
       params[:id]
     end

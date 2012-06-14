@@ -34,7 +34,7 @@ class App < ActiveRecord::Base
       :info_url => 'https://play.google.com/store/apps/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
-      :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :versions =>  %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0),
       :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
@@ -49,7 +49,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
-      :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
+      :versions => %w( 2.0 2.1 2.2 3.0 3.1 3.2 4.0 4.1 4.2 4.3 5.0 5.1 6.0 ),
       :cell_download_limit_bytes => 50.megabytes
     },
     'windows' => {
@@ -63,7 +63,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://windowsphone.com/s?appId=STORE_ID',
       :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
-      :versions => [ '7.0' ],
+      :versions => %w( 7.0 ),
       :cell_download_limit_bytes => 20.megabytes
     },
   }
@@ -85,6 +85,7 @@ class App < ActiveRecord::Base
   has_many :non_rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded"
   has_one :primary_non_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded", :order => "created_at"
   has_many :action_offers
+  has_many :deeplink_offers
   has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
@@ -119,7 +120,7 @@ class App < ActiveRecord::Base
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
-    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
+    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist, :languages,
     :to => :primary_app_metadata, :allow_nil => true
   delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
 
@@ -146,7 +147,7 @@ class App < ActiveRecord::Base
   end
 
   def virtual_goods
-    VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
+    VirtualGood.select(:where => "app_id = '#{self.id}'", :limit => 1000)[:items]
   end
 
   def has_virtual_goods?

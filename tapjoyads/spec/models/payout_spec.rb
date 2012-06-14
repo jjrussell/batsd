@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Payout do
-  subject { Factory(:payout) }
+  subject { FactoryGirl.create(:payout) }
 
   describe '.belongs_to' do
     it { should belong_to(:partner) }
@@ -18,13 +18,13 @@ describe Payout do
 
   context "A Payout" do
     before :each do
-      @partner = Factory(:partner, :pending_earnings => 100)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 100)
     end
 
     it "decreases a partner's pending earnings" do
       @partner.pending_earnings.should == 100
       @partner.payouts.count.should == 0
-      Factory(:payout, :partner => @partner, :amount => 100)
+      FactoryGirl.create(:payout, :partner => @partner, :amount => 100)
       @partner.reload
       @partner.pending_earnings.should == 0
       @partner.payouts.count.should == 1
@@ -33,7 +33,7 @@ describe Payout do
 
   describe '#status_string' do
     before :each do
-      @payout = Factory(:payout)
+      @payout = FactoryGirl.create(:payout)
     end
 
     context 'when status is invalid' do
@@ -53,7 +53,7 @@ describe Payout do
 
   describe '#payment_method_string' do
     before :each do
-      @payout = Factory(:payout)
+      @payout = FactoryGirl.create(:payout)
     end
 
     context 'when payment method is paid' do

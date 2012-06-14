@@ -5,7 +5,7 @@ namespace :db do
       threads = []
       Mc::MEMCACHED_ACTIVE_RECORD_MODELS.each do |model|
         t = Thread.new do
-          system("#{Rails.root}/script/runner -e #{Rails.env} '#{model}.cache_all(true)'")
+          system("rails runner -e #{Rails.env} '#{model}.cache_all(true)'")
         end
         threads << t
       end

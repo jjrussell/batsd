@@ -1,10 +1,4 @@
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
-
 Tapjoyad::Application.configure do
-
-  route_filenames.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
 
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -53,6 +47,7 @@ Tapjoyad::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  config.i18n_js_cache = true
 end
 
 begin
@@ -73,7 +68,6 @@ DISTRIBUTED_MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
   'localhost:21211'
 ]
 

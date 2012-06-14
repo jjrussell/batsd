@@ -1,4 +1,3 @@
-//= require marketplace/namespace
 //= require marketplace/core/jquery
 //= require marketplace/core/foundation
 //= require marketplace/core/objects
@@ -17,3 +16,4 @@
 //= require marketplace/ajax
 //= require marketplace/main
 //= require marketplace/logged-out
+//= require marketplace/login_modal

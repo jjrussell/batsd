@@ -1,4 +1,7 @@
 module Offer::UrlGeneration
+  def router
+    Rails.application.routes.url_helpers
+  end
 
   def destination_url(options)
     if item_type != 'VideoOffer' && instructions.present?
@@ -50,17 +53,20 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
-    if item_type == 'App'
+    case item_type
+    when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        subbed_string = (os_version && os_version >= '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
+        subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
         final_url.sub!('market://search?q=', subbed_string)
       end
-    elsif item_type == 'EmailOffer'
+    when 'EmailOffer'
       final_url += "&publisher_app_id=#{publisher_app_id}"
-    elsif item_type == 'GenericOffer'
+    when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -72,12 +78,12 @@ module Offer::UrlGeneration
         mark = '&' if final_url =~ /\?/
         final_url += "#{mark}#{extra_params.to_query}"
       end
-    elsif item_type == 'ActionOffer'
+    when 'ActionOffer'
       final_url = url
-    elsif item_type == 'SurveyOffer'
+    when 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
-    elsif item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+    when 'VideoOffer', 'TestVideoOffer'
       params = {
         :offer_id           => id,
         :app_id             => publisher_app_id,
@@ -86,8 +92,11 @@ module Offer::UrlGeneration
         :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+    when 'DeeplinkOffer'
+      params = { :udid => udid, :id => currency.id, :click_key => click_key }
+      data=ObjectEncryptor.encrypt(params)
+      final_url = "#{WEBSITE_URL}/earn?data=#{data}"
     end
-
     final_url
   end
 
@@ -109,29 +118,23 @@ module Offer::UrlGeneration
     gamer_id           = options.delete(:gamer_id)           { nil }
     os_version         = options.delete(:os_version)         { nil }
     mac_address        = options.delete(:mac_address)        { nil }
+    device_type        = options.delete(:device_type)        { nil }
+    offerwall_rank     = options.delete(:offerwall_rank)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
-    if item_type == 'App' || item_type == 'EmailOffer'
-      click_url += "app"
-    elsif item_type == 'GenericOffer'
-      click_url += "generic"
-    elsif item_type == 'RatingOffer'
-      click_url += "rating"
-    elsif item_type == 'TestOffer'
-      click_url += "test_offer"
-    elsif item_type == 'TestVideoOffer'
-      click_url += "test_video_offer"
-    elsif item_type == 'ActionOffer'
-      click_url += "action"
-    elsif item_type == 'VideoOffer'
-      click_url += "video"
-    elsif item_type == 'ReengagementOffer'
-      click_url += 'reengagement'
-    elsif item_type == 'SurveyOffer'
-      click_url += "survey"
-    elsif item_type == 'DeeplinkOffer'
-      click_url += 'deeplink'
+
+    click_url += case item_type
+    when 'App','EmailOffer'   then 'app'
+    when 'GenericOffer'       then "generic"
+    when 'RatingOffer'        then "rating"
+    when 'TestOffer'          then "test_offer"
+    when 'TestVideoOffer'     then "test_video_offer"
+    when 'ActionOffer'        then "action"
+    when 'VideoOffer'         then "video"
+    when 'ReengagementOffer'  then 'reengagement'
+    when 'SurveyOffer'        then "survey"
+    when 'DeeplinkOffer'      then 'deeplink'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
@@ -156,6 +159,8 @@ module Offer::UrlGeneration
       :gamer_id           => gamer_id,
       :mac_address        => mac_address,
       :os_version         => os_version,
+      :device_type        => device_type,
+      :offerwall_rank     => offerwall_rank,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
@@ -254,5 +259,15 @@ module Offer::UrlGeneration
   def dashboard_statz_url
     uri = URI.parse(DASHBOARD_URL)
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
+  end
+
+  def format_as_click_key( params )
+    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
+    elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    else
+      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+    end
   end
 end

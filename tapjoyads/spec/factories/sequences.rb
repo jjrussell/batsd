@@ -18,4 +18,5 @@ FactoryGirl.define do
   sequence :integer do |n|
     n
   end
+
 end

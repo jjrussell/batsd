@@ -12,4 +12,8 @@ class String
 
     (key + (key >> 5)).signed_overflow
   end
+
+  def ip_to_i
+    split(".").inject(0) { |s, p| (s << 8) + p.to_i }
+  end
 end

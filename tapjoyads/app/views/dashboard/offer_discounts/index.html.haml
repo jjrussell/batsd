@@ -1,6 +1,6 @@
 - @page_title = 'Offer Discounts'
 
-%h1= "#{link_to(@partner.name, @partner)} :: Offer Discounts"
+%h1= "#{link_to(@partner.name, @partner)} :: Offer Discounts".html_safe
 = link_to 'Create an Offer Discount', new_partner_offer_discount_path(@partner)
 
 .metadata

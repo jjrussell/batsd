@@ -2,16 +2,15 @@ require 'spec_helper'
 
 describe Dashboard::AppsController do
   before :each do
-    fake_the_web
     activate_authlogic
-    @user = Factory(:user)
-    @partner = Factory(:partner,
+    @user = FactoryGirl.create(:user)
+    @partner = FactoryGirl.create(:partner,
       :pending_earnings => 10000,
       :balance => 10000,
       :users => [@user]
     )
-    Factory(:app, :partner => @partner)
-    Factory(:app, :partner => @partner)
+    FactoryGirl.create(:app, :partner => @partner)
+    FactoryGirl.create(:app, :partner => @partner)
     login_as(@user)
   end
 
@@ -77,11 +76,11 @@ describe Dashboard::AppsController do
       end
 
       it 'shows apps from another partner' do
-        someone_else = Factory(:partner,
+        someone_else = FactoryGirl.create(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
-        not_my_app = Factory(:app, :partner => someone_else)
+        not_my_app = FactoryGirl.create(:app, :partner => someone_else)
         get(:show, :id => not_my_app.id)
         response.should be_success
       end
@@ -113,11 +112,11 @@ describe Dashboard::AppsController do
       end
 
       it 'does not show apps from another publisher' do
-        someone_else = Factory(:partner,
+        someone_else = FactoryGirl.create(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
-        not_my_app = Factory(:app, :partner => someone_else)
+        not_my_app = FactoryGirl.create(:app, :partner => someone_else)
         expect {
           get(:show, :id => not_my_app.id)
         }.to raise_error(ActiveRecord::RecordNotFound)
@@ -130,11 +129,11 @@ describe Dashboard::AppsController do
       end
 
       it 'redirects to app creation page' do
-        someone_else = Factory(:partner,
+        someone_else = FactoryGirl.create(:partner,
           :pending_earnings => 10000,
           :balance => 10000
         )
-        not_my_app = Factory(:app, :partner => someone_else)
+        not_my_app = FactoryGirl.create(:app, :partner => someone_else)
         get(:show, :id => not_my_app.id)
         response.should redirect_to(new_app_path)
       end

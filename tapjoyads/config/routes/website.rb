@@ -15,6 +15,7 @@ Tapjoyad::Application.routes.draw do
     match 'careers' => 'careers#index'
     match 'careers/:id' => 'careers#show'
     match 'glu' => 'press#glu'
+    match 'sdk' => 'homepage#sdk_redirect'
     match 'publishing' => 'homepage#publishers'
     match 'androidfund' => 'androidfund#index'
     match 'AndroidFund' => 'androidfund#index'
@@ -29,15 +30,16 @@ Tapjoyad::Application.routes.draw do
     root :to => 'homepage#index'
     match '/' => 'homepage#index'
     match 'tos' => 'homepage#tos', :as => :tos
-    match 'privacy' => 'homepage#privacy', :as => :privacy
+    get 'privacy' => 'homepage#privacy', :as => :privacy
     match 'help' => 'homepage#help', :as => :help
     match 'switch_device' => 'homepage#switch_device', :as => :switch_device
     match 'send_device_link' => 'homepage#send_device_link', :as => :send_device_link
-    match 'earn/:eid' => 'homepage#earn', :as => :earn
+    get 'earn(/:eid)' => 'homepage#earn', :as => :earn
     match 'more_apps' => 'homepage#index', :as => :more_apps
-    match 'get_app' => 'homepage#get_app', :as => :get_app
+    get 'get_app' => 'homepage#get_app', :as => :get_app
     match 'record_click' => 'homepage#record_click'
-    match 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
+    match 'record_local_request' => 'homepage#record_local_request', :as => :record_local_request
+    get 'editor_picks' => 'more_games#editor_picks', :as => :more_games_editor_picks
     match 'recommended' => 'more_games#recommended', :as => :more_games_recommended
     match 'translations/:filename.js' => 'homepage#translations', :as => :translations
     resources :my_apps, :only => [:show, :index]
@@ -45,16 +47,20 @@ Tapjoyad::Application.routes.draw do
     get 'login' => 'gamer_sessions#new', :as => :login
     post 'login' => 'gamer_sessions#create'
     match 'logout' => 'gamer_sessions#destroy', :as => :logout
-    match 'support' => 'support_requests#new', :type => 'contact_support'
-    match 'bugs' => 'support_requests#new', :type => 'report_bug'
-    match 'feedback' => 'support_requests#new', :type => 'feedback'
-    resource :gamer, :only => [:create, :edit, :update, :destroy, :show, :new] do
+
+    get 'support' => 'support_requests#new', :type => 'contact_support'
+    get 'bugs' => 'support_requests#new', :type => 'report_bug'
+    get 'feedback' => 'support_requests#new', :type => 'feedback'
+    match 'partners/:id' => 'partners#show', :as => :show
+    resource :gamer, :only => [:create, :update, :destroy, :show, :new] do
       member do
+        match 'device' => 'devices#create'
         put :update_password
         put :accept_tos
         get :password
         get :confirm_delete
         get :prefs
+        get :link_device
         resource :device, :only => [:new, :create] do
           member do
             get :finalize
@@ -96,7 +102,6 @@ Tapjoyad::Application.routes.draw do
       match 'send_email_invites' => 'social#send_email_invites', :as => :send_email_invites
       match 'invite_twitter_friends' => 'social#invite_twitter_friends', :as => :invite_twitter_friends
       match 'send_twitter_invites' => 'social#send_twitter_invites', :as => :send_twitter_invites
-      match 'get_twitter_friends' => 'social#get_twitter_friends', :as => :get_twitter_friends
       match 'social/invites' => 'social#invites', :as => :invites
       match 'social/friends' => 'social#friends', :as => :friends
       scope :twitter do

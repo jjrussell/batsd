@@ -1,3 +1,4 @@
+# TODO: does this controller still get used? didn't want to remove it here
 class HomepageController < WebsiteController
   layout 'newcontent'
   protect_from_forgery :except => [:contact]

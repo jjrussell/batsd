@@ -18,9 +18,9 @@ describe Dashboard::ToolsController do
 
     context 'with an unauthorized user' do
       before :each do
-        @user = Factory :agency_user
-        @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-        login_as @user
+        @user = FactoryGirl.create(:agency_user)
+        @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+        login_as(@user)
       end
 
       context 'accessing tools index' do
@@ -33,9 +33,9 @@ describe Dashboard::ToolsController do
 
     context 'with an admin user' do
       before :each do
-        @user = Factory :admin
-        @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-        login_as @user
+        @user = FactoryGirl.create(:admin)
+        @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+        login_as(@user)
       end
 
       context 'accessing tools index' do
@@ -66,16 +66,18 @@ describe Dashboard::ToolsController do
 
   context 'with a customer service manager' do
     before :each do
-      @user = Factory :customer_service_manager
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-      login_as @user
 
-      @pub_user = Factory :publisher_user
-      @device1 = Factory :device
-      @device2 = Factory :device
+      @user = FactoryGirl.create(:customer_service_manager)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      login_as(@user)
+
+      @pub_user = FactoryGirl.create(:publisher_user)
+      @device1 = FactoryGirl.create(:device)
+      @device2 = FactoryGirl.create(:device)
+
       @pub_user.update!(@device1.key)
       @pub_user.update!(@device2.key)
-      PublisherUser.stubs(:new).returns(@pub_user)
+      PublisherUser.stub(:new).and_return(@pub_user)
     end
 
     describe '#view_pub_user_account' do
@@ -91,7 +93,7 @@ describe Dashboard::ToolsController do
       context 'with an invalid udid' do
         it 'does nothing' do
           app_id, user_id = @pub_user.key.split('.')
-          @device3 = Factory :device
+          @device3 = FactoryGirl.create(:device)
           post(:detach_pub_user_account, {:publisher_app_id => app_id, :publisher_user_id => user_id, :udid => @device3.key})
           @pub_user.udids.count.should == 2
           (@pub_user.udids - [@device1.key, @device2.key]).should be_empty

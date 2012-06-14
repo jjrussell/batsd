@@ -1,8 +1,7 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::GamersController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 
@@ -11,8 +10,8 @@ describe Games::GamersController do
       @date = 13.years.ago(Time.zone.now.beginning_of_day) - 1.day
       @options = {
         :gamer => {
-          :email            => Factory.next(:email),
-          :password         => Factory.next(:name),
+          :email            => FactoryGirl.generate(:email),
+          :password         => FactoryGirl.generate(:name),
           :terms_of_service => '1',
         },
         :date => {
@@ -28,7 +27,7 @@ describe Games::GamersController do
     end
 
     it 'creates a new gamer' do
-      Sqs.expects(:send_message).once
+      Sqs.should_receive(:send_message).once
       post(:create, @options)
 
       should_respond_with_json_success(200)
@@ -59,10 +58,10 @@ describe Games::GamersController do
 
     context 'when referrer present' do
       before :each do
-        @gamer = Factory(:gamer)
+        @gamer = FactoryGirl.create(:gamer)
 
-        @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
-        @invite_offer = Factory(:invite_offer, :partner => @partner)
+        @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
+        @invite_offer = FactoryGirl.create(:invite_offer, :partner => @partner)
         @options[:gamer][:email] = 'TEST@test.com'
       end
 
@@ -78,7 +77,7 @@ describe Games::GamersController do
 
       context 'when in old format' do
         before :each do
-          @invitation = Factory(
+          @invitation = FactoryGirl.create(
             :invitation,
             :gamer_id => @gamer.id,
             :external_info => @options[:gamer][:email]
@@ -120,8 +119,8 @@ describe Games::GamersController do
 
   describe '#destroy' do
     before :each do
-      @gamer = Factory(:gamer)
-      @controller.stubs(:current_gamer).returns(@gamer)
+      @gamer = FactoryGirl.create(:gamer)
+      @controller.stub(:current_gamer).and_return(@gamer)
     end
 
     it 'displays confirmation page' do

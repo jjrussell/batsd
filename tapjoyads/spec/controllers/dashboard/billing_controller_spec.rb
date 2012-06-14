@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Dashboard::BillingController do
   before :each do
     activate_authlogic
-    user = Factory(:user)
-    @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user], :transfer_bonus => 0.1)
+    user = FactoryGirl.create(:user)
+    @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user], :transfer_bonus => 0.1)
     login_as(user)
   end
 
@@ -42,10 +42,10 @@ describe Dashboard::BillingController do
 
   describe '#update_payout_info' do
     before :each do
-      @payout_info = Factory(:payout_info, :partner => @partner)
+      @payout_info = FactoryGirl.create(:payout_info, :partner => @partner)
       @partner.payout_info_confirmation = true
       @partner.save!
-      @partner.payout_info.stubs(:safe_update_attributes).returns(true)
+      @partner.payout_info.stub(:safe_update_attributes).and_return(true)
       post(:update_payout_info, :payout_info => {})
       @partner.reload
     end

@@ -14,17 +14,17 @@ describe AppMetadata do
   describe '#update_from_store' do
     context 'when AppStore returns no data' do
       it 'raises an error' do
-        app_metadata = Factory(:app_metadata)
-        AppStore.expects(:fetch_app_by_id).raises(Exception, "Invalid response from app store.")
+        app_metadata = FactoryGirl.create(:app_metadata)
+        AppStore.should_receive(:fetch_app_by_id).and_raise(Exception.new "Invalid response from app store.")
         expect { app_metadata.update_from_store }.to raise_error
       end
     end
 
     context 'when updating app_metadata only from AppStore' do
       it 'updates metadata name' do
-        app_metadata = Factory(:app_metadata, :name => 'MyApp', :store_id => "abcdefg")
+        app_metadata = FactoryGirl.create(:app_metadata, :name => 'MyApp', :store_id => "abcdefg")
 
-        AppStore.expects(:fetch_app_by_id).returns({:title => 'SomeOtherApp', :price => 0, :categories => []})
+        AppStore.should_receive(:fetch_app_by_id).and_return({:title => 'SomeOtherApp', :price => 0, :categories => []})
         app_metadata.update_from_store
 
         app_metadata.name.should == 'SomeOtherApp'
@@ -33,10 +33,10 @@ describe AppMetadata do
 
     context 'when updating app_metadata and app from AppStore' do
       it 'updates metadata and app name' do
-        app = Factory(:app, :name => 'MyApp')
+        app = FactoryGirl.create(:app, :name => 'MyApp')
         app.primary_app_metadata.update_attributes({ :name => 'MyApp', :store_id => 'abcdefg' })
 
-        AppStore.expects(:fetch_app_by_id).returns({:title => 'SomeOtherApp', :price => 0, :categories => []})
+        AppStore.should_receive(:fetch_app_by_id).and_return({:title => 'SomeOtherApp', :price => 0, :categories => []})
         app.primary_app_metadata.update_from_store
         app.reload
 
@@ -48,7 +48,7 @@ describe AppMetadata do
 
   describe '#total_thumbs_count' do
     before :each do
-      @app_metadata = Factory(:app_metadata)
+      @app_metadata = FactoryGirl.create(:app_metadata)
       @app_metadata.thumbs_up   = 4
       @app_metadata.thumbs_down = 4
     end
@@ -60,7 +60,7 @@ describe AppMetadata do
 
   describe '#positive_thumbs_percentage' do
     before :each do
-      @app_metadata = Factory(:app_metadata)
+      @app_metadata = FactoryGirl.create(:app_metadata)
       @app_metadata.thumbs_up   = 4
       @app_metadata.thumbs_down = 4
     end

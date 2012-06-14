@@ -203,10 +203,10 @@ span.gill {
 
     .signup-nav-menu {
       color: #fff;
-      height: 60px;
       margin: 0 auto;
-      padding-top: 24px;
+      padding: 15px 0;
       width: 300px;
+      overflow: auto;
 
       #gamer_submit {
         position: relative;
@@ -216,11 +216,12 @@ span.gill {
       .title {
         font: 500 22px "Museo Slab";
         color: #fff;
+        float: left;
+        padding-top: 5px;
       }
       .next-btn {
         cursor: default;
         float: right;
-        display: inline-block;
         padding: 10px 24px;
         position: relative;
         top: 12px;
@@ -305,6 +306,10 @@ span.gill {
 #signup-form.show {
   display: block;
   @include fade-in(0.2s);
+}
+
+#signup-form.show-now {
+  display: block;
 }
 
 .register-form {
@@ -516,61 +521,6 @@ span.gill {
   width: 16px;
   height: 16px;
   margin: 4px;
-}
-
-#benefits {
-  background: #fff url(#{$root_image_path}/edge_shadow.png) no-repeat top center;
-  min-height: 350px;
-  border-bottom: 1px solid #909090;
-  @include animate(all, 0.35s, ease-in);
-
-  .box {
-    margin-top: 30px;
-    width: 33%;
-  }
-
-  .findapps,
-  .sharefriends,
-  .collect {
-    width: 280px;
-    height: 130px;
-    margin: 0 auto;
-  }
-
-  h6,
-  p {
-    margin-left: 25px;
-  }
-
-  .findapps {
-    background: url(#{$image_path}/apps.png) no-repeat 0 0;
-  }
-
-  .sharefriends {
-    background: url(#{$image_path}/shared.png) no-repeat 0 0;
-    height: 110px;
-    width: 280px;
-    margin-top: 20px;
-  }
-
-  .collect {
-    background: url(#{$image_path}/rewards.png) no-repeat 0 0;
-  }
-
-  h6 {
-    color: #363636;
-    font: 100 18px "Museo Slab";
-    margin-top: 10px;
-    -webkit-text-stroke-color: #363636;
-    -webkit-text-stroke-width: 1px;
-  }
-
-  p {
-    padding-right: 20px;
-    margin-top: 5px;
-    font: normal 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
-    line-height: 18px;
-  }
 }
 
 #footer {
