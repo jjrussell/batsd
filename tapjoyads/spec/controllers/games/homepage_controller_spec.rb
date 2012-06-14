@@ -6,6 +6,9 @@ describe Games::HomepageController do
     @gamer = FactoryGirl.create(:gamer)
     @controller.stub(:current_gamer).and_return(@gamer)
   end
+  after :all do
+    I18n.default_locale = :en
+  end
 
   describe '#get_language_code' do
 
