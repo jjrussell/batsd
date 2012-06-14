@@ -154,7 +154,8 @@ class Dashboard::DashboardController < ApplicationController
       app = current_partner.apps.find_by_id(app_id)
       return app unless app.nil?
       path = current_partner.apps.first || new_app_path
-      redirect_to path, :alert => "Couldn't find app with ID #{app_id}"
+      flash[:error] = "Couldn't find app with ID #{app_id}"
+      redirect_to path
     end
   end
 end
