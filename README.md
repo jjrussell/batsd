@@ -158,23 +158,13 @@ brew install memcached
 Follow the post-install directions. (Type `brew info mysql` to see them again)
 
 
-Copy local config files
------------------------
+Setup repo
+----------
+
+This adds the GeoIP database and puts in the local configuration yaml files.
 
 ```
-cd tapjoyserver/tapjoyads
-cp config/newrelic-test.yml config/newrelic.yml
-cp config/database-default.yml config/database.yml
-cp config/local-default.yml config/local.yml
-```
-
-Download GeoIP database
------------------------
-
-Download GeoIP database, unzip it and move it to the 
-
-```
-curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > data/GeoIPCity.dat
+./setup_repo.sh
 ```
 
 Install required gems
