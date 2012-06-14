@@ -40,6 +40,11 @@ class VideoButton < ActiveRecord::Base
     xml.to_s
   end
 
+  def reject_device?(device, block_rewarded=false)
+    !tracking_offer.get_device_types.include?(device) ||
+      (block_rewarded && rewarded?)
+  end
+
   private
   def update_offer
     video_offer.update_buttons
