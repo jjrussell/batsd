@@ -55,6 +55,13 @@ describe Dashboard::AppsController do
         get(:index)
         last_app.should == assigns(:app)
       end
+
+      context 'last shown app is someone else\'s app' do
+        it 'redirects to show an app they own' do
+          another_app = FactoryGirl.create(:app)
+          get(:show, :id => another_app.id)
+        end
+      end
     end
 
     context 'with a user without apps' do
