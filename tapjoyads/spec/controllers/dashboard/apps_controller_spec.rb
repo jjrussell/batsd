@@ -60,6 +60,7 @@ describe Dashboard::AppsController do
         it 'redirects to show an app they own' do
           another_app = FactoryGirl.create(:app)
           get(:show, :id => another_app.id)
+          response.should be_redirect
         end
       end
     end
