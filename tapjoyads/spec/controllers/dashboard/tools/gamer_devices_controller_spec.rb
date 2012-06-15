@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Dashboard::Tools::GamerDevicesController do
-  let(:gamer) { FactoryGirl.create(:gamer) }
-  let(:gamer_device) { FactoryGirl.create(:gamer_device, :gamer => gamer) }
-  let(:params) { { :id       => gamer_device.id,
-                   :gamer_id => gamer.id } }
+  let(:gamer)         { FactoryGirl.create(:gamer) }
+  let(:gamer_device)  { FactoryGirl.create(:gamer_device, :gamer => gamer) }
+  let(:params)        { { :id       => gamer_device.id,
+                          :gamer_id => gamer.id } }
   
   before :each do
     ExternalPublisher.stub(:load_all).and_return(nil)
