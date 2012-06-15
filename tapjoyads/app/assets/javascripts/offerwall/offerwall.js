@@ -388,7 +388,8 @@
       for(var i = 0, k = data.length; i < k; i++){
         var li = document.createElement('li'),
             item = data[i],
-            type = item.type.toLowerCase();
+            type = item.type.toLowerCase(),
+            connector = item.redirectURL.match(/\?/) ? '&' : '?';
 
         item.free = $.labels.text.free;
         item.points = $.labels.text.points;
@@ -401,8 +402,8 @@
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
-
-        li.innerHTML = '<a href="' + item.redirectURL + '?viewID=' + $.data.viewID + '">' + $.format($.tpl.offers[0], item) + $.format($.tpl.offers[1], item) + '</a>';
+        
+        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + $.format($.tpl.offers[0], item) + $.format($.tpl.offers[1], item) + '</a>';
 
         $.offersContainer.appendChild(li);
         
