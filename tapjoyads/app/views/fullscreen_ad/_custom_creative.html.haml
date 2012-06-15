@@ -37,16 +37,23 @@
 
       skip = document.getElementById('close-link');
       skip.onclick = function() {
+
+  - if params[:preview] == true
+    :plain
+        return false;
+  - else
+    :plain
         xmlHttpRequst = new XMLHttpRequest();
-        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
+        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid], :offer_id => @offer.id }))}', false)
         xmlHttpRequst.send();
+  :plain
       }
 
   - # Provide available custom creative sizes to javascript
   - @offer.banner_creatives.each do |size|
     :plain
         availableCreativeSizes.push("#{size}".split('x'));
-        availableCreatives.push("#{@offer.banner_creative_path(size, 'jpeg')}");
+        availableCreatives.push("#{@offer.banner_creative_url(size, 'jpeg', params[:preview] == true)}");
 
   :plain
 
@@ -171,7 +178,6 @@
     }
 
     function setupCreative(creative) {
-      var baseCreativeUrl = "#{CLOUDFRONT_URL}";
       var creativeImg = document.getElementById('creative');
       var main = document.getElementById('main');
 
@@ -201,7 +207,7 @@
       main.style.height = newHeight + 'px';
 
       // Set the image url if this is the initial drawing
-      creativeImg.src = baseCreativeUrl + "/" + creative.name;
+      creativeImg.src = creative.name;
     }
 
     function webkitStyle(element, attribute, value) {
