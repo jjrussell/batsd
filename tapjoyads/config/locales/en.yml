@@ -38,8 +38,8 @@ en:
           other: "%{count} errors prohibited this %{model} from being saved"
   authlogic:
     error_messages:
-      login_not_found: "Email is invalid"
-      password_invalid: "Password is invalid"
+      login_not_found: "is invalid"
+      password_invalid: "is invalid"
   date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
