@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe EarningsAdjustment do
 
-  subject { Factory(:earnings_adjustment) }
+  subject { FactoryGirl.create(:earnings_adjustment) }
 
   describe '.belongs_to' do
     it { should belong_to(:partner) }

@@ -60,7 +60,7 @@ class Gamer < ActiveRecord::Base
            :referred_by, :referred_by=, :referred_by?, :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create
-  validates_presence_of :email
+  validates :email, :presence => true, :uniqueness => true
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
 
@@ -132,12 +132,14 @@ class Gamer < ActiveRecord::Base
 
   def before_connect(facebook_session, options = {})
     account_type = options.delete(:account_type) { ACCOUNT_TYPE[:facebook_signup] }
+    referrer     = options.delete(:referrer)     { nil }
 
     self.email                 = facebook_session.email
     self.password              = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{facebook_session.name}--")[0,6]
     self.password_confirmation = self.password
     self.terms_of_service      = '1'
     self.account_type          = account_type
+    self.referrer              = referrer
   end
 
   def confirm!
@@ -313,12 +315,10 @@ class Gamer < ActiveRecord::Base
     if referrer.present? && referrer != 'tjreferrer:'
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
-        if click.rewardable?
-          device = Device.new :key => click.udid
-          device.product = click.device_name
-          device.save
-          devices.build(:device => device)
-        end
+        device = Device.new :key => click.udid
+        device.product = click.device_name
+        device.save
+        devices.build(:device => device)
       else
         begin
           invitation_id, advertiser_app_id = ObjectEncryptor.decrypt(referrer).split(',')

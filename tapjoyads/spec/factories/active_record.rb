@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :user do
-    email    { Factory.next(:email) }
+    email    { FactoryGirl.generate(:email) }
     username { |u| u.email }
     password 'asdf'
     password_confirmation 'asdf'
@@ -63,23 +63,23 @@ FactoryGirl.define do
   end
 
   factory :partner do
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     approved_publisher true
     payout_threshold 50_000_00
   end
 
   factory :payout_info do
-    signature           { Factory.next(:name) }
-    billing_name        { Factory.next(:name) }
+    signature           { FactoryGirl.generate(:name) }
+    billing_name        { FactoryGirl.generate(:name) }
     beneficiary_name    { billing_name }
     tax_country         { 'United States of America' }
     account_type        { 'LLC' }
-    tax_id              { Factory.next(:name) }
-    company_name        { Factory.next(:name) }
-    address_1           { Factory.next(:name) }
-    address_city        { Factory.next(:name) }
-    address_state       { Factory.next(:name) }
-    address_postal_code { Factory.next(:name) }
+    tax_id              { FactoryGirl.generate(:name) }
+    company_name        { FactoryGirl.generate(:name) }
+    address_1           { FactoryGirl.generate(:name) }
+    address_city        { FactoryGirl.generate(:name) }
+    address_state       { FactoryGirl.generate(:name) }
+    address_postal_code { FactoryGirl.generate(:name) }
     payment_country     { 'United States of America' }
     payout_method       { 'check' }
     association         :partner
@@ -107,8 +107,8 @@ FactoryGirl.define do
     thumbs_up  0
     thumbs_down 0
     store_name 'App Store'
-    store_id   { Factory.next(:name) }
-    name       { Factory.next(:name) }
+    store_id   { FactoryGirl.generate(:name) }
+    name       { FactoryGirl.generate(:name) }
   end
 
   factory :app_metadata_mapping do
@@ -123,31 +123,37 @@ FactoryGirl.define do
     partner { currency.partner }
     instructions 'Do some stuff.'
     reward_value 5
-    day_number { Factory.next(:integer) }
+    day_number { FactoryGirl.generate(:integer) }
+  end
+
+  factory :deeplink_offer do
+    association :currency
+    app     { currency.app }
+    partner { currency.partner }
   end
 
   factory :app do
     association :partner
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     platform 'iphone'
     after_build do |app|
-      app.add_app_metadata(Factory(:app_metadata))
+      app.add_app_metadata(FactoryGirl.create(:app_metadata))
     end
   end
 
   factory :enable_offer_request do
-    offer        { Factory(:app).primary_offer }
-    requested_by { Factory(:user) }
+    offer        { FactoryGirl.create(:app).primary_offer }
+    requested_by { FactoryGirl.create(:user) }
   end
 
   factory :email_offer do
     association :partner
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
   end
 
   factory :offerpal_offer do
     association :partner
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     offerpal_id UUIDTools::UUID.random_create.to_s
     url 'http://ws.tapjoyads.com/healthz'
     payment 100
@@ -156,12 +162,12 @@ FactoryGirl.define do
   factory :rating_offer do
     association :partner
     association :app
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
   end
 
   factory :generic_offer do
     association :partner
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     url 'http://ws.tapjoyads.com/healthz?click_key=TAPJOY_GENERIC'
     category 'Social'
   end
@@ -169,27 +175,27 @@ FactoryGirl.define do
   factory :invite_offer, :parent => :generic_offer do
     association :partner
     id TAPJOY_GAMES_INVITATION_OFFER_ID
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     category 'Social'
     url "#{WEBSITE_URL}/games/gamer/social?advertiser_app_id=TAPJOY_GENERIC_INVITE"
   end
 
   factory :video_offer do
     association :partner
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     video_url ''
   end
 
   factory :video_button do
     association :video_offer
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
     url 'http://www.tapjoy.com'
     ordinal 1
   end
 
   factory :conversion do
     association :publisher_app, :factory => :app
-    advertiser_offer { Factory(:app).primary_offer }
+    advertiser_offer { FactoryGirl.create(:app).primary_offer }
     reward_id UUIDTools::UUID.random_create.to_s
     reward_type Conversion::REWARD_TYPES['install']
     publisher_amount 70
@@ -228,11 +234,11 @@ FactoryGirl.define do
   end
 
   factory :user_role do
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
   end
 
   factory :rank_boost do
-    offer      { Factory(:app).primary_offer }
+    offer      { FactoryGirl.create(:app).primary_offer }
     start_time { Time.zone.now }
     end_time   { Time.zone.now + 1.hour }
     amount 1
@@ -246,7 +252,7 @@ FactoryGirl.define do
   end
 
   factory :offer_event do
-    offer { Factory(:app).primary_offer }
+    offer { FactoryGirl.create(:app).primary_offer }
     scheduled_for       1.hour.from_now
     user_enabled        true
     change_user_enabled true
@@ -255,7 +261,7 @@ FactoryGirl.define do
   end
 
   factory :gamer do
-    email    { Factory.next(:email) }
+    email    { FactoryGirl.generate(:email) }
     password { 'asdf' }
     password_confirmation { 'asdf' }
     terms_of_service { '1' }
@@ -264,13 +270,13 @@ FactoryGirl.define do
   end
 
   factory :invitation do
-    gamer         { Factory(:gamer) }
+    gamer         { FactoryGirl.create(:gamer) }
     channel       { 0 }
-    external_info { Factory.next(:name) }
+    external_info { FactoryGirl.generate(:name) }
   end
 
   factory :reseller do
-    name               { Factory.next(:name) }
+    name               { FactoryGirl.generate(:name) }
     reseller_rev_share { 0.8 }
     rev_share          { 0.75 }
   end
@@ -289,38 +295,39 @@ FactoryGirl.define do
 
   factory :creative_approval_queue do
     association :user
-    offer       { Factory(:app).primary_offer }
+    offer       { FactoryGirl.create(:app).primary_offer }
     size        '320x50'
   end
 
   factory :app_review do
-    app_metadata { Factory(:app_metadata) }
+    app_metadata { FactoryGirl.create(:app_metadata) }
     text         "A sample gamer review"
     user_rating  1
   end
 
   factory :gamer_review, :parent => :app_review do
-    author { Factory(:gamer) }
+    author { FactoryGirl.create(:gamer) }
   end
 
   factory :employee do
-    first_name    { Factory.next(:name) }
-    last_name     { Factory.next(:name) }
-    email         { Factory.next(:email) }
+    first_name    { FactoryGirl.generate(:name) }
+    last_name     { FactoryGirl.generate(:name) }
+    email         { FactoryGirl.generate(:email) }
     title         'title'
     superpower    'superpower'
     current_games 'current_games'
     weapon        'weapon'
     biography     'biography'
+    department    'products'
   end
 
   factory :employee_review, :parent => :app_review do
-    author { Factory(:employee) }
+    author { FactoryGirl.create(:employee) }
   end
 
   factory :favorite_app do
-    gamer         { Factory(:gamer) }
-    app_metadata  { Factory(:app_metadata) }
+    gamer         { FactoryGirl.create(:gamer) }
+    app_metadata  { FactoryGirl.create(:app_metadata) }
   end
 
   factory :featured_content do
@@ -332,22 +339,22 @@ FactoryGirl.define do
     start_date            { Time.zone.now }
     end_date              { Time.zone.now + 1.day }
     weight                1
-    tracking_source_offer { Factory(:app).primary_offer }
-    author                { Factory(:employee) }
+    tracking_source_offer { FactoryGirl.create(:app).primary_offer }
+    author                { FactoryGirl.create(:employee) }
     button_url            'https://www.tapjoy.com'
   end
 
   factory :brand do
-    name { Factory.next(:name) }
+    name { FactoryGirl.generate(:name) }
   end
 
   factory :brand_offer_mapping do
-    brand {Factory(:brand)}
-    offer {Factory(:app).primary_offer }
+    brand {FactoryGirl.create(:brand)}
+    offer {FactoryGirl.create(:app).primary_offer }
     allocation 1
   end
 
   factory :client do
-    name  { Factory.next(:name) }
+    name  { FactoryGirl.generate(:name) }
   end
 end

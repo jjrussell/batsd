@@ -3,10 +3,10 @@ require 'spec_helper'
 describe GetOffersHelper do
   describe '#offer_text' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
-      @offer = Factory(:app).primary_offer
-      @action_offer = Factory(:action_offer).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
+      @action_offer = FactoryGirl.create(:action_offer).primary_offer
     end
 
     it 'returns nil if not an app offer' do
@@ -25,10 +25,10 @@ describe GetOffersHelper do
 
   describe '#action_text' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
-      @offer = Factory(:app).primary_offer
-      @action_offer = Factory(:action_offer).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
+      @action_offer = FactoryGirl.create(:action_offer).primary_offer
     end
 
     it 'returns download text if App Offer' do

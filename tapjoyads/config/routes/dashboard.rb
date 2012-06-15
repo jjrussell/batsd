@@ -5,6 +5,7 @@ Tapjoyad::Application.routes.draw do
   [ 'dashboard', '' ].each do |s|
     namespace :dashboard, :as => nil, :path => s do
       root :to => 'homepage#index'
+      match 'team' => 'homepage#team'
       match 'tos-advertiser.html' => 'documents#tos_advertiser'
       match 'tos-publisher.html' => 'documents#tos_publisher'
       match 'publisher-guidelines.html' => 'documents#publisher_guidelines'

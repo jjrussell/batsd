@@ -1,4 +1,7 @@
 module Offer::UrlGeneration
+  def router
+    Rails.application.routes.url_helpers
+  end
 
   def destination_url(options)
     if item_type != 'VideoOffer' && instructions.present?
@@ -63,6 +66,7 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -88,8 +92,11 @@ module Offer::UrlGeneration
         :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+    when 'DeeplinkOffer'
+      params = { :udid => udid, :id => currency.id, :click_key => click_key }
+      data=ObjectEncryptor.encrypt(params)
+      final_url = "#{WEBSITE_URL}/earn?data=#{data}"
     end
-
     final_url
   end
 
@@ -111,6 +118,8 @@ module Offer::UrlGeneration
     gamer_id           = options.delete(:gamer_id)           { nil }
     os_version         = options.delete(:os_version)         { nil }
     mac_address        = options.delete(:mac_address)        { nil }
+    device_type        = options.delete(:device_type)        { nil }
+    offerwall_rank     = options.delete(:offerwall_rank)     { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -150,6 +159,8 @@ module Offer::UrlGeneration
       :gamer_id           => gamer_id,
       :mac_address        => mac_address,
       :os_version         => os_version,
+      :device_type        => device_type,
+      :offerwall_rank     => offerwall_rank,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

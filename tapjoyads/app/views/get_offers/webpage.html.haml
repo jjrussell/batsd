@@ -37,7 +37,7 @@
       - click_url = '#'
       - click_options = { :onclick => 'return false;', :style => 'width: 320px; height: 76px; border: 1px solid #000; cursor: default;' }
     - else
-      - click_url = get_click_url(offer)
+      - click_url = get_click_url(offer, :offerwall_rank => (index + 1))
       - if @show_wifi_only && offer.wifi_only?
         - click_options = { :onclick => "return wifiPopUp(this);" }
       - else

@@ -39,7 +39,7 @@ describe SimpledbResource do
 
   describe 'A SimpledbResource object' do
     before :each do
-      SimpledbResource.reset_connection
+      enable_sdb
       load_model
     end
 
@@ -190,6 +190,7 @@ describe SimpledbResource do
 
   describe 'Many Simpledb rows' do
     before :each do
+      enable_sdb
       @rows = []
       10.times do |i|
         m = Testing.new(:key => "select-#{i}")

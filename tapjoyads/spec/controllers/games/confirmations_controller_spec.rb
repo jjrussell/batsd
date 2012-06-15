@@ -1,14 +1,13 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::ConfirmationsController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 
   describe '#create' do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
     end
     context 'with valid data' do
       it 'redirects to url with tracking params' do
@@ -25,7 +24,7 @@ describe Games::ConfirmationsController do
     end
     context 'with valid data for confirm only message' do
       it 'queues post confirm message' do
-        Sqs.expects(:send_message)
+        Sqs.should_receive(:send_message)
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
         get(:create, :data => data)
       end
@@ -48,7 +47,7 @@ describe Games::ConfirmationsController do
     end
     context 'with extra spaces in the posted data (like SendGrid, sometimes)' do
       it 'strips the spaces and continues' do
-        Sqs.expects(:send_message)
+        Sqs.should_receive(:send_message)
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'}).insert(5, ' ')
         get(:create, :data => data)
       end

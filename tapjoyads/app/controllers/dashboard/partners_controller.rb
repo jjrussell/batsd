@@ -146,7 +146,6 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     end
 
     transfer_params = sanitize_currency_params(params[:transfer], [:amount])
-    transfer_params[:transfer_type] = transfer_params[:transfer_type]
     @transfer = Transfer.new(transfer_params)
 
     unless @transfer.valid?
@@ -154,8 +153,11 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     end
 
     Partner.transaction do
-      payout, order, marketing_order = @transfer.transfer_type.to_i == 4 ? @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes) : @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
-
+      if @transfer.transfer_type.to_i == 4
+        payout, order, marketing_order = @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes) 
+      else
+        payout, order, marketing_order = @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
+      end
       log_activity(payout)
       payout.save!
 
@@ -185,14 +187,14 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     @transfer = Transfer.new(transfer_params)
 
     unless @transfer.valid?
-      return render :new_dev_credit
+      render :new_dev_credit and return
     end
 
     Partner.transaction do
       payout = @partner.build_dev_credit(@transfer.amount, @transfer.internal_notes)
       log_activity(payout)
       payout.save!
-      email = order.partner.users.first.email rescue "(no email)"
+      email = @partner.users.map(&:email).first || '(no email)'
       flash[:notice] = "The dev credit of <b>$#{"%.2f" % ((-1 * @transfer.amount) / 100.0)}</b> to <b>#{email}</b> was successfully created."
     end
     redirect_to partner_path(@partner)

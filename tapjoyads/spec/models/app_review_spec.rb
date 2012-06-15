@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe AppReview do
-  subject { Factory(:gamer_review) }
+  subject { FactoryGirl.create(:gamer_review) }
 
   describe '.belongs_to' do
     it { should belong_to :author }
@@ -23,8 +23,8 @@ describe AppReview do
   end
 
   before :each do
-    @gamer = Factory(:gamer)
-    @gamer_review = Factory(:gamer_review, :author => @gamer)
+    @gamer = FactoryGirl.create(:gamer)
+    @gamer_review = FactoryGirl.create(:gamer_review, :author => @gamer)
   end
 
   describe '#update_app_metadata_rating_counts' do
@@ -54,8 +54,8 @@ describe AppReview do
 
     context 'when author_type is Employee' do
       before :each do
-        @employee = Factory(:employee)
-        @employee_review = Factory(:gamer_review, :author => @employee)
+        @employee = FactoryGirl.create(:employee)
+        @employee_review = FactoryGirl.create(:gamer_review, :author => @employee)
       end
       it 'returns employee name' do
         @employee_review.author_name.should == @employee.full_name

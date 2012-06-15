@@ -41,14 +41,13 @@
 #  negotiated_rev_share_ends_on  :date
 #  accepted_negotiated_tos       :boolean(1)      default(FALSE)
 #  cs_contact_email              :string(255)
-#  confirmed_for_payout          :boolean(1)      default(FALSE), not null
-#  payout_confirmation_notes     :string(255)
 #  discount_all_offer_types      :boolean(1)      default(FALSE), not null
 #  client_id                     :string(36)
 #  promoted_offers               :text            default(""), not null
 #  payout_threshold              :integer(4)      default(5000000), not null
 #  payout_info_confirmation      :boolean(1)      default(FALSE), not null
 #  payout_threshold_confirmation :boolean(1)      default(FALSE), not null
+#  live_date                     :datetime
 #
 
 class Partner < ActiveRecord::Base
@@ -125,14 +124,14 @@ class Partner < ActiveRecord::Base
 
   before_validation :remove_whitespace_from_attributes, :update_rev_share
   before_save :check_billing_email
-  after_save :update_currencies, :update_offers, :recache_currencies
+  after_save :update_currencies, :update_offers, :recache_currencies, :recache_offers
 
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
 
   @@per_page = 20
 
-  scope :to_calculate_next_payout_amount, :conditions => 'pending_earnings >= 10000'
+  scope :to_calculate_next_payout_amount, :conditions => ['pending_earnings >= 10000 or pending_earnings > 0 and reseller_id is not ?', nil]
   scope :to_payout, :conditions => 'pending_earnings != 0',
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
@@ -458,6 +457,11 @@ class Partner < ActiveRecord::Base
 
   def recache_currencies
     currencies.each { |c| c.cache }
+  end
+
+  def recache_offers
+    clear_association_cache
+    offers.each { |o| o.cache }
   end
 
   def update_rev_share

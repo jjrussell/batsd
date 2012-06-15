@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Brand do
-  subject { Factory(:brand) }
+  subject { FactoryGirl.create(:brand) }
 
   it { should have_many :offers }
   it { should validate_presence_of :name }

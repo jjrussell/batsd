@@ -7,10 +7,10 @@ describe Dashboard::PartnersController do
 
   context "when creating create transfer" do
     before :each do
-      @user = Factory(:admin)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-      Factory(:app, :partner => @partner)
-      Factory(:app, :partner => @partner)
+      @user = FactoryGirl.create(:admin)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      FactoryGirl.create(:app, :partner => @partner)
+      FactoryGirl.create(:app, :partner => @partner)
       login_as(@user)
     end
 
@@ -60,9 +60,9 @@ describe Dashboard::PartnersController do
 
   context "when agencies act as partners" do
     before :each do
-      @user = Factory(:agency_user)
-      @partner1 = @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
-      @partner2 = @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      @user = FactoryGirl.create(:agency_user)
+      @partner1 = @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
+      @partner2 = @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
 
       post(:make_current, {:id => @partner2.id})
     end

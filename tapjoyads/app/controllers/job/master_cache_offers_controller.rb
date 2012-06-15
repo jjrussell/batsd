@@ -7,6 +7,7 @@ class Job::MasterCacheOffersController < Job::JobController
 
     OfferCacher.cache_offer_stats
     OfferCacher.cache_offers(Time.now.min == 0)
+    OfferCacher.cache_reengagement_offers
 
     render :text => 'ok'
   end

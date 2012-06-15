@@ -24,6 +24,13 @@
         }
       },
 
+      trackEvent : function(tracking_url) {
+        $.ajax({
+          url: tracking_url,
+          timeout: 15000
+        });
+      },
+
       mask: function(){
         var wrap = $(document.createElement('div'));
 
@@ -121,13 +128,39 @@
 
         return res;
       },
+      
+      customError: function (msg, options, name) {
+        var info = "",
+            i,
+            TapjoyCustomError,
+            stringify = (window.JSON && window.JSON.stringify) || function (t) { return t; };
+
+        options = options || {};
+        name = name || "TapjoyCustomError";
+
+        TapjoyCustomError = function (n, m) {
+          this.name = n;
+          this.message = m;
+        };
+        TapjoyCustomError.prototype = Error.prototype;
+
+        for (i in options) {
+          if (options.hasOwnProperty(i)) {
+            info += "\n[ " + i + ": " + stringify(options[i]) + " ]";
+          }
+        }
+
+        msg = info ? msg + info : msg;
+
+        return new TapjoyCustomError(name, msg);
+      },
 
       basicTemplate: function(tpl, object) {
         object = object || {};
         return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
           // undefined is bad m'kay
           if(object[key] === undefined) {
-            throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
+            throw this.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
           }
           return object[key];
         });
@@ -213,7 +246,7 @@
       },
 
       Storage: {
-        set: function(k) {
+        set: function(k,v) {
           try {
             localStorage[k] = v;
             return true;

@@ -1,17 +1,16 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::AppReviews::FlagModerationController do
   before :each do
-    fake_the_web
     activate_authlogic
-    @gamer = Factory(:gamer)
-    @other_gamer = Factory(:gamer)
-    controller.stubs(:current_gamer).returns(@gamer)
-    app = Factory(:app)
+    @gamer = FactoryGirl.create(:gamer)
+    @other_gamer = FactoryGirl.create(:gamer)
+    controller.stub(:current_gamer).and_return(@gamer)
+    app = FactoryGirl.create(:app)
     @app_metadata = app.app_metadatas.first
-    @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @good_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @user_owned_review = Factory(:gamer_review, :author => @gamer, :user_rating => 0)
+    @troll_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @good_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @user_owned_review = FactoryGirl.create(:gamer_review, :author => @gamer, :user_rating => 0)
   end
 
   context 'when flagging a message as inappropriate' do
@@ -62,7 +61,7 @@ describe Games::AppReviews::FlagModerationController do
     end
     it "refuses to undo a flag that the user doesn't own'" do
       post(:create, { :app_review_id => @troll_review.id, :vote => 'flag' })
-      controller.stubs(:current_gamer).returns(@other_gamer)
+      controller.stub(:current_gamer).and_return(@other_gamer)
       delete(:destroy, { :app_review_id => @troll_review.id, :vote => 'flag' })
       should respond_with_content_type :json
       should respond_with(404)
@@ -72,16 +71,15 @@ end
 
 describe Games::AppReviews::FaveModerationController do
   before :each do
-    fake_the_web
     activate_authlogic
-    @gamer = Factory(:gamer)
-    @other_gamer = Factory(:gamer)
-    controller.stubs(:current_gamer).returns(@gamer)
-    app = Factory(:app)
+    @gamer = FactoryGirl.create(:gamer)
+    @other_gamer = FactoryGirl.create(:gamer)
+    controller.stub(:current_gamer).and_return(@gamer)
+    app = FactoryGirl.create(:app)
     @app_metadata = app.app_metadatas.first
-    @troll_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @good_review = Factory(:gamer_review, :author => Factory(:gamer), :user_rating => 0)
-    @user_owned_review = Factory(:gamer_review, :author => @gamer, :user_rating => 0)
+    @troll_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @good_review = FactoryGirl.create(:gamer_review, :author => FactoryGirl.create(:gamer), :user_rating => 0)
+    @user_owned_review = FactoryGirl.create(:gamer_review, :author => @gamer, :user_rating => 0)
   end
   context 'when upvoting a message' do
     it 'upvotes a good review' do

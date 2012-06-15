@@ -60,6 +60,14 @@ module Offer::Rejecting
     # Card Ace Casino
     [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ] =>
     [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ],
+    # MeetMoi
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a) =>
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a),
+    # US interactive
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2) =>
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2),
+    # GSN Casino
+    %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6) => %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -127,7 +135,10 @@ module Offer::Rejecting
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
-    sdkless_reject?(library_version)
+    sdkless_reject?(library_version) ||
+    recently_skipped?(device) ||
+    partner_has_no_funds? ||
+    rewarded_offerwall_non_rewarded_reject?(currency, source)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -156,6 +167,14 @@ module Offer::Rejecting
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
+  end
+
+  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
+  end
+
+  def partner_has_no_funds?
+    partner_balance < 0
   end
 
   private
@@ -219,6 +238,10 @@ module Offer::Rejecting
     end
 
     device.has_app?(app_id_for_device)
+  end
+
+  def recently_skipped?(device)
+    device.recently_skipped?(id)
   end
 
   def selective_opt_out_reject?(device)
@@ -297,10 +320,6 @@ module Offer::Rejecting
     !get_screen_layout_sizes.include?(screen_layout_size)
   end
 
-  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
-  end
-
   def cookie_tracking_reject?(publisher_app, library_version, source)
     publisher_app && cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
@@ -321,6 +340,10 @@ module Offer::Rejecting
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
     currency && !currency.rewarded? && rewarded? && item_type != 'App'
+  end
+
+  def rewarded_offerwall_non_rewarded_reject?(currency, source)
+    currency && currency.rewarded? && !rewarded? && (source == 'offerwall' || source == 'tj_games')
   end
 
   def recommendable_types_reject?

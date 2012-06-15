@@ -2,15 +2,14 @@ require 'spec_helper'
 
 describe OfferList do
   before :each do
-    fake_the_web
     RailsCache.flush
   end
 
   context 'with a bad device' do
     before :each do
-      @banned_device = Factory(:device, :banned => true)
-      @opted_out_device = Factory(:device, :opted_out => true)
-      RailsCache.expects(:get_and_put).never
+      @banned_device = FactoryGirl.create(:device, :banned => true)
+      @opted_out_device = FactoryGirl.create(:device, :opted_out => true)
+      RailsCache.should_receive(:get_and_put).never
     end
 
     it 'returns no offers for a banned device' do
@@ -26,9 +25,9 @@ describe OfferList do
 
   context 'with a non-Tapjoy currency' do
     before :each do
-      @currency = Factory(:currency)
-      @currency.expects(:tapjoy_enabled?).returns(false)
-      RailsCache.expects(:get_and_put).never
+      @currency = FactoryGirl.create(:currency)
+      @currency.should_receive(:tapjoy_enabled?).and_return(false)
+      RailsCache.should_receive(:get_and_put).never
     end
 
     it 'returns no offers' do
@@ -39,53 +38,53 @@ describe OfferList do
 
   context 'with an app' do
     before :each do
-      @app = Factory(:app, :platform => 'windows')
+      @app = FactoryGirl.create(:app, :platform => 'windows')
     end
 
     it 'overwrites the platform_name parameter with the app platform name' do
-      OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, 'Windows', anything, anything)
-      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE)
+      OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, 'Windows', anything, anything)
+      OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE).offers
     end
 
     context 'called with a null device_type' do
       before :each do
-        Device.stubs(:normalize_device_type).with(nil).returns(nil)
+        Device.stub(:normalize_device_type).with(nil).and_return(nil)
       end
 
       it 'uses the app platform for windows or android' do
         ['android', 'windows'].each do |platform|
           @app.platform = platform
-          OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, platform)
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
+          OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, platform)
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
         end
       end
 
       it 'uses itouch for any other platform' do
         other_platforms = App::PLATFORMS.keys - ['android', 'windows']
-        OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').times(other_platforms.count)
+        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').exactly(other_platforms.count).times
         other_platforms.each do |platform|
           @app.platform = platform
-          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE)
+          OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
         end
       end
     end
 
     context 'called with a valid device type' do
       before :each do
-        Device.expects(:normalize_device_type).with('Android 2.3.4').returns('android')
+        Device.should_receive(:normalize_device_type).with('Android 2.3.4').and_return('android')
       end
 
       it 'uses the parameter value, rather than the app platform' do
-        OfferCacher.expects(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'android')
-        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE)
+        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'android')
+        OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE).offers
       end
     end
   end
 
   context 'with currency set to hide_rewarded_app_installs' do
     before :each do
-      @currency = Factory(:currency)
-      @currency.stubs(:hide_rewarded_app_installs_for_version?).returns(true)
+      @currency = FactoryGirl.create(:currency)
+      @currency.stub(:hide_rewarded_app_installs_for_version?).and_return(true)
     end
 
     it 'replaces each rewarded offer type with its non-rewarded equivalent' do
@@ -94,8 +93,8 @@ describe OfferList do
         Offer::FEATURED_BACKFILLED_OFFER_TYPE => Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE,
         Offer::DISPLAY_OFFER_TYPE => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       }.each do |type,nonrew_equiv|
-        OfferCacher.expects(:get_unsorted_offers_prerejected).with(nonrew_equiv, anything, anything, anything).returns([])
-        OfferList.new(:currency => @currency, :type => type)
+        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(nonrew_equiv, anything, anything, anything).and_return([])
+        OfferList.new(:currency => @currency, :type => type).offers
       end
     end
   end
@@ -103,17 +102,17 @@ describe OfferList do
   describe '#get_offers' do
     before :each do
       @offers = []
-      10.times { @offers << Factory(:video_offer).primary_offer }
-      RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new(@offers))
-      @currency = Factory(:currency)
+      10.times { @offers << FactoryGirl.create(:video_offer).primary_offer }
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(@offers)
+      @currency = FactoryGirl.create(:currency)
       @app = @currency.app
-      @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
+      @base_params = {:device => FactoryGirl.create(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
     end
 
     context 'with a bad device' do
       before :each do
-        @banned_device = Factory(:device, :banned => true)
-        @opted_out_device = Factory(:device, :opted_out => true)
+        @banned_device = FactoryGirl.create(:device, :banned => true)
+        @opted_out_device = FactoryGirl.create(:device, :opted_out => true)
       end
 
       it 'returns no offers for a banned device' do
@@ -133,7 +132,8 @@ describe OfferList do
         before :each do
           @deeplink = @currency.deeplink_offer
           @deeplink.partner.balance = 100
-          Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
+          OptimizedOfferList.stub(:get_offer_list).and_return([])
+          Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
         end
 
         it 'returns the deeplink offer in the offerwall' do
@@ -143,7 +143,7 @@ describe OfferList do
         end
 
         it 'correctly inserts deeplink offers in small lists' do
-          RailsCache.stubs(:get_and_put).returns(RailsCacheValue.new([]))
+          RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
           offers, remaining = list.get_offers(0,5)
           offers.should == [@deeplink.primary_offer]
@@ -164,10 +164,10 @@ describe OfferList do
 
       context 'with a rating offer' do
         before :each do
-          @rating = Factory(:rating_offer)
+          @rating = FactoryGirl.create(:rating_offer)
           @app.enabled_rating_offer_id = @rating.id
-          Offer.stubs(:find_in_cache).with(@rating.primary_offer.id).returns(@rating.primary_offer)
-          @rating.primary_offer.stubs(:postcache_reject?).returns(false)
+          Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
+          @rating.primary_offer.stub(:postcache_reject?).and_return(false)
         end
 
         it 'should return the rating offer first, but there is a defect so it raises a NameError' do
@@ -195,12 +195,12 @@ describe OfferList do
       context 'with a deeplink and rating offer' do
         before :each do
           @deeplink = @currency.deeplink_offer
-          Offer.stubs(:find_in_cache).with(@deeplink.primary_offer.id).returns(@deeplink.primary_offer)
-          @rating = Factory(:rating_offer)
+          Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+          @rating = FactoryGirl.create(:rating_offer)
 
           @app.enabled_rating_offer_id = @rating.id
-          Offer.stubs(:find_in_cache).with(@rating.primary_offer.id).returns(@rating.primary_offer)
-          @rating.primary_offer.stubs(:postcache_reject?).returns(false)
+          Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
+          @rating.primary_offer.stub(:postcache_reject?).and_return(false)
         end
 
         it 'skips the special offers' do

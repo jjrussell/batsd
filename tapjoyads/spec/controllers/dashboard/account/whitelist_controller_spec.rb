@@ -2,22 +2,21 @@ require 'spec_helper'
 
 describe Dashboard::Account::WhitelistController do
   before :each do
-    fake_the_web
     activate_authlogic
   end
 
   context 'on GET to :index' do
     before :each do
-      @user = Factory(:admin)
-      @offer1 = Factory(:app).primary_offer
-      @offer2 = Factory(:app).primary_offer
+      @user = FactoryGirl.create(:admin)
+      @offer1 = FactoryGirl.create(:app).primary_offer
+      @offer2 = FactoryGirl.create(:app).primary_offer
       @offer1.tapjoy_enabled = true
       @offer1.user_enabled = true
       @offer1.save
       @offer2.tapjoy_enabled = true
       @offer2.user_enabled = true
       @offer2.save
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer1, @offer2], :use_whitelist => true)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer1, @offer2], :use_whitelist => true)
       @partner.add_to_whitelist(@offer1.id)
       @partner.save
       login_as @user
@@ -73,12 +72,12 @@ describe Dashboard::Account::WhitelistController do
 
   context 'on GET to :enable' do
     before :each do
-      @user = Factory(:admin)
-      @offer = Factory(:app).primary_offer
+      @user = FactoryGirl.create(:admin)
+      @offer = FactoryGirl.create(:app).primary_offer
       @offer.tapjoy_enabled = true
       @offer.user_enabled = true
       @offer.save
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer], :use_whitelist => true)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer], :use_whitelist => true)
       login_as @user
     end
 
@@ -105,12 +104,12 @@ describe Dashboard::Account::WhitelistController do
 
   context 'on GET to :disable' do
     before :each do
-      @user = Factory(:admin)
-      @offer = Factory(:app).primary_offer
+      @user = FactoryGirl.create(:admin)
+      @offer = FactoryGirl.create(:app).primary_offer
       @offer.tapjoy_enabled = true
       @offer.user_enabled = true
       @offer.save
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer], :use_whitelist => true)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user], :offers => [@offer], :use_whitelist => true)
       login_as @user
     end
 

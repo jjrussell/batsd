@@ -364,6 +364,7 @@ en:
       log_in_title: "Log In"
       log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
       log_in_not_a_member: "Not a member? Sign Up"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -390,6 +391,7 @@ en:
       post_to_facebook: "Post to Facebook!"
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
+      privacy_tos: "Privacy Policy"
       profile: Me
       profile_error: "There was an error updating your profile."
       profile_update: "Your profile has been updated."
@@ -432,6 +434,7 @@ en:
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
+      terms_of_use_tos: "Terms of Use"
       thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
       thanks_contact_us: "Thank you for contacting us. We'll get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
@@ -439,7 +442,9 @@ en:
       thats_you: "that's you"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      tos_survey_html: "I agree to the %{terms_of_use} and %{privacy_policy}"
       twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_account_protected_error: "We are unable to fetch your Twitter Followers list. Please check your Twitter privacy settings and make sure the 'Protect my Tweets' box is unchecked."
       twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
       twitter_forbidden_error: "Requests are being denied due to update limits."
       twitter_general_error: "Something happened to Twitter. Please try again later."
@@ -470,14 +475,9 @@ en:
         download: Download and run this app.
         steps: Complete a series of steps.
         video: Watch this video.
-        TJM_link: Tap here to visit %{Tapjoy} for more free offers!
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
-      buy_currency_html: "Buy %{amount} %{currency}"
-      earn_currency: "Earn %{amount} %{currency}"
-      earn: Earn
-      earn_more: Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations
-      deep_link_part_1: Tap here to visit
+      deep_link_part_1: Tap here to visit 
       deep_link_part_2: for more free offers!
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free

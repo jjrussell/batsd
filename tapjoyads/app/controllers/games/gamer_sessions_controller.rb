@@ -1,4 +1,5 @@
 class Games::GamerSessionsController < GamesController
+  before_filter :set_show_nav_bar_login_button, :only => [:new]
 
   def index
     redirect_to games_login_path
@@ -8,18 +9,19 @@ class Games::GamerSessionsController < GamesController
     if current_gamer
       redirect_to games_path and return
     end
+
+    set_show_partners_bar_in_footer
     render_login_page
   end
 
   def create
     @gamer_session = GamerSession.new(params[:gamer_session])
     @gamer_session.remember_me = true
+    @gamer_session.referrer = params[:referrer] if params[:referrer].present?
     if @gamer_session.save
-      unless params[:gamer_session] && params[:gamer_session][:email].present?
-        if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup]
-          current_gamer.referrer     = params[:referrer] if params[:referrer].present?
-          current_gamer.confirmed_at = current_gamer.created_at
-          current_gamer.save
+      if params[:facebook]
+        if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup] && !current_gamer.confirmed_at
+          current_gamer.confirm!
 
           @tjm_request.replace_path("tjm_facebook_signup")
           default_platforms = {}
