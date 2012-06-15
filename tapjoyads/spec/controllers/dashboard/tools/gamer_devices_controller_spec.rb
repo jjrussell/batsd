@@ -11,8 +11,8 @@ describe Dashboard::Tools::GamerDevicesController do
   end
 
   describe "#new" do
-    context "when logged in as customer service" do
-      include_context 'logged in as customer service'
+    context "when logged in as a customer service user" do
+      include_context 'logged in as a customer service user'
     
       it "allows access" do
         get(:new, params)
@@ -45,8 +45,8 @@ describe Dashboard::Tools::GamerDevicesController do
   end
 
   describe "#edit" do
-    context "when logged in as customer service" do
-      include_context 'logged in as customer service'
+    context "when logged in as a customer service user" do
+      include_context 'logged in as a customer service user'
     
       it "allows access" do
         get(:edit, params)
@@ -74,8 +74,8 @@ describe Dashboard::Tools::GamerDevicesController do
   end
 
   describe "#update" do
-    context "when logged in as customer service" do
-      include_context 'logged in as customer service'
+    context "when logged in as a customer service user" do
+      include_context 'logged in as a customer service user'
     
       it "redirects to gamer management tool for associated gamer after update" do
         put(:update, params)

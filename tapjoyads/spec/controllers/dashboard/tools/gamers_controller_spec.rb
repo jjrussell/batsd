@@ -6,8 +6,8 @@ describe Dashboard::Tools::GamersController do
   end
 
   describe "#index" do
-    context "when logged in as customer service" do
-      include_context 'logged in as customer service'
+    context "when logged in as a customer service user" do
+      include_context 'logged in as a customer service user'
     
       it "allows access" do
         get :index
@@ -38,8 +38,8 @@ describe Dashboard::Tools::GamersController do
     let(:gamer)   { FactoryGirl.create(:gamer) }
     let(:params)  { { :id => gamer.id } }
 
-    context "when logged in as customer service" do
-      include_context 'logged in as customer service'
+    context "when logged in as a customer service user" do
+      include_context 'logged in as a customer service user'
     
       it "allows access" do
         get(:show, params)
