@@ -37,9 +37,16 @@
 
       skip = document.getElementById('close-link');
       skip.onclick = function() {
+
+  - if params[:preview] == true
+    :plain
+        return false;
+  - else
+    :plain
         xmlHttpRequst = new XMLHttpRequest();
-        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
+        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid], :offer_id => @offer.id }))}', false)
         xmlHttpRequst.send();
+  :plain
       }
 
   - # Provide available custom creative sizes to javascript
