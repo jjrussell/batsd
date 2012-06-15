@@ -3,23 +3,24 @@ class UserEventsController < ApplicationController
   def create
     verify_params([:app_id, :udid, :event_type_id])
     unless params_valid?
-      return render :text =>  "Could not find app or device. Check your app_id and udid paramters.\n", :status => 400
+      return render :text => UserEvent::ERROR_APP_ID_OR_UDID_MSG , :status => UserEvent::ERROR_STATUS
     end
     event = UserEvent.new(params)
     if event.valid?
       event.save
-      render :text => "Successfully saved user event.", :status => 200
+      render :text => UserEvent::SUCCESS_MSG, :status => UserEvent::SUCCESS_STATUS
     else
-      render :text => "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price.\n", :status => 400
+      render :text => UserEvent::ERROR_EVENT_INFO_MSG, :status => UserEvent::ERROR_STATUS
     end
   end
 
   private
 
   def params_valid?
-    app           = App.find_by_id(params[:app_id])
-    event_type_id = params[:event_type_id].to_i rescue nil
-    device        = Device.find(params[:udid]) if app.present? && event_type_id.present?
-    device.try(:has_app?, params[:app_id])
+    app           = App.find(params[:app_id]) rescue false
+    device        = Device.new(:key => params[:udid]) rescue false
+    event_type_id = params[:event_type_id] == 1 || params[:event_type_id] == 0    # TODO make useable for all
+    binding.pry
+    app && device && event_type_id
   end
 end

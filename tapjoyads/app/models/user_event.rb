@@ -7,6 +7,12 @@ class UserEvent < SyslogMessage
   self.define_attr :type_id, :type => :int
   self.define_attr :data, :type => :json
 
+  ERROR_APP_ID_OR_UDID_MSG  = "Could not find app or device. Check your app_id and udid paramters.\n"
+  ERROR_EVENT_INFO_MSG      = "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price.\n"
+  SUCCESS_MSG               = "Successfully saved user event.\n"
+  SUCCESS_STATUS            = 200
+  ERROR_STATUS              = 400
+
   def initialize(options = {})
     options.delete(:action)
     options.delete(:controller)
