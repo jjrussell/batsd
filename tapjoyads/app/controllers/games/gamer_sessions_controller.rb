@@ -19,30 +19,30 @@ class Games::GamerSessionsController < GamesController
     @gamer_session.remember_me = true
     @gamer_session.referrer = params[:referrer] if params[:referrer].present?
     if @gamer_session.save
+      if current_gamer.deactivated_at?
+        current_gamer.reactivate!
+        flash[:notice] = t('text.games.reactivated_account')
+      end
+
+      destroy and return if current_gamer.blocked?
+
       if params[:facebook]
         if current_gamer.account_type == Gamer::ACCOUNT_TYPE[:facebook_signup] && !current_gamer.confirmed_at
           current_gamer.confirm!
 
           @tjm_request.replace_path("tjm_facebook_signup")
-          default_platforms = {}
-          default_platforms[params[:default_platform]] = "1" if params[:default_platform]
-          current_gamer.send_welcome_email(request, device_type, default_platforms, geoip_data, os_version)
+          detected_platform = ''
+          detected_platform = params[:platform][:detected] if params[:platform]
+          current_gamer.send_welcome_email(request, device_type, detected_platform, geoip_data, os_version)
+          is_android = params[:src] == 'android_app'
 
-          if params[:data].present? && params[:src] == 'android_app'
-            redirect_to link_device_games_gamer_path(:link_device_url => finalize_games_device_path(:data => params[:data]), :android => true) and return
-          else
-            redirect_to link_device_games_gamer_path(:link_device_url => new_games_device_path) and return
-          end
+          render(:json => { :success => true, :new_gamer => true, :redirect_url => current_gamer.signup_next_step(params), :android_app => is_android }) and return
         else
           @tjm_request.replace_path("tjm_facebook_login")
+          render(:json => { :success => true, :new_gamer => false, :redirect_url => current_gamer.signup_next_step(params), :android_app => is_android }) and return
         end
       end
 
-      if current_gamer.deactivated_at?
-        current_gamer.reactivate!
-        flash[:notice] = t('text.games.reactivated_account')
-      end
-      destroy and return if current_gamer.blocked?
       if params[:data].present? && cookies[:data].blank?
         redirect_to finalize_games_device_path(:data => params[:data])
       elsif params[:path]
@@ -51,7 +51,11 @@ class Games::GamerSessionsController < GamesController
         redirect_to games_path
       end
     else
-      render_login_page
+      flash[:error] = @gamer_session.errors.full_messages.join '\n'
+      options = {}
+      options[:path] = params[:path] if params[:path]
+      options[:state] = 'login-focused'
+      redirect_to new_games_gamer_session_path(options)
     end
   end
 

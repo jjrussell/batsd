@@ -8,7 +8,7 @@ describe Gamer do
   context "Gamer" do
     before :each do
       @gamer = FactoryGirl.create(:gamer, :twitter_id => '1')
-      @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
+      @gamer.gamer_profile.update_attributes(:facebook_id => '0', :gamer => @gamer)
     end
 
     context 'suspicious activities' do
@@ -81,7 +81,7 @@ describe Gamer do
         :external_info => '0')
 
       new_gamer = FactoryGirl.create(:gamer)
-      new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => new_gamer)
+      new_gamer.gamer_profile.update_attributes(:facebook_id => '0', :gamer => new_gamer)
       new_gamer.referrer = ObjectEncryptor.encrypt("#{@gamer.id},#{invitation.id}")
       new_gamer.send :check_referrer
 
@@ -91,11 +91,11 @@ describe Gamer do
 
     it 'sets up friendships' do
       @new_gamer = FactoryGirl.create(:gamer)
-      @new_gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @new_gamer)
+      @new_gamer.gamer_profile.update_attributes(:facebook_id => '0', :gamer => @new_gamer)
       @referring_gamer = FactoryGirl.create(:gamer)
-      @referring_gamer.gamer_profile = GamerProfile.create(:facebook_id => '1', :gamer => @referring_gamer)
+      @referring_gamer.gamer_profile.update_attributes(:facebook_id => '1', :gamer => @referring_gamer)
       @stalker_gamer = FactoryGirl.create(:gamer)
-      @stalker_gamer.gamer_profile = GamerProfile.create(:facebook_id => '2', :gamer => @stalker_gamer)
+      @stalker_gamer.gamer_profile.update_attributes(:facebook_id => '2', :gamer => @stalker_gamer)
 
       accepted_invitation = Invitation.create(:gamer_id => @referring_gamer.id,
                                               :channel => Invitation::FACEBOOK,
@@ -123,6 +123,11 @@ describe Gamer do
       @gamer.deactivated_at.should < Time.zone.now
     end
 
+    it 'is able to deal with text dates' do
+      @gamer.birthdate = '10/10/2000'
+      @gamer.birthdate.class.should == Date
+    end
+
     describe '#external_info' do
       context 'when channel == Invitation::EMAIL' do
         it 'returns email' do
@@ -148,10 +153,10 @@ describe Gamer do
         before :each do
           @facebook_id = '2'
           gamer1 = FactoryGirl.create(:gamer)
-          gamer1.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer1)
+          gamer1.gamer_profile.update_attributes(:facebook_id => @facebook_id, :gamer => gamer1)
 
           gamer2 = FactoryGirl.create(:gamer)
-          gamer2.gamer_profile = GamerProfile.create(:facebook_id => @facebook_id, :gamer => gamer2)
+          gamer2.gamer_profile.update_attributes(:facebook_id => @facebook_id, :gamer => gamer2)
         end
         it 'returns gamers based on facebook_id' do
           Gamer.find_all_gamer_based_on_channel(Invitation::FACEBOOK, @facebook_id).size.should == 2
@@ -219,7 +224,7 @@ describe Gamer do
         }
         @gamer2 = FactoryGirl.create(:gamer)
         @gamer3 = FactoryGirl.create(:gamer)
-        @gamer3.gamer_profile = GamerProfile.create(:gamer => @gamer3, :referred_by => @gamer.id)
+        @gamer3.gamer_profile.update_attributes(:gamer => @gamer3, :referred_by => @gamer.id)
 
         @invitation = FactoryGirl.create(:invitation, :gamer => @gamer, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
         @invitation2 = FactoryGirl.create(:invitation, :gamer => @gamer2, :channel => Invitation::TWITTER, :external_info => @authhash[:twitter_id], :status => Invitation::PENDING)
@@ -335,7 +340,7 @@ describe Gamer do
         g.referrer              = referrer
         g.terms_of_service      = '1'
       end
-      noob.gamer_profile = GamerProfile.new(:birthdate => Date.parse('1981-10-23'))
+      noob.birthdate = Date.parse('1981-10-23')
 
       noob.save
     end

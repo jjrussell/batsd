@@ -9,43 +9,28 @@ class Games::GamersController < GamesController
   def new
     @gamer = Gamer.new
     @hide_fb_signup = UiConfig.is_fb_signup_hidden
+
+    if params[:data].present? && params[:src] == 'android_app'
+      @finalize_path = finalize_games_device_path(:data => params[:data])
+    end
+
     redirect_to games_path if current_gamer.present?
   end
 
   def create
-    @gamer = Gamer.new do |g|
-      g.nickname              = params[:gamer][:nickname]
-      g.email                 = params[:gamer][:email]
-      g.password              = params[:gamer][:password]
-      g.password_confirmation = params[:gamer][:password]
-      g.referrer              = params[:gamer][:referrer]
-      g.terms_of_service      = params[:gamer][:terms_of_service]
-      g.account_type          = params[:gamer][:account_type].to_i
-    end
-    begin
-      birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
-    rescue ArgumentError => e
-      if e.message == 'invalid date'
-        errors = [ ['birthday', 'is not valid'] ]
-        render_json_error(errors) and return
-      else
-        raise e
-      end
-    end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
-    @gamer.gamer_profile = @gamer_profile
+    @gamer = Gamer.new params[:gamer]
+    @gamer.password_confirmation = @gamer.password
 
     if @gamer.save
-      @gamer.send_welcome_email(request, device_type, params[:default_platforms] || {}, geoip_data, os_version)
+      default_platform = params[:platform][:default] if params[:platform]
+      is_android = params[:src] == 'android_app'
 
-      if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => finalize_games_device_path(:data => params[:data]), :android => true) })
-      else
-        render(:json => { :success => true, :redirect_url => link_device_games_gamer_path(:link_device_url => new_games_device_path) })
-      end
+      @gamer.send_welcome_email(request, device_type, default_platform || '', geoip_data, os_version)
+      render(:json => { :success => true, :redirect_url => @gamer.signup_next_step(params), :android_app => is_android })
     else
       errors = @gamer.errors.reject { |k,v| k == :gamer_profile }
-      errors.merge!(@gamer_profile.errors)
+      errors.merge!(@gamer.gamer_profile.errors)
+
       render_json_error(errors) and return
     end
   end

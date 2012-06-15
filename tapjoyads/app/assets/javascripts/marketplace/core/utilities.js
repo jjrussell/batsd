@@ -10,8 +10,8 @@
       log : function(result, message){
         // Get around YUI compressor
         var cnsl = window.console;
-        if(window.ENVIRONMENT !== "development") { return; }
-        if(cnsl && cnsl.log){
+
+        if(cnsl && cnsl.log && window.ENVIRONMENT.toLowerCase() === 'development'){
           cnsl.log(result +' :: '+ message);
         }
       },
@@ -265,6 +265,30 @@
         }
       },
 
+      ViewPort: {
+        belowView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var fold = $(window).height() + $(window).scrollTop() + padding;
+          return fold <= $(el).offset().top - threshold;
+        },
+
+        aboveView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var top = $(window).scrollTop() + padding;
+          return top >= $(el).offset().top + $(el).height() - threshold;
+        },
+
+        aboveInView: function(el, cfg) {
+          return !this.belowView(el, cfg) || this.aboveView(el, cfg);
+        },
+
+        inView: function(el, cfg) {
+          return !this.belowView(el, cfg);
+        }
+      },
+
       Cookie: {
         set: function(k, v, days, years) {
           if (days) {
@@ -294,27 +318,6 @@
         },
         remove: function(k) {
           this.set(k, "", -1);
-        }
-      },
-
-      ViewPort: {
-        belowView: function(el, cfg) {
-          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
-          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
-          var fold = $(window).height() + $(window).scrollTop() + padding;
-          return fold <= $(el).offset().top - threshold;
-        },
-        aboveView: function(el, cfg) {
-          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
-          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
-          var top = $(window).scrollTop() + padding;
-          return top >= $(el).offset().top + $(el).height() - threshold;
-        },
-        aboveInView: function(el, cfg) {
-          return !this.belowView(el, cfg) || this.aboveView(el, cfg);
-        },
-        inView: function(el, cfg) {
-          return !this.belowView(el, cfg);
         }
       }
     }

@@ -1,11 +1,11 @@
 .container
   - if @show_nav_bar_login_button
     .right
-      #login.header-button
+      #login.header-button.js-next-state
         %span= t('text.shared.login_verb')
-      #login-web
+      %a#login-web.js-next-state
         #login-web-wrapper
-          %span= t('text.shared.login_verb')
+          .toggle-off= t('text.shared.login_verb')
 
   .nav
     - if @show_nav_bar_quad_menu
