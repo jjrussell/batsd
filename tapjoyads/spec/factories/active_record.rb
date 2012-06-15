@@ -268,6 +268,12 @@ FactoryGirl.define do
     been_buried_count 0
     been_helpful_count 0
   end
+  
+  factory :gamer_device do
+    gamer       { FactoryGirl.create(:gamer) }
+    device      { FactoryGirl.create(:device) }
+    device_type { 'iphone' }
+  end
 
   factory :invitation do
     gamer         { FactoryGirl.create(:gamer) }
