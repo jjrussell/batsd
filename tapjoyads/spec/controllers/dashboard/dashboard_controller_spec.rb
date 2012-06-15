@@ -21,13 +21,12 @@ describe Dashboard::DashboardController do
       end
 
       it 'finds my app' do
-        @controller.send(:find_app, @user_app.id).should  == @user_app
+        @controller.send(:find_app, @user_app.id).should == @user_app
       end
 
       it 'cannot find other apps' do
-        expect {
-          @controller.send(:find_app, @admin_app.id)
-        }.to raise_exception(ActiveRecord::RecordNotFound)
+        @controller.stub(:redirect_to)
+        @controller.send(:find_app, @admin_app.id).should be_nil
       end
     end
 

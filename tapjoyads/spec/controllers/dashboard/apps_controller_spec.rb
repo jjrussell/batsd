@@ -55,14 +55,6 @@ describe Dashboard::AppsController do
         get(:index)
         last_app.should == assigns(:app)
       end
-
-      context 'last shown app is someone else\'s app' do
-        it 'redirects to show an app they own' do
-          another_app = FactoryGirl.create(:app)
-          get(:show, :id => another_app.id)
-          response.should be_redirect
-        end
-      end
     end
 
     context 'with a user without apps' do
@@ -125,9 +117,8 @@ describe Dashboard::AppsController do
           :balance => 10000
         )
         not_my_app = FactoryGirl.create(:app, :partner => someone_else)
-        expect {
-          get(:show, :id => not_my_app.id)
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        get(:show, :id => not_my_app.id)
+        response.should be_redirect
       end
     end
 

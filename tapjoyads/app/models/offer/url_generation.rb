@@ -185,19 +185,6 @@ module Offer::UrlGeneration
     display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false, true)
   end
 
-  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, dimensions = nil)
-    if dimensions.present? && display_custom_banner_for_size?(dimensions)
-      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
-    else
-      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
-    end
-    url << "&ts=#{Time.now.to_i}" if bust_cache
-    options.each do |key,value|
-      url << "&#{key}=#{value}"
-    end
-    url
-  end
-
   def fullscreen_ad_url(options)
     publisher_app_id   = options.delete(:publisher_app_id)   { |k| raise "#{k} is a required argument" }
     publisher_user_id  = options.delete(:publisher_user_id)  { |k| }
