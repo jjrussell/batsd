@@ -45,6 +45,18 @@ class VideoButton < ActiveRecord::Base
       (block_rewarded && rewarded?)
   end
 
+  def tracking_item_options(item)
+    offer = item.primary_offer
+    return nil unless offer.present? && self.rewarded? && offer.rewarded?
+
+    {
+      :bid          => offer.bid,
+      :payment      => offer.payment,
+      :reward_value => offer.reward_value,
+      :rewarded     => true
+    }
+  end
+
   private
   def update_offer
     video_offer.update_buttons
