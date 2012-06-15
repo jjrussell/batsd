@@ -3,14 +3,14 @@ class UserEventsController < ApplicationController
   def create
     verify_params([:app_id, :udid, :event_type_id])
     unless params_valid?
-      return render :text => UserEvent::ERROR_APP_ID_OR_UDID_MSG , :status => :precondition_failed
+      return render :text => t('user_event.error.bad_params') , :status => :precondition_failed
     end
     event = UserEvent.new(params)
     if event.valid?
       event.save
-      render :text => UserEvent::SUCCESS_MSG, :status => :created
+      render :text => t('user_event.success.created') , :status => :created
     else
-      render :text => UserEvent::ERROR_EVENT_INFO_MSG, :status => :not_acceptable
+      render :text => t('user_event.error.bad_event') , :status => :not_acceptable
     end
   end
 

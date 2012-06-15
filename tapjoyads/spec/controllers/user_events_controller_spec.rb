@@ -25,7 +25,7 @@ describe UserEventsController do
         it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
           response.status.should == 412
-          response.body.should == UserEvent::ERROR_APP_ID_OR_UDID_MSG
+          response.body.should == I18n.t('user_event.error.bad_params')
         end
       end
 
@@ -42,7 +42,7 @@ describe UserEventsController do
         it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
           response.status.should == 412
-          response.body.should == UserEvent::ERROR_APP_ID_OR_UDID_MSG 
+          response.body.should == I18n.t('user_event.error.bad_params')
         end
       end
     end
@@ -62,7 +62,7 @@ describe UserEventsController do
         it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
           response.status.should == 201
-          response.body.should == UserEvent::SUCCESS_MSG
+          response.body.should == I18n.t('user_event.success.created')
         end
       end
 
@@ -80,7 +80,7 @@ describe UserEventsController do
         it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
           response.status.should == 201
-          response.body.should == UserEvent::SUCCESS_MSG
+          response.body.should == I18n.t('user_event.success.created')
         end
       end
 
@@ -102,7 +102,7 @@ describe UserEventsController do
         it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
           response.status.should == 406
-          response.body.should == UserEvent::ERROR_EVENT_INFO_MSG
+          response.body.should == I18n.t('user_event.error.bad_event')
           end
         end
 
@@ -124,7 +124,7 @@ describe UserEventsController do
           it 'succeeds and returns the SUCCESS_MSG message' do
             post(:create, @params)
             response.status.should == 201
-            response.body.should == UserEvent::SUCCESS_MSG
+            response.body.should == I18n.t('user_event.success.created')
           end
         end
 
@@ -146,7 +146,7 @@ describe UserEventsController do
           it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
             response.status.should == 406
-            response.body.should == UserEvent::ERROR_EVENT_INFO_MSG
+            response.body.should == I18n.t('user_event.error.bad_event')
           end
         end
       end
