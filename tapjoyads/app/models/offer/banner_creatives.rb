@@ -100,8 +100,9 @@ module Offer::BannerCreatives
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
-  def banner_creative_url(size, format = nil, bust_cache = false)
-    url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size, format)}"
+  def banner_creative_url(size, format = nil, bust_cache = false, use_cloudfront = true)
+    base = use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"
+    url = "#{base}/#{banner_creative_path(size, format)}"
     url << "?ts=#{Time.now.to_i}" if bust_cache
     url
   end

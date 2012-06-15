@@ -169,15 +169,13 @@ module Offer::UrlGeneration
   def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true, preview = false)
     size = "#{width}x#{height}"
 
-    delim = '?'
     if display_custom_banner_for_size?(size) || (preview && has_banner_creative?(size))
-      url = "#{use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"}/#{banner_creative_path(size)}"
-    else
-      display_multiplier = (display_multiplier || 1).to_f
-      url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
-      delim = '&'
+      return banner_creative_url(size, nil, bust_cache, use_cloudfront)
     end
-    url << "#{delim}ts=#{Time.now.to_i}" if bust_cache
+
+    display_multiplier = (display_multiplier || 1).to_f
+    url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
+    url << "&ts=#{Time.now.to_i}" if bust_cache
     url
   end
 
