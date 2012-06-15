@@ -24,7 +24,7 @@ describe UserEventsController do
 
         it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
-          response.status.should == UserEvent::ERROR_STATUS
+          response.status.should == 412
           response.body.should == UserEvent::ERROR_APP_ID_OR_UDID_MSG
         end
       end
@@ -41,7 +41,7 @@ describe UserEventsController do
 
         it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
-          response.status.should == UserEvent::ERROR_STATUS
+          response.status.should == 412
           response.body.should == UserEvent::ERROR_APP_ID_OR_UDID_MSG 
         end
       end
@@ -61,7 +61,7 @@ describe UserEventsController do
 
         it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
-          response.status.should == UserEvent::SUCCESS_STATUS
+          response.status.should == 201
           response.body.should == UserEvent::SUCCESS_MSG
         end
       end
@@ -79,7 +79,7 @@ describe UserEventsController do
 
         it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
-          response.status.should == UserEvent::SUCCESS_STATUS
+          response.status.should == 201
           response.body.should == UserEvent::SUCCESS_MSG
         end
       end
@@ -101,7 +101,7 @@ describe UserEventsController do
 
         it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
-          response.status.should == UserEvent::ERROR_STATUS
+          response.status.should == 406
           response.body.should == UserEvent::ERROR_EVENT_INFO_MSG
           end
         end
@@ -123,7 +123,7 @@ describe UserEventsController do
 
           it 'succeeds and returns the SUCCESS_MSG message' do
             post(:create, @params)
-            response.status.should == UserEvent::SUCCESS_STATUS
+            response.status.should == 201
             response.body.should == UserEvent::SUCCESS_MSG
           end
         end
@@ -145,7 +145,7 @@ describe UserEventsController do
 
           it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
-            response.status.should == UserEvent::ERROR_STATUS
+            response.status.should == 406
             response.body.should == UserEvent::ERROR_EVENT_INFO_MSG
           end
         end
