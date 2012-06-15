@@ -5,7 +5,7 @@ describe Games::Social::SocialController do
     activate_authlogic
 
     @gamer = FactoryGirl.create(:gamer, :twitter_id => '1', :twitter_access_token => 'token', :twitter_access_secret => 'secret')
-    @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
+    @gamer.gamer_profile.update_attributes(:facebook_id => '0', :gamer => @gamer)
     login_as(@gamer)
   end
 
@@ -13,7 +13,7 @@ describe Games::Social::SocialController do
     context "when facebook account already associated with other account" do
       before :each do
         gamer2 = FactoryGirl.create(:gamer, :email => 'foo@test.com')
-        gamer2.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => gamer2)
+        gamer2.gamer_profile.update_attributes(:facebook_id => '0', :gamer => gamer2)
         @gamer.gamer_profile.facebook_id = nil
 
         @current_facebook_user = mock('current_facebook_user')
@@ -40,7 +40,7 @@ describe Games::Social::SocialController do
     context "when inviting friends without invitation" do
       before :each do
         foo_gamer = FactoryGirl.create(:gamer, :email => 'foo@test.com')
-        foo_gamer.gamer_profile = GamerProfile.create(:facebook_id => 'foo', :gamer => foo_gamer)
+        foo_gamer.gamer_profile.update_attributes(:facebook_id => 'foo', :gamer => foo_gamer)
         recipients = 'foo@test.com, bar@test.com'
         post 'send_email_invites', :recipients => recipients, :content => 'hello'
       end
@@ -87,7 +87,7 @@ describe Games::Social::SocialController do
     context "when inviting friends without invitation" do
       before :each do
         foo_gamer = FactoryGirl.create(:gamer, :twitter_id => 'foo')
-        foo_gamer.gamer_profile = GamerProfile.create(:gamer => foo_gamer)
+        foo_gamer.gamer_profile.update_attributes(:gamer => foo_gamer)
         friends = 'foo,bar'
         post 'send_twitter_invites', :friend_selected => friends, :ajax => true
       end
