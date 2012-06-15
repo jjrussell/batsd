@@ -27,6 +27,7 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
       flash[:notice] = 'Successfully created Video Button'
       redirect_to :action => :index
     else
+      flash[:error] = 'Unable to create Video Button'
       render :action => :new
     end
   end
