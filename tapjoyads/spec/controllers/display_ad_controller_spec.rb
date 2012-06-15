@@ -211,7 +211,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
 
@@ -220,7 +223,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
     end

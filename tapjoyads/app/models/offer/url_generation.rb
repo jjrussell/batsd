@@ -166,21 +166,37 @@ module Offer::UrlGeneration
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
-  def display_ad_image_url(publisher_app_id, width, height, currency_id = nil, display_multiplier = nil, bust_cache = false, use_cloudfront = true, preview = false)
+  def display_ad_image_url(options)
+    publisher_app_id = options.fetch(:publisher_app_id) { |k| raise "#{k} is a required argument" }
+    width            = options.fetch(:width)            { |k| raise "#{k} is a required argument" }
+    height           = options.fetch(:height)           { |k| raise "#{k} is a required argument" }
+
     size = "#{width}x#{height}"
 
-    if display_custom_banner_for_size?(size) || (preview && has_banner_creative?(size))
-      return banner_creative_url(size, nil, bust_cache, use_cloudfront)
+    if display_custom_banner_for_size?(size) || (options[:preview] && has_banner_creative?(size))
+      return banner_creative_url(options.slice(:bust_cache, :use_cloudfront).merge(:size => size))
     end
 
-    display_multiplier = (display_multiplier || 1).to_f
-    url = "#{API_URL}/display_ad/image?publisher_app_id=#{publisher_app_id}&advertiser_app_id=#{id}&size=#{size}&display_multiplier=#{display_multiplier}&currency_id=#{currency_id}&offer_type=#{item_type}"
-    url << "&ts=#{Time.now.to_i}" if bust_cache
-    url
+    params = { :publisher_app_id => publisher_app_id,
+               :advertiser_app_id => id,
+               :size => size,
+               :display_multiplier => (options[:display_multiplier] || 1).to_f,
+               :currency_id => options[:currency_id],
+               :offer_type => item_type }
+
+    params[:currency_id] = options[:currency_id] if options.include?(:currency_id)
+    params[:ts] = Time.now.to_i if options[:bust_cache]
+
+    "#{API_URL}/display_ad/image?#{params.to_query}"
   end
 
   def preview_display_ad_image_url(publisher_app_id, width, height)
-    display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false, true)
+    display_ad_image_url(:publisher_app_id => publisher_app_id,
+                         :width => width,
+                         :height => height,
+                         :bust_cache => true,
+                         :use_cloudfront => false,
+                         :preview => true)
   end
 
   def fullscreen_ad_url(options)
