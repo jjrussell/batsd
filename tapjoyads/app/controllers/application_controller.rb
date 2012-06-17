@@ -26,6 +26,11 @@ class ApplicationController < ActionController::Base
     ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
   end
 
+  def initialize
+    @@available_locales = setup_locales
+    super
+  end
+
   private
 
   def redis_write
@@ -81,28 +86,31 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = I18n.default_locale
+    I18n.locale = get_locale || I18n.default_locale
+  end
+
+  # detect the locale info from the params and return the proper one
+  #
+  # @return [String] Locale detected from the language_code param
+  def get_locale
     language_code = params[:language_code]
     if language_code.present?
       language_code = language_code.split('-').first if language_code['-']
-      if available_locales.any?{ |s| s.casecmp(language_code) == 0 }
-        I18n.locale = language_code
-      end
+      @@available_locales.detect { |s| s.casecmp(language_code) == 0 }
     end
   end
 
   # memoize and massages I18n.available_locales for consumption in #set_locale
   #
   # @return [Array<String>] Possible locales that set_locale can match to
-  def available_locales
-    return @@available_locales if @@available_locales
+  def setup_locales
     # Preconvert to string
-    @@available_locales = I18n.available_locales.collect(&:to_s)
+    available_locales = I18n.available_locales.collect(&:to_s)
     # Only keep the languages that would match
-    @@available_locales = @@available_locales.select{ |l| l.length == 2 }
+    available_locales = available_locales.select{ |l| l.length == 2 }
     # Move en up to the front
-    @@available_locales.delete('en')
-    @@available_locales.unshift('en')
+    available_locales.delete('en')
+    available_locales.unshift('en')
   end
 
   def lookup_udid
