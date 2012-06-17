@@ -27,7 +27,7 @@ class ApplicationController < ActionController::Base
   end
 
   def initialize
-    @@available_locales = setup_locales
+    @@available_locales ||= setup_locales
     super
   end
 
