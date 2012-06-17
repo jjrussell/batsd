@@ -84,12 +84,25 @@ class ApplicationController < ActionController::Base
     I18n.locale = I18n.default_locale
     language_code = params[:language_code]
     if language_code.present?
-      language_code.downcase!
       language_code = language_code.split('-').first if language_code['-']
-      if I18n.available_locales.collect(&:to_s).include?(language_code)
+      if available_locales.any?{ |s| s.casecmp(language_code) == 0 }
         I18n.locale = language_code
       end
     end
+  end
+
+  # memoize and massages I18n.available_locales for consumption in #set_locale
+  #
+  # @return [Array<String>] Possible locales that set_locale can match to
+  def available_locales
+    return @@available_locales if @@available_locales
+    # Preconvert to string
+    @@available_locales = I18n.available_locales.collect(&:to_s)
+    # Only keep the languages that would match
+    @@available_locales = @@available_locales.select{ |l| l.length == 2 }
+    # Move en up to the front
+    @@available_locales.delete('en')
+    @@available_locales.unshift('en')
   end
 
   def lookup_udid
