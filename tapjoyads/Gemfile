@@ -1,6 +1,5 @@
 source :rubygems
 
-gem 'SystemTimer', '1.2.3', :require => 'system_timer'
 gem 'activemerchant'
 gem 'acts-as-approvable', '0.6.9'
 gem 'addressable', '2.2.6', :require => 'addressable/uri'
@@ -42,7 +41,6 @@ gem 'patron', '0.4.4'
 gem 'plist', '3.1.0'
 gem 'rails', '~>3.0.12'
 gem 'rake'
-gem 'rcov'
 gem 'rdoc', '3.12'
 gem 'read_from_slave', '0.4.0'
 gem 'redis', '2.2.2'
@@ -74,7 +72,7 @@ end
 
 group :development do
   gem 'annotate'
-  gem 'mongrel', '1.1.5'
+  gem 'thin'
   gem 'guard-spork'
   gem 'guard-rspec'
   gem 'rspec-instafail'
@@ -107,4 +105,13 @@ end
 group :ops do
   gem 'pry'
   gem 'unicorn', '4.2.0'
+end
+
+platforms :ruby_18 do
+  gem 'SystemTimer', '1.2.3', :require => 'system_timer'
+  gem 'rcov'
+end
+
+platforms :ruby_19 do
+  gem 'simplecov', :require => false
 end
