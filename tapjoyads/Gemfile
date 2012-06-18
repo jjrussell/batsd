@@ -87,8 +87,7 @@ end
 
 group :test do
   gem 'capybara'
-  gem 'factory_girl', '2.6.4'
-  gem 'factory_girl_rails', '~>1'
+  gem 'factory_girl_rails', '1.2.0'
   gem 'launchy'
   gem 'spork'
   gem 'timecop'
