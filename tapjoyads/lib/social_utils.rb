@@ -17,6 +17,9 @@ module SocialUtils
       rescue Exception => e
         raise I18n.t('text.games.generic_issue')
       end
+      if result && result.class == Hash && result['error_code'].present?
+        raise I18n.t('text.games.generic_issue')
+      end
       result || nil
     end
   end
