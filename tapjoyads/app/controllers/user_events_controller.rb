@@ -18,6 +18,7 @@ class UserEventsController < ApplicationController
 
   def params_valid?
     app           = App.find_by_id(params[:app_id])
+    #Using Integer(n) raises exceptions when n isn't a valid int, instead of .to_i(), which will return 0
     event_type    = UserEvent::EVENT_TYPE_IDS[Integer(params[:event_type_id])] rescue nil
     app.present? && event_type.present?
   end
