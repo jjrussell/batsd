@@ -141,6 +141,52 @@ body {
   background: inline-image('/images/games/ui-joy-r-arrow.png') no-repeat 98% center;
 }
 
+#login-form, #signup-form {
+  .slide-forward {
+    background-image: inline-image('#{$logged_out_image_path}/slide-right-arrow.png');
+    background-position: 15px 21px;
+  }
+  .slide-back {
+    background-image: inline-image('#{$logged_out_image_path}/slide-left-arrow.png');
+    background-position: 15px 21px;
+  }
+
+  .right-slide {
+    background: inline-image('#{$logged_out_image_path}/slide-right-arrow-active.png') center 3px no-repeat;
+    background-size: 30px 22px;
+  }
+
+  .left-slide {
+    background: inline-image('#{$logged_out_image_path}/slide-left-arrow-active.png') center 3px no-repeat;
+    background-size: 30px 22px;
+  }
+
+  .primary {
+    .left-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-left-arrow-primary.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+
+    .right-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-right-arrow-primary.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+  }
+
+  .disabled {
+
+    .left-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-left-arrow-inactive.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+
+    .right-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-right-arrow-inactive.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+  }
+}
+
 /**
  * moderation
  */

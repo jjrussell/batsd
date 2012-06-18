@@ -32,12 +32,13 @@ class GamerProfile < ActiveRecord::Base
 
   validate :at_least_age_thirteen
   validates_inclusion_of :gender, :in => %w{ male female }, :allow_nil => true, :allow_blank => true
+  validates_presence_of :birthdate
 
   delegate :blocked?, :to => :gamer
   after_save :check_suspicious_activities, :unless => :blocked?
 
   def at_least_age_thirteen
-    unless birthdate.nil?
+    unless self.birthdate.nil?
       turns_thirteen = birthdate.years_since(13)
       errors.add(:birthdate, "is less than thirteen years ago") if (turns_thirteen.future?)
     end

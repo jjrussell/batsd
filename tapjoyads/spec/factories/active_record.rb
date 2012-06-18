@@ -267,6 +267,7 @@ FactoryGirl.define do
     terms_of_service { '1' }
     been_buried_count 0
     been_helpful_count 0
+    birthdate { 13.years.ago - 1.day }
   end
   
   factory :gamer_device do

@@ -117,9 +117,8 @@ describe Dashboard::AppsController do
           :balance => 10000
         )
         not_my_app = FactoryGirl.create(:app, :partner => someone_else)
-        expect {
-          get(:show, :id => not_my_app.id)
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        get(:show, :id => not_my_app.id)
+        response.should be_redirect
       end
     end
 

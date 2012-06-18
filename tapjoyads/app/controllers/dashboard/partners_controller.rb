@@ -5,7 +5,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored ]
+  before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :new_dev_credit, :create_dev_credit]
   before_filter :get_account_managers, :only => [ :index, :managed_by ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
@@ -153,8 +153,11 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     end
 
     Partner.transaction do
-      payout, order, marketing_order = @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
-
+      if @transfer.transfer_type.to_i == 4
+        payout, order, marketing_order = @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes) 
+      else
+        payout, order, marketing_order = @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
+      end
       log_activity(payout)
       payout.save!
 
@@ -169,6 +172,30 @@ class Dashboard::PartnersController < Dashboard::DashboardController
         marketing_order.save!
         flash[:notice] += "<br/>The marketing credit of <b>$#{"%.2f" % (marketing_order.amount / 100.0)}</b> to <b>#{email}</b> was successfully created."
       end
+    end
+    redirect_to partner_path(@partner)
+  end
+
+  def new_dev_credit
+    @transfer = Transfer.new
+  end
+
+  def create_dev_credit
+    transfer_params = sanitize_currency_params(params[:transfer], [:amount])
+    transfer_params[:transfer_type] = transfer_params[:transfer_type].to_i
+    transfer_params[:amount] = transfer_params[:amount].to_i
+    @transfer = Transfer.new(transfer_params)
+
+    unless @transfer.valid?
+      render :new_dev_credit and return
+    end
+
+    Partner.transaction do
+      payout = @partner.build_dev_credit(@transfer.amount, @transfer.internal_notes)
+      log_activity(payout)
+      payout.save!
+      email = @partner.users.map(&:email).first || '(no email)'
+      flash[:notice] = "The dev credit of <b>$#{"%.2f" % ((-1 * @transfer.amount) / 100.0)}</b> to <b>#{email}</b> was successfully created."
     end
     redirect_to partner_path(@partner)
   end

@@ -6,6 +6,9 @@ describe Games::HomepageController do
     @gamer = FactoryGirl.create(:gamer)
     @controller.stub(:current_gamer).and_return(@gamer)
   end
+  after :all do
+    I18n.default_locale = :en
+  end
 
   describe '#get_language_code' do
 
@@ -78,6 +81,7 @@ describe Games::HomepageController do
     end
 
     it 'sets default_locale when language_code values are invalid' do
+      I18n.default_locale = :de
       get(:index, :language_code => "honey badger don't care about locale")
       I18n.locale.should == I18n.default_locale
     end
@@ -118,7 +122,7 @@ describe Games::HomepageController do
       activate_authlogic
       @gamer = FactoryGirl.create(:gamer)
       login_as(@gamer)
-      @controller.stub!(:current_gamer=>@gamer)
+      @controller.stub!(:current_gamer => @gamer)
     end
 
     it 'creates a valid tjm_request' do
@@ -232,18 +236,18 @@ describe Games::HomepageController do
       before :each do
         login_as(@troll_author)
         controller.stub(:current_gamer).and_return(@troll_author)
-        get(:get_app, :id=>@offer.id)
+        get(:get_app, :id => @offer.id)
       end
       it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
         assigns[:app_reviews].count.should == 3
         assigns[:app_reviews].should == [@stellar_review, @good_review, @good_review_by_troll_author]
       end
     end
-    context 'good author viewer ' do
+    context 'good author viewer' do
       before :each do
         login_as(@another_good_author)
-        controller.stub!(:current_gamer=>@another_good_author)
-        get(:get_app, :id=>@offer.id)
+        controller.stub!(:current_gamer => @another_good_author)
+        get(:get_app, :id => @offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
         assigns[:app_reviews].count.should == 3
@@ -253,8 +257,8 @@ describe Games::HomepageController do
     context 'unassociated gamer viewer' do
       before :each do
         login_as(@gamer)
-        controller.stub!(:current_gamer=>@gamer)
-        get(:get_app, :id=>@offer.id)
+        controller.stub!(:current_gamer => @gamer)
+        get(:get_app, :id => @offer.id)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
         assigns[:app_reviews].count.should == 2
@@ -269,7 +273,7 @@ describe Games::HomepageController do
         controller.stub(:current_gamer).and_return(nil)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
-        get(:get_app, :id=>@offer.id)
+        get(:get_app, :id => @offer.id)
         assigns[:app_reviews].count.should == 2
       end
       it 'can see a single review only if specified' do

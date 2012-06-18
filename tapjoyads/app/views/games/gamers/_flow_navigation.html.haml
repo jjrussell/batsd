@@ -1,0 +1,17 @@
+- header_text ||= t("text.shared.sign_up")
+- add_class ||= ''
+.sub-header{:class => add_class}
+  .sub-header-wrapper
+    = header_text
+    .header-state-nav
+      .ui-joy-button.soft-grey-action.mobile-backward.js-previous-state
+        .ui-icon.left-slide &nbsp;
+      .ui-joy-button.soft-grey-action.mobile-forward.js-next-state
+        .ui-icon.right-slide &nbsp;
+.ui-joy-button.slide-button.slide-back.js-previous-state
+  &nbsp;
+.ui-joy-button.slide-button.slide-forward.js-next-state
+  #tapjoy_loader.hidden
+    #loader_t.loader_letter
+    #loader_a.loader_letter
+    #loader_p.loader_letter

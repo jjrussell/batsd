@@ -3,7 +3,7 @@ module DashboardHelpers
     visit "/dashboard"
     click_link "Register now."
     fill_in "Email Address", :with => "jeff@dickey.xxx"
-    fill_in "Company Name", :with => "Tapjoy"
+    fill_in "Company Name", :with => "Lapjoy"
     fill_in "Password", :with => "password"
     fill_in "Confirm Password", :with => "password"
     select "United States", :from => "Country"
