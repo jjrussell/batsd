@@ -135,6 +135,14 @@ rvm install 1.8.7
 rvm use 1.8.7 --default
 ```
 
+Sometimes there are issues with this with readline not working correctly. If
+you're having trouble, try this:
+
+```
+rvm pkg install readline
+rvm reinstall 1.8.7 -C --with-readline-dir=$rvm_path/usr
+```
+
 Install MySQL
 -------------
 
