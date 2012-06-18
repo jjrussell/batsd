@@ -11,6 +11,9 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
+  OFFERWALL_EXPERIMENT_APP_IDS = Set.new([ '9d6af572-7985-4d11-ae48-989dfc08ec4c' ,  #Tiny Farm
+		                                    'e34ef85a-cd6d-4516-b5a5-674309776601' #Magic Piano
+                                      ])
   def webpage_redesign
     webpage
 
@@ -258,6 +261,8 @@ include GetOffersHelper
     experiment = case params[:source]
     when 'tj_games'
       :optimization
+    when 'offerwall'
+       OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :offerwall : nil
     else
       nil
     end
@@ -267,11 +272,11 @@ include GetOffersHelper
 
   def set_algorithm
     case params[:exp]
-    when 'a_optimization'
+    when 'a_optimization', 'a_offerwall'
       @algorithm = nil
-    when 'b_optimization'
+    when 'b_optimization', 'b_offerwall'
       @algorithm = '101'
-    when 'c_optimization'
+    when 'c_optimization', 'c_offerwall'
       @algorithm = '101'
       @algorithm_options = { :skip_country => true }
     end
