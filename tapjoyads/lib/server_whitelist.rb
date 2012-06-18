@@ -37,6 +37,7 @@ class ServerWhitelist
     '79.125.122.234',                        # HasOffers Europe added 2012.05.22
     ['176.34.107.49', '176.34.107.63'],      # HasOffers Europe added 2012.05.22
     ['64.8.20.35', '64.8.20.36'],            # Websponsors added 2012.05.24
+    ['69.25.171.0', '69.25.171.127'],        # Impact Radius added 2012.06.18
   ]
 
   def self.ip_whitelist_includes?(ip_address)
