@@ -8,4 +8,7 @@ class Array
     end
     nil
   end
+
+  def <=(other); (self <=> other) <= 0; end
+  def >=(other); (self <=> other) >= 0; end
 end

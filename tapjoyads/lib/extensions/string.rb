@@ -4,11 +4,11 @@ class String
   end
 
   def version_greater_than_or_equal_to?(other_version)
-    (to_version_array <=> other_version.to_version_array) >= 0
+    to_version_array >= other_version.to_version_array
   end
 
   def version_less_than_or_equal_to?(other_version)
-    (to_version_array <=> other_version.to_version_array) <= 0
+    to_version_array <= other_version.to_version_array
   end
 
   def matz_silly_hash
