@@ -81,14 +81,17 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = I18n.default_locale
+    I18n.locale = get_locale || I18n.default_locale
+  end
+
+  # detect the locale info from the params and return the proper one
+  #
+  # @return [String] Locale detected from the language_code param
+  def get_locale
     language_code = params[:language_code]
     if language_code.present?
-      language_code.downcase!
       language_code = language_code.split('-').first if language_code['-']
-      if I18n.available_locales.collect(&:to_s).include?(language_code)
-        I18n.locale = language_code
-      end
+      language_code.downcase
     end
   end
 

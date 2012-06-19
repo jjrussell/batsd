@@ -142,7 +142,7 @@ class TjmRequest < SyslogMessage
     end
 
     if @tracking_param.present?
-      self.replace_path("#{self.path}_#{@tracking_param}")
+      self.replace_path("#{self.path.join}_#{@tracking_param}")
     end
 
     super

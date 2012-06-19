@@ -23,6 +23,7 @@ class BrandOfferMapping < ActiveRecord::Base
   after_commit  :redistribute_allocation, :on => :destroy
   after_commit  :redistribute_allocation, :on => :create
 
+
   scope :mappings_by_offer, lambda { |offer_id| {:conditions => [ "offer_id = ?", offer_id ] }}
 
   private

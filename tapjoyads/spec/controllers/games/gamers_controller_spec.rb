@@ -13,11 +13,7 @@ describe Games::GamersController do
           :email            => FactoryGirl.generate(:email),
           :password         => FactoryGirl.generate(:name),
           :terms_of_service => '1',
-        },
-        :date => {
-          :year  => @date.year,
-          :month => @date.month,
-          :day   => @date.day,
+          :birthdate        => @date.to_s
         },
         :default_platforms => {
           :android => '1',
@@ -34,23 +30,14 @@ describe Games::GamersController do
     end
 
     it 'rejects when under 13 years old' do
-      @date += 2.days
-      @options[:date] = {
-        :year  => @date.year,
-        :month => @date.month,
-        :day   => @date.day,
-      }
+      @options[:gamer][:birthdate] = @date + 2.days
       post(:create, @options)
 
       should_respond_with_json_error(403)
     end
 
     it 'rejects when under date is invalid' do
-      @options[:date] = {
-        :year  => @date.year,
-        :month => 11,
-        :day   => 31,
-      }
+      @options[:gamer][:birthdate] = 'blahblahblah'
       post(:create, @options)
 
       should_respond_with_json_error(403)

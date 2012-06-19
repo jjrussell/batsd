@@ -26,6 +26,7 @@ describe Partner do
     should validate_numericality_of(:next_payout_amount)
     should validate_numericality_of(:rev_share)
     should validate_numericality_of(:direct_pay_share)
+    should validate_presence_of(:name)
   end
 
   describe 'A Partner' do
@@ -401,6 +402,22 @@ describe Partner do
 
     it 'matches URL for Rails partner_url helper' do
       @partner.dashboard_partner_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/partners/#{@partner.id}"
+    end
+  end
+
+  describe 'validate_each name' do
+    before :each do
+      @partner = FactoryGirl.create :partner
+    end
+    
+    it 'must have a name' do
+      @partner.name = ' '
+      @partner.should_not be_valid
+    end
+    
+    it 'must not have tapjoy in the name' do
+      @partner.name = ' Tapjoy '
+      @partner.should_not be_valid
     end
   end
 end

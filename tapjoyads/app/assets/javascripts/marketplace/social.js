@@ -47,6 +47,7 @@
             });
           } else {
             notify(_t('games.grant_us_access'));
+            $('#' + submitFormId).trigger('facebook-connect-fail');
           }
         }, {scope: 'offline_access,publish_stream,email,user_birthday'});
       },
@@ -259,7 +260,7 @@
           }
         });
 
-        $(document).bind("twitter-invite-ajax-success", function (ev, form, data) {
+        $('.twitter-invite-form').on("ajax-success", function (ev, form, data) {
           if (data.success === true) {
             if (data.gamers.length === 0 ) {
               notify(_t('games.generic_issue'));

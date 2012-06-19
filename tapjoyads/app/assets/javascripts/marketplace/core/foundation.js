@@ -328,6 +328,7 @@
     });
 
     Tap.apply(Tap, {
+      emptyFn: function(){},
       browser: {
         prefix: (/webkit/i).test(appversion) ? 'webkit' : (/firefox/i).test(agent) ? 'moz' : 'opera' in window ? 'o' : (/msie/i).test(agent) ? 'ms' : '',
         language: (('language' in navigator) ? navigator.language.toLowerCase() : undefined ),
@@ -373,7 +374,7 @@
       /**
        * Component types, I refer to them as xtypes.
        */
-      xtypes: ['Button', 'Carousel'],
+      xtypes: ['Button', 'Carousel', 'DatePicker'],
       /**
        * input placeholders bucket
        * Manage place-holder text of inputs on browsers which do not support the placeholder attributes.
