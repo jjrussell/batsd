@@ -276,9 +276,12 @@ include GetOffersHelper
       @algorithm = nil
     when 'b_optimization', 'b_offerwall'
       @algorithm = '101'
-    when 'c_optimization', 'c_offerwall'
+    when 'c_optimization'
       @algorithm = '101'
       @algorithm_options = { :skip_country => true }
+    when 'c_offerwall'
+      @algorithm = '101'
+      @algorithm_options = { :skip_app => true }
     end
   end
 
