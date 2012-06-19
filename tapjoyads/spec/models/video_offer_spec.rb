@@ -115,11 +115,23 @@ describe VideoOffer do
           subject.video_buttons_for_device(device).should_not include(filtered_out)
         end
 
-        context 'and a rewarded button' do
+        context 'and a rewarded CPI button' do
           let(:filtered_out) { @buttons['rewarded'] }
 
           it 'filters out the rewarded install offer' do
             subject.video_buttons_for_device(device).should_not include(filtered_out)
+          end
+        end
+
+        context 'and a rewarded non-CPI button' do
+          let(:filtered_out) { @buttons['rewarded'] }
+          before(:each) do
+            filtered_out.tracking_item = Factory(:generic_offer)
+            filtered_out.save!
+          end
+
+          it 'does not filter out the rewarded offer' do
+            subject.video_buttons_for_device(device).should include(filtered_out)
           end
         end
       end
