@@ -16,14 +16,16 @@ module Offer::BannerCreatives
   end
 
   %w(banner_creatives approved_banner_creatives).each do |method_name|
-    define_method method_name do
-      self.send("#{method_name}=", []) if super.nil?
-      super.sort
-    end
+    class_eval <<-EOS
+      def #{method_name}
+        self.send("#{method_name}=", []) if super.nil?
+        super.sort
+      end
 
-    define_method "#{method_name}_was" do
-      super || []
-    end
+      def #{method_name}_was
+        super || []
+      end
+    EOS
   end
 
   def can_change_banner_creatives?
@@ -98,6 +100,12 @@ module Offer::BannerCreatives
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
     "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
+  end
+
+  def banner_creative_url(size, format = nil, bust_cache = false)
+    url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size, format)}"
+    url << "?ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
   def banner_creative_s3_object(size, format = nil)

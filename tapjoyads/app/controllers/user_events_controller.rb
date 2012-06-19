@@ -3,14 +3,14 @@ class UserEventsController < ApplicationController
   def create
     verify_params([:app_id, :udid, :event_type_id])
     unless params_valid?
-      return render :text =>  "Could not find app or device. Check your app_id and udid paramters.\n", :status => 400
+      return render :text => t('user_event.error.bad_params') , :status => :precondition_failed
     end
     event = UserEvent.new(params)
     if event.valid?
       event.save
-      render :text => "Successfully saved user event.", :status => 200
+      render :text => t('user_event.success.created') , :status => :created
     else
-      render :text => "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price.\n", :status => 400
+      render :text => t('user_event.error.bad_event') , :status => :not_acceptable
     end
   end
 
@@ -18,8 +18,8 @@ class UserEventsController < ApplicationController
 
   def params_valid?
     app           = App.find_by_id(params[:app_id])
-    event_type_id = params[:event_type_id].to_i rescue nil
-    device        = Device.find(params[:udid]) if app.present? && event_type_id.present?
-    device.try(:has_app?, params[:app_id])
+    #Using Integer(n) raises exceptions when n isn't a valid int, instead of .to_i(), which will return 0
+    event_type    = UserEvent::EVENT_TYPE_IDS[Integer(params[:event_type_id])] rescue nil
+    app.present? && event_type.present?
   end
 end

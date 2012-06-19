@@ -24,6 +24,7 @@ module SpecHelpers
   end
 
   def enable_sdb
+    warn 'WARNING: Enabling the real simpledb during tests is slow and prone to errors. Please make your test work with the fake simpledb by not calling `enable_sdb`.'
     RightAws::SdbInterface.unstub!(:new)
     SimpledbResource.reset_connection
   end

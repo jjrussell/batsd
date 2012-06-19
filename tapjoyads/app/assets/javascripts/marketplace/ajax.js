@@ -152,17 +152,17 @@
           success: function () {
             var args = me.argsToArray(arguments);
             args.unshift($$);
-            $(document).trigger(success_event, args);
+            $$.trigger(success_event, args);
           },
           error: function () {
             var args = me.argsToArray(arguments);
             args.unshift($$);
-            $(document).trigger(error_event, args);
+            $$.trigger(error_event, args);
           },
           complete: function () {
             var args = me.argsToArray(arguments);
             args.unshift($$);
-            $(document).trigger(complete_event, args);
+            $$.trigger(complete_event, args);
           }
         });
       });
@@ -198,14 +198,6 @@
     me.fillElements();
     me.ajaxForms();
     me.fetchImages();
-
-    $(document).bind("ajax-success", function (ev, form, data, status, xhr) {
-      notify(_t('shared.success'));
-    });
-
-    $(document).bind("ajax-error", function (ev, form, data, status, xhr) {
-      notify(_t('games.generic_issue'));
-    });
 
     $(window).scroll(Tapjoy.Utils.debounce(me.fetchImages));
     $('.lazy-image-loader').on('ajax-loader-success', me.fetchImages);
