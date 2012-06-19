@@ -23,7 +23,7 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
     end
 
     unless offers_needing_more_funds.empty? && offers_needing_higher_bids.empty? && offers_not_meeting_budget.empty?
-      recipients = partner.users.select { |user| user.receive_campaign_emails? && user.can_email && !user.email.blank? }
+      recipients = partner.users.select { |user| user.receive_campaign_emails? && user.can_email && !user.email.blank? }.collect(&:email)
       sales_rep = partner.sales_rep
       recipients << sales_rep.email if sales_rep.present? && sales_rep.email.present?
       unless recipients.empty?
