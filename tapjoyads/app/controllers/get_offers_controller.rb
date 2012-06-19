@@ -281,7 +281,7 @@ include GetOffersHelper
       @algorithm_options = { :skip_country => true }
     when 'c_offerwall'
       @algorithm = '101'
-      @algorithm_options = { :skip_app => true }
+      @algorithm_options = { :skip_currency => true }
     end
   end
 

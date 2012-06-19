@@ -147,7 +147,7 @@ class OfferList
 
   def get_optimized_offers
     country = @algorithm_options[:skip_country] ? nil : @geoip_data[:primary_country]
-    currency_id = @currency.id
+    currency_id = @algorithm_options[:skip_currency] ? nil : @currency.id
 
     RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@device_type}") do
       OptimizedOfferList.get_offer_list(
