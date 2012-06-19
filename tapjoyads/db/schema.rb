@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120614023145) do
+ActiveRecord::Schema.define(:version => 20120620163623) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -136,6 +136,7 @@ ActiveRecord::Schema.define(:version => 20120614023145) do
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
+    t.text     "screenshots"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
