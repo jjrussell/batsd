@@ -32,7 +32,7 @@ Background: User is an Account Manager
 2. User clicks "View/Edit Video Button"
 3. User clicks "[Add Button]"
 4. User should manually enter a "Name" and "Ordinal" value.
-5. User should select an "Item" marked for "Android", "Windows" or "All" platforms from the list presented.
+5. User should select an App "Item" marked for "Android", "Windows" or "All" platforms from the list presented.
 6. User should check the "Rewarded" and "Enabled" checkboxes
 7. User clicks "Create Video Button"
 8. The user should be redirected to the Video Button list, and the new button should be visible with the values entered.
@@ -42,7 +42,7 @@ Background: User is an Account Manager
 Background: User is a Consumer on an Android Client Device
 
 1. User selects Video Offer from Offerwall
-2. After video completes, User should see a Rewarded action with a reward value.
+2. After video completes, User should see a Rewarded CPI (App Install) action with a reward value.
 3. User clicks rewarded action
 4. User should receive the reward
 
@@ -51,7 +51,7 @@ Background: User is a Consumer on an Android Client Device
 Background: User is a Consumer on an Windows Client Device
 
 1. User selects Video Offer from Offerwall
-2. After video completes, User should see a Rewarded action with a reward value.
+2. After video completes, User should see a Rewarded CPI (App Install) action with a reward value.
 3. User clicks rewarded action
 4. User should receive the reward
 
@@ -60,7 +60,7 @@ Background: User is a Consumer on an Windows Client Device
 Background: User is a Consumer on an iOS Client Device
 
 1. User selects Video Offer from Offerwall
-2. After video completes, User should _not_ see a Rewarded action.
+2. After video completes, User should _not_ see a Rewarded CPI (App Install) action.
 
 ### Test 6: Actions may only exist on one Video Button per Video Offer
 
