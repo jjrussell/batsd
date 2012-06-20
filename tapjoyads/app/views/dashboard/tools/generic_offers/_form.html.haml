@@ -38,4 +38,13 @@
       %th= f.label :instructions
       %td= f.text_area :instructions
     %tr
+      %th= f.label :trigger_action
+      %td
+        = f.select :trigger_action, GenericOffer::TRIGGER_ACTIONS, :include_blank => true
+        = error_message_on @generic_offer, :trigger_action
+        .inline_help Specify the action need to be triggered, please keep this field empty if it is a regular generic offer.
+    %tr.fb_like
+      %th= label_tag :fb_url, "Facebook URL"
+      %td= f.text_field :fb_url, :size => 50
+    %tr
       %td{ :colspan => 2 }= f.submit @generic_offer.new_record? ? 'Create Generic Offer' : 'Update Generic Offer'

@@ -43,13 +43,20 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
-
+  
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'
   match 'offer_completed/gambit' => 'offer_completed#gambit'
   match 'offer_completed/paypal' => 'offer_completed#paypal'
   match 'offer_completed/socialvibe' => 'offer_completed#socialvibe'
-
+  resources :offer_completed do
+    collection do
+      match :boku
+      match :gambit
+      match :paypal
+      match :socialvibe
+    end
+  end
   resource :points do
     collection do
       match :award
@@ -58,6 +65,9 @@ Tapjoyad::Application.routes.draw do
       match :consume_vg
     end
   end
+  match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
+  match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
+
   resources :reengagement_rewards, :only => [:index]
   resources :survey_results, :only => [:new, :create]
   resources :support_requests, :only => [:new, :create] do

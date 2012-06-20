@@ -1,0 +1,13 @@
+= render 'instructions_fb_visit'
+
+- @load_facebook = true
+- @load_facebook_sdk = true
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
+      fbOpts["subscribeEdgeCreate"] = true;
+      if (!fbOpts) { return; }
+      initiateFacebook(fbOpts);
+    });

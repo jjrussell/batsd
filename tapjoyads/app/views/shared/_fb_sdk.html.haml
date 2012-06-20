@@ -1,0 +1,51 @@
+%script{ :type => 'text/javascript', :charset => 'utf-8' }
+  :plain
+    function edgeCreateFire(response) {
+      var cURL = "#{@complete_action_url}";
+      var rURL = "#{@generic_offer.fb_url}";
+      if (cURL == '') { return; }
+      var img = $("<img />").attr('src', cURL);
+      img.load(function(){
+        if (rURL != '') {
+            window.location = rURL;
+         }
+      });
+      img.error(function(){
+         $('body').append(img);
+         if (rURL != '') {
+            window.location = rURL;
+         }
+      });
+    }
+    function initiateFacebook (options, onReady) {
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId  : options.appId,
+          status : true,
+          cookie : true,
+          oauth : true,
+          xfbml : true
+        });
+        if (options.subscribeEdgeCreate) {
+          FB.Event.subscribe('edge.create', function(response) {
+            edgeCreateFire(response);
+          });
+        }
+      };
+
+      (function() {
+        var e = document.createElement('script'); e.async = true;
+        e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
+        document.getElementById('fb-root').appendChild(e);
+      }());
+    }
+
+    function checkPermission (withPerm) {
+      FB.api('/me/permissions', function (response) {
+        if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
+          withPerm();
+        } else {
+          $('.error').text('Please grant us Facebook permission').show();
+        }
+      });
+    }
