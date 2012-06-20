@@ -24,7 +24,7 @@ xml.TapjoyConnectReturnObject do
           if offer.featured_custom_creative?
             xml.CustomCreatives do
               offer.banner_creatives.each do |size|
-                xml.CreativeUrl("#{CLOUDFRONT_URL}/#{offer.banner_creative_path(size, 'jpeg')}",  {:size => size})
+                xml.CreativeUrl(offer.banner_creative_url(size), { :size => size })
               end
             end
           end
