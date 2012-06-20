@@ -162,15 +162,14 @@ class Mc
 
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
-      begin
-        log_info_with_time("Wrote to memcache - distributed") do
-          @@distributed_caches.each do |cache|
+      log_info_with_time("Wrote to memcache - distributed") do
+        @@distributed_caches.each do |cache|
+          begin
             Mc.put(key, value, clone, time, cache)
+          rescue Exception => e
+            # One of the servers didn't work, we still want the key though
           end
         end
-      rescue Exception => e
-        Mc.distributed_delete(key, clone)
-        raise e
       end
     end
   end
