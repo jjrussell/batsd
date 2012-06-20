@@ -1,7 +1,7 @@
 class Job::MasterUpdateCloudwatchRpmController < Job::JobController
 
   def index
-    rpms = $redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    rpms = $redis.mget(*$redis.keys('request_counters:*')).map(&:to_i)
     mean = rpms.mean.to_i
 
     metrics = [
