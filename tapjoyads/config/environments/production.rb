@@ -79,7 +79,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
-API_URL_EXT = local_config['api_url'] || 'https://ws-ext.tapjoyads.com'
+API_URL_EXT = local_config['api_url_ext'] || 'https://ws-ext.tapjoyads.com'
 
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
