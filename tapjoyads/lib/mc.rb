@@ -162,16 +162,18 @@ class Mc
 
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
-      begin
-        log_info_with_time("Wrote to memcache - distributed") do
-          @@distributed_caches.each do |cache|
+      errors = []
+      log_info_with_time("Wrote to memcache - distributed") do
+        @@distributed_caches.each do |cache|
+          begin
             Mc.put(key, value, clone, time, cache)
+          rescue Exception => e
+            errors << e
           end
         end
-      rescue Exception => e
-        Mc.distributed_delete(key, clone)
-        raise e
       end
+
+      raise errors.first if errors.length == @@distributed_caches.length
     end
   end
 
