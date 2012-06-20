@@ -213,7 +213,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_test_device_ids
-    Set.new(test_devices.split(';'))
+    test_devices
   end
   memoize :get_test_device_ids
 
@@ -313,7 +313,10 @@ class Currency < ActiveRecord::Base
   end
 
   def sanitize_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '').gsub(/;{2,}/, ';').downcase
+    self.test_devices = test_devices.map do |val|
+      val = val.gsub(/\s/, '')
+      val unless val.empty?
+    end
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 

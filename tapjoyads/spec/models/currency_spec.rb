@@ -612,16 +612,23 @@ describe Currency do
       it 'encodes field' do
         devs = ['a', 'b']
         @currency.test_devices = devs
-        @currency.test_devices.should == devs.join(';')
+        @currency.test_devices.should == Set.new(devs)
       end
     end
+
     context 'with string as arg' do
       it 'stores string as field' do
         devs = ['a', 'b']
         @currency.test_devices = devs.join(';')
-        @currency.test_devices.should == devs.join(';')
-        @currency.test_devices = 'a'
-        @currency.test_devices.should == 'a'
+        @currency.test_devices.should == Set.new(devs)
+      end
+    end
+
+    context 'with Set as arg' do
+      it 'stores string as field' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs
+        @currency.test_devices.should == devs
       end
     end
   end
