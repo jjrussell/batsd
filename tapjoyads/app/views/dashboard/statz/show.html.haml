@@ -34,7 +34,7 @@
   - property_row('Tapjoy Enabled', @offer.tapjoy_enabled?, nil, @offer.tapjoy_enabled?.to_s)
   - property_row('User Enabled', @offer.user_enabled?, nil, @offer.user_enabled?.to_s)
   - property_row('SDK-less Enabled', @offer.sdkless?, nil, @offer.sdkless?.to_s)
-  - property_row('Disabled Resons', @offer.get_disabled_reasons.join('; '), nil, '')
+  - property_row('Disabled Reasons', @offer.get_disabled_reasons.join('; '), '', 'warning')
   - property_row('Tracking Offer', @offer.tracking_for.present?, false, @offer.tracking_for.present?.to_s)
   - property_row('Bid', number_to_currency(@offer.bid / 100.0))
   - property_row('Payment', number_to_currency(@offer.payment / 100.0))
@@ -60,7 +60,7 @@
   - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
   - property_row('Daily budget', @offer.daily_budget, 0)
   - property_row('Overall budget', @offer.overall_budget, 0)
-  - property_row('Show rate', "%.1f%" % ((@offer.show_rate || 0) * 100.0), "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
+  - property_row('Show rate', "#{number_to_percentage(((@offer.show_rate || 0) * 100.0), :precision => 1)}#{' - ' << label_tag('show_rate_reasons', link_to('Show Reasons','', :id => :view_show_rate_reasons), :id => 'show_rate_reasons') if @offer.show_rate < 0.001}", "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
   - property_row('Min CVR', @offer.min_conversion_rate, nil)
   - property_row('Countries', @offer.countries, '')
   - property_row('Regions', @offer.regions, '')
@@ -234,6 +234,18 @@
         url: "#{support_request_reward_ratio_statz_url(@offer.id)}",
         success: function(html) {
           $('#srr_ratio').text(html);
+        }
+      });
+      return false;
+    });
+    $('#view_show_rate_reasons').click(function() {
+      $('#view_show_rate_reasons').hide();
+      $('#show_rate_reasons').text("Calculating...");
+      $.ajax({
+        type: "GET",
+        url: "#{show_rate_reasons_statz_url(@offer.id)}",
+        success: function(html) {
+          $('#show_rate_reasons').text(html);
         }
       });
       return false;

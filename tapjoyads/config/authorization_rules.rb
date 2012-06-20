@@ -96,7 +96,7 @@ authorization do
   end
 
   role :reporting do
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons ]
     has_permission_on :dashboard_search, :to => [ :offers, :brands ]
   end
 
@@ -119,7 +119,7 @@ authorization do
     includes :customer_service
     includes :file_sharer
     has_permission_on :dashboard_users, :to => [ :approve ]
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons]
     has_permission_on :dashboard_search, :to => [ :offers, :partners, :users, :currencies ]
     has_permission_on :dashboard_tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :dashboard_tools_enable_offer_requests, :to => [ :index, :update ]
