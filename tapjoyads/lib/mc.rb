@@ -116,6 +116,8 @@ class Mc
           Mc.add(key, value, clone, 1.week, cache)
         rescue Memcached::NotStored
           # Refilling a cache server, someone must have done it already
+        rescue Memcached::ServerError
+          # This cache server probably can't fit the key, ignore for now
         end
       end
     end
