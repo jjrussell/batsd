@@ -1,6 +1,6 @@
 Tapjoyad::Application.routes.draw do
   namespace :job do
-    match 'internal_update_cloudwatch_rpm(/index)' => 'internal_update_cloudwatch_rpm#index'
+    match 'master_update_cloudwatch_rpm(/index)' => 'master_update_cloudwatch_rpm#index'
     match 'internal_cache_optimized_offers(/index)' => 'internal_cache_optimized_offers#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'
     match 'master_android_app_ranks(/index)' => 'master_android_app_ranks#index'
