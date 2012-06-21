@@ -6,6 +6,9 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+      var url = "#{@impression_tracking_url.first}",
+          src = '<iframe src="'+ url +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      $("body").append(src);
       var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
       fbOpts["subscribeEdgeCreate"] = true;
       if (!fbOpts) { return; }

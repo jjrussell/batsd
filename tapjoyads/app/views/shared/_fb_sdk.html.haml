@@ -1,22 +1,16 @@
 %script{ :type => 'text/javascript', :charset => 'utf-8' }
   :plain
     function edgeCreateFire(response) {
-      var cURL = "#{@complete_action_url}";
-      var rURL = "#{@generic_offer.fb_url}";
-      if (cURL == '') { return; }
-      var img = $("<img />").attr('src', cURL);
-      img.load(function(){
-        if (rURL != '') {
-            window.location = rURL;
-         }
-      });
-      img.error(function(){
-         $('body').append(img);
-         if (rURL != '') {
-            window.location = rURL;
-         }
-      });
+      var cURL = "#{@conversion_tracking_url.first}";
+      var rURL = "#{@complete_action_url}";
+      if (cURL != '' && rURL != '') {
+        $("body").append('<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+        setTimeout(function() {
+          window.location = rURL;
+        }, 100);
+      }
     }
+    
     function initiateFacebook (options, onReady) {
       window.fbAsyncInit = function() {
         FB.init({

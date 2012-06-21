@@ -10,8 +10,8 @@ class OfferTriggeredActionsController < ApplicationController
   end
 
   def fb_visit
-    @generic_offer = GenericOffer.find_by_id params[:id]
-    @fb_url = @generic_offer.fb_url
+    @impression_tracking_url = @offer.impression_tracking_urls
+    @conversion_tracking_url = @offer.conversion_tracking_urls
   end
 
   private
