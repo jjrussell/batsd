@@ -23,7 +23,7 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
     end
 
     unless offers_needing_more_funds.empty? && offers_needing_higher_bids.empty? && offers_not_meeting_budget.empty?
-      recipients = partner.users.select { |user| user.receive_campaign_emails? && user.can_email && !user.email.blank? }
+      recipients = partner.users.select { |user| user.receive_campaign_emails? && user.can_email && !user.email.blank? }.collect(&:email)
       sales_rep = partner.sales_rep
       recipients << sales_rep.email if sales_rep.present? && sales_rep.email.present?
       unless recipients.empty?
@@ -37,7 +37,6 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
           TapjoyMailer.deliver_campaign_status(recipients, partner, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
         rescue AWS::SimpleEmailService::Errors::MessageRejected => e
           raise unless e.to_s =~ /Address blacklisted/
-          recipients = mail.to.to_a
           # TODO: reset the can_email flag to false on this user
           raise e.inspect
         end

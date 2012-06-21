@@ -164,6 +164,7 @@ class Games::HomepageController < GamesController
 
   def params_id
     if params[:eid].present?
+      params[:eid].strip!
       if params[:eid] =~ UUID_REGEX
         params[:eid]
       else
