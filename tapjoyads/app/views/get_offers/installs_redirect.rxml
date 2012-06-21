@@ -21,6 +21,13 @@ xml.TapjoyConnectReturnObject do
           xml.EarnCurrencyText featured_offer_earn_currency_text(offer, @currency, params[:display_multiplier])
           xml.ActionText       featured_offer_action_text(offer)
           xml.CustomCreative   offer.featured_custom_creative?
+          if offer.featured_custom_creative?
+            xml.CustomCreatives do
+              offer.banner_creatives.each do |size|
+                xml.CreativeUrl(offer.banner_creative_url(size), { :size => size })
+              end
+            end
+          end
           xml.SkipText         t('text.featured.skip')
         end
       end
