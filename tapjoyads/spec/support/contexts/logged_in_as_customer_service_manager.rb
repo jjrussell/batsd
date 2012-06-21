@@ -1,4 +1,4 @@
-shared_context "logged in as a customer service manager" do
+shared_context "logged in as customer service manager" do
   let(:user) { user = FactoryGirl.create(:customer_service_manager)
               FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [user])
               user }
