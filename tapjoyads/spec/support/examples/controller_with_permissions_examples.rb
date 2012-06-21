@@ -4,10 +4,8 @@ shared_examples "a controller with permissions" do
       let(:params) { map[:params].present? ? map[:params] : {} }
       
       map[:permissions].each_pair do |user_type, permission|
-        context_name = "logged in as #{user_type.to_s.humanize.downcase}"
-        
-        context "when #{context_name}" do
-          include_context context_name
+        context "when logged in as #{user_type.to_s.humanize.downcase} user" do
+          include_context "logged in as user type", user_type
           if permission
             it "allows access" do
               get action, params

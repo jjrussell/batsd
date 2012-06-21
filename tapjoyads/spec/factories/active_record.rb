@@ -55,7 +55,7 @@ FactoryGirl.define do
     end
   end
 
-  factory :role_mgr_user, :parent => :user do
+  factory :role_manager_user, :parent => :user do
     after_build do |mgr|
       role = UserRole.find_or_create_by_name('role_mgr', :employee => true)
       mgr.user_roles << role

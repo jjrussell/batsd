@@ -5,9 +5,27 @@ describe Dashboard::Tools::GamersController do
   PERMISSIONS_MAP = {
     :index => {
       :permissions => {
-        :account_manager        => true,
-        :customer_service_user  => true,
-        :partner                => false
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service_manager => true,
+        :customer_service         => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_change           => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
       }
     },
     
@@ -16,9 +34,27 @@ describe Dashboard::Tools::GamersController do
         :id => FactoryGirl.create(:gamer).id
       },
       :permissions => {
-        :account_manager        => true,
-        :customer_service_user  => true,
-        :partner                => false
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service_manager => true,
+        :customer_service         => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_change           => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
       }
     }
   } unless defined? PERMISSIONS_MAP

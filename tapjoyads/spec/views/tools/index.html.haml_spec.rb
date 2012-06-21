@@ -58,7 +58,7 @@
 
   #context 'with a role manager user' do
     #before :each do
-      #user = FactoryGirl.create :role_mgr_user
+      #user = FactoryGirl.create :role_manager_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
