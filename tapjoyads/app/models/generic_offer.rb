@@ -15,7 +15,6 @@
 #  instructions     :text
 #  category         :string(255)
 #  trigger_action   :string(255)
-#  fb_url           :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base
