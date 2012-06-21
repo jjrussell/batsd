@@ -19,39 +19,42 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       return
     end
 
-    # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
-    if currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
-      click.block_reason = "InvalidPlaydomUserId"
+    # TODO: may have multiple conversion attempts per click, so should not use the reward_key as key for conversion attempt
+    attempt = ConversionAttempt.new(:key => click.reward_key)
+    attempt.reward_type            = click.type
+    attempt.publisher_app_id       = click.publisher_app_id
+    attempt.advertiser_app_id      = click.advertiser_app_id
+    attempt.displayer_app_id       = click.displayer_app_id
+    attempt.advertiser_offer_id    = click.offer_id
+    attempt.currency_id            = click.currency_id
+    attempt.publisher_user_id      = click.publisher_user_id
+    attempt.advertiser_amount      = click.advertiser_amount
+    attempt.publisher_amount       = click.publisher_amount
+    attempt.displayer_amount       = click.displayer_amount
+    attempt.currency_reward        = click.currency_reward
+    attempt.tapjoy_amount          = click.tapjoy_amount
+    attempt.source                 = click.source
+    attempt.udid                   = click.udid
+    attempt.country                = click.country
+    attempt.viewed_at              = click.viewed_at
+    attempt.clicked_at             = click.clicked_at
+    attempt.click_key              = click.key
+    attempt.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
+    attempt.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
+    attempt.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
+    attempt.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
+    attempt.spend_share            = click.spend_share || currency.get_spend_share(offer)
+    attempt.mac_address            = click.mac_address
+    attempt.save
+
+    checker = ConversionChecker.new(click, attempt)
+    unless checker.acceptable_risk?
+      click.block_reason = checker.risk_message
       click.save
+      attempt.block_reason = checker.risk_message
+      attempt.resolution = 'blocked'
+      attempt.save
       return
-    end
-
-    publisher_user = PublisherUser.for_click(click)
-    unless publisher_user.update!(click.udid)
-      click.block_reason = "TooManyUdidsForPublisherUserId"
-      click.save
-      return
-    end
-
-    device = Device.new(:key => click.udid)
-    other_devices = (publisher_user.udids - [ click.udid ]).map { |udid| Device.new(:key => udid) }
-
-    banned_devices = (other_devices + [ device ]).select(&:banned?)
-    if banned_devices.present?
-      click.block_reason = "Banned (UDID=#{banned_devices.map(&:key).join ', '})"
-      click.save
-      return
-    end
-
-    # Do not reward if user has installed this app for the same publisher user id on another device
-    unless offer.multi_complete? || offer.video_offer?
-      other_devices.each do |d|
-        if d.has_app?(click.advertiser_app_id)
-          click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})"
-          click.save
-          return
-        end
-      end
     end
 
     unless click.reward_key
@@ -105,6 +108,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     rescue Simpledb::ExpectedAttributeError => e
       return
     end
+    checker.process_conversion(reward)
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward.key)
@@ -117,13 +121,15 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     click.put('installed_at', installed_at_epoch)
     click.save
+    attempt.resolution = 'converted'
+    attempt.save
 
     begin
       click.update_partner_live_dates!
     rescue => e
       Rails.logger.error "Failed to update partner live dates for click #{click}: #{e.class} #{e.message}"
     end
-    
+
     device.set_last_run_time(click.advertiser_app_id)
     device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
     device.save
@@ -150,5 +156,4 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.click_key         = reward.click_key
     web_request.save
   end
-
 end

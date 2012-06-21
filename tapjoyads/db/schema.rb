@@ -838,6 +838,7 @@ ActiveRecord::Schema.define(:version => 20120620163623) do
     t.boolean  "payout_threshold_confirmation",                                             :default => false,     :null => false
     t.datetime "live_date"
     t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
+    t.boolean  "enable_risk_management",                                                    :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
