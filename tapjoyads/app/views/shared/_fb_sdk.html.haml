@@ -4,7 +4,8 @@
       var cURL = "#{@conversion_tracking_url.first}";
       var rURL = "#{@complete_action_url}";
       if (cURL != '' && rURL != '') {
-        $("body").append('<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+        var src = '<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+        $("body").append(src);
         setTimeout(function() {
           window.location = rURL;
         }, 100);
