@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Dashboard::Tools::FeaturedContentsController do
   before :each do
     activate_authlogic
-    @admin = FactoryGirl.create(:admin)
+    @admin = FactoryGirl.create(:admin_user)
     @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
     @admin.partners << @partner
     login_as(@admin)

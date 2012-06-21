@@ -7,14 +7,14 @@ FactoryGirl.define do
     country  'earth'
   end
 
-  factory :admin, :parent => :user do
+  factory :admin_user, :parent => :user do
     after_build do |admin|
       role = UserRole.find_or_create_by_name('admin', :employee => true)
       admin.user_roles << role
     end
   end
 
-  factory :account_mgr_user, :parent => :user do
+  factory :account_manager_user, :parent => :user do
     association :current_partner, :factory => :partner
     after_build do |account_mgr|
       role = UserRole.find_or_create_by_name('account_mgr', :employee => true)

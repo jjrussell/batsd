@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Dashboard::DashboardController do
   before :each do
     activate_authlogic
-    @admin = FactoryGirl.create(:admin)
+    @admin = FactoryGirl.create(:admin_user)
     @user  = FactoryGirl.create(:user)
     @admin_partner = FactoryGirl.create(:partner, :users => [ @admin ])
     @user_partner  = FactoryGirl.create(:partner, :users => [ @user ])

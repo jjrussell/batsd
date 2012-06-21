@@ -31,7 +31,7 @@ describe User do
 
     context 'given an admin user' do
       before :each do
-        @admin = FactoryGirl.create(:admin)
+        @admin = FactoryGirl.create(:admin_user)
       end
 
       it 'has the partner role' do

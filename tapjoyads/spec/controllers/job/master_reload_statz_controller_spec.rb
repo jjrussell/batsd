@@ -266,8 +266,8 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      admin_user = FactoryGirl.create(:admin)
-      admin_user2 = FactoryGirl.create(:admin, :email => 'admin0123@tapjoy.com')
+      admin_user = FactoryGirl.create(:admin_user)
+      admin_user2 = FactoryGirl.create(:admin_user, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user

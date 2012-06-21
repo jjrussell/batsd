@@ -7,7 +7,7 @@ describe Games::DevicesController do
 
   context 'when linking device' do
     before :each do
-      user = FactoryGirl.create(:admin)
+      user = FactoryGirl.create(:admin_user)
       partner = FactoryGirl.create(:partner, :users => [user])
       generic_offer_for_invite = FactoryGirl.create(:generic_offer, :partner => partner, :url => 'http://ws.tapjoyads.com/healthz?advertiser_app_id=TAPJOY_GENERIC_INVITE')
 
