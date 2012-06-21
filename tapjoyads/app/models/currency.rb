@@ -86,7 +86,6 @@ class Currency < ActiveRecord::Base
   after_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
-  after_create :create_deeplink_offer
   after_update  :approve_on_tapjoy_enabled
   after_commit :cache_by_app_id, :on => :create
   after_commit :cache_by_app_id, :on => :update

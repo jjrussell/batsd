@@ -12,7 +12,7 @@ describe Dashboard::Tools::UsersController do
 
     context 'when unauthorized' do
       before :each do
-        user = Factory :user
+        user = FactoryGirl.create :user
         login_as user
         get(:index)
       end
@@ -24,8 +24,8 @@ describe Dashboard::Tools::UsersController do
 
     context 'when admin' do
       before :each do
-        @user = Factory :admin
-        @user.current_partner = Factory :partner
+        @user = FactoryGirl.create :admin
+        @user.current_partner = FactoryGirl.create :partner
         login_as @user
         get(:index)
       end
@@ -39,7 +39,7 @@ describe Dashboard::Tools::UsersController do
   describe '#show' do
     context 'when unauthorized' do
       before :each do
-        user = Factory :user
+        user = FactoryGirl.create :user
         login_as user
         get(:show, :id => user.id)
       end
@@ -51,8 +51,8 @@ describe Dashboard::Tools::UsersController do
 
     context 'when role manager' do
       before :each do
-        user = Factory :role_mgr_user
-        user.current_partner = Factory :partner
+        user = FactoryGirl.create :role_mgr_user
+        user.current_partner = FactoryGirl.create :partner
         login_as user
         get(:show, :id => user.id)
       end
@@ -69,8 +69,8 @@ describe Dashboard::Tools::UsersController do
 
     context 'when admin' do
       before :each do
-        user = Factory :admin
-        user.current_partner = Factory :partner
+        user = FactoryGirl.create :admin
+        user.current_partner = FactoryGirl.create :partner
         login_as user
         get(:show, :id => user.id)
       end

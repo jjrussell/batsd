@@ -1,4 +1,7 @@
 module Offer::UrlGeneration
+  def router
+    Rails.application.routes.url_helpers
+  end
 
   def destination_url(options)
     if item_type != 'VideoOffer' && instructions.present?
@@ -63,6 +66,7 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {
@@ -88,8 +92,11 @@ module Offer::UrlGeneration
         :publisher_user_id  => publisher_user_id
       }
       final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+    when 'DeeplinkOffer'
+      params = { :udid => udid, :id => currency.id, :click_key => click_key }
+      data=ObjectEncryptor.encrypt(params)
+      final_url = "#{WEBSITE_URL}/earn?data=#{data}"
     end
-
     final_url
   end
 
@@ -176,19 +183,6 @@ module Offer::UrlGeneration
 
   def preview_display_ad_image_url(publisher_app_id, width, height)
     display_ad_image_url(publisher_app_id, width, height, nil, nil, true, false, true)
-  end
-
-  def fullscreen_ad_image_url(publisher_app_id, bust_cache = false, dimensions = nil)
-    if dimensions.present? && display_custom_banner_for_size?(dimensions)
-      url = "#{CLOUDFRONT_URL}/#{banner_creative_path(size)}"
-    else
-      url = "#{API_URL}/fullscreen_ad/image?publisher_app_id=#{publisher_app_id}&offer_id=#{id}"
-    end
-    url << "&ts=#{Time.now.to_i}" if bust_cache
-    options.each do |key,value|
-      url << "&#{key}=#{value}"
-    end
-    url
   end
 
   def fullscreen_ad_url(options)

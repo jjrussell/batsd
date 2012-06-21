@@ -131,7 +131,6 @@ $(function($) {
         });
       },
       error: function() {
-        alert('Could not generate reports. Check the date range and try again.');
         $('#change_date').children().attr('disabled', false);
       },
       complete: function() {

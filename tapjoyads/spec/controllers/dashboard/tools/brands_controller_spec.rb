@@ -8,7 +8,7 @@ describe Dashboard::Tools::BrandsController do
   describe '#index' do
     context 'when normal user' do
       before :each do
-        @user = Factory(:user)
+        @user = FactoryGirl.create(:user)
         login_as(@user)
       end
 
@@ -21,7 +21,7 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       it 'will succeed' do
-        @user = Factory(:account_mgr_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
         get(:index)
         response.should be_success
@@ -31,12 +31,12 @@ describe Dashboard::Tools::BrandsController do
 
   describe '#create' do
     before :each do
-      @brand = Factory(:brand)
+      @brand = FactoryGirl.create(:brand)
     end
 
     context 'when normal user' do
       before :each do
-        @user = Factory(:user)
+        @user = FactoryGirl.create(:user)
         login_as(@user)
       end
 
@@ -52,7 +52,7 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       before :each do
-        @user = Factory(:account_mgr_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
       end
 
@@ -81,7 +81,7 @@ describe Dashboard::Tools::BrandsController do
   describe '#show' do
     context 'when normal user' do
       before :each do
-        @user = Factory(:user)
+        @user = FactoryGirl.create(:user)
         login_as(@user)
       end
 
@@ -98,10 +98,10 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       before :each do
-        @user = Factory(:account_mgr_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
-        @brand = Factory(:brand)
-        @offer = Factory(:app).primary_offer
+        @brand = FactoryGirl.create(:brand)
+        @offer = FactoryGirl.create(:app).primary_offer
         @brand.stub(:offers).and_return([@offer])
       end
 

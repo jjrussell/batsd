@@ -1,10 +1,10 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::Social::TwitterController do
   before :each do
     activate_authlogic
 
-    @gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
     login_as(@gamer)
 
     @fake_consumer = mock('consumer')

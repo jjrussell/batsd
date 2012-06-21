@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::MasterReloadStatzController do
   let(:stats_hash) do
@@ -22,7 +22,7 @@ describe Job::MasterReloadStatzController do
 
   describe '#index' do
     it 'saves memcache values' do
-      100.times { Factory(:email_offer) }
+      100.times { FactoryGirl.create(:email_offer) }
       stub_vertica
       get(:index)
 
@@ -94,28 +94,28 @@ describe Job::MasterReloadStatzController do
 
     it 'generates combined ranks' do
       apps = [
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'iphone'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'iphone'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'android'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'android'),
       ]
 
       app_metadatas = [
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'ios.free',
           :price => 0),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'ios.paid',
           :price => 1),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'android.free',
           :store_name => 'Google Play',
           :price => 0),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'android.paid',
           :store_name => 'Google Play',
           :price => 1),
@@ -149,7 +149,7 @@ describe Job::MasterReloadStatzController do
 
   describe '#partner_index' do
     before :each do
-      @partner = Factory(:partner)
+      @partner = FactoryGirl.create(:partner)
 
       @mock_appstats = mock()
       @mock_appstats.stub(:stats).and_return(stats_hash)
@@ -266,8 +266,8 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      admin_user = Factory(:admin)
-      admin_user2 = Factory(:admin, :email => 'admin0123@tapjoy.com')
+      admin_user = FactoryGirl.create(:admin)
+      admin_user2 = FactoryGirl.create(:admin, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user
@@ -383,7 +383,7 @@ def stub_vertica(start_time = nil, end_time = nil)
     }
   end
 
-  @worst_offer = Factory(:app).primary_offer
+  @worst_offer = FactoryGirl.create(:app).primary_offer
   stats_to_be_cached << {
     'offer_id' => @worst_offer.id,
     'spend' => 0,

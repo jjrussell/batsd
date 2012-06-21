@@ -7,8 +7,8 @@ describe OfferList do
 
   context 'with a bad device' do
     before :each do
-      @banned_device = Factory(:device, :banned => true)
-      @opted_out_device = Factory(:device, :opted_out => true)
+      @banned_device = FactoryGirl.create(:device, :banned => true)
+      @opted_out_device = FactoryGirl.create(:device, :opted_out => true)
       RailsCache.should_receive(:get_and_put).never
     end
 
@@ -25,7 +25,7 @@ describe OfferList do
 
   context 'with a non-Tapjoy currency' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @currency.should_receive(:tapjoy_enabled?).and_return(false)
       RailsCache.should_receive(:get_and_put).never
     end
@@ -38,7 +38,7 @@ describe OfferList do
 
   context 'with an app' do
     before :each do
-      @app = Factory(:app, :platform => 'windows')
+      @app = FactoryGirl.create(:app, :platform => 'windows')
     end
 
     it 'overwrites the platform_name parameter with the app platform name' do
@@ -83,7 +83,7 @@ describe OfferList do
 
   context 'with currency set to hide_rewarded_app_installs' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @currency.stub(:hide_rewarded_app_installs_for_version?).and_return(true)
     end
 
@@ -102,17 +102,17 @@ describe OfferList do
   describe '#get_offers' do
     before :each do
       @offers = []
-      10.times { @offers << Factory(:video_offer).primary_offer }
+      10.times { @offers << FactoryGirl.create(:video_offer).primary_offer }
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(@offers)
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @app = @currency.app
-      @base_params = {:device => Factory(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
+      @base_params = {:device => FactoryGirl.create(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
     end
 
     context 'with a bad device' do
       before :each do
-        @banned_device = Factory(:device, :banned => true)
-        @opted_out_device = Factory(:device, :opted_out => true)
+        @banned_device = FactoryGirl.create(:device, :banned => true)
+        @opted_out_device = FactoryGirl.create(:device, :opted_out => true)
       end
 
       it 'returns no offers for a banned device' do
@@ -164,7 +164,7 @@ describe OfferList do
 
       context 'with a rating offer' do
         before :each do
-          @rating = Factory(:rating_offer)
+          @rating = FactoryGirl.create(:rating_offer)
           @app.enabled_rating_offer_id = @rating.id
           Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
           @rating.primary_offer.stub(:postcache_reject?).and_return(false)
@@ -196,7 +196,7 @@ describe OfferList do
         before :each do
           @deeplink = @currency.deeplink_offer
           Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
-          @rating = Factory(:rating_offer)
+          @rating = FactoryGirl.create(:rating_offer)
 
           @app.enabled_rating_offer_id = @rating.id
           Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)

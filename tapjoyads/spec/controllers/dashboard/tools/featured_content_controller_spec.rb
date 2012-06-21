@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Dashboard::Tools::FeaturedContentsController do
   before :each do
     activate_authlogic
-    @admin = Factory(:admin)
-    @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
+    @admin = FactoryGirl.create(:admin)
+    @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
     @admin.partners << @partner
     login_as(@admin)
   end
@@ -24,8 +24,8 @@ describe Dashboard::Tools::FeaturedContentsController do
           :start_date               => @start_date.to_s,
           :end_date                 => @end_date.to_s,
           :weight                   => 1,
-          :tracking_source_offer_id => Factory(:app).primary_offer.id,
-          :author                   => Factory(:employee),
+          :tracking_source_offer_id => FactoryGirl.create(:app).primary_offer.id,
+          :author                   => FactoryGirl.create(:employee),
           :button_url               => 'https://www.tapjoy.com',
         }
       }
@@ -97,7 +97,7 @@ describe Dashboard::Tools::FeaturedContentsController do
 
   describe '#edit' do
     before :each do
-      @featured_content = Factory(:featured_content)
+      @featured_content = FactoryGirl.create(:featured_content)
       get 'edit', :id => @featured_content.id
     end
 
@@ -114,7 +114,7 @@ describe Dashboard::Tools::FeaturedContentsController do
 
   describe '#update' do
     before :each do
-      @featured_content = Factory(:featured_content)
+      @featured_content = FactoryGirl.create(:featured_content)
 
       @options = {
         :id                         => @featured_content.id,
@@ -187,7 +187,7 @@ describe Dashboard::Tools::FeaturedContentsController do
 
   describe '#destroy' do
     before :each do
-      @featured_content = Factory(:featured_content)
+      @featured_content = FactoryGirl.create(:featured_content)
       @tracking_offer_id = @featured_content.tracking_offer.id
     end
 

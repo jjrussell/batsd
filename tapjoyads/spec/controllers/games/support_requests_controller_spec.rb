@@ -4,13 +4,13 @@ describe Games::SupportRequestsController do
   before :each do
     activate_authlogic
 
-    @device = Factory(:device)
+    @device = FactoryGirl.create(:device)
 
-    @click1 = Factory(:click,           :udid => @device.key,
+    @click1 = FactoryGirl.create(:click,           :udid => @device.key,
                                         :clicked_at => 1.hour.ago)
-    @click2 = Factory(:click,           :udid => @device.key,
+    @click2 = FactoryGirl.create(:click,           :udid => @device.key,
                                         :clicked_at => 1.hour.ago)
-    @click1_dupe_old = Factory(:click,  :udid => @device.key,
+    @click1_dupe_old = FactoryGirl.create(:click,  :udid => @device.key,
                                         :currency_id => @click1.currency_id,
                                         :advertiser_app_id => @click1.advertiser_app_id,
                                         :publisher_app_id => @click1.publisher_app_id,
@@ -21,7 +21,7 @@ describe Games::SupportRequestsController do
     Click.stub(:select_all).and_return(results)
     GamesMailer.stub(:contact_support).and_return(Object.new.tap { |obj| obj.stub(:deliver) })
 
-    @gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
     @gamer.gamer_profile = GamerProfile.create(:facebook_id => '0', :gamer => @gamer)
     @gamer.devices << GamerDevice.new(:device => @device)
 
@@ -136,7 +136,7 @@ describe Games::SupportRequestsController do
 
         it "limits the number of clicks in the list to 20" do
           results = [ @click1, @click1_dupe_old, @click2 ]
-          20.times { |i| results << Factory(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
+          20.times { |i| results << FactoryGirl.create(:click, :udid => @device.key, :clicked_at => 1.hour.ago) }
           Click.stub(:select_all).and_return(results) # results.size is 23
 
           get :unresolved_clicks, @params

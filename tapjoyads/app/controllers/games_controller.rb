@@ -12,6 +12,26 @@ class GamesController < ApplicationController
 
   protected
 
+  def set_show_partners_bar_in_footer
+    @show_partners_bar_in_footer = true
+  end
+
+  def set_exclude_social_from_submenu
+    @exclude_social_from_submenu = true
+  end
+
+  def set_exclude_help_from_submenu
+    @exclude_help_from_submenu = true
+  end
+
+  def set_show_nav_bar_quad_menu
+    @show_nav_bar_quad_menu = true
+  end
+
+  def set_show_nav_bar_login_button
+    @show_nav_bar_login_button = true
+  end
+
   def get_friends_info(ids)
     Gamer.find_all_by_id(ids).map do |friend|
       {
@@ -28,7 +48,7 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+    I18n.locale = (get_language_codes.concat(http_accept_language).push(I18n.default_locale.to_s) & I18n.available_locales.map(&:to_s)).first
   end
 
   def get_locale_filename
@@ -38,7 +58,6 @@ class GamesController < ApplicationController
 
   def get_language_codes
     return [] unless params[:language_code]
-
     code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
@@ -206,6 +225,7 @@ class GamesController < ApplicationController
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
+      options[:state] = params[:state] if params[:state].present?
       if request.xhr?
         render :json=> "Unauthorized", :status => 401
       else
@@ -216,6 +236,8 @@ class GamesController < ApplicationController
 
   def render_login_page
     @gamer_session ||= GamerSession.new
+    @login_form_class_name = "show" if params[:state]=='login-form'
+    @non_login_form_class_name = "hide" if params[:state]=='login-form'
     render 'games/gamer_sessions/new'
   end
 
@@ -238,10 +260,13 @@ class GamesController < ApplicationController
   end
 
   def current_device_id
-    if session[:current_device_id]
+    if params[:udid]
+      @current_device_id = params[:udid]
+      session[:current_device_id] = ObjectEncryptor.encrypt(@current_device_id) if @current_device_id.present?
+    elsif session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
     end
-    if @current_device_id.nil?
+    if @current_device_id.nil? && current_device_id_cookie
       device_id_cookie = current_device_id_cookie
       @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
       @current_device_id ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.present?

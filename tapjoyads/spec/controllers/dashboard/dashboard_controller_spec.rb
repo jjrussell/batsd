@@ -3,16 +3,16 @@ require 'spec_helper'
 describe Dashboard::DashboardController do
   before :each do
     activate_authlogic
-    @admin = Factory(:admin)
-    @user  = Factory(:user)
-    @admin_partner = Factory(:partner, :users => [ @admin ])
-    @user_partner  = Factory(:partner, :users => [ @user ])
+    @admin = FactoryGirl.create(:admin)
+    @user  = FactoryGirl.create(:user)
+    @admin_partner = FactoryGirl.create(:partner, :users => [ @admin ])
+    @user_partner  = FactoryGirl.create(:partner, :users => [ @user ])
   end
 
   describe '#find_app' do
     before :each do
-      @user_app  = Factory(:app, :partner => @user_partner)
-      @admin_app = Factory(:app, :partner => @admin_partner)
+      @user_app  = FactoryGirl.create(:app, :partner => @user_partner)
+      @admin_app = FactoryGirl.create(:app, :partner => @admin_partner)
     end
 
     context "when given a regular user" do
@@ -21,13 +21,12 @@ describe Dashboard::DashboardController do
       end
 
       it 'finds my app' do
-        @controller.send(:find_app, @user_app.id).should  == @user_app
+        @controller.send(:find_app, @user_app.id).should == @user_app
       end
 
       it 'cannot find other apps' do
-        expect {
-          @controller.send(:find_app, @admin_app.id)
-        }.to raise_exception(ActiveRecord::RecordNotFound)
+        @controller.stub(:redirect_to)
+        @controller.send(:find_app, @admin_app.id).should be_nil
       end
     end
 

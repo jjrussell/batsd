@@ -1,10 +1,19 @@
 require 'spec_helper'
 
 describe Games::HomepageController do
+
+  let(:app) { FactoryGirl.create(:app) }
+  let(:currency) { FactoryGirl.create(:currency) }
+  let(:gamer) { FactoryGirl.create(:gamer) }
+  let(:offer) { FactoryGirl.create(:app).primary_offer }
+  let(:app_metadata) { offer.app.primary_app_metadata }
+
   before :each do
     activate_authlogic
-    @gamer = Factory(:gamer)
-    @controller.stub(:current_gamer).and_return(@gamer)
+    @controller.stub(:current_gamer).and_return(gamer)
+  end
+  after :all do
+    I18n.default_locale = :en
   end
 
   describe '#get_language_code' do
@@ -78,6 +87,7 @@ describe Games::HomepageController do
     end
 
     it 'sets default_locale when language_code values are invalid' do
+      I18n.default_locale = :de
       get(:index, :language_code => "honey badger don't care about locale")
       I18n.locale.should == I18n.default_locale
     end
@@ -116,15 +126,15 @@ describe Games::HomepageController do
   describe "#index" do
     before :each do
       activate_authlogic
-      @gamer = Factory(:gamer)
-      login_as(@gamer)
-      @controller.stub!(:current_gamer=>@gamer)
+      gamer = FactoryGirl.create(:gamer)
+      login_as(gamer)
     end
 
     it 'creates a valid tjm_request' do
+      @controller.stub!(:current_gamer=>gamer)
       get('index')
       tjm_request = assigns(:tjm_request)
-      tjm_request.gamer_id.should == @gamer.id
+      tjm_request.gamer_id.should == gamer.id
     end
 
     context 'with a tjreferrer click as the referrer' do
@@ -138,13 +148,13 @@ describe Games::HomepageController do
 
     context 'with a facebook styled referrer' do
       it 'records the referral event' do
-        facebook_referrer = "tj_fb_post_#{@gamer.id}"
+        facebook_referrer = "tj_fb_post_#{gamer.id}"
         get('index', { :referrer => ObjectEncryptor.encrypt(facebook_referrer) })
 
         assigns(:tjm_request)
         tjm_social_request = assigns(:tjm_social_request)
         tjm_social_request.path.should include('tjm_social_referrer')
-        tjm_social_request.social_referrer_gamer.should == @gamer.id
+        tjm_social_request.social_referrer_gamer.should == gamer.id
         tjm_social_request.social_source.should == 'fb'
         tjm_social_request.social_action.should == 'post'
       end
@@ -167,68 +177,90 @@ describe Games::HomepageController do
   describe "#record_click" do
     before :each do
       activate_authlogic
-      @gamer = Factory(:gamer)
-      login_as(@gamer)
-      @app = Factory(:app)
+      gamer = FactoryGirl.create(:gamer)
+      login_as(gamer)
 
       @params = {
-        :eid          => ObjectEncryptor.encrypt(@app.id),
-        :redirect_url => ObjectEncryptor.encrypt(@app.primary_offer.url),
+        :eid          => ObjectEncryptor.encrypt(app.id),
+        :redirect_url => ObjectEncryptor.encrypt(app.primary_offer.url),
       }
       get('record_click', @params)
     end
 
     it 'records the outbound click in a tjm_request' do
       tjm_request = assigns(:tjm_request)
-      tjm_request.outbound_click_url.should == @app.primary_offer.url
-      tjm_request.app_id.should == @app.id
+      tjm_request.outbound_click_url.should == app.primary_offer.url
+      tjm_request.app_id.should == app.id
     end
 
     it 'redirects to the actual app url' do
       response.should be_redirect
-      response.should redirect_to(@app.primary_offer.url)
+      response.should redirect_to(app.primary_offer.url)
     end
   end
 
   context "#get_app" do
     before :each do
-      @good_author = Factory(:gamer)
-      @stellar_author = Factory(:gamer)
-      @troll_author = Factory(:gamer, :been_buried_count => 100)
-      @gamer = Factory(:gamer)
-      @offer = Factory(:app).primary_offer
-      @good_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>10, :author=>@good_author)
-      @stellar_review = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>100, :author=>@stellar_author)
-      @good_review_by_troll_author = Factory(:app_review, :bury_votes_count=>0, :helpful_votes_count=>1, :author=>@troll_author)
-      @troll_review_by_good_author = Factory(:app_review, :bury_votes_count=>100, :author=>@good_author)
+
+      @good_author = FactoryGirl.create(:gamer)
+      @another_good_author = FactoryGirl.create(:gamer)
+      @stellar_author = FactoryGirl.create(:gamer)
+      @troll_author = FactoryGirl.create(:gamer, :been_buried_count => 100)
+      @good_review = FactoryGirl.create(:app_review,
+                             :bury_votes_count => 0,
+                             :helpful_votes_count => 10,
+                             :text => "A good review",
+                             :author => @good_author,
+                             :app_metadata => app_metadata)
+      @stellar_review = FactoryGirl.create(:app_review,
+                                :bury_votes_count => 0,
+                                :helpful_votes_count => 100,
+                                :author => @stellar_author,
+                                :text => "A stellar review",
+                                :app_metadata => app_metadata)
+      @good_review_by_troll_author = FactoryGirl.create(:app_review,
+                                             :bury_votes_count => 0,
+                                             :helpful_votes_count => 1,
+                                             :author => @troll_author,
+                                             :text => "A good review by a troll",
+                                             :app_metadata => app_metadata)
+      @troll_review_by_another_good_author = FactoryGirl.create(:app_review,
+                                                     :bury_votes_count => 100,
+                                                     :text => "A troll review by a good author",
+                                                     :author => @another_good_author,
+                                                     :app_metadata => app_metadata)
       activate_authlogic
-      login_as(@gamer)
-      AppReview.stub_chain(:where, :includes, :paginate).and_return([@good_review, @troll_review_by_good_author, @stellar_review, @good_review_by_troll_author])
+      login_as(gamer)
+
+      AppReview.stub_chain(:where, :includes, :paginate).and_return([@good_review, @troll_review_by_another_good_author, @stellar_review, @good_review_by_troll_author])
     end
     context 'troll author sees' do
       before :each do
-        controller.stub!(:current_gamer=>@troll_author)
-        get(:get_app, :id=>@offer.id)
+        login_as(@troll_author)
+        controller.stub(:current_gamer).and_return(@troll_author)
+        get(:get_app, :id => offer.id)
       end
       it 'sees good review, stellar review, own troll-authored but not good-authored troll ' do
         assigns[:app_reviews].count.should == 3
         assigns[:app_reviews].should == [@stellar_review, @good_review, @good_review_by_troll_author]
       end
     end
-    context 'good author viewer ' do
+    context 'good author viewer' do
       before :each do
-        controller.stub!(:current_gamer=>@good_author)
-        get(:get_app, :id=>@offer.id)
+        login_as(@another_good_author)
+        controller.stub!(:current_gamer=>@another_good_author)
+        get(:get_app, :id => offer.id)
       end
       it 'sees good review, stellar review, own troll review, but not good review by troll author' do
         assigns[:app_reviews].count.should == 3
-        assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_good_author]
+        assigns[:app_reviews].should == [@stellar_review, @good_review, @troll_review_by_another_good_author]
       end
     end
     context 'unassociated gamer viewer' do
       before :each do
-        controller.stub!(:current_gamer=>@gamer)
-        get(:get_app, :id=>@offer.id)
+        login_as(gamer)
+        controller.stub!(:current_gamer => gamer)
+        get(:get_app, :id => offer.id)
       end
       it 'sees good review, stellar review,  but not troll review or troll-authored review' do
         assigns[:app_reviews].count.should == 2
@@ -236,6 +268,19 @@ describe Games::HomepageController do
       it 'sees stellar review before good review' do
         assigns[:app_reviews].should == [@stellar_review, @good_review]
         assigns[:app_reviews].should_not == [@good_review, @stellar_review]
+      end
+    end
+    context 'Guest "no login" viewer' do
+      before :each do
+        controller.stub(:current_gamer).and_return(nil)
+      end
+      it 'sees good review, stellar review,  but not troll review or troll-authored review' do
+        get(:get_app, :id => offer.id)
+        assigns[:app_reviews].count.should == 2
+      end
+      it 'can see a single review only if specified' do
+        get(:get_app, :id=>offer.id, :app_review_id => @stellar_review.id)
+        assigns[:app_reviews].should == [@stellar_review]
       end
     end
   end
@@ -293,6 +338,13 @@ describe Games::HomepageController do
         tjm_request.action.should == 'action_for_test'
         tjm_request.is_ajax.should be_true
       end
+    end
+  end
+
+  describe "#earn" do
+    it 'accepts an eid with spaces on the end' do
+      get(:earn, :eid => "   #{currency.id} ")
+      response.status.should == 200
     end
   end
 end

@@ -93,10 +93,11 @@ input[type=checkbox]:checked {
     padding-right: 12px;
     margin-right: 12px;
     height: 44px;
+    color: white;
 
-    span {
+    div {
       display: block;
-      font: 500 16px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
+      font: 500 16px 'Gill Sans', 'Gill Sans MT', Arial, sans-serif;
       margin-right: 12px;
       padding: 12px 0 12px 12px;
       position: relative;
@@ -132,15 +133,6 @@ input[type=checkbox]:checked {
 
 .row {
   box-shadow: none;
-}
-
-#platform-row {
-  width: 300px;
-  margin: 12px auto 0;
-  text-align: center;
-  div {
-    float: left;
-  }
 }
 
 #tos-row {
@@ -219,21 +211,10 @@ span.gill {
         float: left;
         padding-top: 5px;
       }
-      .next-btn {
-        cursor: default;
-        float: right;
-        padding: 10px 24px;
-        position: relative;
-        top: 12px;
-        width: auto;
-      }
     }
   }
 
   .register-form, .register-progress, #register-android, #register-ios {
-    margin: 0 auto;
-    width: 300px;
-    text-align: center;
     padding-top: 12px;
   }
 
@@ -252,9 +233,10 @@ span.gill {
     .install {
 
       img {
-        background: url(#{$image_path}/ios_link.png) no-repeat center center;
+        background: url(#{$image_path}/ios_link.png) no-repeat 0 0;
+        background-size: 288px 147px;
         height: 147px;
-        width: 300px;
+        width: 288px;
       }
     }
   }
@@ -287,15 +269,6 @@ span.gill {
     margin-top: 12px;
     padding: 8px 0;
   }
-  .cancel-btn, .login-btn {
-    cursor: pointer;
-    margin: 24px auto 0;
-    padding: 10px 0;
-    width: 140px;
-  }
-  .cancel-btn {
-    margin-right: 0px;
-  }
 }
 
 #login-form.show {
@@ -306,6 +279,10 @@ span.gill {
 #signup-form.show {
   display: block;
   @include fade-in(0.2s);
+}
+
+#signup-form.show-now {
+  display: block;
 }
 
 .register-form {
@@ -517,61 +494,6 @@ span.gill {
   width: 16px;
   height: 16px;
   margin: 4px;
-}
-
-#benefits {
-  background: #fff url(#{$root_image_path}/edge_shadow.png) no-repeat top center;
-  min-height: 350px;
-  border-bottom: 1px solid #909090;
-  @include animate(all, 0.35s, ease-in);
-
-  .box {
-    margin-top: 30px;
-    width: 33%;
-  }
-
-  .findapps,
-  .sharefriends,
-  .collect {
-    width: 280px;
-    height: 130px;
-    margin: 0 auto;
-  }
-
-  h6,
-  p {
-    margin-left: 25px;
-  }
-
-  .findapps {
-    background: url(#{$image_path}/apps.png) no-repeat 0 0;
-  }
-
-  .sharefriends {
-    background: url(#{$image_path}/shared.png) no-repeat 0 0;
-    height: 110px;
-    width: 280px;
-    margin-top: 20px;
-  }
-
-  .collect {
-    background: url(#{$image_path}/rewards.png) no-repeat 0 0;
-  }
-
-  h6 {
-    color: #363636;
-    font: 100 18px "Museo Slab";
-    margin-top: 10px;
-    -webkit-text-stroke-color: #363636;
-    -webkit-text-stroke-width: 1px;
-  }
-
-  p {
-    padding-right: 20px;
-    margin-top: 5px;
-    font: normal 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
-    line-height: 18px;
-  }
 }
 
 #footer {
@@ -1029,6 +951,12 @@ span.gill {
   border-top: 1px solid rgba(0,0,0, .6);
 }
 
+.hidden-submit {
+  position: relative;
+  left: -9999px;
+  width: 0;
+  height: 0;
+}
 
 .login.modal {
   background: #343434 url(#{$root_image_path}/menu_dropdown.jpg) repeat-x 0 0;

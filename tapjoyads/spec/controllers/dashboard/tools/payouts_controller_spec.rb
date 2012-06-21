@@ -5,8 +5,8 @@ describe Dashboard::Tools::PayoutsController do
 
   before :each do
     activate_authlogic
-    @user = Factory(:admin)
-    @partner = Factory(:partner, :users => [@user])
+    @user = FactoryGirl.create(:admin)
+    @partner = FactoryGirl.create(:partner, :users => [@user])
     login_as(@user)
   end
 
@@ -27,8 +27,8 @@ describe Dashboard::Tools::PayoutsController do
 
     context 'when payout manager' do
       before :each do
-        @user = Factory(:payout_manager_user)
-        @partner = Factory(:partner, :users => [@user])
+        @user = FactoryGirl.create(:payout_manager_user)
+        @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
         Partner.stub(:find).with(@partner.id).and_return(@partner)
       end
@@ -51,8 +51,8 @@ describe Dashboard::Tools::PayoutsController do
   describe '#create' do
     context 'when a payout manager' do
       before :each do
-        @user = Factory(:payout_manager_user)
-        @partner = Factory(:partner, :users => [@user])
+        @user = FactoryGirl.create(:payout_manager_user)
+        @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
       end
 
@@ -71,7 +71,7 @@ describe Dashboard::Tools::PayoutsController do
 
       context 'when payout not saved properly' do
         before :each do
-          payout = Factory(:payout, :partner => @partner)
+          payout = FactoryGirl.create(:payout, :partner => @partner)
           payout.stub(:save).and_return(false)
           payouts = mock('build',:build => payout)
           @partner.stub(:payouts).and_return(payouts)

@@ -1,20 +1,20 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe GetOffersController do
   render_views
 
   describe '#index' do
     before :each do
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency)
       @deeplink = @currency.deeplink_offer.primary_offer
-      @offer = Factory(:app).primary_offer
-      @offer2 = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
+      @offer2 = FactoryGirl.create(:app).primary_offer
       @offer2.countries = ["GB"].to_json
       @offer2.save
-      @offer3 = Factory(:app).primary_offer
+      @offer3 = FactoryGirl.create(:app).primary_offer
       @offer3.countries = ["US"].to_json
       @offer3.save
-      @offer4 = Factory(:app).primary_offer
+      @offer4 = FactoryGirl.create(:app).primary_offer
       @offer4.countries = ["CN"].to_json
       @offer4.save
 
@@ -40,14 +40,14 @@ describe GetOffersController do
     # TODO: Make promoted offers work with optmization
     # describe "with promoted offers" do
     #   before :each do
-    #     @partner = Factory(:partner)
-    #     @app = Factory(:app, :partner => @partner)
+    #     @partner = FactoryGirl.create(:partner)
+    #     @app = FactoryGirl.create(:app, :partner => @partner)
     # 
-    #     @offer1 = Factory(:app, :partner => @partner).primary_offer
-    #     @offer2 = Factory(:app, :partner => @partner).primary_offer
-    #     @offer3 = Factory(:app, :partner => @partner).primary_offer
-    #     @offer4 = Factory(:app, :partner => @partner).primary_offer
-    #     @offer5 = Factory(:app, :partner => @partner).primary_offer
+    #     @offer1 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+    #     @offer2 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+    #     @offer3 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+    #     @offer4 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+    #     @offer5 = FactoryGirl.create(:app, :partner => @partner).primary_offer
     # 
     #     App.stub(:find_in_cache).and_return(@app)
     #     Currency.stub(:find_in_cache).and_return(@currency)
@@ -141,8 +141,8 @@ describe GetOffersController do
 
   describe '#webpage' do
     before :each do
-      @device = Factory(:device)
-      @currency = Factory(:currency, :test_devices => @device.id)
+      @device = FactoryGirl.create(:device)
+      @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @params = {
         :udid => 'stuff',
@@ -150,7 +150,7 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
     end
 
     it 'should queue up tracking url calls' do
@@ -179,10 +179,10 @@ describe GetOffersController do
   describe '#featured' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
-      @device = Factory(:device)
-      @currency = Factory(:currency, :test_devices => @device.id)
+      @device = FactoryGirl.create(:device)
+      @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       controller.stub(:ip_address).and_return('208.90.212.38')
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @params = {
@@ -286,9 +286,9 @@ describe GetOffersController do
 
   describe '#setup' do
     before :each do
-      @device = Factory(:device)
-      @currency = Factory(:currency, :callback_url => 'http://www.tapjoy.com')
-      @offer = Factory(:app).primary_offer
+      @device = FactoryGirl.create(:device)
+      @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
+      @offer = FactoryGirl.create(:app).primary_offer
       controller.stub(:ip_address).and_return('208.90.212.38')
       fake_cache_object = double('fake_cache_object')
       fake_cache_object.stub(:value).and_return([@offer])
@@ -337,13 +337,13 @@ describe GetOffersController do
     end
 
     it 'unassigns currency' do
-      app = Factory(:app)
+      app = FactoryGirl.create(:app)
       get(:index, @params.merge(:app_id => app.id))
       assigns(:currency).should be_nil
     end
 
     it 'assigns currency based on app_id' do
-      Factory(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
+      FactoryGirl.create(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
       get(:index, @params.merge(:currency_id => nil, :debug => '1'))
       assigns(:currency).should_not be_nil
     end

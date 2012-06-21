@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe EmailOffer do
 
-  subject { Factory(:email_offer) }
+  subject { FactoryGirl.create(:email_offer) }
 
   describe '.has_many' do
     it { should have_many(:offers) }

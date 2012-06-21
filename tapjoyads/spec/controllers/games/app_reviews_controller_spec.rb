@@ -1,22 +1,22 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::AppReviewsController do
   before :each do
     activate_authlogic
-    @gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
     login_as(@gamer)
-    app = Factory(:app)
-    @currency = Factory(:currency, :app => app)
+    app = FactoryGirl.create(:app)
+    @currency = FactoryGirl.create(:currency, :app => app)
     @app_metadata = app.app_metadatas.first
   end
 
   describe '#index' do
     before :each do
-      @gamer2 = Factory(:gamer)
-      app_metadata2 = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-      Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
-      Factory(:gamer_review, :author => @gamer, :app_metadata => app_metadata2)
-      Factory(:gamer_review, :author => @gamer2, :app_metadata => @app_metadata)
+      @gamer2 = FactoryGirl.create(:gamer)
+      app_metadata2 = FactoryGirl.create(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
+      FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
+      FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => app_metadata2)
+      FactoryGirl.create(:gamer_review, :author => @gamer2, :app_metadata => @app_metadata)
     end
 
     context 'when not params' do
@@ -96,7 +96,7 @@ describe Games::AppReviewsController do
 
   describe '#edit' do
     before :each do
-      @gamer_review = Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
+      @gamer_review = FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
 
       get(:edit, :id => @gamer_review)
     end
@@ -110,7 +110,7 @@ describe Games::AppReviewsController do
 
   describe '#update' do
     before :each do
-      @gamer_review = Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
+      @gamer_review = FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
 
       @options = {
         :id => @gamer_review.id,
@@ -149,7 +149,7 @@ describe Games::AppReviewsController do
 
     context 'trying to update unsafe attributes' do
       it 'should not update' do
-        hax0r = Factory(:gamer)
+        hax0r = FactoryGirl.create(:gamer)
         original_author_id = @gamer_review.author_id
         @options[:app_review][:author_id] = hax0r.id
         put(:update, @options)
@@ -161,7 +161,7 @@ describe Games::AppReviewsController do
 
   describe '#destroy' do
     before :each do
-      @gamer_review = Factory(:gamer_review, :author => @gamer)
+      @gamer_review = FactoryGirl.create(:gamer_review, :author => @gamer)
       delete(:destroy, :id => @gamer_review.id)
       @app_metadata.reload
     end

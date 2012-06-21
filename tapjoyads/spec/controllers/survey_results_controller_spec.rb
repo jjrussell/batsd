@@ -1,11 +1,11 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe SurveyResultsController do
   before :each do
-    user = Factory(:admin)
-    partner = Factory(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
-    survey_offer = Factory(:survey_offer)
-    @survey_question = Factory(:survey_question, :survey_offer => survey_offer)
+    user = FactoryGirl.create(:admin)
+    partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
+    survey_offer = FactoryGirl.create(:survey_offer)
+    @survey_question = FactoryGirl.create(:survey_question, :survey_offer => survey_offer)
     survey_offer.save
     @offer = survey_offer.primary_offer
   end

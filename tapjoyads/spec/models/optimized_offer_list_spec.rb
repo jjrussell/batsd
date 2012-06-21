@@ -24,7 +24,7 @@ describe OptimizedOfferList do
   # describe ".cache_offer_list" do
   #   context "with an empty cache, getting a list of offers from s3" do
   #     it "caches a list of offers" do
-  #       Offer.stubs(:find).returns(Factory(:app).primary_offer)
+  #       Offer.stubs(:find).returns(FactoryGirl.create(:app).primary_offer)
   #       fake_the_web
   #       OptimizedOfferList.cache_offer_list(@s3_key)
   #     end

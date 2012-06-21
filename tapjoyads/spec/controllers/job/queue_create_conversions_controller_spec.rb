@@ -1,14 +1,14 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::QueueCreateConversionsController do
   before :each do
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
 
-    publisher_app = Factory(:app)
-    advertiser_app = Factory(:app)
+    publisher_app = FactoryGirl.create(:app)
+    advertiser_app = FactoryGirl.create(:app)
     @offer = advertiser_app.primary_offer
     Offer.stub(:find).and_return(@offer)
-    @reward = Factory(:reward,
+    @reward = FactoryGirl.create(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
       :advertiser_app_id => advertiser_app.id,

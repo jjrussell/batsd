@@ -1,11 +1,11 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::FavoriteAppController do
   before :each do
     activate_authlogic
-    @app_metadata = Factory(:app_metadata)
+    @app_metadata = FactoryGirl.create(:app_metadata)
 
-    @gamer = Factory(:gamer)
+    @gamer = FactoryGirl.create(:gamer)
     @controller.stub(:current_gamer).and_return(@gamer)
 
     @params = {

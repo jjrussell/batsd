@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BrandOfferMapping do
 
-  subject { Factory(:brand_offer_mapping) }
+  subject { FactoryGirl.create(:brand_offer_mapping) }
 
   it { should belong_to :offer }
   it { should belong_to :brand }
@@ -15,7 +15,7 @@ describe BrandOfferMapping do
     context 'before validation' do
       before :each do
         @brand_offer_mapping = BrandOfferMapping.new
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @brand_offer_mapping.offer = @offer
         @counter = mock()
         BrandOfferMapping.stub(:mappings_by_offer).with(@offer).and_return(@counter)
@@ -51,7 +51,7 @@ describe BrandOfferMapping do
     context 'after commit' do
       before :each do
         @brand_offer_mapping = BrandOfferMapping.new
-        @offer = Factory(:app).primary_offer
+        @offer = FactoryGirl.create(:app).primary_offer
         @brand_offer_mapping.offer = @offer
         @brand_offer_mapping.id = 'test'
         @offer_mappings = mock()

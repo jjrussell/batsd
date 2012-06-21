@@ -2,6 +2,8 @@ class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
   layout 'tabbed'
   current_tab :tools
 
+  filter_access_to :all
+
   before_filter :check_change_attributes, :only => [ :create, :update ]
   before_filter :setup
   after_filter :save_activity_logs, :only => [ :create, :update, :destroy ]
@@ -47,7 +49,7 @@ class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
       flash[:notice] = "Updated Event for #{@offer_event.offer.name}"
       redirect_to :action => 'index' and return
     else
-      flash.now[:error] = "Event could not be updated. #{@offer_event.errors[:base]}"
+      flash.now[:error] = "Event could not be updated. #{@offer_event.errors[:base].join}"
       render :edit and return
     end
   end

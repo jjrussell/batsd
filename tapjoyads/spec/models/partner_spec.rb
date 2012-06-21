@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Partner do
-  subject { Factory(:partner) }
+  subject { FactoryGirl.create(:partner) }
 
   it 'associates' do
     should have_many(:orders)
@@ -26,6 +26,7 @@ describe Partner do
     should validate_numericality_of(:next_payout_amount)
     should validate_numericality_of(:rev_share)
     should validate_numericality_of(:direct_pay_share)
+    should validate_presence_of(:name)
   end
 
   describe 'A Partner' do
@@ -33,24 +34,24 @@ describe Partner do
       mock_slave = mock()
       mock_slave.stub(:execute)
       Partner.stub(:slave_connection).and_return(mock_slave)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
-      @app = Factory(:app, :partner => @partner)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       cutoff_date = @partner.payout_cutoff_date
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => cutoff_date)
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => cutoff_date)
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
       @partner.reload
     end
 
     it 'adds account_mgr as account manager' do
-      manager_role = Factory(:user_role, :name => "account_mgr")
-      manager_user = Factory(:user, :user_roles => [manager_role])
+      manager_role = FactoryGirl.create(:user_role, :name => "account_mgr")
+      manager_user = FactoryGirl.create(:user, :user_roles => [manager_role])
       @partner.users << manager_user
       @partner.account_managers.length.should == 1
     end
 
     it 'adds normal users but not as account manager' do
-      @partner.users << Factory(:user)
+      @partner.users << FactoryGirl.create(:user)
       @partner.account_managers.length.should == 0
     end
 
@@ -116,8 +117,8 @@ describe Partner do
 
     context 'with currencies' do
       before :each do
-        @currency1 = Factory(:currency, :partner => @partner)
-        @currency2 = Factory(:currency, :partner => @partner)
+        @currency1 = FactoryGirl.create(:currency, :partner => @partner)
+        @currency2 = FactoryGirl.create(:currency, :partner => @partner)
       end
 
       it "updates its currencies's spend_share when saved" do
@@ -217,10 +218,10 @@ describe Partner do
 
     context 'when assigning a reseller user' do
       before :each do
-        @partner.users << Factory(:user)
-        @reseller = Factory(:reseller)
-        @reseller_user = Factory(:user, :reseller => @reseller)
-        @currency = Factory(:currency, :partner => @partner)
+        @partner.users << FactoryGirl.create(:user)
+        @reseller = FactoryGirl.create(:reseller)
+        @reseller_user = FactoryGirl.create(:user, :reseller => @reseller)
+        @currency = FactoryGirl.create(:currency, :partner => @partner)
       end
 
       it "modifies reseller of partner and partner's dependent records" do
@@ -244,15 +245,16 @@ describe Partner do
 
     context "with promoted offers" do
       before :each do
-        @partner = Factory(:partner)
-        @offer1 = Factory(:app, :partner => @partner).primary_offer.target
-        @offer2 = Factory(:app, :partner => @partner).primary_offer
-        @offer3 = Factory(:app, :partner => @partner, :platform => 'android').primary_offer
-        @offer4 = Factory(:app, :partner => @partner).primary_offer
+        @partner = FactoryGirl.create(:partner)
+        @offer1 = FactoryGirl.create(:app, :partner => @partner).primary_offer.target
+        @offer2 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+        @offer3 = FactoryGirl.create(:app, :partner => @partner, :platform => 'android').primary_offer
+        @offer4 = FactoryGirl.create(:app, :partner => @partner).primary_offer
         Offer.any_instance.stub(:can_be_promoted?).and_return(true)
       end
 
       it "returns available offers with correct platform" do
+        @partner.reload
         available_offers = @partner.offers_for_promotion
         available_offers[:windows].should == []
         available_offers[:android].should == [ @offer3 ]
@@ -370,7 +372,7 @@ describe Partner do
 
       context 'when user has proper role' do
         before :each do
-          @user = Factory(:admin)
+          @user = FactoryGirl.create(:admin)
         end
 
         it 'remains confirmed the partner' do
@@ -381,7 +383,7 @@ describe Partner do
 
       context 'when user does not have proper role' do
         before :each do
-          @user = Factory(:agency_user)
+          @user = FactoryGirl.create(:agency_user)
         end
 
         it 'does not confirm the partner' do
@@ -395,11 +397,27 @@ describe Partner do
   describe '#dashboard_partner_url' do
     include Rails.application.routes.url_helpers
     before :each do
-      @partner = Factory :partner
+      @partner = FactoryGirl.create :partner
     end
 
     it 'matches URL for Rails partner_url helper' do
       @partner.dashboard_partner_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/partners/#{@partner.id}"
+    end
+  end
+
+  describe 'validate_each name' do
+    before :each do
+      @partner = FactoryGirl.create :partner
+    end
+    
+    it 'must have a name' do
+      @partner.name = ' '
+      @partner.should_not be_valid
+    end
+    
+    it 'must not have tapjoy in the name' do
+      @partner.name = ' Tapjoy '
+      @partner.should_not be_valid
     end
   end
 end

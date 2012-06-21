@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "Ad orders" do
-  let(:testapp) { Factory(:app) }
+  let(:testapp) { FactoryGirl.create(:app) }
 
   describe "GET /get_ad_order" do
     it "returns 0 when there are no campaigns" do

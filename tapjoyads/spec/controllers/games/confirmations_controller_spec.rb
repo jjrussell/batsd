@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::ConfirmationsController do
   before :each do
@@ -7,7 +7,7 @@ describe Games::ConfirmationsController do
 
   describe '#create' do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
     end
     context 'with valid data' do
       it 'redirects to url with tracking params' do
