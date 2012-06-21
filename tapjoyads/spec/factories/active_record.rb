@@ -8,41 +8,87 @@ FactoryGirl.define do
   end
 
   factory :admin_user, :parent => :user do
-    after_build do |admin|
-      role = UserRole.find_or_create_by_name('admin', :employee => true)
-      admin.user_roles << role
+    after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('admin', :employee => true)
     end
   end
 
   factory :account_manager_user, :parent => :user do
     association :current_partner, :factory => :partner
-    after_build do |account_mgr|
-      role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
-      account_mgr.user_roles << role
+    after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('account_mgr', :employee => true)
     end
   end
 
   factory :agency_user, :parent => :user do
-    after_build do |agency|
-      agency.user_roles << UserRole.find_or_create_by_name('agency')
+    after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('agency')
     end
   end
 
   factory :customer_service_user, :parent => :user do
-    after_build do |customer_service|
-      customer_service.user_roles << UserRole.find_or_create_by_name('customer_service')
+    after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('customer_service', :employee => true)
     end
   end
 
-  factory :customer_service_manager, :parent => :user do
-    after_build do |cs_manager|
-      cs_manager.user_roles << UserRole.find_or_create_by_name('customer_service_manager')
+  factory :customer_service_manager_user, :parent => :user do
+    after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('customer_service_manager', :employee => true)
+    end
+  end
+
+  factory :devices_user, :parent => :user do
+     after_build do |user|
+       user.user_roles << UserRole.find_or_create_by_name('devices', :employee => true)
+    end
+  end
+
+  factory :executive_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('executive', :employee => true)
+    end
+  end
+  
+  factory :file_sharer_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('file_sharer', :employee => true)
+    end
+  end
+  
+  factory :games_editor_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('games_editor', :employee => true)
+    end
+  end
+  
+  factory :hr_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('hr', :employee => true)
+    end
+  end
+  
+  factory :money_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('money', :employee => true)
+    end
+  end
+
+  factory :ops_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('ops', :employee => true)
+    end
+  end
+
+  factory :payops_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('payops', :employee => true)
     end
   end
 
   factory :payout_manager_user, :parent => :user do
-     after_build do |payout_manager|
-      payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('payout_manager', :employee => true)
     end
   end
 
@@ -54,11 +100,40 @@ FactoryGirl.define do
       end
     end
   end
+  
+  factory :partner_change_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('partner_change', :employee => true)
+    end
+  end
+  
+  factory :products_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('products', :employee => true)
+    end
+  end
+  
+  factory :reporting_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('reporting')
+    end
+  end
 
   factory :role_manager_user, :parent => :user do
-    after_build do |mgr|
-      role = UserRole.find_or_create_by_name('role_mgr', :employee => true)
-      mgr.user_roles << role
+    after_build do |user|
+      user.user_roles <<  UserRole.find_or_create_by_name('role_mgr', :employee => true)
+    end
+  end
+  
+  factory :sales_rep_manager_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('sales_rep_mgr', :employee => true)
+    end
+  end
+  
+  factory :tools_user, :parent => :user do
+     after_build do |user|
+      user.user_roles << UserRole.find_or_create_by_name('tools', :employee => true)
     end
   end
 

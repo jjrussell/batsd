@@ -58,6 +58,7 @@ describe Dashboard::Tools::GamersController do
       }
     }
   } unless defined? PERMISSIONS_MAP
+  
   it_behaves_like "a controller with permissions"
   
 end
