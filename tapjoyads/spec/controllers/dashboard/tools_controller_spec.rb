@@ -24,7 +24,7 @@ describe Dashboard::ToolsController do
     end
     
     context 'with an unauthorized user' do
-      include_context 'logged in as an agency user'
+      include_context 'logged in as user type', :agency
     
       context 'accessing tools index' do
         it 'redirects to dashboard' do
@@ -35,7 +35,7 @@ describe Dashboard::ToolsController do
     end
 
     context 'with an admin user' do
-      include_context 'logged in as an admin user'
+      include_context 'logged in as user type', :admin
 
       context 'accessing tools index' do
         it 'renders appropriate page' do
@@ -48,7 +48,7 @@ describe Dashboard::ToolsController do
 
   describe '#partner_monthly_balance' do
     context 'with an admin user' do
-      include_context 'logged in as an admin user'
+      include_context 'logged in as user type', :admin
     
       it 'gets correct months_list' do
         get :partner_monthly_balance
@@ -61,7 +61,7 @@ describe Dashboard::ToolsController do
 
   describe '#view_pub_user_account' do
     context 'when logged in as a customer service manager' do
-      include_context 'logged in as a customer service manager'
+      include_context 'logged in as user type', :customer_service_manager
       
       it 'succeeds' do
         app_id, user_id = pub_user.key.split('.')
@@ -74,7 +74,7 @@ describe Dashboard::ToolsController do
   
   describe '#detach_pub_user_account' do
     context 'when logged in as a customer service manager' do
-      include_context 'logged in as a customer service manager'
+      include_context 'logged in as user type', :customer_service_manager
       
       context 'with an invalid udid' do
         it 'does nothing' do

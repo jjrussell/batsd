@@ -12,7 +12,7 @@ describe Dashboard::Tools::GamerDevicesController do
 
   describe "#new" do
     context "when logged in as a customer service user" do
-      include_context 'logged in as a customer service user'
+      include_context 'logged in as user type', :customer_service
     
       it "allows access" do
         get(:new, params)
@@ -26,7 +26,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
 
     context "when logged in as an account manager" do
-      include_context 'logged in as an account manager'
+      include_context 'logged in as user type', :account_manager
     
       it "allows access" do
         get(:new, params)
@@ -35,7 +35,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
 
     context "when logged in as a partner" do
-      include_context 'logged in as a partner'
+      include_context 'logged in as user type', :partner
       
       it "disallows access" do
         get(:new, params)
@@ -46,7 +46,7 @@ describe Dashboard::Tools::GamerDevicesController do
 
   describe "#edit" do
     context "when logged in as a customer service user" do
-      include_context 'logged in as a customer service user'
+      include_context 'logged in as user type', :customer_service
     
       it "allows access" do
         get(:edit, params)
@@ -55,7 +55,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
 
     context "when logged in as an account manager" do
-      include_context 'logged in as an account manager'
+      include_context 'logged in as user type', :account_manager
     
       it "allows access" do
         get(:edit, params)
@@ -64,7 +64,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
 
     context "when logged in as a partner" do
-      include_context 'logged in as a partner'
+      include_context 'logged in as user type', :partner
       
       it "disallows access" do
         get(:edit, params)
@@ -75,7 +75,7 @@ describe Dashboard::Tools::GamerDevicesController do
 
   describe "#update" do
     context "when logged in as a customer service user" do
-      include_context 'logged in as a customer service user'
+      include_context 'logged in as user type', :customer_service
     
       it "redirects to gamer management tool for associated gamer after update" do
         put(:update, params)
@@ -98,7 +98,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
     
     context "when logged in as an account manager" do
-      include_context 'logged in as an account manager'
+      include_context 'logged in as user type', :account_manager
     
       it "redirects to gamer management tool for associated gamer after update" do
         put(:update, params)
@@ -107,7 +107,7 @@ describe Dashboard::Tools::GamerDevicesController do
     end
     
     context "when logged in as a partner" do
-      include_context 'logged in as a partner'
+      include_context 'logged in as user type', :partner
     
       it "disallows access" do
         put(:update, params)
