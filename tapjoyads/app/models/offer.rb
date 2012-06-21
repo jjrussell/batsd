@@ -726,8 +726,6 @@ class Offer < ActiveRecord::Base
     reasons = []
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
-    reasons << 'Rating Offer' if self.item_type == 'RatingOffer'
-    reasons << 'Reengagement Offer' if self.item_type == 'ReengagementOffer'
     reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment
     reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value > 0
     reasons << 'Tracking for' unless self.tracking_for.nil?
