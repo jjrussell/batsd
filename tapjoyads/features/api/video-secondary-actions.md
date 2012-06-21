@@ -46,7 +46,7 @@ Background: User is a Consumer on an Android Client Device
 3. User clicks rewarded action
 4. User should receive the reward
 
-### Test 4: Verify Rewarded actions display the reward on Android
+### Test 4: Verify Rewarded actions display the reward on Windows
 
 Background: User is a Consumer on an Windows Client Device
 
