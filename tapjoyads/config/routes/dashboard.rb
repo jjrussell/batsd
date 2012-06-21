@@ -159,6 +159,7 @@ Tapjoyad::Application.routes.draw do
         member do
           get :mail_chimp_info
           get :new_transfer
+          get :new_dev_credit
           post :set_tapjoy_sponsored
           post :make_current
           post :set_unconfirmed_for_payout
@@ -166,6 +167,7 @@ Tapjoyad::Application.routes.draw do
           get :reporting
           post :create_transfer
           post :stop_managing
+          post :create_dev_credit
         end
         resources :offer_discounts, :only => [:index, :new, :create] do
 

@@ -21,7 +21,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       end
     end
 
-    @partners = @partners.paginate(:page => params[:page])
+    @partners = @partners.paginate(:page => params[:page]) unless params[:print].present?
     @freeze_enabled = PayoutFreeze.enabled?
   end
 

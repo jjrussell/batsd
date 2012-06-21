@@ -49,7 +49,7 @@ class Dashboard::Tools::OfferEventsController < Dashboard::DashboardController
       flash[:notice] = "Updated Event for #{@offer_event.offer.name}"
       redirect_to :action => 'index' and return
     else
-      flash.now[:error] = "Event could not be updated. #{@offer_event.errors[:base]}"
+      flash.now[:error] = "Event could not be updated. #{@offer_event.errors[:base].join}"
       render :edit and return
     end
   end

@@ -8,9 +8,9 @@ module JsonSetField
 
     def json_set_field(*fields)
       fields.each do |f|
-
-        define_method "#{f}=" do |new_field_value|
-          self[:"#{f}"] = if new_field_value.is_a?(String)
+        class_eval <<-EOS
+        def #{f}=(new_field_value)
+          self[:#{f}] = if new_field_value.is_a?(String)
             new_field_value
           elsif new_field_value.is_a?(Array)
             new_field_value.reject! { |val| val.blank? }
@@ -20,13 +20,15 @@ module JsonSetField
           end
         end
 
-        define_method "get_#{f}" do
+        def get_#{f}
           begin
-            Set.new((send(f).blank? || send(f) == '[]') ? nil : JSON.parse(send(f)))
+            Set.new((send(:#{f}).blank? || send(:#{f}) == '[]') ? nil : JSON.parse(send(:#{f})))
           rescue JSON::ParserError
             Set.new()
           end
         end
+
+EOS
 
       end
 

@@ -1,44 +1,56 @@
 @import "../../tjm-mixins.scss";
+$image_path: "/images/marketplace/themes/tjm/logged_out";
 
-#login-form {
-  form {
+.auth {
+  form .field {
     margin: 0 auto;
-    width: 300px;
+    width: 288px;
   }
 }
 #login-form.show{
   display:block;
 }
+
 #login-form, #signup-form {
-  top: 0px;
-  bottom: 0px;
-  color: #f1f1f1;
-  font-family: 'Gill Sans', 'Gill Sans MT', Arial, sans-serif;
+  color: #a5a5a5;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 14px;
   display: none;
-  padding-top: 20px;
-  background-color: #000000;
+  background-color: #f4f4f4;
   min-height: 480px;
   position: absolute;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  overflow: auto;
+  overflow: hidden;
   z-index: 999;
 
-  a, a:visited {
-    color: #fff;
+  * {
+    @include border-box;
   }
+
   ul, ol {
     margin: 0;
     padding: 0;
   }
-  input {
-    font: 500 14px 'Gill Sans', 'Gill Sans MT', Arial , sans-serif;
+
+  .instructions {
+    color: #a5a5a5;
+    width: 288px;
+    margin: 0 auto;
+
+    .title {
+      color: #5b5b5b;
+      font: 500 22px "Museo Slab";
+    }
   }
+
+  input {
+  }
+
   input[type=text], input[type=email], input[type=password] {
     border: 1px solid #bfbfbf;
-    padding: 12px 16px;
-    width: 268px;
+    padding: 12px 12px;
+    width: 288px;
     font-size: 1.1em;
     box-shadow: inset 0 1px 1px rgba(0,0,0, .2);
     @include rounded-corners(4px);
@@ -61,50 +73,33 @@
     font-size: 1.1em;
     padding: 11px 8px;
   }
-  #platform_ios,
-  #platform_android {
+
+  .platform-choice {
+    float: left;
     cursor: pointer;
-    width: 150px;
+    width: 50%;
     padding: 6px 0 2px;
     height: 32px;
 
-    input[type=checkbox] {
-      opacity: 0;
-      visibility: hidden;
-    }
     label {
       position: relative;
     }
   }
-  #platform_ios {
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-  }
-  #platform_android {
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-  }
-  #platform_ios.orange-action, #platform_android.orange-action {
-    padding: 5px 0 2px;
-  }
+
   .field {
     margin-bottom: 10px;
 
     .field_checkbox {
-      margin-right: 6px;
+      margin-right: 15px;
       width: 25px;
     }
     .field_tos_text {
       font-size: 0.85em;
-      width: 260px;
+      width: 248px;
       a, a:visited {
         color: #e9292e;
       }
     }
-  }
-  .title {
-    font: 500 22px "Museo Slab";
-    color: #fff;
   }
   .cancel-btn,
   .login-btn {
@@ -120,21 +115,22 @@
 
   .forgot-pass a {
     color: #e9292e;
-    float: right;
     font-size: 13px;
+    padding-left: 12px;
   }
 
   .form-error {
-    text-align: center;
+    height: 0;
+    width: 288px;
+    line-height: 0em;
     border-radius: 3px 3px 3px 3px;
     font: normal 1em "Gill Sans", Arial;
-    display: none;
-    box-shadow: 0 1px 2px rgba(0,0,0, .1);
-    background: #d84141;
-    color: #fff;
-    text-shadow: 0 -1px 0 #c93232;
-    line-height: 1.5em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+    background-color: #fffbae;
+    color: #8c8c8c;
+    text-shadow: 0 -1px 0 #fff;
     margin-bottom: 7px;
+    opacity: 0;
     @include animate(all, 0.35s, ease-in);
   }
 
@@ -145,10 +141,305 @@
     text-align: center;
     width: 100px;
   }
+
+  .form-error.show {
+    line-height: 1.5em;
+    height: auto;
+    padding: 5px;
+    text-align: left;
+  }
+
+  .slide-forward {
+    right: 0%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .slide-forward.loading {
+    background-image: none;
+
+    #tapjoy_loader {
+      display: block;
+      margin: 30px auto;
+      padding: 0;
+      width: 42px;
+      overflow: visible;
+
+      .loader_letter {
+        @include linear-gradient(top, #eee, #ddd);
+        @include set-box-shadow(0, 1px, 0, rgba(255, 255, 255, .4), inset);
+        box-shadow: inset 0 1px 0 rgba(255,255,255, .4), 0 1px 0 #d67810;
+        border-bottom: none;
+      }
+    }
+  }
+
+  .slide-back {
+    left: 0%;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .slide-button {
+    @include animate(margin, 0.3s, ease-in);
+    width: 70px;
+    height: 75px;
+    position: absolute;
+    top: 40%;
+    background-color: #cecece;
+    background-repeat: no-repeat;
+    z-index: 9999;
+  }
+
+  .slide-back.hide-button {
+    margin-left: -75px;
+  }
+
+  .slide-forward.hide-button {
+    margin-right: -75px;
+  }
+
+  .slide-button.primary {
+    background-color: #ff8400;
+  }
+  .slide-button.active {
+    background-color: #bdbdbd;
+  }
+  .slide-button.disabled {
+    background-color: #eaeaea;
+    border: 0px;
+  }
+}
+
+.outer-auth {
+  position: relative;
+}
+.auth {
+  margin: 25px auto;
+  width: 700px;
+
+  .fields {
+    width: 288px;
+  }
+
+  .ui-joy-button {
+    width: 288px;
+  }
+  .left-form, .right-form {
+    float: left;
+    width: 350px;
+  }
+
+  .left-form {
+    padding: 60px 60px 40px 0;
+  }
+
+  .right-form {
+    padding: 60px 0px 40px 60px;
+    border-left: 1px solid #cecece;
+  }
+
+  .right-form:after {
+    content: 'OR';
+    font-family: 'Museo Slab', Helvetica, sans-serif;
+    position: absolute;
+    display: block;
+    text-align: center;
+    padding: 15px 0;
+    background-color: #f4f4f4;
+    width: 50px;
+    margin-left: -25px;
+    left: 50%;
+    top: 30%;
+  }
+
+  .flocused:after, .unflocused:after {
+    display: none;
+  }
+
+  .flocused {
+    border: 0;
+
+    .fields {
+      width: 100%
+    }
+  }
+}
+
+
+.flocus {
+  .flocal {
+    -webkit-transition: opacity 0.2s ease-in, margin 0.3s ease-in, padding 0.3s ease-in;
+    -moz-transition: opacity 0.2s ease-in, margin 0.3s ease-in, padding 0.3s ease-in;
+    -ms-transition: opacity 0.2s ease-in, margin 0.3s ease-in, padding 0.3s ease-in;
+    transition: opacity 0.2s ease-in, margin 0.3s ease-in, padding 0.3s ease-in;
+
+    .show-when-flocused {
+      display: none;
+    }
+  }
+
+  .flocused {
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+    float: none;
+
+    .show-when-flocused {
+      display: block;
+    }
+  }
+
+  .unflocused {
+    width: 0;
+    height: 0;
+    position: relative;
+    opacity: 0;
+    margin-left: -100%;
+  }
 }
 
 #login-form {
   .title {
     margin-bottom: 6px;
   }
+}
+
+.header-state-nav {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 288px;
+  margin-left: -144px;
+  display: none;
+
+  .ui-icon {
+    padding: 3px;
+    background-size: 44px 24px;
+  }
+  .ui-joy-button {
+    width: 50px;
+    height: 30px;
+  }
+}
+
+.mobile-forward {
+  @include animate(opacity, 0.3s, ease-in);
+  float: right;
+}
+
+.mobile-backward {
+  @include animate(opacity, 0.3s, ease-in);
+  float: left;
+}
+
+.mobile-forward.primary {
+}
+
+.mobile-backward.primary {
+}
+
+.mobile-forward.hide-button {
+  opacity: 0;
+}
+
+.mobile-backward.hide-button {
+  opacity: 0;
+}
+
+
+@media screen and (max-width: 705px) {
+  .header-state-nav {
+    display: block;
+  }
+
+  .slides-down {
+    display: block;
+    height: 0px;
+    overflow: hidden;
+
+    .sub-header-wrapper {
+      @include animate(all, .3s, ease-in);
+      height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+
+  .slides-down.show {
+    height: 45px;
+
+    .sub-header-wrapper {
+      height: 45px;
+      padding: 10px 0;
+    }
+  }
+
+  #login-form, #signup-form {
+    .slide-forward, .slide-back {
+      display: none;
+    }
+  }
+  .auth {
+    margin: auto;
+    width: 100%;
+
+    .fb-facepile {
+      display: none;
+    }
+
+    .left-form, .right-form {
+      float: none;
+      margin: auto;
+      padding: 10px 0px 25px 0px;
+      width: 288px;
+    }
+
+    .left-form {
+      padding-top: 15px;
+    }
+
+    .right-form {
+      border-left: none;
+      border-top: 1px solid #cecece;
+    }
+
+    .right-form:before {
+      content: 'OR';
+      position: relative;
+      top: -18px;
+      left: 50%;
+      margin-left: -25px;
+      width: 50px;
+      height: 16px;
+      line-height: 16px;
+      background-color: #f4f4f4;
+      display:block;
+      text-align: center;
+    }
+
+    .right-form:after {
+      display: none;
+    }
+
+    .flocused:before, .unflocused:before {
+      display: none;
+    }
+
+    .flocused {
+      border: 0;
+    }
+    .unflocused {
+      -webkit-transition: none;
+      -moz-transition: none;
+      -ms-transition: none;
+      transition: none;
+
+      margin: 0;
+      padding: 0;
+      margin-left: -999px;
+    }
+  }
+
 }

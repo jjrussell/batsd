@@ -22,10 +22,10 @@ describe UserEventsController do
           }
         end
 
-        it 'renders the ERROR_PARAMS message' do
+        it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
-          response.status.should  == 400
-          response.body.should    start_with "Could not find app or device"
+          response.status.should == 412
+          response.body.should == I18n.t('user_event.error.bad_params')
         end
       end
 
@@ -39,10 +39,10 @@ describe UserEventsController do
           }
         end
 
-        it 'renders the ERROR_PARAMS message' do
+        it 'fails with the ERROR_APP_ID_OR_UDID_MSG message' do
           post(:create, @params)
-          response.status.should  == 400
-          response.body.should    start_with "Could not find app or device."
+          response.status.should == 412
+          response.body.should == I18n.t('user_event.error.bad_params')
         end
       end
     end
@@ -59,10 +59,10 @@ describe UserEventsController do
           }
         end
 
-        it 'renders the ERROR_PARAMS message' do
+        it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
-          response.status.should  == 400
-          response.body.should    start_with "Could not find app or device."
+          response.status.should == 201
+          response.body.should == I18n.t('user_event.success.created')
         end
       end
 
@@ -77,10 +77,10 @@ describe UserEventsController do
           }
         end
 
-        it 'renders SUCCESS_MESSAGE' do
+        it 'succeeds and returns the SUCCESS_MSG message' do
           post(:create, @params)
-          response.status.should  == 200
-          response.body.should    == "Successfully saved user event."
+          response.status.should == 201
+          response.body.should == I18n.t('user_event.success.created')
         end
       end
 
@@ -99,10 +99,10 @@ describe UserEventsController do
             }
           end
 
-          it 'renders ERROR_EVENT' do
+        it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
-            response.status.should  == 400
-            response.body.should    start_with "Error parsing the event info."
+          response.status.should == 406
+          response.body.should == I18n.t('user_event.error.bad_event')
           end
         end
 
@@ -121,10 +121,10 @@ describe UserEventsController do
             }
           end
 
-          it 'renders SUCCESS_MESSAGE' do
+          it 'succeeds and returns the SUCCESS_MSG message' do
             post(:create, @params)
-            response.status.should  == 200
-            response.body.should    == "Successfully saved user event."
+            response.status.should == 201
+            response.body.should == I18n.t('user_event.success.created')
           end
         end
 
@@ -143,10 +143,10 @@ describe UserEventsController do
             }
           end
 
-          it 'renders ERROR_EVENT' do
+          it 'fails with the ERROR_EVENT_INFO_MSG message' do
             post(:create, @params)
-            response.status.should  == 400
-            response.body.should    start_with "Error parsing the event info."
+            response.status.should == 406
+            response.body.should == I18n.t('user_event.error.bad_event')
           end
         end
       end

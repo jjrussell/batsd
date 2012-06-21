@@ -173,7 +173,7 @@ class Offer < ActiveRecord::Base
   validate :bid_within_range
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
-      record.get_device_types(true)
+      record.get_device_types()
       record.errors.add(attribute, "can only be enabled for Android or iOS offers") unless record.get_platform(true) == 'Android'|| record.get_platform(true) == 'iOS'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
@@ -203,7 +203,19 @@ class Offer < ActiveRecord::Base
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
 
-  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
+  scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
+  scope :enabled_by_user, :conditions => { :user_enabled => true }
+  scope :with_allowed_types, :conditions => [ 'item_type not in (?)', ENABLED_OFFER_TYPES ]
+  scope :with_fund, {
+    :joins => :partner,
+    :conditions => '(payment > 0 AND partners.balance > payment) OR (payment = 0 AND reward_value > 0)'
+  }
+  scope :not_tracking, :conditions => { :tracking_for_id => nil }
+  def self.enabled_offers
+    not_tracking.with_fund.with_allowed_types.enabled_by_user.enabled_by_tapjoy.scoped(:readonly => false)
+  end
+
   scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -485,7 +497,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      App::PLATFORMS.index(get_platform) != item.platform
+      App::PLATFORMS.key(get_platform) != item.platform
     end
   end
 

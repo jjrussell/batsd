@@ -16,14 +16,16 @@ module Offer::BannerCreatives
   end
 
   %w(banner_creatives approved_banner_creatives).each do |method_name|
-    define_method method_name do
-      self.send("#{method_name}=", []) if super.nil?
-      super.sort
-    end
+    class_eval <<-EOS
+      def #{method_name}
+        self.send("#{method_name}=", []) if super.nil?
+        super.sort
+      end
 
-    define_method "#{method_name}_was" do
-      super || []
-    end
+      def #{method_name}_was
+        super || []
+      end
+    EOS
   end
 
   def can_change_banner_creatives?
