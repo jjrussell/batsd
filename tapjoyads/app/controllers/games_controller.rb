@@ -174,42 +174,6 @@ class GamesController < ApplicationController
     redirect_to social_feature_redirect_path
   end
 
-  def friends_for(gamer)
-    facebook_friends = Rails.cache.fetch("facebook_friends.#{gamer.id}", :expires_in => 4.hour) do
-      begin
-        query = "SELECT uid, name FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = me())"
-        fb_friendlist = SocialUtils::Facebook.facebook_query(gamer, query)
-
-        fb_friends = fb_friendlist ? fb_friendlist.map do |fb_friend|
-          friend = Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => fb_friend['uid'].to_s }).first
-          if friend
-            is_tjm_gamer = true
-            friendship = Friendship.new(:key => "#{gamer.id}.#{friend.id}")
-            unless friendship.new_record?
-              is_tjm_friend = true
-            end
-
-            friendship = Friendship.new(:key => "#{friend.id}.#{gamer.id}")
-            unless friendship.new_record?
-              is_tjm_friend = true
-            end
-          end
-
-          {
-            :id            => fb_friend['uid'].to_s,
-            :name          => fb_friend['name'],
-            :is_tjm_gamer  => is_tjm_gamer || false,
-            :is_tjm_friend => is_tjm_friend || false
-          }
-        end : nil
-      rescue Exception => e
-        flash[:error] = e.message
-      end
-
-      fb_friends
-    end
-  end
-
   private
 
   def render_json_error(errors, status = 403)
