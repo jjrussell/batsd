@@ -10,7 +10,7 @@ class BucketNames
   STORE_CLICKS        = RUN_MODE_PREFIX + 'store-clicks'
   STORE_RANKS         = RUN_MODE_PREFIX + 'store-ranks'
   SUPPORT_REQUESTS    = RUN_MODE_PREFIX + 'support-requests'
-  APP_SCREENSHOTS     = RUN_MODE_PREFIX + 'app-screenshots'
+  APP_SCREENSHOTS     = Rails.env.production? ? 'app-screenshots.tapjoy.com' : RUN_MODE_PREFIX + 'app-screenshots'
   TAPJOY              = RUN_MODE_PREFIX + 'tapjoy'
   TAPJOY_DOCS         = RUN_MODE_PREFIX + 'tj-docs'
   TAPJOY_GAMES        = RUN_MODE_PREFIX + 'tj-games'
