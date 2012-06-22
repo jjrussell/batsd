@@ -74,6 +74,7 @@ ActiveRecord::Schema.define(:version => 20120620163623) do
     t.integer  "thumbs_down",                       :default => 0
     t.text     "countries_blacklist"
     t.text     "languages"
+    t.text     "screenshots"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -136,7 +137,6 @@ ActiveRecord::Schema.define(:version => 20120620163623) do
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
-    t.text     "screenshots"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

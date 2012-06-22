@@ -3,8 +3,6 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { |ctx| get_offer_device_types.to_json }, :url => :store_url
 
-  json_set_field :screenshots
-
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
@@ -239,35 +237,19 @@ class App < ActiveRecord::Base
   def fill_app_store_data(data)
     self.name = data[:title]
     download_icon(data[:icon_url]) unless new_record?
-    save_screenshots(data[:screenshot_urls])
-  end
-
-  def save_screenshots(screenshot_urls)
-    return if screenshot_urls.nil? || screenshot_urls.empty?
-    new_screenshots = []
-    screenshot_urls.each do |screenshot_url|
-      screenshot_blob = download_blob(screenshot_url)
-      next if screenshot_blob.nil?
-
-      screenshot_hash = hashed_blob(Digest::MD5.hexdigest(screenshot_blob))
-      new_screenshots << screenshot_hash
-      upload_screenshot(screenshot_blob, screenshot_hash) unless self.get_screenshots.include?(screenshot_hash)
-    end
-
-    delete_screenshots(self.get_screenshots - new_screenshots)
-    self.screenshots = new_screenshots
-    save if changed?
   end
 
   def download_icon(url)
     return if url.blank?
 
-    icon_src_blob = download_blob(url)
-    primary_offer.save_icon!(icon_src_blob) unless icon_src_blob.nil?
-  end
-
-  def hashed_blob(checksum)
-    Digest::SHA2.hexdigest("#{id}#{checksum}")
+    begin
+      icon_src_blob = Downloader.get(url, :timeout => 30)
+    rescue Exception => e
+      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
+      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
+    else
+      primary_offer.save_icon!(icon_src_blob)
+    end
   end
 
   def get_icon_url(options = {})
@@ -443,25 +425,6 @@ class App < ActiveRecord::Base
     self.reengagement_campaign_enabled = enable
     self.save!
     reengagement_campaign.map(&:update_offers)
-  end
-
-  def delete_screenshots(screenshot_name)
-    S3.bucket(BucketNames::APP_SCREENSHOTS).objects["app_store/original/#{screenshot_name}"].delete
-  end
-
-  def upload_screenshot(blob, screenshot_name)
-    S3.bucket(BucketNames::APP_SCREENSHOTS).objects["app_store/original/#{screenshot_name}"].write(:data => blob, :acl => :public_read)
-  end
-
-  def download_blob(url)
-    return nil if url.blank?
-    begin
-      Downloader.get(url, :timeout => 30)
-    rescue Exception => e
-      Rails.logger.info "Failed to download image/icon blob for url: #{url}. Error: #{e}"
-      Notifier.alert_new_relic(AppDataFetchError, "image/icon url #{url} for app id #{id}. Error: #{e}")
-      return nil
-    end
   end
 
   def generate_secret_key
