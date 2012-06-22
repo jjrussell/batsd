@@ -52,7 +52,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
       'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
       'Confirmed,Notes'
-       ]
+     ]
     managers = {}
     User.account_managers.each do |user|
       managers[user.id] = user.email
