@@ -14,7 +14,7 @@ Not being hooked up with any existing page, will be used for showing Facebook fr
 1. Go to SocialUtils::Facebook.friends_for(current_gamer), add ```Rails.cache.delete("facebook_friends.#{gamer.id}")```, so that the fetch friend logic will always be executed. Don't forget to restart server.
 2. Login TJM
 3. Make sure current gamer connected his FB account
-4. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect})``` to any controller#action, say social_controller#invites
+4. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect)``` to any controller#action, say social_controller#invites
 5. Access the page that will send request to social_controller#invites
 6. Check the log, see if there's correct response, the response is an array, each element structured like this:
 ```
@@ -30,7 +30,7 @@ Not being hooked up with any existing page, will be used for showing Facebook fr
 1. Go to SocialUtils::Facebook.friends_for(current_gamer), add ```Rails.cache.delete("facebook_friends.#{gamer.id}")```, so that the fetch friend logic will always be executed. Don't forget to restart server.
 2. Login TJM
 3. Make sure current gamer does not connect any FB account
-4. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect})``` to any controller#action, say social_controller#invites
+4. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect)``` to any controller#action, say social_controller#invites
 5. Access the page that will send request to social_controller#invites
 6. An error will be raised, with 'There was an issue. Please try again.' as error message.
 
@@ -42,7 +42,7 @@ Not being hooked up with any existing page, will be used for showing Facebook fr
    If under development environment, the App name is 'Tapjoy Dev';
    If under staging environment, the App name is 'Tapjoy Staging';
    If under production environment, the App name is 'Tapjoy'
-5. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect})``` to any controller#action, say social_controller#invites
+5. Add ```Rails.logger.info(SocialUtils::Facebook.friends_for(current_gamer).inspect)``` to any controller#action, say social_controller#invites
 6. Access the page that will send request to social_controller#invites
 7. An error will be raised, with 'There was an issue. Please try again.' as error message.
 
