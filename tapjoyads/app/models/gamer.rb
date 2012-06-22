@@ -326,6 +326,10 @@ class Gamer < ActiveRecord::Base
     end
   end
 
+  def friend_of?(gamer)
+    Friendship.connected?(self, gamer)
+  end
+
   private
 
   def generate_gravatar_hash

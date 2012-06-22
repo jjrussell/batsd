@@ -25,4 +25,9 @@ class Friendship < SimpledbResource
       f.gamer_id
     end
   end
+
+  def self.connected?(left, right)
+    self.new(:key => "#{left.id}.#{right.id}").present? ||
+    self.new(:key => "#{right.id}.#{left.id}").present?
+  end
 end
