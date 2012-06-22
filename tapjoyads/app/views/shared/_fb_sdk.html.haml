@@ -1,46 +1,43 @@
-%script{ :type => 'text/javascript', :charset => 'utf-8' }
-  :plain
-    function edgeCreateFire(response) {
-      var cURL = "#{@conversion_tracking_url.first}";
-      var rURL = "#{@complete_action_url}";
-      if (cURL != '' && rURL != '') {
-        var src = '<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
-        $("body").append(src);
-        setTimeout(function() {
-          window.location = rURL;
-        }, 1000);
-      }
+:javascript
+  function edgeCreateFire(response) {
+    if (window.cURL && window.rURL) {
+      var src = '<iframe src="'+ window.cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      $("body").append(src);
+      setTimeout(function() {
+        window.location = window.rURL;
+      }, 1000);
     }
-    
-    function initiateFacebook (options, onReady) {
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId  : options.appId,
-          status : true,
-          cookie : true,
-          oauth : true,
-          xfbml : true
-        });
-        if (options.subscribeEdgeCreate) {
-          FB.Event.subscribe('edge.create', function(response) {
-            edgeCreateFire(response);
-          });
-        }
-      };
-
-      (function() {
-        var e = document.createElement('script'); e.async = true;
-        e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
-        document.getElementById('fb-root').appendChild(e);
-      }());
-    }
-
-    function checkPermission (withPerm) {
-      FB.api('/me/permissions', function (response) {
-        if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
-          withPerm();
-        } else {
-          $('.error').text('Please grant us Facebook permission').show();
-        }
+  }
+  
+  function initiateFacebook (options, onReady) {
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId  : options.appId,
+        status : true,
+        cookie : true,
+        oauth : true,
+        xfbml : true
       });
-    }
+      if (options.subscribeEdgeCreate) {
+        FB.Event.subscribe('edge.create', function(response) {
+          edgeCreateFire(response);
+        });
+      }
+    };
+
+    (function() {
+      var e = document.createElement('script'); e.async = true;
+      e.src = document.location.protocol + '//connect.facebook.net/' + options.locale + '/all.js';
+      document.getElementById('fb-root').appendChild(e);
+    }());
+  }
+
+  function checkPermission (withPerm) {
+    FB.api('/me/permissions', function (response) {
+      if (response['data'][0]['offline_access'] && response['data'][0]['publish_stream']) {
+        withPerm();
+      } else {
+        $('.error').text('Please grant us Facebook permission').show();
+      }
+    });
+  }
