@@ -141,15 +141,6 @@ module Offer::Rejecting
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
   end
 
-  def precache_rejections(platform_name, hide_rewarded_app_installs, normalized_device_type)
-    reject_functions = [
-      { :method => :app_platform_mismatch?, :parameters => [platform_name], :reason => 'platform_mismatch' },
-      { :method => :hide_rewarded_app_installs_reject?, :parameters => [hide_rewarded_app_installs], :reason => 'hide_rewarded_app_installs_reject' },
-      { :method => :device_platform_mismatch?, :parameters => [normalized_device_type], :reason => 'device_platform_mismatched' },
-    ]
-    reject_reasons(reject_functions)
-  end
-
   def reject_reasons(reject_functions)
     reject_functions.each do |function_hash|
       function_hash[:reason].humanize if send(function_hash[:method], *function_hash[:parameters])
