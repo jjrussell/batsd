@@ -12,9 +12,12 @@
       %li
         %a{:href => get_click_url(button.tracking_offer)}
           .reward
-            %span.earn= t('text.shared.earn_verb')
-            %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
-            %span.points= t('text.offerwall.points')
+            - if @currency.get_reward_amount(button.tracking_offer) > 0
+              %span.earn= t('text.shared.earn_verb')
+              %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
+              %span.points= t('text.offerwall.points')
+            - else
+              %span.big= t('text.shared.tap_here')
             %span.free= visual_cost(offer)
 
           .offer
