@@ -142,9 +142,11 @@ module Offer::Rejecting
   end
 
   def reject_reasons(reject_functions)
-    reject_functions.each do |function_hash|
-      function_hash[:reason].humanize if send(function_hash[:method], *function_hash[:parameters])
-    end.compact
+    reject_functions.select do |function_hash|
+      send(function_hash[:method], *function_hash[:parameters])
+    end.map do |function_hash|
+      function_hash[:reason].humanize
+    end
   end
 
   def frequency_capping_reject?(device)
