@@ -37,3 +37,7 @@
       %a{:class => 'button', :href => '/offer_wall'} View More Offers
     .button-wrapper
       %a{:class => 'button', :href => get_click_url(@offer)} Replay
+
+- content_for :page_javascript do
+  :plain
+    Tapjoy.Utils.Scrolling.touchScroll('panel');
