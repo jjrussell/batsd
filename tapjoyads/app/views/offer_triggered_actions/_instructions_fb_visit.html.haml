@@ -1,0 +1,37 @@
+- @page_title = "#{t('text.instructions.title')} - #{@offer.name}"
+- steps = @offer.instructions.gsub!(/\r\n/, "\n").split(/\n+/)
+
+.ui-joy-mask
+  .ui-joy-panel#panel
+    .earn-block
+      .reward
+        %span.earn= t('text.instructions.earn_currency_html', :amount_and_currency => '')
+        %span.big= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+        %span.points= @currency.name
+        %span.free= visual_cost(@offer)
+
+    .grey-box
+      .facebook
+        = image_tag @offer.get_icon_url(:source => :cloudfront, :size => '57')
+      .heading= @offer.name
+    .instructions
+      %ul.steps.fb_like
+        - if steps.first.present?
+          %li#step-1.animate.grey-box.highlight
+            #count-1.animate.count= 1
+            .step
+              = steps.first if steps.first.present?
+            .padit
+              #click-action-1
+                #b-facebook
+                  %fb:like{ :href => "#{@complete_action_url}", :send => "false", :layout => "button_count", :width => "90", :show_faces => "false" }
+        - if steps.second.present?
+          .or
+            = t('text.shared.or').upcase
+          %li#step-2.animate
+            #count-1.animate.count= 2
+            .step
+              = link_to steps.second, @complete_action_url
+    .padit
+      .error.hide
+

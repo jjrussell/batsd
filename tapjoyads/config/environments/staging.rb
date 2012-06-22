@@ -45,6 +45,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = 'staging_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
+API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
