@@ -69,14 +69,14 @@ describe Dashboard::ReportingController do
         end
 
         it 'renders json' do
-          Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin_user => false).and_return('data!')
+          Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin => false).and_return('data!')
           get(:show, :id => @app.id, :format => 'json')
           response.should be_success
           JSON.parse(response.body)['data'].should_not be_nil
         end
 
         it 'renders with custom parameters' do
-          Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin_user => false).and_return('data!')
+          Appstats.any_instance.should_receive(:graph_data).with(:offer => @app.primary_offer, :admin => false).and_return('data!')
           start_time = Time.zone.parse('2011-02-15').beginning_of_day
           end_time = Time.zone.parse('2011-02-18').end_of_day
           get(:show, :id => @app.id, :format => 'json', :date => '2011-02-15', :end_date => '2011-02-18', :granularity => 'daily')
