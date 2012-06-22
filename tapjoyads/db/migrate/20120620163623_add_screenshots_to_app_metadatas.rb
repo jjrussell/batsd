@@ -4,6 +4,6 @@ class AddScreenshotsToAppMetadatas < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :apps_metadatas, :screenshots
+    remove_column :app_metadatas, :screenshots
   end
 end
