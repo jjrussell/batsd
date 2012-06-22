@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Gamer do
-  subject { FactoryGirl.create(:gamer) }
+  subject { FactoryGirl.create(:user) }
 
   it { should validate_uniqueness_of :email }
 
