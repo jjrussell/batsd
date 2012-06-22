@@ -219,7 +219,6 @@
         return !isNaN(parseFloat(obj)) && isFinite(obj);
       },
       isObject: function(obj){
-        console.log(Tap.type(obj), Tap.type(obj) === 'object')
         return Tap.type(obj) === 'object';
       },
       isString: function(obj){
