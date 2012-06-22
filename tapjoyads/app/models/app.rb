@@ -427,7 +427,6 @@ class App < ActiveRecord::Base
     reengagement_campaign.map(&:update_offers)
   end
 
-
   def generate_secret_key
     return if secret_key.present?
 
