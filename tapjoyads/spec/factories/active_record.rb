@@ -343,6 +343,9 @@ FactoryGirl.define do
     been_buried_count 0
     been_helpful_count 0
     birthdate { 13.years.ago - 1.day }
+    after_build do |gamer|
+      Rails.logger.debug "Gamer Email: #{gamer.email}"
+    end
   end
   
   factory :gamer_device do

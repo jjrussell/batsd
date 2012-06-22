@@ -31,7 +31,7 @@ describe Dashboard::Tools::GamersController do
     
     :show => {
       :params => {
-        :id => FactoryGirl.create(:gamer).id
+        :id => lambda { FactoryGirl.create(:gamer).id }
       },
       :permissions => {
         :account_manager          => true,
@@ -60,5 +60,4 @@ describe Dashboard::Tools::GamersController do
   } unless defined? PERMISSIONS_MAP
   
   it_behaves_like "a controller with permissions"
-  
 end
