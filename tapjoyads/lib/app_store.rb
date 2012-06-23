@@ -273,7 +273,7 @@ private
       :url                    => hash["trackViewUrl"],
       :icon_url               => hash["artworkUrl100"],
       :small_icon_url         => hash["artworkUrl60"],
-      :screenshot_urls        => hash['screenshotUrls'] | hash [ipadScreenshotUrls],
+      :screenshot_urls        => hash['screenshotUrls'] || hash['ipadScreenshotUrls'],
       :price                  => '%.2f' % price_in_dollars,
       :description            => hash["description"],
       :publisher              => hash["artistName"],
