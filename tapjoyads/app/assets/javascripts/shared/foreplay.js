@@ -79,8 +79,7 @@
     });
   });
 
-
-  $.each(['swipe', 'tap', 'singleTap', 'doubleTap', 'press'], function(method){
+  ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
     $.fn[method] = function(callback){
       return this.bind(method, callback);
     }
