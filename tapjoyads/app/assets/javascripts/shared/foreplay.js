@@ -3,7 +3,7 @@
       touchTimeout,
       pressDelay = 750;      
 
-  function swipeDirection(x1, x2, y1, y2) {
+  function swipeDirection(x1, x2, y1, y2){
     var xDelta = Math.abs(x1 - x2), 
         yDelta = Math.abs(y1 - y2);
 
@@ -80,10 +80,10 @@
   });
 
 
-  ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(m) {
-      $.fn[m] = function(callback){
-        return this.bind(m, callback)
-      }
+  $.each(['swipe', 'tap', 'singleTap', 'doubleTap', 'press'], function(method){
+    $.fn[method] = function(callback){
+      return this.bind(method, callback);
+    }
   });
 
 })(Tapjoy, jQuery);
