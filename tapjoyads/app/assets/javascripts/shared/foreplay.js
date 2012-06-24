@@ -1,8 +1,9 @@
-;(function($){
+;(function(window, $){
 
   var supportsTouch = (!!window.Touch) && (typeof window.TouchEvent != 'undefined');
 
   var foreplay = {
+    addEvent: (/msie/i).test(navigator.userAgent) ? 'attachEvent' : 'addEventListener',
     event: {},
     delay: 800,
     timestamp: null,
@@ -16,25 +17,12 @@
 
     init: function(){
       var $t = this;
-      // addlistener to touchstart/mousedown
-      document.addEventListener($t.eventsMap.start, function(e){
-        $t.start(e);
-      }, false);
 
-      // addlistener to touchmove/mousemove
-      document.addEventListener($t.eventsMap.move, function(e){
-        $t.move(e);
-      }, false);
-
-      // addlistener to touchend/mouseup
-      document.addEventListener($t.eventsMap.end, function(e){
-        $t.end(e);
-      }, false);
-
-      // addlistener to touchcancel/mouseout
-      document.addEventListener($t.eventsMap.cancel, function(e){
-        $t.cancel(e);
-      }, false);
+      ['start', 'move', 'end', 'cancel'].forEach(function(event){
+        document[$t.addEvent]($t.eventsMap[event], function(e){
+          $t[event](e);
+        }, false);
+      });
 
       // extend jQuery.fn with touch methods
       ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
@@ -165,4 +153,4 @@
     foreplay.init();
   });
 
-})(jQuery);
+})(window, jQuery);
