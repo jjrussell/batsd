@@ -289,6 +289,11 @@ class Offer < ActiveRecord::Base
   end
   memoize :countries_blacklist
 
+  def all_blacklisted?
+    whitelist = get_countries
+    whitelist.present? && (whitelist - countries_blacklist).blank?
+  end
+
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
   end
