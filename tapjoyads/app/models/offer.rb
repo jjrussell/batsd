@@ -750,10 +750,6 @@ class Offer < ActiveRecord::Base
     currency.get_test_device_ids.include?(device.id)
   end
 
-  def is_test_video_offer?(type)
-    type == 'TestVideoOffer'
-  end
-
   def cleanup_url
     if (url_overridden_changed? || url_changed?) && !url_overridden?
       if %w(App ActionOffer RatingOffer).include?(item_type)
