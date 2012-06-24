@@ -25,12 +25,12 @@ include GetOffersHelper
     @offer_list.each do |offer|
       hash                      = {}
       hash["cost"]              = visual_cost(offer)
-      hash["iconURL"]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
+      hash["iconURL"]           = offer.video_offer? ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
       hash["payout"]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
       hash["redirectURL"]       = get_click_url(offer)
       hash["requiresWiFi"]      = offer.wifi_only? if @show_wifi_only
       hash["title"]             = offer.name
-      hash["type"]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
+      hash["type"]              = offer.video_offer? ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
       offer_array << hash
     end
 

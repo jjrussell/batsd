@@ -231,8 +231,8 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
+  scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
@@ -375,8 +375,12 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
 
+  def video_offer?
+    item_type == 'VideoOffer'
+  end
+
   def video_icon_url(options = {})
-    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+    if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
         object.exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
@@ -395,7 +399,7 @@ class Offer < ActiveRecord::Base
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
-    size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
+    size       = options.delete(:size)     { (video_offer? || item_type == 'TestVideoOffer') ? '200' : '57' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
@@ -412,7 +416,7 @@ class Offer < ActiveRecord::Base
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
-    if item_type == 'VideoOffer'
+    if video_offer?
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
       corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
       corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
@@ -710,7 +714,7 @@ class Offer < ActiveRecord::Base
   end
 
   def update_video_button_tracking_offers
-    return unless item_type == 'VideoOffer'
+    return unless video_offer?
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
@@ -735,7 +739,7 @@ class Offer < ActiveRecord::Base
       end
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
-    elsif item_type == 'VideoOffer'
+    elsif video_offer?
       2
     else
       0
