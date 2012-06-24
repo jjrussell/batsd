@@ -399,7 +399,7 @@ class Offer < ActiveRecord::Base
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
-    size       = options.delete(:size)     { (video_offer? || item_type == 'TestVideoOffer') ? '200' : '57' }
+    size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
