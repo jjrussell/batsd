@@ -11,11 +11,13 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  OFFERWALL_EXPERIMENT_APP_IDS = Set.new([ '9d6af572-7985-4d11-ae48-989dfc08ec4c' ,  #Tiny Farm
-		                                    'e34ef85a-cd6d-4516-b5a5-674309776601', #Magic Piano
-                                        '8d87c837-0d24-4c46-9d79-46696e042dc5',  #AppDog Web App -- iOS
-                                            '2efe982d-c1cf-4eb0-8163-1836cd6d927c'  #Draw Something Free -- Android
-                                      ])
+  OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
+                                          'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
+                                          '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
+                                          '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
+                                          'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
+                                          'b138a117-4b68-4e41-890a-2ea84a83ed38'  # Tiny Farm (iOS)
+                                        ])
   def webpage_redesign
     webpage
 
