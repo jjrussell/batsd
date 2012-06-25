@@ -30,9 +30,9 @@ describe Dashboard::Tools::GamersController do
     },
     
     :show => {
-      :params => {
-        :id => lambda { FactoryGirl.create(:gamer).id }
-      },
+      # :params => {
+      #   :id => lambda { FactoryGirl.create(:gamer).id }
+      # },
       :permissions => {
         :account_manager          => true,
         :admin                    => true,

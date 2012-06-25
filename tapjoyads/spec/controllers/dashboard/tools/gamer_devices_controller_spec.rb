@@ -9,73 +9,103 @@ describe Dashboard::Tools::GamerDevicesController do
   before :each do
     ExternalPublisher.stub(:load_all).and_return(nil)
   end
+  
+  PERMISSIONS_MAP = {
+    :edit => {
+      :permissions => {
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service_manager => true,
+        :customer_service         => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_change           => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
+    
+    :new => {
+      :permissions => {
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service_manager => true,
+        :customer_service         => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_change           => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
+    
+    :update => {
+      :permissions => {
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service_manager => true,
+        :customer_service         => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_change           => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
+  } unless defined? PERMISSIONS_MAP
+  
+  it_behaves_like "a controller with permissions"
 
   describe "#new" do
-    context "when logged in as a customer service user" do
-      include_context 'logged in as user type', :customer_service
-    
-      it "allows access" do
-        get(:new, params)
-        response.should be_success
-      end
+    context "when logged in as an admin user" do
+      include_context 'logged in as user type', :admin
     
       it "redirects to gamer management tool if no gamer_id is specified" do
         get :new
         response.should redirect_to(tools_gamers_path)
       end
     end
-
-    context "when logged in as an account manager" do
-      include_context 'logged in as user type', :account_manager
-    
-      it "allows access" do
-        get(:new, params)
-        response.should be_success
-      end
-    end
-
-    context "when logged in as a partner" do
-      include_context 'logged in as user type', :partner
-      
-      it "disallows access" do
-        get(:new, params)
-        response.should_not be_success
-      end
-    end
-  end
-
-  describe "#edit" do
-    context "when logged in as a customer service user" do
-      include_context 'logged in as user type', :customer_service
-    
-      it "allows access" do
-        get(:edit, params)
-        response.should be_success
-      end
-    end
-
-    context "when logged in as an account manager" do
-      include_context 'logged in as user type', :account_manager
-    
-      it "allows access" do
-        get(:edit, params)
-        response.should be_success
-      end
-    end
-
-    context "when logged in as a partner" do
-      include_context 'logged in as user type', :partner
-      
-      it "disallows access" do
-        get(:edit, params)
-        response.should_not be_success
-      end
-    end
   end
 
   describe "#update" do
-    context "when logged in as a customer service user" do
-      include_context 'logged in as user type', :customer_service
+    context "when logged in as an admin user" do
+      include_context 'logged in as user type', :admin
     
       it "redirects to gamer management tool for associated gamer after update" do
         put(:update, params)
@@ -94,24 +124,6 @@ describe Dashboard::Tools::GamerDevicesController do
         put(:update, params)
         gamer_device.reload
         gamer_device.device_type.should == 'ipod'
-      end
-    end
-    
-    context "when logged in as an account manager" do
-      include_context 'logged in as user type', :account_manager
-    
-      it "redirects to gamer management tool for associated gamer after update" do
-        put(:update, params)
-        response.should redirect_to(tools_gamer_path(gamer))
-      end
-    end
-    
-    context "when logged in as a partner" do
-      include_context 'logged in as user type', :partner
-    
-      it "disallows access" do
-        put(:update, params)
-        response.should_not be_success
       end
     end
   end
