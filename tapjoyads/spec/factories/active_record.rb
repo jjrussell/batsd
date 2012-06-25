@@ -101,9 +101,9 @@ FactoryGirl.define do
     end
   end
   
-  factory :partner_change_user, :parent => :user do
+  factory :partner_changer_user, :parent => :user do
      after_build do |user|
-      user.user_roles << UserRole.find_or_create_by_name('partner_change', :employee => true)
+      user.user_roles << UserRole.find_or_create_by_name('partner_changer', :employee => true)
     end
   end
   

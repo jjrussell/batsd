@@ -6,18 +6,14 @@ describe Dashboard::Tools::GamerDevicesController do
   let(:params)        { { :id       => gamer_device.id,
                           :gamer_id => gamer.id } }
   
-  before :each do
-    ExternalPublisher.stub(:load_all).and_return(nil)
-  end
-  
   PERMISSIONS_MAP = {
     :edit => {
       :permissions => {
         :account_manager          => true,
         :admin                    => true,
         :agency                   => false,
-        :customer_service_manager => true,
         :customer_service         => true,
+        :customer_service_manager => true,
         :devices                  => false,
         :executive                => false,
         :file_sharer              => false,
@@ -27,7 +23,7 @@ describe Dashboard::Tools::GamerDevicesController do
         :ops                      => false,
         :products                 => false,
         :partner                  => false,
-        :partner_change           => false,
+        :partner_changer          => false,
         :payops                   => false,
         :payout_manager           => false,
         :reporting                => false,
@@ -42,8 +38,8 @@ describe Dashboard::Tools::GamerDevicesController do
         :account_manager          => true,
         :admin                    => true,
         :agency                   => false,
-        :customer_service_manager => true,
         :customer_service         => true,
+        :customer_service_manager => true,
         :devices                  => false,
         :executive                => false,
         :file_sharer              => false,
@@ -53,7 +49,7 @@ describe Dashboard::Tools::GamerDevicesController do
         :ops                      => false,
         :products                 => false,
         :partner                  => false,
-        :partner_change           => false,
+        :partner_changer          => false,
         :payops                   => false,
         :payout_manager           => false,
         :reporting                => false,
@@ -68,8 +64,8 @@ describe Dashboard::Tools::GamerDevicesController do
         :account_manager          => true,
         :admin                    => true,
         :agency                   => false,
-        :customer_service_manager => true,
         :customer_service         => true,
+        :customer_service_manager => true,
         :devices                  => false,
         :executive                => false,
         :file_sharer              => false,
@@ -79,7 +75,7 @@ describe Dashboard::Tools::GamerDevicesController do
         :ops                      => false,
         :products                 => false,
         :partner                  => false,
-        :partner_change           => false,
+        :partner_changer          => false,
         :payops                   => false,
         :payout_manager           => false,
         :reporting                => false,
@@ -93,7 +89,7 @@ describe Dashboard::Tools::GamerDevicesController do
   it_behaves_like "a controller with permissions"
 
   describe "#new" do
-    context "when logged in as an admin user" do
+    context "when logged in as an authorized user" do
       include_context 'logged in as user type', :admin
     
       it "redirects to gamer management tool if no gamer_id is specified" do
@@ -104,7 +100,7 @@ describe Dashboard::Tools::GamerDevicesController do
   end
 
   describe "#update" do
-    context "when logged in as an admin user" do
+    context "when logged in as an authorized user" do
       include_context 'logged in as user type', :admin
     
       it "redirects to gamer management tool for associated gamer after update" do

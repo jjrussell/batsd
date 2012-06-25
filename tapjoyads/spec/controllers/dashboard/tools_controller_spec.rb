@@ -14,38 +14,141 @@ describe Dashboard::ToolsController do
   before :each do  
     PublisherUser.stub(:new).and_return(pub_user)
   end
+  
+  PERMISSIONS_MAP = {
+    :detach_pub_user_account => {
+      :permissions => {
+        :account_manager          => false,
+        :admin                    => false,
+        :agency                   => false,
+        :customer_service         => false,
+        :customer_service_manager => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_changer          => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
 
-  describe '#index' do
-    context 'with a non-logged in user' do
-      it 'redirects to login page' do
-        get :index
-        response.should redirect_to(login_path(:goto => tools_path))
-      end
-    end
+    :index => {
+      :permissions => {
+        :account_manager          => true,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service         => true,
+        :customer_service_manager => true,
+        :devices                  => true,
+        :executive                => true,
+        :file_sharer              => true,
+        :games_editor             => true,
+        :hr                       => true,
+        :money                    => true,
+        :ops                      => false,
+        :products                 => true,
+        :partner                  => false,
+        :partner_changer          => true,
+        :payops                   => true,
+        :payout_manager           => true,
+        :reporting                => false,
+        :role_manager             => true,
+        :sales_rep_manager        => true,
+        :tools                    => true
+      }
+    },
+      
+    :partner_monthly_balance => {
+      :permissions => {
+        :account_manager          => false,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service         => false,
+        :customer_service_manager => false,
+        :devices                  => false,
+        :executive                => true,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_changer          => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
     
-    context 'with an unauthorized user' do
-      include_context 'logged in as user type', :agency
+    :partner_monthly_balance => {
+      :permissions => {
+        :account_manager          => false,
+        :admin                    => true,
+        :agency                   => false,
+        :customer_service         => false,
+        :customer_service_manager => false,
+        :devices                  => false,
+        :executive                => true,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_changer          => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    },
     
-      context 'accessing tools index' do
-        it 'redirects to dashboard' do
-          get :index
-          response.should redirect_to root_path
-        end
-      end
-    end
+    :view_pub_user_account => {
+      :permissions => {
+        :account_manager          => false,
+        :admin                    => false,
+        :agency                   => false,
+        :customer_service         => false,
+        :customer_service_manager => true,
+        :devices                  => false,
+        :executive                => false,
+        :file_sharer              => false,
+        :games_editor             => false,
+        :hr                       => false,
+        :money                    => false,
+        :ops                      => false,
+        :products                 => false,
+        :partner                  => false,
+        :partner_changer          => false,
+        :payops                   => false,
+        :payout_manager           => false,
+        :reporting                => false,
+        :role_manager             => false,
+        :sales_rep_manager        => false,
+        :tools                    => false
+      }
+    }
+  } unless defined? PERMISSIONS_MAP
 
-    context 'with an admin user' do
-      include_context 'logged in as user type', :admin
-
-      context 'accessing tools index' do
-        it 'renders appropriate page' do
-          get :index
-          response.should render_template 'tools/index'
-        end
-      end
-    end
-  end
-
+  it_behaves_like "a controller with permissions"
+  
   describe '#partner_monthly_balance' do
     context 'with an admin user' do
       include_context 'logged in as user type', :admin
@@ -58,7 +161,7 @@ describe Dashboard::ToolsController do
       end
     end
   end
-
+  
   describe '#view_pub_user_account' do
     context 'when logged in as a customer service manager' do
       include_context 'logged in as user type', :customer_service_manager
@@ -71,7 +174,7 @@ describe Dashboard::ToolsController do
       end
     end
   end
-  
+
   describe '#detach_pub_user_account' do
     context 'when logged in as a customer service manager' do
       include_context 'logged in as user type', :customer_service_manager

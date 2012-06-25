@@ -19,7 +19,7 @@ describe Dashboard::Tools::GamersController do
         :ops                      => false,
         :products                 => false,
         :partner                  => false,
-        :partner_change           => false,
+        :partner_changer          => false,
         :payops                   => false,
         :payout_manager           => false,
         :reporting                => false,
@@ -30,9 +30,6 @@ describe Dashboard::Tools::GamersController do
     },
     
     :show => {
-      # :params => {
-      #   :id => lambda { FactoryGirl.create(:gamer).id }
-      # },
       :permissions => {
         :account_manager          => true,
         :admin                    => true,
@@ -48,7 +45,7 @@ describe Dashboard::Tools::GamersController do
         :ops                      => false,
         :products                 => false,
         :partner                  => false,
-        :partner_change           => false,
+        :partner_changer          => false,
         :payops                   => false,
         :payout_manager           => false,
         :reporting                => false,
