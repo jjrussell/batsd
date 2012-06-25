@@ -27,7 +27,7 @@
       // extend jQuery.fn with touch methods
       ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
         $.fn[method] = function(callback){
-          return this.bind(method, callback);
+          return this.bind(method, callback).data('foreplay', true)
         }
       });
     },
@@ -44,9 +44,9 @@
       var $t = this;
 
       // reset all
-      $t.touchTimeout && clearTimeout($t.touchTimeout);
-      $t.pressTimeout && clearTimeout($t.pressTimeout);
-      $t.touchTimeout = $t.pressTimeout = null;
+      $t.touchTimer && clearTimeout($t.touchTimer);
+      $t.pressTimer && clearTimeout($t.pressTimer);
+      $t.touchTimer = $t.pressTimer = null;
     },
 
     end: function(e){
@@ -64,11 +64,10 @@
       else if(($t.event.x2 && Math.abs($t.event.x1 - $t.event.x2) > 30) || ($t.event.y2 && Math.abs($t.event.y1 - $t.event.y2) > 30)){
         // trigger swipe, pass swipe object back
         $t.event.element.trigger('swipe', {
-          direction: $t.swipe($t.event.x1, $t.event.x2, $t.event.y1, $t.event.y2),
+          direction: $t.swipe(),
           x: $t.event.x1 - $t.event.x2,
           y: $t.event.y1 - $t.event.y2
         });
-
         // empty event object
         $t.event = {};
       }
@@ -76,9 +75,12 @@
         // trigger fast tap
         $t.event.element.trigger('tap');
         // set timer for tap event
-        $t.touchTimeout = setTimeout(function(){
-          $t.touchTimeout = null;
+        $t.touchTimer = setTimeout(function(){
+          // clear
+          $t.touchTimer = null;
+          // trigger single tap
           $t.event.element.trigger('singleTap');
+          // empty event object
           $t.event = {};
         }, 250);
       }
@@ -98,10 +100,12 @@
     press: function(){
       var $t = this,
           // get timestamp of touchstart from event object
-          timestamp = $t.event.timestamp;
+          timestamp = $t.event.timestamp,
+          // get current timestamp
+          now = Date.now();
 
       // if the time between start and now exceeds our delay
-      if(timestamp && (Date.now() - timestamp >= $t.delay)){
+      if(timestamp && (now - timestamp >= $t.delay)){
         // trigger press event
         $t.event.element.trigger('press');
         // empty event object
@@ -116,10 +120,11 @@
           // compare against last timestamp
           delta = now - ($t.event.timestamp || now);
 
-      e.preventDefault();
+      if($(e.target).data('foreplay'))
+        e.preventDefault();
 
       // clear touch timer
-      $t.touchTimeout && clearTimeout($t.touchTimeout)
+      $t.touchTimer && clearTimeout($t.touchTimer)
 
       // create event object
       $t.event = {
@@ -128,28 +133,29 @@
         // x position
         x1: $t.supportsTouch ? e.touches[0].pageX : e.pageX,
         // y position
-        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY
+        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY,
+        // if our timestamp delta is between 0 - 250 then set doubleTap to true
+        isDoubleTap: delta > 0 && delta <= 250 ? true : false,
+        // store reference to timestamp
+        timestamp: now
       };
 
-      // if our timestamp delta is between 0 - 250 then set doubleTap to true
-      $t.event.isDoubleTap = delta > 0 && delta <= 250 ? true : false;
-
-      // store reference to timestamp
-      $t.event.timestamp = now;
-
       // start timer for press event
-      $t.pressTimeout = setTimeout(function(){
+      $t.pressTimer = setTimeout(function(){
+        // trigger press event
         $t.press();
       }, $t.delay);
     },
 
-    swipe: function(startX, endX, startY, endY){
+    swipe: function(){
+      var $t = this;
       // determine if x or y movement was greater and return direction of swipe
-      return Math.abs(startX - endX) >= Math.abs(startY - endY) ? (startX - endX > 0 ? 'left' : 'right') : (startY - endY > 0 ? 'up' : 'down');
+      return Math.abs($t.event.x1 - $t.event.x2) >= Math.abs($t.event.y1 - $t.event.y2) ? ($t.event.x1 - $t.event.x2 > 0 ? 'left' : 'right') : ($t.event.y1 - $t.event.y2 > 0 ? 'up' : 'down');
     }
   };
 
   $(document).ready(function(){
+    // let's get it on
     foreplay.init();
   });
 
