@@ -81,7 +81,6 @@
       if($t.event.pressed && $t.event.element.data('swipe') && Math.abs($t.event.y1 - $t.event.y2) > 15){
         e.preventDefault();
       }
-
     },
 
     press: function(){
