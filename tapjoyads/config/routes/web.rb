@@ -44,6 +44,8 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
 
+  match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
+
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'
   match 'offer_completed/gambit' => 'offer_completed#gambit'

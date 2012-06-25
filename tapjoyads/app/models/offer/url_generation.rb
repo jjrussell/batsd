@@ -36,7 +36,11 @@ module Offer::UrlGeneration
       :os_version            => os_version
     }
 
-    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+    if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
+      "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    else
+      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+    end
   end
 
   def complete_action_url(options)
