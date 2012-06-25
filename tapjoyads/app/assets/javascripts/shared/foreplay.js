@@ -25,7 +25,6 @@
 
     clear: function(){
       var $t = this;
-
       // reset all
       $t.touchTimer && clearTimeout($t.touchTimer);
       $t.pressTimer && clearTimeout($t.pressTimer);
@@ -34,9 +33,10 @@
 
     end: function(e){
       var $t = this;
-
       // clear timers
       $t.clear();
+      // set pressed state
+      $t.event.pressed = false;
       // check if doubleTap flag
       if($t.event.isDoubleTap){
         // trigger event
@@ -71,13 +71,17 @@
 
     move: function(e){
       var $t = this;
-
       // clear timers
       $t.clear();
       // store x position
       $t.event.x2 = $t.supportsTouch ? e.touches[0].pageX : e.pageX;
       // store y position
       $t.event.y2 = $t.supportsTouch ? e.touches[0].pageY : e.pageY;
+      // check if touchstart is active, if event is swipe and if movement is swipe or scrolling
+      if($t.event.pressed && $t.event.element.data('swipe') && Math.abs($t.event.y1 - $t.event.y2) > 15){
+        e.preventDefault();
+      }
+
     },
 
     press: function(){
@@ -104,21 +108,27 @@
           delta = now - ($t.event.timestamp || now);
 
       // clear touch timer
-      $t.touchTimer && clearTimeout($t.touchTimer)
+      $t.touchTimer && clearTimeout($t.touchTimer);
 
       // create event object
       $t.event = {
         // our target element
         element: $t.supportsTouch ? $(e.touches[0].target) : $(e.target),
+        // if our timestamp delta is between 0 - 250 then set doubleTap to true
+        isDoubleTap: delta > 0 && delta <= 250 ? true : false,
+        // set pressed state
+        pressed: true,
+        // store reference to timestamp
+        timestamp: now,
         // x position
         x1: $t.supportsTouch ? e.touches[0].pageX : e.pageX,
         // y position
-        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY,
-        // if our timestamp delta is between 0 - 250 then set doubleTap to true
-        isDoubleTap: delta > 0 && delta <= 250 ? true : false,
-        // store reference to timestamp
-        timestamp: now
+        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY        
       };
+
+      // check if press event exists
+      if($t.event.element.data('press'))
+        e.preventDefault();
 
       // start timer for press event
       $t.pressTimer = setTimeout(function(){
@@ -148,7 +158,7 @@
   // extend jQuery.fn with touch methods
   ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
     $.fn[method] = function(callback){
-      return this.bind(method, callback);
+      return this.bind(method, callback).data(method, true);
     }
   });
 
@@ -158,4 +168,3 @@
   });
 
 })(window, jQuery);
-
