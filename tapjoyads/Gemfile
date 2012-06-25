@@ -81,6 +81,7 @@ group :development do
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-nav'
+  gem 'ruby18_source_location'
   gem 'parallel_tests'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git', :require => false
 end
