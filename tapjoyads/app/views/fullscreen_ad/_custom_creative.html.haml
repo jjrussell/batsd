@@ -53,7 +53,7 @@
   - @offer.banner_creatives.each do |size|
     :plain
         availableCreativeSizes.push("#{size}".split('x'));
-        availableCreatives.push("#{@offer.banner_creative_url(size, 'jpeg', params[:preview] == true)}");
+        availableCreatives.push("#{@offer.banner_creative_url(:size => size, :format => 'jpeg', :bust_cache => (params[:preview] == true))}");
 
   :plain
 
