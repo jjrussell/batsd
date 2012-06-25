@@ -1089,7 +1089,9 @@ describe Offer do
   end
 
   describe '#all_blacklisted?' do
-    it { should_not be_all_blacklisted }
+    context 'without whitelist' do
+      it { should_not be_all_blacklisted }
+    end
 
     context 'with whitelist' do
       before :each do
