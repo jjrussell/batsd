@@ -15,23 +15,6 @@
       cancel: supportsTouch ? 'touchcancel' : 'mouseout'
     },
 
-    init: function(){
-      var $t = this;
-
-      ['start', 'move', 'end', 'cancel'].forEach(function(event){
-        document[$t.addEvent]($t.eventsMap[event], function(e){
-          $t[event](e);
-        }, false);
-      });
-
-      // extend jQuery.fn with touch methods
-      ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
-        $.fn[method] = function(callback){
-          return this.bind(method, callback).data('foreplay', true)
-        }
-      });
-    },
-
     cancel: function(){
       var $t = this;
       // clear timers
@@ -120,9 +103,6 @@
           // compare against last timestamp
           delta = now - ($t.event.timestamp || now);
 
-      if($(e.target).data('foreplay'))
-        e.preventDefault();
-
       // clear touch timer
       $t.touchTimer && clearTimeout($t.touchTimer)
 
@@ -151,12 +131,31 @@
       var $t = this;
       // determine if x or y movement was greater and return direction of swipe
       return Math.abs($t.event.x1 - $t.event.x2) >= Math.abs($t.event.y1 - $t.event.y2) ? ($t.event.x1 - $t.event.x2 > 0 ? 'left' : 'right') : ($t.event.y1 - $t.event.y2 > 0 ? 'up' : 'down');
-    }
+    },
+
+    touch: function(){
+      var $t = this;
+
+      // add listernes to document
+      ['start', 'move', 'end', 'cancel'].forEach(function(event){
+        document[$t.addEvent]($t.eventsMap[event], function(e){
+          $t[event](e);
+        }, false);
+      });
+    }    
   };
+
+  // extend jQuery.fn with touch methods
+  ['swipe', 'tap', 'singleTap', 'doubleTap', 'press'].forEach(function(method){
+    $.fn[method] = function(callback){
+      return this.bind(method, callback);
+    }
+  });
 
   $(document).ready(function(){
     // let's get it on
-    foreplay.init();
+    foreplay.touch();
   });
 
 })(window, jQuery);
+
