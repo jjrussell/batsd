@@ -62,13 +62,9 @@ describe VideoOffer do
 
     let(:buttons) do
       3.times do |i|
-        button = subject.video_buttons.build
-        button.name     = "button #{i}"
-        button.url      = 'http://www.tapjoy.com'
-        button.ordinal  = i
-        button.stub(:update_tracking_offer).and_return(true)
-        button.save!
+        Factory(:video_button, :video_offer => subject, :ordinal => i)
       end
+      subject.reload
       subject.video_buttons
     end
 
@@ -81,17 +77,12 @@ describe VideoOffer do
       it 'makes buttons enabled by default' do
         subject.video_buttons.enabled.size.should == 3
       end
-
-      it 'is not valid for update buttons' do
-        subject.should_not be_valid_for_update_buttons
-      end
     end
 
     context 'given two enabled buttons (one of which was formerly enabled)' do
       let(:button) {buttons.last}
       before(:each) do
         button.enabled = false
-        button.stub(:update_tracking_offer).and_return(true)
         button.save!
         subject.reload
       end
@@ -99,9 +90,83 @@ describe VideoOffer do
       it 'correctly tracks disabled buttons' do
         subject.video_buttons.enabled.size.should == 2
       end
+    end
 
-      it 'is valid for update buttons' do
-        subject.should be_valid_for_update_buttons
+    describe '#video_buttons_for_device' do
+      before(:each) do
+        @buttons = {}
+
+        types = [%w(iphone android), %w(iphone), %w(android)]
+        buttons.each do |button|
+          type = types.shift
+          button.tracking_offer.update_attribute(:device_types, type.to_json)
+          button.update_attribute(:rewarded, true) if type.size > 1
+          @buttons[type.size > 1 ? 'rewarded' : type] = button
+        end
+
+        subject.reload
+      end
+
+      context 'with an iphone device' do
+        let(:device) { 'iphone' }
+        let(:filtered_out) { @buttons['android'] }
+
+        it 'filters out non-iphone offers' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+
+        context 'and a rewarded PPI button' do
+          let(:filtered_out) { @buttons['rewarded'] }
+
+          it 'filters out the rewarded install offer' do
+            subject.video_buttons_for_device(device).should_not include(filtered_out)
+          end
+        end
+
+        context 'and a rewarded non-PPI button' do
+          let(:filtered_out) { @buttons['rewarded'] }
+          before(:each) do
+            filtered_out.tracking_item = Factory(:generic_offer)
+            filtered_out.save!
+          end
+
+          it 'does not filter out the rewarded offer' do
+            subject.video_buttons_for_device(device).should include(filtered_out)
+          end
+        end
+      end
+
+      context 'with an itouch device and a rewarded install offer' do
+        let(:device) { 'itouch' }
+        let(:filtered_out) { @buttons['rewarded'] }
+
+        it 'filters out the rewarded install offer' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with an ipad device and a rewarded install offer' do
+        let(:device) { 'ipad' }
+        let(:filtered_out) { @buttons['rewarded'] }
+
+        it 'filters out the rewarded install offer' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with an android device' do
+        let(:device) { 'android' }
+        let(:filtered_out) { @buttons['iphone'] }
+
+        it 'filters out non-android offers' do
+          subject.video_buttons_for_device(device).should_not include(filtered_out)
+        end
+      end
+
+      context 'with a non-mobile device' do
+        it 'does not filter any buttons out' do
+          subject.video_buttons_for_device(nil).length.should == 3
+        end
       end
     end
 
