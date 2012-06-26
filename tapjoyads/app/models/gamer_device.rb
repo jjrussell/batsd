@@ -74,6 +74,7 @@ class GamerDevice < ActiveRecord::Base
   validates_presence_of :gamer, :device_id, :name
   validates_uniqueness_of :device_id, :scope => [:gamer_id]
 
+  default_scope order('name')
   delegate :blocked?, :to => :gamer
   after_save :check_suspicious_activities, :unless => :blocked?
 
