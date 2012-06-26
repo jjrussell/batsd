@@ -63,7 +63,6 @@ class Mc
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is returned.
   def self.get(keys, clone = false, caches = nil, &block)
-   # return 'foo'
     keys = keys.to_a
     key  = keys.shift
     caches ||= [ @@cache ]
@@ -126,10 +125,10 @@ class Mc
     end
 
     if value.nil?
-      unless keys.empty?
+      if keys.present?
         value = Mc.get(keys, clone, caches, &block)
-      else
-        value = yield if block_given?
+      elsif block_given?
+        value = yield
       end
     end
 
