@@ -61,12 +61,7 @@ class Games::DevicesController < GamesController
 
       new_device = current_gamer.devices.new(:device => device)
       if new_device.save
-        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
-        if click.rewardable?
-          current_gamer.reward_click(click)
-        else
-          device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
-        end
+        device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
 
         session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
 
