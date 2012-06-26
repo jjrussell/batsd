@@ -1,6 +1,41 @@
+%style{:type => 'text/css'}
+  :plain
+    <!--[if gte IE 9]>
+    <style type="text/css">
+      .gradient {
+         filter: none;
+      }
+
+      .button-wrapper .button {
+        background: url(gray_button_tile.png) repeat-x 0 0;
+      } 
+
+      ul#offers li .reward {
+        background: url(reward_tile.png) repeat-x 0 0;
+      }
+
+      .ui-joy-panel .header .heading {
+        background: url(header_tile.png) repeat-x 0 0;
+      }
+      @media (max-width:425px){
+        .button-wrapper {
+          .button {
+            font-size: 90%;
+          }
+        }
+
+        .blurb {
+          color: #555;
+          font-size: 84%;
+          line-height: 100%;
+          margin: 5px 0;
+        }
+
+    </style>
+    <![endif]-->
 #panel.ui-joy-panel.video
   .header
-    .heading
+    .heading.gradient
       Success
   .instructions
     %p.blurb.center
@@ -11,7 +46,7 @@
       - offer = button.tracking_item.primary_offer
       %li
         %a{:href => get_click_url(button.tracking_offer)}
-          .reward
+          .reward.gradient
             - if @currency.get_reward_amount(button.tracking_offer) > 0
               %span.earn= t('text.shared.earn_verb')
               %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
@@ -21,7 +56,7 @@
             %span.free= visual_cost(offer)
 
           .offer
-            .icon.mtn
+            .icon
               .rounded
               %img.cover{:src => offer.get_icon_url(:source => :cloudfront, :size => '57')}
               - if offer.wifi_only?
@@ -37,9 +72,9 @@
 
   .container
     .button-wrapper
-      %a{:class => 'button', :href => '/offer_wall'} View More Offers
+      %a{:class => 'button gradient', :href => '/offer_wall'} View More Offers
     .button-wrapper
-      %a{:class => 'button', :href => get_click_url(@offer)} Replay
+      %a{:class => 'button gradient', :href => get_click_url(@offer)} Replay
 
 - content_for :page_javascript do
   :plain
