@@ -14,7 +14,7 @@ describe IdListValidator do
 
   context 'considering nils - ' do
     it 'allows nils when :allow_nil configured' do
-      App.stubs(:find_by_id).returns(true)
+      App.stub(:find_by_id).and_return(true)
       subject.app_ids = '12345'
       subject.nilable_app_ids = nil
       subject.blankable_app_ids = ''
@@ -30,7 +30,7 @@ describe IdListValidator do
 
   context 'considering blanks - ' do
     it 'allows blanks when :allow_blank configured' do
-      App.stubs(:find_by_id).returns(true)
+      App.stub(:find_by_id).and_return(true)
       subject.app_ids = '12345'
       subject.blankable_app_ids = ''
       subject.should be_valid
@@ -44,8 +44,8 @@ describe IdListValidator do
   end
 
   it 'rejects invalid id values' do
-    App.stubs(:find_by_id).with('12345').returns(true)
-    App.stubs(:find_by_id).with('45678').returns(nil)
+    App.stub(:find_by_id).with('12345').and_return(true)
+    App.stub(:find_by_id).with('45678').and_return(nil)
     subject.app_ids = '12345;45678'
     subject.should_not be_valid
     subject.errors[:app_ids].should_not == []
@@ -53,8 +53,8 @@ describe IdListValidator do
 
   context 'with happiness and rainbows' do
     before :each do
-      App.stubs(:find_by_id).with('12345').returns(true)
-      App.stubs(:find_by_id).with('45678').returns(true)
+      App.stub(:find_by_id).with('12345').and_return(true)
+      App.stub(:find_by_id).with('45678').and_return(true)
     end
 
     it 'validates' do
@@ -88,7 +88,7 @@ describe IdListValidator do
       obj = DirtyValidationTarget.new
       obj.user_ids = '12345;6789'
       obj.save
-      App.stubs(:find_by_id).never
+      App.should_not_receive(:find_by_id)
       obj.should be_valid
     end
   end
