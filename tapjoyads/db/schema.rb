@@ -503,6 +503,7 @@ ActiveRecord::Schema.define(:version => 20120620163623) do
     t.datetime "updated_at"
     t.text     "instructions"
     t.string   "category"
+    t.string   "trigger_action"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true

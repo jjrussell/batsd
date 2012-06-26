@@ -44,7 +44,7 @@ describe Partner do
     end
 
     it 'adds account_mgr as account manager' do
-      manager_role = FactoryGirl.create(:user_role, :name => "account_mgr")
+      manager_role = UserRole.find_by_name("account_mgr")
       manager_user = FactoryGirl.create(:user, :user_roles => [manager_role])
       @partner.users << manager_user
       @partner.account_managers.length.should == 1
