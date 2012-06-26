@@ -1,0 +1,17 @@
+#device-setup
+  #register-android.hidden.instructions
+    .title
+      = t('text.games.almost_done')
+    .message
+      = t('text.games.install_android_app')
+    #link-android.install
+      .install-btn.ui-joy-button.orange-action.js-next-state
+        = t('text.games.download_now')
+
+  #register-ios.hidden.instructions{ 'data-url' => new_games_device_path }
+    .title
+      = t('text.games.almost_done')
+    .message
+      = t('text.games.install_profile')
+    #link-ios.install.js-next-state
+      %img{ :src => BLANK_IMAGE }

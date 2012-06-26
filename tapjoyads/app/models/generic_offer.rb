@@ -14,6 +14,7 @@
 #  updated_at       :datetime
 #  instructions     :text
 #  category         :string(255)
+#  trigger_action   :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base
@@ -21,6 +22,8 @@ class GenericOffer < ActiveRecord::Base
   acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
+
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'

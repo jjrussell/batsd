@@ -81,19 +81,17 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
+    I18n.locale = get_locale || I18n.default_locale
+  end
+
+  # detect the locale info from the params and return the proper one
+  #
+  # @return [String] Locale detected from the language_code param
+  def get_locale
     language_code = params[:language_code]
-    if language_code
-      I18n.locale = nil
-      if I18n.available_locales.collect(&:to_s).include?(language_code)
-        I18n.locale = language_code
-      elsif language_code.present? && language_code['-']
-        language_code = language_code.split('-').first
-        if I18n.available_locales.collect(&:to_s).include?(language_code)
-          I18n.locale = language_code
-        end
-      end
-    else
-      I18n.locale = I18n.default_locale
+    if language_code.present?
+      language_code = language_code.split('-').first if language_code['-']
+      language_code.downcase
     end
   end
 
@@ -103,6 +101,8 @@ class ApplicationController < ActionController::Base
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
+    lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
+    lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)

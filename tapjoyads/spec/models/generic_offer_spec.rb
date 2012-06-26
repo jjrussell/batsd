@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe GenericOffer do
 
-  subject { Factory(:generic_offer) }
+  subject { FactoryGirl.create(:generic_offer) }
 
   describe '.has_many' do
     it { should have_many(:offers) }
@@ -24,7 +24,7 @@ describe GenericOffer do
   end
 
   before :each do
-    @generic_offer = Factory(:generic_offer)
+    @generic_offer = FactoryGirl.create(:generic_offer)
   end
 
   it 'accepts existing categories' do

@@ -129,6 +129,17 @@ class Click < SimpledbShardedResource
     "#{uri.scheme}://#{uri.host}/tools/device_info?click_key=#{self.key}"
   end
 
+  def update_partner_live_dates!
+    [
+      [publisher_partner,  publisher_amount],
+      [advertiser_partner, advertiser_amount]
+    ].each do |partner, amount|
+      if partner.present? && amount > 0
+        partner.update_attributes!(:live_date => clicked_at) unless partner.live_date.present?
+      end
+    end
+  end
+  
   private
 
   def url_to_resolve

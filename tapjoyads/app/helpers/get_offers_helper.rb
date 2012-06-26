@@ -11,7 +11,8 @@ module GetOffersHelper
     return nil if @more_data_available < 1
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['json'] = "1"
-    "/get_offers/webpage_redesign?data=#{ObjectEncryptor.encrypt(tmp_params)}"
+    tmp_params['redesign'] = 'true'
+    "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
   def get_currency_link(currency)

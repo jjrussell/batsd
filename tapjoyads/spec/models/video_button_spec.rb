@@ -13,7 +13,7 @@ describe VideoButton do
   end
 
   before :each do
-    @video_button = Factory(:video_button)
+    @video_button = FactoryGirl.create(:video_button)
   end
 
   it "is by default enabled" do

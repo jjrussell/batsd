@@ -1,8 +1,8 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
-    SimpledbResource.reset_connection
+    enable_sdb
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
     @mock_response.stub(:status).and_return('OK')
@@ -11,7 +11,7 @@ describe Job::QueueSendCurrencyController do
     Downloader.stub(:get).and_return(@mock_response)
     Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
 
-    @currency = Factory(:currency, :callback_url => 'http://www.whatwhat.com')
+    @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.whatwhat.com')
 
     @reward = FactoryGirl.build(
       :reward,
@@ -87,8 +87,8 @@ describe Job::QueueSendCurrencyController do
     it 'should record errors for multiple currencies' do
       get(:run_job, :message => @reward.id) rescue TestingError
 
-      currency = Factory(:currency, :callback_url => 'https://www.whatnot.com')
-      reward = Factory(:reward, :currency_id => currency.id)
+      currency = FactoryGirl.create(:currency, :callback_url => 'https://www.whatnot.com')
+      reward = FactoryGirl.create(:reward, :currency_id => currency.id)
 
       expect {
         get(:run_job, :message => reward.id)
@@ -105,7 +105,7 @@ describe Job::QueueSendCurrencyController do
 
       get(:run_job, :message => @reward.id) rescue TestingError
 
-      reward = Factory(:reward, :currency_id => @currency.id)
+      reward = FactoryGirl.create(:reward, :currency_id => @currency.id)
       @controller.instance_variable_set('@bad_callbacks', Set.new)
 
       get(:run_job, :message => reward.id) rescue TestingError
@@ -240,7 +240,7 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should send offer data if currency says so' do
-      app = Factory(:app)
+      app = FactoryGirl.create(:app)
       offer = app.primary_offer
 
       @currency.update_attribute(:id, app.id)

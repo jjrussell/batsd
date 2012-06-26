@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Client do
-  subject { Factory(:client) }
+  subject { FactoryGirl.create(:client) }
 
   describe '.has_many' do
     it { should have_many(:partners) }
@@ -14,9 +14,9 @@ describe Client do
 
   describe '.ordered_by_name' do
     it 'orders clients by name' do
-      @client = Factory(:client, :name => 'BBB')
-      @client2 = Factory(:client, :name => 'CCC')
-      @client3 = Factory(:client, :name => 'AAA')
+      @client = FactoryGirl.create(:client, :name => 'BBB')
+      @client2 = FactoryGirl.create(:client, :name => 'CCC')
+      @client3 = FactoryGirl.create(:client, :name => 'AAA')
       Client.ordered_by_name.should == [ @client3, @client, @client2 ]
     end
   end
@@ -24,10 +24,10 @@ describe Client do
   describe '#remove_from_partners' do
     context 'before destroy' do
       before :each do
-        @client = Factory(:client)
-        @partner = Factory(:partner, :client => @client)
-        @partner2 = Factory(:partner, :client => @client)
-        @partner3 = Factory(:partner, :client => @client)
+        @client = FactoryGirl.create(:client)
+        @partner = FactoryGirl.create(:partner, :client => @client)
+        @partner2 = FactoryGirl.create(:partner, :client => @client)
+        @partner3 = FactoryGirl.create(:partner, :client => @client)
       end
 
       it 'removes client_id from all associated partners' do

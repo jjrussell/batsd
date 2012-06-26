@@ -79,6 +79,7 @@ class TjmRequest < SyslogMessage
   self.define_attr :referrer
   self.define_attr :gamer_id
   self.define_attr :device_id
+  self.define_attr :is_ajax
   self.define_attr :app_id
   self.define_attr :social_referrer_gamer
   self.define_attr :social_source
@@ -141,10 +142,14 @@ class TjmRequest < SyslogMessage
     end
 
     if @tracking_param.present?
-      self.replace_path("#{self.path}_#{@tracking_param}")
+      self.replace_path("#{self.path.join}_#{@tracking_param}")
     end
 
     super
+  end
+
+  def update_path
+    self.replace_path(lookup_path)
   end
 
   private

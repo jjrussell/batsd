@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe Offer do
@@ -24,8 +26,7 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    fake_the_web
-    @app = Factory :app
+    @app = FactoryGirl.create :app
     @offer = @app.primary_offer
   end
 
@@ -265,7 +266,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.countries = ["GB"].to_json
-    @offer.get_countries(true)
+    @offer.get_countries
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :primary_country => "GB" }
@@ -301,7 +302,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.regions = ["CA"].to_json
-    @offer.get_regions(true)
+    @offer.get_regions
     geoip_data = { :region => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :region => "CA" }
@@ -319,7 +320,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.dma_codes = ["123"].to_json
-    @offer.get_dma_codes(true)
+    @offer.get_dma_codes
     geoip_data = { :dma_code => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :dma_code => "123" }
@@ -337,7 +338,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.cities = ["San Francisco"].to_json
-    @offer.get_cities(true)
+    @offer.get_cities
     geoip_data = { :city => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :city => "San Francisco" }
@@ -438,7 +439,7 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 150})
       @offer = @app.primary_offer
     end
@@ -478,7 +479,7 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 0})
       @offer = @app.primary_offer
     end
@@ -518,7 +519,7 @@ describe Offer do
 
   context "with a video item" do
     before :each do
-      @video = Factory(:video_offer)
+      @video = FactoryGirl.create(:video_offer)
       @offer = @video.primary_offer
     end
 
@@ -529,7 +530,7 @@ describe Offer do
 
   context "with an action offer item" do
     before :each do
-      @action = Factory(:action_offer)
+      @action = FactoryGirl.create(:action_offer)
       @offer = @action.primary_offer
     end
 
@@ -566,12 +567,23 @@ describe Offer do
 
   context "with a generic offer item" do
     before :each do
-      @generic = Factory(:generic_offer)
+      @generic = FactoryGirl.create(:generic_offer)
       @offer = @generic.primary_offer
     end
 
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
+    end
+
+    describe "url generation" do
+      describe '#complete_action_url' do
+        it "should substitute tokens in the URL" do
+          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
+          source = @offer.source_token('12345')
+          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+        end
+      end
     end
   end
 
@@ -831,9 +843,9 @@ describe Offer do
       @offer.banner_creatives = ['320x50', '640x100', '768x90']
       @offer.approved_banner_creatives = ['320x50', '1x1']
 
-      @valid_remove   = @offer.add_banner_approval(Factory(:user), '320x50')
-      @valid_keep     = @offer.add_banner_approval(Factory(:user), '640x100')
-      @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
+      @valid_remove   = @offer.add_banner_approval(FactoryGirl.create(:user), '320x50')
+      @valid_keep     = @offer.add_banner_approval(FactoryGirl.create(:user), '640x100')
+      @invalid_remove = @offer.add_banner_approval(FactoryGirl.create(:user), '2x2')
 
       @offer.send(:sync_creative_approval)
       @offer.approvals.reload
@@ -995,7 +1007,7 @@ describe Offer do
   context "An App Offer for a free app" do
     before :each do
       Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
     end
 
     context "with banner_creatives" do
@@ -1182,7 +1194,6 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      Sqs.stub(:send_message)
       @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]']
       now = Time.zone.now
       Timecop.freeze(now)
@@ -1255,6 +1266,28 @@ describe Offer do
 
     it 'matches URL for Rails statz_url helper' do
       @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
+    end
+  end
+
+  describe '#all_blacklisted?' do
+    context 'without whitelist' do
+      it { should_not be_all_blacklisted }
+    end
+
+    context 'with whitelist' do
+      before :each do
+        subject.stub(:get_countries).and_return(['US'])
+      end
+
+      it { should_not be_all_blacklisted }
+
+      context 'with conflicting blacklist' do
+        before :each do
+          subject.stub(:countries_blacklist).and_return(['US'])
+        end
+
+        it { should be_all_blacklisted }
+      end
     end
   end
 end

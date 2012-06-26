@@ -42,7 +42,7 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices, :dependent => :destroy
+  has_many :gamer_devices, :dependent => :destroy, :order => 'name'
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
 
@@ -54,13 +54,14 @@ class Gamer < ActiveRecord::Base
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
 
-  delegate :birthdate, :birthdate?, :city, :city?, :country, :country?, :facebook_id, :facebook_id?,
+  delegate :birthdate, :birthdate?, :birthdate=, :city, :city?, :country, :country?, 
+           :facebook_id, :facebook_id?, :facebook_id=, :fb_access_token=,
            :fb_access_token, :favorite_category, :favorite_category?, :favorite_game, :favorite_game?,
-           :gender, :gender?, :postal_code, :postal_code?, :referral_count,
+           :gender, :gender?, :postal_code, :postal_code?, :referral_count, :nickname, :nickname=,
            :referred_by, :referred_by=, :referred_by?, :to => :gamer_profile, :allow_nil => true
 
   validates_associated :gamer_profile, :on => :create
-  validates_presence_of :email
+  validates :email, :presence => true, :uniqueness => true
   attr_accessor :terms_of_service
   validates_acceptance_of :terms_of_service, :on => :create, :allow_nil => false
 
@@ -201,6 +202,11 @@ class Gamer < ActiveRecord::Base
     invitation
   end
 
+  alias orig_gamer_profile gamer_profile
+  def gamer_profile
+    orig_gamer_profile || build_gamer_profile
+  end
+
   def get_gamer_nickname
     if gamer_profile.present? && gamer_profile.nickname.present?
       gamer_profile.nickname
@@ -293,16 +299,35 @@ class Gamer < ActiveRecord::Base
     gamer_devices.count >= MAX_DEVICE_THRESHOLD
   end
 
-  def send_welcome_email(request, device_type, default_platforms, geoip_data, os_version)
+  def send_welcome_email(request, device_type, default_platform, geoip_data, os_version)
     message = {
       :gamer_id => id,
       :accept_language_str => request.accept_language,
       :user_agent_str => request.user_agent,
       :device_type => device_type,
-      :selected_devices => default_platforms.reject { |k, v| v != '1' }.keys,
+      :selected_devices => default_platform,
       :geoip_data => geoip_data,
       :os_version => os_version }
     Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS, Base64::encode64(Marshal.dump(message)))
+  end
+
+  def signup_next_step(params)
+    routes = Rails.application.routes.url_helpers
+    detected_platform = params[:platform][:detected] if params[:platform]
+
+    if params[:data].present? && params[:src] == 'android_app'
+      routes.finalize_games_device_path(:data => params[:data])
+    elsif detected_platform == 'ios'
+      routes.new_games_device_path
+    elsif detected_platform == 'android'
+      GAMES_ANDROID_MARKET_URL
+    else
+      WEBSITE_URL
+    end
+  end
+
+  def friend_of?(gamer)
+    Friendship.connected?(self, gamer)
   end
 
   private
@@ -319,7 +344,6 @@ class Gamer < ActiveRecord::Base
           device = Device.new :key => click.udid
           device.product = click.device_name
           device.save
-          devices.build(:device => device)
         end
       else
         begin
@@ -344,6 +368,7 @@ class Gamer < ActiveRecord::Base
       end
     end
   end
+
 
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token

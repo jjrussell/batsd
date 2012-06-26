@@ -1,0 +1,12 @@
+{
+  "key":"101.1.Android.US..android",
+  "enabled":"true",
+  "offers":
+   [
+      {"offer_id":"7d4ca900-a286-4d15-adf3-ab7f7baad722", "rank_score":"2098.39080459771"},
+{"offer_id":"60dfc6cd-65a7-47ea-94e3-698988a9f480", "rank_score":"2074.54545454545"},
+{"offer_id":"3f851cc5-448d-4f7b-85e8-8b617bc8747b", "rank_score":"1530.07662835249"},
+{"offer_id":"2efe982d-c1cf-4eb0-8163-1836cd6d927c", "rank_score":"1356.53966587456"},
+{"offer_id":"e0805782-7944-47e9-9cc4-2c36b89e0cc0", "rank_score":"1325.005"}
+   ]
+}

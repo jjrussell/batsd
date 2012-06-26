@@ -25,7 +25,7 @@
                 :question => survey_question
         %div.center.m15.terms
           %label=t("text.games.tos_survey_html",
-              :terms_of_use => link_to(t("text.games.terms_of_use_tos"), '/games/tos', :target => '_blank'),
+              :terms_of_use => link_to(t("text.games.terms_of_use_tos"), 'http://www.tapjoy.com/tos', :target => '_blank'),
               :privacy_policy => link_to(t("text.games.privacy_tos"), 'http://info.tapjoy.com/about-tapjoy/privacy-policy/', :target => '_blank'))
           %input{:type => 'checkbox', :id => 'terms'}
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120605215944) do
+ActiveRecord::Schema.define(:version => 20120620163623) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -73,6 +73,8 @@ ActiveRecord::Schema.define(:version => 20120605215944) do
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
     t.text     "countries_blacklist"
+    t.text     "languages"
+    t.text     "screenshots"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -501,6 +503,7 @@ ActiveRecord::Schema.define(:version => 20120605215944) do
     t.datetime "updated_at"
     t.text     "instructions"
     t.string   "category"
+    t.string   "trigger_action"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -551,26 +554,29 @@ ActiveRecord::Schema.define(:version => 20120605215944) do
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                :null => false
-    t.string   "partner_id",                 :limit => 36,                :null => false
-    t.integer  "month",                                                   :null => false
-    t.integer  "year",                                                    :null => false
-    t.integer  "beginning_balance",                                       :null => false
-    t.integer  "ending_balance",                                          :null => false
-    t.integer  "website_orders",                                          :null => false
-    t.integer  "invoiced_orders",                                         :null => false
-    t.integer  "marketing_orders",                                        :null => false
-    t.integer  "transfer_orders",                                         :null => false
-    t.integer  "spend",                                                   :null => false
-    t.integer  "beginning_pending_earnings",                              :null => false
-    t.integer  "ending_pending_earnings",                                 :null => false
-    t.integer  "payment_payouts",                                         :null => false
-    t.integer  "transfer_payouts",                                        :null => false
-    t.integer  "earnings",                                                :null => false
+    t.string   "id",                           :limit => 36,                :null => false
+    t.string   "partner_id",                   :limit => 36,                :null => false
+    t.integer  "month",                                                     :null => false
+    t.integer  "year",                                                      :null => false
+    t.integer  "beginning_balance",                                         :null => false
+    t.integer  "ending_balance",                                            :null => false
+    t.integer  "website_orders",                                            :null => false
+    t.integer  "invoiced_orders",                                           :null => false
+    t.integer  "marketing_orders",                                          :null => false
+    t.integer  "transfer_orders",                                           :null => false
+    t.integer  "spend",                                                     :null => false
+    t.integer  "beginning_pending_earnings",                                :null => false
+    t.integer  "ending_pending_earnings",                                   :null => false
+    t.integer  "payment_payouts",                                           :null => false
+    t.integer  "transfer_payouts",                                          :null => false
+    t.integer  "earnings",                                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "earnings_adjustments",                                    :null => false
-    t.integer  "bonus_orders",                             :default => 0, :null => false
+    t.integer  "earnings_adjustments",                                      :null => false
+    t.integer  "bonus_orders",                               :default => 0, :null => false
+    t.integer  "dev_credit_payouts",                         :default => 0, :null => false
+    t.integer  "recoupable_marketing_orders",                :default => 0, :null => false
+    t.integer  "recoupable_marketing_payouts",               :default => 0, :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true
@@ -722,6 +728,7 @@ ActiveRecord::Schema.define(:version => 20120605215944) do
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
+    t.text     "account_manager_notes"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -829,6 +836,8 @@ ActiveRecord::Schema.define(:version => 20120605215944) do
     t.integer  "payout_threshold",                                                          :default => 5000000,   :null => false
     t.boolean  "payout_info_confirmation",                                                  :default => false,     :null => false
     t.boolean  "payout_threshold_confirmation",                                             :default => false,     :null => false
+    t.datetime "live_date"
+    t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

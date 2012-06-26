@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe VideoOffer do
-  before :each do
-    fake_the_web
-  end
-
   context 'when associating' do
     it 'has many' do
       should have_many :offers
@@ -29,7 +25,7 @@ describe VideoOffer do
 
   context "A Video Offer" do
     before :each do
-      @video_offer = Factory(:video_offer)
+      @video_offer = FactoryGirl.create(:video_offer)
     end
 
     it "updates video_offer's name" do
@@ -45,7 +41,7 @@ describe VideoOffer do
 
   context "A Video Offer with a primary_offer" do
     before :each do
-      @video_offer = Factory(:video_offer)
+      @video_offer = FactoryGirl.create(:video_offer)
       @offer = @video_offer.primary_offer
     end
 
@@ -62,7 +58,7 @@ describe VideoOffer do
   end
 
   context "A Video Offer with multiple video_buttons" do
-    subject {Factory(:video_offer)}
+    subject {FactoryGirl.create(:video_offer)}
 
     let(:buttons) do
       3.times do |i|
@@ -109,7 +105,7 @@ describe VideoOffer do
       end
     end
 
-    #   @video_offer = Factory(:video_offer)
+    #   @video_offer = FactoryGirl.create(:video_offer)
     #   @video_button_1 = @video_offer.video_buttons.build
     #   @video_button_1.name = "button 1"
     #   @video_button_1.url = "http://www.tapjoy.com"

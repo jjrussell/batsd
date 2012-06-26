@@ -40,6 +40,8 @@
           - if rb.active?
             = link_to "Deactivate", deactivate_tools_rank_boost_path(rb), :method => :post, :confirm => 'Are you sure?'
 
+= will_paginate(@rank_boosts)
+
 - content_for :page_javascript do
   :plain
     $(function() {

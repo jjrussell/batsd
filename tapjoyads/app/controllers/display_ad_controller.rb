@@ -106,7 +106,11 @@ class DisplayAdController < ApplicationController
       width, height = parse_size(params[:size])
 
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
+        @image_url = offer.display_ad_image_url(:publisher_app_id => publisher_app.id,
+                                                :width => width,
+                                                :height => height,
+                                                :currency_id => currency.id,
+                                                :display_multiplier => params[:display_multiplier])
       else
         @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
       end

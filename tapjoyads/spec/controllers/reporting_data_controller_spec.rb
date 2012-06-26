@@ -1,16 +1,12 @@
 require 'spec_helper'
 
 describe ReportingDataController do
-  before :each do
-    fake_the_web
-  end
-
   describe '#index' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @user.partners << @partner
-      @partner.offers << Factory(:app).primary_offer
+      @partner.offers << FactoryGirl.create(:app).primary_offer
     end
 
     context 'with missing params' do
@@ -131,10 +127,10 @@ describe ReportingDataController do
 
   describe '#udids with data' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @partner.users << @user
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @partner.offers << @offer
       UdidReports.stub(:get_daily_report).and_return('a,b,c')
       UdidReports.stub(:get_monthly_report).and_return('a,b,c')
@@ -215,10 +211,10 @@ describe ReportingDataController do
 
   describe '#udids without data' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @partner.users << @user
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @partner.offers << @offer
     end
 

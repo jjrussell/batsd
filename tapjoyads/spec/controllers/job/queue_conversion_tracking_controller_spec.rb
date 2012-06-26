@@ -1,4 +1,4 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 def click_message(click_key)
   { :click_key => click_key, :install_timestamp => Time.zone.parse('2010-04-15').to_f.to_s }.to_json
@@ -16,8 +16,6 @@ end
 
 describe Job::QueueConversionTrackingController do
   before :each do
-    fake_the_web
-    Sqs.stub(:send_message)
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
   end
 
@@ -35,7 +33,7 @@ describe Job::QueueConversionTrackingController do
 
   context 'missing a reward key' do
     before :each do
-      @click = Factory(:click, :reward_key => nil, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID')
+      @click = FactoryGirl.create(:click, :reward_key => nil, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID')
       Click.should_receive(:find).and_return(@click)
     end
 
@@ -49,7 +47,7 @@ describe Job::QueueConversionTrackingController do
   context 'with a valid click id' do
     before :each do
       @reward_uuid = UUIDTools::UUID.random_create.to_s
-      @click = Factory(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install')
+      @click = FactoryGirl.create(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install')
       Click.should_receive(:find).and_return(@click)
       Reward.any_instance.stub(:update_realtime_stats)
     end
@@ -104,8 +102,8 @@ describe Job::QueueConversionTrackingController do
 
     context 'with multiple devices associated with the pubuser' do
       before :each do
-        @this_device = Factory(:device)
-        @other_device = Factory(:device)
+        @this_device = FactoryGirl.create(:device)
+        @other_device = FactoryGirl.create(:device)
         Device.stub(:new).and_return(@this_device, @other_device)
         pu = PublisherUser.for_click(@click)
         pu.update!(@this_device.key)
@@ -142,7 +140,7 @@ describe Job::QueueConversionTrackingController do
         @offer = Offer.find_in_cache(@click.offer_id, true)
         @offer.stub(:is_paid?).and_return(true)
         Offer.stub(:find_in_cache).and_return(@offer)
-        @device = Factory(:device)
+        @device = FactoryGirl.create(:device)
         @device.is_jailbroken = true
         Device.stub(:new).and_return(@device)
       end
@@ -197,7 +195,7 @@ describe Job::QueueConversionTrackingController do
 
     context 'offer is rewarded and the currency has a callback url' do
       before :each do
-        offer = Factory(:app).primary_offer
+        offer = FactoryGirl.create(:app).primary_offer
         offer.rewarded = true
         Offer.stub(:find_in_cache).and_return(offer)
         Currency.any_instance.stub(:callback_url).and_return('http://example.com')
@@ -242,7 +240,7 @@ describe Job::QueueConversionTrackingController do
 
     context 'updating the last_run_time on the device' do
       before :each do
-        @device = Factory(:device)
+        @device = FactoryGirl.create(:device)
         Device.stub(:new).and_return(@device)
       end
 
@@ -282,6 +280,12 @@ describe Job::QueueConversionTrackingController do
           do_get
         end
       end
+    end
+
+    it 'does not blow up if Click#update_partner_live_dates! fails' do
+      @click.stub(:update_partner_live_dates!).and_raise(RuntimeError)
+      expect_request_completes
+      do_get
     end
 
     it 'creates a WebRequest object' do

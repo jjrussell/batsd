@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe Device do
-  before :each do
-    SimpledbResource.reset_connection
-  end
-
   describe '.normalize_device_type' do
     context 'type is iPhone' do
       it 'returns iphone' do
@@ -50,17 +46,43 @@ describe Device do
 
     context 'type is something else' do
       it 'returns nil' do
-        param = Factory.next(:name)
+        param = FactoryGirl.generate(:name)
         Device.normalize_device_type(param).should be_nil
       end
     end
   end
 
+  describe '#create_identifiers!' do
+    before :each do
+      @device = Factory(:device)
+      @device.mac_address = 'a1b2c3d4e5f6'
+      @device.android_id = 'test-android-id'
+      @device.open_udid = 'test-open-udid'
+      @device_identifier = Factory(:device_identifier)
+    end
+
+    it 'creates the device identifiers' do
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
+      @device.create_identifiers!
+    end
+
+    it 'alerts new relic for remapped identifiers' do
+      @device_identifier.udid = 'old_device_udid'
+      DeviceIdentifier.stub(:new).and_return(@device_identifier)
+      Notifier.should_receive(:alert_new_relic).with(RuntimeError, "Overwriting identifier: #{Digest::SHA2.hexdigest(@device.key)} with a udid: #{@device.key} instead of the existing udid: #{@device_identifier.udid}")
+      @device.create_identifiers!
+    end
+  end
+
   describe '#handle_sdkless_click!' do
     before :each do
-      app = Factory :app
+      app = FactoryGirl.create :app
       @offer = app.primary_offer
-      @device = Factory :device
+      @device = FactoryGirl.create :device
       @now = Time.zone.now
     end
 
@@ -253,14 +275,14 @@ describe Device do
 
   context 'Jailbreak detection' do
     before :each do
-      @non_jb_device = Factory(:device)
+      @non_jb_device = FactoryGirl.create(:device)
 
-      @jb_device = Factory(:device)
+      @jb_device = FactoryGirl.create(:device)
       @jb_device.is_jailbroken = true
       @jb_device.stub(:save)
       @jb_device.stub(:save!)
 
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
     end
 
     it 'marks as not jb when lad is 0' do
@@ -312,7 +334,7 @@ describe Device do
   describe '#dashboard_device_info_tool_url' do
     include Rails.application.routes.url_helpers
     before :each do
-      @device = Factory :device
+      @device = FactoryGirl.create :device
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do

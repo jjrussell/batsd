@@ -1,14 +1,11 @@
 require 'spec_helper'
 
 describe PointsController do
-  before :each do
-    fake_the_web
-  end
-
   describe '#award' do
     before :each do
-      @app = Factory(:app)
-      @currency = Factory(:currency, :id => @app.id)
+      enable_sdb
+      @app = FactoryGirl.create(:app)
+      @currency = FactoryGirl.create(:currency, :id => @app.id)
       @params = {
         :app_id => @app.id,
         :udid => 'stuff',
@@ -18,7 +15,6 @@ describe PointsController do
         :timestamp => Time.zone.now
       }
       @params[:verifier] = verifier(@params)
-      Sqs.stub(:send_message)
     end
 
     it 'renders error for bad verifier' do
@@ -69,8 +65,8 @@ describe PointsController do
 
   describe '#spend' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
@@ -107,9 +103,9 @@ describe PointsController do
 
   describe '#purchase_vg' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
-      @vg = Factory(:virtual_good)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
+      @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
@@ -149,9 +145,9 @@ describe PointsController do
 
   describe '#consume_vg' do
     before :each do
-      app = Factory(:app)
-      currency = Factory(:currency, :id => app.id)
-      @vg = Factory(:virtual_good)
+      app = FactoryGirl.create(:app)
+      currency = FactoryGirl.create(:currency, :id => app.id)
+      @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',

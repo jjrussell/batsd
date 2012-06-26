@@ -2,9 +2,8 @@ require 'spec_helper'
 
 describe SupportRequestsController do
   before :each do
-    fake_the_web
-    @app = Factory(:app)
-    @currency = Factory(:currency)
+    @app = FactoryGirl.create(:app)
+    @currency = FactoryGirl.create(:currency)
     @udid = 'test udid'
   end
 

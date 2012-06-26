@@ -1,3 +1,4 @@
+
 #help.current
   .page-header
     .container
@@ -7,13 +8,13 @@
     .ui-joy-group.mt10
       %ul.list-button-container.big
         %li.list-button.soft-gray-gradient.charcoal
-          %a{ :href => new_games_support_request_path( :type => 'contact_support') }
+          %a{ :href => new_games_support_request_path( :type => 'contact_support'), :class=>'req-login' }
             = t('text.games.contact_support_page_title')
 
         %li.list-button.soft-gray-gradient.charcoal
-          %a{ :href => new_games_support_request_path( :type => 'report_bug' ) }
+          %a{ :href => new_games_support_request_path( :type => 'report_bug' ), :class=>'req-login' }
             = t('text.games.report_bug')
 
         %li.list-button.soft-gray-gradient.charcoal
-          %a{ :href => new_games_support_request_path( :type => 'feedback' ) }
+          %a{ :href => new_games_support_request_path( :type => 'feedback' ), :class=>'req-login' }
             = t('text.games.feedback')

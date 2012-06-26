@@ -38,8 +38,8 @@ en:
           other: "%{count} errors prohibited this %{model} from being saved"
   authlogic:
     error_messages:
-      login_not_found: "Email is invalid"
-      password_invalid: "Password is invalid"
+      login_not_found: "is invalid"
+      password_invalid: "is invalid"
   date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
@@ -364,6 +364,7 @@ en:
       log_in_title: "Log In"
       log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
       log_in_not_a_member: "Not a member? Sign Up"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -443,6 +444,7 @@ en:
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
       tos_survey_html: "I agree to the %{terms_of_use} and %{privacy_policy}"
       twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_account_protected_error: "We are unable to fetch your Twitter Followers list. Please check your Twitter privacy settings and make sure the 'Protect my Tweets' box is unchecked."
       twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
       twitter_forbidden_error: "Requests are being denied due to update limits."
       twitter_general_error: "Something happened to Twitter. Please try again later."
@@ -542,6 +544,7 @@ en:
       none: None
       offers_by: "Offers by Tapjoy"
       ok: OK
+      or: or
       options: Options
       other: Other
       password: Password
@@ -603,3 +606,9 @@ en:
       long: "%B %d, %Y %I:%M %p %Z"
       short: "%d %b %H:%M"
     pm: pm
+  user_event:
+    error:
+      bad_params: "Could not find app or device. Check your app_id and udid paramters."
+      bad_event: "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price."
+    success:
+      created: "Successfully saved user event."

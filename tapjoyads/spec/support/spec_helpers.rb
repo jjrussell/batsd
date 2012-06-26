@@ -23,12 +23,10 @@ module SpecHelpers
     result['error'].should_not be_present
   end
 
-  def fake_the_web
-    Resolv.stub!(:getaddress=>'1.1.1.1')
-    RightAws::SdbInterface.stub!(:new=>FakeSdb.new)
+  def enable_sdb
+    warn 'WARNING: Enabling the real simpledb during tests is slow and prone to errors. Please make your test work with the fake simpledb by not calling `enable_sdb`.'
+    RightAws::SdbInterface.unstub!(:new)
     SimpledbResource.reset_connection
-    AWS::S3.stub!(:new=>FakeS3.new)
-    Sqs.stub(:send_message)
   end
 
   def read_asset(name, directory)

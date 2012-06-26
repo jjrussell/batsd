@@ -1,19 +1,14 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe ConnectController do
   render_views
 
-  before :each do
-    fake_the_web
-    Sqs.stub(:send_message)
-  end
-
   describe '#index' do
     context 'with required parameters' do
       before :each do
-        app = Factory(:app)
+        app = FactoryGirl.create(:app)
         offer = app.primary_offer
-        device = Factory(:device)
+        device = FactoryGirl.create(:device)
         device.sdkless_clicks = { offer.third_party_data => { 'click_time' => (Time.zone.now - 1.hour).to_i, 'item_id' => offer.id }}
 
         @params = { :app_id => 'test_app',

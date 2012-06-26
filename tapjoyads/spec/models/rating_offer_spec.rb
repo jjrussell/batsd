@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe RatingOffer do
 
-  subject { Factory(:rating_offer) }
+  subject { FactoryGirl.create(:rating_offer) }
 
   describe '.has_many' do
     it { should have_many(:offers) }
@@ -22,7 +22,7 @@ describe RatingOffer do
   end
 
   before :each do
-    @rating_offer = Factory(:rating_offer)
+    @rating_offer = FactoryGirl.create(:rating_offer)
   end
 
   it 'appends the app version to the id' do

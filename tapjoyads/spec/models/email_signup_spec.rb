@@ -3,8 +3,8 @@ require 'spec_helper'
 describe EmailSignup do
 
   before :each do
-    SimpledbResource.reset_connection
-    @email_signup = Factory(:email_signup)
+    enable_sdb
+    @email_signup = FactoryGirl.create(:email_signup)
     @email_address = @email_signup.email_address
   end
 
@@ -29,7 +29,7 @@ describe EmailSignup do
         @stamp = Time.zone.now
         @count = EmailSignup.count(:consistent => true, :where => "sent_date = '#{@stamp.to_f}'")
         @num = 5
-        @num.times { Factory(:email_signup, :sent_date => @stamp) }
+        @num.times { FactoryGirl.create(:email_signup, :sent_date => @stamp) }
       end
 
       it 'returns the correct count' do

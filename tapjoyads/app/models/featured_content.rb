@@ -64,7 +64,7 @@ class FeaturedContent < ActiveRecord::Base
     Mc.get_and_put("featured_contents.#{platform}", false, 1.hour) do
       now = Time.now.utc
       featured_contents =  FeaturedContent.active(now).for_platform(platform) ||
-                FeaturedContent.upcoming.for_platform(platform) ||
+                FeaturedContent.upcoming(now).for_platform(platform) ||
                 FeaturedContent.expired(now).for_platform(platform)
 
       if featured_contents.nil?

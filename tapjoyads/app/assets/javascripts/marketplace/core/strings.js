@@ -14,7 +14,7 @@
        */
       format: function(string){
         var args = Tap.toArray(arguments, 1);
-        return String(value).replace(Tap.RegEx.format, function(m, i){
+        return String(string).replace(Tap.RegEx.format, function(m, i){
           return args[i];
         });
       },

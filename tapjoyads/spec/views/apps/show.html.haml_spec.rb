@@ -3,8 +3,8 @@ require 'spec_helper'
 describe 'dashboard/apps/show.html.haml' do
   context 'with an admin user' do
     before :each do
-      @app = assigns[:app] = Factory(:app)
-      user = Factory :admin
+      @app = assigns[:app] = FactoryGirl.create(:app)
+      user = FactoryGirl.create :admin
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
       render
@@ -17,8 +17,8 @@ describe 'dashboard/apps/show.html.haml' do
 
   context 'with a non-admin user' do
     before :each do
-      @app = assigns[:app] = Factory(:app)
-      user = Factory :partner_user
+      @app = assigns[:app] = FactoryGirl.create(:app)
+      user = FactoryGirl.create :partner_user
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
       render
@@ -31,14 +31,14 @@ describe 'dashboard/apps/show.html.haml' do
 
   context 'with an admin user' do
     before :each do
-      user = Factory :admin
+      user = FactoryGirl.create :admin
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
     end
 
     context 'for an iOS app' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
         @app.platform = 'iphone'
         assigns[:app] = @app
         render
@@ -51,7 +51,7 @@ describe 'dashboard/apps/show.html.haml' do
 
     context 'for a non-iOS app' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
         @app.platform = 'android'
         assigns[:app] = @app
         render

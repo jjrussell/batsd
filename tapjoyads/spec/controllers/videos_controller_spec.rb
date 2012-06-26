@@ -4,9 +4,8 @@ describe VideosController do
   render_views
 
   before(:each) do
-    fake_the_web
     OfferCacher.stub(:get_offer_list).and_return([])
-    @currency = Factory(:currency)
+    @currency = FactoryGirl.create(:currency)
     @params = {
       :udid => 'stuff',
       :publisher_user_id => 'more_stuff',
@@ -25,7 +24,7 @@ describe VideosController do
 
   describe '#complete' do
     before(:each) do
-      @offer = Factory(:video_offer)
+      @offer = FactoryGirl.create(:video_offer)
     end
 
     it 'renders the completion screen' do

@@ -4,12 +4,11 @@ describe Dashboard::Tools::SurveyOffersController do
   render_views
 
   before :each do
-    fake_the_web
     flash.stub(:sweep)
     activate_authlogic
-    user = Factory(:admin)
-    partner = Factory(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
-    @survey_question = Factory(:survey_question)
+    user = FactoryGirl.create(:admin)
+    partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
+    @survey_question = FactoryGirl.create(:survey_question)
     @survey_offer = @survey_question.survey_offer
     login_as(user)
   end

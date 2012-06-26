@@ -1,22 +1,19 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe DisplayAdController do
   render_views
-  before :each do
-    fake_the_web
-  end
 
   describe 'hitting display ad controller' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
       @bucket = FakeBucket.new
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency, :conversion_rate => 0)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -210,7 +207,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
 
@@ -219,7 +219,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
     end

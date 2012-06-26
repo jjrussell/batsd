@@ -141,6 +141,14 @@ body {
   width: 44px;
 }
 
+#test_offers .explaination { 
+  padding: 12px 24px;
+}
+
+#test_offers a {
+  color: rgba(0,0,0, .8);
+}
+
 /**
  * Offers list
  */
@@ -150,7 +158,7 @@ ul#offers {
   list-style: none;
 }
 
-ul#offers li {
+ul#offers li, #test_offers ul li {
   background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(247,247,247,1) 50%, rgba(242,242,242,1) 85%, rgba(240,240,240,1) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(251,251,251,1)), color-stop(50%,rgba(247,247,247,1)), color-stop(85%,rgba(242,242,242,1)), color-stop(100%,rgba(240,240,240,1)));
   background: -webkit-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
@@ -162,6 +170,11 @@ ul#offers li {
   height: 80px;
   position: relative;
   width: 100%;
+}
+
+#test_offers ul li {
+  height: auto;
+  padding: 12px 24px;
 }
 
 ul#offers li a {
@@ -394,7 +407,7 @@ ul#offers li .reward .free {
   font-weight: bold;
   left: 0;
   padding: 1px 0 2px;
-  position: absolute;.ea
+  position: absolute;
   text-align: center;
   text-shadow: 0 1px 1px rgba(0,0,0, .5);
   text-transform: uppercase;
@@ -552,7 +565,7 @@ ul#offers li .error {
 .poweredby {
   color: #707070;
   font-family: "Gill Sans", "Helvetica", arial, sans-serif;
-  font-size: 50%;
+  font-size: 60%;
   text-shadow: 0 1px 0 rgba(255,255,255, .8);
 }
 

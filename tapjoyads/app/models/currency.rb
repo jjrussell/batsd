@@ -86,9 +86,9 @@ class Currency < ActiveRecord::Base
   after_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
-  after_create :create_deeplink_offer
   after_update  :approve_on_tapjoy_enabled
-  set_callback :cache, :after, :cache_by_app_id
+  after_commit :cache_by_app_id, :on => :create
+  after_commit :cache_by_app_id, :on => :update
   set_callback :cache_clear, :after, :clear_cache_by_app_id
 
   delegate :postcache_weights, :to => :currency_group
@@ -278,11 +278,11 @@ class Currency < ActiveRecord::Base
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
+    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c }
+      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
       Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
     end
   end

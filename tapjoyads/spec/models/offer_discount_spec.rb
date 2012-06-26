@@ -1,10 +1,6 @@
 require 'spec_helper'
 
 describe OfferDiscount do
-  before :each do
-    fake_the_web
-  end
-
   context '.belongs_to' do
     it { should belong_to :partner }
   end
@@ -19,7 +15,7 @@ describe OfferDiscount do
 
   context 'An Admin OfferDiscount' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @offer = @app.primary_offer
       @partner = @app.partner
     end

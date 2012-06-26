@@ -21,7 +21,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       end
     end
 
-    @partners = @partners.paginate(:page => params[:page])
+    @partners = @partners.paginate(:page => params[:page]) unless params[:print].present?
     @freeze_enabled = PayoutFreeze.enabled?
   end
 
@@ -52,9 +52,18 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
       'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
       'Confirmed,Notes'
-    ]
+     ]
+    managers = {}
+    User.account_managers.each do |user|
+      managers[user.id] = user.email
+    end
     @partners.all.each do |partner|
       confirmation_notes = partner.confirmation_notes
+      account_manager_email = ''
+
+      partner.users.each do |user|
+        account_manager_email = managers[user.id] if managers[user.id]
+      end
       line = [
           partner.name.gsub(/[,]/,' '),
           partner.id.gsub(/[,]/,' '),
@@ -63,7 +72,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
           NumberHelper.number_to_currency((partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0), :delimiter => ''),
           NumberHelper.number_to_currency((partner.next_payout_amount / 100.0), :delimiter => ''),
           partner.completed_payout_info? ? partner.payout_info.payout_method : '',
-          partner.account_managers.present? ? (partner.account_managers.first.email) : '',
+          account_manager_email,
           partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
           confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
         ]
@@ -82,7 +91,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
       @partners = Partner.to_payout
     end
 
-    @partners = @partners.includes([:payout_info, {:users => [:user_roles] }])
+    @partners = @partners.includes([:payout_info, :users ])
     @partners = @partners.where('id = ?', params[:partners_filter]) if params[:partners_filter].present?
   end
 end
