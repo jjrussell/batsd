@@ -35,7 +35,6 @@ Tapjoyad::Application.routes.draw do
   resources :get_offers, :only => [:index] do
     collection do
       match :webpage
-      match :webpage_redesign
       match :featured
     end
   end
