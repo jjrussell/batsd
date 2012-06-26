@@ -42,7 +42,7 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices, :dependent => :destroy
+  has_many :gamer_devices, :dependent => :destroy, :order => 'name'
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
 
