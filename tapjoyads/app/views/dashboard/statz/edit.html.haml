@@ -7,7 +7,7 @@
 
 .clear
 
-= form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+= form_for(@offer, :as => :offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
   %table
     %tr
       %th
@@ -168,6 +168,13 @@
       %td
         = f.text_field(:show_rate)
         = error_message_on @offer, :show_rate
+    %tr
+      %th
+        = f.label(:bid)
+        #help_bid.help ?
+      %td
+        = f.currency_field(:bid)
+        = error_message_on @offer, :bid
     %tr
       %th
         = f.label(:min_conversion_rate, 'Min CVR')

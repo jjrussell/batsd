@@ -10,7 +10,7 @@ class SurveyResultsController < ApplicationController
   def new
     return unless verify_params([:udid, :click_key])
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
-    @survey_questions = @survey_offer.survey_questions
+    @survey_questions = @survey_offer.questions
   end
 
   def create
@@ -23,8 +23,8 @@ class SurveyResultsController < ApplicationController
     @now = Time.zone.now
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
     return unless verify_records([ @survey_offer ])
-    @survey_questions = @survey_offer.survey_questions
 
+    @survey_questions = @survey_offer.survey_questions
     answers = {}
     @survey_questions.each do |question|
       if params[question.id].blank?

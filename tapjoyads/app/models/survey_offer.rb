@@ -15,8 +15,11 @@ class SurveyOffer < ActiveRecord::Base
   include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable
 
-  has_many :survey_questions
+  has_many :questions, :class_name => "SurveyQuestion"
+  alias_method :survey_questions, :questions
+
   has_one :offer, :as => :item
   has_one :primary_offer,
     :class_name => 'Offer',
@@ -26,129 +29,107 @@ class SurveyOffer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
 
-  attr_accessor :bid_price
-
-  accepts_nested_attributes_for :survey_questions
+  accepts_nested_attributes_for :questions
 
   validates_presence_of :partner, :name
-  validates_presence_of :bid_price, :on => :create
+  validates_presence_of :bid, :on => :create
   validates_presence_of :prerequisite_offer, :if => Proc.new { |survey_offer| survey_offer.prerequisite_offer_id? }
   validates_with OfferPrerequisitesValidator
 
-  before_validation :assign_partner_id
-  after_create :create_primary_offer, :create_icon
-  after_update :update_offer
-  set_callback :cache_associations, :before, :survey_questions
+  after_initialize :set_default_partner
+  before_save :build_primary_offer,         :if => Proc.new { |survey_offer| survey_offer.new_record? }
+  after_save :save_primary_offer
+
+  set_callback :cache_associations, :before, :questions
+
+  delegate :enabled?, :to => :primary_offer
 
   scope :visible, :conditions => { :hidden => false }
+  def visible?;  not hidden? ; end
+  def disabled?; not enabled?; end
 
   json_set_field :exclusion_prerequisite_offer_ids
 
   def bid
-    if @bid_price
-      @bid_price
-    elsif primary_offer
-      primary_offer.bid
-    else
-      nil
-    end
+    primary_offer.try(:bid) || @bid || 0
   end
 
-  def bid=(price)
-    @bid_price = price.to_i
+  def bid=(amount)
+    @bid = amount
+  end
+
+  def icon=(io)
+    @icon = io
+  end
+
+  def icon_url
+    @icon_url ||= primary_offer.try(:get_icon_url) || DEFAULT_ICON_URL
   end
 
   def hide!
     self.hidden = true
-    self.save!
+    save
   end
 
-  def to_s
-    name
+  def to_s; name; end
+
+  def enable!
+    self.enabled = true
   end
 
-  def enabled?
-    primary_offer.is_enabled?
+  def disable!
+    self.enabled = false
   end
 
   def enabled=(value)
     primary_offer.user_enabled = value
-    primary_offer.save!
+    save
   end
 
-  def build_blank_questions(count = 4)
-    (count - survey_questions.size).times { survey_questions.build }
+  def question(position)
+    questions.where(:position => position.to_i).first
   end
 
-  alias :survey_questions_attrs= :survey_questions_attributes=
-
-  def survey_questions_attributes=(questions_attrs)
-    unless questions_attrs.nil?
-      questions_attrs.each do |num, hash|
-        if hash['text'].blank?
-          SurveyQuestion.delete(hash[:id])
-          questions_attrs.delete(num)
-        end
+  def questions_attributes=(qs)
+    questions.destroy_all
+    return unless qs.present?
+    qs.each_pair do |i, params|
+      if params['text'].blank?
+        qs.delete(i.to_i)
+        next
       end
-      self.survey_questions_attrs=(questions_attrs)
+      questions.create!(params)
     end
   end
 
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+private
 
-    url = generate_url
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
+  def set_default_partner
+    self.partner_id ||= TAPJOY_PARTNER_ID
   end
 
-  def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
-  end
+  def save_primary_offer
+    has_icon                        = !primary_offer.new_record?
 
-  def save_icon!(icon_src_blob)
-    Offer.upload_icon!(icon_src_blob, id)
-  end
+    primary_offer.id                = self.id
+    primary_offer.partner_id        = partner_id || TAPJOY_PARTNER_ID
+    primary_offer.name              = name
+    primary_offer.hidden            = hidden
+    primary_offer.reward_value      = 15 # WTF?
+    primary_offer.price             = 0
+    primary_offer.url               = generate_url
+    primary_offer.bid               = @bid || 0
+    primary_offer.name_suffix       = 'Survey'
+    primary_offer.device_types      = Offer::ALL_DEVICES.to_json
+    primary_offer.tapjoy_enabled    = true
+    primary_offer.multi_complete    = false
+    primary_offer.save!
 
-  private
-
-  def create_primary_offer
-    url = generate_url
-
-    offer = Offer.new({
-      :item             => self,
-      :partner          => partner,
-      :name             => name,
-      :reward_value     => 15,
-      :price            => 0,
-      :url              => url,
-      :bid              => @bid_price,
-      :name_suffix      => 'Survey',
-      :device_types     => Offer::ALL_DEVICES.to_json,
-      :tapjoy_enabled   => true,
-      :multi_complete   => false,
-      :prerequisite_offer_id => prerequisite_offer_id,
-      :exclusion_prerequisite_offer_ids => exclusion_prerequisite_offer_ids,
-    })
-    offer.id = id
-    offer.save!
+    if @icon
+      self.primary_offer.save_icon!(@icon.read)
+    elsif !has_icon
+      self.primary_offer.save_icon!(default_icon)
+    end
   end
 
   def generate_url
@@ -160,24 +141,15 @@ class SurveyOffer < ActiveRecord::Base
     "#{API_URL}/survey_results/new?#{url_params.join('&')}"
   end
 
-  def create_icon
-    reload
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    image_data = bucket.objects['icons/survey-blue.png'].read
-    save_icon!(image_data)
+  DEFAULT_ICON_PATH = 'icons/survey-blue.png' unless defined? DEFAULT_ICON_PATH
+  DEFAULT_ICON_URL  = 'https://s3.amazonaws.com/' + BucketNames::TAPJOY + '/' + DEFAULT_ICON_PATH
+
+  def default_icon
+    @default_icon ||= bucket.objects[DEFAULT_ICON_PATH].read
   end
 
-  def update_offer
-    offer.partner_id       = partner_id
-    offer.name             = name
-    offer.hidden           = hidden
-    offer.bid              = @bid_price unless @bid_price.blank?
-    offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
-    offer.save! if offer.changed?
+  def bucket
+    @bucket ||= S3.bucket(BucketNames::TAPJOY)
   end
 
-  def assign_partner_id
-    self.partner_id ||= TAPJOY_PARTNER_ID
-  end
 end
