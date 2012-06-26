@@ -11,7 +11,10 @@ describe Offer::UrlGeneration do
   describe '#display_ad_image_url' do
     context 'with currency passed' do
       it 'should add key param to url ' do
-        url = @offer.display_ad_image_url(@app.id, 320, 50, @currency)
+        url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                            :width => 320,
+                                            :height => 50,
+                                            :currency => @currency })
         params = CGI::parse(URI(url).query)
         params["key"].first.should == @offer.image_hash(@currency)
       end
@@ -19,7 +22,9 @@ describe Offer::UrlGeneration do
 
     context 'with currency not passed' do
       it 'should add key param' do
-        url = @offer.display_ad_image_url(@app.id, 320, 50)
+        url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                            :width => 320,
+                                            :height => 50 })
         params = CGI::parse(url)
         params["key"].first.should == @offer.image_hash(nil)
       end
@@ -28,7 +33,9 @@ describe Offer::UrlGeneration do
 
   describe '#preview_display_ad_image_url' do
     it 'should add key param to url ' do
-      url = @offer.preview_display_ad_image_url(@app.id, 320, 50)
+      url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                          :width => 320,
+                                          :height => 50 })
       params = CGI::parse(URI(url).query)
       params["key"].first.should == @offer.image_hash(nil)
     end

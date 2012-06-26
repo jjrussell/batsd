@@ -113,7 +113,6 @@ module Offer::BannerCreatives
     base = use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"
 
     url = "#{base}/#{banner_creative_path(options[:size], options[:format])}"
-    url << "&key=#{image_hash(currency)}"
     url << "?" << { :ts => Time.now.to_i }.to_query if options[:bust_cache]
     url
   end

@@ -125,8 +125,7 @@ describe DisplayAdController do
             display_multiplier = (display_multiplier || 1).to_f
             old_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}"
             new_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}.foo"
-            Mc.should_receive(:distributed_get_and_put).with(new_key, false, 1.day).and_yield()
-            Mc.should_receive(:distributed_get_and_put).with(old_key, false, 1.day).and_return(Base64.encode64('cached image'))
+            Mc.should_receive(:distributed_get_and_put).with([new_key, old_key], false, 1.day).and_return(Base64.encode64('cached image'))
             @params[:key] = 'foo'
             get(:image, @params)
             response.body.should == 'cached image'
@@ -302,7 +301,7 @@ describe DisplayAdController do
           assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
                                                                      :width => 320,
                                                                      :height => 50,
-                                                                     :currency_id => @currency.id)
+                                                                     :currency => @currency)
         end
       end
     end

@@ -30,7 +30,7 @@ class DisplayAdController < ApplicationController
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
     # if not found in cache, pass data required to generate
-    image_data = image_from_cache(keys) do |data|
+    image_data = image_from_cache(keys) do
       publisher = App.find_in_cache(params[:publisher_app_id])
       currency  = Currency.find_in_cache(params[:currency_id])
       currency  = nil if currency.present? && currency.app_id != params[:publisher_app_id]
@@ -41,8 +41,7 @@ class DisplayAdController < ApplicationController
       end
 
       return unless verify_records([publisher, currency, offer])
-
-      data.merge!({
+      generate_image({
         :publisher          => publisher,
         :currency           => currency,
         :offer              => offer,
@@ -123,7 +122,7 @@ class DisplayAdController < ApplicationController
         @image_url = offer.display_ad_image_url(:publisher_app_id => @publisher_app.id,
                                                 :width => width,
                                                 :height => height,
-                                                :currency_id => currency.id,
+                                                :currency => currency,
                                                 :display_multiplier => params[:display_multiplier])
       else
         @image = get_ad_image(@publisher_app, offer, width, height, currency, params[:display_multiplier])
@@ -153,8 +152,8 @@ class DisplayAdController < ApplicationController
     key = image_cache_key(currency, offer, width, height, display_multiplier)
     Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
     # if not found in cache, pass data required to generate
-    image_from_cache(key) do |data|
-      data.merge!({
+    image_from_cache(key) do
+      generate_image({
         :publisher          => publisher,
         :currency           => currency,
         :offer              => offer,
@@ -240,14 +239,9 @@ class DisplayAdController < ApplicationController
 
   ##
   # Gets image from cache given a list of keys to try, generates image on failure from yielded data
-  def image_from_cache(keys, &block)
-    keys = keys.to_a
-    key = keys.shift
-    image_data = Mc.distributed_get_and_put(key, false, 1.day) do
-      data = {}
-      return image_from_cache(keys, &block) unless keys.empty?
-      yield data if block_given?
-      generate_image(data)
+  def image_from_cache(keys)
+    Mc.distributed_get_and_put(keys, false, 1.day) do
+      yield
     end
   end
 
