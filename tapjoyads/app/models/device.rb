@@ -226,8 +226,13 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
-      if device_identifier.udid? && device_identifier.udid != key
-        Notifier.alert_new_relic(RuntimeError, "Overwriting identifier: #{identifier} with a udid: #{key} instead of the existing udid: #{device_identifier.udid}")
+      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        timestamp = Time.zone.now
+        key = "device_identifier.#{timestamp.to_f.to_s}"
+        $redis.set(key, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
+        $redis.sadd("device_identifier", key)
+        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", key)
+        $redis.expire(key, 30.days)
       end
       device_identifier.udid = key
       device_identifier.save!
