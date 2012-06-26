@@ -35,7 +35,6 @@ Tapjoyad::Application.routes.draw do
   resources :get_offers, :only => [:index] do
     collection do
       match :webpage
-      match :webpage_redesign
       match :featured
     end
   end
@@ -43,6 +42,8 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
+
+  match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
 
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'

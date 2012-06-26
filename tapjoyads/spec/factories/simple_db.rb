@@ -31,4 +31,9 @@ FactoryGirl.define do
     publisher_user_id "bill"
     currency_reward    100
   end
+
+  factory :device_identifier do
+    key { Factory.next(:guid) }
+    udid ''
+  end
 end

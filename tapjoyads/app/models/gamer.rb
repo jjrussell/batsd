@@ -42,7 +42,7 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices, :dependent => :destroy
+  has_many :gamer_devices, :dependent => :destroy, :order => 'name'
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
 
@@ -324,6 +324,10 @@ class Gamer < ActiveRecord::Base
     else
       WEBSITE_URL
     end
+  end
+
+  def friend_of?(gamer)
+    Friendship.connected?(self, gamer)
   end
 
   private

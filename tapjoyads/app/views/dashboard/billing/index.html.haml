@@ -37,7 +37,8 @@
               %th Payouts
               %th Transfers
               %th Adjustments
-              %th Dev Credits
+              - if current_user.employee?
+                %th Dev Credits
           %tbody
             = render :partial => 'statement', :collection => @statements, :locals => {:format => :table}
       #billing-summary-right

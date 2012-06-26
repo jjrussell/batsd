@@ -392,7 +392,7 @@
             connector = item.redirectURL.match(/\?/) ? '&' : '?';
 
         item.free = $.labels.text.free;
-        item.points = $.labels.text.points;
+        item.points = $.data.currencyName;
         item.earn = $.labels.text.earn;
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';

@@ -101,6 +101,8 @@ class ApplicationController < ActionController::Base
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
+    lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
+    lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
