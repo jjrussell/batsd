@@ -20,7 +20,7 @@ class DisplayAdController < ApplicationController
   def image
     params[:currency_id] = params[:publisher_app_id] if params[:currency_id].blank?
     return unless verify_params([:advertiser_app_id, :size, :publisher_app_id, :currency_id])
-    offer_id = params.delete(:advertiser_app_id)
+    offer_id = params[:advertiser_app_id]
     width, height = parse_size(params[:size])
     size = "#{width}x#{height}"
 
@@ -146,7 +146,6 @@ class DisplayAdController < ApplicationController
 
     web_request.save
   end
-
 
   def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
     key = image_cache_key(currency, offer, width, height, display_multiplier)
@@ -290,7 +289,7 @@ class DisplayAdController < ApplicationController
   # Returns the full cache key for the image including a hash based off the offer and currency
   # requires objects not id's
   def image_cache_key(currency, offer, width, height, display_multiplier)
-    hash = offer.image_hash(currency)
+    hash = offer.display_ad_image_hash(currency)
     image_key_from_hash(currency.id, offer.id, width, height, display_multiplier, hash)
   end
 

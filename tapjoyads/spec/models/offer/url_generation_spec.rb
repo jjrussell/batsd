@@ -16,7 +16,7 @@ describe Offer::UrlGeneration do
                                             :height => 50,
                                             :currency => @currency })
         params = CGI::parse(URI(url).query)
-        params["key"].first.should == @offer.image_hash(@currency)
+        params["key"].first.should == @offer.display_ad_image_hash(@currency)
       end
     end
 
@@ -26,7 +26,7 @@ describe Offer::UrlGeneration do
                                             :width => 320,
                                             :height => 50 })
         params = CGI::parse(url)
-        params["key"].first.should == @offer.image_hash(nil)
+        params["key"].first.should == @offer.display_ad_image_hash(nil)
       end
     end
   end
@@ -37,7 +37,7 @@ describe Offer::UrlGeneration do
                                           :width => 320,
                                           :height => 50 })
       params = CGI::parse(URI(url).query)
-      params["key"].first.should == @offer.image_hash(nil)
+      params["key"].first.should == @offer.display_ad_image_hash(nil)
     end
   end
 

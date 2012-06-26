@@ -191,7 +191,7 @@ module Offer::UrlGeneration
                :offer_type => item_type }
 
     params[:currency_id] = options[:currency].id if options.include?(:currency)
-    params[:key] = image_hash(options[:currency])
+    params[:key] = display_ad_image_hash(options[:currency])
     params[:ts] = Time.now.to_i if options[:bust_cache]
 
     "#{API_URL}/display_ad/image?#{params.to_query}"
@@ -279,10 +279,5 @@ module Offer::UrlGeneration
     else
       "#{params[:udid]}.#{item_id_str}"
     end
-  end
-
-  def image_hash(currency)
-    currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if !currency.blank?
-    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
   end
 end
