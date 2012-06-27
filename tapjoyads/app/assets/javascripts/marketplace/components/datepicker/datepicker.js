@@ -340,7 +340,7 @@
               o.push('->');
             }
         }
-        yearsGroup.push(r);
+        yearsGroup.push(o);
       }
       for(var i = 0, k = yearsGroup[$t.position].length; i < k; i++){
         var cls = '',
