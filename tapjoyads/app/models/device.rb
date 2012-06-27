@@ -48,6 +48,10 @@ class Device < SimpledbShardedResource
     "devices_#{domain_number}"
   end
 
+  def tjgames_registration_click_key
+    "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
@@ -226,8 +230,12 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
-      if device_identifier.udid? && device_identifier.udid != key
-        Notifier.alert_new_relic(RuntimeError, "Overwriting identifier: #{identifier} with a udid: #{key} instead of the existing udid: #{device_identifier.udid}")
+      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        timestamp = Time.zone.now
+        key = "device_identifier.#{timestamp.to_f.to_s}"
+        $redis.setex(key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
+        $redis.sadd("device_identifier", key)
+        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", key)
       end
       device_identifier.udid = key
       device_identifier.save!
