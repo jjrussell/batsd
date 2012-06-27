@@ -143,13 +143,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, 'is not valid JSON')
     end
   end
-  validates_each :publisher_app_whitelist, :allow_blank => true do |record, attribute, value|
-    if record.publisher_app_whitelist_changed?
-      value.split(';').each do |app_id|
-        record.errors.add(attribute, "contains an unknown app id: #{app_id}") if App.find_by_id(app_id).nil?
-      end
-    end
-  end
+  validates :publisher_app_whitelist, :id_list => {:of => App}, :allow_blank => true
   validates_each :payment_range_low do |record, attribute, value|
     if record.payment_range_low.present?
       record.errors.add(attribute, "must equal payment") if value != record.payment
