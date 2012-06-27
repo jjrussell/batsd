@@ -1,9 +1,7 @@
 class Experiments
-  OPTIMIZATION_EXPERIMENT_IDS = [ 'a_optimization', 'b_optimization', 'c_optimization' ]
 
   OFFERWALL_EXPERIMENT_IDS = %W( a_offerwall b_offerwall c_offerwall )
-  EXPERIMENTS = { :optimization => OPTIMIZATION_EXPERIMENT_IDS,
-                  :offerwall => OFFERWALL_EXPERIMENT_IDS }
+  EXPERIMENTS = { :offerwall => OFFERWALL_EXPERIMENT_IDS }
 
   def self.choose(udid, options = {})
     if udid.present?

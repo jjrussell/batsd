@@ -402,7 +402,10 @@ class Partner < ActiveRecord::Base
 
   def confirm_for_payout(user)
     self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
-    self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
+    if can_confirm_payout_threshold?(user)
+      self.payout_threshold_confirmation = true 
+      self.payout_threshold *= 1.1
+    end
   end
 
   def monthly_accounting(year, month)

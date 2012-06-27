@@ -221,7 +221,9 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
     when 'tj_games'
-      :optimization
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+      nil
     when 'offerwall'
        OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :offerwall : nil
     else
@@ -233,13 +235,10 @@ include GetOffersHelper
 
   def set_algorithm
     case params[:exp]
-    when 'a_optimization', 'a_offerwall'
+    when 'a_offerwall'
       @algorithm = nil
-    when 'b_optimization', 'b_offerwall'
+    when  'b_offerwall'
       @algorithm = '101'
-    when 'c_optimization'
-      @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
     when 'c_offerwall'
       @algorithm = '101'
       @algorithm_options = { :skip_currency => true }
