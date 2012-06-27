@@ -2,7 +2,6 @@
 
   $.fn.DatePicker = function(config){
     config = $.extend({}, Tap.Components.DatePicker, config || {});
-
     return this.each(function(){
 
       var $t = $(this);
@@ -116,9 +115,9 @@
       });
 
       $t.tabs();
-      $t.months();      
-      $t.days();      
-      $t.years();      
+      $t.months();
+      $t.days();
+      $t.years();
     },
 
     close: function(){
@@ -317,11 +316,35 @@
 
     years: function(direction){
       var $t = this,
-          years = [];
+          years = [],
+          yearsGroup = [],
+          yearsRange = [],
+          currYear = $t.config.yearStart || new Date().getFullYear(),
+          endYear = currYear - ($t.config.yearRange || 75x),
+          slots = $t.config.yearSlots || 16;
 
-      for(var i = 0, k = $t.config.years[$t.position].length; i < k; i++){
+      for (var year = currYear; year >= endYear; year--){
+        yearsRange.push(year);
+      }
+      var pages = Math.ceil(yearsRange.length/slots);
+      for (var i = 0; i < pages; i++) {
+        var o = [];
+        if (i == 0) {
+            o = yearsRange.splice(0, slots - 1);
+            o.push('->');
+        }
+        else {
+            o = yearsRange.splice(0, slots - 2);
+            o.unshift('<-');
+            if (i != (pages - 1)) {
+              o.push('->');
+            }
+        }
+        yearsGroup.push(r);
+      }
+      for(var i = 0, k = yearsGroup[$t.position].length; i < k; i++){
         var cls = '',
-            year = $t.config.years[$t.position][i];
+            year = yearsGroup[$t.position][i];
 
         if(year === '->'){
           cls = 'ui-joy-datepicker-right-arrow';
