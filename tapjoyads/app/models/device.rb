@@ -48,6 +48,10 @@ class Device < SimpledbShardedResource
     "devices_#{domain_number}"
   end
 
+  def tjgames_registration_click_key
+    "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
