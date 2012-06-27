@@ -17,18 +17,19 @@ class UserEventsController < ApplicationController
   private
 
   def check_params
-    render :text => t('user_event.error.bad_verifier'), :status => :precondition_failed and return unless verified?
+    verify_params([ :verifier, :app_id, :udid, :type ])
     app = App.find_in_cache(params[:app_id])
+    render :text => t('user_event.error.bad_params'), :status => :precondition_failed and return unless app
+    render :text => t('user_event.error.bad_verifier'), :status => :precondition_failed and return unless verified?(app)
     #Using Integer(n) raises exceptions when n isn't a valid int, instead of n.to_i(), which would return 0
-    event_type = UserEvent::EVENT_TYPE_IDS[Integer(params[:event_type_id])] rescue nil
-    render :text => t('user_event.error.bad_params'), :status => :precondition_failed unless app && event_type
+    type = UserEvent::EVENT_TYPE_IDS[Integer(params[:event_type_id])] rescue nil
+    render :text => t('user_event.error.bad_params'), :status => :precondition_failed and return unless type
   end
 
-  def verified?
-    verify_params([ :verifier, :app_id, :udid, :event_type_id ])
+  def verified?(app)
     verifier = params.delete(:verifier)
-    params_string = params.map { |key, val| "#{key}=#{val}" }.join('&')
-    verifier == Digest::SHA1.digest(USER_EVENT_SALT + params_string)
+    params_string = params.values.map { |val| "#{val}" }.join(':')
+    verifier == Digest::SHA1.digest(app.secret_key + params_string)
   end
 
 
