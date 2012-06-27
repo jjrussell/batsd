@@ -58,7 +58,7 @@
         long : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
         short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
       },
-      yearRange: 80,
+      yearRange: 81,
       yearSlots: 16,
       tabs: ['Month', 'Day', 'Year'],
       templates: {
