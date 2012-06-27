@@ -56,10 +56,19 @@
           = f.label :name, 'Prerequisite'
           #help_prerequisite.help ?
         %td
-          - offer_options = @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] }
+          - offer_options = @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ "#{offer.name} --- #{offer.item_type}", offer.id ] }
           - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.prerequisite_offer_id.blank?))
           = f.select :prerequisite_offer_id, offer_options
           = error_message_on @action_offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :name, 'Negative Prerequisite'
+          #help_negative_prerequisite.help ?
+        %td
+          - offer_options = @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ "#{offer.name} --- #{offer.item_type}", offer.id ] }
+          - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.neg_prerequisite_offer_id.blank?))
+          = f.select :neg_prerequisite_offer_id, offer_options
+          = error_message_on @action_offer, :neg_prerequisite_offer_id
       %tr
         %th
           = f.label :instructions, 'Instructions'
