@@ -320,7 +320,7 @@
           yearsGroup = [],
           yearsRange = [],
           currYear = $t.config.yearStart || new Date().getFullYear(),
-          endYear = currYear - ($t.config.yearRange || 75x),
+          endYear = currYear - ($t.config.yearRange || 75),
           slots = $t.config.yearSlots || 16;
 
       for (var year = currYear; year >= endYear; year--){
