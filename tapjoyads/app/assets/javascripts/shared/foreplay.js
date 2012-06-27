@@ -1,6 +1,6 @@
 ;(function(window, $){
 
-  var supportsTouch = (!!window.Touch) && (typeof window.TouchEvent != 'undefined');
+  var supportsTouch = "ontouchstart" in window;
 
   var foreplay = {
     addEvent: (/msie/i).test(navigator.userAgent) ? 'attachEvent' : 'addEventListener',
@@ -78,7 +78,7 @@
       // store y position
       $t.event.y2 = $t.supportsTouch ? e.touches[0].pageY : e.pageY;
       // check if touchstart is active, if event is swipe and if movement is swipe or scrolling
-      if($t.event.pressed && $t.event.element.data('swipe') && Math.abs($t.event.y1 - $t.event.y2) > 15){
+      if($t.event.pressed && $t.event.element.data('swipe') && Math.abs($t.event.y1 - $t.event.y2) > 10){
         e.preventDefault();
       }
     },
