@@ -539,3 +539,15 @@ span.small {
     }
   }
 }
+
+@media screen and (max-width: 533px) and (orientation: landscape) and (min-device-width : 320px){
+  .button, 
+  .blurb {
+    font-size: 75%;
+  }
+
+  .blurb {
+    margin: 0px;
+  }
+}
+
