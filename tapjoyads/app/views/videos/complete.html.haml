@@ -41,34 +41,35 @@
     %p.blurb.center
       You've earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
       in #{@publisher_app.name} by completing #{@video_offer.name}!
-  %ul#offers
-    - @video_buttons.each do |button|
-      - offer = button.tracking_item.primary_offer
-      %li
-        %a{:href => get_click_url(button.tracking_offer)}
-          .reward.gradient
-            - if @currency.get_reward_amount(button.tracking_offer) > 0
-              %span.earn= t('text.shared.earn_verb')
-              %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
-              %span.points= t('text.offerwall.points')
-            - else
-              %span.big= t('text.shared.tap_here')
-            %span.free= visual_cost(offer)
+  .offers-wrapper
+    %ul#offers
+      - @video_buttons.each do |button|
+        - offer = button.tracking_item.primary_offer
+        %li
+          %a{:href => get_click_url(button.tracking_offer)}
+            .reward.gradient
+              - if @currency.get_reward_amount(button.tracking_offer) > 0
+                %span.earn= t('text.shared.earn_verb')
+                %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
+                %span.points= t('text.offerwall.points')
+              - else
+                %span.big= t('text.shared.tap_here')
+              %span.free= visual_cost(offer)
 
-          .offer
-            .icon
-              .rounded
-              %img.cover{:src => offer.get_icon_url(:source => :cloudfront, :size => '57')}
-              - if offer.wifi_only?
-                .wifi WiFi
-            .about
-              .title= button.name
-              - if button.item_type == 'App'
-                .action.download= t('text.offerwall.actions.download')
-              - elsif button.item_type == 'VideoOffer'
-                .action.video= t('text.offerwall.actions.video')
-              - elsif %w(ActionOffer GenericOffer).include?(button.item_type)
-                .action.series= t('text.offerwall.actions.steps')
+            .offer
+              .icon
+                .rounded
+                %img.cover{:src => offer.get_icon_url(:source => :cloudfront, :size => '57')}
+                - if offer.wifi_only?
+                  .wifi WiFi
+              .about
+                .title= button.name
+                - if button.item_type == 'App'
+                  .action.download= t('text.offerwall.actions.download')
+                - elsif button.item_type == 'VideoOffer'
+                  .action.video= t('text.offerwall.actions.video')
+                - elsif %w(ActionOffer GenericOffer).include?(button.item_type)
+                  .action.series= t('text.offerwall.actions.steps')
 
   .container
     .button-wrapper
