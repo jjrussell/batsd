@@ -103,6 +103,10 @@ describe RiskProfile do
       subject.conversion_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
       subject.revenue_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
     end
+
+    after :each do
+      Timecop.return
+    end
   end
 
   describe '#process_block' do
@@ -123,6 +127,10 @@ describe RiskProfile do
 
       subject.process_block
       subject.block_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
+    end
+
+    after :each do
+      Timecop.return
     end
   end
 
@@ -202,6 +210,10 @@ describe RiskProfile do
           subject.revenue_total(24).should == 0
         end
       end
+    end
+
+    after :each do
+      Timecop.return
     end
   end
 end
