@@ -87,7 +87,7 @@
     = property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
   - if permitted_to?(:edit, :dashboard_statz) && @offer.account_manager_notes.present?
     = property_row('Internal Notes', @offer.account_manager_notes, false)
-  - raw property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+  = property_row('id', @offer.id + ' - ' + clippy(@offer.id))
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
