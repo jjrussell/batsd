@@ -94,8 +94,9 @@
             if($.endOfTheLine() && !$.fetching){
              $.fetch();
              $.fetched++;
-             if($.fetched === 3){
-               $.loadMore.parentNode.style.display = 'block'; 
+             if($.fetched <= 3){
+               if($.loadMore && $.loadMore.parent)
+                 $.loadMore.parentNode.style.display = 'block'; 
              }
             }
           }
@@ -256,7 +257,7 @@
         $.header.style.display = 'none';
       }
 
-      if($.data.autoload){
+      if($.data.autoload && $.loadMore && $.loadMore.parentNode){
         $.loadMore.parentNode.style.display = 'none';
       }
     },
