@@ -1,48 +1,54 @@
 class UserEvent < WebRequest
+  include UserEventTypes
 
-  EVENT_TYPE_IDS = [ :IAP, :SHUTDOWN ]
+  REQUIRED_KEYS = [ :app_id, :event_type_id, :udid ]
 
-
-  self.define_attr :data
+  self.define_attr :name
+  self.define_attr :event_type
+  self.define_attr :quantity, :type => :int
+  self.define_attr :price,    :type => :float
 
   def initialize(options = {})
-    options.delete(:action)
-    options.delete(:controller)
-    event_data    = options.delete(:data)                       { |k| {} }
-
+    verify_options(options)
     super(options, false)
-
-    self.data     = event_data
-  end
-
-  def valid?
-    ### TODO temporary code follows, will change when publishers can make their own events
-    type_id = Integer(type) rescue nil
-    if type_id == EVENT_TYPE_IDS.index(:IAP)
-      local_data = to_hash_from_json(data)
-      local_data.present? && local_data[:name].present? && price_valid?(local_data[:price])
-    elsif type_id == EVENT_TYPE_IDS.index(:SHUTDOWN)
-      self.data.blank?
-    else
-      false
-    end
-    ### END TODO
+    validate_event(options)
   end
 
   private
 
-  def to_hash_from_json(data)
-    hashed_data = {}
-    data.to_hash.each do |key, val|
-      hashed_data[key.to_sym] = val
+  def validate_event(options)
+      self.event_type = UserEventTypes::EVENT_TYPE_KEYS[options[:event_type_id].to_i]
+    if self.event_type != :invalid
+      event_descriptor = UserEventTypes::EVENT_TYPE_MAP[key]
+      event_descriptor.each do |required_key, expected_data_type|
+        converter = TypeConverter::TYPES[expected_data_type]
+        unless converter.try(:from_string, expected_data_type, true)
+          raise "Error assigning '#{required_key}' attribute. The value '#{options[required_key]}' is not of type '#{expected_data_type}."    # TODO use i18n?
+        end
+        send("#{required_key}=", options[required_key])
+      end
     end
-    hashed_data
   end
 
-  def price_valid?(price)
-    # this could be module-ized and used as a general #numeric? method
-    true if Float(price) rescue false
+  def verify_options(options)
+    verifier = options.delete(:verifier)
+    raise t('user_event.error.no_verifier') unless verifier.present?
+    event_type_key = UserEventTypes::EVENT_TYPE_KEYS[options[:event_type_id].to_i]
+    raise "#{options[:event_type_id]} is not a valid 'event_type_id'." if :invalid == event_type_key    # TODO use i18n?
+    values = []
+    required_keys = (REQUIRED_KEYS + UserEventTypes::EVENT_TYPE_MAP[event_type_key].keys)
+    required_keys.sort.each do |required_key|
+      if options.has_key?(required_key)
+        values << options[required_key]
+      else
+        raise "Expected attribute '#{required_key}' of type '#{UserEventTypes::EVENT_TYPE_MAP[event_type_key][required_key]}' not found."    # TODO use i18n?
+      end
+    end
+    string_to_be_verified = values.join(':')
+    app = App.find_in_cache(options[:app_id])
+    raise "App ID #{options[:app_id]} could not be found. Check 'app_id' and try again." unless app
+    if verifier != Digest::SHA1.digest(app.secret_key + string_to_be_verified)
+      raise t('user_event.error.verification_failed')
+    end
   end
-
-
 end
