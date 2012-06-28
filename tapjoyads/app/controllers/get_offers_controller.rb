@@ -11,97 +11,51 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  def webpage_redesign
-    webpage
+  OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
+                                          'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
+                                          '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
+                                          '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
+                                          'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
+                                          'b138a117-4b68-4e41-890a-2ea84a83ed38', # Tiny Farm(iOS)
+                                          '0f127143-e23b-46df-9e70-b6e07222d122'  # Songify (Android)
+                                        ])
 
-    offer_array = []
-    @offer_list.each do |offer|
-      hash                      = {}
-      hash["cost"]              = visual_cost(offer)
-      hash["iconURL"]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
-      hash["payout"]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-      hash["redirectURL"]       = get_click_url(offer)
-      hash["requiresWiFi"]      = offer.wifi_only? if @show_wifi_only
-      hash["title"]             = offer.name
-      hash["type"]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
-      offer_array << hash
-    end
+  # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
+  TEST_A1 = {
+              :autoload => true, :actionLocation => 'right',
+              :deepLink => false, :showBanner => false,
+              :showActionLine => true, :showCostBalloon => false,
+              :showCurrentApp => false, :squircles => false,
+              :viewID => 1001,
+            }
 
-    @obj                        = {}
-    @obj["autoload"]            = true
-    @obj["actionLocation"]      = 'left'
-    @obj["deepLink"]            = true
-    @obj["currencyName"]        = @currency.name
-    @obj["currentAppName"]      = @publisher_app.name
-    @obj["currentIconURL"]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
-    @obj["maxlength"]           = 70
-    @obj["message"]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
-    @obj["offers"]              = offer_array
-    @obj["orientation"]         = 'landscape'
-    @obj["records"]             = @more_data_available if @more_data_available
-    @obj["showBanner"]          = true
-    @obj["showActionLine"]      = true
-    @obj["showCostBalloon"]     = false
-    @obj["showCurrentApp"]      = false
-    @obj["squircles"]           = true
+  # Specimen #2 - Same as #1 minus auto loading
+  TEST_A2 = {
+              :autoload => false, :actionLocation => 'right',
+              :deepLink => false, :showBanner => false,
+              :showActionLine => true, :showCostBalloon => false,
+              :showCurrentApp => false, :squircles => false,
+              :viewID => 1002,
+            }
 
-    # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
-    @testA1                     = {}
-    @testA1["autoload"]         = true
-    @testA1["actionLocation"]   = 'right'
-    @testA1["deepLink"]         = false
-    @testA1["showBanner"]       = false
-    @testA1["showActionLine"]   = true
-    @testA1["showCostBalloon"]  = false
-    @testA1["showCurrentApp"]   = false
-    @testA1["squircles"]        = false
-    @testA1["viewID"]           = 1001
+  # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
+  TEST_B1 = {
+              :autoload =>  false, :actionLocation =>  'right',
+              :deepLink =>  false, :maxlength =>  90,
+              :showBanner =>  false, :showActionLine =>  false,
+              :showCostBalloon =>  false, :showCurrentApp =>  false,
+              :squircles =>  false, :viewID =>  1003,
+            }
 
-    # Specimen #2 - Same as #1 minus auto loading
-    @testA2                     = {}
-    @testA2["autoload"]         = false
-    @testA2["actionLocation"]   = 'right'
-    @testA2["deepLink"]         = false
-    @testA2["showBanner"]       = false
-    @testA2["showActionLine"]   = true
-    @testA2["showCostBalloon"]  = false
-    @testA2["showCurrentApp"]   = false
-    @testA2["squircles"]        = false
-    @testA2["viewID"]           = 1002
 
-    # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
-    @testB1                     = {}
-    @testB1["autoload"]         = false
-    @testB1["actionLocation"]   = 'right'
-    @testB1["deepLink"]         = false
-    @testB1["maxlength"]        = 90
-    @testB1["showBanner"]       = false
-    @testB1["showActionLine"]   = false
-    @testB1["showCostBalloon"]  = false
-    @testB1["showCurrentApp"]   = false
-    @testB1["squircles"]        = false
-    @testB1["viewID"]           = 1003
-
-    # Specimen #4 - Same as #3 plus auto loading
-    @testB2                     = {}
-    @testB2["autoload"]         = true
-    @testB2["actionLocation"]   = 'right'
-    @testB2["deepLink"]         = false
-    @testB2["maxlength"]        = 90
-    @testB2["showBanner"]       = false
-    @testB2["showActionLine"]   = false
-    @testB2["showCostBalloon"]  = false
-    @testB2["showCurrentApp"]   = false
-    @testB2["squircles"]        = false
-    @testB2["viewID"]           = 1004
-
-    @final                      = @obj.merge(@testA1);
-
-    if params[:json] == '1'
-      render :json => @final.to_json, :callback => params[:callback] and return
-    end
-
-  end
+  # Specimen #4 - Same as #3 plus auto loading
+  TEST_B2 = {
+              :autoload =>  true, :actionLocation =>  'right',
+              :deepLink =>  false, :maxlength =>  90,
+              :showBanner =>  false, :showActionLine =>  false,
+              :showCostBalloon =>  false, :showCurrentApp =>  false,
+              :squircles =>  false, :viewID =>  1004,
+            }
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -116,6 +70,16 @@ include GetOffersHelper
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
+
+    if params[:redesign].present?
+      set_redesign_parameters
+      if params[:json] == '1'
+        render :json => @final.to_json, :callback => params[:callback] and return
+      else
+        render :template => 'get_offers/webpage_redesign' and return
+      end
+    end
+      
   end
 
   def featured
@@ -257,7 +221,11 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
     when 'tj_games'
-      :optimization
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+      nil
+    when 'offerwall'
+       OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :offerwall : nil
     else
       nil
     end
@@ -267,13 +235,13 @@ include GetOffersHelper
 
   def set_algorithm
     case params[:exp]
-    when 'a_optimization'
+    when 'a_offerwall'
       @algorithm = nil
-    when 'b_optimization'
+    when  'b_offerwall'
       @algorithm = '101'
-    when 'c_optimization'
+    when 'c_offerwall'
       @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
+      @algorithm_options = { :skip_currency => true }
     end
   end
 
@@ -314,6 +282,37 @@ include GetOffersHelper
     web_request.offerwall_max_items = @max_items
 
     web_request
+  end
+
+  def set_redesign_parameters
+    offer_array = []
+    @offer_list.each do |offer|
+      hash                      = {}
+      hash[:cost]              = visual_cost(offer)
+      hash[:iconURL]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
+      hash[:payout]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+      hash[:redirectURL]       = get_click_url(offer)
+      hash[:requiresWiFi]      = offer.wifi_only? if @show_wifi_only
+      hash[:title]             = offer.name
+      hash[:type]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
+      offer_array << hash
+    end
+
+    @obj = {
+             :autoload => true, :actionLocation => 'left',
+             :deepLink => true, :maxlength =>  70,
+             :showBanner =>  true, :showActionLine =>  true,
+             :showCostBalloon =>  false, :showCurrentApp =>  false,
+             :squircles =>  true, :orientation =>  'landscape',
+             :offers => offer_array, :currencyName => @currency.name,
+             :currentAppName => @publisher_app.name
+           }
+
+    @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
+    @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
+    @obj[:records]             = @more_data_available if @more_data_available
+
+    @final = @obj.merge(TEST_A1);
   end
 
 end

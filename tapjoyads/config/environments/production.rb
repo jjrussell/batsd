@@ -79,6 +79,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
+API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
@@ -112,6 +113,7 @@ SENDGRID_PASSWD = sendgrid['passwd']
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'Z*Xac$dum8xeB9-Quv3St@RET6E6UT'
+CLICK_KEY_SALT = 'qEKa5TabzRTryO2BpFcR8s6qwFvB4i'
 
 FRESHBOOKS_API_URL = 'tapjoy.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '26c1ce82ad1cfab698746e532361f814'
