@@ -540,16 +540,10 @@ span.small {
   }
 }
 
-@media screen and (max-width: 533px) and (orientation: landscape) and (min-device-width : 320px){
+@media screen and (max-width: 533px) and (orientation: landscape) and (min-device-width : 243px){
   .blurb {
     font-size: 75%;
     margin: 0px;
-  }
-
-  .ui-joy-panel {
-    .instructions {
-      padding: 10px;
-    }
   }
 
   .offers-wrapper {
