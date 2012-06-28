@@ -546,6 +546,12 @@ span.small {
     margin: 0px;
   }
 
+  .ui-joy-panel {
+    .instructions {
+      padding: 5px;
+    }
+  }
+
   .offers-wrapper {
     overflow: hidden;
     max-height: 130px;
@@ -557,6 +563,12 @@ span.small {
       height: 63.5px;
 
       .offer {
+        .reward {
+          span.big {
+            font-size: 140px;
+          }
+        }
+
         .icon {
           margin-top: 0;
           top: 0px;
