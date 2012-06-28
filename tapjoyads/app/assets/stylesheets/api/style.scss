@@ -541,13 +541,42 @@ span.small {
 }
 
 @media screen and (max-width: 533px) and (orientation: landscape) and (min-device-width : 320px){
-  .button, 
   .blurb {
     font-size: 75%;
+  }
+
+  .offers-wrapper {
+    overflow: hidden;
+    max-height: 130px;
+    overflow-y: scroll;
+  }
+
+  ul#offers li {
+    height: 63.5px;
+  }
+
+  ul#offers li .offer .icon {
+    margin-top: 0;
+    top: 0px;
+  }
+
+  ul#offers li .offer .desc {
+    color: rgba(0,0,0, .5);
+    display: none;
+    font-size: 60%;
+    margin-top: 2px;
+  }
+  
+  ul#offers li .offer .about .action {
+    line-height: 110%;
+  }
+
+  .button-wrapper .button {
+    font-size: 75%;
+    padding: 5px 0;    
   }
 
   .blurb {
     margin: 0px;
   }
-}
-
+}  
