@@ -11,6 +11,7 @@ exit if server_type == 'testserver'
 require 'rubygems'
 require 'yaml'
 require 'aws-sdk'
+require 'fileutils'
 
 LOCAL_BASE    = '/home/webuser/tapjoyserver/tapjoyads/data/'
 
@@ -26,11 +27,10 @@ else
   File.open("#{LOCAL_BASE}#{GEOIP_FILE}", 'w') do |f|
     f.write(BUCKET.objects[GEOIP_FILE].read)
   end
+
   unless File.exists? "#{LOCAL_BASE}GeoIPCity.dat"
-    File.open("#{LOCAL_BASE}GeoIPCity.dat", 'w') do |f|
-      # Backwards compatibility
-      f.write(BUCKET.objects[GEOIP_FILE].read)
-    end
+    FileUtils.cp "#{LOCAL_BASE}#{GEOIP_FILE}", "#{LOCAL_BASE}GeoIPCity.dat"
   end
+
   puts "Updated GeoIP database.  #{GEOIP_VERSION}"
 end
