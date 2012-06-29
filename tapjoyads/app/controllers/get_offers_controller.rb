@@ -225,7 +225,7 @@ include GetOffersHelper
       @algorithm_options = { :skip_country => true }
       nil
     when 'offerwall'
-      :ow_redesign
+      :ow_redesign if params[:action] == 'webpage'
     else
       nil
     end
