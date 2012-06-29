@@ -17,6 +17,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :version
   self.sdb_attr :mac_address
   self.sdb_attr :open_udid
+  self.sdb_attr :android_id
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -47,6 +48,10 @@ class Device < SimpledbShardedResource
     "devices_#{domain_number}"
   end
 
+  def tjgames_registration_click_key
+    "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
@@ -64,6 +69,7 @@ class Device < SimpledbShardedResource
     path_list = []
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
+    self.android_id = params[:android_id] if params[:android_id].present?
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -216,6 +222,7 @@ class Device < SimpledbShardedResource
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
     all_identifiers.push(open_udid) if self.open_udid.present?
+    all_identifiers.push(android_id) if self.android_id.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
@@ -223,6 +230,13 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
+      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        timestamp = Time.zone.now
+        key = "device_identifier.#{timestamp.to_f.to_s}"
+        $redis.setex(key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
+        $redis.sadd("device_identifier", key)
+        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", key)
+      end
       device_identifier.udid = key
       device_identifier.save!
     end

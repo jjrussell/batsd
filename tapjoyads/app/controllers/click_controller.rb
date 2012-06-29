@@ -120,6 +120,8 @@ class ClickController < ApplicationController
 
   private
 
+  APPS_WITH_BAD_PUB_USER_ID = Set.new(%w(469f7523-3b99-4b42-bcfb-e18d9c3c4576 c522ed90-8764-4d3e-ba9a-0499836ee20d))
+
   def reengagement_setup
     params[:advertiser_app_id] = params[:publisher_app_id]
   end
@@ -157,8 +159,8 @@ class ClickController < ApplicationController
 
     @device = Device.new(:key => params[:udid])
 
-    # Hottest App sends the same publisher_user_id for every click
-    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
+    # These apps send the same publisher_user_id for every click
+    if APPS_WITH_BAD_PUB_USER_ID.include?(params[:publisher_app_id])
       params[:publisher_user_id] = params[:udid]
     end
   end

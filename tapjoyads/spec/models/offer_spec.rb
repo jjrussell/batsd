@@ -1087,4 +1087,26 @@ describe Offer do
       @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
     end
   end
+
+  describe '#all_blacklisted?' do
+    context 'without whitelist' do
+      it { should_not be_all_blacklisted }
+    end
+
+    context 'with whitelist' do
+      before :each do
+        subject.stub(:get_countries).and_return(['US'])
+      end
+
+      it { should_not be_all_blacklisted }
+
+      context 'with conflicting blacklist' do
+        before :each do
+          subject.stub(:countries_blacklist).and_return(['US'])
+        end
+
+        it { should be_all_blacklisted }
+      end
+    end
+  end
 end

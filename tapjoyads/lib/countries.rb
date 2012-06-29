@@ -37,9 +37,11 @@ class Countries
   def self.get_continent_code_to_country_codes
     @@continent_code_to_country_codes = {}
     GeoIP::CountryContinent.each_with_index do |continent_code, i|
-      next if GeoIP::CountryCode[i] == 'KP'
+      code = GeoIP::CountryCode[i]
+      next if code == 'KP' || code == 'FX'
+      continent_code = 'EU' if code == 'CY'
       @@continent_code_to_country_codes[continent_code] ||= []
-      @@continent_code_to_country_codes[continent_code] << GeoIP::CountryCode[i]
+      @@continent_code_to_country_codes[continent_code] << code
     end
 
     CONTINENT_CODES.each do |continent_code|

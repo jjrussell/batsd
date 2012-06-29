@@ -3,20 +3,20 @@ require 'spork'
 
 unless defined?(DeferredGarbageCollection)
   class DeferredGarbageCollection
-    DEFERRED_GC_THRESHOLD = 5.0
-    @@last_gc_run = Time.now
+    GC_THRESHOLD = 5.0
 
     def self.start
-      GC.disable if DEFERRED_GC_THRESHOLD > 0
+      GC.disable
+      @@thread = Thread.new do
+        loop do
+          sleep GC_THRESHOLD
+          GC.enable; GC.start; GC.disable
+        end
+      end
     end
 
-    def self.reconsider
-      if DEFERRED_GC_THRESHOLD > 0 && Time.now - @@last_gc_run >= DEFERRED_GC_THRESHOLD
-        GC.enable
-        GC.start
-        GC.disable
-        @@last_gc_run = Time.now
-      end
+    def self.stop
+      Thread.kill(@@thread)
     end
   end
 end
@@ -41,7 +41,7 @@ Spork.prefork do
     config.include(SpecHelpers)
     config.include(DashboardHelpers)
     config.include(Authlogic::TestCase)
-    config.before(:all) do
+    config.before(:suite) do
       DeferredGarbageCollection.start
     end
     config.before(:each) do
@@ -52,11 +52,13 @@ Spork.prefork do
       Sqs.stub(:send_message)
       Memcached.stub(:new=>FakeMemcached.new)
     end
-    config.after(:all) do
-      DeferredGarbageCollection.reconsider
+    config.after(:suite) do
+      DeferredGarbageCollection.stop
     end
   end
 end
 
 Spork.each_run do
+  UserRole.find_or_create_by_name('admin', :employee => true)
+  UserRole.find_or_create_by_name('account_mgr', :employee => true)
 end

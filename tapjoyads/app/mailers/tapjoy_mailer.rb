@@ -1,6 +1,7 @@
 class TapjoyMailer < ActionMailer::Base
-  default :from => 'Tapjoy <noreply@tapjoy.com>'
-
+  default :from => 'Tapjoy <noreply@tapjoy.com>',
+          :bcc  => 'email.receipts@tapjoy.com'
+          
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
