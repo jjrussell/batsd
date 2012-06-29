@@ -92,7 +92,7 @@ describe VideoOffer do
       end
     end
 
-    describe '#video_buttons_for_device' do
+    describe '#video_buttons_for_device_type' do
       before(:each) do
         @buttons = {}
 
@@ -112,14 +112,14 @@ describe VideoOffer do
         let(:filtered_out) { @buttons['android'] }
 
         it 'filters out non-iphone offers' do
-          subject.video_buttons_for_device(device).should_not include(filtered_out)
+          subject.video_buttons_for_device_type(device).should_not include(filtered_out)
         end
 
         context 'and a rewarded PPI button' do
           let(:filtered_out) { @buttons['rewarded'] }
 
           it 'filters out the rewarded install offer' do
-            subject.video_buttons_for_device(device).should_not include(filtered_out)
+            subject.video_buttons_for_device_type(device).should_not include(filtered_out)
           end
         end
 
@@ -131,7 +131,7 @@ describe VideoOffer do
           end
 
           it 'does not filter out the rewarded offer' do
-            subject.video_buttons_for_device(device).should include(filtered_out)
+            subject.video_buttons_for_device_type(device).should include(filtered_out)
           end
         end
       end
@@ -141,7 +141,7 @@ describe VideoOffer do
         let(:filtered_out) { @buttons['rewarded'] }
 
         it 'filters out the rewarded install offer' do
-          subject.video_buttons_for_device(device).should_not include(filtered_out)
+          subject.video_buttons_for_device_type(device).should_not include(filtered_out)
         end
       end
 
@@ -150,7 +150,7 @@ describe VideoOffer do
         let(:filtered_out) { @buttons['rewarded'] }
 
         it 'filters out the rewarded install offer' do
-          subject.video_buttons_for_device(device).should_not include(filtered_out)
+          subject.video_buttons_for_device_type(device).should_not include(filtered_out)
         end
       end
 
@@ -159,13 +159,13 @@ describe VideoOffer do
         let(:filtered_out) { @buttons['iphone'] }
 
         it 'filters out non-android offers' do
-          subject.video_buttons_for_device(device).should_not include(filtered_out)
+          subject.video_buttons_for_device_type(device).should_not include(filtered_out)
         end
       end
 
       context 'with a non-mobile device' do
         it 'does not filter any buttons out' do
-          subject.video_buttons_for_device(nil).length.should == 3
+          subject.video_buttons_for_device_type(nil).length.should == 3
         end
       end
     end
