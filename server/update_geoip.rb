@@ -12,26 +12,25 @@ require 'rubygems'
 require 'yaml'
 require 'aws-sdk'
 
-LOCAL_BASE = '/home/webuser/GeoIP/'
-GEOIP_FILE = 'GeoIPCity.dat'
-GEOIP_MD5  = 'GeoIPCity.md5'
-AWS_CONFIG = YAML::load_file('/home/webuser/.tapjoy_aws_credentials.yaml')['production']
-BUCKET     = AWS::S3.new(:access_key_id => AWS_CONFIG['access_key_id'], :secret_access_key => AWS_CONFIG['secret_access_key']).buckets['tapjoy']
+LOCAL_BASE    = '/home/webuser/tapjoyserver/tapjoyads/data/'
 
-local_md5 = if File.exists? "#{LOCAL_BASE}#{GEOIP_FILE}"
-              Digest::MD5.hexdigest(File.read("#{LOCAL_BASE}#{GEOIP_FILE}"))
-            else
-              ""
-            end
-remote_md5 = BUCKET.objects[GEOIP_MD5].read
+AWS_CONFIG    = YAML::load_file('/home/webuser/.tapjoy_aws_credentials.yaml')['production']
+BUCKET        = AWS::S3.new(:access_key_id => AWS_CONFIG['access_key_id'], :secret_access_key => AWS_CONFIG['secret_access_key']).buckets['tapjoy']
 
-if local_md5 == remote_md5
-  puts "GeoIP database is already up-to-date."
+GEOIP_VERSION = BUCKET.objects['GeoIPCity.version'].read
+GEOIP_FILE    = "#{GEOIP_VERSION}-GeoIPCity.dat"
+
+if File.exists? "#{LOCAL_BASE}#{GEOIP_FILE}"
+  puts "GeoIP data is already up-to-date.  #{GEOIP_VERSION}"
 else
-  File.open("#{LOCAL_BASE}#{GEOIP_FILE}.new", 'w') do |f|
+  File.open("#{LOCAL_BASE}#{GEOIP_FILE}", 'w') do |f|
     f.write(BUCKET.objects[GEOIP_FILE].read)
   end
-  File.rename("#{LOCAL_BASE}#{GEOIP_FILE}.new", "#{LOCAL_BASE}#{GEOIP_FILE}")
-  system "/home/webuser/tapjoyserver/server/start_or_reload_unicorn.rb"
-  puts "Updated GeoIP database."
+  unless File.exists? "#{LOCAL_BASE}GeoIPCity.dat"
+    File.open("#{LOCAL_BASE}GeoIPCity.dat", 'w') do |f|
+      # Backwards compatibility
+      f.write(BUCKET.objects[GEOIP_FILE].read)
+    end
+  end
+  puts "Updated GeoIP database.  #{GEOIP_VERSION}"
 end
