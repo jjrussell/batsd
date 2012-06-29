@@ -27,6 +27,9 @@ else
   File.open("#{LOCAL_BASE}#{GEOIP_FILE}", 'w') do |f|
     f.write(BUCKET.objects[GEOIP_FILE].read)
   end
+  File.open("#{LOCAL_BASE}GeoIPCity.version", 'w') do |f|
+    f.write(GEOIP_VERSION)
+  end
 
   unless File.exists? "#{LOCAL_BASE}GeoIPCity.dat"
     FileUtils.cp "#{LOCAL_BASE}#{GEOIP_FILE}", "#{LOCAL_BASE}GeoIPCity.dat"
