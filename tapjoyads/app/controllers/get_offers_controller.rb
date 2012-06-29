@@ -1,14 +1,61 @@
 class GetOffersController < ApplicationController
+include GetOffersHelper
 
   layout 'offerwall', :only => :webpage
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup
-  before_filter :choose_papaya_experiment, :only => [:index, :webpage]
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm
+  # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
+
+  OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
+                                          'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
+                                          '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
+                                          '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
+                                          'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
+                                          'b138a117-4b68-4e41-890a-2ea84a83ed38', # Tiny Farm(iOS)
+                                          '0f127143-e23b-46df-9e70-b6e07222d122'  # Songify (Android)
+                                        ])
+
+  # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
+  TEST_A1 = {
+              :autoload => true, :actionLocation => 'right',
+              :deepLink => false, :showBanner => false,
+              :showActionLine => true, :showCostBalloon => false,
+              :showCurrentApp => false, :squircles => false,
+              :viewID => 1001,
+            }
+
+  # Specimen #2 - Same as #1 minus auto loading
+  TEST_A2 = {
+              :autoload => false, :actionLocation => 'right',
+              :deepLink => false, :showBanner => false,
+              :showActionLine => true, :showCostBalloon => false,
+              :showCurrentApp => false, :squircles => false,
+              :viewID => 1002,
+            }
+
+  # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
+  TEST_B1 = {
+              :autoload =>  false, :actionLocation =>  'right',
+              :deepLink =>  false, :maxlength =>  90,
+              :showBanner =>  false, :showActionLine =>  false,
+              :showCostBalloon =>  false, :showCurrentApp =>  false,
+              :squircles =>  false, :viewID =>  1003,
+            }
+
+
+  # Specimen #4 - Same as #3 plus auto loading
+  TEST_B2 = {
+              :autoload =>  true, :actionLocation =>  'right',
+              :deepLink =>  false, :maxlength =>  90,
+              :showBanner =>  false, :showActionLine =>  false,
+              :showCostBalloon =>  false, :showCurrentApp =>  false,
+              :squircles =>  false, :viewID =>  1004,
+            }
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -23,6 +70,16 @@ class GetOffersController < ApplicationController
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
+
+    if params[:redesign].present?
+      set_redesign_parameters
+      if params[:json] == '1'
+        render :json => @final.to_json, :callback => params[:callback] and return
+      else
+        render :template => 'get_offers/webpage_redesign' and return
+      end
+    end
+      
   end
 
   def featured
@@ -106,19 +163,10 @@ class GetOffersController < ApplicationController
     params[:source] = 'offerwall' if params[:source].blank?
     params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
+    set_offerwall_experiment
+
     if @save_web_requests
-      if params[:source] == 'tj_games'
-        wr_path = 'tjm_offers'
-      elsif params[:source] == 'featured'
-        wr_path = 'featured_offer_requested'
-      else
-        wr_path = 'offers'
-      end
-      @web_request = WebRequest.new(:time => @now)
-      @web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
-      @web_request.viewed_at = @now
-      @web_request.offerwall_start_index = @start_index
-      @web_request.offerwall_max_items = @max_items
+      @web_request = generate_web_request
     end
     @show_papaya = false
     @papaya_offers = {}
@@ -145,6 +193,8 @@ class GetOffersController < ApplicationController
       :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
       :all_videos           => params[:all_videos],
+      :algorithm            => @algorithm,
+      :algorithm_options    => @algorithm_options,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
     )
   end
@@ -155,15 +205,43 @@ class GetOffersController < ApplicationController
 
   def save_impressions
     if @save_web_requests
+      web_request = generate_web_request
       @offer_list.each_with_index do |offer, i|
-        @web_request.replace_path('offerwall_impression')
-        @web_request.offer_id = offer.id
-        @web_request.offerwall_rank = i + @start_index + 1
-        @web_request.offerwall_rank_score = offer.rank_score
-        @web_request.save
+        web_request.replace_path('offerwall_impression')
+        web_request.offer_id = offer.id
+        web_request.offerwall_rank = i + @start_index + 1
+        web_request.offerwall_rank_score = offer.rank_score
+        web_request.save
 
         offer.queue_impression_tracking_requests # for third party tracking vendors
       end
+    end
+  end
+
+  def set_offerwall_experiment
+    experiment = case params[:source]
+    when 'tj_games'
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+      nil
+    when 'offerwall'
+       OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :offerwall : nil
+    else
+      nil
+    end
+
+    choose_experiment(experiment)
+  end
+
+  def set_algorithm
+    case params[:exp]
+    when 'a_offerwall'
+      @algorithm = nil
+    when  'b_offerwall'
+      @algorithm = '101'
+    when 'c_offerwall'
+      @algorithm = '101'
+      @algorithm_options = { :skip_currency => true }
     end
   end
 
@@ -187,6 +265,54 @@ class GetOffersController < ApplicationController
 
   def queue_impression_tracking
     @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
+  end
+
+  def generate_web_request
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offers'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_requested'
+    else
+      wr_path = 'offers'
+    end
+    web_request = WebRequest.new(:time => @now)
+    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.viewed_at = @now
+    web_request.offerwall_start_index = @start_index
+    web_request.offerwall_max_items = @max_items
+
+    web_request
+  end
+
+  def set_redesign_parameters
+    offer_array = []
+    @offer_list.each do |offer|
+      hash                      = {}
+      hash[:cost]              = visual_cost(offer)
+      hash[:iconURL]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
+      hash[:payout]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+      hash[:redirectURL]       = get_click_url(offer)
+      hash[:requiresWiFi]      = offer.wifi_only? if @show_wifi_only
+      hash[:title]             = offer.name
+      hash[:type]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
+      offer_array << hash
+    end
+
+    @obj = {
+             :autoload => true, :actionLocation => 'left',
+             :deepLink => true, :maxlength =>  70,
+             :showBanner =>  true, :showActionLine =>  true,
+             :showCostBalloon =>  false, :showCurrentApp =>  false,
+             :squircles =>  true, :orientation =>  'landscape',
+             :offers => offer_array, :currencyName => @currency.name,
+             :currentAppName => @publisher_app.name
+           }
+
+    @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
+    @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
+    @obj[:records]             = @more_data_available if @more_data_available
+
+    @final = @obj.merge(TEST_A1);
   end
 
 end

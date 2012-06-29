@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120503225751) do
+ActiveRecord::Schema.define(:version => 20120620163623) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                    :limit => 36,                    :null => false
@@ -69,10 +69,12 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
-    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
+    t.text     "languages"
+    t.text     "screenshots"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -240,8 +242,8 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -343,6 +345,7 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.integer  "display_order"
     t.string   "desk_location"
     t.string   "department"
+    t.string   "office"
   end
 
   add_index "employees", ["email"], :name => "index_employees_on_email", :unique => true
@@ -551,26 +554,29 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
   create_table "monthly_accountings", :id => false, :force => true do |t|
-    t.string   "id",                         :limit => 36,                :null => false
-    t.string   "partner_id",                 :limit => 36,                :null => false
-    t.integer  "month",                                                   :null => false
-    t.integer  "year",                                                    :null => false
-    t.integer  "beginning_balance",                                       :null => false
-    t.integer  "ending_balance",                                          :null => false
-    t.integer  "website_orders",                                          :null => false
-    t.integer  "invoiced_orders",                                         :null => false
-    t.integer  "marketing_orders",                                        :null => false
-    t.integer  "transfer_orders",                                         :null => false
-    t.integer  "spend",                                                   :null => false
-    t.integer  "beginning_pending_earnings",                              :null => false
-    t.integer  "ending_pending_earnings",                                 :null => false
-    t.integer  "payment_payouts",                                         :null => false
-    t.integer  "transfer_payouts",                                        :null => false
-    t.integer  "earnings",                                                :null => false
+    t.string   "id",                           :limit => 36,                :null => false
+    t.string   "partner_id",                   :limit => 36,                :null => false
+    t.integer  "month",                                                     :null => false
+    t.integer  "year",                                                      :null => false
+    t.integer  "beginning_balance",                                         :null => false
+    t.integer  "ending_balance",                                            :null => false
+    t.integer  "website_orders",                                            :null => false
+    t.integer  "invoiced_orders",                                           :null => false
+    t.integer  "marketing_orders",                                          :null => false
+    t.integer  "transfer_orders",                                           :null => false
+    t.integer  "spend",                                                     :null => false
+    t.integer  "beginning_pending_earnings",                                :null => false
+    t.integer  "ending_pending_earnings",                                   :null => false
+    t.integer  "payment_payouts",                                           :null => false
+    t.integer  "transfer_payouts",                                          :null => false
+    t.integer  "earnings",                                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "earnings_adjustments",                                    :null => false
-    t.integer  "bonus_orders",                             :default => 0, :null => false
+    t.integer  "earnings_adjustments",                                      :null => false
+    t.integer  "bonus_orders",                               :default => 0, :null => false
+    t.integer  "dev_credit_payouts",                         :default => 0, :null => false
+    t.integer  "recoupable_marketing_orders",                :default => 0, :null => false
+    t.integer  "recoupable_marketing_payouts",               :default => 0, :null => false
   end
 
   add_index "monthly_accountings", ["id"], :name => "index_monthly_accountings_on_id", :unique => true
@@ -699,29 +705,30 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.string   "reseller_id",                       :limit => 36
     t.boolean  "rewarded",                                                                      :default => true
+    t.string   "reseller_id",                       :limit => 36
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.text     "regions",                                                                                          :null => false
     t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.text     "banner_creatives"
     t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "banner_creatives"
     t.text     "dma_codes",                                                                                        :null => false
-    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
+    t.text     "regions",                                                                                          :null => false
     t.boolean  "instructions_overridden",                                                       :default => false, :null => false
-    t.text     "approved_sources",                                                                                 :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
     t.boolean  "wifi_only",                                                                     :default => false, :null => false
+    t.text     "approved_banner_creatives"
+    t.text     "approved_sources",                                                                                 :null => false
     t.boolean  "sdkless",                                                                       :default => false
+    t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
-    t.text     "carriers",                                                                                         :null => false
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
+    t.text     "account_manager_notes"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
@@ -814,9 +821,9 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.boolean  "approved_publisher",                                                        :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                       :default => false,     :null => false
+    t.string   "reseller_id",                   :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
-    t.string   "reseller_id",                   :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                  :limit => 36
     t.decimal  "max_deduction_percentage",                    :precision => 8, :scale => 6, :default => 1.0,       :null => false
@@ -829,6 +836,8 @@ ActiveRecord::Schema.define(:version => 20120503225751) do
     t.integer  "payout_threshold",                                                          :default => 5000000,   :null => false
     t.boolean  "payout_info_confirmation",                                                  :default => false,     :null => false
     t.boolean  "payout_threshold_confirmation",                                             :default => false,     :null => false
+    t.datetime "live_date"
+    t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

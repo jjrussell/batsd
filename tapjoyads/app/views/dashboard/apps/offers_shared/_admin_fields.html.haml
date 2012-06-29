@@ -89,7 +89,7 @@
     = f.label(:device_types)
     #help_device_types.help ?
   %td
-    = f.select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
+    = f.select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types.to_a), {}, :multiple => true)
     = error_message_on @offer, :device_types
 %tr.admin
   %th
@@ -126,7 +126,7 @@
       = f.label(:screen_layout_sizes)
       #help_screen_layout_sizes.help ?
     %td
-      = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+      = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes.to_a), {}, :multiple => true)
       = error_message_on @offer, :screen_layout_sizes
 
 .hidden

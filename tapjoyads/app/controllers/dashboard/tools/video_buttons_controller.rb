@@ -45,7 +45,7 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
         render :action => :edit
       else
         flash[:notice] = 'Successfully updated Video Button'
-        redirect_to :action => :show
+        redirect_to :action => :index
       end
     else
       render :action => :edit

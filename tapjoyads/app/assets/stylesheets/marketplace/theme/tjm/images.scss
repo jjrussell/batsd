@@ -63,6 +63,11 @@ body {
   background-size: auto 100%;
 }
 
+.facebook-square {
+  background: url(#{$image_path}/facebook_logo_square.png) no-repeat 5px center;
+  background-size: 24px 24px;
+}
+
 .rightarrow {
   padding-right: 20px;
   background: inline-image("#{$image_path}/right_arrow.png") no-repeat 98% center;
@@ -71,6 +76,7 @@ body {
 .rightarrow.white {
   padding-right: 20px;
   background: inline-image("#{$image_path}/right_arrow_white.png") no-repeat 98% center;
+  background-size: 16px 16px;
 }
 
 .plussign {
@@ -135,6 +141,52 @@ body {
   background: inline-image('/images/games/ui-joy-r-arrow.png') no-repeat 98% center;
 }
 
+#login-form, #signup-form {
+  .slide-forward {
+    background-image: inline-image('#{$logged_out_image_path}/slide-right-arrow.png');
+    background-position: 15px 21px;
+  }
+  .slide-back {
+    background-image: inline-image('#{$logged_out_image_path}/slide-left-arrow.png');
+    background-position: 15px 21px;
+  }
+
+  .right-slide {
+    background: inline-image('#{$logged_out_image_path}/slide-right-arrow-active.png') center 3px no-repeat;
+    background-size: 30px 22px;
+  }
+
+  .left-slide {
+    background: inline-image('#{$logged_out_image_path}/slide-left-arrow-active.png') center 3px no-repeat;
+    background-size: 30px 22px;
+  }
+
+  .primary {
+    .left-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-left-arrow-primary.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+
+    .right-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-right-arrow-primary.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+  }
+
+  .disabled {
+
+    .left-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-left-arrow-inactive.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+
+    .right-slide {
+      background: inline-image('#{$logged_out_image_path}/slide-right-arrow-inactive.png') center 3px no-repeat;
+      background-size: 30px 22px;
+    }
+  }
+}
+
 /**
  * moderation
  */
@@ -157,6 +209,7 @@ body {
 .list-button-container .list-button {
   .list-squircle {
     background: inline-image("#{$image_path}/app_icon_overlay_list_button_large.png") no-repeat 0 0 !important;
+    background-size: 100px 100px;
   }
 }
 .list-button-container.earn-theme {

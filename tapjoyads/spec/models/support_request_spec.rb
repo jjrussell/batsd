@@ -2,15 +2,14 @@ require 'spec_helper'
 
 describe SupportRequest do
   before :each do
-    fake_the_web
     @support_request = SupportRequest.new
 
-    @app = Factory(:app)
+    @app = FactoryGirl.create(:app)
     @offer = @app.primary_offer
-    @currency = Factory(:currency, :app => @app)
-    @device = Factory(:device)
-    publisher_app = Factory(:app)
-    @click = Factory(:click,  :udid                 => @device.key,
+    @currency = FactoryGirl.create(:currency, :app => @app)
+    @device = FactoryGirl.create(:device)
+    publisher_app = FactoryGirl.create(:app)
+    @click = FactoryGirl.create(:click,  :udid                 => @device.key,
                               :currency_id          => @currency.id,
                               :offer_id             => @offer.id,
                               :publisher_app_id     => publisher_app.id,
@@ -41,7 +40,7 @@ describe SupportRequest do
 
       context 'with a click association' do
         before :each do
-          @support_request.stubs(:get_last_click).returns(@click)
+          @support_request.stub(:get_last_click).and_return(@click)
         end
 
         it "stores the click's id" do
@@ -52,7 +51,7 @@ describe SupportRequest do
 
       context 'without a click association' do
         before :each do
-          @support_request.stubs(:get_last_click).returns(nil)
+          @support_request.stub(:get_last_click).and_return(nil)
         end
 
         it "leaves click_id blank" do
@@ -137,7 +136,7 @@ describe SupportRequest do
 
   describe '#fill_from_click' do
     before :each do
-      @gamer = Factory(:gamer)
+      @gamer = FactoryGirl.create(:gamer)
       @gamer_device = GamerDevice.new(:device => @device)
       @gamer_device.device_type = "android"
       @gamer.devices << @gamer_device
@@ -255,10 +254,10 @@ describe SupportRequest do
 
   describe '#get_last_click' do
     it 'should perform the proper SimpleDB query' do
-      udid, offer = 'test udid', Factory(:app).primary_offer
+      udid, offer = 'test udid', FactoryGirl.create(:app).primary_offer
       conditions = ["udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id]
 
-      Click.expects(:select_all).with({ :conditions => conditions }).once.returns([])
+      Click.should_receive(:select_all).with({ :conditions => conditions }).once.and_return([])
       @support_request.get_last_click(udid, offer)
     end
   end

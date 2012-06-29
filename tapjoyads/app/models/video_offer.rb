@@ -14,7 +14,7 @@
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
-  acts_as_trackable :url => lambda { video_url.present? ? video_url : nil }
+  acts_as_trackable :url => lambda { |ctx| video_url.present? ? video_url : nil }
 
   has_many :offers, :as => :item
   has_many :video_buttons
@@ -22,7 +22,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  set_callback :cache, :before, :cache_video_buttons_and_tracking_offers
+  set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -80,7 +80,7 @@ class VideoOffer < ActiveRecord::Base
     buttons_xml = buttons.inject([]) do |result, button|
       result << button.xml_for_offer
     end
-    buttons_xml.to_s
+    buttons_xml.join
   end
 
   def video_exists

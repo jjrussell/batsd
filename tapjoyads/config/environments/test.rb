@@ -1,5 +1,3 @@
-MACHINE_TYPE = nil
-
 Tapjoyad::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -36,9 +34,7 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :stderr
   config.time_zone = 'UTC'
 
-  route_filenames.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
+  config.i18n_js_cache = true
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
@@ -60,6 +56,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = 'test_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
+API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
@@ -88,6 +85,7 @@ MAIL_CHIMP_WEBHOOK_KEY = mail_chimp['webhook_key']
 SYMMETRIC_CRYPTO_SECRET = '63fVhp;QqC8N;cV2A0R.q(@6Vd;6K.\\_'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'yeJaf+ux5W!a_62eZacra9ep8w@Z&?'
+CLICK_KEY_SALT = 'nKKliIDdXwDvLaRv3kWYjDkf4lRnvw'
 
 FRESHBOOKS_API_URL = 'tjdev.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '59548f1150fa38c3feb2a67d6b1a0f8b'

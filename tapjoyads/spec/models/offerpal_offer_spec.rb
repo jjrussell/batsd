@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe OfferpalOffer do
 
-  subject { Factory(:offerpal_offer) }
+  subject { FactoryGirl.create(:offerpal_offer) }
 
   describe '.has_many' do
     it { should have_many(:offers) }

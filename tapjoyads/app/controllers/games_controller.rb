@@ -8,9 +8,29 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :get_local_tracking_url
 
   protected
+
+  def set_show_partners_bar_in_footer
+    @show_partners_bar_in_footer = true
+  end
+
+  def set_exclude_social_from_submenu
+    @exclude_social_from_submenu = true
+  end
+
+  def set_exclude_help_from_submenu
+    @exclude_help_from_submenu = true
+  end
+
+  def set_show_nav_bar_quad_menu
+    @show_nav_bar_quad_menu = true
+  end
+
+  def set_show_nav_bar_login_button
+    @show_nav_bar_login_button = true
+  end
 
   def get_friends_info(ids)
     Gamer.find_all_by_id(ids).map do |friend|
@@ -28,16 +48,16 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & I18n.available_locales.map(&:to_s)).first
+    I18n.locale = (get_language_codes.concat(http_accept_language).push(I18n.default_locale.to_s) & I18n.available_locales.map(&:to_s)).first
   end
 
   def get_locale_filename
-    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}"
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
   def get_language_codes
     return [] unless params[:language_code]
-
     code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
@@ -93,7 +113,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue
@@ -133,8 +156,8 @@ class GamesController < ApplicationController
       render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
-      redirect_to games_social_get_twitter_friends_path
+      render :json => { :success => false, :errorRedirectPath => games_social_twitter_start_oauth_path } and return if params[:ajax].present?
+      redirect_to games_social_twitter_start_oauth_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
       flash[:error] = t('text.games.twitter_internal_error')
@@ -166,6 +189,7 @@ class GamesController < ApplicationController
       path = url_for(params.merge(:only_path => true))
       options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
+      options[:state] = params[:state] if params[:state].present?
       if request.xhr?
         render :json=> "Unauthorized", :status => 401
       else
@@ -176,6 +200,8 @@ class GamesController < ApplicationController
 
   def render_login_page
     @gamer_session ||= GamerSession.new
+    @login_form_class_name = "show" if params[:state]=='login-form'
+    @non_login_form_class_name = "hide" if params[:state]=='login-form'
     render 'games/gamer_sessions/new'
   end
 
@@ -198,10 +224,13 @@ class GamesController < ApplicationController
   end
 
   def current_device_id
-    if session[:current_device_id]
+    if params[:udid]
+      @current_device_id = params[:udid]
+      session[:current_device_id] = ObjectEncryptor.encrypt(@current_device_id) if @current_device_id.present?
+    elsif session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
     end
-    if @current_device_id.nil?
+    if @current_device_id.nil? && current_device_id_cookie
       device_id_cookie = current_device_id_cookie
       @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
       @current_device_id ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.present?
@@ -286,6 +315,15 @@ class GamesController < ApplicationController
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
+  def get_local_tracking_url(path, controller=nil, action=nil, url=nil)
+    request_params = {}
+    request_params[:request_path] = path if path.present?
+    request_params[:request_controller] = controller if controller.present?
+    request_params[:request_action] = action if action.present?
+    request_params[:request_url] = url if url.present?
+    request_params.empty? ? nil : "#{games_record_local_request_path}?data=#{ObjectEncryptor.encrypt(request_params)}"
   end
 
   def record_recommended_apps

@@ -35,12 +35,13 @@ class GamesMarketingMailer < ActionMailer::Base
 
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
-
-    @detailed_email = rand(2) == 1
+    #@detailed_email = @facebook_signup ? true : rand(2) == 1
+    @detailed_email = true
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
-    @confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
+    #@confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
+    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"
     mail :to => gamer.email, :from => 'Tapjoy <noreply@tapjoy.com>', :subject => 'Welcome to Tapjoy!'
@@ -76,7 +77,7 @@ class GamesMarketingMailer < ActionMailer::Base
 
       sess = Patron::Session.new
       response = sess.get(offerwall_url)
-      raise "Error getting offerwall data" unless response.status == 200
+      raise "Error getting offerwall data HTTP code: #{ response.status }" unless response.status == 200
       @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
     end
 
@@ -87,6 +88,8 @@ class GamesMarketingMailer < ActionMailer::Base
 
     device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
     @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+    @facebook_signup = gamer.facebook_id.present?
+    @gamer_email = gamer.email if @facebook_signup
 
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
   end

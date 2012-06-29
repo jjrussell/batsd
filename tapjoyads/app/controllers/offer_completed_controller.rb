@@ -74,6 +74,13 @@ private
       notify_and_render_error(true) and return
     end
 
+    if offer.partner_use_server_whitelist?
+      unless ServerWhitelist.ip_whitelist_includes? ip_address
+        @error_message = "originating IP (#{ip_address}) not on server whitelist (#{click.key})"
+        notify_and_render_error(false, ServerWhitelistError) and return
+      end
+    end
+
     if offer.has_variable_payment?
       if params[:payment].blank?
         @error_message = "payment required (#{click.key})"
@@ -132,8 +139,9 @@ private
     end
   end
 
-  def notify_and_render_error(retry_if_supported)
-    Notifier.alert_new_relic(GenericOfferCallbackError, @error_message, request, params)
+  def notify_and_render_error(retry_if_supported, error = GenericOfferCallbackError)
+    Notifier.alert_new_relic(error, @error_message, request, params)
+    @error_message = 'failed to convert' if error == ServerWhitelistError # show generic error message for server whitelist mismatch
     case @source
     when 'gambit'
       render :text => (retry_if_supported ? 'ERROR:RESEND' : 'ERROR:FATAL')

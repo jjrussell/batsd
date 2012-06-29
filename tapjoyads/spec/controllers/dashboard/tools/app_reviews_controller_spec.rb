@@ -2,24 +2,23 @@ require 'spec_helper'
 
 describe Dashboard::Tools::AppReviewsController do
   before :each do
-    fake_the_web
     activate_authlogic
-    admin = Factory(:admin)
-    partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
+    admin = FactoryGirl.create(:admin)
+    partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
     admin.partners << partner
     login_as(admin)
 
-    @app_metadata = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-    @app_metadata2 = Factory(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
-    @gamer = Factory(:gamer)
-    gamer2 = Factory(:gamer)
+    @app_metadata = FactoryGirl.create(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
+    @app_metadata2 = FactoryGirl.create(:app_metadata, :thumbs_up => 0, :thumbs_down => 0)
+    @gamer = FactoryGirl.create(:gamer)
+    gamer2 = FactoryGirl.create(:gamer)
 
-    @gamer_review = Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
-    Factory(:gamer_review, :author => @gamer, :app_metadata => @app_metadata2, :user_rating => 0)
-    Factory(:gamer_review, :author => gamer2, :app_metadata => @app_metadata, :user_rating => 0)
-    Factory(:gamer_review, :author => gamer2, :app_metadata => @app_metadata2, :user_rating => 0)
-    Factory(:app_metadata_mapping, :app_metadata => @app_metadata)
-    Factory(:app_metadata_mapping, :app_metadata => @app_metadata2)
+    @gamer_review = FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => @app_metadata)
+    FactoryGirl.create(:gamer_review, :author => @gamer, :app_metadata => @app_metadata2, :user_rating => 0)
+    FactoryGirl.create(:gamer_review, :author => gamer2, :app_metadata => @app_metadata, :user_rating => 0)
+    FactoryGirl.create(:gamer_review, :author => gamer2, :app_metadata => @app_metadata2, :user_rating => 0)
+    FactoryGirl.create(:app_metadata_mapping, :app_metadata => @app_metadata)
+    FactoryGirl.create(:app_metadata_mapping, :app_metadata => @app_metadata2)
   end
 
   describe '#index' do
@@ -56,7 +55,7 @@ describe Dashboard::Tools::AppReviewsController do
 
   describe '#create' do
     before :each do
-      @employee = Factory(:employee)
+      @employee = FactoryGirl.create(:employee)
       @options = {
         :app_review => {
           :author_id       => @employee.id,

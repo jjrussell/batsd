@@ -3,7 +3,7 @@ module DashboardHelpers
     visit "/dashboard"
     click_link "Register now."
     fill_in "Email Address", :with => "jeff@dickey.xxx"
-    fill_in "Company Name", :with => "Tapjoy"
+    fill_in "Company Name", :with => "Lapjoy"
     fill_in "Password", :with => "password"
     fill_in "Confirm Password", :with => "password"
     select "United States", :from => "Country"
@@ -12,9 +12,9 @@ module DashboardHelpers
   end
 
   def capybara_dashboard_login
-    partner = Factory(:partner)
-    app = Factory(:app, :partner => partner)
-    user = Factory(:user, :partners => [partner])
+    partner = FactoryGirl.create(:partner)
+    app = FactoryGirl.create(:app, :partner => partner)
+    user = FactoryGirl.create(:user, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username
@@ -23,9 +23,9 @@ module DashboardHelpers
   end
 
   def capybara_dashboard_admin_login
-    partner = Factory(:partner)
-    app = Factory(:app, :partner => partner)
-    user = Factory(:admin, :partners => [partner])
+    partner = FactoryGirl.create(:partner)
+    app = FactoryGirl.create(:app, :partner => partner)
+    user = FactoryGirl.create(:admin, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username

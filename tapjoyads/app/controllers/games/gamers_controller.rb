@@ -3,59 +3,35 @@ class Games::GamersController < GamesController
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
   rescue_from Errno::ETIMEDOUT, :with => :handle_errno_exceptions
-  before_filter :set_profile, :only => [ :show, :edit, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
+  before_filter :set_profile, :only => [ :show, :accept_tos, :password, :prefs, :update_password, :confirm_delete ]
+  before_filter :set_show_nav_bar_quad_menu
 
   def new
     @gamer = Gamer.new
+    @hide_fb_signup = UiConfig.is_fb_signup_hidden
+
+    if params[:data].present? && params[:src] == 'android_app'
+      @finalize_path = finalize_games_device_path(:data => params[:data])
+    end
+
     redirect_to games_path if current_gamer.present?
   end
 
   def create
-    @gamer = Gamer.new do |g|
-      g.nickname              = params[:gamer][:nickname]
-      g.email                 = params[:gamer][:email]
-      g.password              = params[:gamer][:password]
-      g.password_confirmation = params[:gamer][:password]
-      g.referrer              = params[:gamer][:referrer]
-      g.terms_of_service      = params[:gamer][:terms_of_service]
-    end
-    begin
-      birthdate = Date.new(params[:date][:year].to_i, params[:date][:month].to_i, params[:date][:day].to_i)
-    rescue ArgumentError => e
-      if e.message == 'invalid date'
-        errors = [ ['birthday', 'is not valid'] ]
-        render_json_error(errors) and return
-      else
-        raise e
-      end
-    end
-    @gamer_profile = GamerProfile.new(:birthdate => birthdate, :nickname => params[:gamer][:nickname])
-    @gamer.gamer_profile = @gamer_profile
+    @gamer = Gamer.new params[:gamer]
+    @gamer.password_confirmation = @gamer.password
 
     if @gamer.save
-      params[:default_platforms] ||= {}
-      @gamer.send_welcome_email(request, device_type, params[:default_platforms], geoip_data, os_version)
+      default_platform = params[:platform][:default] if params[:platform]
+      is_android = params[:src] == 'android_app'
 
-      if params[:data].present? && params[:src] == 'android_app'
-        render(:json => { :success => true, :link_device_url => finalize_games_device_path(:data => params[:data]), :android => true })
-      else
-        render(:json => { :success => true, :link_device_url => new_games_device_path })
-      end
+      @gamer.send_welcome_email(request, device_type, default_platform || '', geoip_data, os_version)
+      render(:json => { :success => true, :redirect_url => @gamer.signup_next_step(params), :android_app => is_android })
     else
       errors = @gamer.errors.reject { |k,v| k == :gamer_profile }
-      errors.merge!(@gamer_profile.errors)
+      errors.merge!(@gamer.gamer_profile.errors)
+
       render_json_error(errors) and return
-    end
-  end
-
-  def edit
-    if @gamer_profile.country.blank?
-      @gamer_profile.country = Countries.country_code_to_name[geoip_data[:country]]
-    end
-
-    if @gamer_profile.facebook_id.present?
-      fb_create_user_and_client(@gamer_profile.fb_access_token, '', @gamer_profile.facebook_id)
-      current_facebook_user.fetch
     end
   end
 
@@ -68,7 +44,6 @@ class Games::GamersController < GamesController
       :followers => get_friends_info(Friendship.follower_ids(current_gamer.id))
     }
   end
-
 
   def update_password
     @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
@@ -97,6 +72,9 @@ class Games::GamersController < GamesController
     end
   end
 
+  def link_device
+  end
+
   def create_account_for_offer
     current_facebook_user.fetch
     gamer = Gamer.find(
@@ -119,8 +97,9 @@ class Games::GamersController < GamesController
       gamer.gamer_profile = gamer_profile
 
       if gamer.save
-        params[:default_platforms] ||= {}
-        gamer.send_welcome_email(request, device_type, params[:default_platforms], geoip_data, os_version)
+        default_platform = params[:platform][:default] if params[:platform]
+
+        gamer.send_welcome_email(request, device_type, default_platform || '', geoip_data, os_version)
       else
         render(:json => { :success => false, :message => t('text.games.generic_issue') }) and return
       end
@@ -149,8 +128,10 @@ class Games::GamersController < GamesController
       @gamer_profile = @gamer.gamer_profile || GamerProfile.new(:gamer => @gamer)
       @gamer.gamer_profile = @gamer_profile
     else
-      flash[:error] = "Please log in and try again. You must have cookies enabled."
-      redirect_to games_path
+      path = url_for(params.merge(:only_path => true))
+      options = { :path => path } unless path == games_root_path
+      options[:referrer] = params[:referrer] if params[:referrer].present?
+      redirect_to games_login_path(options)
     end
   end
 

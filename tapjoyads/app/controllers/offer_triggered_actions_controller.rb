@@ -1,12 +1,17 @@
 class OfferTriggeredActionsController < ApplicationController
-  include Facebooker2::Rails::Controller
   prepend_before_filter :decrypt_data_param
   before_filter :setup
 
-  layout 'facebook', :only => :facebook_login
+  layout 'offer_instructions', :only => [ :fb_login, :fb_visit ]
 
-  def facebook_login
-    @redirect_url = "#{WEBSITE_URL}/games/gamer/create_account_for_offer?udid=#{params[:udid]}"
+  def fb_login
+    include Facebooker2::Rails::Controller
+    @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?udid=#{params[:udid]}"
+  end
+
+  def fb_visit
+    @impression_tracking_url = @offer.impression_tracking_urls
+    @conversion_tracking_url = @offer.conversion_tracking_urls
   end
 
   private

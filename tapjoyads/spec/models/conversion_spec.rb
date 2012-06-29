@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Conversion do
-  subject { Factory(:conversion) }
+  subject { FactoryGirl.create(:conversion) }
 
   describe '.belongs_to' do
     it { should belong_to(:publisher_app) }

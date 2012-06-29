@@ -2,6 +2,9 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::CREATE_CONVERSIONS
+
+    # Raising on error means the job doesn't process the rest
+    @raise_on_error = false
   end
 
   private

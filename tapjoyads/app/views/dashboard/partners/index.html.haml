@@ -14,9 +14,8 @@
     = text_field_tag(:q, params[:q], :size => '40')
     = submit_tag('Search')
 
-- if @partners
-  = render :partial => "shared/partner_table", :locals => { :partners => @partners }
-  = will_paginate(@partners)
+= render :partial => "shared/partner_table", :locals => { :partners => @partners }
+= will_paginate(@partners)
 
 - content_for :page_styles do
   :plain

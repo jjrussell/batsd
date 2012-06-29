@@ -14,6 +14,7 @@
 #  updated_at       :datetime
 #  instructions     :text
 #  category         :string(255)
+#  trigger_action   :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base
@@ -23,6 +24,8 @@ class GenericOffer < ActiveRecord::Base
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
   
   TRIGGER_ACTIONS = [ 'Facebook Login' ]
+
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'

@@ -104,7 +104,8 @@ class Dashboard::Tools::PartnerProgramStatzController < Dashboard::DashboardCont
         'overall_store_rank' => combined_ranks[offer.third_party_data] || '-',
         'sales_rep'          => offer.partner.sales_rep.to_s,
         'partner_pending_earnings'  => offer.partner.pending_earnings,
-        'partner_id'         => offer.partner.id
+        'partner_id'         => offer.partner.id,
+        'live_date'          => offer.partner.live_date
       }
       partner_names[offer.partner.id] ||= offer.partner.name
       partner_revenue_stats[offer.partner.id] ||= 0
@@ -142,7 +143,7 @@ class Dashboard::Tools::PartnerProgramStatzController < Dashboard::DashboardCont
       "Offer,Publisher_name,Spend,Conversions,Store_rank,Price,Payment,Balance," <<
       "Platform,CVR,Published_offers,ARPDAU,In_app_offerwall_ecpm,TJM_offerwall_ecpm," <<
       "Featured_ecpm,Display_ecpm,Gross_revenue,Publisher_revenue,Publisher_total_revenue," <<
-      "Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep"
+      "Publisher_pending_earnings,Featured,Rewarded,Offer_type,Sales_rep,Live_date"
     ]
     stats_data = get_stats(@start_time, @end_time)
     @partner_program_metadata = stats_data[:partner_program_metadata] || {}
@@ -177,7 +178,8 @@ class Dashboard::Tools::PartnerProgramStatzController < Dashboard::DashboardCont
         metadata['featured'],
         metadata['rewarded'],
         metadata['offer_type'],
-        metadata['sales_rep']
+        metadata['sales_rep'],
+        metadata['live_date']
       ]
       data << line.join(',')
     end

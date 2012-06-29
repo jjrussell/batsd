@@ -3,8 +3,8 @@ require 'spec_helper'
 describe PartnerAssignment do
   describe '#<=>' do
     before :each do
-      user = Factory(:user)
-      5.times { user.partners << Factory(:partner) }
+      user = FactoryGirl.create(:user)
+      5.times { user.partners << FactoryGirl.create(:partner) }
       @assignments = user.partner_assignments
     end
 

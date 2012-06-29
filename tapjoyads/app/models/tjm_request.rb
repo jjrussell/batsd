@@ -42,6 +42,9 @@ class TjmRequest < SyslogMessage
       'show'                        => 'view_account',
       'edit'                        => 'edit_account',
       'update'                      => 'account_info_changed',
+      'dissociate_account'          => 'dissociate_social_account',
+      'update_prefs'                => 'update_preferences',
+      'update_birthdate'            => 'update_birthdate',
     },
     'password_resets' => {
       'new'                         => 'forgot_password',
@@ -76,6 +79,7 @@ class TjmRequest < SyslogMessage
   self.define_attr :referrer
   self.define_attr :gamer_id
   self.define_attr :device_id
+  self.define_attr :is_ajax
   self.define_attr :app_id
   self.define_attr :social_referrer_gamer
   self.define_attr :social_source
@@ -126,20 +130,26 @@ class TjmRequest < SyslogMessage
           self.social_source          = social_referrer[1]
           self.social_action          = social_referrer[2]
           self.social_referrer_gamer  = social_referrer[3]
-        else
+        elsif referrer.include?(',')
           self.replace_path('tjm_invite_referrer')
           invitation_or_gamer_id, advertiser_app_id = referrer.split(',')
           self.social_invitation_or_gamer_id  = invitation_or_gamer_id
           self.social_advertiser_app_id       = advertiser_app_id
+        else
+          return true
         end
       end
     end
 
     if @tracking_param.present?
-      self.replace_path("#{self.path}_#{@tracking_param}")
+      self.replace_path("#{self.path.join}_#{@tracking_param}")
     end
 
     super
+  end
+
+  def update_path
+    self.replace_path(lookup_path)
   end
 
   private
