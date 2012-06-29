@@ -5,6 +5,7 @@ class AppDataFetchError < RuntimeError; end
 class AppReviewEmptyError < RuntimeError; end
 class FeaturedContentEmptyError < RuntimeError; end
 class GenericOfferCallbackError < RuntimeError; end
+class ServerWhitelistError < RuntimeError; end
 class DeviceCountryChanged < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
