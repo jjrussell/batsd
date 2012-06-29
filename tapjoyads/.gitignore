@@ -15,6 +15,7 @@ tapjoy.komodoproject
 .project
 config/local.yml
 data/GeoIPCity.dat
+data/*-GeoIPCity.dat
 public/stylesheets/*.css
 public/stylesheets/*/*.css
 .sass-cache

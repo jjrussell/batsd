@@ -66,6 +66,9 @@ Dir.chdir "tapjoyads" do
     `bundle install --deployment`
   end
 
+  puts "Updating GeoIPCity Data"
+  system "../server/update_geoip.rb"
+
   puts "Restarting unicorn"
   system "../server/start_or_reload_unicorn.rb"
 
