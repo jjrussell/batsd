@@ -24,16 +24,17 @@ module UserEventTypes
     # :data_type_X MUST match a key in TypeConverters::TYPES
 
     :invalid => {
-    }
+    },
 
     :iap => {
       :name         => :string,
       :price        => :float,
       :quantity     => :int,
       :currency_id  => :string,
-    }
+    },
 
     :shutdown => {
-    }
+    },
 
   }
+end
