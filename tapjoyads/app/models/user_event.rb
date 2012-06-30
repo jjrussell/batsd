@@ -20,7 +20,7 @@ class UserEvent < WebRequest
     event_descriptor = UserEventTypes::EVENT_TYPE_KEYS[options[:event_type_id].to_i]
     UserEventTypes::EVENT_TYPE_MAP[event_descriptor].each do |required_key, expected_data_type|
       converter = TypeConverters::TYPES[expected_data_type]
-      unless converter.try(:from_string, expected_data_type, true)
+      unless converter.try(:from_string, options[required_key], true)
         raise "Error assigning '#{required_key}' attribute. The value '#{options[required_key]}' is not of type '#{expected_data_type}'."    # TODO use i18n?
       end
       send("#{required_key}=", options[required_key])

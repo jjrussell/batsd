@@ -8,6 +8,18 @@ describe UserEvent do
   before(:each) do
     Device.stub(:find).and_return(device)
     app.cache
+    # Use an IAP event, since it's got additional required params
+    @options = {
+      :event_type_id => 1,
+      :app_id => app.id,
+      :udid => device.id,
+      :quantity => 2,
+      :price => 34.50,
+      :name => 'BFG',
+      :currency_id => 'USD',
+    }
+    string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
+    @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
   end
 
   describe '#initialize' do
@@ -19,9 +31,7 @@ describe UserEvent do
 
     context 'with an invalid verifier' do
       before(:each) do
-        @options = {
-          :verifier => 'not a valid verifier'
-        }
+        @options[:verifier] = 'not a valid verifier'
       end
 
       context 'with an invalid event_type_id' do
@@ -32,19 +42,6 @@ describe UserEvent do
       end
 
       context 'with a valid event_type_id' do
-        before(:each) do
-          @app = app
-          @device = device
-          # Use an IAP event, since it's got additional required params
-          @options[:event_type_id] = 1
-          @options[:app_id] = @app.id
-          @options[:udid] = @device.id
-          @options[:quantity] = 2
-          @options[:price] = 34.50
-          @options[:name] = 'BFG'
-          @options[:currency_id] = 'USD'
-        end
-
         context 'with missing params' do
           before(:each) do
             #randomly decided to remove quantity here, any param with its associated error message (below) should work
@@ -78,18 +75,7 @@ describe UserEvent do
 
     context 'with a valid verifier' do
       before(:each) do
-        @app = app
-        @device = device
-        # Use an IAP event, since it's got additional required params
-        @options = {
-          :event_type_id  => 1,
-          :app_id         => @app.id,
-          :udid           => @device.id,
-          :quantity       => 2,
-          :price          => 34.50,
-          :name           => 'BFG',
-          :currency_id    => 'USD',
-        }
+        @options.delete(:verifier) if @options.has_key?(:verifier)
       end
 
       context 'with an invalid event_type_id' do
@@ -146,7 +132,6 @@ describe UserEvent do
 
             context 'with all params of valid types' do
               before(:each) do
-                @options[:price] = 23.02
                 string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
                 @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
               end
