@@ -82,7 +82,7 @@ describe UserEvent do
         before(:each) do
           @options[:event_type_id] = -1
           string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-          @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
+          @options[:verifier] = Digest::SHA256.digest(app.secret_key + string_to_be_verified)
         end
 
         it 'raises an error' do
@@ -133,7 +133,7 @@ describe UserEvent do
             context 'with all params of valid types' do
               before(:each) do
                 string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-                @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
+                @options[:verifier] = Digest::SHA256.digest(app.secret_key + string_to_be_verified)
               end
 
               it 'returns a UserEvent object, which can be saved' do

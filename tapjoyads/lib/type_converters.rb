@@ -54,7 +54,7 @@ module TypeConverters
   end
 
   class JsonConverter
-    def from_string(sj, strict=false)
+    def from_string(s, strict=false)
       JSON.parse(s)
     end
     def to_string(j)

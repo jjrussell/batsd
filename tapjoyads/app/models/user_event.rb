@@ -49,7 +49,7 @@ class UserEvent < WebRequest
     string_to_be_verified = values.join(':')
     app = App.find_in_cache(options[:app_id])
     raise "App ID #{options[:app_id]} could not be found. Check 'app_id' and try again." unless app    # TODO use i18n?
-    raise I18n.t('user_event.error.verification_failed') if verifier != Digest::SHA1.digest(app.secret_key + string_to_be_verified)
+    raise I18n.t('user_event.error.verification_failed') if verifier != Digest::SHA256.digest(app.secret_key + string_to_be_verified)
   end
 
 
