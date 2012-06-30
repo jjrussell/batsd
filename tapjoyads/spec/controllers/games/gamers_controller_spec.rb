@@ -129,27 +129,27 @@ describe Games::GamersController do
       current_facebook_client = mock('current_facebook_client')
       click = mock("click")
 
-      @controller.stubs(:current_facebook_user).returns(current_facebook_user)
-      current_facebook_user.stubs(:fetch).returns(current_facebook_user)
-      current_facebook_user.stubs(:email).returns("email@test.com")
-      current_facebook_user.stubs(:birthday).returns("1900-01-01")
-      current_facebook_user.stubs(:name).returns("name")
-      current_facebook_user.stubs(:gender).returns("female")
-      current_facebook_user.stubs(:id).returns("id")
-      current_facebook_user.stubs(:client).returns(current_facebook_client)
-      current_facebook_client.stubs(:access_token).returns("token")
+      @controller.stub(:current_facebook_user).and_return(current_facebook_user)
+      current_facebook_user.stub(:fetch).and_return(current_facebook_user)
+      current_facebook_user.stub(:email).and_return("email@test.com")
+      current_facebook_user.stub(:birthday).and_return("1900-01-01")
+      current_facebook_user.stub(:name).and_return("name")
+      current_facebook_user.stub(:gender).and_return("female")
+      current_facebook_user.stub(:id).and_return("id")
+      current_facebook_user.stub(:client).and_return(current_facebook_client)
+      current_facebook_client.stub(:access_token).and_return("token")
 
-      Click.stubs(:new).returns(click)
-      click.stubs(:rewardable?).returns(true)
-      click.stubs(:key).returns('click_key')
-      click.stubs(:udid).returns('udid')
-      click.stubs(:device_name).returns('device_name')
+      Click.stub(:new).and_return(click)
+      click.stub(:rewardable?).and_return(true)
+      click.stub(:key).and_return('click_key')
+      click.stub(:udid).and_return('udid')
+      click.stub(:device_name).and_return('device_name')
     end
 
     context 'when gamer already exist' do
       before :each do
         @gamer = Factory(:gamer)
-        @gamer.gamer_profile = GamerProfile.create(:facebook_id => 'id', :gamer => @gamer)
+        @gamer.gamer_profile.update_attributes(:facebook_id => 'id')
         get(:create_account_for_offer, :udid => 'udid')
       end
 
@@ -158,11 +158,11 @@ describe Games::GamersController do
       end
 
       it 'logs in this existing gamer' do
-        response.session['gamer_credentials_id'].should == @gamer.id
+        request.session['gamer_credentials_id'].should == @gamer.id
       end
 
       it 'connects device with the existing gamer' do
-        @gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+        @gamer.devices.include?(GamerDevice.find_by_gamer_id_and_device_id(@gamer.id, 'udid')).should be_true
       end
 
       it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
@@ -173,7 +173,7 @@ describe Games::GamersController do
     context 'when matching gamer exist' do
       before :each do
         @gamer = Factory(:gamer, :email => "email@test.com")
-        @gamer.gamer_profile = GamerProfile.create(:facebook_id => nil, :gamer => @gamer)
+        @gamer.gamer_profile.update_attributes(:facebook_id => nil, :gamer => @gamer)
         get(:create_account_for_offer, :udid => 'udid')
       end
 
@@ -182,7 +182,7 @@ describe Games::GamersController do
       end
 
       it 'logs in this matching gamer' do
-        response.session['gamer_credentials_id'].should == @gamer.id
+        request.session['gamer_credentials_id'].should == @gamer.id
       end
 
       it 'updates the matching gamer with facebook id' do
@@ -191,7 +191,7 @@ describe Games::GamersController do
       end
 
       it 'connects device with the matching gamer' do
-        @gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+        @gamer.devices.include?(GamerDevice.find_by_gamer_id_and_device_id(@gamer.id, 'udid')).should be_true
       end
 
       it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
@@ -209,12 +209,12 @@ describe Games::GamersController do
       end
 
       it 'sets new gamer email to be facebook email' do
-        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
+        new_gamer = Gamer.find_by_id(request.session['gamer_credentials_id'])
         new_gamer.email.should == 'email@test.com'
       end
 
       it 'set new gamer facebook_id to be facebook id' do
-        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
+        new_gamer = Gamer.find_by_id(request.session['gamer_credentials_id'])
         new_gamer.facebook_id.should == 'id'
       end
 
@@ -223,12 +223,12 @@ describe Games::GamersController do
           :first,
           :conditions => { :email => 'email@test.com', :gamer_profiles => { :facebook_id => 'id' } },
           :include => :gamer_profile)
-        response.session['gamer_credentials_id'].should == new_gamer.id
+        request.session['gamer_credentials_id'].should == new_gamer.id
       end
 
       it 'connects device with the new gamer' do
-        new_gamer = Gamer.find_by_id(response.session['gamer_credentials_id'])
-        new_gamer.devices.include?(GamerDevice.find_by_device_id('udid')).should be_true
+        new_gamer = Gamer.find_by_id(request.session['gamer_credentials_id'])
+        new_gamer.devices.include?(GamerDevice.find_by_gamer_id_and_device_id(new_gamer.id, 'udid')).should be_true
       end
 
       it 'set last run time for LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
