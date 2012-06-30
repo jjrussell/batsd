@@ -56,7 +56,7 @@ include GetOffersHelper
               :squircles =>  false, :viewID =>  'VIEW_B2',
             }
 
-  DEFAULT_VIEW = VIEW_A1
+  DEFAULT_VIEW = 'VIEW_A1'
 
   VIEW_ID_MAP = {
     :VIEW_A1 => VIEW_A1,
@@ -293,7 +293,7 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID].present? ? params[:viewID] : DEFAULT_VIEW[:viewID]
+    view_id = params[:viewID].present? ? params[:viewID] : DEFAULT_VIEW
     view_id_obj = VIEW_ID_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []
