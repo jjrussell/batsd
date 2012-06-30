@@ -472,7 +472,7 @@ describe Offer do
     fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
+                                  'device_types', 'countries', 'audition_factor',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
