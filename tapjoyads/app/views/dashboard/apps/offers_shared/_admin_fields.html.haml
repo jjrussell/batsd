@@ -76,7 +76,7 @@
     #help_audition_factor.help ?
   %td
     - p Offer::Optimization::AUDITION_FACTORS
-    = f.select(:audition_factor, Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value })
+    = f.select(:audition_factor, Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }, :include_blank => '')
     = error_message_on @offer, :audition_factor
 %tr.admin
   %th
