@@ -5,8 +5,11 @@ class OfferTriggeredActionsController < ApplicationController
   layout 'offer_instructions', :only => [ :fb_login, :fb_visit ]
 
   def fb_login
-    include Facebooker2::Rails::Controller
-    @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?udid=#{params[:udid]}"
+    OfferTriggeredActionsController.class_eval do
+      include Facebooker2::Rails::Controller
+    end
+    route_addition = '/games' if Rails.env != 'production'
+    @redirect_url = "#{WEBSITE_URL}#{route_addition || ''}/gamer/create_account_for_offer?udid=#{params[:udid]}"
   end
 
   def fb_visit

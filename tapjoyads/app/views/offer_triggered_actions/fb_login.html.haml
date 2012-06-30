@@ -1,0 +1,49 @@
+= render 'instructions_fb_login'
+
+- @load_facebook = true
+- @load_facebook_sdk = true
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var redirectUrl = "#{@redirect_url}";
+      var completeActionUrl = "#{@complete_action_url}";
+
+      var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
+      if (fbOpts) {
+        initiateFacebook(fbOpts, function () {
+          $('.reward-button').click(function (event) {
+            event.preventDefault();
+
+            FB.login(function (response) {
+              if (response.authResponse) {
+                FB.api('/me', function (response) {
+                  checkPermission(function () {
+                    $.ajax({
+                      url: redirectUrl,
+                      dataType: "json",
+                      success: function (d) {
+                        if (d.success) {
+                          if (d.message) {
+                            $('.error').text(d.message).show();
+                          } else {
+                            window.location = completeActionUrl;
+                          }
+                        } else {
+                          $('.error').text(d.message).show();
+                        }
+                      },
+                      error: function () {
+                        $('.error').text(I18n.t('games.generic_issue')).show();
+                      }
+                    });
+                  });
+                });
+              } else {
+               $('.error').text(I18n.t('games.grant_us_access')).show();
+              }
+            }, {scope: 'publish_stream,email,user_birthday'});
+          });
+        });
+      }
+    });

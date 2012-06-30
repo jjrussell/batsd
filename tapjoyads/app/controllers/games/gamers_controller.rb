@@ -76,15 +76,14 @@ class Games::GamersController < GamesController
   end
 
   def create_account_for_offer
+    render(:json => { :success => false, :message => 'lack of device info' }) and return unless params[:udid]
+
     current_facebook_user.fetch
-    gamer = Gamer.find(
-      :first,
-      :conditions => { :gamer_profiles => { :facebook_id => current_facebook_user.id } },
-      :include => :gamer_profile) ||
+
+    gamer = Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => current_facebook_user.id }).first ||
       Gamer.find_by_email(current_facebook_user.email) ||
       Gamer.new
     if gamer.new_record?
-      gamer = Gamer.new
       gamer.before_connect(current_facebook_user)
       gamer.confirmed_at = gamer.created_at
       gamer_profile = GamerProfile.new(
@@ -97,7 +96,8 @@ class Games::GamersController < GamesController
       gamer.gamer_profile = gamer_profile
 
       if gamer.save
-        default_platform = params[:platform][:default] if params[:platform]
+        device = Device.find_by_id(params[:udid])
+        default_platform = device.platform if device
 
         gamer.send_welcome_email(request, device_type, default_platform || '', geoip_data, os_version)
       else

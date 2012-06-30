@@ -338,9 +338,9 @@ module Offer::Rejecting
     if TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
       return TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && device && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) && !device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
     elsif item_id == TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      return device && device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
+      return device && (device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID))
     elsif item_id == LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID
-      return device && device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+      return device && (device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID))
     end
   end
 
