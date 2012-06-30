@@ -46,18 +46,6 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
-  create_table "alternatives", :force => true do |t|
-    t.string   "split_test_id", :limit => 36,                :null => false
-    t.string   "offer_id",      :limit => 36,                :null => false
-    t.string   "name"
-    t.integer  "views",                       :default => 0
-    t.integer  "clicks",                      :default => 0
-    t.integer  "conversions",                 :default => 0
-    t.integer  "revenues",                    :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "app_metadata_mappings", :id => false, :force => true do |t|
     t.string  "id",              :limit => 36,                    :null => false
     t.string  "app_id",          :limit => 36,                    :null => false
@@ -1051,16 +1039,6 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
 
   add_index "spend_shares", ["effective_on"], :name => "index_spend_shares_on_effective_on", :unique => true
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
-
-  create_table "split_tests", :force => true do |t|
-    t.string   "partner_id",  :limit => 36,                 :null => false
-    t.string   "control_id",  :limit => 36
-    t.string   "name"
-    t.text     "description"
-    t.integer  "bucket",                    :default => -1
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "survey_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
