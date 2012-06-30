@@ -294,7 +294,7 @@ include GetOffersHelper
 
   def set_redesign_parameters
     view_id = params[:viewID].present? ? params[:viewID] : DEFAULT_VIEW[:viewID]
-    view_id_obj = VIEW_ID_MAP.fetch(view_id.to_sym) { nil }
+    view_id_obj = VIEW_ID_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []
     @offer_list.each_with_index do |offer, index|
