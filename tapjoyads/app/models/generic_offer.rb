@@ -22,8 +22,6 @@ class GenericOffer < ActiveRecord::Base
   acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
-  
-  TRIGGER_ACTIONS = [ 'Facebook Login' ]
 
   TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
 
