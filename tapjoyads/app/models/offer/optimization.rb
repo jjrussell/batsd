@@ -1,5 +1,14 @@
 module Offer::Optimization
 
+  AUDITION_FACTORS = {
+    :low =>1,
+    :medium_low => 2,
+    :medium => 3,
+    :medium_high => 4,
+    :high => 5,
+    :very_high => 10 #not a typo, requested by Joey to work with his Audition Factor algorithm
+  }
+
   def for_caching
     run_callbacks(:cache)
     clear_association_cache
