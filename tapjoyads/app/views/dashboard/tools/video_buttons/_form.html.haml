@@ -13,8 +13,14 @@
         = f.label :item_id
         #help_item.help ?
       %td
-        = f.select :item_id, formatted_items_for_tracking(@video_offer.partner), {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
+        = f.select :item_id, formatted_items_for_tracking(@video_offer.available_trackable_items(@video_button.item_id)), {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
         = error_message_on @video_button, :item_id
+    %tr
+      %th
+        = f.label :rewarded
+        #help_rewarded.help ?
+      %td
+        = f.check_box :rewarded
     %tr
       %th
         = f.label :ordinal
@@ -31,8 +37,12 @@
         = error_message_on @video_button, :enabled
     %tr
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'
+
+%p{ :style => 'clear: left' }
+  = link_to 'Back to Buttons', tools_video_offer_video_buttons_path(@video_offer.id)
 .hidden
   #help_name_content{ :name => 'Name' } The text appearing on the button. Maximum 20 characters.
   #help_item_content{ :name => 'Item' } The offer this button uses for link generation and tracking.
+  #help_rewarded_content{ :name => 'Rewarded' } Mark this button as a Rewarded Install action. These actions will not display on iOS devices.
   #help_ordinal_content{ :name => 'Ordinal' } Priority of the button, the smaller the ordinal, the higher the priority. (Integer only)
   #help_enabled_content{ :name => 'Enabled' } Only enabled button will be shown by the end of the video. Permit at most 2 enabled buttons.

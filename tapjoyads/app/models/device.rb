@@ -182,7 +182,7 @@ class Device < SimpledbShardedResource
       'ipad'
     when /android/
       'android'
-    when /windows/
+    when /windows|wince/
       'windows'
     end
   end
