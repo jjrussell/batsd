@@ -11,7 +11,7 @@
       - @video_buttons.each do |button|
         - offer = button.tracking_item.primary_offer
         %li
-          %a{:href => get_click_url(button.tracking_offer)}
+          %a{:href => get_click_url(button.tracking_offer, :source => 'secondary')}
             .reward.gradient
               - if @currency.get_reward_amount(button.tracking_offer) > 0
                 %span.earn= t('text.shared.earn_verb')
