@@ -126,13 +126,6 @@ class App < ActiveRecord::Base
 
   memoize :partner_name, :partner_dashboard_partner_url
 
-  def update_non_html_responses(bool)
-    if uses_non_html_responses != bool
-      message = { :publisher_app_id => id, :bool => bool }
-      Sqs.send_message(QueueNames::UPDATE_NON_HTML_RESPONSES, Base64::encode64(Marshal.dump(message)))
-    end
-  end
-
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
   end
