@@ -81,9 +81,9 @@ include GetOffersHelper
     if params[:redesign].present?
       set_redesign_parameters
       if params[:json] == '1'
-        # unless @publisher_app.uses_non_html_responses
-        #   @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-        # end
+        unless @publisher_app.uses_non_html_responses
+          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+        end
         render :json => @final.to_json, :callback => params[:callback] and return
       else
         render :template => 'get_offers/webpage_redesign' and return
@@ -107,9 +107,9 @@ include GetOffersHelper
       @web_request.path = 'featured_offer_shown'
     end
 
-    # unless @publisher_app.uses_non_html_responses
-    #   @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-    # end
+    unless @publisher_app.uses_non_html_responses
+      @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+    end
 
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
