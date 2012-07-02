@@ -28,7 +28,7 @@ module GetOffersHelper
       :publisher_user_id  => params[:publisher_user_id],
       :udid               => params[:udid],
       :currency_id        => @currency.id,
-      :source             => params[:source],
+      :source             => options.delete(:source) { params[:source] },
       :app_version        => params[:app_version],
       :viewed_at          => @now,
       :exp                => params[:exp],
