@@ -74,6 +74,9 @@ include GetOffersHelper
     if params[:redesign].present?
       set_redesign_parameters
       if params[:json] == '1'
+        unless @publisher_app.uses_non_html_responses
+          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+        end
         render :json => @final.to_json, :callback => params[:callback] and return
       else
         render :template => 'get_offers/webpage_redesign' and return
@@ -98,6 +101,10 @@ include GetOffersHelper
       @web_request.path = 'featured_offer_shown'
     end
 
+    unless @publisher_app.uses_non_html_responses
+      @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+    end
+
     if params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
@@ -109,6 +116,10 @@ include GetOffersHelper
     @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     if @currency.tapjoy_managed? && params[:source] == 'tj_games'
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
+    end
+
+    unless @publisher_app.uses_non_html_responses
+      @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
     if params[:type] == Offer::CLASSIC_OFFER_TYPE
