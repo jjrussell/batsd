@@ -9,7 +9,7 @@ class ZyngaDataController < ApplicationController
   def index
     return unless verify_params([:date])
 
-    @@zynga_partner = Partner.find(ZYGNA_PARTNER_ID) unless @@zynga_partner
+    @@zynga_partner ||= Partner.find(ZYNGA_PARTNER_ID)
 
     start_time = Time.zone.parse(params[:date])
 
