@@ -35,14 +35,14 @@ class RiskProfile < SimpledbShardedResource
 
   def add_curated_offset(name, value)
     parsed_curated_offsets = curated_offsets
-    parsed_curated_offsets[name] = value
+    parsed_curated_offsets[name] = { :offset => value, :updated => Time.now.to_f }
     self.curated_offsets = parsed_curated_offsets
     save
   end
 
   def add_historical_offset(name, value)
     parsed_historical_offsets = historical_offsets
-    parsed_historical_offsets[name] = value
+    parsed_historical_offsets[name] =  { :offset => value, :updated => Time.now.to_f }
     self.historical_offsets = parsed_historical_offsets
     save
   end
@@ -51,12 +51,15 @@ class RiskProfile < SimpledbShardedResource
     parsed_curated_offsets = curated_offsets
     parsed_historical_offsets = historical_offsets
 
+    puts "curated: #{parsed_curated_offsets.inspect}"
+    puts "historical: #{parsed_historical_offsets.inspect}"
+
     total = 0
-    total += parsed_curated_offsets.values.inject(:+) unless parsed_curated_offsets.empty?
+    total += parsed_curated_offsets.values.inject(0) { |sum, h| puts "offset: #{h['offset']}"; sum += h['offset'] } unless parsed_curated_offsets.empty?
     if parsed_historical_offsets.empty?
       total += NO_HISTORY_OFFSET
     else
-      total += parsed_historical_offsets.values.inject(:+)
+      total += parsed_historical_offsets.values.inject(0) { |sum, h| sum += h['offset'] }
     end
 
     return MINIMUM_TOTAL_OFFSET if total < MINIMUM_TOTAL_OFFSET
