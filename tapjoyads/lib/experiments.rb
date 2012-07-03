@@ -1,7 +1,14 @@
 class Experiments
 
-  OFFERWALL_EXPERIMENT_IDS = %W( a_offerwall b_offerwall c_offerwall )
-  EXPERIMENTS = { :offerwall => OFFERWALL_EXPERIMENT_IDS }
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS =  { 0 => 'ow_redesign' }
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS.default = 'ow_control'
+  class << OFFERWALL_REDESIGN_EXPERIMENT_IDS
+    def length
+      100
+    end
+  end
+
+  EXPERIMENTS = { :ow_redesign => OFFERWALL_REDESIGN_EXPERIMENT_IDS }
 
   def self.choose(udid, options = {})
     if udid.present?
