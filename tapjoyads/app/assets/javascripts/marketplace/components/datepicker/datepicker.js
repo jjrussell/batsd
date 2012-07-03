@@ -133,7 +133,7 @@
 
     days: function(){
       var $t = this,
-          total = $t.total($t.year || 2002, $t.month || 0),
+          total = $t.total($t.year || 2012, $t.month || 0),
           days = [];
 
       for(var i = 0, k = total; i < k; i++){
@@ -305,7 +305,7 @@
     update: function(){
       var $t = this;
       
-      $t.hidden.attr('value', $t.format(new Date($t.year, (parseInt($t.month, 0) + 1), $t.day), $t.config.hiddenOutput)); 
+      $t.hidden.attr('value', $t.format(new Date($t.year, (parseInt($t.month, 0)), $t.day), $t.config.hiddenOutput)); 
 
       if($t.month !== undefined && $t.day !== undefined && $t.year !== undefined && $t.year !== '&nbsp;'){
         $t.submit.removeClass('disabled');
