@@ -156,7 +156,8 @@
         var yyyy = date.getFullYear(),
             yy = yyyy.toString().substring(2),
             m = date.getMonth(),
-            mm = m < 10 ? "0" + (m+1) : m+1,
+            s = console.log(m),
+            mm = (m < 9 ? "0" : '') + (m + 1),
             mmm = $t.config.months.short[m],
             M = $t.config.months.long[m],
             d = date.getDate(),
@@ -304,8 +305,7 @@
 
     update: function(){
       var $t = this;
-      
-      $t.hidden.attr('value', $t.format(new Date($t.year, (parseInt($t.month, 0)), $t.day), $t.config.hiddenOutput)); 
+      $t.hidden.attr('value', $t.format(new Date($t.year, parseInt($t.month, 0), $t.day), $t.config.hiddenOutput)); 
 
       if($t.month !== undefined && $t.day !== undefined && $t.year !== undefined && $t.year !== '&nbsp;'){
         $t.submit.removeClass('disabled');
