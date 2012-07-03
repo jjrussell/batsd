@@ -85,8 +85,8 @@ $(function($){
         checkbox.hide();
         checkbox.after(loadingImage);
       },
-      complete: function(result) {
-        if (result.error) {
+      complete: function(result, status) {
+        if (status != 'success') {
           $('#flash_warning').text('Error - please try again');
           $('#flash_warning').fadeIn();
           checkbox.attr('disabled', false);
