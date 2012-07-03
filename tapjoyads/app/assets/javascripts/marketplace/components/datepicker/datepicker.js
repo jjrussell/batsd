@@ -156,7 +156,6 @@
         var yyyy = date.getFullYear(),
             yy = yyyy.toString().substring(2),
             m = date.getMonth(),
-            s = console.log(m),
             mm = (m < 9 ? "0" : '') + (m + 1),
             mmm = $t.config.months.short[m],
             M = $t.config.months.long[m],
