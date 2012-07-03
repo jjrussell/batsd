@@ -140,6 +140,12 @@ $(function($){
       tp_inst.onTimeChange(dp_inst, tp_inst);
     }
   };
+  $('#server-info').mouseover(function(){
+    $('#server-info span.data').show();
+  });
+  $('#server-info').mouseout(function(){
+    $('#server-info span.data').hide();
+  });
 });
 
 Tapjoy.anchorToParams = function(){
