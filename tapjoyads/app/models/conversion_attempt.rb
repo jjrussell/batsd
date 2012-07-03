@@ -7,20 +7,20 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :publisher_user_id
   self.sdb_attr :advertiser_offer_id
   self.sdb_attr :currency_id
-  self.sdb_attr :advertiser_amount, :type => :int
-  self.sdb_attr :publisher_amount,  :type => :int
-  self.sdb_attr :displayer_amount,  :type => :int
-  self.sdb_attr :tapjoy_amount,     :type => :int
-  self.sdb_attr :currency_reward,   :type => :int
-  self.sdb_attr :spend_share,       :type => :float
+  self.sdb_attr :advertiser_amount,          :type => :int
+  self.sdb_attr :publisher_amount,           :type => :int
+  self.sdb_attr :displayer_amount,           :type => :int
+  self.sdb_attr :tapjoy_amount,              :type => :int
+  self.sdb_attr :currency_reward,            :type => :int
+  self.sdb_attr :spend_share,                :type => :float
   self.sdb_attr :source
   self.sdb_attr :reward_type
   self.sdb_attr :udid
   self.sdb_attr :country
-  self.sdb_attr :viewed_at,         :type => :time
-  self.sdb_attr :clicked_at,        :type => :time
-  self.sdb_attr :installed_at,      :type => :time
-  self.sdb_attr :created,           :type => :time
+  self.sdb_attr :viewed_at,                  :type => :time
+  self.sdb_attr :clicked_at,                 :type => :time
+  self.sdb_attr :installed_at,               :type => :time
+  self.sdb_attr :created,                    :type => :time
   self.sdb_attr :resolution
   self.sdb_attr :block_reason
   self.sdb_attr :publisher_partner_id
@@ -29,13 +29,13 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
   self.sdb_attr :mac_address
-  self.sdb_attr :risk_profiles,     :type => :json,  :default_value => {}
-  self.sdb_attr :rules_matched,     :type => :json,  :default_value => {}
-  self.sdb_attr :system_entities_offset
-  self.sdb_attr :individual_entities_offset
-  self.sdb_attr :rules_offset
-  self.sdb_attr :processed_actions, :type => :json,  :default_value => {}
-  self.sdb_attr :final_risk_score
+  self.sdb_attr :risk_profiles,              :type => :json,  :default_value => {}
+  self.sdb_attr :rules_matched,              :type => :json,  :default_value => {}
+  self.sdb_attr :system_entities_offset,     :type => :float
+  self.sdb_attr :individual_entities_offset, :type => :float
+  self.sdb_attr :rules_offset,               :type => :float
+  self.sdb_attr :processed_actions,          :type => :json,  :default_value => {}
+  self.sdb_attr :final_risk_score,           :type => :float
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
