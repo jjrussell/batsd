@@ -6,6 +6,7 @@ class AppStore
   ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
+  WINDOWS_APP_IMAGES  = "http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true"
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -104,6 +105,10 @@ private
       description = (doc/".doc-description"/"#doc-original-text").inner_html
       icon_url    = (doc/".doc-banner-icon"/"img").attr("src")
       publisher   = (doc/".doc-banner-title-container"/"a.doc-header-link").inner_html
+      screenshot_urls = []
+      (doc/".screenshot-carousel-content-container"/"img").each do |img|
+        screenshot_urls << img.attributes['data-baseUrl']
+      end
 
       metadata = doc/".doc-metadata"
       keys = (metadata/:dt).map do |dt|
@@ -127,6 +132,7 @@ private
         :title            => CGI::unescapeHTML(title),
         :description      => CGI::unescapeHTML(description),
         :icon_url         => icon_url,
+        :screenshot_urls  => screenshot_urls,
         :publisher        => CGI::unescapeHTML(publisher),
         :price            => price,
         :file_size_bytes  => file_size.to_i,
@@ -142,12 +148,17 @@ private
   def self.fetch_app_by_id_for_windows(id)
     response = request(WINDOWS_APP_URL.sub('_APPID_', CGI::escape(id)))
     if response.status == 200
-      doc         = Hpricot(response.body)
-      title       = (doc/:sorttitle).inner_text.strip
-      description = (doc/'a:feed'/'a:content').inner_text.strip
-      icon_id     = (doc/'image'/'id').inner_text.split(':').last
-      icon_url    = "http://catalog.zune.net/v3.2/image/#{icon_id}?width=160&height=120"
-      publisher   = (doc/'a:feed'/:publisher).inner_text.strip
+      doc               = Hpricot(response.body)
+      title             = (doc/:sorttitle).inner_text.strip
+      description       = (doc/'a:feed'/'a:content').inner_text.strip
+      icon_id           = (doc/'image'/'id').inner_text.split(':').last
+      icon_url          = "http://catalog.zune.net/v3.2/image/#{icon_id}?width=160&height=120"
+      publisher         = (doc/'a:feed'/:publisher).inner_text.strip
+      screenshot_urls   = []
+
+      (doc/'screenshots'/'screenshot').each do |screenshot|
+        screenshot_urls << WINDOWS_APP_IMAGES.sub('_IMGID_', screenshot.inner_text.split(':').last)
+      end
 
       offers      = (doc/'a:feed'/:offers/:offer)
       if offers.length == 0
@@ -173,6 +184,7 @@ private
         :title            => CGI::unescapeHTML(title),
         :description      => CGI::unescapeHTML(description),
         :icon_url         => icon_url,
+        :screenshot_urls  => screenshot_urls,
         :publisher        => CGI::unescapeHTML(publisher),
         :price            => price,
         :file_size_bytes  => file_size.to_i,
@@ -256,19 +268,21 @@ private
   def self.app_info_from_apple(hash)
     price_in_dollars = recalculate_app_price('iphone', hash['price'], hash['currency'])
     app_info = {
-      :item_id            => hash["trackId"],
-      :title              => hash["trackName"],
-      :url                => hash["trackViewUrl"],
-      :icon_url           => hash["artworkUrl100"],
-      :small_icon_url     => hash["artworkUrl60"],
-      :price              => '%.2f' % price_in_dollars,
-      :description        => hash["description"],
-      :publisher          => hash["artistName"],
-      :file_size_bytes    => hash["fileSizeBytes"],
-      :supported_devices  => hash["supportedDevices"].sort,
-      :user_rating        => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
-      :categories         => hash["genres"],
-      :released_at        => hash["releaseDate"],
+      :item_id                => hash["trackId"],
+      :title                  => hash["trackName"],
+      :url                    => hash["trackViewUrl"],
+      :icon_url               => hash["artworkUrl100"],
+      :small_icon_url         => hash["artworkUrl60"],
+      :screenshot_urls        => hash['screenshotUrls'] || hash['ipadScreenshotUrls'],
+      :price                  => '%.2f' % price_in_dollars,
+      :description            => hash["description"],
+      :publisher              => hash["artistName"],
+      :file_size_bytes        => hash["fileSizeBytes"],
+      :supported_devices      => hash["supportedDevices"].sort,
+      :user_rating            => hash["averageUserRatingForCurrentVersion"] || hash["averageUserRating"],
+      :categories             => hash["genres"],
+      :released_at            => hash["releaseDate"],
+      :languages              => hash['languageCodesISO2A'].join(', ') ,
       # other possibly useful values:
       #   hash["currency"],
       #   hash["version"]

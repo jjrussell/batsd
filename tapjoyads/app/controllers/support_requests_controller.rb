@@ -55,6 +55,6 @@ private
   def render_new_with_error(message)
     find_incomplete_offers
     flash.now[:error] = message
-    render('/games/support_requests/new') and return
+    render('new') and return
   end
 end

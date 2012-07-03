@@ -10,6 +10,10 @@ class Dashboard::UserSessionsController < Dashboard::DashboardController
     end
     @user_session = UserSession.new
     @goto = params[:goto]
+
+    respond_to do |format|
+      format.html
+    end
   end
 
   def create

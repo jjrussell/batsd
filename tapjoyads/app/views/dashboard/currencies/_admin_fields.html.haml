@@ -29,6 +29,7 @@
   %td
     = f.text_area :disabled_offers
     = error_message_on(@currency, :disabled_offers) if @currency.errors.on :disabled_offers
+    = raw(@currency.get_disabled_offers.map { |o| link_to(o.name, statz_path(o)) }.join(', '))
 %tr.admin
   %th
     = f.label :max_age_rating, 'Max age rating'
@@ -80,7 +81,7 @@
     .msg
       = link_to('Edit partner', edit_partner_path(@app.partner_id))
   %td
-    = @currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
+    = raw(@currency.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', '))
 %tr.admin
   %th
     Show Deeplink on Offerwall?
@@ -93,7 +94,7 @@
     Encrypted ID
     #help_encrypted_id.help ?
   %td
-    = truncate(ObjectEncryptor.encrypt(@currency.id),30)
+    = truncate(ObjectEncryptor.encrypt(@currency.id), :length => 30)
     = clippy(ObjectEncryptor.encrypt(@currency.id))
 
 .hidden

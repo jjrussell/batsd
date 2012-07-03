@@ -1,12 +1,12 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Games::FavoriteAppController do
   before :each do
     activate_authlogic
-    @app_metadata = Factory(:app_metadata)
+    @app_metadata = FactoryGirl.create(:app_metadata)
 
-    @gamer = Factory(:gamer)
-    @controller.stubs(:current_gamer).returns(@gamer)
+    @gamer = FactoryGirl.create(:gamer)
+    @controller.stub(:current_gamer).and_return(@gamer)
 
     @params = {
       :eapp_metadata_id => ObjectEncryptor.encrypt(@app_metadata.id)
@@ -36,7 +36,7 @@ describe Games::FavoriteAppController do
 
     context 'when unable to save' do
       before :each do
-        FavoriteApp.any_instance.stubs(:save).returns(false)
+        FavoriteApp.any_instance.stub(:save).and_return(false)
         post('create', @params)
       end
 

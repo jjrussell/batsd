@@ -1,13 +1,13 @@
 #TODO: rails3 replace with BDD
-#require 'spec/spec_helper'
+#require 'spec_helper'
 
 #describe 'tools/index.html.haml' do
   #context 'with a customer service user' do
     #before :each do
-      #user = Factory :customer_service_user
-      #controller.stubs(:current_user).returns(user)
-      #view.stubs(:current_user).returns(user)
-      #view.stubs(:has_permissions_for_one_of?).returns(true)
+      #user = FactoryGirl.create :customer_service_user
+      #controller.stub(:current_user).and_return(user)
+      #view.stub(:current_user).and_return(user)
+      #view.stub(:has_permissions_for_one_of?).and_return(true)
       #render
     #end
 
@@ -22,10 +22,10 @@
 
   #context 'with an account manager user' do
     #before :each do
-      #user = Factory :account_mgr_user
-      #controller.stubs(:current_user).returns(user)
-      #view.stubs(:current_user).returns(user)
-      #view.stubs(:has_permissions_for_one_of?).returns(true)
+      #user = FactoryGirl.create :account_mgr_user
+      #controller.stub(:current_user).and_return(user)
+      #view.stub(:current_user).and_return(user)
+      #view.stub(:has_permissions_for_one_of?).and_return(true)
       #render
     #end
 
@@ -40,10 +40,10 @@
 
   #context 'with a partner user' do
     #before :each do
-      #user = Factory :partner_user
-      #controller.stubs(:current_user).returns(user)
-      #view.stubs(:current_user).returns(user)
-      #view.stubs(:has_permissions_for_one_of?).returns(false)
+      #user = FactoryGirl.create :partner_user
+      #controller.stub(:current_user).and_return(user)
+      #view.stub(:current_user).and_return(user)
+      #view.stub(:has_permissions_for_one_of?).and_return(false)
       #render
     #end
 
@@ -58,10 +58,10 @@
 
   #context 'with a role manager user' do
     #before :each do
-      #user = Factory :role_mgr_user
-      #controller.stubs(:current_user).returns(user)
-      #view.stubs(:current_user).returns(user)
-      #view.stubs(:has_permissions_for_one_of?).returns(true)
+      #user = FactoryGirl.create :role_mgr_user
+      #controller.stub(:current_user).and_return(user)
+      #view.stub(:current_user).and_return(user)
+      #view.stub(:has_permissions_for_one_of?).and_return(true)
       #render
     #end
 
@@ -77,9 +77,9 @@
 
   #context 'with an admin user' do
     #before :each do
-      #user = Factory :admin
-      #controller.stubs(:current_user).returns(user)
-      #view.stubs(:current_user).returns(user)
+      #user = FactoryGirl.create :admin
+      #controller.stub(:current_user).and_return(user)
+      #view.stub(:current_user).and_return(user)
       #render
     #end
 

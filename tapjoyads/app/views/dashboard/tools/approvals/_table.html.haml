@@ -14,6 +14,7 @@
         %td= render :partial => 'owner_select', :locals => {:approval => approval}
         %td= approval.state.gsub(/^approved$/, 'accepted')
         %td.actions
-          = link_to('Accept', approve_tools_approval_path(approval), :class => 'approve')
-          = link_to('Reject', reject_tools_approval_path(approval), :class => 'reject')
+          - if approval.pending?
+            = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
+            = link_to('Reject', reject_tools_acceptance_path(approval.id), :class => 'reject')
 

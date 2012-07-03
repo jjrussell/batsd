@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: offer_discounts
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  source     :string(255)     not null
+#  expires_on :date            not null
+#  amount     :integer(4)      not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class OfferDiscount < ActiveRecord::Base
   include UuidPrimaryKey
 

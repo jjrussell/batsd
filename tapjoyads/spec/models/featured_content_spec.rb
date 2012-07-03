@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe FeaturedContent do
   before :each do
-    @featured_content = Factory(:featured_content)
+    @featured_content = FactoryGirl.create(:featured_content)
   end
 
   describe '.belong_to' do
@@ -103,7 +103,7 @@ describe FeaturedContent do
         @featured_content.tracking_offers.each(&:destroy)
         @featured_content.reload
 
-        Factory(:partner, :id => TAPJOY_PARTNER_ID)
+        FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
       end
 
       context "when the featured_type is 'STAFFPICK'" do
@@ -161,7 +161,7 @@ describe FeaturedContent do
 
   describe '.featured_contents' do
     before :each do
-      @featured_content_for_ipad = Factory(:featured_content, :platforms => %w( ipad android ).to_json)
+      @featured_content_for_ipad = FactoryGirl.create(:featured_content, :platforms => %w( ipad android ).to_json)
     end
 
     context 'when device is ipad' do
@@ -179,13 +179,13 @@ describe FeaturedContent do
 
   describe '.with_country_targeting' do
     before :each do
-      @featured_content2 = Factory(:featured_content)
+      @featured_content2 = FactoryGirl.create(:featured_content)
       @featured_content2.tracking_offer.countries = %w( GL GD GP GT GY ).to_json
       @featured_content2.tracking_offer.save!
       @featured_content2.reload
 
       @geoip_data = { :country => "US" }
-      @device = Factory(:device)
+      @device = FactoryGirl.create(:device)
     end
 
     context 'when there is country targeting' do

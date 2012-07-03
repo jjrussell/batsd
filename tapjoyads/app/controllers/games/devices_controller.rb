@@ -1,11 +1,14 @@
 class Games::DevicesController < GamesController
 
+  ssl_allowed :create
+
   def new
     if current_gamer.present?
       if Rails.env.staging?
         send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig.staging.unsigned", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
       else
-        send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
+        redirect_to 'http://assets.tapjoy.com/mobileconfig/TapjoyProfile.mobileconfig'
+        #send_file("#{Rails.root}/data/TapjoyProfile.mobileconfig", :filename => 'TapjoyProfile.mobileconfig', :disposition => 'inline', :type => 'application/x-apple-aspen-config')
       end
     else
       flash[:error] = "Please log in and try again. You must have cookies enabled."
@@ -36,7 +39,7 @@ class Games::DevicesController < GamesController
       :mac_address       => mac_address,
       :platform          => 'ios'
     }
-    redirect_to finalize_games_gamer_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
+    redirect_to finalize_games_device_path(:data => ObjectEncryptor.encrypt(data)), :status => 301
   rescue Exception => e
     Notifier.alert_new_relic(e.class, e.message, request, params)
     flash[:error] = "Error linking device. Please try again."
@@ -58,10 +61,14 @@ class Games::DevicesController < GamesController
 
       new_device = current_gamer.devices.new(:device => device)
       if new_device.save
-        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
-        if click.rewardable?
-          current_gamer.reward_click(click)
-        else
+
+        # if user didn't sign up via registration offer, register the app with the device
+        # so that the user won't see that offer in future offerwalls on that device
+
+        # (if they did sign up via that offer, we don't want to do this so that they will
+        # have a chance to be rewarded for it by confirming their email address eventually)
+        click = current_gamer.referrer_click
+        if click.nil? || click.key != device.tjgames_registration_click_key
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
 
@@ -83,6 +90,8 @@ class Games::DevicesController < GamesController
             end
           end
         end
+      elsif current_gamer.gamer_devices.find_by_device_id(device.key) && Device.find(device.key)
+        session[:current_device_id] = ObjectEncryptor.encrypt(device.key)
       else
         flash[:error] = "Error linking device. Please try again."
       end

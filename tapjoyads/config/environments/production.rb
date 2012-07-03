@@ -1,23 +1,4 @@
-MACHINE_TYPE = `"#{Rails.root}/../server/server_type.rb"`
-
 Tapjoyad::Application.configure do
-
-  routes = case MACHINE_TYPE
-           when 'dashboard'
-             %w( dashboard api )
-           when 'website'
-             %w( website api )
-           when 'webserver'
-             %w( web legacy )
-           when 'jobserver'
-             %w( job )
-           else
-             %w( api dashboard website web legacy )
-           end
-
-  routes.each do |route|
-    config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
-  end
 
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -66,6 +47,7 @@ Tapjoyad::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  config.i18n_js_cache = true
 end
 
 begin
@@ -86,7 +68,6 @@ DISTRIBUTED_MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com',
   'localhost:21211'
 ]
 
@@ -98,6 +79,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
+API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
@@ -131,6 +113,7 @@ SENDGRID_PASSWD = sendgrid['passwd']
 SYMMETRIC_CRYPTO_SECRET = 'YI,B&nZVZQtl*YRDYpEjVE&\U\#jL2!H#H&*2d'
 ICON_HASH_SALT = 'Gi97taauc9VFnb1vDbxWE1ID8Jjv06Il0EehMIKQ'
 UDID_SALT = 'Z*Xac$dum8xeB9-Quv3St@RET6E6UT'
+CLICK_KEY_SALT = 'qEKa5TabzRTryO2BpFcR8s6qwFvB4i'
 
 FRESHBOOKS_API_URL = 'tapjoy.freshbooks.com'
 FRESHBOOKS_AUTH_TOKEN = '26c1ce82ad1cfab698746e532361f814'

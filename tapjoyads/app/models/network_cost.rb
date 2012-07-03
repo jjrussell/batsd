@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: network_costs
+#
+#  id                 :string(36)      not null, primary key
+#  amount             :integer(4)      default(0), not null
+#  notes              :text
+#  created_at         :datetime
+#  updated_at         :datetime
+#  first_effective_on :date            not null
+#
+
 class NetworkCost < ActiveRecord::Base
   include UuidPrimaryKey
 

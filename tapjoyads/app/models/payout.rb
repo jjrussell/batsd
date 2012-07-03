@@ -1,8 +1,23 @@
+# == Schema Information
+#
+# Table name: payouts
+#
+#  id             :string(36)      not null, primary key
+#  amount         :integer(4)      default(0), not null
+#  month          :integer(4)      not null
+#  year           :integer(4)      not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  partner_id     :string(36)      not null
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      default(1), not null
+#
+
 class Payout < ActiveRecord::Base
   include UuidPrimaryKey
 
   STATUS_CODES = { 0 => 'Invalid', 1 => 'Normal' }
-  PAYMENT_METHODS = { 1 => 'Paid', 3 => 'Transfer' }
+  PAYMENT_METHODS = { 1 => 'Paid', 3 => 'Transfer', 4 => 'Recoupable Marketing Credit', 6 => 'Dev Credit' }
 
   belongs_to :partner
 
@@ -29,7 +44,9 @@ class Payout < ActiveRecord::Base
     PAYMENT_METHODS[payment_method]
   end
 
-  def is_transfer?; payment_method==3; end
+  def is_transfer?;                     payment_method==3; end
+  def is_recoupable_marketing_credit?;  payment_method==4; end
+  def is_dev_credit?;                   payment_method==6; end
 
   private
 

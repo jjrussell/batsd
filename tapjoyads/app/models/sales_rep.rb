@@ -1,3 +1,14 @@
+# == Schema Information
+#
+# Table name: sales_reps
+#
+#  id           :string(36)      not null, primary key
+#  sales_rep_id :string(36)      not null
+#  offer_id     :string(36)      not null
+#  start_date   :datetime        not null
+#  end_date     :datetime
+#
+
 class SalesRep < ActiveRecord::Base
   include UuidPrimaryKey
 

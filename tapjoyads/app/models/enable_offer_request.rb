@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: enable_offer_requests
+#
+#  id              :string(36)      not null, primary key
+#  offer_id        :string(36)      not null
+#  requested_by_id :string(36)      not null
+#  assigned_to_id  :string(36)
+#  status          :integer(4)      default(0)
+#  created_at      :datetime
+#  updated_at      :datetime
+#
+
 class EnableOfferRequest < ActiveRecord::Base
   include UuidPrimaryKey
 

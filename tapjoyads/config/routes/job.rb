@@ -1,7 +1,7 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
   namespace :job do
-    match 'internal_update_cloudwatch_rpm(/index)' => 'internal_update_cloudwatch_rpm#index'
+    match 'master_update_cloudwatch_rpm(/index)' => 'master_update_cloudwatch_rpm#index'
+    match 'master_cache_optimized_offers(/index)' => 'master_cache_optimized_offers#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'
     match 'master_android_app_ranks(/index)' => 'master_android_app_ranks#index'
     match 'master_android_market_format(/index)' => 'master_android_market_format#index'
@@ -17,6 +17,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_delete_gamers(/index)' => 'master_delete_gamers#index'
     match 'master_external_publishers/cache' => 'master_external_publishers#cache'
     match 'master_external_publishers/populate_potential' => 'master_external_publishers#populate_potential'
+    match 'master_failed_sqs_writes(/index)' => 'master_failed_sqs_writes#index'
     match 'master_get_store_info(/index)' => 'master_get_store_info#index'
     match 'master_grab_disabled_popular_offers(/index)' => 'master_grab_disab#index'
     match 'master_group_daily_stats(/index)' => 'master_group_daily_stats#index'
@@ -49,7 +50,9 @@ Tapjoyad::Application.routes.draw do
     match 'queue_calculate_show_rate(/index)' => 'queue_calculate_show_rate#index'
     match 'queue_change_partners(/index)' => 'queue_change_partners#index'
     match 'queue_conversion_tracking(/index)' => 'queue_conversion_tracking#index'
+    match 'queue_conversion_tracking/run_job' => 'queue_conversion_tracking#run_job'
     match 'queue_create_conversions(/index)' => 'queue_create_conversions#index'
+    match 'queue_create_conversions/run_job' => 'queue_create_conversions#run_job'
     match 'queue_create_device_identifiers(/index)' => 'queue_create_device_identifiers#index'
     match 'queue_create_invoices(/index)' => 'queue_create_invoices#index'
     match 'queue_daily_app_stats(/index)' => 'queue_daily_app_stats#index'
@@ -66,6 +69,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_sdb_backups(/index)' => 'queue_sdb_backups#index'
     match 'queue_select_vg_items(/index)' => 'queue_select_vg_items#index'
     match 'queue_send_currency(/index)' => 'queue_send_currency#index'
+    match 'queue_send_currency/run_job' => 'queue_send_currency#run_job'
     match 'queue_send_failed_emails(/index)' => 'queue_send_failed_emails#index'
     match 'queue_send_welcome_emails(/index)' => 'queue_send_welcome_emails#index'
     match 'queue_suspicious_gamer_emails(/index)' => 'queue_suspicious_gamer_emails#index'
@@ -76,4 +80,10 @@ Tapjoyad::Application.routes.draw do
     match 'queue_update_papaya_user_count(/index)' => 'queue_update_papaya_user_count#index'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
+
+  match 'statusz/index' => 'statusz#index'
+  match 'statusz/queue_check' => 'statusz#queue_check'
+  match 'statusz/slave_db_check' => 'statusz#slave_db_check'
+  match 'statusz/memcached_check' => 'statusz#memcached_check'
+  match 'statusz/master_healthz' => 'statusz#master_healthz'
 end

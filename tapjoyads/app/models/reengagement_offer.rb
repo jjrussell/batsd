@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: reengagement_offers
+#
+#  id           :string(36)      not null, primary key
+#  app_id       :string(36)      not null
+#  partner_id   :string(36)      not null
+#  currency_id  :string(36)      not null
+#  instructions :text
+#  day_number   :integer(4)      not null
+#  reward_value :integer(4)      not null
+#  hidden       :boolean(1)      default(FALSE), not null
+#  created_at   :datetime
+#  updated_at   :datetime
+#
+
 class ReengagementOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable

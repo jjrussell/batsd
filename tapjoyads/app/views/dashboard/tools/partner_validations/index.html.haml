@@ -2,6 +2,9 @@
 - @page_title = 'Publisher Payout Confirmations'
 
 %h1 Publisher Payout Confirmations
+= label_tag(:confirm_filter, 'Filter on confirmation status')
+= select_tag('confirm_filter', options_for_select(@filter_options, params[:confirm_filter]))
+%br
 = label_tag(:q, 'Account Manager:')
 = text_field_tag(:acct_mgrs, @account_manager, :size => '40')
 = submit_tag('Clear Filters', :class => 'clear_filter')
@@ -10,8 +13,9 @@
     %tr
       %th Partner
       %th Partner Email
-      %th{:class => "sort #{params[:acct_mgr_sort] if params[:acct_mgr_sort]}"} Account Manager#{'&nbsp;'*5}
+      %th{:class => "sort #{params[:acct_mgr_sort]}"} Account Manager
       %th Bank Info Present?
+      %th Next Payout Amount
       %th Confirm
       %th Notes
   %tbody
@@ -48,6 +52,7 @@
           %td
             %span.not_present
               %strong Not Present
+        %td= number_to_currency(partner.next_payout_amount / 100.0)
         = render 'shared/payout_confirmations', :partner => partner, :permitted => permitted_to?(:confirm_payouts, :dashboard_tools_partner_validations), :path => confirm_payouts_tools_partner_validations_path( :partner_id => partner.id, :type => :json)
 = will_paginate(@partners)
 - content_for :page_javascript do
@@ -55,7 +60,7 @@
     $(function($) {
       $('th.sort').click(function() {
         var location = '#{tools_partner_validations_path}?'
-        location += '#{ [:page, :acct_mgr_filter].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}';
+        location += '#{ [:page, :acct_mgr_filter, :confirm_filter].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}';
         if($(this).hasClass('ASC')) {
           $(this).removeClass('ASC');
           $(this).addClass('DESC');
@@ -72,12 +77,18 @@
         delay: 250,
         minLength: 2,
         select: function(event, ui) {
-          location.href = '#{tools_partner_validations_path}?#{ ('acct_mgr_sort='+params[:acct_mgr_sort]+'&') if params[:acct_mgr_sort].present?}acct_mgr_filter='+ ui.item.user_id;
+          location.href = '#{tools_partner_validations_path}?#{ [:confirm_filter, :acct_mgr_sort].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}acct_mgr_filter='+ ui.item.user_id;
         }
       };
       $('#acct_mgrs').focus().autocomplete(options);
       $('input.clear_filter').click(function(){
           window.location ='#{tools_partner_validations_path}';
+      });
+      $('select#confirm_filter').change(function() {
+        var location = '#{tools_partner_validations_path}?'
+        location += '#{ [:acct_mgr_filter, :acct_mgr_sort].map { |param| (param.to_s+'='+params[param]+'&') if params[param].present? }.join('')}';
+        location += 'confirm_filter=' + $(this).val();
+        window.location = location;
       });
     });
 - content_for :page_styles do
@@ -111,6 +122,7 @@
       background-position: 100% 50%;
       background-repeat: no-repeat;
       background-image: url(/stylesheets/themes/blue/bg.gif);
+      padding-right: 16px;
     }
     th.ASC {
       background-position: 100% 50%;

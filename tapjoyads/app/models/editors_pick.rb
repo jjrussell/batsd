@@ -1,3 +1,19 @@
+# == Schema Information
+#
+# Table name: editors_picks
+#
+#  id             :string(36)      not null, primary key
+#  offer_id       :string(36)      not null
+#  display_order  :integer(4)      default(100), not null
+#  description    :string(255)     default(""), not null
+#  internal_notes :string(255)     default(""), not null
+#  scheduled_for  :datetime        not null
+#  activated_at   :datetime
+#  expired_at     :datetime
+#  created_at     :datetime
+#  updated_at     :datetime
+#
+
 class EditorsPick < ActiveRecord::Base
   include UuidPrimaryKey
 

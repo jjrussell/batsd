@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: offer_events
+#
+#  id                  :string(36)      not null, primary key
+#  offer_id            :string(36)      not null
+#  daily_budget        :integer(4)
+#  user_enabled        :boolean(1)
+#  change_daily_budget :boolean(1)      default(FALSE), not null
+#  change_user_enabled :boolean(1)      default(FALSE), not null
+#  scheduled_for       :datetime        not null
+#  ran_at              :datetime
+#  disabled_at         :datetime
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+
 class OfferEvent < ActiveRecord::Base
   include UuidPrimaryKey
 

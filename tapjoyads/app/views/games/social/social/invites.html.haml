@@ -29,5 +29,4 @@
             .ui-icon-medium.email
               = t("text.games.invite_by_email")
 
-- content_for :page_head do
-  = fb_connect_async_js
+- @load_facebook = true

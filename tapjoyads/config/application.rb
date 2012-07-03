@@ -7,6 +7,15 @@ require "active_resource/railtie"
 
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
+MACHINE_TYPE = if ENV['MACHINE_TYPE']
+  ENV['MACHINE_TYPE']
+elsif `hostname` !~ /^ip-|^domU-/
+  # TODO: This is a bad hack to detect "production" boxes (what if we don't use amazon anymore!)
+  'dev'
+else
+  `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n").reject {|g| g == "tapbase"}.first
+end
+
 module Tapjoyad
   class Application < Rails::Application
     config.autoload_paths += [config.root.join('lib')]
@@ -38,6 +47,22 @@ module Tapjoyad
 
     config.generators do |g|
       g.test_framework :rspec
+    end
+
+    route_filenames = case MACHINE_TYPE
+                      when 'dashboard'
+                        %w( dashboard api global )
+                      when 'website'
+                        %w( website api global )
+                      when 'webserver'
+                        %w( web legacy global )
+                      when 'jobserver'
+                        %w( job global )
+                      else
+                        %w( api dashboard job website web legacy global )
+                      end
+    route_filenames.each do |route|
+      config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
     end
   end
 

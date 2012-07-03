@@ -1,51 +1,44 @@
+# TODO: Missing functionality
+# Deleting multiple values
 class FakeSdb
-  @@fake_sdb_data ||= {}
 
   def put_attributes(domain, key, attrs_to_put, attrs_to_replace = {}, expected_attrs = {})
-    data_key = "#{domain}.#{key}"
-
-    existing_attrs = @@fake_sdb_data[data_key] || {}
-    expected_attrs.each do |key, value|
-      if key == 'version'
-        current_version = existing_attrs[key]
-        if current_version && current_version.first.to_i != value.to_i + 1
+    existing_attrs = fake_sdb_data(domain)[key] || {}
+    expected_attrs.each do |k, v|
+      if k == 'version'
+        current_version = existing_attrs[k]
+        if current_version && current_version.first.to_i != v.to_i + 1
           raise Simpledb::ExpectedAttributeError
         end
-      elsif existing_attrs[key] != value
+      elsif existing_attrs[k] != v
         raise Simpledb::ExpectedAttributeError
       end
     end
-    @@fake_sdb_data[data_key] = existing_attrs.merge(attrs_to_put)
+    fake_sdb_data(domain)[key] = existing_attrs.merge(attrs_to_put)
   end
 
   def get_attributes(domain, key, something, consistent)
-    data_key = "#{domain}.#{key}"
-
-    attributes = @@fake_sdb_data[data_key] || {}
+    attributes = fake_sdb_data(domain)[key] || {}
     { :attributes => attributes }
   end
 
   def delete_attributes(domain, key, attrs_to_delete = {}, expected_attrs = {})
-    data_key = "#{domain}.#{key}"
-
     if attrs_to_delete.empty?
-      @@fake_sdb_data.delete(key)
+      fake_sdb_data(domain).delete(key)
     else
-      attributes = @@fake_sdb_data[data_key] || {}
+      attributes = fake_sdb_data(domain)[key] || {}
       attrs_to_delete.each do |attr, value|
         attributes.delete(attr)
       end
-      @@fake_sdb_data[data_key] = attributes
+      fake_sdb_data(domain)[key] = attributes
     end
 
   end
 
   def select(query, next_token, consistent)
     options = parse_query(query)
-    domain = options.delete(:from)
-    results = @@fake_sdb_data.reject { |k, v|
-      k !~ /#{domain}/
-    }
+    domain = options.delete(:from).first
+    results = fake_sdb_data(domain)
     final_results = {}
 
     options[:where].each do |element|
@@ -92,5 +85,12 @@ class FakeSdb
       end
     end
     options
+  end
+
+  private
+
+  def fake_sdb_data(domain)
+    @fake_sdb_data ||= {}
+    @fake_sdb_data[domain] ||= {}
   end
 end

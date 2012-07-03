@@ -3,7 +3,6 @@ require 'spec_helper'
 describe "App creation", :type => :request do
 
   before :each do
-    fake_the_web
     activate_authlogic
   end
 

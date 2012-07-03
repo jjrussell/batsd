@@ -1,26 +1,27 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 def read_asset(name, directory='banner_ads')
-  File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+  if RUBY_VERSION < '1.9'
+    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+  else
+    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}", :encoding => "BINARY")
+  end
 end
 
 describe DisplayAdController do
   render_views
-  before :each do
-    fake_the_web
-  end
 
   describe 'hitting display ad controller' do
     before :each do
-      RailsCache.stubs(:get).returns(nil)
-      @offer = Factory(:app).primary_offer
-      Offer.stubs(:find_in_cache).with(@offer.id).returns(@offer)
-      OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([ @offer ])
+      RailsCache.stub(:get).and_return(nil)
+      @offer = FactoryGirl.create(:app).primary_offer
+      Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
+      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
       @bucket = S3.bucket(BucketNames::TAPJOY)
-      S3.stubs(:bucket).with(BucketNames::TAPJOY).returns(@bucket)
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
-      @currency = Factory(:currency)
+      @currency = FactoryGirl.create(:currency, :conversion_rate => 0)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -47,9 +48,9 @@ describe DisplayAdController do
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
           @custom_banner = read_asset('custom_320x50.png')
 
-          object.stubs(:read).returns(@custom_banner)
+          object.stub(:read).and_return(@custom_banner)
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
-          @bucket.stubs(:objects).returns(bucket_objects)
+          @bucket.stub(:objects).and_return(bucket_objects)
         end
 
         it 'returns proper image' do
@@ -80,11 +81,11 @@ describe DisplayAdController do
             "display/icon_shadow.png" => obj_icon_shadow,
           }
 
-          @bucket.stubs(:objects).returns(objects)
-          obj_ad_bg.stubs(:read).returns(ad_bg)
-          obj_td_icon.stubs(:read).returns(td_icon)
-          obj_round_mask.stubs(:read).returns(round_mask)
-          obj_icon_shadow.stubs(:read).returns(icon_shadow)
+          @bucket.stub(:objects).and_return(objects)
+          obj_ad_bg.stub(:read).and_return(ad_bg)
+          obj_td_icon.stub(:read).and_return(td_icon)
+          obj_round_mask.stub(:read).and_return(round_mask)
+          obj_icon_shadow.stub(:read).and_return(icon_shadow)
 
           @generated_banner = read_asset('generated_320x50.png')
         end
@@ -113,30 +114,30 @@ describe DisplayAdController do
           "display/round_mask.png" => obj_round_mask,
           "display/icon_shadow.png" => obj_icon_shadow,
         }
-        @bucket.stubs(:objects).returns(objects)
-        obj_td_icon.stubs(:read).returns(td_icon)
-        obj_round_mask.stubs(:read).returns(round_mask)
-        obj_icon_shadow.stubs(:read).returns(icon_shadow)
+        @bucket.stub(:objects).and_return(objects)
+        obj_td_icon.stub(:read).and_return(td_icon)
+        obj_round_mask.stub(:read).and_return(round_mask)
+        obj_icon_shadow.stub(:read).and_return(icon_shadow)
 
         ad_bg = read_asset('self_ad_bg_640x100.png', 'display')
+        @bucket.stub(:objects).and_return({ "display/self_ad_bg_640x100.png" => 'file' })
         obj_ad_bg = @bucket.objects["display/self_ad_bg_640x100.png"]
-        @bucket.stubs(:objects).returns({ "display/self_ad_bg_640x100.png" => obj_ad_bg })
-        obj_ad_bg.stubs(:read).returns(ad_bg)
+        obj_ad_bg.stub(:read).and_return(ad_bg)
       end
 
       it 'should queue up tracking url calls' do
-        @offer.expects(:queue_impression_tracking_requests).once
+        @offer.should_receive(:queue_impression_tracking_requests).once
 
         get(:index, @params)
       end
 
       context 'with unfilled request' do
         before :each do
-          OfferCacher.stubs(:get_unsorted_offers_prerejected).returns([])
+          OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
         end
 
         it 'should not queue up tracking url calls' do
-          Offer.any_instance.expects(:queue_impression_tracking_requests).never
+          Offer.any_instance.should_receive(:queue_impression_tracking_requests).never
 
           get(:index, @params)
         end
@@ -150,24 +151,25 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in json' do
-          object = @bucket.objects[@offer.banner_creative_path('320x50')]
+          bucket_objects = { @offer.banner_creative_path('320x50') => 'file' }
+          @bucket.stub(:objects).and_return(bucket_objects)
+          s3_object = @bucket.objects[@offer.banner_creative_path('320x50')]
           custom_banner = read_asset('custom_320x50.png')
-          object.stubs(:read).returns(custom_banner)
-          bucket_objects = { @offer.banner_creative_path('320x50') => object }
-          @bucket.stubs(:objects).returns(bucket_objects)
+          s3_object.stub(:read).and_return(custom_banner)
 
           get(:index, @params.merge(:format => 'json'))
 
           response.content_type.should == 'application/json'
           Base64.decode64(assigns['image']).should == custom_banner
+          expect { JSON.parse(response.body) }.should_not raise_error
         end
 
         it 'returns proper image data in xml' do
-          object = @bucket.objects[@offer.banner_creative_path('640x100')]
+          bucket_objects = { @offer.banner_creative_path('640x100') => 'file' }
+          @bucket.stub(:objects).and_return(bucket_objects)
+          s3_object = @bucket.objects[@offer.banner_creative_path('640x100')]
           custom_banner = read_asset('custom_640x100.png')
-          object.stubs(:read).returns(custom_banner)
-          bucket_objects = { @offer.banner_creative_path('640x100') => object }
-          @bucket.stubs(:objects).returns(bucket_objects)
+          s3_object.stub(:read).and_return(custom_banner)
 
           get(:index, @params)
           response.content_type.should == 'application/xml'
@@ -178,10 +180,10 @@ describe DisplayAdController do
       context 'with generated ad' do
         it 'returns proper image data in json' do
           ad_bg = read_asset('self_ad_bg_320x50.png', 'display')
+          bucket_objects = { "display/self_ad_bg_320x50.png" => 'some_file' }
+          @bucket.stub(:objects).and_return(bucket_objects)
           obj_ad_bg = @bucket.objects["display/self_ad_bg_320x50.png"]
-          bucket_objects = { "display/self_ad_bg_320x50.png" => obj_ad_bg }
-          @bucket.stubs(:objects).returns(bucket_objects)
-          obj_ad_bg.stubs(:read).returns(ad_bg)
+          obj_ad_bg.stub(:read).and_return(ad_bg)
 
           get(:index, @params.merge(:format => 'json'))
           response.content_type.should == 'application/json'
@@ -197,7 +199,7 @@ describe DisplayAdController do
     describe '#webview' do
 
       it 'should queue up tracking url calls' do
-        @offer.expects(:queue_impression_tracking_requests).once
+        @offer.should_receive(:queue_impression_tracking_requests).once
 
         get(:webview, @params)
       end
@@ -213,7 +215,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
 
@@ -222,7 +227,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
     end

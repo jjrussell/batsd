@@ -1,12 +1,17 @@
 class Experiments
-  EXPERIMENTS = {
-    :default => '0',
-    :papaya_on => '1',
-    :papaya_off => '2'
-  }
 
-  def self.choose(udid)
-    EXPERIMENTS[:default]
+  OFFERWALL_EXPERIMENT_IDS = %W( a_offerwall b_offerwall c_offerwall )
+  EXPERIMENTS = { :offerwall => OFFERWALL_EXPERIMENT_IDS }
+
+  def self.choose(udid, options = {})
+    if udid.present?
+      experiment = options[:experiment]
+      experiment_ids = EXPERIMENTS[experiment]
+      return nil if experiment_ids.blank?
+      udid_index = Digest::MD5.hexdigest("#{udid}#{experiment}").hex % experiment_ids.length
+
+      experiment_ids[udid_index]
+    end
   end
 
   def self.report(start_time, end_time, experiment_id, control_id = EXPERIMENTS[:control])

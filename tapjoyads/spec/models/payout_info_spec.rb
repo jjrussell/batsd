@@ -19,10 +19,10 @@ describe PayoutInfo do
     it { should validate_presence_of(:address_postal_code) }
   end
 
-  subject { Factory(:payout_info) }
+  subject { FactoryGirl.create(:payout_info) }
 
   before :each do
-    @info = Factory(:payout_info)
+    @info = FactoryGirl.create(:payout_info)
   end
 
   it "validates bank info if payout_method is ACH or wire" do

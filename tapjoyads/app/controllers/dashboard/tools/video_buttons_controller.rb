@@ -3,7 +3,7 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
   current_tab :tools
   filter_access_to :all
 
-  before_filter :find_button, :only => [ :edit, :show, :update ]
+  before_filter :find_button, :only => [ :edit, :update ]
   before_filter :find_video_offer
   before_filter :handle_params, :only => [ :create, :update ]
   after_filter :save_activity_logs
@@ -19,22 +19,15 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
   def edit
   end
 
-  def show
-  end
-
   def create
     @video_button = VideoButton.new(params[:video_button])
     log_activity(@video_button)
 
     if @video_button.save
-      unless @video_offer.valid_for_update_buttons?
-        flash.now[:warning] = 'Support at most 2 enabled buttons.'
-        render :action => :new
-      else
-        flash[:notice] = 'Successfully created Video Button'
-        redirect_to :action => :index
-      end
+      flash[:notice] = 'Successfully created Video Button'
+      redirect_to :action => :index
     else
+      flash[:error] = 'Unable to create Video Button'
       render :action => :new
     end
   end
@@ -43,13 +36,8 @@ class Dashboard::Tools::VideoButtonsController < Dashboard::DashboardController
     log_activity(@video_button)
 
     if @video_button.update_attributes(params[:video_button])
-      unless @video_offer.valid_for_update_buttons?
-        flash.now[:warning] = 'Support at most 2 enabled buttons.'
-        render :action => :edit
-      else
-        flash[:notice] = 'Successfully updated Video Button'
-        redirect_to :action => :show
-      end
+      flash[:notice] = 'Successfully updated Video Button'
+      redirect_to :action => :index
     else
       render :action => :edit
     end

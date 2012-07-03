@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: press_releases
+#
+#  id               :string(36)      not null, primary key
+#  published_at     :datetime        not null
+#  link_text        :text            default(""), not null
+#  link_href        :text            default(""), not null
+#  link_id          :string(255)
+#  content_title    :text
+#  content_subtitle :text
+#  content_body     :text
+#  content_about    :text
+#  content_contact  :text
+#  created_at       :datetime
+#  updated_at       :datetime
+#
+
 class PressRelease < ActiveRecord::Base
   include UuidPrimaryKey
 

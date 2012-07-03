@@ -1,6 +1,6 @@
 !!! 5
 
-%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
+%html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" + (current_gamer.nil? ? ' nologin' : '') }
   %head
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ :name => 'viewport', 'content' => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' }
@@ -34,7 +34,7 @@
     /[if IE 8]
       :javascript
         stash.require("#{path_for('marketplace/theme/tjm/ie', 'css', false)}");
-
+        
     = yield :page_head
 
     :javascript
@@ -50,6 +50,9 @@
 
     %script{ :id => "analytics-goes-here" }
   %body
+    - if @load_facebook == true
+      #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
+
     %noscript
       %style{:type => "text/css", :media => "screen"}
         :plain
@@ -81,21 +84,16 @@
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
 
-
     - js_cache 'tjm', true
     - js_cache! games_translations_path(:filename => get_locale_filename), true
 
     :javascript
-      stash.require(#{js_requires.to_json}, function(stash){
-        Tapjoy.rootPath =  "#{WEBSITE_URL}";
-        Tapjoy.iosLinkDevicePath = "#{new_games_device_path}";
-        Tapjoy.androidAppPath = "#{GAMES_ANDROID_MARKET_URL}";
-        Tapjoy.selectDevice = #{current_gamer ? current_gamer.all_device_data.to_json : [].to_json};
-        Tapjoy.selectDevicePath = "#{games_switch_device_path}";
-        Tapjoy.requireSelectDevice = #{@require_select_device.to_json};
-
+      stash.require(#{js_requires.to_json}, function (stash) {
         #{yield :page_javascript}
       });
+    
+    = yield :page_tracking_js
+    = yield :page_tracking
 
     - if Rails.env.production?
       :javascript
@@ -108,7 +106,6 @@
           ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
         })();
-
 
     -# keep this as the last call in the file
     :javascript

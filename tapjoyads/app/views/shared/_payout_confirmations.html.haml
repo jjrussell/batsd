@@ -20,4 +20,5 @@
 %td.notes
   %span{ :class => 'disabled' }
     - unless partner.confirmation_notes.empty?
-      \- #{partner.confirmation_notes.join('<br>-')}
+      - partner.confirmation_notes.each do |note|
+        %li= note

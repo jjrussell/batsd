@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: orders
+#
+#  id             :string(36)      not null, primary key
+#  partner_id     :string(36)      not null
+#  payment_txn_id :string(36)
+#  refund_txn_id  :string(36)
+#  coupon_id      :string(36)
+#  status         :integer(4)      default(1), not null
+#  payment_method :integer(4)      not null
+#  amount         :integer(4)      default(0), not null
+#  created_at     :datetime
+#  updated_at     :datetime
+#  note           :text
+#  invoice_id     :integer(4)
+#  description    :string(255)
+#  note_to_client :string(255)
+#
+
 class Order < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -11,6 +31,7 @@ class Order < ActiveRecord::Base
     1 => 'Invoice',
     2 => 'Marketing Credits',
     3 => 'Transfer',
+    4 => 'Recoupable Marketing Credits',
     5 => 'Bonus',
   }
 
@@ -44,11 +65,12 @@ class Order < ActiveRecord::Base
     PAYMENT_METHODS[payment_method]
   end
 
-  def is_order?;             payment_method==0;  end
-  def is_invoiced?;          payment_method==1;  end
-  def is_marketing_credits?; payment_method==2;  end
-  def is_transfer?;          payment_method==3;  end
-  def is_bonus?;             payment_method==5;  end
+  def is_order?;                        payment_method==0; end
+  def is_invoiced?;                     payment_method==1; end
+  def is_marketing_credit?;             payment_method==2; end
+  def is_transfer?;                     payment_method==3; end
+  def is_recoupable_marketing_credit?;  payment_method==4; end
+  def is_bonus?;                        payment_method==5; end
 
   def create_freshbooks_invoice!
     return if invoice_id

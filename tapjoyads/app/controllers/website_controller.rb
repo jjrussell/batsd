@@ -114,14 +114,6 @@ class WebsiteController < ApplicationController
     @current_user_session
   end
 
-  def set_time_zone
-    if current_user
-      Time.zone = current_user.time_zone
-    else
-      Time.zone = 'UTC'
-    end
-  end
-
   def get_stat_prefix(group)
     @platform == 'all' ? group : "#{group}-#{@platform}"
   end
@@ -158,14 +150,6 @@ class WebsiteController < ApplicationController
           make_current_partner_path(partner_id)
         ]
       end
-    end
-  end
-
-  def find_app(app_id)
-    if permitted_to? :edit, :dashboard_statz
-      App.find(app_id)
-    else
-      current_partner.apps.find(app_id)
     end
   end
 end

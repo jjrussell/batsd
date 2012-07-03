@@ -165,6 +165,11 @@ p {
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.4);
 }
 
+#mainsection {
+  position: relative;
+}
+
+
 /**
  * colors
  */
@@ -402,6 +407,9 @@ p {
 
         .menu-subnav-wrapper {
           clear: both;
+          .fullwidth {
+            width: 100%;
+          }
           a {
             div {
               float: left;
@@ -420,6 +428,20 @@ p {
         }
       }
     }
+  }
+}
+
+.sub-header {
+  .sub-header-wrapper {
+    text-align: center;
+    text-shadow: 0 1px 0 #ffffff;
+    font: 500 1.5em "Museo Slab";
+    padding: 10px 0;
+    color: #505050;
+    background-color: #e6e6e6;
+    box-shadow: 0px 1px 3px rgb(217,217,217);
+    border-bottom: 1px solid rgb(207, 207, 207);
+    position: relative;
   }
 }
 
@@ -586,6 +608,14 @@ p {
   @extend .image-caption;
 
   padding-bottom: 4px;
+}
+
+.mod {
+  .message-content {
+    .register-btn {
+      margin: 12px auto;
+    }
+  }
 }
 
 .review.line-item {
@@ -879,29 +909,6 @@ input.ui-joy-button, input.button {
   }
 }
 
-.orange-action,
-.primary {
-  @include gradient-top(#ffc000, #ffb300, #ff9200, #ff8600);
-  border: 1px solid #d67810;
-  border-bottom: 1px solid #c06a0a;
-  box-shadow: inset 0 1px 0 rgba(255,255,255, .4), 0 1px 0 rgba(0,0,0, .1);
-}
-
-.orange-action.active,
-.primary.active {
-  background: #d67810;
-  box-shadow: inset 0 1px 4px rgba(0,0,0, .4), 0 1px 0 rgba(255,255,255, .1);
-}
-
-.primary.disabled {
-  cursor: default;
-  color: rgba(255,255,255, .7);
-  opacity: .7;
-}
-
-.primary.smaller {
-  padding: 2px 8px;
-}
 
 .grey-action, .button {
   @extend .ui-joy-button;
@@ -946,6 +953,29 @@ input.ui-joy-button, input.button {
   box-shadow: inset 0 1px 4px rgba(0,0,0, .3);
 }
 
+.orange-action,
+.primary {
+  @include gradient-top(#ffc000, #ffb300, #ff9200, #ff8600);
+  border: 1px solid #d67810;
+  border-bottom: 1px solid #c06a0a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255, .4), 0 1px 0 rgba(0,0,0, .1);
+}
+
+.orange-action.active,
+.primary.active {
+  background-color: #d67810;
+  box-shadow: inset 0 1px 4px rgba(0,0,0, .4), 0 1px 0 rgba(255,255,255, .1);
+}
+
+.primary.disabled {
+  cursor: default;
+  color: rgba(255,255,255, .7);
+  opacity: .7;
+}
+
+.primary.smaller {
+  padding: 2px 8px;
+}
 .candy-red {
   @extend .ui-joy-button;
   background: rgb(232,39,44);
@@ -1112,6 +1142,68 @@ div.ui-joy-button.support-button {
 div.ui-joy-button .get-app {
   font-size: 1.2em;
   padding: 10px 0;
+}
+body.modal-overlay-enabled{
+  overflow:hidden;
+}
+
+@media (orientation : landscape){
+#login_modal .floaty{ margin: 15% auto; }
+  }
+@media (orientation : portrait){
+  #login_modal .floaty{ margin: 25% auto; }
+}
+
+#login_modal{
+  display:none;
+  .overlay{
+    background-color: rgba(0,0,0,0.6);
+    height:100%;
+    width:100%;
+    position:absolute;
+    top:0;
+    z-index:200;
+    .floaty{
+      min-width: 280px;
+      width: 90%;
+      position: relative;
+      .ui-close-btn{
+        cursor:pointer;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.6);
+        position: relative;
+        float: right;
+        right: -12px;
+        top: -12px;
+        width:20px;
+        height:20px;
+        border: 3px white solid;
+        display: block;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        @include linear-gradient(top, #5b5b5b, #020202);
+
+      }
+      .inner{
+        border-radius: 5px;
+        padding:10px;
+        background-color:#fff;
+        color: #000;
+        .soft-grey-action{
+          border-color: #bbb;
+        }
+        .ui-joy-button{
+          margin-top:10px;
+          .button_inner{
+            padding: 10px 0;
+            font-size: 1.2em;
+          }
+
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -1357,7 +1449,7 @@ div.ui-joy-button .get-app {
   border-radius: 3px 3px 3px 3px;
   font-weight: bold;
   box-shadow: 0 1px 2px rgba(0,0,0, .1);
-  z-index: 99;
+  z-index: 999;
 }
 
 .ui-notification.error {
@@ -1664,6 +1756,14 @@ div.app {
   }
 }
 
+.js-toggle {
+  .toggle-on {
+  }
+  .toggle-off {
+    display: none;
+  }
+}
+
 .section.dark {
   @include linear-gradient(top, #8a949e, #6e7a87);
   border-top: 1px solid #3c3f43;
@@ -1870,19 +1970,42 @@ div.app {
   .field, .form-error {
     padding: 12px 0;
   }
+  .form-error {
+    display: none;
+  }
 }
 
 #footer {
 
   .partners {
-    height: 40px;
     padding: 10px 0;
     text-align: center;
-    border-bottom: 1px solid #ccc;
-    img {
-      width: 350px;
-      height: 45px;
-      background: url(#{$image_path}/partners.png) no-repeat 0 0;
+    margin: 0 auto;
+    width: 450px;
+    height: 42px;
+    div {
+      float: left;
+      height: 42px;
+      background: url(#{$image_path}/partners.png) no-repeat;
+    }
+    .kabam {
+      width: 80px;
+    }
+    .glu {
+      width: 70px;
+      background-position: -80px 0;
+    }
+    .papaya {
+      width: 100px;
+      background-position: -150px 0;
+    }
+    .zynga {
+      width: 100px;
+      background-position: -250px 0;
+    }
+    .ngmoco {
+      width: 100px;
+      background-position: -350px 0;
     }
   }
   .links {

@@ -28,6 +28,12 @@ $mobile-scaledown-multiplier: 2;
   @return $n/$mobile-scaledown-multiplier;
 }
 
+@mixin border-box {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 @mixin rounded-corners($radius: 6px) {
   border-radius: $radius;
   -moz-border-radius-: $radius;
@@ -213,11 +219,11 @@ $mobile-scaledown-multiplier: 2;
 }
 
 @mixin animate($type: all, $time: 0.65s, $ease: ease-out, $delay: 0s) {
-  transition: $type $time $ease $delay;
   -moz-transition: $type $time $ease $delay;
   -o-transition: $type $time $ease $delay;
   -webkit-transition: $type $time $ease $delay;
   -ms-transition: $type $time $ease $delay;
+  transition: $type $time $ease $delay;
 }
 
 @mixin museo {

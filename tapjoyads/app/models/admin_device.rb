@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: admin_devices
+#
+#  id          :string(36)      not null, primary key
+#  udid        :string(255)
+#  description :string(255)
+#  platform    :string(255)
+#  created_at  :datetime
+#  updated_at  :datetime
+#  user_id     :string(36)
+#
+
 class AdminDevice < ActiveRecord::Base
   include UuidPrimaryKey
   belongs_to :user

@@ -1,3 +1,25 @@
+# == Schema Information
+#
+# Table name: conversions
+#
+#  id                     :string(36)      not null, primary key
+#  reward_id              :string(36)
+#  advertiser_offer_id    :string(36)
+#  publisher_app_id       :string(36)      not null
+#  advertiser_amount      :integer(4)      not null
+#  publisher_amount       :integer(4)      not null
+#  tapjoy_amount          :integer(4)      not null
+#  reward_type            :integer(4)      not null
+#  created_at             :datetime
+#  updated_at             :datetime
+#  country                :string(2)
+#  publisher_partner_id   :string(36)      not null
+#  advertiser_partner_id  :string(36)      not null
+#  publisher_reseller_id  :string(36)
+#  advertiser_reseller_id :string(36)
+#  spend_share            :float
+#
+
 class Conversion < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -52,7 +74,7 @@ class Conversion < ActiveRecord::Base
     'published_installs'        => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id' },
     'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id' },
     'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id' },
-    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id' },
+    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 8, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id' },
     'jailbroken_installs'       => { :reward_types => [ 4, 2004, 3004 ],                            :attr_name => 'advertiser_offer_id' },
     'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
     'installs_revenue'          => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },

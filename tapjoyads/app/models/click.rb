@@ -50,6 +50,8 @@ class Click < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
+  self.sdb_attr :offerwall_rank
+  self.sdb_attr :device_type
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
@@ -127,6 +129,17 @@ class Click < SimpledbShardedResource
     "#{uri.scheme}://#{uri.host}/tools/device_info?click_key=#{self.key}"
   end
 
+  def update_partner_live_dates!
+    [
+      [publisher_partner,  publisher_amount],
+      [advertiser_partner, advertiser_amount]
+    ].each do |partner, amount|
+      if partner.present? && amount > 0
+        partner.update_attributes!(:live_date => clicked_at) unless partner.live_date.present?
+      end
+    end
+  end
+  
   private
 
   def url_to_resolve

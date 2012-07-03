@@ -48,11 +48,35 @@ module Offer::Rejecting
     # Gamefly
     [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ] => [ 'ac845f34-6631-45f4-8d7e-8d9d981c05b4', '0c785af7-57b8-4efe-9112-44c7194f5a94' ],
     # Zillow
-    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ] => [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53' ],
+    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53', 'a9ef5dfe-4182-4208-ba75-dd93e18d32be' ] =>
+    [ '11bf4c4e-0a00-4536-b029-cf455f4976c0', 'd1d5ec4c-ec7d-490b-a1e0-76af0967de53', 'a9ef5dfe-4182-4208-ba75-dd93e18d32be' ],
     # Mobile Xpression
     [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ] => [ '49cbc1ae-8f04-4220-b0b8-d23a1559a560', '9007b2c0-6e26-46df-8950-ade2250e6167' ],
     # Cool Savings
     [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ] => [ 'acc8406a-2bdf-4800-a981-b9dc05493cef', '1d135d70-5eae-4d57-9131-febea19d9ea7' ],
+    # Card Ace Casino HD
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ] =>
+    [ '6ece54bb-b4f0-40fa-9d8c-b5425eb43dc7', '04ef8af7-f3ab-4062-b20c-1c20609302aa', '2d880990-563d-4612-bef1-e8b492f29d1b', 'b132b5b3-c68b-42ef-b809-bb43ada6be47', 'cfed8dfe-4b53-45e2-90c7-93587b4f4a5a' ],
+    # Card Ace Casino
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ] =>
+    [ 'a64fafc9-78a0-443b-b8f1-e368d8f7c5da', '495234c6-4b83-442b-ac2a-78205e9e4064' ],
+    # MeetMoi
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a) =>
+    %w(1bbdd36b-d7b0-4cdd-ac56-5e93583248a3 11fa6b53-dd3c-4f52-a130-22dc2a76e2c0 1c6c9d26-2578-4fd3-bbc5-ef432e8ca988 ff3e6ca1-5523-4b43-a5c1-0660338d7ed8 a907ad56-bf0a-4730-94d7-7906ed62712a),
+    # US interactive
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2) =>
+    %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2),
+    # GSN Casino
+    %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6) => %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6),
+    # Hotel Tonight Android
+    %w(39e6dad0-5a6a-4bc0-8b82-10db740fbf7a 0e589ce9-0e8e-49e6-a8aa-3b992a9c9c6a) => %w(39e6dad0-5a6a-4bc0-8b82-10db740fbf7a 0e589ce9-0e8e-49e6-a8aa-3b992a9c9c6a),
+    # Hotel Tonight iOS
+    %w(44eac10c-57ea-4969-977f-2c60a0abb48c 71a1d3d2-20e9-4c13-a03d-ee855552271e 4d3b8250-6be5-4e59-a3af-b448d94c2f5f 6577c3b0-df65-4428-a266-49c49cc8c559 778faf7c-01c8-4756-82d7-c3718017e22f 876bbbf3-7472-4f1b-8024-81c33386640b c8196876-6458-4fab-bed6-c9306fe35b05) =>
+    %w(44eac10c-57ea-4969-977f-2c60a0abb48c 71a1d3d2-20e9-4c13-a03d-ee855552271e 4d3b8250-6be5-4e59-a3af-b448d94c2f5f 6577c3b0-df65-4428-a266-49c49cc8c559 778faf7c-01c8-4756-82d7-c3718017e22f 876bbbf3-7472-4f1b-8024-81c33386640b c8196876-6458-4fab-bed6-c9306fe35b05),
+    # GSN Casino Android
+    %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb) => %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb),
+    # 60 Second Insurance
+    %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8) => %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -60,44 +84,40 @@ module Offer::Rejecting
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
       screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
-    reasons = []
     reject_functions = [
-      { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip'.humanize },
-      { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete'.humanize },
-      { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out'.humanize },
-      { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter'.humanize },
-      { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid'.humanize },
-      { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken'.humanize },
-      { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay'.humanize },
-      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app'.humanize },
-      { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version'.humanize },
-      { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking'.humanize },
-      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes'.humanize },
-      { :method => :offer_is_the_publisher?, :parameters => [currency], :reason => 'offer_is_the_publisher'.humanize },
-      { :method => :offer_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'offer_is_blacklisted_by_currency'.humanize },
-      { :method => :partner_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'partner_is_blacklisted_by_currency'.humanize },
-      { :method => :currency_only_allows_free_offers?, :parameters => [currency], :reason => 'currency_only_allows_free_offers'.humanize },
-      { :method => :self_promote_reject?, :parameters => [publisher_app], :reason => 'self_promote_only'.humanize },
-      { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating'.humanize },
-      { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist'.humanize },
-      { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist'.humanize },
-      { :method => :frequency_capping_reject?, :parameters => [device], :reason => 'frequency_capping'.humanize },
-      { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting'.humanize },
-      { :method => :source_reject?, :parameters => [source], :reason => 'source'.humanize },
-      { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded'.humanize },
-      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers'.humanize },
+      { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
+      { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
+      { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out' },
+      { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter' },
+      { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
+      { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
+      { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
+      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
+      { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
+      { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
+      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
+      { :method => :offer_is_the_publisher?, :parameters => [currency], :reason => 'offer_is_the_publisher' },
+      { :method => :offer_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'offer_is_blacklisted_by_currency' },
+      { :method => :partner_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'partner_is_blacklisted_by_currency' },
+      { :method => :currency_only_allows_free_offers?, :parameters => [currency], :reason => 'currency_only_allows_free_offers' },
+      { :method => :self_promote_reject?, :parameters => [publisher_app], :reason => 'self_promote_only' },
+      { :method => :age_rating_reject?, :parameters => [ currency && currency.max_age_rating], :reason => 'age_rating' },
+      { :method => :publisher_whitelist_reject?, :parameters => [publisher_app], :reason => 'publisher_whitelist' },
+      { :method => :currency_whitelist_reject?, :parameters => [currency], :reason => 'currency_whitelist' },
+      { :method => :frequency_capping_reject?, :parameters => [device], :reason => 'frequency_capping' },
+      { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting' },
+      { :method => :source_reject?, :parameters => [source], :reason => 'source' },
+      { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
+      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
     ]
-    reject_functions.each do |function_hash|
-      reasons << function_hash[:reason] if send(function_hash[:method], *function_hash[:parameters])
-    end
-    reasons
+    reject_reasons(reject_functions)
   end
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device) ||
+    show_rate_reject?(device, type) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -120,11 +140,22 @@ module Offer::Rejecting
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
     carriers_reject?(mobile_carrier_code) ||
-    sdkless_reject?(library_version)
+    sdkless_reject?(library_version) ||
+    recently_skipped?(device) ||
+    partner_has_no_funds? ||
+    rewarded_offerwall_non_rewarded_reject?(currency, source)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
     app_platform_mismatch?(platform_name) || hide_rewarded_app_installs_reject?(hide_rewarded_app_installs) || device_platform_mismatch?(normalized_device_type)
+  end
+
+  def reject_reasons(reject_functions)
+    reject_functions.select do |function_hash|
+      send(function_hash[:method], *function_hash[:parameters])
+    end.map do |function_hash|
+      function_hash[:reason].humanize
+    end
   end
 
   def frequency_capping_reject?(device)
@@ -149,6 +180,14 @@ module Offer::Rejecting
     return true if get_dma_codes.present? && !get_dma_codes.include?(geoip_data[:dma_code])
     return true if get_cities.present? && !get_cities.include?(geoip_data[:city])
     false
+  end
+
+  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
+    hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
+  end
+
+  def partner_has_no_funds?
+    partner_balance < 0
   end
 
   private
@@ -214,11 +253,16 @@ module Offer::Rejecting
     device.has_app?(app_id_for_device)
   end
 
+  def recently_skipped?(device)
+    device.recently_skipped?(id)
+  end
+
   def selective_opt_out_reject?(device)
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device)
+  def show_rate_reject?(device, type)
+    return false if type == Offer::VIDEO_OFFER_TYPE
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -289,10 +333,6 @@ module Offer::Rejecting
     !get_screen_layout_sizes.include?(screen_layout_size)
   end
 
-  def hide_rewarded_app_installs_reject?(hide_rewarded_app_installs)
-    hide_rewarded_app_installs && rewarded? && item_type != 'GenericOffer' && item_type != 'VideoOffer'
-  end
-
   def cookie_tracking_reject?(publisher_app, library_version, source)
     publisher_app && cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
@@ -313,6 +353,10 @@ module Offer::Rejecting
 
   def non_rewarded_offerwall_rewarded_reject?(currency)
     currency && !currency.rewarded? && rewarded? && item_type != 'App'
+  end
+
+  def rewarded_offerwall_non_rewarded_reject?(currency, source)
+    currency && currency.rewarded? && !rewarded? && (source == 'offerwall' || source == 'tj_games')
   end
 
   def recommendable_types_reject?
