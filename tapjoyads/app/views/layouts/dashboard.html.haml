@@ -9,26 +9,6 @@
     = stylesheet_link_tag 'print', :media => 'print'
     %style{ :type => 'text/css' }
       = yield :page_styles
-      :plain
-        #acting_as {
-          font-size: 0.8em;
-          background-color: yellow;
-          float: right;
-        }
-        #server-info {
-          float: right;
-          padding-right: 10px;
-          color: gray;
-        }
-        #server-info span.icon {
-          color: #A0A0A0;
-          font: 1.5em serif;
-          padding: 0px 2px;
-        }
-        #server-info span.data {
-          display: none;
-          margin: 7px 5px 0px 5px;
-        }
       - if @kiosk
         :plain
           body {
