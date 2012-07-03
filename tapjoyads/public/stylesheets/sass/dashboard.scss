@@ -407,22 +407,3 @@ select.chosen {
     width: 160px;
   }
 }
-#acting_as {
-  font-size: 0.8em;
-  background-color: yellow;
-  float: right;
-}
-#server-info {
-  float: right;
-  padding-right: 10px;
-  color: gray;
-  span.icon {
-    color: #A0A0A0;
-    font: 1.5em serif;
-    padding: 0px 2px;
-  }
-  span.data {
-    display: none;
-    margin: 7px 5px 0px 5px;
-  }
-}
