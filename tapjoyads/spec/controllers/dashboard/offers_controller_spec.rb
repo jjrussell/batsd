@@ -209,7 +209,7 @@ describe Dashboard::OffersController do
       it 'will render json error' do
         @offer.stub(:save).and_return(false)
         post(:toggle, :id => @offer.object_id, :user_enables => true)
-        response.body.should == {:error => true}.to_json
+        response.should be_error
       end
     end
   end
