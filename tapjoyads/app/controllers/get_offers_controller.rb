@@ -56,9 +56,7 @@ include GetOffersHelper
               :squircles =>  false, :viewID =>  'VIEW_B2',
             }
 
-  DEFAULT_VIEW = 'VIEW_A1'
-
-  VIEW_ID_MAP = {
+  VIEW_MAP = {
     :VIEW_A1 => VIEW_A1,
     :VIEW_A2 => VIEW_A2,
     :VIEW_B1 => VIEW_B1,
@@ -293,8 +291,8 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID].present? ? params[:viewID] : DEFAULT_VIEW
-    view_id_obj = VIEW_ID_MAP.fetch(view_id.to_sym) { {} }
+    view_id = params[:viewID] || :VIEW_A1
+    view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []
     @offer_list.each_with_index do |offer, index|
@@ -323,7 +321,7 @@ include GetOffersHelper
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
 
-    @final = @obj.merge(view_id_obj);
+    @final = @obj.merge(view);
   end
 
 end
