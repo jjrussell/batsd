@@ -10,5 +10,4 @@
 - 'marketplace/helpers/mediaqueries'
 - 'marketplace/theme/tjm/ie'
 - 'marketplace/theme/tjm/logged_out'
-- 'api/style_v1'
 - 'api/style'
