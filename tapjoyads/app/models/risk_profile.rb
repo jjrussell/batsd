@@ -15,6 +15,7 @@ class RiskProfile < SimpledbShardedResource
   MINIMUM_TOTAL_OFFSET = -100
   MAXIMUM_TOTAL_OFFSET = 100
   VELOCITY_WINDOW_HOURS = 72
+  SECONDS_PER_HOUR = 3600
   NO_HISTORY_OFFSET = 0
 
   self.sdb_attr :category
@@ -51,11 +52,8 @@ class RiskProfile < SimpledbShardedResource
     parsed_curated_offsets = curated_offsets
     parsed_historical_offsets = historical_offsets
 
-    puts "curated: #{parsed_curated_offsets.inspect}"
-    puts "historical: #{parsed_historical_offsets.inspect}"
-
     total = 0
-    total += parsed_curated_offsets.values.inject(0) { |sum, h| puts "offset: #{h['offset']}"; sum += h['offset'] } unless parsed_curated_offsets.empty?
+    total += parsed_curated_offsets.values.inject(0) { |sum, h| sum += h['offset'] } unless parsed_curated_offsets.empty?
     if parsed_historical_offsets.empty?
       total += NO_HISTORY_OFFSET
     else
@@ -71,7 +69,7 @@ class RiskProfile < SimpledbShardedResource
   def process_conversion(reward)
     clear_expired_values
 
-    hour = Time.now.change(:min => 0).to_f.to_s
+    hour = (Time.now.to_i / SECONDS_PER_HOUR).to_s
     if @parsed_conversion_tracker[hour]
       @parsed_conversion_tracker[hour] += 1
       @parsed_revenue_tracker[hour] -= reward.advertiser_amount
@@ -88,7 +86,7 @@ class RiskProfile < SimpledbShardedResource
   def process_block
     clear_expired_values
 
-    hour = Time.now.change(:min => 0).to_f.to_s
+    hour = (Time.now.to_i / SECONDS_PER_HOUR).to_s
     if @parsed_block_tracker[hour]
       @parsed_block_tracker[hour] += 1
     else
@@ -100,21 +98,24 @@ class RiskProfile < SimpledbShardedResource
   end
 
   def conversion_count(window)
-    start = (Time.now - window.hours).change(:min => 0).to_f.to_s
+    window = VELOCITY_WINDOW_HOURS if window > VELOCITY_WINDOW_HOURS
+    start = Time.now.to_i / SECONDS_PER_HOUR - window
     @parsed_conversion_tracker = conversion_tracker
-    @parsed_conversion_tracker.inject(0) { |count, pair| pair[0] >= start ? count+pair[1] : count }
+    @parsed_conversion_tracker.inject(0) { |count, pair| pair[0].to_i >= start ? count+pair[1] : count }
   end
 
   def revenue_total(window)
-    start = (Time.now - window.hours).change(:min => 0).to_f.to_s
+    window = VELOCITY_WINDOW_HOURS if window > VELOCITY_WINDOW_HOURS
+    start = Time.now.to_i / SECONDS_PER_HOUR - window
     @parsed_revenue_tracker = revenue_tracker
-    @parsed_revenue_tracker.inject(0) { |sum, pair| pair[0] >= start ? sum+pair[1] : sum }
+    @parsed_revenue_tracker.inject(0) { |sum, pair| pair[0].to_i >= start ? sum+pair[1] : sum }
   end
 
   def block_count(window)
-    start = (Time.now - window.hours).change(:min => 0).to_f.to_s
+    window = VELOCITY_WINDOW_HOURS if window > VELOCITY_WINDOW_HOURS
+    start = Time.now.to_i / SECONDS_PER_HOUR - window
     @parsed_block_tracker = block_tracker
-    @parsed_block_tracker.inject(0) { |sum, pair| pair[0] >= start ? sum+pair[1] : sum }
+    @parsed_block_tracker.inject(0) { |sum, pair| pair[0].to_i >= start ? sum+pair[1] : sum }
   end
 
   def block_percent(window)
@@ -137,9 +138,9 @@ class RiskProfile < SimpledbShardedResource
     @parsed_block_tracker = block_tracker
     @parsed_revenue_tracker = revenue_tracker
 
-    start = (Time.now - VELOCITY_WINDOW_HOURS.hours).change(:min => 0).to_f.to_s
-    @parsed_conversion_tracker.delete_if { |key, value| key < start }
-    @parsed_block_tracker.delete_if { |key, value| key < start }
-    @parsed_revenue_tracker.delete_if { |key, value| key < start }
+    start = Time.now.to_i / SECONDS_PER_HOUR - VELOCITY_WINDOW_HOURS
+    @parsed_conversion_tracker.delete_if { |key, value| key.to_i < start }
+    @parsed_block_tracker.delete_if { |key, value| key.to_i < start }
+    @parsed_revenue_tracker.delete_if { |key, value| key.to_i < start }
   end
 end
