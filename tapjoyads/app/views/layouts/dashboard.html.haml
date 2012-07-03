@@ -112,9 +112,10 @@
         = yield :page_sidebar
         = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
       .clear
-    #footer
-      &copy; #{Time.now.year} Tapjoy, Inc.
-      = link_to 'Privacy Policy', "#{WEBSITE_URL}/privacy.html", :target => '_blank'
+    - unless @kiosk
+      #footer
+        &copy; #{Time.now.year} Tapjoy, Inc.
+        = link_to 'Privacy Policy', "#{WEBSITE_URL}/privacy.html", :target => '_blank'
     #server-info
       %span.icon &tau;
       %span.data
