@@ -10,14 +10,14 @@ describe RiskProfile do
   describe '#add_curated_offset' do
     it 'adds curated offset' do
       subject.add_curated_offset('test1', 20)
-      subject.curated_offsets.should == {'test1' => 20}
+      subject.curated_offsets['test1']['offset'].should == 20
     end
   end
 
   describe '#add_historical_offset' do
     it 'adds historical offset' do
       subject.add_historical_offset('test2', -40)
-      subject.historical_offsets.should == {'test2' => -40}
+      subject.historical_offsets['test2']['offset'].should == -40
     end
   end
 
@@ -56,16 +56,16 @@ describe RiskProfile do
 
   describe '#process_conversion' do
     before :each do
-      now = Time.now
-      Timecop.freeze(now)
+      @now = Time.now
+      Timecop.freeze(@now)
       reward = double("reward")
       reward.stub(:advertiser_amount).and_return(-500)
       subject.process_conversion(reward)
     end
 
     it 'processes a conversion' do
-      subject.conversion_tracker.should == {Time.now.change(:min => 0).to_f.to_s => 1}
-      subject.revenue_tracker.should == {Time.now.change(:min => 0).to_f.to_s => 500}
+      subject.conversion_tracker.should == {(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s => 1}
+      subject.revenue_tracker.should == {(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s => 500}
     end
 
     context 'when profile has data for current hour' do
@@ -73,35 +73,35 @@ describe RiskProfile do
         reward = double("reward")
         reward.stub(:advertiser_amount).and_return(-250)
         subject.process_conversion(reward)
-        subject.conversion_tracker.should == {Time.now.change(:min => 0).to_f.to_s => 2}
-        subject.revenue_tracker.should == {Time.now.change(:min => 0).to_f.to_s => 750}
+        subject.conversion_tracker.should == {(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s => 2}
+        subject.revenue_tracker.should == {(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s => 750}
       end
     end
 
     context 'when profile has no data for current hour' do
       it 'adds data for new hour' do
-        original_time = Time.now
-        Timecop.freeze(original_time + 3.hours)
+        original_time = @now
+        new_time = @now + 3.hours
+        Timecop.freeze(new_time)
         reward = double("reward")
         reward.stub(:advertiser_amount).and_return(-250)
         subject.process_conversion(reward)
-        subject.conversion_tracker[original_time.change(:min => 0).to_f.to_s].should == 1
-        subject.conversion_tracker[Time.now.change(:min => 0).to_f.to_s].should == 1
-        subject.revenue_tracker[original_time.change(:min => 0).to_f.to_s].should == 500
-        subject.revenue_tracker[Time.now.change(:min => 0).to_f.to_s].should == 250
+        subject.conversion_tracker[(original_time.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 1
+        subject.conversion_tracker[(new_time.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 1
+        subject.revenue_tracker[(original_time.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 500
+        subject.revenue_tracker[(new_time.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 250
       end
     end
 
     it 'clears data older than maximum velocity window' do
-      original_time = Time.now
-      Timecop.freeze(original_time + 100.hours)
-      subject.revenue_tracker[original_time.change(:min => 0).to_f.to_s].should == 500
+      Timecop.freeze(@now + 100.hours)
+      subject.revenue_tracker[(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 500
 
       reward = double("reward")
       reward.stub(:advertiser_amount).and_return(-250)
       subject.process_conversion(reward)
-      subject.conversion_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
-      subject.revenue_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
+      subject.conversion_tracker[(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should be_nil
+      subject.revenue_tracker[(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should be_nil
     end
 
     after :each do
@@ -111,22 +111,21 @@ describe RiskProfile do
 
   describe '#process_block' do
     before :each do
-      now = Time.now
-      Timecop.freeze(now)
+      @now = Time.now
+      Timecop.freeze(@now)
       subject.process_block
     end
 
     it 'processes a blocked conversion' do
-      subject.block_tracker.should == {Time.now.change(:min => 0).to_f.to_s => 1}
+      subject.block_tracker.should == {(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s => 1}
     end
 
     it 'clears data older than maximum velocity window' do
-      original_time = Time.now
-      Timecop.freeze(original_time + 100.hours)
-      subject.block_tracker[original_time.change(:min => 0).to_f.to_s].should == 1
+      Timecop.freeze(@now + 100.hours)
+      subject.block_tracker[(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should == 1
 
       subject.process_block
-      subject.block_tracker[original_time.change(:min => 0).to_f.to_s].should be_nil
+      subject.block_tracker[(@now.to_i / RiskProfile::SECONDS_PER_HOUR).to_s].should be_nil
     end
 
     after :each do
