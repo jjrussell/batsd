@@ -11,7 +11,17 @@
   = text_field_tag(:request_id, params[:request_id], :size => 15)
   = label_tag(:partner_id)
   = text_field_tag(:partner_id, params[:partner_id], :size => 15)
-  = submit_tag("Change")
+  %br
+  %div{:style => "padding-top: 3px; padding-bottom: 3px"}
+    = label_tag(:start_date)
+    = text_field_tag(:start_date, params[:start_date], :size => 10)
+    = label_tag(:end_date)
+    = text_field_tag(:end_date, params[:end_date], :size => 10)
+    = label_tag(:object_type)
+    = text_field_tag(:object_type, params[:object_type], {:size => 15})
+    = label_tag(:field)
+    = text_field_tag(:field, params[:field], :size => 15)
+  = submit_tag("Search")
 
 %table#activities_table.tablesorter
   %thead
@@ -47,7 +57,7 @@
         %td
           = link_to_function(truncate(activity.request_id, :length => 9), "setValue('request_id', '#{activity.request_id}')")
 
-= link_to('Next &rarr;', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :partner_id => params[:partner_id], :next_token => @next_token), :class => 'next') if @next_token
+= link_to('Next >>>', activities_path(:object_id => params[:object_id], :user => params[:user], :request_id => params[:request_id], :partner_id => params[:partner_id], :start_date => params[:start_date], :end_date => params[:end_date], :object_type => params[:object_type], :field => params[:field], :next_token => @next_token), :class => 'next') if @next_token
 
 - content_for :page_javascript do
   :plain
@@ -88,7 +98,7 @@
 - content_for :page_styles do
   :plain
     table.tablesorter {
-      margin-top: 40px;
+      margin-top: 105px;
     }
 
     h1 {
