@@ -28,7 +28,7 @@
       },
       text: {
         offersby: i18n.t("offers_by"),
-        earn: i18n.t("earn_currency_html", {amount:'', currency:''}) || i18n.t("earn"),
+        earn: i18n.t("earn"),
         error: i18n.t("load_error"),
         free: i18n.t("free"),
         points: i18n.t("points")
@@ -394,7 +394,7 @@
 
         item.free = $.labels.text.free;
         item.points = $.data.currencyName;
-        item.earn = $.labels.text.earn.split(' ')[0];
+        item.earn = $.labels.text.earn;
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
