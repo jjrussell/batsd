@@ -478,6 +478,7 @@ en:
       earn_currency: "Earn %{amount} %{currency}"
       deep_link_part_1: Tap here to visit 
       deep_link_part_2: for more free offers!
+      earn: Earn
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}."
