@@ -9,12 +9,12 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
+  before_filter :check_uri
   before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
-  before_filter :check_uri
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
