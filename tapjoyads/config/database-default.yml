@@ -17,7 +17,7 @@ test:
 staging:
   adapter: mysql
   database: tapjoy_db_staging
-  host: tapjoy-db-staging.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  host: tapjoy-rds-staging.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
   password: andoverbusiness1
   reconnect: true
@@ -33,9 +33,9 @@ production:
 production_slave_for_tapjoy_db:
   adapter: mysql
   database: tapjoy_db
-  host: tapjoy-db-rds-replica1.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  host: tapjoy-db-rds-replica2.cck8zbm50hdd.us-east-1.rds.amazonaws.com
   username: tapjoy
-  password: andoverbusiness1
+  password: xatrugAxu6
   reconnect: true
 
 production_slave:

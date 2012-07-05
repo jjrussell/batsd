@@ -88,8 +88,8 @@ module ToolsHelper
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
   end
 
-  def formatted_items_for_tracking(partner)
-    partner.trackable_items.map do |item|
+  def formatted_items_for_tracking(items)
+    items.map do |item|
       type = item.class.name.to_s.gsub(/Offer$/, '')
       platform = if item.respond_to?(:platform_name)
                    item.platform_name

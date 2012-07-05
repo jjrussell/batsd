@@ -48,7 +48,7 @@ describe OfferCompletedController do
             ServerWhitelist.stub(:ip_whitelist_includes?).and_return(false)
             get(:index, @parameters)
             response.should render_template('layouts/error')
-            assigns(:error_message).should =~ /originating IP (.*) not on server whitelist/
+            assigns(:error_message).should =~ /failed to convert/
           end
         end
 

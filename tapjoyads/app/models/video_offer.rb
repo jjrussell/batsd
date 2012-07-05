@@ -36,13 +36,21 @@ class VideoOffer < ActiveRecord::Base
 
   def update_buttons
     offers.each do |offer|
-      offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
+      offer.third_party_data = xml_for_buttons
       offer.save! if offer.changed?
     end
   end
 
-  def valid_for_update_buttons?
-    video_buttons.enabled.size <= 2
+  def video_buttons_for_device_type(device_type)
+    block_rewarded = (Device.device_type_to_platform(device_type) == 'ios')
+    video_buttons.enabled.ordered.reject do |button|
+      device_type.present? && button.reject_device_type?(device_type, block_rewarded)
+    end
+  end
+
+  def available_trackable_items(selected_id=nil)
+    ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
+    partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }
   end
 
   private

@@ -188,9 +188,11 @@ FactoryGirl.define do
 
   factory :video_button do
     association :video_offer
+    association :tracking_item, :factory => :app
     name { FactoryGirl.generate(:name) }
     url 'http://www.tapjoy.com'
     ordinal 1
+    enabled true
   end
 
   factory :conversion do
