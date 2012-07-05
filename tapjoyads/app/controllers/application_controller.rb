@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
+  before_filter :check_uri
 
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
@@ -295,5 +296,11 @@ class ApplicationController < ActionController::Base
 
   def os_version
     @os_version ||= HeaderParser.os_version(request.user_agent)
+  end
+
+  def check_uri
+    if MACHINE_TYPE == 'website' && !/^www/.match(request.host)
+      redirect_to request.protocol + "www." + request.host_with_port + request.request_uri
+    end
   end
 end
