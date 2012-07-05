@@ -6,8 +6,8 @@ end
 
 def expect_request_completes
   request = WebRequest.new(:time => Time.zone.now)
-  WebRequest.should_receive(:new).and_return(request)
-  request.should_receive(:save)
+  WebRequest.should_receive(:new).twice.and_return(request)
+  request.should_receive(:save).twice
 end
 
 def expect_request_does_not_complete
@@ -81,7 +81,6 @@ describe Job::QueueConversionTrackingController do
       checker.stub(:risk_message).and_return('test failure')
       ConversionChecker.should_receive(:new).and_return(checker)
       @click.should_receive(:save)
-      expect_request_does_not_complete
       do_get
       @click.block_reason.should == 'test failure'
     end

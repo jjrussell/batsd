@@ -133,7 +133,7 @@ describe RiskProfile do
     end
   end
 
-  context 'with multiple conversions spaced 12 hours apart' do
+  context '' do
     before :each do
       @start_time = Time.now
       Timecop.freeze(@start_time)

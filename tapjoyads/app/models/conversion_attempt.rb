@@ -19,7 +19,6 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :country
   self.sdb_attr :viewed_at,                  :type => :time
   self.sdb_attr :clicked_at,                 :type => :time
-  self.sdb_attr :installed_at,               :type => :time
   self.sdb_attr :created,                    :type => :time
   self.sdb_attr :resolution
   self.sdb_attr :block_reason
@@ -36,6 +35,7 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :rules_offset,               :type => :float
   self.sdb_attr :processed_actions,          :type => :json,  :default_value => {}
   self.sdb_attr :final_risk_score,           :type => :float
+  self.sdb_attr :force_converted_by
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
