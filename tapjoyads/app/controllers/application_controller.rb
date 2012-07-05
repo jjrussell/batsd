@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
-  before_filter :check_uri
+  before_filter :check_uri if MACHINE_TYPE == 'website'
   before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
@@ -299,8 +299,6 @@ class ApplicationController < ActionController::Base
   end
 
   def check_uri
-    if MACHINE_TYPE == 'website' && !/^www/.match(request.host)
-      redirect_to request.protocol + "www." + request.host_with_port + request.fullpath
-    end
+    redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
   end
 end
