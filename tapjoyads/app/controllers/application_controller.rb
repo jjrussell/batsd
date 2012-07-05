@@ -300,7 +300,7 @@ class ApplicationController < ActionController::Base
 
   def check_uri
     if MACHINE_TYPE == 'website' && !/^www/.match(request.host)
-      redirect_to request.protocol + "www." + request.host_with_port + request.request_uri
+      redirect_to request.protocol + "www." + request.host_with_port + request.fullpath
     end
   end
 end
