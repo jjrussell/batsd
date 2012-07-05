@@ -75,6 +75,7 @@ group :development do
   gem 'thin'
   gem 'guard-spork'
   gem 'guard-rspec'
+  gem 'guard-cucumber'
   gem 'rspec-instafail'
   gem 'ruby_gntp'
   gem 'pry'
@@ -88,6 +89,8 @@ end
 
 group :test do
   gem 'capybara'
+  gem 'cucumber'
+  gem 'database_cleaner'
   gem 'factory_girl_rails', '1.2.0'
   gem 'launchy'
   gem 'spork'
@@ -98,6 +101,7 @@ end
 group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'cucumber-rails', :require => false
   gem 'shoulda-matchers'
   gem "fakeredis", :require => "fakeredis/rspec"
 end
