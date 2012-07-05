@@ -220,6 +220,8 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
+      terms: "Terms of Service"
+      updated: "Privacy Policy [Updated]"      
     games:
       apps: Apps
       about_body: "A better way to love the apps you have and find the apps you'll love."
