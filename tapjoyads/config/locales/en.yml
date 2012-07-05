@@ -221,7 +221,7 @@ en:
       developers: Developers
       privacy: "Privacy Policy"
       terms: "Terms of Service"
-      updated: "Privacy Policy [Updated]"      
+      updated: "Privacy Policy [Updated]"
     games:
       apps: Apps
       about_body: "A better way to love the apps you have and find the apps you'll love."
@@ -478,7 +478,7 @@ en:
         video: Watch this video.
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
-      deep_link_part_1: Tap here to visit 
+      deep_link_part_1: Tap here to visit
       deep_link_part_2: for more free offers!
       earn: Earn
       earn_currency_html: "Earn %{amount} %{currency}"
