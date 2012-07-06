@@ -27,10 +27,10 @@ module UserEventTypes
     },
 
     :iap => {
-      :name         => :string,
-      :price        => :float,
-      :quantity     => :int,
-      :currency_id  => :string,
+      :currency_id    => :string,
+      :name           => :string,
+      :price          => :float,
+      :quantity       => :int,
     },
 
     :shutdown => {

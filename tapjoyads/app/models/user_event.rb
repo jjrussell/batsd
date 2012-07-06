@@ -1,56 +1,47 @@
 class UserEvent < WebRequest
   include UserEventTypes
 
-  REQUIRED_KEYS = [ :app_id, :event_type_id, :udid ]
+  DEVICE_KEYS_TO_TRY = [ :udid, :mac_address, :android_id, :serial_id, :sha1_mac_address ]
 
+  # add new event type fields here with their required types
   self.define_attr :name
-  self.define_attr :event_type
   self.define_attr :quantity, :type => :int
   self.define_attr :price,    :type => :float
 
-  def initialize(options = {})
-    verify_options(options)
-    super(options, false)
-    validate_event(options)
-  end
+  def put_values(args, ip_address, geoip_data, user_agent)
 
-  private
-
-  def validate_event(options)
-    event_descriptor = UserEventTypes::EVENT_TYPE_KEYS[options[:event_type_id].to_i]
-    UserEventTypes::EVENT_TYPE_MAP[event_descriptor].each do |required_key, expected_data_type|
-      converter = TypeConverters::TYPES[expected_data_type]
-      unless converter.try(:from_string, options[required_key], true)
-        raise "Error assigning '#{required_key}' attribute. The value '#{options[required_key]}' is not of type '#{expected_data_type}'."    # TODO use i18n?
-      end
-      send("#{required_key}=", options[required_key])
-    end
-  end
-
-  def verify_options(options)
-    verifier = options.delete(:verifier)
-    raise I18n.t('user_event.error.no_verifier') unless verifier.present?
-    event_type_id = options[:event_type_id].to_i
-    if event_type_id > 0 && event_type_id < UserEventTypes::EVENT_TYPE_KEYS.length
-      event_type = UserEventTypes::EVENT_TYPE_KEYS[event_type_id]
+    # Use '' because the raised error message will show that event_type_id is blank and ''.to_i() computes to 0
+    event_type_id = (args.delete(:event_type_id) { '' }).to_i
+    if event_type_id > 0
+      args[:type] = UserEventTypes::EVENT_TYPE_KEYS[event_type_id]
     else
-      event_type = :invalid
+      raise "#{event_type_id} is not a valid 'event_type_id'."
     end
-    raise "#{options[:event_type_id]} is not a valid 'event_type_id'." if :invalid == event_type    # TODO use i18n?
-    values = []
-    required_keys = REQUIRED_KEYS + UserEventTypes::EVENT_TYPE_MAP[event_type].keys
-    required_keys.sort.each do |required_key|
-      if options.has_key?(required_key)
-        values << options[required_key]
+
+    app = App.find_in_cache(args[:app_id])
+    raise "App ID '#{args[:app_id]}' could not be found. Check 'app_id' and try again." unless app.present?    # TODO use i18n?
+    device_id_key = DEVICE_KEYS_TO_TRY.detect { |key| args[key].present? }
+    raise I18n.t('user_event.error.no_device') unless device_id_key.present?
+    remote_verifier_hash = args.delete(:verifier)
+    raise I18n.t('user_event.error.no_verifier') unless remote_verifier_hash.present?
+    local_verifier_string = [ app.id, args[device_id_key], app.secret_key, UserEventTypes::EVENT_TYPE_IDS[args[:type]] ].join(':')
+    raise I18n.t('user_event.error.verification_failed') unless Digest::SHA256.hexdigest(local_verifier_string) == remote_verifier_hash
+    event_descriptor = UserEventTypes::EVENT_TYPE_MAP[args[:type]]
+    invalid_field, required_type = event_descriptor.detect { |field, type| !TypeConverters::TYPES[type].try(:from_string, args[field], true) }
+    if invalid_field
+      if args[invalid_field].present?
+        raise "Error assigning '#{invalid_field}' attribute. The value '#{args[invalid_field]}' is not of type '#{required_type}'."
       else
-        raise "Expected attribute '#{required_key}' of type '#{UserEventTypes::EVENT_TYPE_MAP[event_type][required_key]}' not found."    # TODO use i18n?
+        raise "Expected attribute '#{invalid_field}' of type '#{required_type}' not found."
       end
     end
-    string_to_be_verified = values.join(':')
-    app = App.find_in_cache(options[:app_id])
-    raise "App ID #{options[:app_id]} could not be found. Check 'app_id' and try again." unless app    # TODO use i18n?
-    raise I18n.t('user_event.error.verification_failed') if verifier != Digest::SHA256.digest(app.secret_key + string_to_be_verified)
-  end
 
+    # assign new event type fields here
+    self.name     = args.delete(:name)
+    self.quantity = args.delete(:quantity)
+    self.price    = args.delete(:price)
+
+    super(nil, args, ip_address, geoip_data, user_agent)
+  end
 
 end

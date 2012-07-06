@@ -610,6 +610,7 @@ en:
     pm: pm
   user_event:
     error:
+      no_device: "Device missing in request."
       verification_failed: "Parameter verification failed."
       no_verifier: "Verifier missing in request."
     success:
