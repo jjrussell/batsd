@@ -340,7 +340,7 @@ module Offer::Rejecting
   def video_offers_reject?(video_offer_ids, type, all_videos)
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
 
-    item_type == 'VideoOffer' && !video_offer_ids.include?(id)
+    video_offer? && !video_offer_ids.include?(id)
   end
 
   def tapjoy_games_retargeting_reject?(device)

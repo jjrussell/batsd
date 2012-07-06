@@ -59,6 +59,8 @@
   %ul
     - if permitted_to? :index, :dashboard_tools_offer_lists                 # account_mgr
       %li= link_to 'View Offer Lists', tools_offer_lists_path
+    - if permitted_to? :index, :dashboard_tools_optimized_offer_lists       # account_mgr
+      %li= link_to 'View Optimized Offer Lists', tools_optimized_offer_lists_path
     - if permitted_to? :index, :dashboard_tools_generic_offers              # account_mgr
       %li= link_to 'View Generic Offers', tools_generic_offers_path
     - if permitted_to? :edit, :dashboard_statz                              # account_mgr
