@@ -133,6 +133,25 @@
       %td
         = f.text_area(:account_manager_notes)
         = error_message_on @offer, :account_manager_notes
+    - if @offer.item_type == 'App'
+      %tr
+        %th
+          = f.label :name, 'Prerequisite'
+          #help_prerequisite.help ?
+        %td
+          - offer_options = @offer.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
+          - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+          = f.select :prerequisite_offer_id, offer_options
+          = error_message_on @offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :name, 'Negative Prerequisite'
+          #help_negative_prerequisite.help ?
+        %td
+          - offer_options = @offer.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
+          - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_id.blank?))
+          = f.select :negative_prerequisite_offer_id, offer_options
+          = error_message_on @offer, :negative_prerequisite_offer_id
     %tr
       %th
         = f.label(:show_rate)

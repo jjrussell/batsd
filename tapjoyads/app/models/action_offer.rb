@@ -25,12 +25,15 @@ class ActionOffer < ActiveRecord::Base
   belongs_to :partner
   belongs_to :app
   belongs_to :prerequisite_offer, :class_name => 'Offer'
+  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :partner, :app, :name, :variable_name
   validates_uniqueness_of :variable_name, :scope => :app_id, :case_sensitive => false
   validates_presence_of :instructions
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
+  validates_presence_of :negative_prerequisite_offer, :if => Proc.new { |action_offer| action_offer.negative_prerequisite_offer_id? }
   validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0
+  validate :prerequisite_not_equal_to_negative_prerequisite
 
   scope :visible, :conditions => { :hidden => false }
 
@@ -51,6 +54,10 @@ class ActionOffer < ActiveRecord::Base
 
   private
 
+  def prerequisite_not_equal_to_negative_prerequisite
+    errors.add(:prerequisite_offer_id, 'prerequisite offer can not be the same as negative prerequisite offer.') if self.prerequisite_offer_id.present? && self.prerequisite_offer_id == self.negative_prerequisite_offer_id
+  end
+
   def create_primary_offer
     offer                  = Offer.new(:item => self)
     offer.id               = id
@@ -63,6 +70,8 @@ class ActionOffer < ActiveRecord::Base
     offer.bid              = offer.min_bid
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
+    offer.prerequisite_offer_id = prerequisite_offer_id
+    offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id
     offer.icon_id_override = app_id
     offer.save!
   end
@@ -80,6 +89,8 @@ class ActionOffer < ActiveRecord::Base
         offer.bid = offer.min_bid
       end
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id if negative_prerequisite_offer_id_changed?
       offer.save! if offer.changed?
     end
   end

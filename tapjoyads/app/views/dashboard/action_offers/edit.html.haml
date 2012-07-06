@@ -56,7 +56,7 @@
           = f.label :name, 'Prerequisite'
           #help_prerequisite.help ?
         %td
-          - offer_options = @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ "#{offer.name} --- #{offer.item_type}", offer.id ] }
+          - offer_options = ([ @app.primary_offer ] + @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id || offer.id == @app.primary_offer.id }).collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
           - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.prerequisite_offer_id.blank?))
           = f.select :prerequisite_offer_id, offer_options
           = error_message_on @action_offer, :prerequisite_offer_id
@@ -65,10 +65,10 @@
           = f.label :name, 'Negative Prerequisite'
           #help_negative_prerequisite.help ?
         %td
-          - offer_options = @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ "#{offer.name} --- #{offer.item_type}", offer.id ] }
-          - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.neg_prerequisite_offer_id.blank?))
-          = f.select :neg_prerequisite_offer_id, offer_options
-          = error_message_on @action_offer, :neg_prerequisite_offer_id
+          - offer_options = @app.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
+          - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.negative_prerequisite_offer_id.blank?))
+          = f.select :negative_prerequisite_offer_id, offer_options
+          = error_message_on @action_offer, :negative_prerequisite_offer_id
       %tr
         %th
           = f.label :instructions, 'Instructions'
@@ -174,6 +174,8 @@
       Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
   #help_prerequisite_content{ :name => 'Prerequisite' }
     This action will only be shown to users who have already completed the prerequisite offer.
+  #help_negative_prerequisite_content{ :name => 'Prerequisite' }
+    This action will only be shown to users who have NOT completed the negative prerequisite offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'}
     Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.

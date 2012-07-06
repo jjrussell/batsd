@@ -105,9 +105,13 @@ class Offer < ActiveRecord::Base
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
+  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
+  validates_presence_of :negative_prerequisite_offer, :if => Proc.new { |offer| offer.negative_prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -185,6 +189,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validate :prerequisite_not_equal_to_negative_prerequisite
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -730,6 +735,10 @@ class Offer < ActiveRecord::Base
   end
 
   private
+
+  def prerequisite_not_equal_to_negative_prerequisite
+    errors.add(:prerequisite_offer_id, 'prerequisite offer can not be the same as negative prerequisite offer.') if self.prerequisite_offer_id.present? && self.prerequisite_offer_id == self.negative_prerequisite_offer_id
+  end
 
   def calculated_min_bid
     if item_type == 'App'

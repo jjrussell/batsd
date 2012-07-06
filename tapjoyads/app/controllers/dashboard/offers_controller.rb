@@ -8,10 +8,11 @@ class Dashboard::OffersController < Dashboard::DashboardController
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
                                :min_os_version, :screen_layout_sizes, :countries]
-  ELEVATED_SAFE_ATTRIBUTES = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
+  ELEVATED_SAFE_ATTRIBUTES = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,   
                                :name, :name_suffix, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-                               :dma_codes, :regions, :carriers, :cities ] | BASE_SAFE_ATTRIBUTES
+                               :dma_codes, :regions, :carriers, :cities,
+                               :prerequisite_offer_id, :negative_prerequisite_offer_id ] | BASE_SAFE_ATTRIBUTES
 
   def new
     offer_params = {}
@@ -63,12 +64,9 @@ class Dashboard::OffersController < Dashboard::DashboardController
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
-    safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
+    safe_attributes = BASE_SAFE_ATTRIBUTES
     if permitted_to? :edit, :dashboard_statz
-      safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
-          :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities ]
+      safe_attributes = ELEVATED_SAFE_ATTRIBUTES
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
