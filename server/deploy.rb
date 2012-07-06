@@ -36,7 +36,7 @@ if deploy_version == 'master'
 end
 
 if server_type == 'jobserver'
-  `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
+  `cp tapjoyads/config/newrelic-queues.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'masterjobs'
   `cp tapjoyads/config/newrelic-cron.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'testserver' || server_type == 'staging'
