@@ -132,6 +132,7 @@ authorization do
     has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_approvals, :to => [ :index, :history, :mine, :assign, :approve, :reject ]
     has_permission_on :dashboard_tools_offer_lists, :to => [ :index ]
+    has_permission_on :dashboard_tools_optimized_offer_lists, :to => [ :index ]
     has_permission_on :dashboard_tools_premier_partners, :to => [ :index ]
     has_permission_on :dashboard_tools_generic_offers, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_tools_video_offers, :to => [ :new, :create, :edit, :update ]
