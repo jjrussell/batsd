@@ -17,7 +17,7 @@ class Dashboard::ActivitiesController < Dashboard::DashboardController
     end
 
     if end_date.present?
-      t = Time.parse(end_date + " 00:00:00")
+      t = Time.parse(end_date + " 23:59:59")
       end_time = Time.zone.local_to_utc(t).to_f
     end
 
