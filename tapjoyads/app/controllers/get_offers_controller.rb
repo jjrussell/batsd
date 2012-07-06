@@ -85,7 +85,6 @@ include GetOffersHelper
         render :template => 'get_offers/webpage_redesign' and return
       end
     end
-      
   end
 
   def featured
