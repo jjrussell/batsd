@@ -9,7 +9,6 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
-  before_filter :check_uri if MACHINE_TYPE == 'website'
   before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
@@ -298,14 +297,4 @@ class ApplicationController < ActionController::Base
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
-  def check_uri
-    redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
-  end
-
-  protected
-
-  # see http://www.agilereasoning.com/2011/04/23/side-efffects-of-rails-security-fix/
-  def handle_unverified_request
-    raise ActionController::InvalidAuthenticityToken
-  end
 end
