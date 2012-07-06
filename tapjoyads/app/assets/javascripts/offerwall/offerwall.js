@@ -14,6 +14,7 @@
       slice = arrayPrototype.slice,
       limit = 25,
       start = 25,
+      autoLoadLimit = 5,
       url = fetchURL;
 
  var $ = {
@@ -91,11 +92,11 @@
       $.fetched = 0;
       if($.data.autoload){
         window[$.addEvent]('scroll', function(){
-          if($.fetched < 3){
+          if($.fetched < autoLoadLimit){
             if($.endOfTheLine() && !$.fetching){
               $.fetch();
               $.fetched++;
-              if($.fetched == 3){
+              if($.fetched == autoLoadLimit){
                 if($.loadMore){
                   try {
                    $.loadMore.parentNode.style.display = 'block'; 
@@ -331,8 +332,9 @@
               catch(err){}
             }
           }else{
-            if($.loadMore)
-              document.removeChild($.loadMore);
+            try {
+              $.loadMore.parentNode.style.display = 'none';
+            }catch(err){}
           }
         },
         error: function(xhr, response){
