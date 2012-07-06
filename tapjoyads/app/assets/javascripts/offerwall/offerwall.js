@@ -319,14 +319,12 @@
         success: function(data, status){
           $.loader.style.display = 'none';
 
-          $.load(data.offers);
-
-          start = start + 25;
-
-          if(data.records <= 0 || !data.records){
+        if(data.MoreDataAvailable){
+            $.load(data.offers);
+            start = start + 25;
+          }else{
             if($.loadMore)
               document.removeChild($.loadMore);
-            
           }
         },
         error: function(xhr, response){
