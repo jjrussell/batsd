@@ -74,11 +74,9 @@ private
       notify_and_render_error(true) and return
     end
 
-    if offer.partner_use_server_whitelist? && !click.manually_resolved_at?
-      unless ServerWhitelist.ip_whitelist_includes? ip_address
-        @error_message = "originating IP (#{ip_address}) not on server whitelist (#{click.key})"
-        notify_and_render_error(false, ServerWhitelistError) and return
-      end
+    if offer.partner_use_server_whitelist? && !click.manually_resolved_at? && !ServerWhitelist.ip_whitelist_includes?(ip_address)
+      @error_message = "originating IP (#{ip_address}) not on server whitelist (#{click.key})"
+      notify_and_render_error(false, ServerWhitelistError) and return
     end
 
     if offer.has_variable_payment?
