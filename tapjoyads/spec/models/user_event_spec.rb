@@ -2,146 +2,106 @@ require 'spec_helper'
 
 describe UserEvent do
 
-  let(:app) { FactoryGirl.create(:app)}
-  let(:device) { FactoryGirl.create(:device) }
-
   before(:each) do
-    Device.stub(:find).and_return(device)
-    app.cache
+    @app = FactoryGirl.create(:app)
+    @device = FactoryGirl.create(:device)
+    @app.cache
     # Use an IAP event, since it's got additional required params
+    @geoip_data = {
+      :country => "USA",
+      :primary_country => "USA",
+    }
+    @ip_address = '10.0.0.1'
+    @user_agent = 'not_a_real_user'
     @options = {
       :event_type_id => 1,
-      :app_id => app.id,
-      :udid => device.id,
-      :quantity => 2,
-      :price => 34.50,
-      :name => 'BFG',
-      :currency_id => 'USD',
+      :app_id => @app.id,
+      :udid => @device.id,
+      :quantity => FactoryGirl.generate(:integer),
+      :price => FactoryGirl.generate(:integer).to_f,
+      :name => FactoryGirl.generate(:name),
+      :currency_id => "Currency #{FactoryGirl.generate(:name)}",
+      :verifier => 'should_recompute_me_with_each_variable_change',
     }
-    string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-    @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
+    @event = UserEvent.new()
   end
 
-  describe '#initialize' do
+  describe '#put_values' do
+
     context 'without a verifier' do
+      before(:each) do
+        @options.delete(:verifier)
+      end
+
       it 'raises an error' do
-        expect{UserEvent.new()}.to raise_error(Exception, I18n.t('user_event.error.no_verifier'))
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.no_verifier'))
+      end
+    end
+
+    context 'with an invalid event_type_id' do
+      before(:each) do
+        @options[:event_type_id] = -1
+      end
+
+      it 'raises an error' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "#{@options[:event_type_id]} is not a valid 'event_type_id'.")
+      end
+    end
+
+    context 'with an invalid app_id' do
+      before(:each) do
+        @options[:app_id] = "completely f'd app_id"
+      end
+
+      it 'raises an error' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "App ID '#{@options[:app_id]}' could not be found. Check 'app_id' and try again.")
+      end
+    end
+
+    context 'without any device identifiers' do
+      before(:each) do
+        @options.delete(:udid)
+      end
+
+      it 'raises an error saying that the no device identifier could be found' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.no_device'))
+      end
+    end
+
+    context 'with at least one missing option' do
+      before(:each) do
+        #randomly decided to remove quantity here, any param with its associated error message (below) should work
+        @options.delete(:quantity)
+      end
+
+      it 'raises an error' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "Expected attribute 'quantity' of type 'int' not found.")
+      end
+    end
+
+    context 'with an option of the wrong data type' do
+      before(:each) do
+        @options[:price] = 'invalid price123'
+      end
+
+      it 'raises an error' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "Error assigning 'price' attribute. The value 'invalid price123' is not of type 'float'.")
       end
     end
 
     context 'with an invalid verifier' do
-      before(:each) do
-        @options[:verifier] = 'not a valid verifier'
-      end
-
-      context 'with an invalid event_type_id' do
-        it 'raises an error' do
-          @options[:event_type_id] = -1
-          expect{UserEvent.new(@options)}.to raise_error(Exception, "#{@options[:event_type_id]} is not a valid 'event_type_id'.")
-        end
-      end
-
-      context 'with a valid event_type_id' do
-        context 'with missing params' do
-          before(:each) do
-            #randomly decided to remove quantity here, any param with its associated error message (below) should work
-            @options.delete(:quantity)
-          end
-
-          it 'raises an error' do
-            expect{UserEvent.new(@options)}.to raise_error(Exception, "Expected attribute 'quantity' of type 'int' not found.")
-          end
-        end
-
-        context 'with no missing params' do
-          context 'with an invalid app_id' do
-            before(:each) do
-              @options[:app_id] = "completely f'd app_id"
-            end
-
-            it 'raises an error' do
-              expect{UserEvent.new(@options)}.to raise_error(Exception, "App ID #{@options[:app_id]} could not be found. Check 'app_id' and try again.")
-            end
-          end
-
-          context 'with a valid app_id' do
-            it 'raises an error saying that the verifier is invalid' do
-              expect{UserEvent.new(@options)}.to raise_error(Exception, I18n.t('user_event.error.verification_failed'))
-            end
-          end
-        end
+      it 'raises an error saying that the verifier is invalid' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.verification_failed'))
       end
     end
 
     context 'with a valid verifier' do
       before(:each) do
-        @options.delete(:verifier) if @options.has_key?(:verifier)
+        @options[:verifier] = Digest::SHA256.hexdigest("#{@app.id}:#{@device.id}:#{@app.secret_key}:#{@options[:event_type_id]}")
       end
 
-      context 'with an invalid event_type_id' do
-        before(:each) do
-          @options[:event_type_id] = -1
-          string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-          @options[:verifier] = Digest::SHA256.digest(app.secret_key + string_to_be_verified)
-        end
-
-        it 'raises an error' do
-          expect{UserEvent.new(@options)}.to raise_error(Exception, "#{@options[:event_type_id]} is not a valid 'event_type_id'.")
-        end
-      end
-
-      context 'with a valid event_type_id' do
-        context 'with missing params' do
-          before(:each) do
-            #randomly decided to remove quantity here, any param with its associated error message (below) should work
-            @options.delete(:quantity)
-            string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-            @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
-          end
-
-          it 'raises an error' do
-            expect{UserEvent.new(@options)}.to raise_error(Exception, "Expected attribute 'quantity' of type 'int' not found.")
-          end
-        end
-
-        context 'with no missing params' do
-          context 'with an invalid app_id' do
-            before(:each) do
-              @options[:app_id] = "completely f'd app_id"
-              string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-              @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
-            end
-
-            it 'raises an error' do
-              expect{UserEvent.new(@options)}.to raise_error(Exception, "App ID #{@options[:app_id]} could not be found. Check 'app_id' and try again.")
-            end
-          end
-
-          context 'with a valid app_id' do
-            context 'with a param of the wrong data type' do
-              before(:each) do
-                @options[:price] = "not a valid price"
-                string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-                @options[:verifier] = Digest::SHA1.digest(app.secret_key + string_to_be_verified)
-              end
-
-              it 'raises an error' do
-                expect{UserEvent.new(@options)}.to raise_error(Exception, "Error assigning 'price' attribute. The value 'not a valid price' is not of type 'float'.")
-              end
-            end
-
-            context 'with all params of valid types' do
-              before(:each) do
-                string_to_be_verified = @options.sort.map { |key, val| "#{val}" }.join(':')
-                @options[:verifier] = Digest::SHA256.digest(app.secret_key + string_to_be_verified)
-              end
-
-              it 'returns a UserEvent object, which can be saved' do
-                expect{UserEvent.new(@options).save}.to_not raise_error
-              end
-            end
-          end
-        end
+      it 'successfully creates and can save a UserEvent' do
+        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent) and @event.save}.to_not raise_error
       end
     end
   end

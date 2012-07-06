@@ -23,6 +23,9 @@ module UserEventTypes
     #
     # :data_type_X MUST match a key in TypeConverters::TYPES
 
+
+    # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
+    
     :invalid => {
     },
 
