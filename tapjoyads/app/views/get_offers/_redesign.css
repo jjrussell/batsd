@@ -229,7 +229,12 @@ ul#offers li .offer .about {
 }
 
 ul#offers li .offer .about {
-  margin-left: 5px;
+  margin: 15px 0 0 5px;
+}
+
+ul#offers li .offer .about .title {
+  font-weight: bold;
+  text-shadow: 0 1px 0 rgba(255,255,255,1);
 }
 
 ul#offers li .offer .desc {
@@ -336,13 +341,13 @@ ul#offers li .offer .icon .wifi {
 
 ul#offers li .offer .about {
   color: #323232;
-  font-size: 90%;
+  font-size: 95%;
   width: 80%;
 }
 
 ul#offers li .offer .about .action {
   color: #444;
-  font-size: 80%;
+  font-size: 85%;
   height: 16px;
   line-height: 120%;
   margin-top: 5px;
@@ -419,7 +424,7 @@ ul#offers li .reward .free {
   box-shadow: 0 -1px 0 #727272;
   text-align: center;
   color: #d8d8d8;
-  font-size: 50%;
+  font-size: 60%;
   font-weight: bold;
   left: 0;
   padding: 1px 0 2px;
