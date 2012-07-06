@@ -5,16 +5,10 @@
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
-    = stylesheet_link_tag 'bootstrap.min', 'dashboard', 'jquery-ui-1.8.5', 'colorbox', 'themes/blue/style', 'chosen'
+    = stylesheet_link_tag 'bootstrap.min', 'dashboard', 'jquery-ui-1.8.5', 'colorbox', 'themes/blue/style', 'chosen', 'shared'
     = stylesheet_link_tag 'print', :media => 'print'
     %style{ :type => 'text/css' }
       = yield :page_styles
-      :plain
-        #acting_as {
-          font-size: 0.8em;
-          background-color: yellow;
-          float: right;
-        }
       - if @kiosk
         :plain
           body {
@@ -118,6 +112,13 @@
         = yield :page_sidebar
         = content_for_exists?(:apps_layout) ? yield(:apps_layout) : yield
       .clear
+
+    - unless @kiosk
+      #footer
+        &copy; #{Time.now.year} Tapjoy, Inc.
+        = link_to 'Privacy Policy', "#{WEBSITE_URL}/privacy.html", :target => '_blank'
+
+    = render('shared/server_info')
 
     = javascript_include_tag 'jquery-1.7.2.min', 'jquery-ui-1.8.5.min', 'jquery_ujs', 'jquery.tablesorter', 'jquery.colorbox.min', 'application', 'chosen.jquery', 'facebox', 'bootstrap'
     = yield :included_javascripts

@@ -365,7 +365,7 @@ class Partner < ActiveRecord::Base
   end
 
   def trackable_items
-    apps + generic_offers + action_offers + video_offers
+    apps.live.visible + generic_offers.visible + action_offers.visible + video_offers.visible
   end
 
   def offers_for_promotion
@@ -403,7 +403,7 @@ class Partner < ActiveRecord::Base
   def confirm_for_payout(user)
     self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
     if can_confirm_payout_threshold?(user)
-      self.payout_threshold_confirmation = true 
+      self.payout_threshold_confirmation = true
       self.payout_threshold *= 1.1
     end
   end
