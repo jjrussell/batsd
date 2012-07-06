@@ -3,33 +3,33 @@
 
 # automatically strip spaces from the end of lines and add newlines to the end of files as necessary
 filetypes = %w(
-  builder
-  conf
-  css
-  erb
-  haml
-  html
-  json
-  rake
-  rb
-  rhtml
-  rxml
-  scss
-  js
-  txt
-  xml
-  yaml
-  yml
+builder
+conf
+css
+erb
+haml
+html
+json
+rake
+rb
+rhtml
+rxml
+scss
+js
+txt
+xml
+yaml
+yml
 )
 
 paths = %w(
-  app
-  config
-  db/migrate
-  lib
-  public
-  test
-  spec
+app
+config
+db/migrate
+lib
+public
+test
+spec
 )
 
 filetype_regexp = /\.(#{filetypes.join('|')})$/
@@ -62,11 +62,11 @@ end
 
 # don't allow migrations to be added without a change to schema.rb, or vice-versa
 def schema_modified?
-  %x[ git status --short | egrep 'db\/schema\.rb$' ] != ""
+  %x[ git diff --staged --name-only | egrep 'db\/schema\.rb$' ] != ""
 end
 
 def migrations_modified?
-  %x[ git status --short | egrep 'db\/migrate/.+\.rb$' ] != ""
+  %x[ git diff --staged --name-only | egrep 'db\/migrate\/.+\.rb$' ] != ""
 end
 
 if schema_modified?
