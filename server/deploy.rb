@@ -35,8 +35,10 @@ if deploy_version == 'master'
   system "git pull --tags origin master"
 end
 
-if server_type == 'jobserver' || server_type == 'masterjobs'
+if server_type == 'jobserver'
   `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'masterjobs'
+  `cp tapjoyads/config/newrelic-cron.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
