@@ -46,6 +46,21 @@ body {
   text-shadow: 0 -1px 0 #868686;
 }
 
+.button.orange {
+  background: -moz-linear-gradient(top, rgba(255,192,0,1) 0%, rgba(255,183,0,1) 36%, rgba(255,156,0,1) 71%, rgba(255,141,0,1) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,192,0,1)), color-stop(36%,rgba(255,183,0,1)), color-stop(71%,rgba(255,156,0,1)), color-stop(100%,rgba(255,141,0,1)));
+  background: -webkit-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+  background: -o-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+  background: -ms-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+  background: linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+  border-left: 1px solid #9c620e;
+  border-right: 1px solid #9c620e;
+  box-shadow: inset 0 1px 0 #fff736, inset -1px 0 0 #f9b800, 0 1px 0 #363636;
+  color: #fff;
+  font-size: 120%;
+  text-shadow: 0 1px 0 #9c620e;
+}
+
 /**
  * Header
  */    
