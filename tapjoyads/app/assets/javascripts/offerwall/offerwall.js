@@ -92,12 +92,15 @@
         window[$.addEvent]('scroll', function(){
           if($.fetched < 3){
             if($.endOfTheLine() && !$.fetching){
-             $.fetch();
-             $.fetched++;
-             if($.fetched <= 3){
-               if($.loadMore && $.loadMore.parent)
-                 $.loadMore.parentNode.style.display = 'block'; 
-             }
+              $.fetch();
+              $.fetched++;
+              if($.fetched == 3){
+                if($.loadMore){
+                  try {
+                   $.loadMore.parentNode.style.display = 'block'; 
+                  }catch(err){}
+                }
+              }
             }
           }
         });
@@ -257,8 +260,10 @@
         $.header.style.display = 'none';
       }
 
-      if($.data.autoload && $.loadMore && $.loadMore.parentNode){
-        $.loadMore.parentNode.style.display = 'none';
+      if($.data.autoload && $.loadMore){
+        try {
+          $.loadMore.parentNode.style.display = 'none';
+        }catch(err){}
       }
     },
 
@@ -319,9 +324,9 @@
           start = start + 25;
 
           if(data.records <= 0 || !data.records){
-            if($.loadMore){
+            if($.loadMore)
               document.removeChild($.loadMore);
-            }
+            
           }
         },
         error: function(xhr, response){
