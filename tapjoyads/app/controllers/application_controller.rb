@@ -302,10 +302,4 @@ class ApplicationController < ActionController::Base
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
   end
 
-  protected
-
-  # see http://www.agilereasoning.com/2011/04/23/side-efffects-of-rails-security-fix/
-  def handle_unverified_request
-    raise ActionController::InvalidAuthenticityToken
-  end
 end
