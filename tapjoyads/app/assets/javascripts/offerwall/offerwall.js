@@ -12,6 +12,7 @@
       objectPrototype = Object.prototype,
       toString = objectPrototype.toString,
       slice = arrayPrototype.slice,
+      limit = 25;
       start = 25,
       url = fetchURL;
 
@@ -313,15 +314,19 @@
       $.loader.style.display = 'block';
 
       $.ajax({
-        url: url + '&limit=50&start=' + start,
+        url: url + '&limit='+ limit +'&start=' + start,
         dataType: 'json',
         timeout: 15000,
         success: function(data, status){
           $.loader.style.display = 'none';
-
-        if(data.MoreDataAvailable){
+          if(data.offers.length > 0){
             $.load(data.offers);
-            start = start + 25;
+            start = start + limit;
+            if (data.records == 0) {
+              try {
+                $.loadMore.parentNode.style.display = 'none';
+              }catch(err){}
+            }
           }else{
             if($.loadMore)
               document.removeChild($.loadMore);
