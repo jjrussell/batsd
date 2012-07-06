@@ -8,8 +8,11 @@ class Games::Social::SocialController < GamesController
 
   before_filter :require_gamer
   before_filter :validate_recipients, :only => [ :send_email_invites ]
-  before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :get_twitter_friends ]
+  before_filter :twitter_authenticate, :only => [ :send_twitter_invites, :invite_twitter_friends ]
   before_filter :offline_facebook_authenticate, :only => :connect_facebook_account
+  before_filter :set_show_nav_bar_quad_menu
+  before_filter :set_exclude_social_from_submenu
+
 
   def invites
     if current_gamer.twitter_id.blank?
@@ -36,6 +39,9 @@ class Games::Social::SocialController < GamesController
 
   def connect_facebook_account
     flash[:notice] = t 'text.games.connected_to_facebook'
+    Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => current_gamer.facebook_id }).each do |gamer|
+      gamer.gamer_profile.dissociate_account!(Invitation::FACEBOOK) if gamer.id != current_gamer.id
+    end
     redirect_to games_social_root_path
   end
 
@@ -79,25 +85,6 @@ class Games::Social::SocialController < GamesController
     @page_size = 25
   end
 
-  def get_twitter_friends
-    twitter_friends = Twitter.follower_ids.ids.map do |id|
-      Twitter.user(id)
-    end
-
-    @twitter_friends = twitter_friends.map do |friend|
-      {
-        :social_id => friend.id,
-        :name      => friend.name,
-        :image_url => friend.profile_image_url_https,
-        :sent      => is_sent?(Invitation::TWITTER, friend.id)
-      }
-    end.sort_by do |friend|
-      friend[:name].downcase
-    end
-
-    render :json => {:friends => @twitter_friends, :start => 0, :selectedFriends => [], :pageSize => params[:pageSize]}, :callback => params[:callback]
-  end
-
   def send_twitter_invites
     friends = params[:friend_selected].split(',')
 
@@ -117,10 +104,11 @@ class Games::Social::SocialController < GamesController
         else
           invitation = current_gamer.invitation_for(friend_id, Invitation::TWITTER)
 
-          if invitation.pending?
-            referrer_value = params[:advertiser_app_id] == "null" ? invitation.encrypted_referral_id : invitation.encrypted_referral_id(params[:advertiser_app_id])
-            link = games_login_url :referrer => referrer_value
-            link = "www.tapjoy.com/login?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
+          if invitation.pending?            
+            app_id = params[:advertiser_app_id] == "null" ? nil : params[:advertiser_app_id]
+            referrer_value = invitation.encrypted_referral_id(app_id)
+            link = new_games_gamer_url(:referrer => referrer_value)
+            link = "http://www.tapjoy.com/gamer/new?referrer=#{referrer_value}" if Rails.env != 'production' # we need this because twitter cannot recognize IP addr as a valid url
 
             name = Twitter.user(current_gamer.twitter_id.to_i).screen_name
             cookies[:twitter_short_url_len] ||= {

@@ -7,6 +7,14 @@ module GetOffersHelper
     "/get_offers?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
+  def get_next_link_json_redesign
+    return nil if @more_data_available < 1
+    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params['json'] = "1"
+    tmp_params['redesign'] = 'true'
+    "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
+  end
+
   def get_currency_link(currency)
     tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
     tmp_params['currency_id'] = currency.id
@@ -14,7 +22,7 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_click_url(offer)
+  def get_click_url(offer, options = {})
     click_url = offer.click_url(
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
@@ -31,7 +39,11 @@ module GetOffersHelper
       :library_version    => params[:library_version],
       :gamer_id           => params[:gamer_id],
       :os_version         => params[:os_version],
-      :mac_address        => params[:mac_address])
+      :mac_address        => params[:mac_address],
+      :device_type        => params[:device_type],
+      :offerwall_rank     => options.delete(:offerwall_rank) { nil },
+      :view_id            => options.delete(:view_id)        { nil }
+      )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
       if @publisher_app.platform == 'windows'

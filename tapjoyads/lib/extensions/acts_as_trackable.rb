@@ -95,10 +95,14 @@ module HasTrackingOffers
   module InstanceMethods
     def tracking_item=(tracking_item)
       if tracking_item.present?
-        self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self)
+        options = tracking_item_options(tracking_item) || {}
+        self.tracking_offer = tracking_item.find_or_build_tracking_offer_for(self, options)
       else
         self.tracking_offer = nil
       end
+    end
+
+    def tracking_item_options(tracking_item)
     end
 
     def tracking_source_offer=(tracking_source_offer)

@@ -1,105 +1,75 @@
-- if error_message_on(@gamer_session, :password).present? || error_message_on(@gamer_session, :email).present?
-  - @login_form_class_name = "show"
-  - content_for :page_javascript do
-    :plain
-      $(".form-error").css({opacity: '1', visibility: 'visible !important'});
+= render '/games/shared/login_form', :gamer_session => @gamer_session
+#mainsection
+  #content
+    #wrapper
+      .wrapper
+        #body-title
+          %h4.museo.center
+            = t('text.games.unlock_mobile_joy')
+          %span.center.gill
+            = t('text.games.about_body')
+        #body.main
+          #tickets.tickets
+            %img{ :src => BLANK_IMAGE }
+          #mobilejoy.mobile-joy
+            %img{ :src => BLANK_IMAGE }
+          #share.share
+            %img{ :src => BLANK_IMAGE }
+        #labels
+          %span= t('text.games.earn_rewards')
+          %span= t('text.games.find_new_apps')
+          %span= t('text.games.join_the_community')
+        .gradient-backdrop
 
-= render '/games/shared/login_form', :gamer_session => @gamer_session, :login_form_class_name => @login_form_class_name
-
-#content
-  #wrapper
-    .wrapper
-      #body-title
-        %h4.museo.center
-          = t('text.games.unlock_mobile_joy')
-        %span.center.gill
-          = t('text.games.about_body')
-      #body.main
-        #tickets.tickets
-          %img{ :src => BLANK_IMAGE }
-        #mobilejoy.mobile-joy
-          %img{ :src => BLANK_IMAGE }
-        #share.share
-          %img{ :src => BLANK_IMAGE }
-      #labels
-        %span= t('text.games.earn_rewards')
-        %span= t('text.games.find_new_apps')
-        %span= t('text.games.join_the_community')
-      .gradient-backdrop
-
-#favorites
-  .slide
-    .title-text
-      %h4.museo= t('text.games.unlock_mobile_joy')
-    .mobilejoy
-      %img{ :src => BLANK_IMAGE }
-  .slide
-    .title-text.mt20.mb10
-      %h4.museo= t('text.games.earn_rewards')
-    .earnrewards
-      %img{ :src => BLANK_IMAGE }
-    .description-text
-      = t('text.games.earning_rewards')
-  .slide
-    .title-text.mt20.mb20
-      %h4.museo= t('text.games.find_new_apps')
-    .findapps
-      %img{ :src => BLANK_IMAGE }
-    .description-text.mt20
-      = t('text.games.recommend_apps')
-  .slide
-    .title-text.mt20.mb10
-      %h4.museo= t('text.games.join_the_community')
-    .sharefriends
-      %img{ :src => BLANK_IMAGE }
-    .description-text
-      = t('text.games.join_the_community_blurb')
-
-#pagingContainer
-  #paging
-
-#getting-started
-  .wrapper
-    .content-box
-      .left
-        .container.mt15
-          .left
-            %span.text.started
-              = t('text.games.start_discovering')
-        .container
-          .left
-            %span.text.small
-              = t('text.games.or_learn_more')
-            %span#arrow.darrow.l10
-              %img{ :src => BLANK_IMAGE }
-      .left
-        = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer])) do
-          %span{ :class => 'signup', :id => 'signup' }
-            = t('text.shared.sign_up')
-
-#benefits
-  .wrapper
-    .left.box
-      .collect.center
+  #favorites
+    .slide
+      .title-text
+        %h4.museo= t('text.games.unlock_mobile_joy')
+      .mobilejoy
         %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.earn_rewards')
-      %p
+    .slide
+      .title-text.mt20.mb10
+        %h4.museo= t('text.games.earn_rewards')
+      .earnrewards
+        %img{ :src => BLANK_IMAGE }
+      .description-text
         = t('text.games.earning_rewards')
-    .left.box
-      .findapps.center
+    .slide
+      .title-text.mt20.mb20
+        %h4.museo= t('text.games.find_new_apps')
+      .findapps
         %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.find_new_apps')
-      %p
+      .description-text.mt20
         = t('text.games.recommend_apps')
-    .left.box
-      .sharefriends.center
+    .slide
+      .title-text.mt20.mb10
+        %h4.museo= t('text.games.join_the_community')
+      .sharefriends
         %img{ :src => BLANK_IMAGE }
-      %h6.mt20
-        = t('text.games.join_the_community')
-      %p
+      .description-text
         = t('text.games.join_the_community_blurb')
+
+  #pagingContainer
+    #paging
+
+  #getting-started
+    .wrapper
+      .content-box
+        .left
+          .container.mt15
+            .left
+              %span.text.started
+                = t('text.games.start_discovering')
+          .container
+            .left
+              %span.text.small
+                = t('text.games.or_learn_more')
+              %span#arrow.darrow.l10
+                %img{ :src => BLANK_IMAGE }
+        .left
+          = link_to(new_games_gamer_path(:data => params[:data], :referrer => params[:referrer], :src => params[:src])) do
+            %span{ :class => 'signup', :id => 'signup' }
+              = t('text.shared.sign_up')
 
 - content_for :page_head do
   %meta{ :name => 'description', :content => t('text.games.meta_description') }

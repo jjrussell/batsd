@@ -1,7 +1,7 @@
 Tapjoyad::Application.routes.draw do
-  match 'healthz' => 'healthz#index'
   namespace :job do
-    match 'internal_update_cloudwatch_rpm(/index)' => 'internal_update_cloudwatch_rpm#index'
+    match 'master_update_cloudwatch_rpm(/index)' => 'master_update_cloudwatch_rpm#index'
+    match 'master_cache_optimized_offers(/index)' => 'master_cache_optimized_offers#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'
     match 'master_android_app_ranks(/index)' => 'master_android_app_ranks#index'
     match 'master_android_market_format(/index)' => 'master_android_market_format#index'
@@ -17,6 +17,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_delete_gamers(/index)' => 'master_delete_gamers#index'
     match 'master_external_publishers/cache' => 'master_external_publishers#cache'
     match 'master_external_publishers/populate_potential' => 'master_external_publishers#populate_potential'
+    match 'master_failed_sqs_writes(/index)' => 'master_failed_sqs_writes#index'
     match 'master_get_store_info(/index)' => 'master_get_store_info#index'
     match 'master_grab_disabled_popular_offers(/index)' => 'master_grab_disab#index'
     match 'master_group_daily_stats(/index)' => 'master_group_daily_stats#index'
@@ -79,4 +80,10 @@ Tapjoyad::Application.routes.draw do
     match 'queue_update_papaya_user_count(/index)' => 'queue_update_papaya_user_count#index'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
+
+  match 'statusz/index' => 'statusz#index'
+  match 'statusz/queue_check' => 'statusz#queue_check'
+  match 'statusz/slave_db_check' => 'statusz#slave_db_check'
+  match 'statusz/memcached_check' => 'statusz#memcached_check'
+  match 'statusz/master_healthz' => 'statusz#master_healthz'
 end

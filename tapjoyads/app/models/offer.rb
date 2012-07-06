@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::UrlGeneration
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
+  include Offer::Optimization
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -17,6 +18,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer DeeplinkOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -43,7 +45,8 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
-  OFFER_LIST_EXCLUDED_COLUMNS = %w( active
+  OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
+                                    active
                                     allow_negative_balance
                                     created_at
                                     daily_budget
@@ -101,6 +104,7 @@ class Offer < ActiveRecord::Base
   belongs_to :reseller
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
+  belongs_to :generic_offer, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -139,13 +143,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, 'is not valid JSON')
     end
   end
-  validates_each :publisher_app_whitelist, :allow_blank => true do |record, attribute, value|
-    if record.publisher_app_whitelist_changed?
-      value.split(';').each do |app_id|
-        record.errors.add(attribute, "contains an unknown app id: #{app_id}") if App.find_by_id(app_id).nil?
-      end
-    end
-  end
+  validates :publisher_app_whitelist, :id_list => {:of => App}, :allow_blank => true
   validates_each :payment_range_low do |record, attribute, value|
     if record.payment_range_low.present?
       record.errors.add(attribute, "must equal payment") if value != record.payment
@@ -170,7 +168,7 @@ class Offer < ActiveRecord::Base
   validate :bid_within_range
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
-      record.get_device_types(true)
+      record.get_device_types()
       record.errors.add(attribute, "can only be enabled for Android or iOS offers") unless record.get_platform(true) == 'Android'|| record.get_platform(true) == 'iOS'
       record.errors.add(attribute, "cannot be enabled for pay-per-click offers") if record.pay_per_click?
       record.errors.add(attribute, "can only be enabled for 'App' offers") unless record.item_type == 'App'
@@ -200,7 +198,19 @@ class Offer < ActiveRecord::Base
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
 
-  scope :enabled_offers, :joins => :partner, :readonly => false, :conditions => "tapjoy_enabled = true AND user_enabled = true AND item_type != 'RatingOffer' AND item_type != 'ReengagementOffer' AND ((payment > 0 AND #{Partner.quoted_table_name}.balance > payment) OR (payment = 0 AND reward_value > 0)) AND tracking_for_id IS NULL"
+  ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
+  scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
+  scope :enabled_by_user, :conditions => { :user_enabled => true }
+  scope :with_allowed_types, :conditions => [ 'item_type not in (?)', ENABLED_OFFER_TYPES ]
+  scope :with_fund, {
+    :joins => :partner,
+    :conditions => '(payment > 0 AND partners.balance > payment) OR (payment = 0 AND reward_value > 0)'
+  }
+  scope :not_tracking, :conditions => { :tracking_for_id => nil }
+  def self.enabled_offers
+    not_tracking.with_fund.with_allowed_types.enabled_by_user.enabled_by_tapjoy.scoped(:readonly => false)
+  end
+
   scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
   scope :by_device, lambda { |platform| { :conditions => ["offers.device_types LIKE ?", "%#{platform}%" ] } }
   scope :for_offer_list, :select => OFFER_LIST_REQUIRED_COLUMNS
@@ -216,8 +226,8 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
-  scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
+  scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
@@ -235,17 +245,16 @@ class Offer < ActiveRecord::Base
     :conditions => "#{Offer.quoted_table_name}.item_type = 'ActionOffer' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
 
-  delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :to => :partner, :prefix => true
+  delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :use_server_whitelist?, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name
+  delegate :trigger_action, :to => :generic_offer, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action
 
   alias_method :events, :offer_events
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
     :approved_sources, :carriers, :cities
-  memoize :get_device_types, :get_screen_layout_sizes, :get_countries, :get_dma_codes,
-    :get_regions, :get_approved_sources, :get_carriers, :get_cities
 
   def clone
     return super if new_record?
@@ -275,6 +284,11 @@ class Offer < ActiveRecord::Base
     end
   end
   memoize :countries_blacklist
+
+  def all_blacklisted?
+    whitelist = get_countries
+    whitelist.present? && (whitelist - countries_blacklist).blank?
+  end
 
   def find_associated_offers
     Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
@@ -362,8 +376,12 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
 
+  def video_offer?
+    item_type == 'VideoOffer'
+  end
+
   def video_icon_url(options = {})
-    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+    if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
         object.exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
@@ -399,7 +417,7 @@ class Offer < ActiveRecord::Base
 
     return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
 
-    if item_type == 'VideoOffer'
+    if video_offer?
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
       corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
       corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
@@ -484,7 +502,7 @@ class Offer < ActiveRecord::Base
 
   def wrong_platform?
     if ['App', 'ActionOffer'].include?(item_type)
-      App::PLATFORMS.index(get_platform) != item.platform
+      App::PLATFORMS.key(get_platform) != item.platform
     end
   end
 
@@ -697,8 +715,16 @@ class Offer < ActiveRecord::Base
   end
 
   def update_video_button_tracking_offers
-    return unless item_type == 'VideoOffer'
+    return unless video_offer?
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
+  end
+
+  # We want a consistent "app id" to report to partners/3rd parties,
+  # but we don't want to reveal internal IDs. We also want to make
+  # the values unique between partners so that no 'collusion' can
+  # take place.
+  def source_token(publisher_app_id)
+    ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
   end
 
   private
@@ -714,8 +740,8 @@ class Offer < ActiveRecord::Base
       end
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
-    elsif item_type == 'VideoOffer'
-      4
+    elsif video_offer?
+      2
     else
       0
     end
@@ -723,10 +749,6 @@ class Offer < ActiveRecord::Base
 
   def is_test_device?(currency, device)
     currency.get_test_device_ids.include?(device.id)
-  end
-
-  def is_test_video_offer?(type)
-    type == 'TestVideoOffer'
   end
 
   def cleanup_url

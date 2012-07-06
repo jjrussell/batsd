@@ -5,8 +5,8 @@ describe Dashboard::Tools::PayoutsController do
 
   before :each do
     activate_authlogic
-    @user = Factory(:admin)
-    @partner = Factory(:partner, :users => [@user])
+    @user = FactoryGirl.create(:admin)
+    @partner = FactoryGirl.create(:partner, :users => [@user])
     login_as(@user)
   end
 
@@ -27,21 +27,21 @@ describe Dashboard::Tools::PayoutsController do
 
     context 'when payout manager' do
       before :each do
-        @user = Factory(:payout_manager_user)
-        @partner = Factory(:partner, :users => [@user])
+        @user = FactoryGirl.create(:payout_manager_user)
+        @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
-        Partner.stubs(:find).with(@partner.id).returns(@partner)
+        Partner.stub(:find).with(@partner.id).and_return(@partner)
       end
 
       context 'when partner is confirmed' do
         it 'succeeds' do
-          @partner.stubs(:confirm_for_payout).returns(true)
+          @partner.stub(:confirm_for_payout).and_return(true)
           post(:confirm_payouts, :partner_id => @partner.id)
           response.should be_success
         end
 
         it 'confirms the partner' do
-          @partner.expects(:confirm_for_payout).once
+          @partner.should_receive(:confirm_for_payout).once
           post(:confirm_payouts, :partner_id => @partner.id)
         end
       end
@@ -51,8 +51,8 @@ describe Dashboard::Tools::PayoutsController do
   describe '#create' do
     context 'when a payout manager' do
       before :each do
-        @user = Factory(:payout_manager_user)
-        @partner = Factory(:partner, :users => [@user])
+        @user = FactoryGirl.create(:payout_manager_user)
+        @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
       end
 
@@ -71,11 +71,11 @@ describe Dashboard::Tools::PayoutsController do
 
       context 'when payout not saved properly' do
         before :each do
-          payout = Factory(:payout, :partner => @partner)
-          payout.stubs(:save).returns(false)
+          payout = FactoryGirl.create(:payout, :partner => @partner)
+          payout.stub(:save).and_return(false)
           payouts = mock('build',:build => payout)
-          @partner.stubs(:payouts).returns(payouts)
-          Partner.stubs(:find).with('faux').returns(@partner)
+          @partner.stub(:payouts).and_return(payouts)
+          Partner.stub(:find).with('faux').and_return(@partner)
         end
 
         it 'will fail' do

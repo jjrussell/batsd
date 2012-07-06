@@ -135,6 +135,14 @@ rvm install 1.8.7
 rvm use 1.8.7 --default
 ```
 
+Sometimes there are issues with this with readline not working correctly. If
+you're having trouble, try this:
+
+```
+rvm pkg install readline
+rvm reinstall 1.8.7 -C --with-readline-dir=$rvm_path/usr
+```
+
 Install MySQL
 -------------
 
@@ -158,23 +166,13 @@ brew install memcached
 Follow the post-install directions. (Type `brew info mysql` to see them again)
 
 
-Copy local config files
------------------------
+Setup repo
+----------
+
+This adds the GeoIP database and puts in the local configuration yaml files.
 
 ```
-cd tapjoyserver/tapjoyads
-cp config/newrelic-test.yml config/newrelic.yml
-cp config/database-default.yml config/database.yml
-cp config/local-default.yml config/local.yml
-```
-
-Download GeoIP database
------------------------
-
-Download GeoIP database, unzip it and move it to the 
-
-```
-curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > data/GeoIPCity.dat
+./setup_repo.sh
 ```
 
 Install required gems
@@ -232,7 +230,7 @@ Set git pre-commit hook to run
 The pre-commit hook runs before any git commit. It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
 
 ```
-ln -s tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
+ln -s tapjoyserver/.pre-commit tapjoyserver/.git/hooks/
 ```
 
 .rvmrc file

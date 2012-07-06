@@ -1,5 +1,5 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
-- @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
+- @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn/#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
 
 - unless @message.blank?
   #top_box
@@ -32,12 +32,12 @@
 #offers.box
   - @offer_list.each_with_index do |offer, index|
     - link_class = index == 0 ? 'offer first' : index == @offer_list.size - 1 ? 'offer last' : 'offer'
-    - link_class << ' video' if offer.item_type == 'VideoOffer'
+    - link_class << ' video' if offer.video_offer?
     - if @for_preview
       - click_url = '#'
       - click_options = { :onclick => 'return false;', :style => 'width: 320px; height: 76px; border: 1px solid #000; cursor: default;' }
     - else
-      - click_url = get_click_url(offer)
+      - click_url = get_click_url(offer, :offerwall_rank => (index + 1))
       - if @show_wifi_only && offer.wifi_only?
         - click_options = { :onclick => "return wifiPopUp(this);" }
       - else
@@ -48,7 +48,7 @@
           .cost
             = visual_cost(offer)
         .icon
-          - if offer.item_type == 'VideoOffer'
+          - if offer.video_offer?
             .video_icon{:style => "background-image: url(" << offer.video_icon_url << ")"}
               .play
           - else

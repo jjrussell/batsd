@@ -55,11 +55,11 @@ class SyslogMessage
   self.define_attr :ip_address
   self.define_attr :geoip_country
 
-  def initialize(options = {})
+  def initialize(options = {}, error_if_nonempty=true)
     @attributes = {}
     @id         = options.delete(:id)   || UUIDTools::UUID.random_create.to_s
     self.time   = options.delete(:time) || Time.zone.now
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    raise "Unknown options #{options.keys.join(', ')}" if error_if_nonempty && options.present?
   end
 
   def replace_path(replacement)

@@ -25,7 +25,7 @@ describe App do
 
   context 'An App' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
     end
 
     it 'does not list North Korea as a possible appstore country' do
@@ -35,7 +35,7 @@ describe App do
 
   describe '#can_have_new_currency?' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
     end
 
     context 'without currencies' do
@@ -46,8 +46,8 @@ describe App do
 
     context 'without currency that has special callback' do
       it 'returns true' do
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
-        Factory(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
+        FactoryGirl.create(:currency, :app_id => @app.id, :callback_url => 'http://foo.com')
+        FactoryGirl.create(:currency, :app_id => @app.id, :callback_url => 'http://bar.com')
         @app.should be_can_have_new_currency
       end
     end
@@ -55,7 +55,7 @@ describe App do
     context 'with currency that has special callback' do
       it 'returns false' do
         special_url = Currency::SPECIAL_CALLBACK_URLS.sample
-        Factory(:currency, :app_id => @app.id, :callback_url => special_url)
+        FactoryGirl.create(:currency, :app_id => @app.id, :callback_url => special_url)
         @app.should_not be_can_have_new_currency
       end
     end
@@ -63,7 +63,7 @@ describe App do
 
   describe '#test_offer' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @test_offer = @app.test_offer
     end
 
@@ -76,7 +76,7 @@ describe App do
 
   describe '#test_video_offer' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @test_video_offer = @app.test_video_offer
       @test_video_offer_primary_offer = @test_video_offer.primary_offer
     end
@@ -95,7 +95,7 @@ describe App do
 
   context 'with Offers' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @offer = @app.primary_offer
     end
 
@@ -128,7 +128,7 @@ describe App do
 
   context 'with Action Offers' do
     before :each do
-      @action_offer = Factory(:action_offer)
+      @action_offer = FactoryGirl.create(:action_offer)
       @app = @action_offer.app
     end
 
@@ -158,7 +158,7 @@ describe App do
 
   context 'with a Non-Rewarded Featured Offer' do
     before :each do
-      @app = Factory :app
+      @app = FactoryGirl.create :app
       @new_offer = @app.primary_offer.create_non_rewarded_featured_clone
       @app.reload
     end
@@ -182,7 +182,7 @@ describe App do
 
   context 'with a Rewarded Featured Offer' do
     before :each do
-      @app = Factory :app
+      @app = FactoryGirl.create :app
       @new_offer = @app.primary_offer.create_rewarded_featured_clone
       @app.reload
     end
@@ -206,7 +206,7 @@ describe App do
 
   context 'with a Non-Rewarded Offer' do
     before :each do
-      @app = Factory :app
+      @app = FactoryGirl.create :app
       @new_offer = @app.primary_offer.create_non_rewarded_clone
       @app.reload
     end
@@ -231,7 +231,7 @@ describe App do
   describe '#reengagement_campaign' do
     context 'without any reengagement offers' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
       end
 
       it 'returns an empty list' do
@@ -241,7 +241,7 @@ describe App do
 
     context 'with a full reengagement campaign' do
       before :each do
-        currency = Factory(:currency)
+        currency = FactoryGirl.create(:currency)
         @app = currency.app
         5.times do
           offer = @app.build_reengagement_offer(
@@ -263,7 +263,7 @@ describe App do
   describe '#enable_reengagement_campaign!' do
     context 'without any reengagement offers' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
       end
 
       it 'does not change self.reengagement_campaign_enabled' do
@@ -276,7 +276,7 @@ describe App do
 
     context 'with a full reengagement campaign' do
       before :each do
-        currency = Factory(:currency)
+        currency = FactoryGirl.create(:currency)
         @app = currency.app
         5.times do
           @app.build_reengagement_offer(
@@ -302,7 +302,7 @@ describe App do
   describe '#disable_reengagement_campaign!' do
     context 'without any reengagement offers' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
       end
 
       it 'does not change self.reengagement_campaign_enabled' do
@@ -315,7 +315,7 @@ describe App do
 
     context 'with a full reengagement campaign' do
       before :each do
-        currency = Factory(:currency)
+        currency = FactoryGirl.create(:currency)
         @app = currency.app
         5.times do
           @app.build_reengagement_offer(
@@ -341,7 +341,7 @@ describe App do
 
   describe '#build_reengagement_offer' do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
     end
 
     it 'builds a new reengagement offer' do
@@ -354,7 +354,7 @@ describe App do
   describe '#reengagement_campaign_from_cache' do
     context 'without any reengagement offers' do
       before :each do
-        @app = Factory(:app)
+        @app = FactoryGirl.create(:app)
       end
 
       it 'returns an empty list' do
@@ -364,7 +364,7 @@ describe App do
 
     context 'with a full reengagement campaign' do
       before :each do
-        currency = Factory(:currency)
+        currency = FactoryGirl.create(:currency)
         @app = currency.app
         5.times do
           @app.build_reengagement_offer(
@@ -387,11 +387,48 @@ describe App do
   describe '#dashboard_app_url' do
     include Rails.application.routes.url_helpers
     before :each do
-      @app = Factory :app
+      @app = FactoryGirl.create :app
     end
 
     it 'matches URL for Rails app_url helper' do
       @app.dashboard_app_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@app.id}"
+    end
+  end
+
+
+  describe '#os_versions' do
+    before :each do
+      @app = FactoryGirl.create :app
+    end
+
+    context 'android' do
+      before :each do
+        @app.platform = 'android'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0 )).should be_empty
+      end
+    end
+
+    context 'iphone' do
+      before :each do
+        @app.platform = 'iphone'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 2.0 2.1 2.2 3.0 3.1 3.2 4.0 4.1 4.2 4.3 5.0 5.1 6.0 )).should be_empty
+      end
+    end
+
+    context 'windows' do
+      before :each do
+        @app.platform = 'windows'
+      end
+
+      it 'has available versions' do
+        (@app.os_versions - %w( 7.0 )).should be_empty
+      end
     end
   end
 end

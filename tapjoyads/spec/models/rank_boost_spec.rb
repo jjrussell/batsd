@@ -13,7 +13,7 @@ describe RankBoost do
   end
 
   before :each do
-    @rank_boost = Factory(:rank_boost)
+    @rank_boost = FactoryGirl.create(:rank_boost)
   end
 
   it "has its offer's partner_id" do
@@ -22,7 +22,7 @@ describe RankBoost do
 
   context "starting before now and ending after now" do
     before :each do
-      @rank_boost = Factory(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now)
+      @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now)
     end
 
     it "is active" do

@@ -64,7 +64,7 @@ module Offer::Ranking
   end
 
   def percentile_type
-    return Offer::VIDEO_OFFER_TYPE if item_type == 'VideoOffer'
+    return Offer::VIDEO_OFFER_TYPE if video_offer?
 
     if featured?
       if rewarded?

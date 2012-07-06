@@ -1,6 +1,7 @@
 class Games::GamerProfilesController < GamesController
 
   before_filter :set_profile, :only => [ :show, :edit, :update, :update_birthdate, :update_prefs, :dissociate_account ]
+  before_filter :set_show_nav_bar_quad_menu
 
   def update
     @gamer_profile.safe_update_attributes(params[:gamer_profile], [ :name, :nickname, :gender, :city, :country, :postal_code, :favorite_game, :favorite_category ])
@@ -32,6 +33,7 @@ class Games::GamerProfilesController < GamesController
     channel = params[:account_type].present? ? params[:account_type].to_i : Invitation::FACEBOOK
     begin
       @gamer_profile.dissociate_account!(channel)
+      @tjm_request.replace_path("#{@tjm_request.path}_#{Invitation::CHANNEL[channel]}")
       redirect_to games_social_root_path(:fb_logout => 'true')
     rescue
       flash[:error] = t('text.games.failed_to_change_linked')
@@ -42,7 +44,7 @@ class Games::GamerProfilesController < GamesController
   def update_prefs
     @gamer_profile.allow_marketing_emails = params[:gamer_profile][:allow_marketing_emails]
     if @gamer_profile.save
-      redirect_to edit_games_gamer_path
+      redirect_to edit_games_gamer_profile_path
     else
       flash[:error] = 'Error updating preferences'
       redirect_to :controller => '/games/gamers', :action => :prefs

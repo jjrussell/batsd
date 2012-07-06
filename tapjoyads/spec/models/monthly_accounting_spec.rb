@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MonthlyAccounting do
-  subject { Factory(:monthly_accounting) }
+  subject { FactoryGirl.create(:monthly_accounting) }
   describe '.belongs_to' do
     it { should belong_to(:partner) }
   end
@@ -16,14 +16,14 @@ describe MonthlyAccounting do
     before :each do
       @today = Time.zone.today
       @now = Time.zone.now
-      @monthly_accounting = Factory(:monthly_accounting)
+      @monthly_accounting = FactoryGirl.create(:monthly_accounting)
     end
 
     context 'with orders and payouts' do
       before :each do
         @partner = @monthly_accounting.partner
-        Factory(:order, :partner => @partner, :amount => 50)
-        Factory(:payout, :partner => @partner, :amount => -51)
+        FactoryGirl.create(:order, :partner => @partner, :amount => 50)
+        FactoryGirl.create(:payout, :partner => @partner, :amount => -51)
       end
 
       it 'calculates totals' do
@@ -44,7 +44,7 @@ describe MonthlyAccounting do
     end
 
     it 'is ordered by dates' do
-      ma_from_last_month = Factory(:monthly_accounting, :month => 1.month.ago(@today).month, :year => 1.year.ago(@today).year)
+      ma_from_last_month = FactoryGirl.create(:monthly_accounting, :month => 1.month.ago(@today).month, :year => 1.year.ago(@today).year)
 
       (ma_from_last_month <=> @monthly_accounting).should == -1
       (@monthly_accounting <=> @monthly_accounting).should ==  0

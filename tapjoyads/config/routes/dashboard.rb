@@ -1,9 +1,11 @@
 Tapjoyad::Application.routes.draw do
   root :to => 'dashboard/homepage#index'
+  resources :survey_results, :only => [:new, :create]
 
   [ 'dashboard', '' ].each do |s|
     namespace :dashboard, :as => nil, :path => s do
       root :to => 'homepage#index'
+      match 'team' => 'homepage#team'
       match 'tos-advertiser.html' => 'documents#tos_advertiser'
       match 'tos-publisher.html' => 'documents#tos_publisher'
       match 'publisher-guidelines.html' => 'documents#publisher_guidelines'
@@ -101,6 +103,7 @@ Tapjoyad::Application.routes.draw do
           post :export_aggregate
           get :aggregate
           post :regenerate_api_key
+          post ':id' => 'reporting#export'
         end
         member do
           post :export
@@ -156,6 +159,7 @@ Tapjoyad::Application.routes.draw do
         member do
           get :mail_chimp_info
           get :new_transfer
+          get :new_dev_credit
           post :set_tapjoy_sponsored
           post :make_current
           post :set_unconfirmed_for_payout
@@ -163,6 +167,7 @@ Tapjoyad::Application.routes.draw do
           get :reporting
           post :create_transfer
           post :stop_managing
+          post :create_dev_credit
         end
         resources :offer_discounts, :only => [:index, :new, :create] do
 
@@ -221,6 +226,15 @@ Tapjoyad::Application.routes.draw do
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
             post :delete
+          end
+        end
+        resources :currency_approvals, :controller => :approvals, :defaults => { :type => 'currency' }, :only => [:index] do
+          collection do
+            get :history
+            get :mine
+          end
+          member do
+            post :approve, :reject, :assign
           end
         end
         resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
@@ -284,6 +298,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :offer_lists, :only => [:index]
+        resources :optimized_offer_lists, :only => [:index]
 
         resources :rank_boosts, :except => [:show, :destroy] do
           member do
@@ -359,6 +374,7 @@ Tapjoyad::Application.routes.draw do
           get :elb_deregister_instance
           get :ec2_reboot_instance
           get :as_terminate_instance
+          get :requests_per_minute
           get :service_stats
           get :elb_status
           get :http_codes

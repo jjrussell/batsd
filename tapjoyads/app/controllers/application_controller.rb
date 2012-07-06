@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
+  before_filter :check_uri if MACHINE_TYPE == 'website'
+  before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
@@ -59,52 +61,38 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def verify_params(required_params, options = {})
+  def verify_params(required_params, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
-      render :text => "missing required params", :status => 400 if render_missing_text
-      return false
-    end
-
-    all_params = true
-    required_params.each do |param|
-      if params[param].blank?
-        all_params = false
-        break
-      end
-    end
-
-    if render_missing_text && !all_params
-      render :text => "missing required params", :status => 400
-    end
-    return all_params
+    param_missing = required_params.any?{ |param| params[param].blank? } || params[:udid] == 'null'
+    render :text => 'missing required params', :status => 400 if render_missing_text && param_missing
+    !param_missing
   end
 
-  def verify_records(required_records, options = {})
+  def verify_records(required_records, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    record_missing = required_records.any?( &:nil? )
+    render :text => 'record not found', :status => 400 if render_missing_text && record_missing
+    !record_missing
+  end
 
-    required_records.each do |record|
-      next unless record.nil?
-
-      render :text => "record not found", :status => 500 if render_missing_text
-      return false
-    end
-    true
+  def force_utc
+    Time.zone = 'UTC'
   end
 
   def set_locale
+    I18n.locale = get_locale || I18n.default_locale
+  end
+
+  # detect the locale info from the params and return the proper one
+  #
+  # @return [String] Locale detected from the language_code param
+  def get_locale
     language_code = params[:language_code]
-    I18n.locale = nil
-    if I18n.available_locales.include?(language_code)
-      I18n.locale = language_code
-    elsif language_code.present? && language_code['-']
-      language_code = language_code.split('-').first
-      if I18n.available_locales.include?(language_code)
-        I18n.locale = language_code
-      end
+    if language_code.present?
+      language_code = language_code.split('-').first if language_code['-']
+      language_code.downcase
     end
   end
 
@@ -114,6 +102,8 @@ class ApplicationController < ActionController::Base
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
+    lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
+    lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
@@ -264,8 +254,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def choose_experiment
-    params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
+  def choose_experiment(experiment)
+    params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end
 
   def decrypt_data_param
@@ -306,5 +296,16 @@ class ApplicationController < ActionController::Base
 
   def os_version
     @os_version ||= HeaderParser.os_version(request.user_agent)
+  end
+
+  def check_uri
+    redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
+  end
+
+  protected
+
+  # see http://www.agilereasoning.com/2011/04/23/side-efffects-of-rails-security-fix/
+  def handle_unverified_request
+    raise ActionController::InvalidAuthenticityToken
   end
 end

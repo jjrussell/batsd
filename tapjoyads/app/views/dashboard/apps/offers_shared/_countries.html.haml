@@ -17,13 +17,13 @@
           %li
             .expander.ui-icon.ui-icon-triangle-1-e
             - country_set = @offer.get_countries
-            - all_checked = Set.new(Countries.contintent_code_to_country_codes[continent_code]).subset?(country_set)
-            - none_checked = (Set.new(Countries.contintent_code_to_country_codes[continent_code]) & country_set).empty?
+            - all_checked = Set.new(Countries.continent_code_to_country_codes[continent_code]).subset?(country_set)
+            - none_checked = (Set.new(Countries.continent_code_to_country_codes[continent_code]) & country_set).empty?
             - class_name = (all_checked || none_checked) ? 'continent-label' : 'continent-label some-checked'
             = check_box_tag "continent_#{continent_code}", '1', all_checked, :class => 'continent'
             = label_tag "continent_#{continent_code}", Countries::CONTINENT_CODE_TO_NAME[continent_code], :class => class_name
             %ul.inner.hidden
-              - Countries.contintent_code_to_country_codes[continent_code].each do |country_code|
+              - Countries.continent_code_to_country_codes[continent_code].each do |country_code|
                 %li
                   - checked = country_set.include?(country_code)
                   = check_box_tag "country_#{country_code}", '1', checked, :class => 'country', :country_code => country_code, :country_name => Countries.country_code_to_name[country_code]

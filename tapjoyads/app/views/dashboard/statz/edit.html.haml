@@ -128,6 +128,13 @@
         = error_message_on @offer, :name_suffix
     %tr
       %th
+        = f.label(:account_manager_notes, 'Internal Notes')
+        #help_account_manager_notes.help ?
+      %td
+        = f.text_area(:account_manager_notes)
+        = error_message_on @offer, :account_manager_notes
+    %tr
+      %th
         = f.label(:show_rate)
         #help_show_rate.help ?
       %td
@@ -171,14 +178,14 @@
         = f.label(:device_types)
         #help_device_types.help ?
       %td
-        = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types), {}, :multiple => true)
+        = f.chosen_select(:device_types, options_for_select(Offer::ALL_DEVICES, @offer.get_device_types.to_a), {}, :multiple => true)
         = error_message_on @offer, :device_types
     %tr
       %th
         = f.label(:approved_sources)
         #help_approved_sources.help ?
       %td
-        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources), {}, :multiple => true)
+        = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources.to_a), {}, :multiple => true)
         = error_message_on @offer, :approved_sources
     %tr
       %th
@@ -222,7 +229,7 @@
         %td
           = f.text_field(:overall_budget)
           = error_message_on @offer, :overall_budget
-    - if @offer.item_type == 'VideoOffer'
+    - if @offer.video_offer?
       %tr
         %th
           = f.label(:age_rating)
@@ -273,7 +280,7 @@
           = f.label(:screen_layout_sizes)
           #help_screen_layout_sizes.help ?
         %td
-          = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes), {}, :multiple => true)
+          = f.chosen_select(:screen_layout_sizes, options_for_select(@offer.item.screen_layout_sizes, @offer.get_screen_layout_sizes.to_a), {}, :multiple => true)
           = error_message_on @offer, :screen_layout_sizes
     - if @offer.item_type == 'ActionOffer' || @offer.item_type == 'GenericOffer'
       %tr
@@ -330,6 +337,7 @@
   #help_rewarded_content{ :name => 'Rewarded' } Whether or not the offer rewards the user with currency.
   #help_name_content{ :name => 'Name' } The name of this offer. This is shown to end-users when displaying the ad.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
+  #help_account_manager_notes_content{ :name => 'Internal Notes' } Internal notes, only viewable by tapjoyers.
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807,515]

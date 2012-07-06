@@ -90,11 +90,8 @@ class Dashboard::OffersController < Dashboard::DashboardController
     log_activity(@offer)
 
     @offer.user_enabled = params[:user_enabled]
-    if @offer.save
-      render :nothing => true
-    else
-      render :json => {:error => true}
-    end
+    status = @offer.save ? 200 : 500
+    render :json => '', :status => status
   end
 
   def percentile

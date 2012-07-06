@@ -5,7 +5,7 @@
       activeCls: 'active',
       attr: {},
       borderRadius: 0,
-      click: function(event, ui){},
+      click: Tap.emptyFn,
       clickEvent: Tap.supportsTouch ? 'tap' : 'click',
       container: $(document),
       containerCSS : {},
@@ -20,12 +20,8 @@
       hoverCls: 'hover',
       iconCls: null,
       id: null,
-      mousedown: Tap.EventsMap.start,
-      mouseup: Tap.EventsMap.end,
-      mousemove:  Tap.EventsMap.move,
-      mouseout: Tap.EventsMap.cancel,
       name: null,
-      tap: function(event, ui){},
+      tap: Tap.emptyFn,
       text: '',
       theme: 'tapped',
       transition: 'fade',
@@ -37,8 +33,8 @@
       handleMouseEvents: true,
       target: '',
       textAlign: 'left',
-      toggle: function(event, ui, state){},
-      touch: function(event, ui){},
+      toggle: Tap.emptyFn,
+      touch: Tap.emptyFn,
       type: 'button'
     },
     Carousel: {
@@ -49,6 +45,29 @@
       minHeight: 200,
       moveThreshold: null,
       pagerContainer: null
+    },
+    DatePicker: {
+      title: 'Calendar',
+      dateOutput: 'dddd, M d, yyyy', // can be any date format (dddd, M d, yyyy - mm-dd-yyyy - etc...). We save selections in MM-DD-YYYY format via hidden field as default. Format is for presentation.
+      hiddenOutput: 'mm/dd/yyyy', // what we look for on the server-side
+      months: {
+        long: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        short: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      },
+      days: {
+        long : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+        short: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      },
+      yearRange: 81,
+      yearSlots: 16,
+      tabs: ['Month', 'Day', 'Year'],
+      templates: {
+        datepicker: '<div class="ui-joy-datepicker-title"><h1>{0}</h1></div><div class="ui-joy-datepicker-tabs"></div><div class="ui-joy-datepicker-selections"><div class="ui-joy-datepicker-months collection"></div><div class="ui-joy-datepicker-days hidden collection"></div><div class="ui-joy-datepicker-years hidden collection"></div></div><div class="ui-joy-datepicker-submit"><button class="disabled">Complete</button></div>',
+        tab: '<div class="ui-joy-datepicker-tab"><a href="javascript:void(0);">{0}</a></div>',
+        month: '<div class="ui-joy-datepicker-month mon{0}" data-month="{0}"><a href="javascript:void(0);">{1}</a></div>',
+        day: '<div class="ui-joy-datepicker-day day{0}" data-day="{0}"><a href="javascript:void(0);">{0}</a></div>',
+        year: '<div class="ui-joy-datepicker-year y{0} {2}" data-year="{1}"><a href="javascript:void(0);">{1}</a></div>'
+      }      
     }
   };
 
@@ -95,8 +114,8 @@
     },
 
     getValue : function(val){
-      for(i = Tap.xtypes.length; i--;){
-        var instance = $.data(this[0], Builder.xtypes[i].toLowerCase());
+      for(var i = Tap.xtypes.length; i--;){
+        var instance = $.data(this[0], Tap.xtypes[i].toLowerCase());
 
         if(instance){
           return instance.config.value || '';
@@ -106,7 +125,7 @@
     },
 
     isHidden : function(){
-      for(i = Tap.xtypes.length; i--;){
+      for(var i = Tap.xtypes.length; i--;){
         var instance = $.data(this[0], Tap.xtypes[i].toLowerCase());
 
         if(instance){
@@ -117,7 +136,7 @@
     },
 
     isDisabled : function(){
-      for(i = Tap.xtypes.length; i--;){
+      for(var i = Tap.xtypes.length; i--;){
         var instance = $.data(this[0], Tap.xtypes[i].toLowerCase());
 
         if(instance){
@@ -130,7 +149,7 @@
     removeComponent : function(){
       return this.each(function(){
 
-        for(i = Tap.xtypes.length; i--;){
+        for(var i = Tap.xtypes.length; i--;){
           var instance = $.data(this, Tap.xtypes[i].toLowerCase());
 
           if(instance){
@@ -155,12 +174,7 @@
     },
 
     Tapified: function(type){
-      var instance = $.data(this[0], type);
-
-      if(instance)
-        return true;
-
-      return false;
+      return $.data(this[0], type) ? true : false;
     }
   });
 })(Tapjoy, jQuery);

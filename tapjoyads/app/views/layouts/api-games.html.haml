@@ -2,18 +2,16 @@
 
 %html{ :class => "#{HeaderParser.device_type(request.headers['user-agent'])} device mobile no-os no-touch no-hd" }
   %head
+    %meta{:content => 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no', :name => 'viewport'}
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
-    %meta{ 'name' => 'viewport', 'content' => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
-    %meta{ 'name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black' }
+    %meta{ :name => 'apple-mobile-web-app-status-bar-style', :content => 'black' }
+    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
 
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
     %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
 
-    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
-
-    = css_tag("api/style_v1")
-    = css_tag("api/style")
+    = css_tag('api/style')
 
     = yield :page_head
 
@@ -23,12 +21,8 @@
 
     :javascript
       window.ENVIRONMENT = "#{Rails.env}";
-    = js_tag "api"
 
     = yield :included_javascripts
 
     %script{ :type => 'text/javascript', :charset => 'utf-8' }
       = yield :page_javascript
-
-    :javascript
-      TJG.blank_img = "#{CLOUDFRONT_URL}/images/blank.png";

@@ -11,7 +11,8 @@
     %span{ :class => 'disabled' } Disabled
   - if permitted_to? :index, :dashboard_tools_payout_freezes
     = link_to '[modify]', tools_payout_freezes_path
-
+= label_tag(:confirm_filter, 'Filter on confirmation status')
+= select_tag('confirm_filter', options_for_select(@filter_options, params[:confirm_filter]))
 - if @start_date.present?
   %h3
     For partners with payout info modified between
@@ -28,7 +29,8 @@
   = link_to 'Filter by payout info modification', '#'
 = form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
   = submit_tag('Export to CSV')
-
+= submit_tag('Print All', :id => :print_all)
+%br
 = label_tag(:q, 'Partner:')
 = text_field_tag(:partners, @partner, :size => '40')
 = submit_tag('Clear Filters', :class => 'clear_filter')
@@ -95,7 +97,7 @@
             &nbsp;
         = render 'shared/payout_confirmations', :partner => partner, :permitted =>  permitted_to?(:confirm_payouts, :dashboard_tools_payouts), :path => confirm_payouts_tools_payouts_path( :partner_id => partner.id, :type => :json)
 
-= will_paginate(@partners)
+= will_paginate(@partners) unless params[:print].present?
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
   :plain
@@ -167,6 +169,24 @@
       $('#partners').focus().autocomplete(options);
       $('input.clear_filter').click(function(){
           window.location ='#{tools_payouts_path}';
+      });
+      $('select#confirm_filter').change(function() {
+        var location = '#{tools_payouts_path}?'
+        location += 'confirm_filter=' + $(this).val();
+        window.location = location;
+      });
+      $('#print_all').click(function() {
+        var url ='#{tools_payouts_path}?print=true';
+        var params = window.location.href.split('?');
+        if(params.length > 1) {
+          url += '&'+params[1];
+        }
+        window.location = url;
+      });
+      $(document).ready(function() {
+        if(#{params[:print].present?}) {
+          window.print();
+        }
       });
     });
 

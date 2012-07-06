@@ -20,7 +20,8 @@ module Offer::ThirdPartyTracking
   end
 
   %w(impression_tracking_urls click_tracking_urls conversion_tracking_urls).each do |method_name|
-    define_method method_name do |*args|
+    class_eval <<-EOS
+    def #{method_name}(*args)
       replace_macros, timestamp = args
 
       self.send("#{method_name}=", []) if super().nil?
@@ -31,20 +32,21 @@ module Offer::ThirdPartyTracking
       urls
     end
 
-    define_method "#{method_name}=" do |urls|
+    def #{method_name}=(urls)
       super(urls.to_a.select(&:present?).map(&:to_s).map(&:strip).uniq)
     end
 
-    define_method "#{method_name}_was" do
+    def #{method_name}_was
       super || []
     end
 
-    define_method "queue_#{method_name.sub(/urls$/, 'requests')}" do |*args|
+    def queue_#{method_name.sub(/urls$/, 'requests')}(*args)
       timestamp = args.shift
-      send(method_name, true, timestamp).each do |url|
+      send("#{method_name}", true, timestamp).each do |url|
         Downloader.queue_get_with_retry(url)
       end
     end
+EOS
   end
 
   def validate_third_party_tracking_urls(attribute, urls)

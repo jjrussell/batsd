@@ -31,9 +31,6 @@ class VideoButton < ActiveRecord::Base
   has_tracking_offers
   delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
 
-  has_tracking_offers
-  delegate :item, :item_id, :item_type, :to => :tracking_offer, :allow_nil => true
-
   def xml_for_offer
     builder = Builder::XmlMarkup.new
     xml = builder.Button do |button|
@@ -41,6 +38,27 @@ class VideoButton < ActiveRecord::Base
       button.tag!("URL", url)
     end
     xml.to_s
+  end
+
+  def reject_device_type?(device, block_rewarded=false)
+    !tracking_offer.get_device_types.include?(device) ||
+      (block_rewarded && rewarded_install?)
+  end
+
+  def rewarded_install?
+    rewarded? && tracking_item.is_a?(App)
+  end
+
+  def tracking_item_options(item)
+    offer = item.primary_offer
+    return nil unless offer.present? && self.rewarded? && offer.rewarded?
+
+    {
+      :bid          => offer.bid,
+      :payment      => offer.payment,
+      :reward_value => offer.reward_value,
+      :rewarded     => true
+    }
   end
 
   private
