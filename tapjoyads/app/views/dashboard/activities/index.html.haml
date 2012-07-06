@@ -14,9 +14,9 @@
   %br
   %div{:style => "padding-top: 3px; padding-bottom: 3px"}
     = label_tag(:start_date)
-    = text_field_tag(:start_date, params[:start_date], :size => 10)
+    = text_field_tag(:start_date, params[:start_date], {:id => 'start_date', :size => 10})
     = label_tag(:end_date)
-    = text_field_tag(:end_date, params[:end_date], :size => 10)
+    = text_field_tag(:end_date, params[:end_date], {:id => 'end_date', :size => 10})
     = label_tag(:object_type)
     = text_field_tag(:object_type, params[:object_type], {:size => 15})
     = label_tag(:field)
@@ -89,6 +89,11 @@
         }
       });
 
+    });
+
+    $(function() {
+      $('#start_date').datepicker();
+      $('#end_date').datepicker();
     });
 
     function setValue(id, value) {
