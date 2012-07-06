@@ -130,6 +130,27 @@
 
     Tap.apply(Tap, {
       version: '1.0',
+      each: function(elements, fn){
+        if($.isArray(elements) || Tapjoy.isNodeList(elements)){
+          for(var i = 0, k = elements.length; i < k; i++){
+            if(fn.call(elements[i], i, elements[i]) === false){
+              return elements;
+            }
+          }
+        }
+        else if(Tapjoy.isObject(elements)){
+          for(var key in elements){
+            if(!elements.hasOwnProperty(key)){
+              continue;
+            }
+
+            if(fn(key, elements[key]) === false){
+              return elements;
+            }
+          }
+        }
+        return elements;
+      },
       extend: function(){
         var target = arguments[0] || {},
             i = 1,
@@ -181,30 +202,18 @@
 
         return target;
       },
-      type: function(value){
 
-        if(!value || value == null)
-          return 'null';
-
-        var type = typeof(value),
-            types = [
-              'undefined',
-              'string',
-              'number',
-              'boolean',
-              'function',
-              'object'
-            ];
-
-        if(type.match(types.join('|'))){
-          return type;
-        }
+      type: function(obj){
+        return !obj || obj == null ? 'null' : toString.call(obj).split(' ').pop().replace(']', '').toLowerCase();
       },
       isArray: function(obj){
         return Tap.type(obj) === 'array';
       },
       isFunction: function(obj){
         return Tap.type(obj) === 'function';
+      },
+      isNodeList: function(obj){
+        return Tap.type(obj) === 'nodelist';
       },
       isNumeric: function(obj){
         return !isNaN(parseFloat(obj)) && isFinite(obj);
@@ -235,9 +244,11 @@
         return array;
       },
 
-      polyfill: function(type, name, method){
+      polyfill: function(reference, method){
 
-        var type = null ? 'array' : type,
+        var pair = reference.split('.'),
+            type = reference ? 'array' : pair[0].toLowerCase(),
+            name = pair[1],
             map = {
               'array': arrayPrototype,
               'string': stringPrototype,
@@ -324,9 +335,45 @@
         }catch(error){}
 
         return query;
-      }      
+      }
     });
 
+    // pub-sub
+    Tap.apply(Tap, {
+      stack: {},
+      publish: function(channel, args){
+        Tap.stack[channel] && Tap.each(Tap.stack[channel], function(){
+          this.apply(Tap, args || []);
+        });
+      },
+      subscribe: function(channel, fn){
+        if(!Tap.stack[channel]){
+          Tap.stack[channel] = [];
+        }
+
+        Tap.stack[channel].push(fn);
+
+        return [channel, fn];
+      },
+      unsubscribe: function(channel, subs){
+        Tap.stack[channel] && Tap.each(Tap.stack[channel], function(index, fn){
+
+          if(subs && subs.length > 0){
+            var fn = this;
+
+            Tap.each(subs, function(){
+              if(this == fn){
+                Tap.stack[channel].splice(index, 1);
+              }
+            });
+          }else{
+            delete Tap.stack[channel];
+          }
+        });
+      }
+    });
+
+    // utilities
     Tap.apply(Tap, {
       emptyFn: function(){},
       browser: {
@@ -425,7 +472,7 @@
     /**
      * Polyfills - Feature support
      */
-    Tap.polyfill('array', 'every', function(fn, scope){
+    Tap.polyfill('array.every', function(fn, scope){
       for(var i = 0, k = this.length; i < k; i++)
         if(!fn.call(scope || window, this[i], i, this)){
           return false;
@@ -433,7 +480,7 @@
       return true;
     });
 
-    Tap.polyfill('array', 'filter', function(fn, scope){
+    Tap.polyfill('array.filter', function(fn, scope){
       var array = [];
 
       for(var i = 0, k = this.length; i < k; i++){
@@ -444,13 +491,13 @@
       return array;
     });
 
-    Tap.polyfill('array', 'forEach', function(fn, scope){
+    Tap.polyfill('array.forEach', function(fn, scope){
       for(var i = 0, k = this.length; i < k; i++){
         fn.call(scope || window, this[i], i, this);
       }
     });
 
-    Tap.polyfill('array', 'indexOf', function(search, start){
+    Tap.polyfill('array.indexOf', function(search, start){
       for(var i = start || 0, k = this.length; i < k; i++){
         if(this[i] === search){
           return i;
@@ -459,7 +506,7 @@
       return -1;
     });
 
-    Tap.polyfill('array', 'map', function(fn, scope){
+    Tap.polyfill('array.map', function(fn, scope){
       var array = new Array(this.length);
 
       for(var i = 0, k = this.length; i < k ; i++){
@@ -470,7 +517,7 @@
       return array;
     });
 
-    Tap.polyfill('string', 'trim', function(){
+    Tap.polyfill('string.trim', function(){
       return this.replace(/^\s+/, '').replace(/\s+$/, '');
     });
 

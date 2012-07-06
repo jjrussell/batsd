@@ -143,13 +143,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, 'is not valid JSON')
     end
   end
-  validates_each :publisher_app_whitelist, :allow_blank => true do |record, attribute, value|
-    if record.publisher_app_whitelist_changed?
-      value.split(';').each do |app_id|
-        record.errors.add(attribute, "contains an unknown app id: #{app_id}") if App.find_by_id(app_id).nil?
-      end
-    end
-  end
+  validates :publisher_app_whitelist, :id_list => {:of => App}, :allow_blank => true
   validates_each :payment_range_low do |record, attribute, value|
     if record.payment_range_low.present?
       record.errors.add(attribute, "must equal payment") if value != record.payment
@@ -237,8 +231,8 @@ class Offer < ActiveRecord::Base
     item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
     { :conditions => ["item_type IN (?)", item_types] }
   }
-  scope :video_offers, :conditions => "item_type = 'VideoOffer'"
-  scope :non_video_offers, :conditions => "item_type != 'VideoOffer'"
+  scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
+  scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
@@ -414,8 +408,12 @@ class Offer < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.item_id}'") > 0
   end
 
+  def video_offer?
+    item_type == 'VideoOffer'
+  end
+
   def video_icon_url(options = {})
-    if item_type == 'VideoOffer' || item_type == 'TestVideoOffer'
+    if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
       begin
         object.exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
@@ -799,7 +797,7 @@ class Offer < ActiveRecord::Base
   end
 
   def update_video_button_tracking_offers
-    return unless item_type == 'VideoOffer'
+    return unless video_offer?
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
@@ -824,7 +822,7 @@ class Offer < ActiveRecord::Base
       end
     elsif item_type == 'ActionOffer'
       is_paid? ? (price * 0.50).round : 10
-    elsif item_type == 'VideoOffer'
+    elsif video_offer?
       2
     else
       0
@@ -833,10 +831,6 @@ class Offer < ActiveRecord::Base
 
   def is_test_device?(currency, device)
     currency.get_test_device_ids.include?(device.id)
-  end
-
-  def is_test_video_offer?(type)
-    type == 'TestVideoOffer'
   end
 
   def cleanup_url

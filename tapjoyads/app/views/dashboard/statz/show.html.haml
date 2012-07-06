@@ -18,7 +18,7 @@
   = link_to('[Edit Offer]', edit_statz_path(@offer.id))
 - if permitted_to?(:edit, :dashboard_tools_generic_offers) && @offer.item_type == 'GenericOffer'
   = link_to('[Edit Generic Offer]', edit_tools_generic_offer_path(@offer.item_id))
-- if permitted_to?(:edit, :dashboard_tools_video_offers) && @offer.item_type == 'VideoOffer'
+- if permitted_to?(:edit, :dashboard_tools_video_offers) && @offer.video_offer?
   = link_to('[Edit Video Offer]', edit_tools_video_offer_path(@offer.item_id))
 - if permitted_to? :last_run_times, :dashboard_statz
   = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
@@ -90,7 +90,7 @@
     = property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
   - if permitted_to?(:edit, :dashboard_statz) && @offer.account_manager_notes.present?
     = property_row('Internal Notes', @offer.account_manager_notes, false)
-  - raw property_row('id', @offer.id + ' - ' + clippy(@offer.id))
+  = property_row('id', @offer.id + ' - ' + clippy(@offer.id))
 
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
@@ -175,7 +175,7 @@
 
 .load-circle= image_tag('load-circle.gif')
 
-- if @offer.item_type == 'VideoOffer'
+- if @offer.video_offer?
   #button_statz
     %h3 Video Buttons
     %ul

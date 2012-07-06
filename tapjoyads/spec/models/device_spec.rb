@@ -70,12 +70,6 @@ describe Device do
       @device.create_identifiers!
     end
 
-    it 'alerts new relic for remapped identifiers' do
-      @device_identifier.udid = 'old_device_udid'
-      DeviceIdentifier.stub(:new).and_return(@device_identifier)
-      Notifier.should_receive(:alert_new_relic).with(RuntimeError, "Overwriting identifier: #{Digest::SHA2.hexdigest(@device.key)} with a udid: #{@device.key} instead of the existing udid: #{@device_identifier.udid}")
-      @device.create_identifiers!
-    end
   end
 
   describe '#handle_sdkless_click!' do

@@ -94,8 +94,9 @@
             if($.endOfTheLine() && !$.fetching){
              $.fetch();
              $.fetched++;
-             if($.fetched === 3){
-               $.loadMore.parentNode.style.display = 'block'; 
+             if($.fetched <= 3){
+               if($.loadMore && $.loadMore.parent)
+                 $.loadMore.parentNode.style.display = 'block';
              }
             }
           }
@@ -246,8 +247,8 @@
      */
     configLayout: function(){
 
-      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>'; 
-        
+      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>';
+
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
       !$.data.showCurrentApp ? $.header.className += ' hide-current-app' : '';
@@ -256,7 +257,7 @@
         $.header.style.display = 'none';
       }
 
-      if($.data.autoload){
+      if($.data.autoload && $.loadMore && $.loadMore.parentNode){
         $.loadMore.parentNode.style.display = 'none';
       }
     },
@@ -398,15 +399,15 @@
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
         item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="' + ($.data.squircles ? 'overlay' : 'rounded') +'"></div><img class="cover" src="' + item.iconURL + '" />';
-        
+
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
-        
+
         li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + $.format($.tpl.offers[0], item) + $.format($.tpl.offers[1], item) + '</a>';
 
         $.offersContainer.appendChild(li);
-        
+
         if(item.wifi.length != 0){
           $.each($.find('.icon', li), function(el){
             el.className += ' mtn';

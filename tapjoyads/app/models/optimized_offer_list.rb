@@ -58,7 +58,7 @@ class OptimizedOfferList
 
       group = 0
       puts "saving #{cache_key} to Memcache"
-      begin        
+      begin
         offers.each_slice(GROUP_SIZE) do |offer_group|
           Mc.distributed_put("#{cache_key}.#{group}", offer_group, false, 1.day)
           group += 1
@@ -71,10 +71,10 @@ class OptimizedOfferList
       # TODO: Cache stuff into S3
       # group = 0
       # puts "saving #{cache_key} to S3"
-      # begin        
+      # begin
       #   offers.each_slice(GROUP_SIZE) do |offer_group|
       #     s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump(offer_group))
-      #     group += 1          
+      #     group += 1
       #   end
       #   puts "wrote #{cache_key} to S3"
       # rescue
@@ -120,6 +120,15 @@ class OptimizedOfferList
 
       { :algorithm => split_key[0], :source => source, :platform => split_key[2],
         :country => split_key[3], :currency_id => split_key[4], :device_type => split_key[5], }
+    end
+
+    def s3_key_for_options(options)
+      options[:source] = case options[:source]
+      when 'offerwall' then 0
+      when 'tj_games' then 1
+      else options[:source]
+      end
+      ORDERED_KEY_ELEMENTS.map{ |k| options[k] }.join('.')
     end
 
     #S3 stuff

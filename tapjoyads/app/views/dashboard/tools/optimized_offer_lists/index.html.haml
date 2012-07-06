@@ -1,0 +1,160 @@
+- @page_title = "Optimized Offer Lists"
+
+%h1= @page_title
+
+= form_tag('', :method => :get) do
+  %table
+    %tr
+      %td= label_tag :algorithm, 'Algorithm'
+      %td= text_field_tag :algorithm, params[:algorithm], :size => 20
+    %tr
+      %td= label_tag :source, 'Source'
+      %td= select_tag :source, options_for_select(['tj_games', 'offerwall'].map { |source| [source, source] }, params[:source])
+    %tr
+      %td= label_tag :platform, 'Publisher App Platform'
+      %td= select_tag :platform, options_for_select(OfferCacher::PLATFORMS, params[:platform])
+    %tr
+      %td= label_tag :device_type, 'User Device Type'
+      %td= select_tag :device_type, options_for_select(OfferCacher::DEVICE_TYPES, params[:device_type])
+    %tr
+      %td= label_tag :country, 'Country'
+      %td= text_field_tag :country, params[:country], :size => '20'
+    %tr
+      %td= label_tag :currency_id, 'Currency ID'
+      %td= text_field_tag :currency_id, params[:currency_id], :size => '65'
+    %tr
+      %td= label_tag :hide_rejected, 'Hide Rejected Offers'
+      %td= check_box_tag :hide_rejected, true, params[:hide_rejected].present?
+    %tr
+      %td= label_tag :processed_offers, 'Show Offers'
+      %td= check_box_tag :processed_offers, true, params[:processed_offers].present?
+    %tr
+      %td= label_tag :raw_offers, 'Show Original Algorithm Rankings From S3'
+      %td= check_box_tag :raw_offers, true, params[:raw_offers].present?
+    %tr
+      %td= label_tag :all_keys, 'Show All Available S3 Keys'
+      %td= check_box_tag :all_keys, true, params[:all_keys].present?
+
+    %tr
+      %td{ :colspan => 2 }= submit_tag('Submit')
+
+-if @key
+  %h3 Keys:
+  %table
+    %tr
+      %td
+        %strong S3 Key:
+      %td= @key
+    %tr
+      %td
+        %strong Cache Key:
+      %td= @cache_key
+
+- if @offers
+  %h3 Offers:
+  - if @offers.empty?
+    %p="Didn't find any optimized offers for those parameters"
+  -else
+    %table#offers.tablesorter
+      %thead
+        %tr
+          %th Rank
+          %th Algorithm Score
+          %th Pre Cache Score
+          %th Name
+          %th Show Rate
+          %th CVR
+          %th Price
+          %th Avg Revenue
+          %th Bid
+          %th Boost
+          %th Devices
+          %th Type
+          %th Rejection Reasons
+      %tbody#offers_tbody
+        - @offers.each_with_index do |offer, i|
+          %tr
+            %td= i + 1
+            %td= offer.rank_score
+            %td= offer.precache_rank_score_for(params[:currency_group_id])
+            %td= (permitted_to? :show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) : offer.name
+            %td= offer.show_rate
+            %td= offer.conversion_rate
+            %td= number_to_currency(0.01 * offer.price)
+            %td= offer.avg_revenue
+            %td= offer.bid
+            %td= offer.rank_boost
+            %td= offer.get_device_types.to_a.join(",")
+            %td= offer.item_type
+            %td= offer.rejections.join('; ')
+
+-if @raw_offers
+  %h3 Original Algorithm Rankings From S3:
+  -if @raw_offers.empty?
+    %p= "Didn't find S3 data for key #{@key}"
+  -else
+    %table#raw_offers.tablesorter
+      %thead
+        %tr
+          %th
+          %th Rank Score
+          %th Offer ID
+      %tbody#raw_offers_tbody
+        - @raw_offers.each_with_index do |offer, i|
+          %tr
+            %td= i + 1
+            %td= offer['rank_score']
+            %td= offer['offer_id']
+
+
+- if @keys
+  %h3 All Keys Available in S3:
+  %table#keys.tablesorter
+    %thead
+      %tr
+        %th S3 Key
+        %th Cache Key
+    %tbody#keys_body
+      - @keys.each do |key|
+        %tr
+          %td= key[:key]
+          %td= key[:cache_key]
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+
+      $.tablesorter.addParser({
+        id: 'float-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s;
+        }
+      });
+
+      $('#offers').tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          6: { sorter: 'float-column' }
+        },
+      });
+
+    });
+
+- content_for :page_styles do
+  :plain
+    form td {
+      vertical-align: top;
+      padding-bottom: 6px;
+      padding-right: 6px;
+    }
+    form select {
+      width: 150px;
+    }
+    label {
+      font-weight: bold;
+    }
+    td.offers_options label {
+      font-weight: normal;
+    }
