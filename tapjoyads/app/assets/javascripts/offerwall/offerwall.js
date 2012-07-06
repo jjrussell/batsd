@@ -88,7 +88,7 @@
      * Attach events events
      */
     initEvents: function(){
-
+      $.fetched = 0;
       if($.data.autoload){
         window[$.addEvent]('scroll', function(){
           if($.fetched < 3){
@@ -325,7 +325,10 @@
             start = start + limit;
             
             if(data.records == 0){
-              try{$.loadMore.parentNode.style.display = 'none';}catch(err){}
+              try{
+                $.loadMore.parentNode.style.display = 'none';
+              }
+              catch(err){}
             }
           }else{
             if($.loadMore)
