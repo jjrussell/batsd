@@ -43,7 +43,6 @@ en:
   date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
-      - ~
       - Jan
       - Feb
       - Mar
@@ -62,7 +61,6 @@ en:
       long: "%B %d, %Y"
       short: "%b %d"
     month_names:
-      - ~
       - January
       - February
       - March
@@ -222,6 +220,8 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
+      terms: "Terms of Use"
+      updated: "Privacy Policy [Updated]"
     games:
       apps: Apps
       about_body: "A better way to love the apps you have and find the apps you'll love."
@@ -478,8 +478,9 @@ en:
         video: Watch this video.
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
-      deep_link_part_1: Tap here to visit 
+      deep_link_part_1: Tap here to visit
       deep_link_part_2: for more free offers!
+      earn: Earn
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}."
