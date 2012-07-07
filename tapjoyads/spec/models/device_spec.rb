@@ -348,28 +348,28 @@ describe Device do
         @device.put('apps', @correct_app_ids.to_json + "D")
       end
 
-      it 'fixes bad publisher_user_id' do
+      it 'reads correct publisher_user_ids' do
         @device.send :after_initialize
         @device.publisher_user_ids.keys.should == @correct_user_ids.keys
       end
 
-      it 'fixes bad publisher_user_id' do
+      it 'reads correct apps' do
         @device.send :after_initialize
         @device.apps.keys.should == @correct_app_ids.keys
       end
     end
 
-    context 'with bad app JSON data' do
+    context 'with bad publisher user ids JSON data' do
       before :each do
         @device.put('publisher_user_ids', @correct_user_ids.to_json + "D")
       end
 
-      it 'fixes bad publisher_user_id' do
+      it 'reads correct publisher_user_id' do
         @device.send :after_initialize
         @device.publisher_user_ids.keys.should == @correct_user_ids.keys
       end
 
-      it 'fixes bad publisher_user_id' do
+      it 'reads correct apps' do
         @device.send :after_initialize
         @device.apps.keys.should == @correct_app_ids.keys
       end
