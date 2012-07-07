@@ -43,10 +43,10 @@ class VideoOffer < ActiveRecord::Base
 
   def video_buttons_for_device_type(device_type)
     block_rewarded = (Device.device_type_to_platform(device_type) == 'ios')
-    video_buttons.sort_by(&:ordinal).reject do |button|
+    video_buttons.reject do |button|
       button.disabled? ||
         (device_type.present? && button.reject_device_type?(device_type, block_rewarded))
-    end
+    end.sort_by(&:ordinal)
   end
 
   def available_trackable_items(selected_id=nil)
