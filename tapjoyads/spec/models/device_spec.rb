@@ -335,4 +335,44 @@ describe Device do
       @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
     end
   end
+
+  describe '#after_initialize' do
+    before :each do
+      @correct_app_ids = {'1' => Time.zone.now, '2' => Time.zone.now}
+      @correct_user_ids = {'1' => 'a', '2' => 'b'}
+      @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
+    end
+
+    context 'with bad app JSON data' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json + "D")
+      end
+
+      it 'fixes bad publisher_user_id' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.keys.should == @correct_user_ids.keys
+      end
+
+      it 'fixes bad publisher_user_id' do
+        @device.send :after_initialize
+        @device.apps.keys.should == @correct_app_ids.keys
+      end
+    end
+
+    context 'with bad app JSON data' do
+      before :each do
+        @device.put('publisher_user_ids', @correct_user_ids.to_json + "D")
+      end
+
+      it 'fixes bad publisher_user_id' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.keys.should == @correct_user_ids.keys
+      end
+
+      it 'fixes bad publisher_user_id' do
+        @device.send :after_initialize
+        @device.apps.keys.should == @correct_app_ids.keys
+      end
+    end
+  end
 end

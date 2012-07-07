@@ -58,7 +58,12 @@ class Device < SimpledbShardedResource
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
-      fix_parser_error
+      fix_app_json
+    end
+    begin
+      publisher_user_ids
+    rescue JSON::ParserError
+      fix_publisher_user_ids_json
     end
   end
 
@@ -313,8 +318,8 @@ class Device < SimpledbShardedResource
 
   private
 
-  def fix_parser_error
-    str = get('apps')
+  def fix_parser_error(attribute)
+    str = get(attribute)
     pos = str.index('}')
     if pos.nil?
       pos = str.rindex(',')
@@ -323,8 +328,14 @@ class Device < SimpledbShardedResource
     else
       removed = str.slice!(pos+1..-1)
     end
-    @parsed_apps = JSON.parse(str)
-    self.apps = @parsed_apps
+    str
   end
 
+  def fix_app_json
+    self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+  end
+
+  def fix_publisher_user_ids_json
+    self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids'))
+  end
 end
