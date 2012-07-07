@@ -373,6 +373,11 @@ describe Device do
         @device.send :after_initialize
         @device.apps.keys.should == @correct_app_ids.keys
       end
+
+      it 'should store correct raw data in publisher_user_ids' do
+        @device.send :after_initialize
+        @device.get('publisher_user_ids').should == @correct_user_ids.to_json
+      end
     end
   end
 end
