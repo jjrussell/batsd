@@ -232,10 +232,10 @@ class Device < SimpledbShardedResource
       next if device_identifier.udid == key
       if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
         timestamp = Time.zone.now
-        key = "device_identifier.#{timestamp.to_f.to_s}"
-        $redis.setex(key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
-        $redis.sadd("device_identifier", key)
-        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", key)
+        redis_key = "device_identifier.#{timestamp.to_f.to_s}"
+        $redis.setex(redis_key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
+        $redis.sadd("device_identifier", redis_key)
+        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", redis_key)
       end
       device_identifier.udid = key
       device_identifier.save!
