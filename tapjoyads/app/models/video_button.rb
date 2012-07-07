@@ -68,5 +68,6 @@ class VideoButton < ActiveRecord::Base
   private
   def update_offer
     video_offer.update_buttons
+    video_offer.cache
   end
 end
