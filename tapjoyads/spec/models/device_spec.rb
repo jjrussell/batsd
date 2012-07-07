@@ -335,4 +335,88 @@ describe Device do
       @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
     end
   end
+
+  describe '#fix_parser_error' do
+    before :each do
+      @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
+      @device = FactoryGirl.create :device, :apps => @correct_app_ids
+    end
+
+    context 'with extra chars at the end' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json + "D")
+        @fixed = @device.send(:fix_parser_error, 'apps')
+      end
+
+      it 'returns proper JSON' do
+        lambda {JSON.load(@fixed)}.should_not raise_exception
+      end
+
+      it 'returns correct data' do
+        @fixed.should == @correct_app_ids.to_json
+      end
+    end
+
+    context 'with missing end-bracket' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json[0..-2])
+        @fixed = @device.send(:fix_parser_error, 'apps')
+      end
+
+      it 'returns properJSON' do
+        lambda {JSON.load(@fixed)}.should_not raise_exception
+      end
+
+      it 'returns mostly correct data' do
+        @fixed.each do |key, value|
+          value.should == @correct_app_ids[key]
+        end
+      end
+    end
+  end
+
+  describe '#after_initialize' do
+    before :each do
+      @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
+      @correct_user_ids = {'1' => 'a', '2' => 'b'}
+      @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
+    end
+
+    context 'with bad app JSON data' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json + "D")
+      end
+
+      it 'reads correct publisher_user_ids' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.should == @correct_user_ids
+      end
+
+      it 'reads correct apps' do
+        @device.send :after_initialize
+        @device.apps.should == @correct_app_ids
+      end
+    end
+
+    context 'with bad publisher user ids JSON data' do
+      before :each do
+        @device.put('publisher_user_ids', @correct_user_ids.to_json + "D")
+      end
+
+      it 'reads correct publisher_user_id' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.should == @correct_user_ids
+      end
+
+      it 'reads correct apps' do
+        @device.send :after_initialize
+        @device.apps.should == @correct_app_ids
+      end
+
+      it 'should store correct raw data in publisher_user_ids' do
+        @device.send :after_initialize
+        @device.get('publisher_user_ids').should == @correct_user_ids.to_json
+      end
+    end
+  end
 end
