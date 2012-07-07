@@ -55,16 +55,8 @@ class Device < SimpledbShardedResource
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
-    begin
-      @parsed_apps = apps
-    rescue JSON::ParserError
-      fix_app_json
-    end
-    begin
-      publisher_user_ids
-    rescue JSON::ParserError
-      fix_publisher_user_ids_json
-    end
+    fix_app_json
+    fix_publisher_user_ids_json
   end
 
   def handle_connect!(app_id, params)
@@ -332,10 +324,18 @@ class Device < SimpledbShardedResource
   end
 
   def fix_app_json
-    self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+    begin
+      @parsed_apps = apps
+    rescue JSON::ParserError
+      self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+    end
   end
 
   def fix_publisher_user_ids_json
-    self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids'))
+    begin
+      publisher_user_ids
+    rescue JSON::ParserError
+      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids'))
+    end
   end
 end
