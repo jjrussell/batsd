@@ -342,7 +342,7 @@ ul#offers li .offer .icon .wifi {
 ul#offers li .offer .about {
   color: #323232;
   font-size: 95%;
-  width: 80%;
+  width: 70%;
 }
 
 ul#offers li .offer .about .action {
@@ -696,3 +696,9 @@ ul#offers.no-action-line li .offer .about .action {
     font-size: 100%;
   }
 }
+@media (max-width:520px){
+  ul#offers li .offer .about {
+    width: 60%;
+  }
+}
+

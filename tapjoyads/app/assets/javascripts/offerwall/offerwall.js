@@ -14,14 +14,14 @@
       slice = arrayPrototype.slice,
       limit = 25,
       start = 25,
-      autoLoadLimit = 5,
+      autoLoadLimit = 3,
+      pagesFetched = 0,
       url = fetchURL;
 
  var $ = {
     blank: 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     addEvent: (/msie/i).test(agent) ? 'attachEvent' : 'addEventListener',
     empty: function(){},
-    fetched: 1,
     labels: {
       actions:{
         download: i18n.t("actions.download"),
@@ -89,20 +89,12 @@
      * Attach events events
      */
     initEvents: function(){
-      $.fetched = 0;
       if($.data.autoload){
         window[$.addEvent]('scroll', function(){
-          if($.fetched < autoLoadLimit){
+          if(pagesFetched < autoLoadLimit){
             if($.endOfTheLine() && !$.fetching){
               $.fetch();
-              $.fetched++;
-              if($.fetched == autoLoadLimit){
-                if($.loadMore){
-                  try {
-                   $.loadMore.parentNode.style.display = 'block'; 
-                  }catch(err){}
-                }
-              }
+              pagesFetched++;
             }
           }
         });
@@ -324,13 +316,21 @@
           if(data.offers.length > 0){
             $.load(data.offers);
             start = start + limit;
-            
+
+            if(pagesFetched == autoLoadLimit){
+              if($.loadMore){
+                try {
+                  $.loadMore.parentNode.style.display = 'block'; 
+                }catch(err){}
+              }
+            }
             if(data.records == 0){
               try{
                 $.loadMore.parentNode.style.display = 'none';
               }
               catch(err){}
             }
+
           }else{
             try {
               $.loadMore.parentNode.style.display = 'none';
