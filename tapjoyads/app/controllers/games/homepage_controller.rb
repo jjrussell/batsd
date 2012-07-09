@@ -56,6 +56,7 @@ class Games::HomepageController < GamesController
     device_id = current_device_id || 'statz_test_udid'
     @device = Device.new(:key => device_id) if device_id.present?
     @active_currency = Currency.includes(:app).where(:id => params_id).first
+    redirect_to root_path and return if @active_currency.nil?
     @app = @active_currency.app
     @external_publisher = ExternalPublisher.new(@active_currency)
     return unless verify_records([ @active_currency, @device ])
