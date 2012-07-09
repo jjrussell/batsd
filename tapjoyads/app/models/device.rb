@@ -25,9 +25,11 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
+  self.sdb_attr :recent_clicks, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
+  RECENT_CLICKS_RANGE = 30.days
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -352,6 +354,27 @@ class Device < SimpledbShardedResource
   def remove_old_skips(time = Device::SKIP_TIMEOUT)
     temp = self.recent_skips
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
+  end
+
+  def add_click(click)
+    click_id = click.id
+    temp_clicks = self.recent_clicks
+    end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
+
+    shift_idx = 0
+    temp_clicks.each_with_index do |clk, i|
+      if clk['clicked_at'] < end_period
+        shift_idx = i+1
+      else
+        break
+      end
+    end
+    temp_clicks.shift(shift_idx)
+
+    temp_clicks << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    self.recent_clicks = temp_clicks
+    @retry_save_on_fail = true
+    save
   end
 
   private

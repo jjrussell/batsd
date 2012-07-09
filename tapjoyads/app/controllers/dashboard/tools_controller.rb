@@ -215,7 +215,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         "clicked_at < '#{@cut_off_date}'",
         "clicked_at > '#{@cut_off_date - 1.month}'",
       ].join(' and ')
-      @clicks = []
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
       @not_rewarded_count = 0
@@ -225,29 +224,29 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
-      NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
-          @clicks << click unless click.tapjoy_games_invitation_primary_click?
-          if click.installed_at?
-            @rewards[click.reward_key] = Reward.find(click.reward_key)
-            if click.force_convert
-              @force_converted_count += 1
-            elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
-              @rewarded_clicks_count += 1
-            else
-              @rewarded_failed_clicks_count += 1
-            end
+      @clicks = @device.recent_clicks.map {|recent_click| Click.find(recent_click['id'])}
+
+      @clicks.each do |click|
+        @clicks << click unless click.tapjoy_games_invitation_primary_click?
+        if click.installed_at?
+          @rewards[click.reward_key] = Reward.find(click.reward_key)
+          if click.force_convert
+            @force_converted_count += 1
+          elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
+            @rewarded_clicks_count += 1
+          else
+            @rewarded_failed_clicks_count += 1
           end
-          @jailbroken_count += 1 if click.type =~ /install_jailbroken/
-          if click.block_reason?
-            if click.block_reason =~ /TooManyUdidsForPublisherUserId/
-              @blocked_count += 1
-            else
-              @not_rewarded_count += 1
-            end
-          end
-          click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
         end
+        @jailbroken_count += 1 if click.type =~ /install_jailbroken/
+        if click.block_reason?
+          if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+            @blocked_count += 1
+          else
+            @not_rewarded_count += 1
+          end
+        end
+        click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
       end
 
       # find all apps at once and store in look up table
