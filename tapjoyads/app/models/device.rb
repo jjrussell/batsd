@@ -55,11 +55,8 @@ class Device < SimpledbShardedResource
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
-    begin
-      @parsed_apps = apps
-    rescue JSON::ParserError
-      fix_parser_error
-    end
+    fix_app_json
+    fix_publisher_user_ids_json
   end
 
   def handle_connect!(app_id, params)
@@ -221,6 +218,7 @@ class Device < SimpledbShardedResource
 
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
     if self.mac_address.present?
@@ -313,9 +311,13 @@ class Device < SimpledbShardedResource
 
   private
 
-  def fix_parser_error
-    str = get('apps')
-    pos = str.index('}')
+  def fix_parser_error(attribute, search_from = :left)
+    str = get(attribute)
+    if search_from == :right
+      pos = str.rindex('}')
+    else
+      pos = str.index('}')
+    end
     if pos.nil?
       pos = str.rindex(',')
       removed = str.slice!(pos..-1)
@@ -323,8 +325,22 @@ class Device < SimpledbShardedResource
     else
       removed = str.slice!(pos+1..-1)
     end
-    @parsed_apps = JSON.parse(str)
-    self.apps = @parsed_apps
+    str
   end
 
+  def fix_app_json
+    begin
+      @parsed_apps = apps
+    rescue JSON::ParserError
+      self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+    end
+  end
+
+  def fix_publisher_user_ids_json
+    begin
+      publisher_user_ids
+    rescue JSON::ParserError
+      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids', :right))
+    end
+  end
 end

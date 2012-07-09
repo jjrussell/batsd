@@ -230,7 +230,7 @@ class GamesController < ApplicationController
     elsif session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
     end
-    if @current_device_id.nil? && current_device_id_cookie
+    if @current_device_id.nil?
       device_id_cookie = current_device_id_cookie
       @current_device_id = device_id_cookie if device_id_cookie.present? && valid_device_id(device_id_cookie)
       @current_device_id ||= current_gamer.devices.first.device_id if current_gamer && current_gamer.devices.present?

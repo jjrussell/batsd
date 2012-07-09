@@ -1,7 +1,7 @@
 module TypeConverters
 
   class StringConverter
-    def from_string(s)
+    def from_string(s, strict=false)
       s
     end
     def to_string(s)
@@ -10,8 +10,12 @@ module TypeConverters
   end
 
   class IntConverter
-    def from_string(s)
-      s.to_i
+    def from_string(s, strict=false)
+      if strict
+        Integer(s) rescue nil
+      else
+        s.to_i
+      end
     end
     def to_string(i)
       i.to_s
@@ -19,16 +23,20 @@ module TypeConverters
   end
 
   class FloatConverter
-    def from_string(s)
-      s.to_f
-    end
+    def from_string(s, strict=false)
+      if strict
+        Float(s) rescue nil
+      else
+        s.to_f
+      end
+   end
     def to_string(f)
       f.to_s
     end
   end
 
   class TimeConverter
-    def from_string(s)
+    def from_string(s, strict=false)
       Time.zone.at(s.to_f)
     end
     def to_string(t)
@@ -37,8 +45,8 @@ module TypeConverters
   end
 
   class BoolConverter
-    def from_string(s)
-      s == '1' || s == 'True'
+    def from_string(s, strict=false)
+      s == '1' || s == 'True' || s == 'true' || s == 'T' || s == 't'
     end
     def to_string(b)
       b ? '1' : '0'
@@ -46,7 +54,7 @@ module TypeConverters
   end
 
   class JsonConverter
-    def from_string(s)
+    def from_string(s, strict=false)
       JSON.parse(s)
     end
     def to_string(j)

@@ -18,6 +18,8 @@ describe User do
     it { should validate_uniqueness_of(:username) }
   end
 
+  it { should validate_presence_of(:time_zone) }
+
   describe '#role_symbols' do
     context 'given a regular user' do
       before :each do
