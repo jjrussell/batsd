@@ -63,6 +63,7 @@ describe Device do
 
     it 'creates the device identifiers' do
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.key)).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)

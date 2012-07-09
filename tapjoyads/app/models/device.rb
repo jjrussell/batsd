@@ -218,6 +218,7 @@ class Device < SimpledbShardedResource
 
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
     if self.mac_address.present?
