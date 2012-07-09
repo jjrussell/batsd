@@ -1,10 +1,12 @@
 class ExactTarget
   extend Savon::Model
   
-  document File.expand_path("../../../lib/exact_target/etframework.wsdl.xml", __FILE__)
+  TJM_WELCOME_EMAIL_ETID = 'tjm_welcome'
+  
+  document "https://webservice.s6.exacttarget.com/etframework.wsdl"
   wsse_auth "tapbrian", "welcome@2"
   
-  actions :get_system_status, :version_info
+  actions :get_system_status
   
   def get_system_status
     response = super
