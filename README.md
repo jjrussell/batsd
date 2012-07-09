@@ -166,7 +166,7 @@ brew install memcached
 Follow the post-install directions. (Type `brew info memcached` to see them again)
 
 
-Install memcached
+Install redis
 -----------------
 
 Install redis:
