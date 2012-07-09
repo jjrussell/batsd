@@ -169,7 +169,7 @@ Follow the post-install directions. (Type `brew info mysql` to see them again)
 Setup repo
 ----------
 
-This adds the GeoIP database and puts in the local configuration yaml files.
+This adds the GeoIP database, puts in the local configuration yaml files, and sets up our custom pre-commit hook.
 
 ```
 ./setup_repo.sh
@@ -223,15 +223,6 @@ To access directly, go to [http://127.0.0.1:8080]().
 
 Optional steps
 ==============
-
-Set git pre-commit hook to run
-------------------------------
-
-The pre-commit hook runs before any git commit. It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
-
-```
-ln -s tapjoyserver/.pre-commit tapjoyserver/.git/hooks/
-```
 
 .rvmrc file
 -----------
