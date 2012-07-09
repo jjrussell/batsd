@@ -6,9 +6,12 @@ function addCommaSeparators(number) {
 }
 
 function numberToCurrency(number) {
-  return '$' + addCommaSeparators(Number(number).toFixed(2));
+  value = '$' + addCommaSeparators(Number(number).toFixed(2));
+  if(value == '$NaN') {
+    value = '$0.00';
+  }
+  return value;
 }
-
 function stringToNumber(currency, allowNegative) {
   if (allowNegative) {
     return Number(currency.replace(/[^\d\.\-]/g, ''));
