@@ -270,6 +270,10 @@ class Offer < ActiveRecord::Base
     item_type == 'App' || item_type == 'ActionOffer'
   end
 
+  def video_offer?
+    item_type == 'VideoOffer'
+  end
+
   def missing_app_store_id?
     app_offer? && !url_overridden? && item.store_id.blank?
   end
