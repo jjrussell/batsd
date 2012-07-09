@@ -378,7 +378,7 @@ describe Device do
   describe '#after_initialize' do
     before :each do
       @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
-      @correct_user_ids = {'1' => 'a', '2' => 'b'}
+      @correct_user_ids = {'1' => '{a}', '2' => 'b'}
       @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
     end
 

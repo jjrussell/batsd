@@ -310,9 +310,13 @@ class Device < SimpledbShardedResource
 
   private
 
-  def fix_parser_error(attribute)
+  def fix_parser_error(attribute, search_from = :left)
     str = get(attribute)
-    pos = str.index('}')
+    if search_from == :right
+      pos = str.rindex('}')
+    else
+      pos = str.index('}')
+    end
     if pos.nil?
       pos = str.rindex(',')
       removed = str.slice!(pos..-1)
@@ -335,7 +339,7 @@ class Device < SimpledbShardedResource
     begin
       publisher_user_ids
     rescue JSON::ParserError
-      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids'))
+      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids', :right))
     end
   end
 end
