@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AdshownController do
   describe '#index' do
-    context 'invalid params([:app_id, :udid, :publisher_user_id])' do
+    context 'invalid params([:app_id, :udid, :campaign_id])' do
       before :each do
         ApplicationController.stub(:verify_params).and_return(false)
       end
