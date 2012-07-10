@@ -11,6 +11,7 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
+  OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0']) # Gun & Blood
   OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
                                           'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
                                           '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
@@ -225,10 +226,6 @@ include GetOffersHelper
 
   def set_offerwall_experiment
     experiment = case params[:source]
-    when 'tj_games'
-      @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
-      nil
     when 'offerwall'
       :ow_redesign if params[:action] == 'webpage'
     else
@@ -239,6 +236,16 @@ include GetOffersHelper
   end
 
   def set_algorithm
+    if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+    end
+
+    if params[:source] == 'tj_games'
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+    end
+
     case params[:exp]
     when 'ow_redesign'
       params[:redesign] = true
