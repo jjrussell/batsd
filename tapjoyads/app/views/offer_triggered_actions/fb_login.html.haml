@@ -21,7 +21,7 @@
                   checkPermission(function () {
                     $.ajax({
                       url: redirectUrl,
-                      dataType: "json",
+                      dataType: "jsonp",
                       success: function (d) {
                         if (d.success) {
                           if (d.message) {
@@ -34,13 +34,13 @@
                         }
                       },
                       error: function () {
-                        $('.error').text(I18n.t('games.generic_issue')).show();
+                        $('.error').text('There is an issue, please try again later.').show();
                       }
                     });
                   });
                 });
               } else {
-               $('.error').text(I18n.t('games.grant_us_access')).show();
+               $('.error').text('Please grant us permissions.').show();
               }
             }, {scope: 'publish_stream,email,user_birthday'});
           });

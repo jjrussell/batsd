@@ -74,12 +74,12 @@ module Offer::UrlGeneration
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
       final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+      final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
       final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
       data = {
         :offer_id           => id,
         :currency_id        => currency.id,
         :display_multiplier => display_multiplier
-        
       }
       final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
       if has_variable_payment?

@@ -8,8 +8,7 @@ class OfferTriggeredActionsController < ApplicationController
     OfferTriggeredActionsController.class_eval do
       include Facebooker2::Rails::Controller
     end
-    route_addition = '/games' if Rails.env != 'production'
-    @redirect_url = "#{WEBSITE_URL}#{route_addition || ''}/gamer/create_account_for_offer?udid=#{params[:udid]}"
+    @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?udid=#{params[:udid]}"
   end
 
   def fb_visit
