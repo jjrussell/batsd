@@ -418,6 +418,10 @@ class App < ActiveRecord::Base
     "#{uri.scheme}://#{uri.host}/apps/#{self.id}"
   end
 
+  def rewardable_currencies
+    currencies.reject{ |c| c.conversion_rate <= 0 }
+  end
+
   private
 
   def update_reengagements_with_enable_or_disable(enable)
