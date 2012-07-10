@@ -106,7 +106,7 @@ class Offer < ActiveRecord::Base
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
   belongs_to :prerequisite_offer, :class_name => 'Offer'
-  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
+  #belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
