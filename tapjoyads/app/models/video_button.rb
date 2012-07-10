@@ -61,8 +61,13 @@ class VideoButton < ActiveRecord::Base
     }
   end
 
+  def disabled?
+    !enabled?
+  end
+
   private
   def update_offer
     video_offer.update_buttons
+    video_offer.cache
   end
 end
