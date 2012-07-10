@@ -12,6 +12,12 @@ GIT
       right_http_connection (>= 1.2.5)
 
 GIT
+  remote: git://github.com/Tapjoy/rollout.git
+  revision: f67bd0d41b4291930656088e644f93696fb81637
+  specs:
+    rollout (1.1.0)
+
+GIT
   remote: git://github.com/odorcicd/authlogic.git
   revision: a087ad0cba3c165ba22fcf176c28b6f7517931e8
   branch: rails3
@@ -386,6 +392,7 @@ DEPENDENCIES
   redis (= 2.2.2)
   right_aws!
   rmagick (= 2.12.2)
+  rollout!
   rspec
   rspec-instafail
   rspec-rails

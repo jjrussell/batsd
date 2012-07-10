@@ -604,7 +604,7 @@ ul#offers.action-right-side li .reward {
 }
 
 ul#offers.action-right-side  li .offer {
-  margin-left: 15px;
+  margin-left: 0px;
   margin-right: 75px;
   overflow: hidden;
   vertical-align: middle;
@@ -652,13 +652,14 @@ ul#offers.no-action-line li .offer .about .action {
   }
 
   ul#offers li .offer .icon {
-    width: 60px;
+    width: 50px;
   }
 
   ul#offers li .offer .about {
-    font-size: 80%;
+    font-size: 75%;
+    margin-top: 15px;
     margin-left: 0;
-    width: 70%;
+    width: 50%;
   }
 
   ul#offers li .offer .about .action {

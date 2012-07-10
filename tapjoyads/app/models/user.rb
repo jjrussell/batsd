@@ -55,6 +55,7 @@ class User < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |user| user.reseller_id? }
   validates_presence_of :country, :on => :create,
     :message => 'Please select a country'
+  validates_presence_of :time_zone
 
   scope :internal_users, {
     :conditions => [ "( email LIKE ? OR email LIKE ? ) AND email NOT LIKE ?", "%@tapjoy.com", "%offerpal.com", "%+%" ],

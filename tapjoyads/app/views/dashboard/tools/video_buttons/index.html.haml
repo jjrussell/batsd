@@ -10,8 +10,9 @@
   %thead
     %tr
       %th Button ID
-      %th Name
+      %th Display Name
       %th Offer
+      %th Platform
       %th Ordinal
       %th Enabled
       %th Operation
@@ -20,7 +21,8 @@
       %tr
         %td.button-id= button.id
         %td.name= button.name
-        %td.url= button.item.try(:name)
+        %td.offer= link_to(button.item.try(:name), statz_path(button.tracking_offer))
+        %td.platform= button.tracking_offer.try(:get_platform)
         %td.ordinal= button.ordinal
         %td.enabled= button.enabled
         %td.operation

@@ -11,6 +11,7 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
+  OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0']) # Gun & Blood
   OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
                                           'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
                                           '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
@@ -21,41 +22,47 @@ include GetOffersHelper
                                         ])
 
   # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
-  TEST_A1 = {
+  VIEW_A1 = {
               :autoload => true, :actionLocation => 'right',
               :deepLink => false, :showBanner => false,
               :showActionLine => true, :showCostBalloon => false,
               :showCurrentApp => false, :squircles => false,
-              :viewID => 1001,
+              :viewID => 'VIEW_A1',
             }
 
   # Specimen #2 - Same as #1 minus auto loading
-  TEST_A2 = {
+  VIEW_A2 = {
               :autoload => false, :actionLocation => 'right',
               :deepLink => false, :showBanner => false,
               :showActionLine => true, :showCostBalloon => false,
               :showCurrentApp => false, :squircles => false,
-              :viewID => 1002,
+              :viewID => 'VIEW_A2',
             }
 
   # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
-  TEST_B1 = {
+  VIEW_B1 = {
               :autoload =>  false, :actionLocation =>  'right',
               :deepLink =>  false, :maxlength =>  90,
               :showBanner =>  false, :showActionLine =>  false,
               :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  1003,
+              :squircles =>  false, :viewID =>  'VIEW_B1',
             }
 
-
   # Specimen #4 - Same as #3 plus auto loading
-  TEST_B2 = {
+  VIEW_B2 = {
               :autoload =>  true, :actionLocation =>  'right',
               :deepLink =>  false, :maxlength =>  90,
               :showBanner =>  false, :showActionLine =>  false,
               :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  1004,
+              :squircles =>  false, :viewID =>  'VIEW_B2',
             }
+
+  VIEW_MAP = {
+    :VIEW_A1 => VIEW_A1,
+    :VIEW_A2 => VIEW_A2,
+    :VIEW_B1 => VIEW_B1,
+    :VIEW_B2 => VIEW_B2
+  }
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -79,7 +86,6 @@ include GetOffersHelper
         render :template => 'get_offers/webpage_redesign' and return
       end
     end
-      
   end
 
   def featured
@@ -220,12 +226,8 @@ include GetOffersHelper
 
   def set_offerwall_experiment
     experiment = case params[:source]
-    when 'tj_games'
-      @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
-      nil
     when 'offerwall'
-       OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :offerwall : nil
+      :ow_redesign if params[:action] == 'webpage'
     else
       nil
     end
@@ -234,14 +236,18 @@ include GetOffersHelper
   end
 
   def set_algorithm
+    if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
+      @algorithm = '101'
+    end
+
+    if params[:source] == 'tj_games'
+      @algorithm = '101'
+      @algorithm_options = { :skip_country => true }
+    end
+
     case params[:exp]
-    when 'a_offerwall'
-      @algorithm = nil
-    when  'b_offerwall'
-      @algorithm = '101'
-    when 'c_offerwall'
-      @algorithm = '101'
-      @algorithm_options = { :skip_currency => true }
+    when 'ow_redesign'
+      params[:redesign] = true
     end
   end
 
@@ -285,13 +291,16 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
+    view_id = params[:viewID] || :VIEW_A1
+    view = VIEW_MAP.fetch(view_id.to_sym) { {} }
+
     offer_array = []
-    @offer_list.each do |offer|
+    @offer_list.each_with_index do |offer, index|
       hash                      = {}
       hash[:cost]              = visual_cost(offer)
       hash[:iconURL]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
       hash[:payout]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-      hash[:redirectURL]       = get_click_url(offer)
+      hash[:redirectURL]       = get_click_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id })
       hash[:requiresWiFi]      = offer.wifi_only? if @show_wifi_only
       hash[:title]             = offer.name
       hash[:type]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type
@@ -301,9 +310,9 @@ include GetOffersHelper
     @obj = {
              :autoload => true, :actionLocation => 'left',
              :deepLink => true, :maxlength =>  70,
-             :showBanner =>  true, :showActionLine =>  true,
-             :showCostBalloon =>  false, :showCurrentApp =>  false,
-             :squircles =>  true, :orientation =>  'landscape',
+             :showBanner => true, :showActionLine => true,
+             :showCostBalloon => false, :showCurrentApp => false,
+             :squircles => true, :orientation => 'landscape',
              :offers => offer_array, :currencyName => @currency.name,
              :currentAppName => @publisher_app.name
            }
@@ -312,7 +321,7 @@ include GetOffersHelper
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
 
-    @final = @obj.merge(TEST_A1);
+    @final = @obj.merge(view);
   end
 
 end

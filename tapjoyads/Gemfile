@@ -46,6 +46,7 @@ gem 'read_from_slave', '0.4.0'
 gem 'redis', '2.2.2'
 gem 'right_aws', :github => 'Tapjoy/right_aws'
 gem 'rmagick', '2.12.2', :require => 'RMagick'
+gem 'rollout', :github => 'Tapjoy/rollout'
 gem 'ruby-hmac', '0.4.0', :require => 'ruby_hmac'
 gem 'sass', '3.1.15'
 gem 'sendgrid', '1.0.1'
@@ -93,13 +94,13 @@ group :test do
   gem 'spork'
   gem 'timecop'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git'
+  gem "fakeredis", :require => "fakeredis/rspec"
 end
 
 group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
-  gem "fakeredis", :require => "fakeredis/rspec"
 end
 
 group :ops do

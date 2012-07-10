@@ -44,7 +44,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     # Do not reward if user has installed this app for the same publisher user id on another device
-    unless offer.multi_complete? || offer.item_type == 'VideoOffer'
+    unless offer.multi_complete? || offer.video_offer?
       other_devices.each do |d|
         if d.has_app?(click.advertiser_app_id)
           click.block_reason = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})"

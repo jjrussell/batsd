@@ -18,7 +18,7 @@ class Games::GamersController < GamesController
   end
 
   def create
-    @gamer = Gamer.new params[:gamer]
+    @gamer = Gamer.new(valid_params)
     @gamer.password_confirmation = @gamer.password
 
     if @gamer.save
@@ -137,6 +137,11 @@ class Games::GamersController < GamesController
 
   def render_json_error(errors, status = 403)
     render(:json => { :success => false, :error => errors }, :status => status)
+  end
+
+  def valid_params
+    safe_attributes = %w(email password nickname birthdate referrer terms_of_service)
+    params[:gamer].slice(*safe_attributes)
   end
 
   def connect_device(gamer)
