@@ -49,4 +49,32 @@ namespace :db do
     system("rm -f #{dump_file}")
     system("rm -f #{dump_file2}")
   end
+
+  namespace :schema do
+    desc "Sync the mysql schema with the sqlite database used for development webserver boxes"
+    task :sync do
+      schema_file  = "db/schema-dev.rb"
+
+      print "Dumping mysql schema to #{schema_file}..."
+      time = Benchmark.realtime do
+        fork {
+          ENV['SCHEMA'] = schema_file
+          exec('bundle exec rake db:schema:dump')
+        }
+        Process.wait
+      end
+      puts "finished in #{time} seconds."
+
+      print "Loading schema file into sqlite..."
+      time = Benchmark.realtime do
+        fork {
+          ENV['SCHEMA'] = schema_file
+          ENV['MACHINE_TYPE'] = 'webserver'
+          exec('bundle exec rake db:schema:load')
+        }
+        Process.wait
+      end
+      puts "finished in #{time} seconds."
+    end
+  end
 end
