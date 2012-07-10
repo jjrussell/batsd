@@ -10,7 +10,7 @@
             %td
               = offer.video_offer? ? 'V' : (offer.app_offer? ? 'A' : 'O')
             %td
-              = offer.app_offer? ? (link_to offer.name, url_to_offer_item(offer)) : (link_to_statz offer.name, offer)
+              = offer.app_offer? ? ( permitted_to?(:show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) :  link_to(offer.name, url_to_offer_item(offer))) : (link_to_statz offer.name, offer)
             %td.offer-type
               - if offer.app_offer?
                 = image_tag(platform_icon_url(offer))
