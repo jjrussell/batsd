@@ -1,6 +1,18 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
+function formatCurrency(textField, button) {
+  if(typeof button == 'undefined') {
+    button = textField.closest('form').find('input[type=submit]');
+  }
+
+  if(isValidCurrencyString(textField.val(), textField.hasClass('allow_negative'))) {
+    handleValidCurrencyString(textField, button);
+  } else {
+    handleInvalidCurrencyString(textField, button);
+  }
+}
+
 function isValidCurrencyString(value, allowNegative) {
     // allows: "$1.23", "$0000", "    10,000,000.123\t"
   return value.match(/^\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/) ||
@@ -8,23 +20,15 @@ function isValidCurrencyString(value, allowNegative) {
     (allowNegative && value.match(/^\s*\-?\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/));
 }
 
-function formatCurrency(textField) {
-  var form  = textField.closest('form');
-  var value = textField.val();
-  var allowNegative = textField.hasClass('allow_negative');
-
-  if(isValidCurrencyString(value, allowNegative)) {
-    textField.val(numberToCurrency(stringToNumber(value, allowNegative)));
-    textField.removeClass('error');
-    form.find('input[type=submit]').attr('disabled', false);
-  } else {
-    textField.addClass('error');
-    form.find('input[type=submit]').attr('disabled', true);
-  }
+function handleValidCurrencyString(textField, button) {
+  textField.val(numberToCurrency(stringToNumber(textField.val(), textField.hasClass('allow_negative'))));
+  textField.removeClass('error');
+  button.attr('disabled', false);
 }
 
-function addCommaSeparators(number) {
-  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+function handleInvalidCurrencyString(textField, button) {
+  textField.addClass('error');
+  button.attr('disabled', true);
 }
 
 function numberToCurrency(number) {
@@ -37,6 +41,10 @@ function stringToNumber(currency, allowNegative) {
   } else {
     return Number(currency.replace(/[^\d\.]/g, ''));
   }
+}
+
+function addCommaSeparators(number) {
+  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 }
 
 function isMobile() {
