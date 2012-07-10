@@ -419,7 +419,7 @@ class App < ActiveRecord::Base
   end
 
   def rewardable_currencies
-    currencies.reject{ |c| c.conversion_rate <= 0 }
+    @rewardable_currencies ||= currencies.reject{ |c| c.conversion_rate <= 0 }
   end
 
   private
