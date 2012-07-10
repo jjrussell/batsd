@@ -11,6 +11,11 @@
 #  updated_at :datetime
 #
 
+require_dependency 'app'
+require_dependency 'action_offer'
+require_dependency 'generic_offer'
+require_dependency 'video_button'
+
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
