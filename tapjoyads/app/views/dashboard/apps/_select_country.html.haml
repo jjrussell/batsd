@@ -1,6 +1,6 @@
-%tr#appstore_country_toggle.admin.hidden
+%tr#appstore_country_toggle.hidden
   %th
-    Country
+    Country of Appstore
     #help_country.help ?
   %td
     = select_tag 'app_country', options_for_select(App::APPSTORE_COUNTRIES_OPTIONS, 'US'), :class => 'wide'
