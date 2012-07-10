@@ -34,7 +34,7 @@
         %b{:style => css[:bold_content]}= t('text.games.invite_email_greet')
     %tr
       %td{:colspan => 4, :style => "padding: 0px 20px 50px 20px; width: 500px;"}
-        = t('text.games.invite_email_body', :name => @gamer_name).each_line do |line|
+        - t('text.games.invite_email_body', :name => @gamer_name).lines.each do |line|
           %p{:style => css[:content]}= line
         = link_to @link, :style => css[:a] do
           = image_tag("#{image_root}/createAccount_btn.png", :title => 'Tapjoy', :alt => 'Tapjoy', :style => "border: none; margin-bottom: 40px;")

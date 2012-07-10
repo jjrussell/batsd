@@ -346,5 +346,10 @@ describe Games::HomepageController do
       get(:earn, :eid => "   #{currency.id} ")
       response.status.should == 200
     end
+
+    it 'handles missing params gracefully' do
+      get(:earn)
+      should redirect_to root_path
+    end
   end
 end

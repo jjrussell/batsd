@@ -100,6 +100,7 @@ class ApplicationController < ActionController::Base
     return if params[:udid].present?
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:sha1_udid]) if params[:sha1_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
     lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
@@ -121,6 +122,7 @@ class ApplicationController < ActionController::Base
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
     downcase_param(:open_udid)
     downcase_param(:app_id)
@@ -302,10 +304,4 @@ class ApplicationController < ActionController::Base
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
   end
 
-  protected
-
-  # see http://www.agilereasoning.com/2011/04/23/side-efffects-of-rails-security-fix/
-  def handle_unverified_request
-    raise ActionController::InvalidAuthenticityToken
-  end
 end
