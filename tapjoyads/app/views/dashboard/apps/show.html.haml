@@ -86,6 +86,15 @@
             = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
             %a#app_store_link{ :target => '_blank' }
+      - if @app.store_id.present?
+        %tr.app_data.hidden
+          %th
+            Custom URL Scheme
+            #help_custom_url_scheme.help ?
+          %td
+            %span{ :id => 'custom_url_scheme' }
+              = @app.launch_url
+            = link_to_function 'Edit', :onclick => 'edit_custom_url_scheme();'
       %tr.app_data.hidden
         %th Icon
         %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
@@ -121,6 +130,8 @@
     A shared secret used to verify requests from your app. Use this when integrating.
   #help_integrated_content{:name => 'Integrated'}
     Integration status - shows if the app has connected with our servers within the last 24-hours.
+  #help_custom_url_scheme_content{:name => 'Custom URL Scheme'}
+    This can be used as a custom URL scheme for your app. This can be used to direclty start the app. If your app already has a registered custom URL scheme, please update it here.
 .clear
 - if @app.hidden?
   - if permitted_to?(:unarchive, :dashboard_apps)
@@ -152,6 +163,33 @@
     }
 
 - content_for :page_javascript do
+  :plain
+    edit_custom_url_scheme = function() {
+      url = prompt('Please enter a Custom URL Scheme', $.trim($('#custom_url_scheme').text()));
+      if (url != null) {
+        url = $.trim(url);
+        $.ajax({
+          type: "POST",
+          url: '#{set_custom_url_scheme_apps_url}',
+          data: { "app_id" : '#{@app.id}', "custom_url_scheme" : url },
+          success: function(result) {
+            if(result['success'] == true) {
+              if(url) {
+                $("#custom_url_scheme").text(url);
+              } else {
+                $("#custom_url_scheme").text('#{@app.default_url_scheme}');
+              }
+            } else {
+              alert('Unable to update the Custom URL Scheme, please try again later.');
+            }
+          },
+          error: function(error) {
+            alert('Unable to update the Custom URL Scheme, please try again later.');
+          }
+        });
+      }
+    };
+
   - if @app.hidden?
     :plain
       $(function($){

@@ -173,6 +173,18 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def publisher_integrate
   end
 
+  def set_custom_url_scheme
+    unless params[:app_id].present? && params[:custom_url_scheme] && current_partner.apps.map(&:id).include?(params[:app_id])
+      render :json => { :success => false } and return
+    end
+    app = App.find(params[:app_id])
+    if app
+      app.custom_url_scheme = params[:custom_url_scheme]
+      render :json => { :success => app.save} and return
+    end
+    render :json => { :success => false } and return
+  end
+
   def integrate_check
     if params[:udid].present? && params[:mac_address].present?
       # TODO: replace with Vertica check
