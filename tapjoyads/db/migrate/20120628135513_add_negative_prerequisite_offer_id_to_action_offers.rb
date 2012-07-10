@@ -1,11 +1,9 @@
 class AddNegativePrerequisiteOfferIdToActionOffers < ActiveRecord::Migration
   def self.up
-    add_guid_column :action_offers, :negative_prerequisite_offer_id
-    add_index :action_offers, :negative_prerequisite_offer_id
+    add_column :action_offers, :negative_prerequisite_offer_ids, :text, :null => false, :default => ''
   end
 
   def self.down
-    remove_index :action_offers, :negative_prerequisite_offer_id
-    remove_column :action_offers, :negative_prerequisite_offer_id
+    remove_column :action_offers, :negative_prerequisite_offer_ids
   end
 end
