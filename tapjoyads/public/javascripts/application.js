@@ -1,8 +1,34 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
-function addCommaSeparators(number) {
-  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+function formatCurrency(textField, button) {
+  if(typeof button == 'undefined') {
+    button = textField.closest('form').find('input[type=submit]');
+  }
+
+  if(isValidCurrencyString(textField.val(), textField.hasClass('allow_negative'))) {
+    handleValidCurrencyString(textField, button);
+  } else {
+    handleInvalidCurrencyString(textField, button);
+  }
+}
+
+function isValidCurrencyString(value, allowNegative) {
+    // allows: "$1.23", "$0000", "    10,000,000.123\t"
+  return value.match(/^\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/) ||
+    // as above, but also allows: "-$1.23", "-$0000", " - 10,000,000.123\t"
+    (allowNegative && value.match(/^\s*\-?\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/));
+}
+
+function handleValidCurrencyString(textField, button) {
+  textField.val(numberToCurrency(stringToNumber(textField.val(), textField.hasClass('allow_negative'))));
+  textField.removeClass('error');
+  button.attr('disabled', false);
+}
+
+function handleInvalidCurrencyString(textField, button) {
+  textField.addClass('error');
+  button.attr('disabled', true);
 }
 
 function numberToCurrency(number) {
@@ -15,6 +41,10 @@ function stringToNumber(currency, allowNegative) {
   } else {
     return Number(currency.replace(/[^\d\.]/g, ''));
   }
+}
+
+function addCommaSeparators(number) {
+  return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 }
 
 function isMobile() {
@@ -41,7 +71,7 @@ $(function($){
 
   $('input.currency_field').change(function() {
     if (!$(this).hasClass('allow_nil') || $(this).val().length > 0) {
-      $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+      formatCurrency($(this));
     }
   });
 
