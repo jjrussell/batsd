@@ -10,7 +10,7 @@
             %td
               = offer.video_offer? ? 'V' : (offer.app_offer? ? 'A' : 'O')
             %td
-              = offer.app_offer? ? (link_to offer.name, url_to_offer_item(offer)) : offer.name
+              = offer.app_offer? ? (link_to offer.name, url_to_offer_item(offer)) : (link_to_statz offer.name, offer)
             %td.offer-type
               - if offer.app_offer?
                 = image_tag(platform_icon_url(offer))
@@ -19,3 +19,4 @@
                 = ''
             %td
               = number_to_currency(offer.bid / 100.0)
+|
