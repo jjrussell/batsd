@@ -238,7 +238,6 @@ include GetOffersHelper
   def set_algorithm
     if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
       @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
     end
 
     if params[:source] == 'tj_games'
