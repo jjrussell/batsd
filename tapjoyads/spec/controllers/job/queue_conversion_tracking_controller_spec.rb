@@ -75,14 +75,31 @@ describe Job::QueueConversionTrackingController do
       do_get
     end
 
-    it 'blocks clicks that are deemed too risky based on risk scores and rules' do
-      checker = double("ConversionChecker")
-      checker.stub(:acceptable_risk?).and_return(false)
-      checker.stub(:risk_message).and_return('test failure')
-      ConversionChecker.should_receive(:new).and_return(checker)
-      @click.should_receive(:save)
-      do_get
-      @click.block_reason.should == 'test failure'
+    context 'for clicks that are deemed too risky based on risk scores and rules' do
+      before :each do
+        @checker = double("ConversionChecker")
+        @checker.stub(:acceptable_risk?).and_return(false)
+        @checker.stub(:risk_message).and_return('test failure')
+        ConversionChecker.should_receive(:new).and_return(@checker)
+        @click.should_receive(:save)
+      end
+
+      it 'blocks the click' do
+        do_get
+        @click.block_reason.should == 'test failure'
+      end
+
+      context 'but is being force converted' do
+        before :each do
+          @click.stub(:force_convert).and_return(true)
+        end
+
+        it 'allows the conversion' do
+          @checker.should_receive(:process_conversion)
+          expect_request_completes
+          do_get
+        end
+      end
     end
 
     context 'a paid app install on a jailbroken device' do
