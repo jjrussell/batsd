@@ -30,7 +30,7 @@ class ExternalPublisher
     os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
 
     publisher_user_id = device.publisher_user_ids[app_id] || device.key
-    publisher_multiplier = device.publisher_multiplier[app_id]
+    publisher_multiplier = device.publisher_multiplier[app_id].present? ? device.publisher_multiplier[app_id] : 1
 
     data = {
       :udid                => device.key,

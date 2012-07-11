@@ -28,7 +28,7 @@ describe ExternalPublisher do
         :udid               => @device.key,
         :publisher_user_id  => @device.key,
         :currency_id        => @currency[:id],
-        :display_multiplier => ''
+        :display_multiplier => '1'
       )
     end
 
@@ -43,7 +43,7 @@ describe ExternalPublisher do
         :udid               => @device.key,
         :publisher_user_id  => 'username',
         :currency_id        => @currency[:id],
-        :display_multiplier => ''
+        :display_multiplier => '1'
       )
     end
 
