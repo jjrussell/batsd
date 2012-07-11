@@ -481,7 +481,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
     attempt = ConversionAttempt.new(:key => click.reward_key)
     if attempt.is_new || attempt.resolution == 'converted'
-      flash[:error] = "Conversion has not been previously attempted and blocked"
+      flash[:error] = "Only blocked conversions can be force converted"
       redirect_to :action => :device_info, :click_key => click.key and return
     elsif attempt.resolution == 'force_converted'
       flash[:error] = "Conversion has already been forced"
