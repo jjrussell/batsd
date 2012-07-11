@@ -508,6 +508,7 @@ en:
       android: Android
       back: Back
       blog: Blog
+      foo: "this is a sentence"
       cancel: Cancel
       change_password: "Change Password"
       city: City
