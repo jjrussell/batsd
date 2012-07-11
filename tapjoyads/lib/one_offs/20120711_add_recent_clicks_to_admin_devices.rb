@@ -1,7 +1,11 @@
 now = Time.now
-devices = AdminDevice.ordered_by_description
-devices.each do |device|
-  udid = device.udid
+admin_devices = AdminDevice.ordered_by_description
+admin_devices.each do |admin_device|
+  puts "---", admin_device.description, admin_device.udid
+
+  device = Device.find(admin_device.udid)
+  next unless device
+  udid = device.key
   conditions = ["udid = '#{udid}'",
                 "clicked_at > '#{(now - Device::RECENT_CLICKS_RANGE).to_i}'",
                 ].join(' and ')
