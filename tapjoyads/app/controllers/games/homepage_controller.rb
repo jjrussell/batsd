@@ -1,5 +1,4 @@
 class Games::HomepageController < GamesController
-  prepend_before_filter :decrypt_data_param, :only => :earn
   rescue_from Mogli::Client::ClientException, :with => :handle_mogli_exceptions
   rescue_from Twitter::Error, :with => :handle_twitter_exceptions
   rescue_from Errno::ECONNRESET, :with => :handle_errno_exceptions
@@ -60,8 +59,6 @@ class Games::HomepageController < GamesController
     redirect_to root_path and return if @active_currency.nil?
     @app = @active_currency.app
     @external_publisher = ExternalPublisher.new(@active_currency)
-    @offer = Offer.find_by_id(params[:offer_id]) if params[:offer_id]
-    @currency = Currency.find_in_cache(params[:currency_id]) if params[:currency_id]
     return unless verify_records([ @active_currency, @device ])
     @app_metadata = @app.primary_app_metadata
     if @app_metadata

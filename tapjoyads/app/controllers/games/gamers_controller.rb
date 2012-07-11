@@ -75,51 +75,6 @@ class Games::GamersController < GamesController
   def link_device
   end
 
-  def create_account_for_offer
-    render(:json => { :success => false, :message => 'lack of device info' }) and return unless params[:udid]
-
-    current_facebook_user.fetch
-
-    gamer = Gamer.includes(:gamer_profile).where(:gamer_profiles => { :facebook_id => current_facebook_user.id }).first ||
-      Gamer.find_by_email(current_facebook_user.email) ||
-      Gamer.new
-    if gamer.new_record?
-      gamer.before_connect(current_facebook_user)
-      gamer.confirmed_at = gamer.created_at
-      gamer_profile = GamerProfile.new(
-        :birthdate       => current_facebook_user.birthday,
-        :nickname        => current_facebook_user.name,
-        :gender          => current_facebook_user.gender,
-        :facebook_id     => current_facebook_user.id,
-        :fb_access_token => current_facebook_user.client.access_token
-      )
-      gamer.gamer_profile = gamer_profile
-
-      if gamer.save
-        device = Device.find_by_id(params[:udid])
-        default_platform = device.platform if device
-
-        gamer.send_welcome_email(request, device_type, default_platform || '', geoip_data, os_version)
-      else
-        render(:json => { :success => false, :message => t('text.games.generic_issue') }) and return
-      end
-    else
-      unless gamer.facebook_id
-        attributes = {
-          :facebook_id     => current_facebook_user.id,
-          :fb_access_token => current_facebook_user.client.access_token
-        }
-        gamer.gamer_profile.update_attributes(attributes)
-      end
-    end
-
-    connect_device(gamer)
-
-    GamerSession.create(gamer)
-
-    render(:json => { :success => true })
-  end
-
   private
 
   def set_profile
@@ -142,23 +97,5 @@ class Games::GamersController < GamesController
   def valid_params
     safe_attributes = %w(email password nickname birthdate referrer terms_of_service)
     params[:gamer].slice(*safe_attributes)
-  end
-
-  def connect_device(gamer)
-    click = Click.new(:key => Digest::MD5.hexdigest("#{params[:udid]}.#{LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID}"))
-    if click.rewardable?
-      gamer.reward_click(click)
-
-      gamer_device = GamerDevice.find_by_gamer_id_and_device_id(gamer.id, click.udid)
-      device = Device.new :key => click.udid
-      unless gamer_device
-        if device.new_record?
-          device.product = click.device_name
-          device.save
-        end
-        gamer.devices.build(:device => device)
-      end
-      device.set_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
-    end
   end
 end
