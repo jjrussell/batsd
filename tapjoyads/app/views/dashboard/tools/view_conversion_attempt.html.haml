@@ -24,7 +24,7 @@
     - if @attempt.final_risk_score
       %tr
         %th Final Risk Score
-        %td= "%.2f" % @attempt.final_risk_score
+        %td= "%.2f (Threshold: #{RiskScore::HIGH_RISK_THRESHOLD})" % @attempt.final_risk_score
       %tr
         %th System Entities Offset
         %td= "%.2f" % @attempt.system_entities_offset
