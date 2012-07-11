@@ -3,15 +3,15 @@ if (typeof(console) == "undefined") console={log:$.noop};
 
 function formatCurrency(field) {
   var value = field.val();
-  var form  = field.closest('form');
+  //var form  = field.closest('form');
   var allowNegative = field.hasClass('allow_negative');
   if(value.match(/^\s*\$?\d+(,\d{3})*(\.\d+)?\s*$/) || (allowNegative && /^\s*\-?\s*\$?\d+(,\d{3})*(\.\d+)?\s*$/)) {
     field.val(numberToCurrency(stringToNumber(value, field.hasClass('allow_negative'))));
     field.removeClass('error');
-    form.find('input[type=submit]').attr('disabled', false);
+    //form.find('input[type=submit]').attr('disabled', false);
   } else {
     field.addClass('error');
-    form.find('input[type=submit]').attr('disabled', true);
+    //form.find('input[type=submit]').attr('disabled', true);
   }
 }
 
