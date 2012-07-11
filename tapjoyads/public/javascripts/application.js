@@ -1,24 +1,16 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
-function isValidCurrencyString(value, allowNegative) {
-    // allows: "$1.23", "$0000", "    10,000,000.123\t"
-  return value.match(/^\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/) ||
-    // as above, but also allows: "-$1.23", "-$0000", " - 10,000,000.123\t"
-    (allowNegative && value.match(/^\s*\-?\s*\$?\d+(,\d{3})*(\.\d{2})?\s*$/));
-}
-
-function formatCurrency(textField) {
-  var form  = textField.closest('form');
-  var value = textField.val();
-  var allowNegative = textField.hasClass('allow_negative');
-
-  if(isValidCurrencyString(value, allowNegative)) {
-    textField.val(numberToCurrency(stringToNumber(value, allowNegative)));
-    textField.removeClass('error');
+function formatCurrency(field) {
+  var value = field.val();
+  var form  = field.closest('form');
+  var allowNegative = field.hasClass('allow_negative');
+  if(value.match(/^\s*\$?\d+(,\d{3})*(\.\d+)?\s*$/) || (allowNegative && /^\s*\-?\s*\$?\d+(,\d{3})*(\.\d+)?\s*$/)) {
+    field.val(numberToCurrency(stringToNumber(value, field.hasClass('allow_negative'))));
+    field.removeClass('error');
     form.find('input[type=submit]').attr('disabled', false);
   } else {
-    textField.addClass('error');
+    field.addClass('error');
     form.find('input[type=submit]').attr('disabled', true);
   }
 }
