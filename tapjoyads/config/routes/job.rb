@@ -78,6 +78,8 @@ Tapjoyad::Application.routes.draw do
     match 'queue_update_monthly_account(/index)' => 'queue_update_monthly_account#index'
     match 'queue_update_papaya_devices(/index)' => 'queue_update_papaya_devices#index'
     match 'queue_update_papaya_user_count(/index)' => 'queue_update_papaya_user_count#index'
+    match 'queue_record_updates(/index)' => 'queue_record_updates#index'
+    match 'queue_record_updates/run_job' => 'queue_record_updates#run_job'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
 
