@@ -53,6 +53,12 @@
           "<span class='free'>{cost}</span>"+
         "</div>"
       ],
+      offersNonReward: [
+        "<div class='reward'>"+
+          "<span class='big'>"+ i18n.t("tap_here") +"</span>"+
+          "<span class='free'>{cost}</span>"+
+        "</div>"
+      ],
       offers: [
         "<div class='offer'>"+
           "<div class='icon'>"+
@@ -419,7 +425,7 @@
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
         if (!$.data.rewarded) {
-          offerTemplate = $.format($.tpl.offers[0], item);
+          offerTemplate = $.format($.tpl.offersNonReward[0], item) + $.format($.tpl.offers[0], item);
         }else{
           offerTemplate = $.format($.tpl.offersReward[0], item) + $.format($.tpl.offers[0], item);
         }
