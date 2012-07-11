@@ -268,6 +268,17 @@ describe Device do
     end
   end
 
+  context 'Publisher multipliers' do
+    before :each do
+      @device = Device.new
+    end
+
+    it 'updates publisher_multiplier' do
+      @device.set_publisher_multiplier('app_id', 'foo')
+      @device.publisher_multiplier['app_id'].should == 'foo'
+    end
+  end
+
   context 'Jailbreak detection' do
     before :each do
       @non_jb_device = FactoryGirl.create(:device)

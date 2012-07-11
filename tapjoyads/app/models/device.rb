@@ -13,6 +13,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :banned, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
+  self.sdb_attr :publisher_multiplier, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
@@ -57,6 +58,7 @@ class Device < SimpledbShardedResource
     @retry_save_on_fail = is_new
     fix_app_json
     fix_publisher_user_ids_json
+    fix_publisher_multiplier_json
   end
 
   def handle_connect!(app_id, params)
@@ -164,6 +166,19 @@ class Device < SimpledbShardedResource
 
   def set_publisher_user_id!(app_id, publisher_user_id)
     set_publisher_user_id(app_id, publisher_user_id)
+    save if changed?
+  end
+
+  def set_publisher_multiplier(app_id, publisher_multi)
+    parsed_publisher_multiplier = publisher_multiplier
+    return if parsed_publisher_multiplier[app_id] == publisher_multi
+
+    parsed_publisher_multiplier[app_id] = publisher_multi
+    self.publisher_multiplier = parsed_publisher_multiplier
+  end
+
+  def set_publisher_multiplier!(app_id, publisher_multiplier)
+    set_publisher_multiplier(app_id, publisher_multiplier)
     save if changed?
   end
 
@@ -341,6 +356,14 @@ class Device < SimpledbShardedResource
       publisher_user_ids
     rescue JSON::ParserError
       self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids', :right))
+    end
+  end
+
+  def fix_publisher_multiplier_json
+    begin
+      publisher_multiplier
+    rescue JSON::ParserError
+      self.publisher_multiplier = JSON.parse(fix_parser_error('publisher_multiplier', :right))
     end
   end
 end
