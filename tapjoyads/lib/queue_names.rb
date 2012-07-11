@@ -28,4 +28,5 @@ class QueueNames
   SEND_WELCOME_EMAILS        = "#{BASE_NAME}SendWelcomeEmails"
   UPDATE_PAPAYA_DEVICES      = "#{BASE_NAME}UpdatePapayaDevices"
   UPDATE_PAPAYA_USER_COUNT   = "#{BASE_NAME}UpdatePapayaUserCount"
+  RECORD_UPDATES             = "#{BASE_NAME}RecordUpdates"
 end

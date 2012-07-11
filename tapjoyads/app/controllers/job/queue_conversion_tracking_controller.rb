@@ -123,7 +123,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     rescue => e
       Rails.logger.error "Failed to update partner live dates for click #{click}: #{e.class} #{e.message}"
     end
-    
+
     device.set_last_run_time(click.advertiser_app_id)
     device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
     device.save
