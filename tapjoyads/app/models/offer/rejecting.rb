@@ -1,5 +1,7 @@
 module Offer::Rejecting
 
+  GUN_AND_BLOOD_ID = '127095d1-42fc-480c-a65d-b5724003daf0'
+
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
     [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
@@ -122,7 +124,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device, type) ||
+    show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -266,8 +268,9 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device, type)
+  def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
+    return false if currency.id == GUN_AND_BLOOD_ID && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
