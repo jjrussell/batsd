@@ -188,7 +188,7 @@ GEM
     multipart-post (1.1.0)
     mysql (2.8.1)
     newrelic_rpm (3.3.0)
-    nokogiri (1.5.0)
+    nokogiri (1.5.5)
     oauth (0.4.5)
     parallel (0.5.17)
     parallel_tests (0.8.2)
@@ -375,7 +375,7 @@ DEPENDENCIES
   multipart-post (= 1.1.0)
   mysql (= 2.8.1)
   newrelic_rpm (= 3.3.0)
-  nokogiri (= 1.5.0)
+  nokogiri (= 1.5.5)
   oauth (= 0.4.5)
   parallel_tests
   patron (= 0.4.4)

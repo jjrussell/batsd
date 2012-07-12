@@ -214,6 +214,10 @@ class ApplicationController < ActionController::Base
     render :text => '' if BANNED_IPS.include?(ip_address)
   end
 
+  def reject_banned_udids
+    render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
+  end
+
   def log_activity(object, options={})
     included_methods = options.delete(:included_methods) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
