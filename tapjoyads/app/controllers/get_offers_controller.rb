@@ -81,7 +81,7 @@ include GetOffersHelper
     if params[:redesign].present?
       set_redesign_parameters
       if params[:json] == '1'
-        unless @publisher_app.uses_non_html_responses
+        if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
           @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
         end
         render :json => @final.to_json, :callback => params[:callback] and return
@@ -107,7 +107,7 @@ include GetOffersHelper
       @web_request.path = 'featured_offer_shown'
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
@@ -124,7 +124,7 @@ include GetOffersHelper
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
