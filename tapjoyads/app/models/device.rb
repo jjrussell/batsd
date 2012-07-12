@@ -361,15 +361,15 @@ class Device < SimpledbShardedResource
     temp_clicks = self.recent_clicks
     end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
 
-    shift_idx = 0
-    temp_clicks.each_with_index do |clk, i|
-      if clk['clicked_at'] < end_period
-        shift_idx = i+1
+    shift_index = 0
+    temp_clicks.each_with_index do |temp_click, i|
+      if temp_click['clicked_at'] < end_period
+        shift_index = i+1
       else
         break
       end
     end
-    temp_clicks.shift(shift_idx)
+    temp_clicks.shift(shift_index)
 
     temp_clicks << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
     self.recent_clicks = temp_clicks
