@@ -210,11 +210,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         return
       end
       @cut_off_date = (params[:cut_off_date] || Time.zone.now).to_i
-      conditions = [
-        "udid = '#{udid}'",
-        "clicked_at < '#{@cut_off_date}'",
-        "clicked_at > '#{@cut_off_date - 1.month}'",
-      ].join(' and ')
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
       @not_rewarded_count = 0
@@ -227,7 +222,9 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @clicks = []
       @device.recent_clicks.each do |recent_click|
         c = Click.find(recent_click['id'])
-        @clicks << c if (c and !c.tapjoy_games_invitation_primary_click?)
+        next unless c
+        cutoff = c.clicked_at > @cut_off_date or c.clicked_at < (@cut_off_date - 1.month)
+        @clicks << c unless (cutoff or c.tapjoy_games_invitation_primary_click?)
       end
 
       @clicks.each do |click|
