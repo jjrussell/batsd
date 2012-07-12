@@ -82,6 +82,7 @@ group :development do
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-nav'
+  gem 'ruby18_source_location', :platforms => :ruby_18
   gem 'parallel_tests'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git', :require => false
 end
@@ -110,9 +111,6 @@ end
 platforms :ruby_18 do
   gem 'SystemTimer', '1.2.3', :require => 'system_timer'
   gem 'rcov'
-  group :test do
-    gem 'ruby18_source_location'
-  end
 end
 
 platforms :ruby_19 do
