@@ -81,7 +81,7 @@ include GetOffersHelper
     if params[:redesign].present?
       set_redesign_parameters
       if params[:json] == '1'
-        unless @publisher_app.uses_non_html_responses
+        if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
           @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
         end
         render :json => @final.to_json, :callback => params[:callback] and return
@@ -107,7 +107,7 @@ include GetOffersHelper
       @web_request.path = 'featured_offer_shown'
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
@@ -124,7 +124,7 @@ include GetOffersHelper
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
@@ -163,9 +163,11 @@ include GetOffersHelper
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
       @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+      @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
     else
       @currency = Currency.find_in_cache(params[:currency_id])
       @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
+      @supports_rewarded = @currency.conversion_rate > 0
     end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
@@ -331,6 +333,7 @@ include GetOffersHelper
     @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
+    @obj[:rewarded]            = @supports_rewarded
 
     @final = @obj.merge(view);
   end

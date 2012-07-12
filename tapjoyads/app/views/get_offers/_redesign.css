@@ -91,8 +91,6 @@ body {
 }
 
 #header .app-icon .overlay {
-  background: url(/images/offerwall/new/squircle_dark.png) no-repeat top left;
-  background-size: 54px 54px;
   height: 54px;
   position: relative;
   z-index: 1;
