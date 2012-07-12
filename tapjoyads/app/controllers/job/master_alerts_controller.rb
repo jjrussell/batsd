@@ -1,4 +1,4 @@
-class Job::MasterAlertsCountController < Job::JobController
+class Job::MasterAlertsController < Job::JobController
   def index
     alerts = [
       {
