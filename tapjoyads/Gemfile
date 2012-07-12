@@ -35,7 +35,7 @@ gem 'multi_json', '1.0.3'
 gem 'multi_xml', '0.4.0'
 gem 'multipart-post', '1.1.0', :require => 'net/http/post/multipart'
 gem 'mysql', '2.8.1'
-gem 'nokogiri', '1.5.0'
+gem 'nokogiri', '1.5.5'
 gem 'oauth', '0.4.5'
 gem 'patron', '0.4.4'
 gem 'plist', '3.1.0'
@@ -82,7 +82,6 @@ group :development do
   gem 'pry-rails'
   gem 'pry-remote'
   gem 'pry-nav'
-  gem 'ruby18_source_location'
   gem 'parallel_tests'
   gem 'tapjoyserver-tests', :git => 'git@github.com:Tapjoy/tapjoyserver-tests.git', :require => false
 end
@@ -111,6 +110,9 @@ end
 platforms :ruby_18 do
   gem 'SystemTimer', '1.2.3', :require => 'system_timer'
   gem 'rcov'
+  group :test do
+    gem 'ruby18_source_location'
+  end
 end
 
 platforms :ruby_19 do
