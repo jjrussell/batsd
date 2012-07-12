@@ -224,10 +224,13 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
-      @clicks = @device.recent_clicks.map {|recent_click| Click.find(recent_click['id'])}
+      @clicks = []
+      @device.recent_clicks.each do |recent_click|
+        c = Click.find(recent_click['id'])
+        @clicks << c if (c and !c.tapjoy_games_invitation_primary_click?)
+      end
 
       @clicks.each do |click|
-        @clicks << click unless click.tapjoy_games_invitation_primary_click?
         if click.installed_at?
           @rewards[click.reward_key] = Reward.find(click.reward_key)
           if click.force_convert
