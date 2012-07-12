@@ -163,7 +163,19 @@ Install memcached:
 brew install memcached
 ```
 
-Follow the post-install directions. (Type `brew info mysql` to see them again)
+Follow the post-install directions. (Type `brew info memcached` to see them again)
+
+
+Install redis
+-----------------
+
+Install redis:
+
+```
+brew install redis
+```
+
+Follow the post-install directions. (Type `brew info redis` to see them again)
 
 
 Setup repo

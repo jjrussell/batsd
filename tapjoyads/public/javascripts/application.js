@@ -1,6 +1,16 @@
 if (typeof(Tapjoy) == "undefined") Tapjoy = {};
 if (typeof(console) == "undefined") console={log:$.noop};
 
+function formatCurrency(field) {
+  var value = field.val();
+  if(value.match(/^\s*\$?([\d\,]+)?(\.(\d)+)?\s*$/)) {
+    field.val(numberToCurrency(stringToNumber(value, field.hasClass('allow_negative'))));
+    field.removeClass('error');
+  } else {
+    field.addClass('error');
+  }
+}
+
 function addCommaSeparators(number) {
   return String(number).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 }
@@ -41,7 +51,7 @@ $(function($){
 
   $('input.currency_field').change(function() {
     if (!$(this).hasClass('allow_nil') || $(this).val().length > 0) {
-      $(this).val(numberToCurrency(stringToNumber($(this).val(), $(this).hasClass('allow_negative'))));
+      formatCurrency($(this));
     }
   });
 

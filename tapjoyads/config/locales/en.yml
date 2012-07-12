@@ -498,6 +498,7 @@ en:
       powered: Powered By Tapjoy
       previous: "Previous %{items}"
       privacy: Privacy Policy
+      tap_here: Tap Here
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
@@ -610,7 +611,8 @@ en:
     pm: pm
   user_event:
     error:
-      bad_params: "Could not find app or device. Check your app_id and udid paramters."
-      bad_event: "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price."
+      no_device: "Device missing in request."
+      verification_failed: "Parameter verification failed."
+      no_verifier: "Verifier missing in request."
     success:
       created: "Successfully saved user event."

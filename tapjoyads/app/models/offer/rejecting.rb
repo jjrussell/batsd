@@ -1,5 +1,7 @@
 module Offer::Rejecting
 
+  GUN_AND_BLOOD_ID = '127095d1-42fc-480c-a65d-b5724003daf0'
+
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
     [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
@@ -80,6 +82,8 @@ module Offer::Rejecting
     # Forces of War
     %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182) =>
     %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182),
+    # Badoo
+    %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc) => %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -120,7 +124,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device, type) ||
+    show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -264,8 +268,9 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device, type)
+  def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
+    return false if currency.id == GUN_AND_BLOOD_ID && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
