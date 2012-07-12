@@ -166,8 +166,10 @@ include GetOffersHelper
       @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
     else
       @currency = Currency.find_in_cache(params[:currency_id])
-      @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-      @supports_rewarded = @currency.conversion_rate > 0
+      if @currency.present? && @currency.app_id != params[:app_id]
+        @supports_rewarded = @currency.conversion_rate > 0
+        @currency = nil
+      end
     end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
