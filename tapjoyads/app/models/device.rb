@@ -13,7 +13,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :banned, :type => :bool, :default_value => false
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
-  self.sdb_attr :publisher_multiplier, :type => :json, :default_value => {}, :cgi_escape => true
+  self.sdb_attr :display_multipliers, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
@@ -58,7 +58,7 @@ class Device < SimpledbShardedResource
     @retry_save_on_fail = is_new
     fix_app_json
     fix_publisher_user_ids_json
-    fix_publisher_multiplier_json
+    fix_display_multipliers_json
   end
 
   def handle_connect!(app_id, params)
@@ -169,16 +169,16 @@ class Device < SimpledbShardedResource
     save if changed?
   end
 
-  def set_publisher_multiplier(app_id, publisher_multi)
-    parsed_publisher_multiplier = publisher_multiplier
-    return if parsed_publisher_multiplier[app_id] == publisher_multi
+  def set_display_multipliers(app_id, display_multi)
+    parsed_display_multipliers = display_multipliers
+    return if parsed_display_multipliers[app_id] == display_multi
 
-    parsed_publisher_multiplier[app_id] = publisher_multi
-    self.publisher_multiplier = parsed_publisher_multiplier
+    parsed_display_multipliers[app_id] = display_multi
+    self.display_multipliers = parsed_display_multipliers
   end
 
-  def set_publisher_multiplier!(app_id, publisher_multiplier)
-    set_publisher_multiplier(app_id, publisher_multiplier)
+  def set_display_multipliers!(app_id, display_multipliers)
+    set_display_multipliers(app_id, display_multipliers)
     save if changed?
   end
 
@@ -359,11 +359,11 @@ class Device < SimpledbShardedResource
     end
   end
 
-  def fix_publisher_multiplier_json
+  def fix_display_multipliers_json
     begin
-      publisher_multiplier
+      display_multipliers
     rescue JSON::ParserError
-      self.publisher_multiplier = JSON.parse(fix_parser_error('publisher_multiplier', :right))
+      self.display_multipliers = JSON.parse(fix_parser_error('display_multipliers', :right))
     end
   end
 end

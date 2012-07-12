@@ -19,7 +19,7 @@ describe ExternalPublisher do
 
     it 'succeeds without a publisher_user_id' do
       @device.stub(:publisher_user_ids).and_return({})
-      @device.stub(:publisher_multiplier).and_return({})
+      @device.stub(:display_multipliers).and_return({})
       @device.stub(:key).and_return('123')
       url = ExternalPublisher.new(@curr)
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)
@@ -34,7 +34,7 @@ describe ExternalPublisher do
 
     it 'succeeds with a publisher_user_id and without a publisher_multiplier' do
       @device.stub(:publisher_user_ids).and_return( {'1234' => 'username'} )
-      @device.stub(:publisher_multiplier).and_return({})
+      @device.stub(:display_multipliers).and_return({})
       @device.stub(:key).and_return('123')
       url = ExternalPublisher.new(@curr)
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)
@@ -49,7 +49,7 @@ describe ExternalPublisher do
 
     it 'succeeds with a publisher_user_id and a publisher_multiplier' do
       @device.stub(:publisher_user_ids).and_return( {'1234' => 'username'} )
-      @device.stub(:publisher_multiplier).and_return({'1234' => '4'})
+      @device.stub(:display_multipliers).and_return({'1234' => '4'})
       @device.stub(:key).and_return('123')
       url = ExternalPublisher.new(@curr)
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)

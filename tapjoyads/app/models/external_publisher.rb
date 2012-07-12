@@ -30,7 +30,7 @@ class ExternalPublisher
     os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
 
     publisher_user_id = device.publisher_user_ids[app_id] || device.key
-    publisher_multiplier = device.publisher_multiplier[app_id].present? ? device.publisher_multiplier[app_id] : 1
+    display_multiplier = device.display_multipliers[app_id].present? ? device.display_multipliers[app_id] : 1
 
     data = {
       :udid                => device.key,
@@ -39,7 +39,7 @@ class ExternalPublisher
       :app_id              => app_id,
       :source              => 'tj_games',
       :json                => '1',
-      :display_multiplier  => "#{publisher_multiplier}"
+      :display_multiplier  => "#{display_multiplier}"
     }
     data[:language_code]       = language_code if language_code.present?
     data[:device_type]         = device_type if device_type.present?
