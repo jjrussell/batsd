@@ -36,7 +36,7 @@ clear_memcache: true
 1. Go to https://developers.facebook.com/apps/374261032627026, change the site url to 'http://tjm-staging.tapjoy.com' and set App Domains to 'tapjoy.com'
 3. Go to 'config/local.yml' file on staging.tapjoy.com update ```website_url``` to ```http://tjm-staging.tapjoy.com```, and add ```api_url_ext: https://staging.tapjoy.com``` if it's not there
 4. Go to 'config/local.yml' file on tjm-staging.tapjoy.com update ```website_url``` to ```http://tjm-staging.tapjoy.com```
-5. Go to 'config/facebooker.yaml', update staging settings to:
+5. Go to 'config/facebooker.yaml' on staging.tapjoy.com, update 'staging' settings to:
 ```
 staging:
   app_id: '374261032627026'
