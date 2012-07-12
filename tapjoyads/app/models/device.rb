@@ -25,7 +25,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
-  self.sdb_attr :recent_clicks, :type => :json, :default_value => []
+  self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
@@ -358,21 +358,21 @@ class Device < SimpledbShardedResource
 
   def add_click(click)
     click_id = click.id
-    temp_clicks = self.recent_clicks
+    temp_click_hashes = self.recent_click_hashes
     end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
 
     shift_index = 0
-    temp_clicks.each_with_index do |temp_click, i|
-      if temp_click['clicked_at'] < end_period
+    temp_click_hashes.each_with_index do |temp_click_hash, i|
+      if temp_click_hash['clicked_at'] < end_period
         shift_index = i+1
       else
         break
       end
     end
-    temp_clicks.shift(shift_index)
+    temp_click_hashes.shift(shift_index)
 
-    temp_clicks << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
-    self.recent_clicks = temp_clicks
+    temp_click_hashes << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    self.recent_click_hashes = temp_click_hashes
     @retry_save_on_fail = true
     save
   end

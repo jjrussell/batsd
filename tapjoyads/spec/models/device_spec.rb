@@ -258,33 +258,33 @@ describe Device do
     end
 
     it "adds a click to the device" do
-      @device.recent_clicks.length.should == 0
+      @device.recent_click_hashes.length.should == 0
       click = FactoryGirl.create(:click, :clicked_at => Time.now)
       @device.add_click(click)
-      recent_clicks = @device.recent_clicks
-      recent_clicks.length.should == 1
-      recent_clicks[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+      recent_click_hashes = @device.recent_click_hashes
+      recent_click_hashes.length.should == 1
+      recent_click_hashes[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
     end
 
     it "pushes off the first click off the device" do
       clicks = []
-      @device.recent_clicks.length.should == 0
+      @device.recent_click_hashes.length.should == 0
       num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
 
       # add the first click with click time older than specified range
       click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days+1).days))
       @device.add_click(click)
-      @device.recent_clicks.length.should == 1
+      @device.recent_click_hashes.length.should == 1
 
       # should push off the older click
       click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days-1).days))
       @device.add_click(click)
-      @device.recent_clicks.length.should == 1
+      @device.recent_click_hashes.length.should == 1
 
       # should retain the last click
       click = FactoryGirl.create(:click, :clicked_at => Time.now)
       @device.add_click(click)
-      @device.recent_clicks.length.should == 2
+      @device.recent_click_hashes.length.should == 2
     end
   end
 

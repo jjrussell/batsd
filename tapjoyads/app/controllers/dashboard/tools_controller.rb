@@ -220,8 +220,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
       @clicks = []
-      @device.recent_clicks.each do |recent_click|
-        c = Click.find(recent_click['id'])
+      @device.recent_click_hashes.each do |recent_click_hash|
+        c = Click.find(recent_click_hash['id'])
         next unless c
         cutoff = c.clicked_at > @cut_off_date or c.clicked_at < (@cut_off_date - 1.month)
         @clicks << c unless (cutoff or c.tapjoy_games_invitation_primary_click?)
