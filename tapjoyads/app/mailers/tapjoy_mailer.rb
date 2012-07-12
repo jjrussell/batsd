@@ -1,12 +1,19 @@
 class TapjoyMailer < ActionMailer::Base
   default :from => 'Tapjoy <noreply@tapjoy.com>',
           :bcc  => 'email.receipts@tapjoy.com'
-          
+
   def newrelic_alert(error)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
     subject "NewRelic Error: #{error.class}"
     body(:error => error)
+  end
+
+  def alert(message, rows)
+    from 'Tapjoy <noc@tapjoy.com>'
+    recipients [ 'aaron@tapjoy.com', 'chris.compeau@tapjoy.com' ]
+    subject "[ALERT] #{message}"
+    body :rows => rows
   end
 
   def sms_sent(phone, message)
