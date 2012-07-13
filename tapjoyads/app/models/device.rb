@@ -361,7 +361,8 @@ class Device < SimpledbShardedResource
     self.recent_click_hashes.each do |recent_click_hash|
       click = Click.find(recent_click_hash['id'])
       next unless click
-      cutoff = (click.clicked_at > end_time or click.clicked_at < start_time)
+      clicked_at = click.clicked_at.to_f
+      cutoff = (clicked_at > end_time or clicked_at < start_time)
       clicks << click unless (cutoff or click.tapjoy_games_invitation_primary_click?)
     end
     clicks
