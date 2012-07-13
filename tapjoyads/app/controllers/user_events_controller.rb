@@ -29,9 +29,9 @@ class UserEventsController < ApplicationController
       @type = UserEventTypes::EVENT_TYPE_KEYS[event_type_id]
       @event_data = params.delete(:ue).try(:symbolize_keys)
       remote_verifier = params.delete(:verifier)
-      raise I18n.t('user_event.error.no_verifier') unless remote_verifier.present?
-      local_verifier = UserEvent.verifier_string(app.id, device.id, app.secret_key, event_type_id, @event_data)
-      raise I18n.t('user_event.error.verification_failed') unless local_verifier == remote_verifier
+      # raise I18n.t('user_event.error.no_verifier') unless remote_verifier.present?
+      # local_verifier = UserEvent.verifier_string(app.id, device.id, app.secret_key, event_type_id, @event_data)
+      # raise I18n.t('user_event.error.verification_failed') unless local_verifier == remote_verifier
     rescue Exception => error
       render :text => "#{error.message}\n", :status => :bad_request
     end
