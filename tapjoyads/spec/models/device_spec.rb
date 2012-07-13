@@ -257,7 +257,7 @@ describe Device do
       @key = @device.id
     end
 
-    it "adds a click to the device" do
+    it "adds a click to the device", :recent_clicks do
       @device.recent_click_hashes.length.should == 0
       click = FactoryGirl.create(:click, :clicked_at => Time.now)
       @device.add_click(click)
@@ -266,7 +266,7 @@ describe Device do
       recent_click_hashes[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
     end
 
-    it "pushes off the first click off the device" do
+    it "pushes off the first click off the device", :recent_clicks do
       clicks = []
       @device.recent_click_hashes.length.should == 0
       num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
@@ -285,6 +285,24 @@ describe Device do
       click = FactoryGirl.create(:click, :clicked_at => Time.now)
       @device.add_click(click)
       @device.recent_click_hashes.length.should == 2
+    end
+
+    it "gets recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks(Time.now-1.month, Time.now)
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
     end
   end
 

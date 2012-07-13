@@ -219,14 +219,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
-      @clicks = []
-      @device.recent_click_hashes.each do |recent_click_hash|
-        c = Click.find(recent_click_hash['id'])
-        next unless c
-        cutoff = c.clicked_at > @cut_off_date or c.clicked_at < (@cut_off_date - 1.month)
-        @clicks << c unless (cutoff or c.tapjoy_games_invitation_primary_click?)
-      end
 
+      @clicks = @device.recent_clicks(@cut_off_date-1.month, @cut_off_date)
       @clicks.each do |click|
         if click.installed_at?
           @rewards[click.reward_key] = Reward.find(click.reward_key)
