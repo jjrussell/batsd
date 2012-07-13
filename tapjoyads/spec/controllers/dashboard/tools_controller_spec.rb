@@ -94,5 +94,28 @@ describe Dashboard::ToolsController do
         end
       end
     end
+
+    describe "#device_info" do
+      before :each do
+        click = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+        click.clicked_at = Time.now-1.day
+        click.save
+        @device1.add_click(click)
+      end
+
+      it "shows all recent clicks", :device_info do
+        app_id, user_id = @pub_user.key.split('.')
+        post(:device_info, {:publisher_app_id => app_id, :publisher_user_id => user_id,
+                            :udid => @device1.key})
+        recent_clicks = @device1.recent_clicks((Time.now-1.month).to_i, Time.now.to_i)
+        recent_clicks.size.should == 1
+      end
+
+      it "shows all recent clicks with cutoff date", :device_info do
+        app_id, user_id = @pub_user.key.split('.')
+        post(:device_info, {:publisher_app_id => app_id, :publisher_user_id => user_id,
+                            :cut_off_date => (Time.now-1.month).to_i, :udid => @device1.key})
+      end
+    end
   end
 end
