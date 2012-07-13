@@ -64,21 +64,21 @@ class UserEvent < WebRequest
       end
     end
     if missing_fields.present?
-      raise "Expected attribute(s) #{missing_fields.join("\n")} not found."
+      raise UserEventFieldException, "Expected attribute(s) #{missing_fields.join("\n")} not found."
     end
   end
 
   def check_for_undefined_fields!(event_descriptor, event_data)
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
     if undefined_fields.present?
-      raise "Attribute(s) #{undefined_fields.join(',')} are undefined for this event type."
+      raise UserEventFieldException, "Attribute(s) #{undefined_fields.join(',')} are undefined for this event type."
     end
   end
 
   def check_for_invalid_fields!(event_descriptor, event_data)
     invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
     if invalid_fields.present?
-      raise invalid_fields.keys.map { |field| "'#{field}' is not of type '#{event_descriptor[field]}'." }.join("\n")
+      raise UserEventFieldException, invalid_fields.keys.map { |field| "'#{field}' is not of type '#{event_descriptor[field]}'." }.join("\n")
     end
   end
 
