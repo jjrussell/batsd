@@ -299,7 +299,7 @@ describe Device do
       @device.add_click(click1)
 
       @device.recent_click_hashes.size.should == 2
-      clicks = @device.recent_clicks(Time.now-1.month, Time.now)
+      clicks = @device.recent_clicks((Time.now-1.month).to_i, Time.now.to_i)
       clicks.size.should == 2
       clicks[0].id.should == click0.id
       clicks[1].id.should == click1.id
