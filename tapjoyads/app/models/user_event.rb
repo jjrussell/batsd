@@ -33,7 +33,6 @@ class UserEvent < WebRequest
     if event_data.present?
       verifier_array += event_data.keys.sort.map { |key| event_data[key] }
     end
-    Rails.logger.info "$$$$$$$$$$$$$$ VERIFIER: #{verifier_array.inspect}"
     Digest::SHA256.hexdigest(verifier_array.join(':'))
   end
 
@@ -52,7 +51,6 @@ class UserEvent < WebRequest
         event_descriptor[event_specific_field] = data_type
       end
     end
-    Rails.logger.info "$$$$$$$$$$$$$$ DESCRIPTOR: #{event_descriptor.inspect}"
     check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
     check_for_undefined_fields!(event_descriptor, event_data)
     check_for_invalid_fields!(event_descriptor, event_data)
@@ -65,7 +63,6 @@ class UserEvent < WebRequest
         missing_fields.delete(field) if missing_fields.include?(field) && event_data[alternative].present?
       end
     end
-    Rails.logger.info "$$$$$$$$$$$$$$ MISSING: #{missing_fields.inspect}"
     if missing_fields.present?
       raise "Expected attribute(s) #{missing_fields.join("\n")} not found."
     end
@@ -73,7 +70,6 @@ class UserEvent < WebRequest
 
   def check_for_undefined_fields!(event_descriptor, event_data)
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
-    Rails.logger.info "$$$$$$$$$$$$$$ UNDEFINED: #{undefined_fields.inspect}"
     if undefined_fields.present?
       raise "Attribute(s) #{undefined_fields.join(',')} are undefined for this event type."
     end
@@ -81,7 +77,6 @@ class UserEvent < WebRequest
 
   def check_for_invalid_fields!(event_descriptor, event_data)
     invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
-    Rails.logger.info "$$$$$$$$$$$$$$ INVALID: #{invalid_fields.inspect}"
     if invalid_fields.present?
       raise invalid_fields.keys.map { |field| "'#{field}' is not of type '#{event_descriptor[field]}'." }.join("\n")
     end
