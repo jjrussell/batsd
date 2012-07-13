@@ -274,7 +274,7 @@ describe Device do
     end
 
     it 'updates display_multiplier' do
-      @device.set_display_multipliers('app_id', 'foo')
+      @device.set_display_multiplier('app_id', 'foo')
       @device.display_multipliers['app_id'].should == 'foo'
     end
   end

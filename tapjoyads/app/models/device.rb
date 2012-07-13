@@ -169,16 +169,16 @@ class Device < SimpledbShardedResource
     save if changed?
   end
 
-  def set_display_multipliers(app_id, display_multi)
-    parsed_display_multipliers = display_multipliers
-    return if parsed_display_multipliers[app_id] == display_multi
+  def set_display_multiplier(app_id, display_multi)
+    parsed_display_multiplier = display_multipliers
+    return if parsed_display_multiplier[app_id] == display_multi
 
-    parsed_display_multipliers[app_id] = display_multi
-    self.display_multipliers = parsed_display_multipliers
+    parsed_display_multiplier[app_id] = display_multi
+    self.display_multipliers = parsed_display_multiplier
   end
 
-  def set_display_multipliers!(app_id, display_multipliers)
-    set_display_multipliers(app_id, display_multipliers)
+  def set_display_multiplier!(app_id, display_multi)
+    set_display_multiplier(app_id, display_multi)
     save if changed?
   end
 
