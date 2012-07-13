@@ -205,7 +205,7 @@ Sync prod db with local db (this will overwrite any pre-existing changes)
 ```
 mkdir tmp
 rake db:create
-rake admin:sync_db
+rake db:sync
 ```
 
 Running the tests
