@@ -1,5 +1,7 @@
 class ConnectController < ApplicationController
 
+  before_filter :reject_banned_udids
+
   def index
     lookup_udid
     return unless verify_params([:app_id, :udid])

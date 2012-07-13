@@ -4,7 +4,7 @@
 html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{ margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; background:transparent}body{ line-height:1}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{ display:block}nav ul{ list-style:none}blockquote,q{ quotes:none}blockquote:before,blockquote:after,q:before,q:after{ content:''; content:none}a{ margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent}ins{ background-color:#ff9; color:#000; text-decoration:none}mark{ background-color:#ff9; color:#000; font-style:italic; font-weight:bold}del{ text-decoration:line-through}abbr[title],dfn[title]{ border-bottom:1px dotted; cursor:help}table{ border-collapse:collapse; border-spacing:0}hr{ display:block; height:1px; border:0;  border-top:1px solid #ccc; margin:1em 0; padding:0}input,select{ vertical-align:middle}
 
 body {
-  background-color: #f0f0f0;        
+  background-color: #f0f0f0;
   font-size: 100%/16px;
   font-family: "Helvetica", Arial, Helvetica, sans-serif;
   font-weight: normal;
@@ -12,8 +12,8 @@ body {
 
 .container {
   border-bottom: 1px solid #888;
-  box-shadow: inset 0 1px 0 #fff; 
-  padding: 10px; 
+  box-shadow: inset 0 1px 0 #fff;
+  padding: 10px;
 }
 
 .mtn {
@@ -34,7 +34,7 @@ body {
   background: -webkit-linear-gradient(top, rgba(199,199,199,1) 0%,rgba(185,185,185,1) 25%,rgba(177,177,177,1) 47%,rgba(150,150,150,1) 72%,rgba(134,134,134,1) 100%);
   background: -o-linear-gradient(top, rgba(199,199,199,1) 0%,rgba(185,185,185,1) 25%,rgba(177,177,177,1) 47%,rgba(150,150,150,1) 72%,rgba(134,134,134,1) 100%);
   background: -ms-linear-gradient(top, rgba(199,199,199,1) 0%,rgba(185,185,185,1) 25%,rgba(177,177,177,1) 47%,rgba(150,150,150,1) 72%,rgba(134,134,134,1) 100%);
-  background: linear-gradient(top, rgba(199,199,199,1) 0%,rgba(185,185,185,1) 25%,rgba(177,177,177,1) 47%,rgba(150,150,150,1) 72%,rgba(134,134,134,1) 100%);        
+  background: linear-gradient(top, rgba(199,199,199,1) 0%,rgba(185,185,185,1) 25%,rgba(177,177,177,1) 47%,rgba(150,150,150,1) 72%,rgba(134,134,134,1) 100%);
   border-radius: 6px;
   box-shadow: inset 0 -1px 0 #545454, 0 1px 1px rgba(0, 0, 0, .2);
   color: #fff;
@@ -63,14 +63,14 @@ body {
 
 /**
  * Header
- */    
+ */
 #header {
   background: -moz-linear-gradient(top, rgba(53,53,53,1) 0%, rgba(59,59,59,1) 19%, rgba(59,59,59,1) 48%, rgba(63,63,63,1) 74%, rgba(68,68,68,1) 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(53,53,53,1)), color-stop(19%,rgba(59,59,59,1)), color-stop(48%,rgba(59,59,59,1)), color-stop(74%,rgba(63,63,63,1)), color-stop(100%,rgba(68,68,68,1)));
   background: -webkit-linear-gradient(top, rgba(53,53,53,1) 0%,rgba(59,59,59,1) 19%,rgba(59,59,59,1) 48%,rgba(63,63,63,1) 74%,rgba(68,68,68,1) 100%);
   background: -o-linear-gradient(top, rgba(53,53,53,1) 0%,rgba(59,59,59,1) 19%,rgba(59,59,59,1) 48%,rgba(63,63,63,1) 74%,rgba(68,68,68,1) 100%);
   background: -ms-linear-gradient(top, rgba(53,53,53,1) 0%,rgba(59,59,59,1) 19%,rgba(59,59,59,1) 48%,rgba(63,63,63,1) 74%,rgba(68,68,68,1) 100%);
-  background: linear-gradient(top, rgba(53,53,53,1) 0%,rgba(59,59,59,1) 19%,rgba(59,59,59,1) 48%,rgba(63,63,63,1) 74%,rgba(68,68,68,1) 100%);        
+  background: linear-gradient(top, rgba(53,53,53,1) 0%,rgba(59,59,59,1) 19%,rgba(59,59,59,1) 48%,rgba(63,63,63,1) 74%,rgba(68,68,68,1) 100%);
   box-shadow: inset 0 -3px 3px rgba(0, 0, 0, .1);
   height: 70px;
 }
@@ -81,7 +81,7 @@ body {
   display: inline-block;
   margin-top: 7px;
   text-shadow: 0 1px 0 rgba(0,0,0, .3);
-  vertical-align: middle;        
+  vertical-align: middle;
 }
 
 #header .app-icon {
@@ -91,11 +91,9 @@ body {
 }
 
 #header .app-icon .overlay {
-  background: url(/images/offerwall/new/squircle_dark.png) no-repeat top left;
-  background-size: 54px 54px;
   height: 54px;
   position: relative;
-  z-index: 1;  
+  z-index: 1;
 }
 
 #header .app-icon img {
@@ -157,7 +155,7 @@ body {
   width: 44px;
 }
 
-#test_offers .explaination { 
+#test_offers .explaination {
   padding: 12px 24px;
 }
 
@@ -284,7 +282,7 @@ ul#offers li .offer .overlay {
   height: 54px;
   position: relative;
   width: 54px;
-  z-index: 1;        
+  z-index: 1;
 }
 
 ul#offers li .offer .rounded {
@@ -295,7 +293,7 @@ ul#offers li .offer .rounded {
   left: 2px;
   position: relative;
   top: 3px;
-  z-index: 1;  
+  z-index: 1;
 }
 
 ul#offers li .offer .icon img.cover {
@@ -607,8 +605,8 @@ ul#offers li .error {
 
 .moreoffers {
   color: #444;
-  font-size: 90%; 
-  line-height: 110%; 
+  font-size: 90%;
+  line-height: 110%;
   padding: 0 0 10px 0;
   text-align: center;
 }
@@ -645,7 +643,7 @@ ul#offers.action-right-side  li .offer {
   margin-top: 25px;
   max-width: 90%;
   line-height: 110%;
-}    
+}
 
 #header.hide-current-app .app-desc h1 {
   display: none;
@@ -658,7 +656,7 @@ ul#offers.action-right-side  li .offer {
 
 ul#offers.no-action-line li .offer .desc {
   display: block;
-} 
+}
 
 ul#offers.no-action-line li .offer .about .action {
   display: none;
@@ -688,7 +686,7 @@ ul#offers.no-action-line li .offer .about .action {
   }
 
   .moreoffers {
-    font-size: 75%; 
+    font-size: 75%;
   }
 
   #header.hide-current-app .app-desc {

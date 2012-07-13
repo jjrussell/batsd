@@ -1,0 +1,7 @@
+= @message
+
+- @rows.each do |row|
+  - row.each_pair do |key,value|
+    = "#{key}:  #{value}"
+  = '-----------------'
+

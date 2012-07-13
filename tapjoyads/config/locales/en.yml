@@ -498,6 +498,7 @@ en:
       powered: Powered By Tapjoy
       previous: "Previous %{items}"
       privacy: Privacy Policy
+      tap_here: Tap Here
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."

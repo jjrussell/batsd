@@ -8,6 +8,7 @@ GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
 geoip_tag = (GEOIP_VERSION == '' ? '' : '-')
 GEOIP = GeoIP.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
+BANNED_UDIDS = Set.new(['358673013795895', '004999010640000'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
@@ -77,3 +78,11 @@ end
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
+
+# Pre-load all of our models to prevent issues with Marshal
+# We do this last to make sure everything is initialized that models may require
+
+Dir["#{Rails.root}/app/models/*.rb"].each do |file|
+  model = File.basename(file).gsub(/\.rb$/, '')
+  require_dependency model
+end
