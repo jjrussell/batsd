@@ -30,14 +30,25 @@ module UserEventTypes
     },
 
     :iap => {
-      :currency_id    => :string,
+      :currency_code  => :string,
       :name           => :string,
+      :item_id        => :string,
       :price          => :float,
       :quantity       => :int,
+
+      :REQUIRED       => [ :currency_code, :name, :item_id, :price, :quantity ],
+      :ALTERNATIVES   => {
+        :item_id        => [ :name ],
+        :name           => [ :item_id ],
+      }
     },
 
     :shutdown => {
     },
 
   }
+
+  EVENT_TYPE_MAP.freeze()
+  EVENT_TYPE_IDS.freeze()
+  EVENT_TYPE_KEYS.freeze()
 end

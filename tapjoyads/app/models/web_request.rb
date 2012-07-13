@@ -133,7 +133,7 @@ class WebRequest < SyslogMessage
     self.advertiser_app_id    = params[:advertiser_app_id]
     self.displayer_app_id     = params[:displayer_app_id]
     self.device_ip            = params[:device_ip]
-    self.type                 = params[:type]
+    self.type                 = params[:type] if params[:type].present?
     self.publisher_user_id    = params[:publisher_user_id]
     self.virtual_good_id      = params[:virtual_good_id]
     self.source               = params[:source]
