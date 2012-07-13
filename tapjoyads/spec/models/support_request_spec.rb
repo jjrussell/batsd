@@ -25,6 +25,7 @@ describe SupportRequest do
                   :currency_id          => "test_currency",
                   :app_id               => "test_app",
                   :offer_id             => "test_offer",
+                  :offer_value          => "test_offer_value",
                   :device_type          => "android",
                   :description          => "I'm needy and have lots of problems",
                   :email_address        => "test@tapjoy.com",
@@ -36,6 +37,11 @@ describe SupportRequest do
       it "stores the offer's id" do
         @support_request.fill_from_params(@params, @app, @currency, @offer, @user_agent)
         @support_request.offer_id.should == @offer.id
+      end
+
+      it "stores the offer's payment" do
+        @support_request.fill_from_params(@params, @app, @currency, @offer, @user_agent)
+        @support_request.offer_value.should == @offer.payment
       end
 
       context 'with a click association' do
@@ -70,6 +76,11 @@ describe SupportRequest do
       it "leaves click_id blank" do
         @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
         @support_request.click_id.should be_blank
+      end
+
+      it "leaves offer_value blank" do
+        @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+        @support_request.offer_value.should be_blank
       end
     end
 
@@ -177,6 +188,11 @@ describe SupportRequest do
         @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
         @support_request.click_id.should == @click.id
       end
+
+      it "stores the click model's advertiser_amount" do
+        @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.offer_value.should == @click.advertiser_amount
+      end
     end
 
     context 'when no click is provided' do
@@ -208,6 +224,11 @@ describe SupportRequest do
       it "leaves offer_id blank" do
         @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
         @support_request.offer_id.should be_blank
+      end
+
+      it "leaves offer_value blank" do
+        @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.offer_value.should be_blank
       end
 
       it "leaves click_id blank" do
