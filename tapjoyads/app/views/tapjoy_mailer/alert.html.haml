@@ -1,9 +1,7 @@
-%h2= @message
+= @message
 
 - @rows.each do |row|
-  %table
-    - row.each_pair do |key,value|
-      %tr
-        %th= key
-        %td= value
-  %hr/
+  - row.each_pair do |key,value|
+    = "#{key}:  value"
+  = '-----------------'
+
