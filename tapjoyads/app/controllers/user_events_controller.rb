@@ -10,7 +10,7 @@ class UserEventsController < ApplicationController
       event.put_values(nil, params, ip_address, geoip_data, request.headers['User-Agent'])
       event.save
       render :text => "#{I18n.t('user_event.success.created')}\n", :status => :ok
-    rescue UserEventInvalid => error
+    rescue UserEvent::UserEventInvalid => error
       render :text => "#{error.message}\n", :status => :bad_request
     end
   end
@@ -22,20 +22,23 @@ class UserEventsController < ApplicationController
       app = App.find_in_cache(params[:app_id])
       unless app
         error_msg_data = { :app_id => params[:app_id] }
-        raise UserEventInvalid, I18n.t('user_event.error.invalid_app_id', error_msg_data)
+        raise UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_app_id', error_msg_data)
       end
+
       device_id_key = DEVICE_KEYS_TO_TRY.detect { |key| params[key].present? }
-      raise UserEventInvalid, I18n.t('user_event.error.no_device') unless device_id_key
+      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.no_device') unless device_id_key
       device = Device.find(params[device_id_key])
+
       event_type_id = params.delete(:event_type_id).to_i
-      raise UserEventInvalid, I18n.t('user_event.error.invalid_event_type') unless event_type_id > 0
+      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_event_type') unless event_type_id > 0
+
       @type = UserEventTypes::EVENT_TYPE_KEYS[event_type_id]
       @event_data = params.delete(:ue).try(:symbolize_keys)
       remote_verifier = params.delete(:verifier)
       # raise UserEventInvalid, I18n.t('user_event.error.no_verifier') unless remote_verifier.present?
       # local_verifier = UserEvent.generate_verifier_key(app.id, device.id, app.secret_key, event_type_id, @event_data)
       # raise UserEventInvalid, I18n.t('user_event.error.verification_failed') unless local_verifier == remote_verifier
-    rescue UserEventInvalid => error
+    rescue UserEvent::UserEventInvalid => error
       render :text => "#{error.message}\n", :status => :bad_request
     end
   end

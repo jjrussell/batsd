@@ -1,6 +1,9 @@
 class UserEvent < WebRequest
   include UserEventTypes
 
+  class UserEventInvalid < RuntimeError
+  end
+
 
   # add new event type fields here with their required types
   # make sure to assign them at the bottom of #put_values() below
@@ -12,7 +15,7 @@ class UserEvent < WebRequest
   self.define_attr :price,    :type => :float
 
   def initialize(event_type, event_data)
-    super
+    super()
     validate!(event_type, event_data)
     self.type = event_type
 
@@ -63,6 +66,7 @@ class UserEvent < WebRequest
     if missing_fields.present?
       error_msg_data = { :missing_fields_string => missing_fields.join(',') }
       raise UserEventInvalid, I18n.t('user_event.error.missing_fields', error_msg_data)
+    end
   end
 
   def check_for_undefined_fields!(event_descriptor, event_data)
