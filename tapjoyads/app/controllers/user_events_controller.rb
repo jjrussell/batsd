@@ -20,7 +20,10 @@ class UserEventsController < ApplicationController
   def setup
     begin
       app = App.find_in_cache(params[:app_id])
-      raise UserEventInvalid, "App ID '#{params[:app_id]}' could not be found. Check 'app_id' and try again." unless app
+      unless app
+        error_msg_data = { :app_id => params[:app_id] }
+        raise UserEventInvalid, I18n.t('user_event.error.invalid_app_id', error_msg_data)
+      end
       device_id_key = DEVICE_KEYS_TO_TRY.detect { |key| params[key].present? }
       raise UserEventInvalid, I18n.t('user_event.error.no_device') unless device_id_key
       device = Device.find(params[device_id_key])

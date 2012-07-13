@@ -611,6 +611,10 @@ en:
     pm: pm
   user_event:
     error:
+      invalid_app_id: "App ID '%{app_id}' could not be found. Check 'app_id' and try again."
+      missing_fields: "Expected attribute(s) %{missing_fields_string} not found."
+      undefined_fields: "Attribute(s) %{undefined_fields_string} are undefined for this event type."
+      invalid_field: "'%{field}' is not of type '%{type}'."
       invalid_event_type: "Invalid event type ID."
       no_device: "Device missing in request."
       verification_failed: "Parameter verification failed."

@@ -54,26 +54,32 @@ class UserEvent < WebRequest
   def check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
     missing_fields = required_fields.reject { |field| event_data[field].present? }
     alternative_fields_map.each do |field, alternatives|
+
       alternatives.each do |alternative|
         missing_fields.delete(field) if missing_fields.include?(field) && event_data[alternative].present?
       end
+
     end
     if missing_fields.present?
-      raise UserEventInvalid, "Expected attribute(s) #{missing_fields.join("\n")} not found."
-    end
+      error_msg_data = { :missing_fields_string => missing_fields.join(',') }
+      raise UserEventInvalid, I18n.t('user_event.error.missing_fields', error_msg_data)
   end
 
   def check_for_undefined_fields!(event_descriptor, event_data)
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
     if undefined_fields.present?
-      raise UserEventInvalid, "Attribute(s) #{undefined_fields.join(',')} are undefined for this event type."
+      error_msg_data = { :undefined_fields_string => undefined_fields.join(',') }
+      raise UserEventInvalid, I18n.t('user_event.error.undefined_fields', error_msg_data)
     end
   end
 
   def check_for_invalid_fields!(event_descriptor, event_data)
     invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
     if invalid_fields.present?
-      raise UserEventInvalid, invalid_fields.keys.map { |field| "'#{field}' is not of type '#{event_descriptor[field]}'." }.join("\n")
+      error_msgs = invalid_fields.keys.map do |field|
+        I18n.t('user_event.error.invalid_field', { :field => field, :type => event_descriptor[field] })
+      end
+      raise UserEventInvalid, error_msgs.join("\n")
     end
   end
 
