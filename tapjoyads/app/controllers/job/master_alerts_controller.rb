@@ -46,7 +46,11 @@ class Job::MasterAlertsController < Job::JobController
     vertica = VerticaCluster.get_connection
 
     alerts.each do |alert|
-      rows = vertica.query(alert[:query]).rows
+      begin
+        rows = vertica.query(alert[:query]).rows
+      rescue Vertica::Error::QueryError
+        next
+      end
 
       if rows.length > 0
         TapjoyMailer.deliver_alert(alert[:message], rows)
