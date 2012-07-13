@@ -25,7 +25,6 @@ describe SupportRequest do
                   :currency_id          => "test_currency",
                   :app_id               => "test_app",
                   :offer_id             => "test_offer",
-                  :offer_value          => "test_offer_value",
                   :device_type          => "android",
                   :description          => "I'm needy and have lots of problems",
                   :email_address        => "test@tapjoy.com",
