@@ -39,30 +39,28 @@ class UserEvent < WebRequest
   private
 
   def validate!(event_type, event_data = {})
-    event_descriptor = {}
-    required_fields = []
-    alternative_fields_map = {}
+    event_descriptor        = {}
+    required_fields         = []
+    alternative_fields_map  = {}
+
     UserEventTypes::EVENT_TYPE_MAP[event_type].each do |event_specific_field, data_type|
       case event_specific_field
-      when :REQUIRED      then required_fields = data_type
+      when :REQUIRED      then required_fields        = data_type
       when :ALTERNATIVES  then alternative_fields_map = data_type
-      else event_descriptor[event_specific_field] = data_type
+      else event_descriptor[event_specific_field]     = data_type
       end
     end
+
     check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
     check_for_undefined_fields!(event_descriptor, event_data)
     check_for_invalid_fields!(event_descriptor, event_data)
   end
 
   def check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
-    missing_fields = required_fields.reject { |field| event_data[field].present? }
-    alternative_fields_map.each do |field, alternatives|
-
-      alternatives.each do |alternative|
-        missing_fields.delete(field) if missing_fields.include?(field) && event_data[alternative].present?
-      end
-
+    missing_fields = required_fields.reject do |field|
+      event_data[field].present? || alternative_fields_map[field].any? { |alt| event_data[alt].present? }
     end
+
     if missing_fields.present?
       error_msg_data = { :missing_fields_string => missing_fields.join(',') }
       raise UserEventInvalid, I18n.t('user_event.error.missing_fields', error_msg_data)
@@ -71,6 +69,7 @@ class UserEvent < WebRequest
 
   def check_for_undefined_fields!(event_descriptor, event_data)
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
+
     if undefined_fields.present?
       error_msg_data = { :undefined_fields_string => undefined_fields.join(',') }
       raise UserEventInvalid, I18n.t('user_event.error.undefined_fields', error_msg_data)
@@ -79,6 +78,7 @@ class UserEvent < WebRequest
 
   def check_for_invalid_fields!(event_descriptor, event_data)
     invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
+
     if invalid_fields.present?
       error_msgs = invalid_fields.keys.map do |field|
         I18n.t('user_event.error.invalid_field', { :field => field, :type => event_descriptor[field] })
