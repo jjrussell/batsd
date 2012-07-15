@@ -94,7 +94,7 @@ describe ClickController do
       it "queues the offer's click_tracking_urls properly" do
         Click.any_instance.stub(:offer).and_return(@offer)
         @params.merge!(:advertiser_app_id => 'testing click_tracking')
-        @offer.should_receive(:queue_click_tracking_requests).with(:ip_address => @request.remote_ip).once
+        @offer.should_receive(:queue_click_tracking_requests).with(:ip_address => @controller.send(:ip_address)).once
 
         get(:generic, @params)
       end
@@ -152,7 +152,7 @@ describe ClickController do
     it "queues the offer's click_tracking_urls properly" do
       Click.any_instance.stub(:offer).and_return(@offer)
       @params.merge!(:advertiser_app_id => 'testing click_tracking')
-      @offer.should_receive(:queue_click_tracking_requests).with(:ip_address => @request.remote_ip).once
+      @offer.should_receive(:queue_click_tracking_requests).with(:ip_address => @controller.send(:ip_address)).once
 
       get(:app, @params)
     end

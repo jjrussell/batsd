@@ -237,7 +237,7 @@ include GetOffersHelper
         web_request.offerwall_rank_score = offer.rank_score
         web_request.save
 
-        offer.queue_impression_tracking_requests(:ip_address => request.remote_ip) # for third party tracking vendors
+        offer.queue_impression_tracking_requests(:ip_address => ip_address) # for third party tracking vendors
       end
     end
   end
