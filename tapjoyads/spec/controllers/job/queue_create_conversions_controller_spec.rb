@@ -22,7 +22,7 @@ describe Job::QueueCreateConversionsController do
   end
 
   it 'enqueues conversion tracking GET requests properly' do
-    @offer.should_receive(:queue_conversion_tracking_requests).with(@reward.created.to_i.to_s).once
+    @offer.should_receive(:queue_conversion_tracking_requests).with(@reward.created.to_i).once
 
     get(:run_job, :message => 'reward_key')
   end
