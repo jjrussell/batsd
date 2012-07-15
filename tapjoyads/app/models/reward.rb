@@ -35,6 +35,8 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :device_type
   self.sdb_attr :offerwall_rank
 
+  belongs_to :offer
+
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
