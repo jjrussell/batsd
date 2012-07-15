@@ -144,7 +144,7 @@ describe DisplayAdController do
         end
 
         it 'should not queue up tracking url calls' do
-          Offer.any_instance.should_receive(:queue_impression_tracking_requests).never
+          Offer.any_instance.should_not_receive(:queue_impression_tracking_requests)
 
           get(:index, @params)
         end
