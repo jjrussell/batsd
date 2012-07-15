@@ -62,6 +62,10 @@ class Click < SimpledbShardedResource
     "clicks_#{domain_number}"
   end
 
+  def self.hashed_key(key)
+    Digest::MD5.hexdigest(key.to_s + CLICK_KEY_SALT)
+  end
+
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end

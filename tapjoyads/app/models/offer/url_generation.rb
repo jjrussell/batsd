@@ -60,7 +60,7 @@ module Offer::UrlGeneration
     case item_type
     when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
-      final_url.gsub!('TAPJOY_HASHED_KEY', Digest::MD5.hexdigest(click_key.to_s + CLICK_KEY_SALT))
+      final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
         final_url.sub!('market://search?q=', subbed_string)
@@ -268,7 +268,7 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
-  def format_as_click_key( params )
+  def format_as_click_key(params)
     if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
     elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
