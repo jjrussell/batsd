@@ -17,6 +17,10 @@ module Offer::ThirdPartyTracking
         Offer::TRUSTED_TRACKING_VENDORS.to_sentence(:two_words_connector => " #{connector} ", :last_word_connector => ", #{connector} ")
       end
 
+      def self.tracking_macros(connector = 'and')
+        Offer::TRACKING_MACROS.collect { |macro| "\"[#{macro}]\"" }.to_sentence(:two_words_connector => " #{connector} ", :last_word_connector => ", #{connector} ")
+      end
+
     end
   end
 
@@ -30,9 +34,10 @@ module Offer::ThirdPartyTracking
       urls = super().sort
 
       if replace_macros
-        macros[:timestamp] ||= Time.zone.now.to_i
+        now = Time.zone.now
+        macros[:timestamp] ||= "\#{now.to_i}.\#{now.usec}"
         Offer::TRACKING_MACROS.each do |macro|
-          urls = urls.collect { |url| url.gsub(/\[#{macro}\]/i, macros[macro].to_s) }
+          urls.collect! { |url| url.gsub(/\\[\#{macro}\\]/i, macros[macro].to_s) }
         end
       end
       urls
