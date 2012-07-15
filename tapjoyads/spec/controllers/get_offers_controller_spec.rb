@@ -34,7 +34,7 @@ describe GetOffersController do
     it 'should queue up tracking url calls' do
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address => @controller.send(:ip_address),
-        :udid => 'stuff').once
+        :udid       => 'stuff').once
 
       get(:index, @params)
     end
@@ -185,7 +185,7 @@ describe GetOffersController do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address => @controller.send(:ip_address),
-        :udid => 'stuff').once
+        :udid       => 'stuff').once
 
       get(:webpage, @params)
     end

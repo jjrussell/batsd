@@ -96,7 +96,7 @@ describe ClickController do
         @params.merge!(:advertiser_app_id => 'testing click_tracking')
         @offer.should_receive(:queue_click_tracking_requests).with(
           :ip_address => @controller.send(:ip_address),
-          :udid => 'stuff').once
+          :udid       => 'stuff').once
 
         get(:generic, @params)
       end
@@ -156,7 +156,7 @@ describe ClickController do
       @params.merge!(:advertiser_app_id => 'testing click_tracking')
       @offer.should_receive(:queue_click_tracking_requests).with(
         :ip_address => @controller.send(:ip_address),
-        :udid => 'app_stuff').once
+        :udid       => 'app_stuff').once
 
       get(:app, @params)
     end

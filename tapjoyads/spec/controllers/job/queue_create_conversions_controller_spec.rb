@@ -9,15 +9,16 @@ describe Job::QueueCreateConversionsController do
     @offer = advertiser_app.primary_offer
     @click = FactoryGirl.create(:click, :ip_address => '127.0.0.1')
     @reward = FactoryGirl.create(:reward,
-      :type => 'offer',
-      :publisher_app_id => publisher_app.id,
-      :advertiser_app_id => advertiser_app.id,
-      :offer_id => @offer.id,
-      :publisher_partner_id => publisher_app.partner_id,
+      :type                  => 'offer',
+      :publisher_app_id      => publisher_app.id,
+      :advertiser_app_id     => advertiser_app.id,
+      :offer_id              => @offer.id,
+      :publisher_partner_id  => publisher_app.partner_id,
       :advertiser_partner_id => advertiser_app.partner_id,
-      :publisher_amount => 1,
-      :advertiser_amount => 1,
-      :tapjoy_amount => 1)
+      :publisher_amount      => 1,
+      :advertiser_amount     => 1,
+      :tapjoy_amount         => 1,
+      :udid                  => 'udid')
     Reward.should_receive(:find).with('reward_key', :consistent => true).and_return(@reward)
     @reward.stub(:offer).and_return(@offer)
     @reward.stub(:click).and_return(@click)
@@ -37,7 +38,10 @@ describe Job::QueueCreateConversionsController do
     end
 
     it 'enqueues conversion tracking GET requests properly' do
-      @offer.should_receive(:queue_conversion_tracking_requests).with(:timestamp => @reward.created.to_i, :ip_address => @click.ip_address).once
+      @offer.should_receive(:queue_conversion_tracking_requests).with(
+        :timestamp  => @reward.created.to_i,
+        :ip_address => @click.ip_address,
+        :udid       => 'udid').once
 
       get(:run_job, :message => 'reward_key')
     end
