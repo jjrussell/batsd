@@ -7,7 +7,6 @@ describe Job::QueueCreateConversionsController do
     publisher_app = FactoryGirl.create(:app)
     advertiser_app = FactoryGirl.create(:app)
     @offer = advertiser_app.primary_offer
-    Offer.stub(:find).and_return(@offer)
     @reward = FactoryGirl.create(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
@@ -19,6 +18,7 @@ describe Job::QueueCreateConversionsController do
       :advertiser_amount => 1,
       :tapjoy_amount => 1)
     Reward.should_receive(:find).with('reward_key', :consistent => true).and_return(@reward)
+    @reward.stub(:offer).and_return(@offer)
   end
 
   it 'enqueues conversion tracking GET requests properly' do
