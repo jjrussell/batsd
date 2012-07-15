@@ -237,7 +237,7 @@ include GetOffersHelper
         web_request.offerwall_rank_score = offer.rank_score
         web_request.save
 
-        offer.queue_impression_tracking_requests # for third party tracking vendors
+        offer.queue_impression_tracking_requests(:ip_address => request.remote_ip) # for third party tracking vendors
       end
     end
   end
@@ -285,10 +285,6 @@ include GetOffersHelper
       return true if params[:redirect] == '1' || (params[:json] == '1' && params[:callback].blank?)
     end
     params[:library_version] == 'server'
-  end
-
-  def queue_impression_tracking
-    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
   end
 
   def generate_web_request
