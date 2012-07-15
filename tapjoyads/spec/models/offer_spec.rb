@@ -1063,19 +1063,19 @@ describe Offer do
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(@ts.to_i)
+          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(@ts.to_i)
+          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(@ts.to_i)
+          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i)
         end
       end
     end

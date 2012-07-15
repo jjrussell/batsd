@@ -18,7 +18,7 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     end
 
     # for third party tracking vendors
-    reward.offer.queue_conversion_tracking_requests(reward.created.to_i)
+    reward.offer.queue_conversion_tracking_requests(:timestamp => reward.created.to_i)
   end
 
   def save_conversion(conversion)

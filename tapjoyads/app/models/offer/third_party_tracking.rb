@@ -52,8 +52,7 @@ module Offer::ThirdPartyTracking
     end
 
     def queue_#{method_name.sub(/urls$/, 'requests')}(*args)
-      timestamp = args.shift
-      send("#{method_name}", true, :timestamp => timestamp).each do |url|
+      send("#{method_name}", true, args.extract_options!).each do |url|
         Downloader.queue_get_with_retry(url)
       end
     end
