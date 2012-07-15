@@ -242,6 +242,7 @@ class DisplayAdController < ApplicationController
   end
 
   def queue_impression_tracking
-    @offer.queue_impression_tracking_requests(:ip_address => ip_address) if @offer.present? # for third party tracking vendors
+    # for third party tracking vendors
+    @offer.queue_impression_tracking_requests(:ip_address => ip_address, :udid => params[:udid]) if @offer.present?
   end
 end

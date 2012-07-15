@@ -269,12 +269,14 @@ module Offer::UrlGeneration
   end
 
   def format_as_click_key(params)
-    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+    item_id_str = params[:advertiser_app_id] || item_id
+
+    if item_id_str == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{item_id_str}"
+    elsif item_type == 'GenericOffer' && item_id_str != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{item_id_str}")
     else
-      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+      "#{params[:udid]}.#{item_id_str}"
     end
   end
 end
