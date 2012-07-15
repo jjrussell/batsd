@@ -300,7 +300,7 @@ class ClickController < ApplicationController
 
     click.save
 
-    @offer.queue_click_tracking_requests # for third party tracking vendors
+    @offer.queue_click_tracking_requests(:ip_address => request.remote_ip) # for third party tracking vendors
   end
 
   def handle_pay_per_click
