@@ -106,9 +106,12 @@ class ApplicationController < ActionController::Base
     lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
     lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
+    params[:identifiers_provided] = lookup_keys.any?
+
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
       unless identifier.new_record?
+        params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break
       end
