@@ -96,7 +96,7 @@ class Partner < ActiveRecord::Base
   validates_format_of :billing_email, :cs_contact_email, :with => Authlogic::Regex.email, :message => "should look like an email address.", :allow_blank => true, :allow_nil => true
   validates_presence_of :name
   validates_each :name do |record, attr, value|
-    record.errors.add(attr, 'enter a valid company name.') if value =~ /tap([[:punct:]]|[[:space:]])*joy/iu && !(value =~ /@tapjoy\.com/iu)
+    record.errors.add(attr, "Company Name cannot contain 'Tapjoy'") if value =~ /tap([[:punct:]]|[[:space:]])*joy/iu && !(value =~ /@tapjoy\.com/iu)
   end
   validates_each :disabled_partners, :allow_blank => true do |record, attribute, value|
     record.errors.add(attribute, "must be blank when using whitelisting") if record.use_whitelist? && value.present?
@@ -365,7 +365,7 @@ class Partner < ActiveRecord::Base
   end
 
   def trackable_items
-    apps + generic_offers + action_offers + video_offers
+    apps.live.visible + generic_offers.visible + action_offers.visible + video_offers.visible
   end
 
   def offers_for_promotion
@@ -402,7 +402,10 @@ class Partner < ActiveRecord::Base
 
   def confirm_for_payout(user)
     self.payout_info_confirmation = true  if can_confirm_payout_info?(user)
-    self.payout_threshold_confirmation = true if can_confirm_payout_threshold?(user)
+    if can_confirm_payout_threshold?(user)
+      self.payout_threshold_confirmation = true
+      self.payout_threshold *= 1.1
+    end
   end
 
   def monthly_accounting(year, month)

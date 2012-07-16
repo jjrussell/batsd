@@ -1,8 +1,17 @@
 class Experiments
-  OPTIMIZATION_EXPERIMENT_IDS = [ 'a_optimization', 'b_optimization', 'c_optimization' ]
 
-  EXPERIMENTS = Hash.new([])
-  EXPERIMENTS[:optimization] = OPTIMIZATION_EXPERIMENT_IDS
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS =  {}
+  (0...10).each do |key|
+    OFFERWALL_REDESIGN_EXPERIMENT_IDS[key] = 'ow_redesign'
+  end
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS.default = 'ow_control'
+  class << OFFERWALL_REDESIGN_EXPERIMENT_IDS
+    def length
+      100
+    end
+  end
+
+  EXPERIMENTS = { :ow_redesign => OFFERWALL_REDESIGN_EXPERIMENT_IDS }
 
   def self.choose(udid, options = {})
     if udid.present?

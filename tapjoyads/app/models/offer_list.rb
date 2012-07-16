@@ -133,6 +133,14 @@ class OfferList
     offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
 
+  def sorted_optimized_offers_with_rejections
+    optimized_offers.each do |offer|
+      class << offer; attr_accessor :rejections; end
+      offer.rejections = rejections_for(offer)
+    end
+    optimized_offers
+  end
+
   def optimized_offers
     @optmized_offers ||= get_optimized_offers
   end
@@ -146,8 +154,10 @@ class OfferList
   private
 
   def get_optimized_offers
+
     country = @algorithm_options[:skip_country] ? nil : @geoip_data[:primary_country]
-    currency_id = @currency.id
+    currency_id = @currency.present? ? @currency.id : nil
+    currency_id = nil if @algorithm_options[:skip_currency]
 
     RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@device_type}") do
       OptimizedOfferList.get_offer_list(

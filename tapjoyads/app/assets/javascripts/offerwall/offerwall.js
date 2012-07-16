@@ -12,14 +12,16 @@
       objectPrototype = Object.prototype,
       toString = objectPrototype.toString,
       slice = arrayPrototype.slice,
+      limit = 25,
       start = 25,
+      autoLoadLimit = 3,
+      pagesFetched = 0,
       url = fetchURL;
 
  var $ = {
     blank: 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
     addEvent: (/msie/i).test(agent) ? 'attachEvent' : 'addEventListener',
     empty: function(){},
-    fetched: 1,
     labels: {
       actions:{
         download: i18n.t("actions.download"),
@@ -43,13 +45,21 @@
         "<div class='app-desc'><h1>{currentAppName}</h1>{message}</div>",
         "<div>{banner}</div>"
       ],
-      offers: [
+      offersReward: [
         "<div class='reward'>"+
           "<span class='earn'>{earn}</span>"+
           "<span class='big'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
-        "</div>",
+        "</div>"
+      ],
+      offersNonReward: [
+        "<div class='reward'>"+
+          "<span class='big'>"+ i18n.t("tap_here") +"</span>"+
+          "<span class='free'>{cost}</span>"+
+        "</div>"
+      ],
+      offers: [
         "<div class='offer'>"+
           "<div class='icon'>"+
             "{pricetag}"+
@@ -87,16 +97,12 @@
      * Attach events events
      */
     initEvents: function(){
-
       if($.data.autoload){
         window[$.addEvent]('scroll', function(){
-          if($.fetched < 3){
+          if(pagesFetched < autoLoadLimit){
             if($.endOfTheLine() && !$.fetching){
-             $.fetch();
-             $.fetched++;
-             if($.fetched === 3){
-               $.loadMore.parentNode.style.display = 'block'; 
-             }
+              $.fetch();
+              pagesFetched++;
             }
           }
         });
@@ -255,9 +261,10 @@
       if(!$.data.showBanner){
         $.header.style.display = 'none';
       }
-
-      if($.data.autoload){
-        $.loadMore.parentNode.style.display = 'none';
+      if($.data.autoload && $.loadMore){
+        try {
+          $.loadMore.parentNode.style.display = 'none';
+        }catch(err){}
       }
     },
 
@@ -307,20 +314,34 @@
       $.loader.style.display = 'block';
 
       $.ajax({
-        url: url + '&limit=50&start=' + start,
+        url: url + '&limit='+ limit +'&start=' + start,
         dataType: 'json',
         timeout: 15000,
         success: function(data, status){
           $.loader.style.display = 'none';
 
-          $.load(data.offers);
+          if(data.offers.length > 0){
+            $.load(data.offers);
+            start = start + limit;
 
-          start = start + 25;
-
-          if(data.records <= 0 || !data.records){
-            if($.loadMore){
-              document.removeChild($.loadMore);
+            if(pagesFetched == autoLoadLimit){
+              if($.loadMore){
+                try {
+                  $.loadMore.parentNode.style.display = 'block'; 
+                }catch(err){}
+              }
             }
+            if(data.records == 0){
+              try{
+                $.loadMore.parentNode.style.display = 'none';
+              }
+              catch(err){}
+            }
+
+          }else{
+            try {
+              $.loadMore.parentNode.style.display = 'none';
+            }catch(err){}
           }
         },
         error: function(xhr, response){
@@ -389,10 +410,11 @@
         var li = document.createElement('li'),
             item = data[i],
             type = item.type.toLowerCase(),
-            connector = item.redirectURL.match(/\?/) ? '&' : '?';
+            connector = item.redirectURL.match(/\?/) ? '&' : '?',
+            offerTemplate;
 
         item.free = $.labels.text.free;
-        item.points = $.labels.text.points;
+        item.points = $.data.currencyName;
         item.earn = $.labels.text.earn;
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
@@ -402,8 +424,12 @@
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
-        
-        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + $.format($.tpl.offers[0], item) + $.format($.tpl.offers[1], item) + '</a>';
+        if (!$.data.rewarded) {
+          offerTemplate = $.format($.tpl.offersNonReward[0], item) + $.format($.tpl.offers[0], item);
+        }else{
+          offerTemplate = $.format($.tpl.offersReward[0], item) + $.format($.tpl.offers[0], item);
+        }
+        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offerTemplate + '</a>';
 
         $.offersContainer.appendChild(li);
         

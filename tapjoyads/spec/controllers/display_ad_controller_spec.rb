@@ -125,6 +125,13 @@ describe DisplayAdController do
         obj_ad_bg.stub(:read).and_return(ad_bg)
       end
 
+      it 'should mark the pub app as using non-html responses' do
+        message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+        Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+
+        get(:index, @params)
+      end
+
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).once
 
@@ -215,7 +222,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(CLOUDFRONT_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
 
@@ -224,7 +234,10 @@ describe DisplayAdController do
           get(:webview, @params)
 
           assigns['image_url'].should be_starts_with(API_URL)
-          assigns['image_url'].should == @offer.display_ad_image_url(@currency.app.id, 320, 50, @currency.id)
+          assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
+                                                                     :width => 320,
+                                                                     :height => 50,
+                                                                     :currency_id => @currency.id)
         end
       end
     end

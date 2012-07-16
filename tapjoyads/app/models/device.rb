@@ -17,6 +17,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :version
   self.sdb_attr :mac_address
   self.sdb_attr :open_udid
+  self.sdb_attr :android_id
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -47,14 +48,15 @@ class Device < SimpledbShardedResource
     "devices_#{domain_number}"
   end
 
+  def tjgames_registration_click_key
+    "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
-    begin
-      @parsed_apps = apps
-    rescue JSON::ParserError
-      fix_parser_error
-    end
+    fix_app_json
+    fix_publisher_user_ids_json
   end
 
   def handle_connect!(app_id, params)
@@ -64,6 +66,7 @@ class Device < SimpledbShardedResource
     path_list = []
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
+    self.android_id = params[:android_id] if params[:android_id].present?
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -176,7 +179,7 @@ class Device < SimpledbShardedResource
       'ipad'
     when /android/
       'android'
-    when /windows/
+    when /windows|wince/
       'windows'
     end
   end
@@ -215,7 +218,9 @@ class Device < SimpledbShardedResource
 
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
+    all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
+    all_identifiers.push(android_id) if self.android_id.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
@@ -223,6 +228,13 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
+      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        timestamp = Time.zone.now
+        redis_key = "device_identifier.#{timestamp.to_f.to_s}"
+        $redis.setex(redis_key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
+        $redis.sadd("device_identifier", redis_key)
+        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", redis_key)
+      end
       device_identifier.udid = key
       device_identifier.save!
     end
@@ -299,9 +311,13 @@ class Device < SimpledbShardedResource
 
   private
 
-  def fix_parser_error
-    str = get('apps')
-    pos = str.index('}')
+  def fix_parser_error(attribute, search_from = :left)
+    str = get(attribute)
+    if search_from == :right
+      pos = str.rindex('}')
+    else
+      pos = str.index('}')
+    end
     if pos.nil?
       pos = str.rindex(',')
       removed = str.slice!(pos..-1)
@@ -309,8 +325,22 @@ class Device < SimpledbShardedResource
     else
       removed = str.slice!(pos+1..-1)
     end
-    @parsed_apps = JSON.parse(str)
-    self.apps = @parsed_apps
+    str
   end
 
+  def fix_app_json
+    begin
+      @parsed_apps = apps
+    rescue JSON::ParserError
+      self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+    end
+  end
+
+  def fix_publisher_user_ids_json
+    begin
+      publisher_user_ids
+    rescue JSON::ParserError
+      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids', :right))
+    end
+  end
 end

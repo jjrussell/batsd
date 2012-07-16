@@ -172,6 +172,11 @@ module ActiveRecord
       self.update_attributes(attributes)
     end
 
+    def queue_update_attributes(attributes_hash)
+      message = { :class_name => self.class.name, :id => id, :attributes => attributes_hash }
+      Sqs.send_message(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message)))
+    end
+
     def self.sanitize_conditions(*ary)
       self.sanitize_sql_array(ary.first.is_a?(Array) ? ary.first : ary)
     end

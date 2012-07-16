@@ -1,25 +1,75 @@
-#jqt
-  .page.current
-    .content_wrapper
-      .content
-        .details.clearfix
-          = image_tag @offer.video_icon_url, :size => '200x125', :id => 'offer-icon'
+#panel.ui-joy-panel.video
+  .header
+    .heading.gradient
+      Success
+  .instructions
+    %p.blurb.center
+      You've earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
+      in #{@publisher_app.name} by completing #{@video_offer.name}!
+  .offers-wrapper
+    %ul#offers
+      - @video_buttons.each do |button|
+        %li
+          %a{:href => get_click_url(button.tracking_offer)}
+            .reward.gradient
+              - if @currency.get_reward_amount(button.tracking_offer) > 0
+                %span.earn= t('text.shared.earn_verb')
+                %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
+                %span.points= t('text.offerwall.points')
+              - else
+                %span.big= t('text.shared.tap_here')
+              %span.free= visual_cost(button.tracking_offer)
 
-          .earned You just earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}!
-          .quiet= @video_offer.name
+            .offer
+              .icon
+                .rounded
+                %img.cover{:src => button.tracking_offer.get_icon_url(:source => :cloudfront, :size => '57')}
+                - if button.tracking_offer.wifi_only?
+                  .wifi WiFi
+              .about
+                .title= button.name
+                - if button.item_type == 'App'
+                  .action.download= t('text.offerwall.actions.download')
+                - elsif button.item_type == 'VideoOffer'
+                  .action.video= t('text.offerwall.actions.video')
+                - elsif %w(ActionOffer GenericOffer).include?(button.item_type)
+                  .action.series= t('text.offerwall.actions.steps')
 
-        .header What now?
-        .message_content.video_complete
-          %a{ :href => get_click_url(@offer), :class => "replay_video_path" }
-            .slider.slider_right
-              .button.grey.arrow
-                .arrow_bg Replay Video
-          %a{ :href => '/offer_wall', :class => 'back_to_wall' }
-            .slider.slider_right
-              .button.grey.arrow
-                .arrow_bg View More Offers
-          - @video_buttons.each do |button|
-            %a{ :href => get_click_url(button.tracking_offer) }
-              .slider.slider_right
-                .button.grey.arrow
-                  .arrow_bg= button.name
+  .container
+    .button-wrapper
+      %a{:class => 'button gradient', :href => '/offer_wall'} View More Offers
+    .button-wrapper
+      %a{:class => 'button gradient', :href => get_click_url(@offer)} Replay
+
+/[if gte IE 9]
+  %style{:type => 'text/css'}
+    :plain
+      .gradient {
+         filter: none;
+      }
+
+      .button-wrapper .button {
+        background: url('/images/api/gray_button_tile.png') repeat-x 0 0 !important;
+      }
+
+      ul#offers li .reward {
+        background: url('/images/api/reward_tile.png') repeat-x 0 0 !important;
+      }
+
+      .ui-joy-panel .header .heading {
+        background: url('/images/api/header_tile.png') repeat-x 0 0 !important;
+      }
+
+      @media (max-width:425px){
+        .button-wrapper {
+          .button {
+            font-size: 90%;
+          }
+        }
+
+        .blurb {
+          color: #555;
+          font-size: 84%;
+          line-height: 100%;
+          margin: 5px 0;
+        }

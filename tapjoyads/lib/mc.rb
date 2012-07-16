@@ -20,7 +20,7 @@ class Mc
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
 
-  MEMCACHED_ACTIVE_RECORD_MODELS = %w( App Currency Offer SurveyOffer VideoOffer ReengagementOffer)
+  MEMCACHED_ACTIVE_RECORD_MODELS = %w(App Currency Offer SurveyOffer VideoOffer ReengagementOffer)
 
   def self.cache_all
     MEMCACHED_ACTIVE_RECORD_MODELS.each do |klass|
@@ -116,6 +116,8 @@ class Mc
           Mc.add(key, value, clone, 1.week, cache)
         rescue Memcached::NotStored
           # Refilling a cache server, someone must have done it already
+        rescue Memcached::ServerError
+          # This cache server probably can't fit the key, ignore for now
         end
       end
     end
@@ -162,16 +164,18 @@ class Mc
 
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
-      begin
-        log_info_with_time("Wrote to memcache - distributed") do
-          @@distributed_caches.each do |cache|
+      errors = []
+      log_info_with_time("Wrote to memcache - distributed") do
+        @@distributed_caches.each do |cache|
+          begin
             Mc.put(key, value, clone, time, cache)
+          rescue Exception => e
+            errors << e
           end
         end
-      rescue Exception => e
-        Mc.distributed_delete(key, clone)
-        raise e
       end
+
+      raise errors.first if errors.length == @@distributed_caches.length
     end
   end
 
