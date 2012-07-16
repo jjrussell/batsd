@@ -2,7 +2,7 @@ require 'spec_helper'
 include ActsAsCacheable
 
 describe ActsAsCacheable do
-  class Testing
+  class CacheableObject
     # TODO: make this less hacky
     def self.table_name; end
     def self.connection; self; end
@@ -15,12 +15,12 @@ describe ActsAsCacheable do
   end
 
   before :each do
-    Testing.stub(:model_name).and_return('Testing')
+    CacheableObject.stub(:model_name).and_return('CacheableObject')
   end
 
   describe '#find_in_cache' do
     before :each do
-      @foo = Testing.new
+      @foo = CacheableObject.new
     end
 
     context 'when ID is valid' do
@@ -30,7 +30,7 @@ describe ActsAsCacheable do
 
       it 'calls Mc.get once' do
         Mc.should_receive(:get).once
-        Testing.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, false)
       end
     end
 
@@ -41,7 +41,7 @@ describe ActsAsCacheable do
 
       it 'does not call Mc.get with invalid key' do
         Mc.should_not_receive(:get)
-        Testing.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, false)
       end
     end
   end
