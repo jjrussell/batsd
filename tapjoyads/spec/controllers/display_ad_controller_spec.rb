@@ -134,8 +134,9 @@ describe DisplayAdController do
 
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address => @controller.send(:ip_address),
-          :udid       => 'stuff').once
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:index, @params)
       end
@@ -209,8 +210,9 @@ describe DisplayAdController do
 
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address => @controller.send(:ip_address),
-          :udid       => 'stuff').once
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:webview, @params)
       end

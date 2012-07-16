@@ -3,7 +3,7 @@ module Offer::ThirdPartyTracking
   def self.included(base)
     base.class_eval do
       const_set(:TRUSTED_TRACKING_VENDORS, %w(doubleclick.net phluantmobile.net srvntrk.com))
-      const_set(:TRACKING_MACROS, [:timestamp, :ip_address, :uid])
+      const_set(:TRACKING_MACROS, [:timestamp, :ip_address, :uid, :user_agent])
 
       [:impression_tracking_urls, :click_tracking_urls, :conversion_tracking_urls].each do |f|
         serialize f, Array
@@ -54,6 +54,7 @@ module Offer::ThirdPartyTracking
     def queue_#{method_name.sub(/urls$/, 'requests')}(*args)
       macros = args.extract_options!
       macros[:uid] = Click.hashed_key(format_as_click_key(:udid => macros.delete(:udid)))
+      macros[:user_agent] = source_token(macros.delete(:publisher_app_id))
 
       send("#{method_name}", true, macros).each do |url|
         Downloader.queue_get_with_retry(url)
