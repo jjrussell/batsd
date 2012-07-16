@@ -99,6 +99,33 @@ class WebRequest < SyslogMessage
   self.define_attr :offerwall_max_items, :type => :int
   self.define_attr :survey_question_id
   self.define_attr :survey_answer
+  self.define_attr :conversion_attempt_key
+  self.define_attr :resolution
+  self.define_attr :block_reason
+  self.define_attr :system_offset, :type => :float
+  self.define_attr :individual_offset, :type => :float
+  self.define_attr :rules_offset, :type => :float
+  self.define_attr :risk_score, :type => :float
+  self.define_attr :publisher_profile_offset, :type => :float
+  self.define_attr :publisher_profile_weight, :type => :int
+  self.define_attr :app_profile_offset, :type => :float
+  self.define_attr :app_profile_weight, :type => :int
+  self.define_attr :advertiser_profile_offset, :type => :float
+  self.define_attr :advertiser_profile_weight, :type => :int
+  self.define_attr :offer_profile_offset, :type => :float
+  self.define_attr :offer_profile_weight, :type => :int
+  self.define_attr :country_profile_offset, :type => :float
+  self.define_attr :country_profile_weight, :type => :int
+  self.define_attr :ipaddr_profile_offset, :type => :float
+  self.define_attr :ipaddr_profile_weight, :type => :int
+  self.define_attr :device_profile_offset, :type => :float
+  self.define_attr :device_profile_weight, :type => :int
+  self.define_attr :user_profile_offset, :type => :float
+  self.define_attr :user_profile_weight, :type => :int
+  self.define_attr :rule_name
+  self.define_attr :rule_offset, :type => :int
+  self.define_attr :rule_actions
+  self.define_attr :rule_message
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)

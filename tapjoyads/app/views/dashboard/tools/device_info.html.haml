@@ -138,6 +138,8 @@
     %span.not-rewarded Won't reward (#{@not_rewarded_count})
     +
     %span.blocked Blocked (#{@blocked_count})
+    +
+    %span.forced Forced (#{@force_converted_count})
   Showing
   %b #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date).to_s(:pub)}
   %table.with-border
@@ -159,16 +161,15 @@
           %td.small
             %nobr= click_timestamp(click, :clicked_at)
           %td{ :class => install_td_class(click) }
-            - if click.block_reason?
-              = click.block_reason
-            - else
-              = click_timestamp(click, :installed_at)
+            = link_install_to_attempt(click)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           - if permitted_to? :view_pub_user_account, :dashboard_tools
             %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
           %td
-            - if click.manually_resolved_at? && click.installed_at?
+            - if click.force_convert && click.installed_at?
+              Force converted
+            - elsif click.manually_resolved_at? && click.installed_at?
               Manually awarded
             - elsif click.installed_at? || click.type =~ /install_jailbroken/
               Already awarded
@@ -177,6 +178,9 @@
                 Blocked device
               - else
                 Won't reward
+              - if permitted_to?(:force_conversion, :dashboard_tools)
+                = form_tag force_conversion_tools_path(:click_key => click.id) do
+                  = submit_tag 'Force'
             - else
               = form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'

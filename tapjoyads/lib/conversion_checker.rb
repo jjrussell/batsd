@@ -5,7 +5,6 @@ class ConversionChecker
   def initialize(click, conversion_attempt)
     @click = click
     @conversion_attempt = conversion_attempt
-    @conversion_attempt.clear_history
 
     @recommended_actions = RiskActionSet.new
     @entity_keys = []
@@ -106,6 +105,7 @@ class ConversionChecker
   end
 
   def update_conversion_attempt
+    @conversion_attempt.clear_history
     @risk_score.record_details(@conversion_attempt)
     @conversion_attempt.processed_actions = @recommended_actions.actions
     @conversion_attempt.save
