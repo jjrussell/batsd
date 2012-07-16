@@ -14,7 +14,7 @@ class UserEvent < WebRequest
   self.define_attr :quantity, :type => :int
   self.define_attr :price,    :type => :float
 
-  def initialize(event_type, event_data)
+  def initialize(event_type, event_data = {})
     super()
     validate!(event_type, event_data)
     self.type = event_type
@@ -22,17 +22,18 @@ class UserEvent < WebRequest
     # assign new event type fields here
     # make sure to define new attributes with `self.define_attr` in the above block
     # make sure all attributes used here are defined for this event type in user_event_types.rb
-    self.name           = event_data[:name]
-    self.item_id        = event_data[:item_id]
-    self.currency_code  = event_data[:currency_code]
-    self.quantity       = event_data[:quantity]
-    self.price          = event_data[:price]
+    event_data.each do |field, value|
+      send("#{field}=", value)
+    end
 
     # MAKE SURE TO CALL #.put_values() AFTER #.new() TO POPULATE GENERAL WEB REQUEST PARAMS BEFORE SAVING!!!
   end
 
   def self.generate_verifier_key(app_id, device_id, secret_key, event_type_id, event_data = {})
-    verifier_array = [ app_id, device_id, secret_key, event_type_id ] + event_data.keys.sort.map { |key| event_data[key] }
+    verifier_array = [ app_id, device_id, secret_key, event_type_id ] 
+    if event_data.present?
+      event_data.keys.sort.map { |key| verifier_array << event_data[key] }
+    end
     Digest::SHA256.hexdigest(verifier_array.join(':'))
   end
 
@@ -51,12 +52,12 @@ class UserEvent < WebRequest
       end
     end
 
-    check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
+    check_for_missing_fields!(event_descriptor, required_fields, alternative_fields_map, event_data)
     check_for_undefined_fields!(event_descriptor, event_data)
     check_for_invalid_fields!(event_descriptor, event_data)
   end
 
-  def check_for_missing_fields!(event_descriptor, event_data, required_fields, alternative_fields_map)
+  def check_for_missing_fields!(event_descriptor, required_fields = [], alternative_fields_map = {}, event_data = {})
     missing_fields = required_fields.reject do |field|
       event_data[field].present? || alternative_fields_map[field].any? { |alt| event_data[alt].present? }
     end
@@ -67,7 +68,8 @@ class UserEvent < WebRequest
     end
   end
 
-  def check_for_undefined_fields!(event_descriptor, event_data)
+  def check_for_undefined_fields!(event_descriptor, event_data = {})
+    return unless event_data.present?
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
 
     if undefined_fields.present?
@@ -76,7 +78,8 @@ class UserEvent < WebRequest
     end
   end
 
-  def check_for_invalid_fields!(event_descriptor, event_data)
+  def check_for_invalid_fields!(event_descriptor, event_data = {})
+    return unless event_data.present?
     invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
 
     if invalid_fields.present?
