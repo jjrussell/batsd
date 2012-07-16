@@ -52,6 +52,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
   self.sdb_attr :offerwall_rank
   self.sdb_attr :device_type
+  self.sdb_attr :geoip_country
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
@@ -139,7 +140,7 @@ class Click < SimpledbShardedResource
       end
     end
   end
-  
+
   private
 
   def url_to_resolve

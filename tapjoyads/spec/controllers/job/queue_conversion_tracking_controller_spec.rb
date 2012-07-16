@@ -50,6 +50,7 @@ describe Job::QueueConversionTrackingController do
       @click = FactoryGirl.create(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install')
       Click.should_receive(:find).and_return(@click)
       Reward.any_instance.stub(:update_realtime_stats)
+      Reward.any_instance.stub(:advertiser_amount).and_return(-50)
     end
 
     def do_get
@@ -74,63 +75,15 @@ describe Job::QueueConversionTrackingController do
       do_get
     end
 
-    it 'blocks clicks from an invalid Playdom user ID' do
-      Currency.any_instance.stub(:callback_url).and_return(Currency::PLAYDOM_CALLBACK_URL)
-      @click.publisher_user_id = 'BADMOFO'
+    it 'blocks clicks that are deemed too risky based on risk scores and rules' do
+      checker = double("ConversionChecker")
+      checker.stub(:acceptable_risk?).and_return(false)
+      checker.stub(:risk_message).and_return('test failure')
+      ConversionChecker.should_receive(:new).and_return(checker)
       @click.should_receive(:save)
       expect_request_does_not_complete
       do_get
-      @click.block_reason.should match(/Playdom/)
-    end
-
-    it 'blocks clicks where the pubuser is associated with too many udids' do
-      PublisherUser.any_instance.stub(:update!).and_return(false)
-      @click.should_receive(:save)
-      expect_request_does_not_complete
-      do_get
-      @click.block_reason.should match(/Udid/)
-    end
-
-    it 'blocks clicks from banned devices' do
-      device = Device.new(:key => @click.udid)
-      device.banned = true
-      device.save
-      expect_request_does_not_complete
-      do_get
-      @click.block_reason.should match(/Banned/)
-    end
-
-    context 'with multiple devices associated with the pubuser' do
-      before :each do
-        @this_device = FactoryGirl.create(:device)
-        @other_device = FactoryGirl.create(:device)
-        Device.stub(:new).and_return(@this_device, @other_device)
-        pu = PublisherUser.for_click(@click)
-        pu.update!(@this_device.key)
-        pu.update!(@other_device.key)
-      end
-
-      it 'blocks clicks if any of the pubuser\'s devices are banned' do
-        @other_device.banned = true
-        expect_request_does_not_complete
-        do_get
-        @click.block_reason.should match(/Banned/)
-      end
-
-      context 'a single-complete offer' do
-        before :each do
-          offer = Offer.find_in_cache(@click.offer_id, true)
-          offer.multi_complete = false
-          Offer.stub(:find_in_cache).and_return(offer)
-        end
-
-        it 'blocks clicks if the pubuser already installed on another device' do
-          @other_device.stub(:has_app?).and_return(true)
-          expect_request_does_not_complete
-          do_get
-          @click.block_reason.should match(/AlreadyRewarded/)
-        end
-      end
+      @click.block_reason.should == 'test failure'
     end
 
     context 'a paid app install on a jailbroken device' do
