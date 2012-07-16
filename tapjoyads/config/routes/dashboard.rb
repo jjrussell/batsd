@@ -146,6 +146,7 @@ Tapjoyad::Application.routes.draw do
           get :last_run_times
           get :udids
           get :support_request_reward_ratio
+          get :show_rate_reasons
           get :download_udids
         end
 
