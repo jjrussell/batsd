@@ -18,17 +18,36 @@ describe Games::DevicesController do
 
       invitation = FactoryGirl.create(:invitation, :gamer_id => @inviter.id)
 
-      gamer = FactoryGirl.create(:gamer, :referrer => ObjectEncryptor.encrypt("#{invitation.id},#{generic_offer_for_invite.id}"))
-      gamer.gamer_profile = GamerProfile.create(:gamer => gamer, :referred_by => @inviter.id)
-      games_login_as(gamer)
+      @gamer = FactoryGirl.create(:gamer, :referrer => ObjectEncryptor.encrypt("#{invitation.id},#{generic_offer_for_invite.id}"))
+      @gamer.gamer_profile = GamerProfile.create(:gamer => @gamer, :referred_by => @inviter.id)
+      games_login_as(@gamer)
+
+      @device = Device.new(:key => FactoryGirl.generate(:udid))
+      Device.stub(:new).and_return(@device)
 
       @data = {
-        :udid              => FactoryGirl.generate(:udid),
+        :udid              => @device.key,
         :product           => FactoryGirl.generate(:name),
         :version           => FactoryGirl.generate(:name),
         :mac_address       => FactoryGirl.generate(:name),
         :platform          => 'ios'
       }
+    end
+
+    context 'if gamer\'s referrer is Tapjoy Registration offer' do
+      it 'does not add Tapjoy Registration offer to device\'s "installed apps"' do
+        @gamer.update_attributes!(:referrer => "tjreferrer:#{@device.tjgames_registration_click_key}")
+
+        get(:finalize, {:data => ObjectEncryptor.encrypt(@data)})
+        @device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID).should_not be_true
+      end
+    end
+
+    context 'if gamer\'s referrer is not Tapjoy Registration offer' do
+      it 'adds Tapjoy Registration offer to device\'s "installed apps"' do
+        get(:finalize, {:data => ObjectEncryptor.encrypt(@data)})
+        @device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID).should be_true
+      end
     end
 
     it 'creates sub click key' do

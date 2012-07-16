@@ -24,7 +24,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
         result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
         if o.item_type == 'GenericOffer' || o.item_type == 'SurveyOffer'
           result[:click_url] = o.url
-        elsif o.item_type == 'VideoOffer'
+        elsif o.video_offer?
           result[:click_url] = o.item.video_url
         elsif o.item_type == 'App'
           app = App.find_by_id(o.item_id)

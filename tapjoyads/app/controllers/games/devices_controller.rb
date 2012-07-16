@@ -61,10 +61,14 @@ class Games::DevicesController < GamesController
 
       new_device = current_gamer.devices.new(:device => device)
       if new_device.save
-        click = Click.new(:key => "#{device.key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}")
-        if click.rewardable?
-          current_gamer.reward_click(click)
-        else
+
+        # if user didn't sign up via registration offer, register the app with the device
+        # so that the user won't see that offer in future offerwalls on that device
+
+        # (if they did sign up via that offer, we don't want to do this so that they will
+        # have a chance to be rewarded for it by confirming their email address eventually)
+        click = current_gamer.referrer_click
+        if click.nil? || click.key != device.tjgames_registration_click_key
           device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
         end
 

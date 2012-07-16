@@ -8,6 +8,7 @@ describe OfferCompletedController do
     @click.stub(:udid).and_return('test')
     @click.stub(:advertiser_app_id).and_return('another')
     @click.stub(:installed_at).and_return(nil)
+    @click.stub(:manually_resolved_at?).and_return(false)
     @device = mock()
     @device.stub(:set_last_run_time!)
     @offer = FactoryGirl.create(:app).primary_offer
@@ -48,7 +49,15 @@ describe OfferCompletedController do
             ServerWhitelist.stub(:ip_whitelist_includes?).and_return(false)
             get(:index, @parameters)
             response.should render_template('layouts/error')
-            assigns(:error_message).should =~ /originating IP (.*) not on server whitelist/
+            assigns(:error_message).should =~ /failed to convert/
+          end
+
+          context 'but the click was awarded by CS' do
+            it 'succeeds' do
+              @click.stub(:manually_resolved_at?).and_return(true)
+              get(:index, @parameters)
+              response.should render_template('layouts/success')
+            end
           end
         end
 

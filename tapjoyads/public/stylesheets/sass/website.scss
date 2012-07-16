@@ -103,6 +103,10 @@ input[type=submit][disabled], input[type=button][disabled] {
   background: -moz-linear-gradient(top,  #fff,  #ccc);
 }
 
+input[type=text].error {
+  border-color: red !important;
+}
+
 #main {
   padding: 10px 15px;
   margin: 10px auto;

@@ -128,7 +128,7 @@
 
         return res;
       },
-      
+
       customError: function (msg, options, name) {
         var info = "",
             i,
@@ -318,6 +318,34 @@
         },
         remove: function(k) {
           this.set(k, "", -1);
+        }
+      },
+
+      Scrolling: {
+        isTouchDevice: function() {
+          try{
+            document.createEvent("TouchEvent");
+            return true;
+          } catch(e) {
+            return false;
+          }
+        },
+        touchScroll: function(id) {
+          if (!this.isTouchDevice()) {
+            return false;
+          }
+
+          var el = document.getElementById(id),
+              start = 0;
+
+          el.addEventListener('touchstart', function(event) {
+            start = this.scrollTop + event.touches[0].pageY;
+            event.preventDefault();
+          }, false);
+          el.addEventListener('touchmove', function(event) {
+            this.scrollTop = start - event.touches[0].pageY;
+            event.preventDefault();
+          }, false);
         }
       }
     }

@@ -3,12 +3,14 @@
 
 base_dir = File.expand_path("../../../", __FILE__)
 server_type = `#{base_dir}/server/server_type.rb`
-big_server = %w(masterjobs jobserver).include?(server_type)
 
 app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir
 
-if big_server
+if server_type == 'masterjobs'
+  worker_processes 24
+  timeout 43200
+elsif server_type == 'jobserver'
   worker_processes 36
   timeout 43200
 elsif server_type == "dev"

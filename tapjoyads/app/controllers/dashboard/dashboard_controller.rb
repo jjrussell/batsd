@@ -6,7 +6,7 @@ class Dashboard::DashboardController < ApplicationController
   skip_before_filter :fix_params
   skip_before_filter :force_utc
 
-  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :premier_enabled?
+  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :current_partner_active_offers, :premier_enabled?
 
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
@@ -94,6 +94,10 @@ class Dashboard::DashboardController < ApplicationController
 
   def current_partner_active_app_offers
     @current_partner_active_app_offers ||= current_partner_app_offers.select(&:is_enabled?)
+  end
+
+  def current_partner_active_offers
+    @current_partner_active_offers ||= current_partner_offers.select(&:is_enabled?)
   end
 
   def premier_enabled?

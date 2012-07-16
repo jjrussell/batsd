@@ -248,7 +248,7 @@
         %td
           = f.text_field(:overall_budget)
           = error_message_on @offer, :overall_budget
-    - if @offer.item_type == 'VideoOffer'
+    - if @offer.video_offer?
       %tr
         %th
           = f.label(:age_rating)

@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :geoip_data, :downcase_param
 
+  before_filter :check_uri if MACHINE_TYPE == 'website'
   before_filter :force_utc
   before_filter :set_readonly_db
   before_filter :fix_params
@@ -99,6 +100,7 @@ class ApplicationController < ActionController::Base
     return if params[:udid].present?
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:sha1_udid]) if params[:sha1_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
     lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
@@ -120,6 +122,7 @@ class ApplicationController < ActionController::Base
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
     downcase_param(:open_udid)
     downcase_param(:app_id)
@@ -211,6 +214,10 @@ class ApplicationController < ActionController::Base
     render :text => '' if BANNED_IPS.include?(ip_address)
   end
 
+  def reject_banned_udids
+    render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
+  end
+
   def log_activity(object, options={})
     included_methods = options.delete(:included_methods) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -296,4 +303,9 @@ class ApplicationController < ActionController::Base
   def os_version
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
+
+  def check_uri
+    redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
+  end
+
 end

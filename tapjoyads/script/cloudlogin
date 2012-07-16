@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'lib/ec2_tasks'
+require File.expand_path('../../config/application', __FILE__)
+require 'ec2_tasks'
 
 unless ARGV[0]
   puts "usage: cloudlogin <server_group> [<server_num> <user>]"

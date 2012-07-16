@@ -25,8 +25,8 @@ class UdidReports
 
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select(:domain_name => "rewards_#{i}", :where => conditions) do |reward|
-        if reward.udid?
-          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country}"
+        if reward.udid? || reward.mac_address?
+          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
           outfile.puts(line)
         end
       end
@@ -68,7 +68,7 @@ class UdidReports
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     report_data = ''
     bucket.objects.with_prefix("#{offer_id}/#{month}/").each do |obj|
-      report_data += obj.read
+      report_data << obj.read
     end
     report_data
   end

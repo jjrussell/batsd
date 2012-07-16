@@ -1,5 +1,7 @@
 module Offer::Rejecting
 
+  GUN_AND_BLOOD_ID = '127095d1-42fc-480c-a65d-b5724003daf0'
+
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
     [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
@@ -68,6 +70,22 @@ module Offer::Rejecting
     %w(d4c8ccbf-2fed-4d10-812a-155600801739 ba903446-2f43-4b8e-9650-695b344e4488 af20fb55-4500-470d-90a7-b45b864a27a0 3b235836-2fa6-44e7-addb-54c0e144c7c6 ddb1495b-6627-46e7-9052-ce0efa2c9565 f9d9e36a-5322-40c2-ba60-0c64c65309f2),
     # GSN Casino
     %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6) => %w(5ff6102b-42ad-4ed0-868a-cf5011f8e28c 9b861ac9-3612-4a6d-98c9-7ea8bedffff6),
+    # Hotel Tonight Android
+    %w(39e6dad0-5a6a-4bc0-8b82-10db740fbf7a 0e589ce9-0e8e-49e6-a8aa-3b992a9c9c6a) => %w(39e6dad0-5a6a-4bc0-8b82-10db740fbf7a 0e589ce9-0e8e-49e6-a8aa-3b992a9c9c6a),
+    # Hotel Tonight iOS
+    %w(44eac10c-57ea-4969-977f-2c60a0abb48c 71a1d3d2-20e9-4c13-a03d-ee855552271e 4d3b8250-6be5-4e59-a3af-b448d94c2f5f 6577c3b0-df65-4428-a266-49c49cc8c559 778faf7c-01c8-4756-82d7-c3718017e22f 876bbbf3-7472-4f1b-8024-81c33386640b c8196876-6458-4fab-bed6-c9306fe35b05) =>
+    %w(44eac10c-57ea-4969-977f-2c60a0abb48c 71a1d3d2-20e9-4c13-a03d-ee855552271e 4d3b8250-6be5-4e59-a3af-b448d94c2f5f 6577c3b0-df65-4428-a266-49c49cc8c559 778faf7c-01c8-4756-82d7-c3718017e22f 876bbbf3-7472-4f1b-8024-81c33386640b c8196876-6458-4fab-bed6-c9306fe35b05),
+    # GSN Casino Android
+    %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb) => %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb),
+    # 60 Second Insurance
+    %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8) => %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8),
+    # Forces of War
+    %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182) =>
+    %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182),
+    # Badoo
+    %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc) => %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc),
+    # The Times
+    %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb) => %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -110,7 +128,7 @@ module Offer::Rejecting
     already_complete?(device, app_version) ||
     prerequisites_not_complete?(device) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device, type) ||
+    show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -265,8 +283,9 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device, type)
+  def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
+    return false if currency.id == GUN_AND_BLOOD_ID && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -344,7 +363,7 @@ module Offer::Rejecting
   def video_offers_reject?(video_offer_ids, type, all_videos)
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
 
-    item_type == 'VideoOffer' && !video_offer_ids.include?(id)
+    video_offer? && !video_offer_ids.include?(id)
   end
 
   def tapjoy_games_retargeting_reject?(device)

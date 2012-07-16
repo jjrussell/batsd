@@ -116,7 +116,7 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
     end
   end
 
-private
+  private
 
   def setup
     @app = find_app(params[:app_id])
