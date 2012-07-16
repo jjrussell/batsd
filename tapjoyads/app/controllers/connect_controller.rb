@@ -4,7 +4,11 @@ class ConnectController < ApplicationController
 
   def index
     lookup_udid
-    return unless verify_params([:app_id, :udid])
+    required_param = [:app_id]
+    required_param << :udid unless params[:udid_via_lookup].blank?
+
+    return unless verify_params(required_param)
+    return unless params[:udid].present?
 
     device = Device.new(:key => params[:udid])
 

@@ -52,5 +52,35 @@ describe ConnectController do
         response.response_code.should == 400
       end
     end
+
+    context 'when device identifiers are provided' do
+      before :each do
+        @params = { :app_id      => 'test_app',
+                    :sha2_udid   => 'sha2_test_device' }
+      end
+
+      context 'when the lookup succeeds' do
+        before :each do
+          device = FactoryGirl.create(:device)
+          identifier = FactoryGirl.create(:device_identifier, :udid => 'test_device')
+          DeviceIdentifier.stub(:new).and_return(identifier)
+          Device.should_receive(:new).and_return(device)
+        end
+
+        it 'returns success' do
+          get(:index, @params)
+          response.body.should include('Success')
+        end
+      end
+
+      context 'when the lookup fails' do
+      it 'returns success, but doesnt do the connect' do
+        Device.should_not_receive(:new)
+
+        get(:index, @params)
+        response.body.should include('Success')
+      end
+      end
+    end
   end
 end
