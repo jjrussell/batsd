@@ -59,7 +59,7 @@ class UserEvent < WebRequest
 
   def check_for_missing_fields!(event_descriptor, required_fields = [], alternative_fields_map = {}, event_data = {})
     missing_fields = required_fields.reject do |field|
-      event_data[field].present? || alternative_fields_map[field].any? { |alt| event_data[alt].present? }
+      event_data[field].present? || alternative_fields_map[field].present? && alternative_fields_map[field].any? { |alt| event_data[alt].present? }
     end
 
     if missing_fields.present?
