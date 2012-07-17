@@ -28,14 +28,17 @@ website_url: http://tapjoy.local:3000
 api_url_ext: http://tapjoy.local:4000
 clear_memcache: true
 ```
+
 4. Start tapjoyserver server with port 4000
 5. Start tapjoymarketplace server with port 3000
 
 ### Test on Staging
-1. For tapjoyserver, suggest use http://rogue.tapjoy.net or http://gambit.tapjoy.net
-2. For TJM, use http://kitty.tapjoy.net
-3. On Facebook: Go to https://developers.facebook.com/apps/374261032627026, change the site url to http://kitty.tapjoy.net and set App Domains to 'tapjoy.net'
-4. On Rogue: Go to 'config/environments/development.rb' file, update urls to the follow:
+1. For tapjoyserver, suggest use [Rogue](http://rogue.tapjoy.net) (or [Gambit](http://gambit.tapjoy.net))
+2. For TJM, use [Kitty](http://kitty.tapjoy.net)
+3. On Facebook: Go to ['Tapjoy Dev' app](https://developers.facebook.com/apps/281461335227331), change the site url to http://kitty.tapjoy.net and set App Domains to 'tapjoy.net'
+4. On Rogue: Enable ['Connect to Tapjoy with Facebook' offer](http://rogue.tapjoy.net/dashboard/statz/609f5b88-80a9-48a7-ac98-d2a304bf9952), set a large rank boost, update the its trigger action to 'Facebook Login' and change the destination url to be '/earn/TJM_EID?data=DATA'
+5. On Rogue: Go to tapjoyserver console, do OfferCacher.cache_offers(true)
+6. On Rogue and Kitty: Go to 'config/environments/development.rb' file, update urls to the follow:
 
 ```
 API_URL = 'http://rogue.tapjoy.net'
@@ -44,37 +47,22 @@ DASHBOARD_URL = 'http://rogue.tapjoy.net'
 WEBSITE_URL = 'http://kitty.tapjoy.net'
 ```
 
-5. On Rogue: Go to 'config/facebooker.yml' file, update api_id and secret for development env to the follow:
-
-```
-development:
-  app_id: '374261032627026'
-  secret: 'b8daf301cd6cf2cb8ea0d3eadb4109b1'
-  api_key: '374261032627026'
-  oauth2: true
-```
-
-6. On Rogue: Enable ['Connect to Tapjoy with Facebook' offer](http://rogue.tapjoy.net/dashboard/statz/609f5b88-80a9-48a7-ac98-d2a304bf9952), set a large rank boost, update the its trigger action to 'Facebook Login' and change the destination url to be '/earn/TJM_EID?data=DATA'
-7. On Rogue: Go to tapjoyserver console, do OfferCacher.cache_offers(true)
-8. On Kitty, Go to 'config/environments/staging.rb' file, update urls to the follow:
-
-```
-API_URL = 'http://rogue.tapjoy.net'
-API_URL_EXT = 'http://rogue.tapjoy.net'
-DASHBOARD_URL = 'http://rogue.tapjoy.net/dashboard'
-WEBSITE_URL = 'http://kitty.tapjoy.net'
-```
-
 ## Test Plan
 
 ### Test 1: Earn rewards by complete 'Connect to Tapjoy with Facebook'
 1. Make sure the device doesn't has app '609f5b88-80a9-48a7-ac98-d2a304bf9952' or 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03'
-2. Go to in-app offer wall or directly use [offer wall xml](http://rogue.tapjoy.net/get_offers?app_id=30091aa4-9ff3-4717-a467-c83d83f98d6d&udid=c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1&publisher_user_id=testuser&currency_id=30091aa4-9ff3-4717-a467-c83d83f98d6d&device_type=iphone)
-3. Click the 'Connect to Tapjoy with Facebook' offer on offer wall
+2. Clear dev_ConversionTracking queue: go to rogue console, do ```Sqs.delete_messages(QueueNames::BASE_NAME + "ConversionTracking", //)```
+3. Go to in-app offer wall or directly use [offer wall xml](http://rogue.tapjoy.net/get_offers?app_id=30091aa4-9ff3-4717-a467-c83d83f98d6d&udid=c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1&publisher_user_id=testuser&currency_id=30091aa4-9ff3-4717-a467-c83d83f98d6d&device_type=iphone)
+4. Click the 'Connect to Tapjoy with Facebook' offer on offer wall
 4. An instruction page for this offer will show up
 5. Click the button, do Facebook login and grant permissions
 6. Page will redirect to the earn page, with a popup saying how many rewards you've earned
 7. Go back to offer wall, both offers ('609f5b88-80a9-48a7-ac98-d2a304bf9952' and 'f7cc4972-7349-42dd-a696-7fcc9dcc2d03') should disappear
+8. If go to rogue console, do ```click = Click.find(Digest::MD5.hexdigest('c1bd5bd17e35e00b828c605b6ae6bf283d9bafa1.609f5b88-80a9-48a7-ac98-d2a304bf9952'))```, then check ```click.rewardable?```, it will return false
+9. Go to http://rogue.tapjoy.net/tools/sqs_lengths?queue_name=dev_ConversionTracking, there should be a new job, click 'Run Once' 
+10. Check in the rogue console
+    (1) Check the Reward based on the reward_key provided in the click;
+    (2) Get the device, then check ```device.has_app?('609f5b88-80a9-48a7-ac98-d2a304bf9952')```, it should return true
 
 ### Test 2: Reject 'Connect to Tapjoy with Facebook' offer on offer wall correctly
 1. Go to dashboard/tools/offer_lists, provide the udid of your device, set offer source to 'offerwall'
