@@ -12,7 +12,7 @@ class Dashboard::OffersController < Dashboard::DashboardController
                                :name, :name_suffix, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
                                :dma_codes, :regions, :carriers, :cities,
-                               :prerequisite_offer_id, :negative_prerequisite_offer_id ] | BASE_SAFE_ATTRIBUTES
+                               :prerequisite_offer_id, :negative_prerequisite_offer_ids ] | BASE_SAFE_ATTRIBUTES
 
   def new
     offer_params = {}

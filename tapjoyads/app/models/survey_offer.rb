@@ -12,6 +12,7 @@
 #
 
 class SurveyOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_cacheable
 
@@ -24,7 +25,6 @@ class SurveyOffer < ActiveRecord::Base
 
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
-  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   attr_accessor :bid_price
 
@@ -33,8 +33,7 @@ class SurveyOffer < ActiveRecord::Base
   validates_presence_of :partner, :name
   validates_presence_of :bid_price, :on => :create
   validates_presence_of :prerequisite_offer, :if => Proc.new { |survey_offer| survey_offer.prerequisite_offer_id? }
-  validates_presence_of :negative_prerequisite_offer, :if => Proc.new { |survey_offer| survey_offer.negative_prerequisite_offer_id? }
-  validate :prerequisite_not_equal_to_negative_prerequisite
+  validates_with OfferPrerequisitesValidator
 
   before_validation :assign_partner_id
   after_create :create_primary_offer, :create_icon
@@ -42,6 +41,8 @@ class SurveyOffer < ActiveRecord::Base
   set_callback :cache_associations, :before, :survey_questions
 
   scope :visible, :conditions => { :hidden => false }
+
+  json_set_field :negative_prerequisite_offer_ids
 
   def bid
     if @bid_price
@@ -120,10 +121,6 @@ class SurveyOffer < ActiveRecord::Base
 
   private
 
-  def prerequisite_not_equal_to_negative_prerequisite
-    errors.add(:prerequisite_offer_id, 'prerequisite offer can not be the same as negative prerequisite offer.') if self.prerequisite_offer_id.present? && self.prerequisite_offer_id == self.negative_prerequisite_offer_id
-  end
-
   def create_primary_offer
     url = generate_url
 
@@ -140,7 +137,7 @@ class SurveyOffer < ActiveRecord::Base
       :tapjoy_enabled   => true,
       :multi_complete   => false,
       :prerequisite_offer_id => prerequisite_offer_id,
-      :negative_prerequisite_offer_id => negative_prerequisite_offer_id,
+      :negative_prerequisite_offer_ids => negative_prerequisite_offer_ids,
     })
     offer.id = id
     offer.save!
@@ -168,7 +165,7 @@ class SurveyOffer < ActiveRecord::Base
     offer.hidden           = hidden
     offer.bid              = @bid_price unless @bid_price.blank?
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id
+    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
     offer.save! if offer.changed?
   end
 

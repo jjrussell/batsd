@@ -18,6 +18,7 @@
 #
 
 class GenericOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
@@ -30,24 +31,20 @@ class GenericOffer < ActiveRecord::Base
 
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
-  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :partner, :name, :url, :category
   validates_presence_of :prerequisite_offer, :if => Proc.new { |generic_offer| generic_offer.prerequisite_offer_id? }
-  validates_presence_of :negative_prerequisite_offer, :if => Proc.new { |generic_offer| generic_offer.negative_prerequisite_offer_id? }
   validates_inclusion_of :category, :in => CATEGORIES, :allow_blank => true
-  validate :prerequisite_not_equal_to_negative_prerequisite
+  validates_with OfferPrerequisitesValidator
 
   after_create :create_primary_offer
   after_update :update_offers
 
   scope :visible, :conditions => { :hidden => false }
 
-  private
+  json_set_field :negative_prerequisite_offer_ids
 
-  def prerequisite_not_equal_to_negative_prerequisite
-    errors.add(:prerequisite_offer_id, 'prerequisite offer can not be the same as negative prerequisite offer.') if self.prerequisite_offer_id.present? && self.prerequisite_offer_id == self.negative_prerequisite_offer_id
-  end
+  private
 
   def create_primary_offer
     offer = Offer.new(:item => self)
@@ -60,7 +57,7 @@ class GenericOffer < ActiveRecord::Base
     offer.instructions = instructions
     offer.third_party_data = third_party_data
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id
+    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
     offer.save!
   end
 
@@ -73,7 +70,7 @@ class GenericOffer < ActiveRecord::Base
       offer.instructions = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.third_party_data = third_party_data if third_party_data_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id if negative_prerequisite_offer_id_changed?
+      offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids if negative_prerequisite_offer_ids_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end

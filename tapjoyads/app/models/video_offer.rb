@@ -12,6 +12,7 @@
 #
 
 class VideoOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_cacheable
   acts_as_trackable :url => lambda { |ctx| video_url.present? ? video_url : nil }
@@ -22,22 +23,22 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
-  belongs_to :negative_prerequisite_offer, :class_name => 'Offer'
 
   set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
   validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
-  validates_presence_of :negative_prerequisite_offer, :if => Proc.new { |video_offer| video_offer.negative_prerequisite_offer_id? }
   validate :video_exists, :unless => :new_record?
-  validate :prerequisite_not_equal_to_negative_prerequisite
+  validates_with OfferPrerequisitesValidator
 
   before_save :update_video_url
   after_create :create_primary_offer
   after_update :update_offers
 
   scope :visible, :conditions => { :hidden => false }
+
+  json_set_field :negative_prerequisite_offer_ids
 
   def update_buttons
     offers.each do |offer|
@@ -61,10 +62,6 @@ class VideoOffer < ActiveRecord::Base
 
   private
 
-  def prerequisite_not_equal_to_negative_prerequisite
-    errors.add(:prerequisite_offer_id, 'prerequisite offer can not be the same as negative prerequisite offer.') if self.prerequisite_offer_id.present? && self.prerequisite_offer_id == self.negative_prerequisite_offer_id
-  end
-
   def create_primary_offer
     offer              = Offer.new(:item => self)
     offer.id           = id
@@ -76,7 +73,7 @@ class VideoOffer < ActiveRecord::Base
     offer.bid          = offer.min_bid
     offer.name_suffix  = 'Video'
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id
+    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
     offer.save!
   end
 
@@ -85,7 +82,7 @@ class VideoOffer < ActiveRecord::Base
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.negative_prerequisite_offer_id = negative_prerequisite_offer_id if negative_prerequisite_offer_id_changed?
+      offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids if negative_prerequisite_offer_ids_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
