@@ -28,7 +28,6 @@ describe AdwaysDataController do
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        offers = FactoryGirl.create(:app)
         partner.stub(:offers).and_return('offers')
         start_time.stub(:iso8601).and_return('2012-12-31')
         Appstats.stub(:new).and_return('test')

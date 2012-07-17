@@ -28,7 +28,6 @@ describe FluentDataController do
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        offers = FactoryGirl.create(:app)
         partner.stub(:apps).and_return(['apps'])
         app = Factory.create(:app)
         App.stub(:find).and_return(['extra_apps'])
