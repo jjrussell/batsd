@@ -93,8 +93,8 @@ class Currency < ActiveRecord::Base
 
   delegate :postcache_weights, :to => :currency_group
   delegate :categories, :to => :app
-  delegate :get_promoted_offers, :to => :partner, :prefix => true
-  memoize :postcache_weights, :categories, :partner_get_promoted_offers
+  delegate :get_promoted_offers, :enable_risk_management?, :to => :partner, :prefix => true
+  memoize :postcache_weights, :categories, :partner_get_promoted_offers, :partner_enable_risk_management?
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")

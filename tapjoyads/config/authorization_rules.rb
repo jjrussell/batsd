@@ -61,7 +61,7 @@ authorization do
     includes :devices
     includes :file_sharer
     has_permission_on :dashboard_search, :to => [ :gamers ]
-    has_permission_on :dashboard_tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures ]
+    has_permission_on :dashboard_tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures, :view_conversion_attempt ]
     has_permission_on :dashboard_tools_gamers, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
@@ -69,7 +69,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account ]
+    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion ]
   end
 
   role :money do
