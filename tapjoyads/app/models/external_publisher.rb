@@ -30,20 +30,22 @@ class ExternalPublisher
     os_version = HeaderParser.os_version(user_agent_str) if device_type.present?
 
     publisher_user_id = device.publisher_user_ids[app_id] || device.key
+    display_multiplier = device.display_multipliers[app_id].present? ? device.display_multipliers[app_id] : 1
 
     data = {
-      :udid              => device.key,
-      :publisher_user_id => publisher_user_id,
-      :currency_id       => currency[:id],
-      :app_id            => app_id,
-      :source            => 'tj_games',
-      :json              => '1',
+      :udid                => device.key,
+      :publisher_user_id   => publisher_user_id,
+      :currency_id         => currency[:id],
+      :app_id              => app_id,
+      :source              => 'tj_games',
+      :json                => '1',
+      :display_multiplier  => "#{display_multiplier}"
     }
-    data[:language_code] = language_code if language_code.present?
-    data[:device_type]   = device_type if device_type.present?
-    data[:os_version]    = os_version if os_version.present?
-    data[:gamer_id]      = gamer_id if gamer_id.present?
-    data[:no_log]        = '1' if no_log
+    data[:language_code]       = language_code if language_code.present?
+    data[:device_type]         = device_type if device_type.present?
+    data[:os_version]          = os_version if os_version.present?
+    data[:gamer_id]            = gamer_id if gamer_id.present?
+    data[:no_log]              = '1' if no_log
 
     "#{API_URL}/get_offers?data=#{ObjectEncryptor.encrypt(data)}"
   end
