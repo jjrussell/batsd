@@ -130,6 +130,11 @@ describe GameStateController do
         get(:save, @params)
         assigns(:game_state).tapjoy_points.should == @params[:game_state_points].to_i
       end
+
+      it 'responds with 200' do
+        get(:save, @params)
+        should respond_with(200)
+      end
     end
   end
 end
