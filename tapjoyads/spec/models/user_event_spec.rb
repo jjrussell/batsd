@@ -3,105 +3,79 @@ require 'spec_helper'
 describe UserEvent do
 
   before(:each) do
-    @app = FactoryGirl.create(:app)
-    @device = FactoryGirl.create(:device)
-    @app.cache
-    # Use an IAP event, since it's got additional required params
-    @geoip_data = {
-      :country => "USA",
-      :primary_country => "USA",
+    @iap_data = {
+      :quantity       => FactoryGirl.generate(:integer),
+      :price          => FactoryGirl.generate(:integer).to_f,
+      :name           => "Item #{FactoryGirl.generate(:name)}",
+      :currency_code  => "Currency #{FactoryGirl.generate(:name)}",
+      :item_id        => FactoryGirl.generate(:guid),
+#      :verifier       => 'should_recompute_me_with_each_variable_change_when_verifier_enabled',
     }
-    @ip_address = '10.0.0.1'
-    @user_agent = 'not_a_real_user'
-    @options = {
-      :event_type_id => 1,
-      :app_id => @app.id,
-      :udid => @device.id,
-      :quantity => FactoryGirl.generate(:integer),
-      :price => FactoryGirl.generate(:integer).to_f,
-      :name => FactoryGirl.generate(:name),
-      :currency_id => "Currency #{FactoryGirl.generate(:name)}",
-      :verifier => 'should_recompute_me_with_each_variable_change',
-    }
-    @event = UserEvent.new()
   end
 
-  describe '#put_values' do
-
-    context 'without a verifier' do
-      before(:each) do
-        @options.delete(:verifier)
-      end
-
-      it 'raises an error' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.no_verifier'))
-      end
-    end
+  describe '#new' do
 
     context 'with an invalid event_type_id' do
-      before(:each) do
-        @options[:event_type_id] = -1
-      end
-
-      it 'raises an error' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "#{@options[:event_type_id]} is not a valid 'event_type_id'.")
+      it 'raises an invalid event type error' do
+        expect{UserEvent.new(:invalid)}.to raise_error(UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_event_type'))
       end
     end
 
-    context 'with an invalid app_id' do
-      before(:each) do
-        @options[:app_id] = "completely f'd app_id"
+    context 'when required fields are missing' do
+      context 'and the missing field has no alternatives' do
+        before(:each) do
+          @iap_data.delete(:quantity)
+          @error_msg = I18n.t('user_event.error.missing_fields', { :missing_fields_string => "quantity" })
+        end
+
+        it 'raises a missing fields error' do
+          expect{UserEvent.new(:iap, @iap_data)}.to raise_error(UserEvent::UserEventInvalid, @error_msg)
+        end
       end
 
-      it 'raises an error' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "App ID '#{@options[:app_id]}' could not be found. Check 'app_id' and try again.")
-      end
-    end
+      context 'and the missing field has alternatives' do
+        before(:each) do
+          @iap_data.delete(:name)
+        end
 
-    context 'without any device identifiers' do
-      before(:each) do
-        @options.delete(:udid)
-      end
+        context 'and those alternatives are missing' do
+          before(:each) do
+            @iap_data.delete(:item_id)
+          @error_msg = I18n.t('user_event.error.missing_fields', { :missing_fields_string => "name, item_id" })
+          end
 
-      it 'raises an error saying that the no device identifier could be found' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.no_device'))
-      end
-    end
+          it 'raises a missing fields error' do
+            expect{UserEvent.new(:iap, @iap_data)}.to raise_error(UserEvent::UserEventInvalid, @error_msg)
+          end
+        end
 
-    context 'with at least one missing option' do
-      before(:each) do
-        #randomly decided to remove quantity here, any param with its associated error message (below) should work
-        @options.delete(:quantity)
-      end
-
-      it 'raises an error' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "Expected attribute 'quantity' of type 'int' not found.")
-      end
-    end
-
-    context 'with an option of the wrong data type' do
-      before(:each) do
-        @options[:price] = 'invalid price123'
-      end
-
-      it 'raises an error' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, "Error assigning 'price' attribute. The value 'invalid price123' is not of type 'float'.")
+        context 'and an alternative is present' do
+          it 'succeeds' do
+            expect{UserEvent.new(:iap, @iap_data)}.to_not raise_error
+          end
+        end
       end
     end
 
-    context 'with an invalid verifier' do
-      it 'raises an error saying that the verifier is invalid' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent)}.to raise_error(Exception, I18n.t('user_event.error.verification_failed'))
+    context 'with a field of the wrong data type' do
+      before(:each) do
+        @iap_data[:price] = 'invalid price123'
+        @error_msg = I18n.t('user_event.error.invalid_field', { :field => :price, :type => UserEvent::EVENT_TYPE_MAP[:iap][:price] })
+      end
+
+      it 'raises an invalid field error' do
+        expect{UserEvent.new(:iap, @iap_data)}.to raise_error(UserEvent::UserEventInvalid, @error_msg)
       end
     end
 
-    context 'with a valid verifier' do
+    context 'with fields not defined in that event\'s mapping' do
       before(:each) do
-        @options[:verifier] = Digest::SHA256.hexdigest("#{@app.id}:#{@device.id}:#{@app.secret_key}:#{@options[:event_type_id]}")
+        @iap_data[:time] = FactoryGirl.generate(:integer)
+        @error_msg = I18n.t('user_event.error.undefined_fields', { :undefined_fields_string => 'time' })
       end
 
-      it 'successfully creates and can save a UserEvent' do
-        expect{@event.put_values(@options, @ip_address, @geoip_data, @user_agent) and @event.save}.to_not raise_error
+      it 'raises an undefined fields error' do
+        expect{UserEvent.new(:iap, @iap_data)}.to raise_error(UserEvent::UserEventInvalid, @error_msg)
       end
     end
   end

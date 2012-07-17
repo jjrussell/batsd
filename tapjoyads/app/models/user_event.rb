@@ -51,7 +51,6 @@ class UserEvent < WebRequest
   }
 
   EVENT_TYPE_MAP.freeze()
-  EVENT_TYPE_IDS.freeze()
   EVENT_TYPE_KEYS.freeze()
 
   # Exception specific to UserEvent for returning custom errors to client devices
@@ -68,6 +67,10 @@ class UserEvent < WebRequest
   self.define_attr :price,    :type => :float
 
   def initialize(event_type, event_data = {})
+    if event_type == :invalid || !EVENT_TYPE_KEYS.include?(event_type)
+      raise UserEventInvalid, I18n.t('user_event.error.invalid_event_type')
+    end
+
     super()
     validate!(event_type, event_data)
     self.type = event_type
@@ -113,7 +116,7 @@ class UserEvent < WebRequest
     end
 
     if missing_fields.present?
-      error_msg_data = { :missing_fields_string => missing_fields.join(',') }
+      error_msg_data = { :missing_fields_string => missing_fields.join(', ') }
       raise UserEventInvalid, I18n.t('user_event.error.missing_fields', error_msg_data)
     end
   end
@@ -123,7 +126,7 @@ class UserEvent < WebRequest
     undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
 
     if undefined_fields.present?
-      error_msg_data = { :undefined_fields_string => undefined_fields.join(',') }
+      error_msg_data = { :undefined_fields_string => undefined_fields.join(', ') }
       raise UserEventInvalid, I18n.t('user_event.error.undefined_fields', error_msg_data)
     end
   end

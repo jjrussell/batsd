@@ -30,9 +30,8 @@ class UserEventsController < ApplicationController
       device = Device.find(params[device_id_key])
 
       event_type_id = params.delete(:event_type_id).to_i
-      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_event_type') unless event_type_id > 0
-
       @type = UserEvent::EVENT_TYPE_KEYS[event_type_id]
+
       @event_data = params.delete(:ue).try(:symbolize_keys) || {}
       remote_verifier = params.delete(:verifier)
       # raise UserEventInvalid, I18n.t('user_event.error.no_verifier') unless remote_verifier.present?
