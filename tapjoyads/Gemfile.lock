@@ -68,6 +68,10 @@ GEM
       activesupport (= 3.0.15)
     activesupport (3.0.15)
     acts-as-approvable (0.6.9)
+    adapter (0.5.2)
+    adapter-redis (0.5)
+      adapter (~> 0.5.1)
+      redis
     addressable (2.2.6)
     airbrake (3.0.5)
       activesupport
@@ -279,6 +283,7 @@ GEM
     shoulda-matchers (1.2.0)
       activesupport (>= 3.0.0)
     simple_oauth (0.1.5)
+    simple_uuid (0.1.2)
     simplecov (0.6.4)
       multi_json (~> 1.0)
       simplecov-html (~> 0.5.3)
@@ -302,6 +307,11 @@ GEM
     thor (0.14.6)
     tilt (1.3.3)
     timecop (0.3.5)
+    toystore (0.10.2)
+      activemodel (~> 3.0, < 3.2)
+      activesupport (~> 3.0, < 3.2)
+      adapter (~> 0.5.1)
+      simple_uuid (~> 0.1.1)
     treetop (1.4.10)
       polyglot
       polyglot (>= 0.3.1)
@@ -339,6 +349,7 @@ DEPENDENCIES
   SystemTimer (= 1.2.3)
   activemerchant
   acts-as-approvable (= 0.6.9)
+  adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
   annotate
@@ -423,6 +434,7 @@ DEPENDENCIES
   thin
   tilt (= 1.3.3)
   timecop
+  toystore (= 0.10.2)
   twitter (= 1.7.2)
   typhoeus (= 0.2.4)
   uglifier (= 1.2.3)
