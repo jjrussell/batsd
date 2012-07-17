@@ -217,6 +217,8 @@ Tapjoyad::Application.routes.draw do
           get :ses_status
           get :view_pub_user_account
           post :detach_pub_user_account
+          get :view_conversion_attempt
+          post :force_conversion
         end
 
 

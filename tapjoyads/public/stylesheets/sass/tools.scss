@@ -13,6 +13,9 @@ table.with-border td {
     color: red;
   }
 }
+table.with-border th {
+  text-align: right
+}
 .rewarded {
   background-color: #0d0;
 }
@@ -26,6 +29,9 @@ table.with-border td {
 .blocked {
   background-color: #222;
   color: #eee;
+}
+.forced {
+  background-color: #aaa;
 }
 .click-key-match {
   background-color: #8dbdd8;
