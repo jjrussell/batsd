@@ -15,7 +15,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     offer = Offer.find_in_cache(click.offer_id, true)
     currency = Currency.find_in_cache(click.currency_id, true)
 
-    if click.installed_at? || (offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) ||
+    if click.installed_at? ||
+      (!click.force_convert && offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) ||
       (!click.force_convert && click.block_reason?)
       return
     end
