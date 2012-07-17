@@ -1,13 +1,66 @@
 class UserEvent < WebRequest
-  include UserEventTypes
+  include TypeConverters
 
+  EVENT_TYPE_KEYS = [
+    :invalid, :iap, :shutdown
+  ]
+
+  EVENT_TYPE_MAP = {
+
+    # structure of this map:
+    #
+    # :event_type_name => {
+    #   :field_1 => :data_type_1,
+    #   :field_2 => :data_type_2,
+
+    #   :REQUIRED => [ :field_x, :field_y ],
+    #   :ALTERNATIVES => {
+    #     :field_a => [ :field_b, :field_c ],
+    #     :field_b => [ :field_a, :field_c ],
+    #     :field_c => [ :field_a, :field_b ],
+    #   }
+    # }
+    #
+    # :data_type_X MUST match a key in TypeConverters::TYPES
+
+    # The :REQUIRED array denotes what fields are required for that event type
+    # The :ALTERNATIVES map consists of keys with possible alternates and arrays of valid alternatives to that key
+
+    # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
+    
+    :invalid => {
+    },
+
+    :iap => {
+      :currency_code  => :string,
+      :name           => :string,
+      :item_id        => :string,
+      :price          => :float,
+      :quantity       => :int,
+
+      :REQUIRED       => [ :currency_code, :name, :item_id, :price, :quantity ],
+      :ALTERNATIVES   => {
+        :item_id        => [ :name ],
+        :name           => [ :item_id ],
+      }
+    },
+
+    :shutdown => {
+    },
+
+  }
+
+  EVENT_TYPE_MAP.freeze()
+  EVENT_TYPE_IDS.freeze()
+  EVENT_TYPE_KEYS.freeze()
+
+  # Exception specific to UserEvent for returning custom errors to client devices
   class UserEventInvalid < RuntimeError
   end
 
-
   # add new event type fields here with their required types
   # make sure to assign them at the bottom of #put_values() below
-  # make sure changes here are reflected in user_event_types.rb
+  # make sure changes here are reflected in the mapping above
   self.define_attr :name
   self.define_attr :currency_code
   self.define_attr :item_id
@@ -19,9 +72,6 @@ class UserEvent < WebRequest
     validate!(event_type, event_data)
     self.type = event_type
 
-    # assign new event type fields here
-    # make sure to define new attributes with `self.define_attr` in the above block
-    # make sure all attributes used here are defined for this event type in user_event_types.rb
     event_data.each do |field, value|
       send("#{field}=", value)
     end
@@ -44,7 +94,7 @@ class UserEvent < WebRequest
     required_fields         = []
     alternative_fields_map  = {}
 
-    UserEventTypes::EVENT_TYPE_MAP[event_type].each do |event_specific_field, data_type|
+    EVENT_TYPE_MAP[event_type].each do |event_specific_field, data_type|
       case event_specific_field
       when :REQUIRED      then required_fields        = data_type
       when :ALTERNATIVES  then alternative_fields_map = data_type
