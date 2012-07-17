@@ -1,6 +1,7 @@
 class SetPublisherUserIdController < ApplicationController
 
   before_filter :lookup_udid
+  before_filter :reject_banned_udids
 
   def index
     return unless verify_params([:app_id, :udid, :publisher_user_id])
