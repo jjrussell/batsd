@@ -106,9 +106,12 @@ class ApplicationController < ActionController::Base
     lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
     lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
+    params[:identifiers_provided] = lookup_keys.any?
+
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
       unless identifier.new_record?
+        params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break
       end
@@ -212,6 +215,10 @@ class ApplicationController < ActionController::Base
 
   def reject_banned_ips
     render :text => '' if BANNED_IPS.include?(ip_address)
+  end
+
+  def reject_banned_udids
+    render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
   end
 
   def log_activity(object, options={})
