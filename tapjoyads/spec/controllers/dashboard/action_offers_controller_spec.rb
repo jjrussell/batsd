@@ -24,7 +24,7 @@ describe Dashboard::ActionOffersController do
     end
 
     it 'downloads the header file' do
-      get :TJCPPA, @params
+      lambda { get :TJCPPA, @params }.should_not raise_exception
     end
   end
 
@@ -34,7 +34,7 @@ describe Dashboard::ActionOffersController do
     end
 
     it 'downloads the java file' do
-      get :TapjoyPPA, @params
+      lambda { get :TapjoyPPA, @params }.should_not raise_exception
     end
   end
 end
