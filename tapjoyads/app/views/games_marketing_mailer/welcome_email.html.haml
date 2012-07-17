@@ -57,8 +57,6 @@
                 %td
                   Now you can start discovering cool new apps while also earning rewards in apps you already play.
 
-        - # HERE I AM
-
         - if @confirmation_link && !@facebook_signup
           %tr
             %td
@@ -191,6 +189,7 @@
                   %td
                     If the "confirm address" button doesn't work, copy the link below and paste it in your browser:
                     = link_to @confirmation_link, @confirmation_link, :style => css[:a]
+
       %tfoot
         %tr
           %td

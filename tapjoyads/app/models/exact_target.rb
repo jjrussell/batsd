@@ -38,41 +38,120 @@ class ExactTarget
         xml.par :EmailAddress, "brian.stebar@tapjoy.com"
         xml.par :SubscriberKey, "brian.stebar@tapjoy.com"
 
-        # xml.par :Attributes do |xml|
-        #   xml.par :Name, "html_body"
-        #   xml.par :Value, "This is my HTML content."
-        # end
-        # xml.par :Attributes do |xml|
-        #   xml.par :Name, "text_body"
-        #   xml.par :Value, "This is my text content."
-        # end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "ConfirmationUrl"
+          xml.par :Value, "https://www.tapjoy.com/confirm?token=CONFIRMATION_TOKEN"
+        end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "FacebookSignup"
+          xml.par :Value, 1
+        end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "ShowDetailedEmail"
+          xml.par :Value, 1
+        end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "Linked"
+          xml.par :Value, 1
+        end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "AndroidDevice"
+          xml.par :Value, 0
+        end
+        xml.par :Attributes do |xml|
+          xml.par :Name, "ShowOfferData"
+          xml.par :Value, 1
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "PublisherIconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/ICON_ID.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "PublisherAppName"
+           xml.par :Value, "PUBLISHER APP NAME"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "CurrencyId"
+           xml.par :Value, "CURRENCY_ID"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "CurrencyName"
+           xml.par :Value, "GOLD COINS"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer1IconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/AN_OFFER.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer1Name"
+           xml.par :Value, "An Offer"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer1Type"
+           xml.par :Value, "App"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer1Amount"
+           xml.par :Value, 10
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer2IconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/ANOTHER_OFFER.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer2Name"
+           xml.par :Value, "Another Offer"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer2Type"
+           xml.par :Value, "NotAnApp"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer2Amount"
+           xml.par :Value, 20
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer3IconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/YET_ANOTHER_OFFER.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer3Name"
+           xml.par :Value, "Yet Another Offer"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer3Type"
+           xml.par :Value, "App"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Offer3Amount"
+           xml.par :Value, 300
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "ShowRecommendations"
+           xml.par :Value, 1
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Recommendation1IconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/AN_APP.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Recommendation1Name"
+           xml.par :Value, "An App"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Recommendation2IconUrl"
+           xml.par :Value, "https://s3.amazonaws.com/tapjoy/icons/SIZE/ANOTHER_APP.jpg"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "Recommendation2Name"
+           xml.par :Value, "Another App"
+        end
+        xml.par :Attributes do |xml|
+           xml.par :Name, "GamerEmail"
+           xml.par :Value, "gamer_email@tapjoy.com"
+        end
       end
     end
-
-    # xml.tag!("par:CreateRequest", "xmlns:par" => "http://exacttarget.com/wsdl/partnerAPI", "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance") {
-      # xml.tag!("par:Objects", "xsi:type"=>"par:TriggeredSend") {
-      #   xml.tag!("par:Client") {
-      #     xml.tag!("par:ID", 7001723)
-      #   }
-      #   xml.tag!("par:TriggeredSendDefinition") {
-      #     xml.tag!("par:PartnerKey", "xsi:nil" => true)
-      #     xml.tag!("par:ObjectID", "xsi:nil" => true)
-      #     xml.tag!("par:CustomerKey", "tjm_welcome")
-      #   }
-      #   xml.tag!("par:Subscribers") {
-      #     xml.tag!("par:EmailAddress", "brian.stebar@tapjoy.com")
-      #     xml.tag!("par:Attributes") {
-      #       xml.tag!("par:Name", "html_body")
-      #       xml.tag!("par:Value", "This is my HTML content.")
-      #     }
-      #     xml.tag!("par:Attributes") {
-      #       xml.tag!("par:Name", "text_body")
-      #       xml.tag!("par:Value", "This is my text content.")
-      #     }
-      #     xml.tag!("par:SubscriberKey", "brian.stebar@tapjoy.com")
-      #   }
-      # }
-    # }
 
     # <?xml version="1.0" encoding="UTF-8"?>
     # <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
