@@ -10,20 +10,18 @@
   .field
     = f.label :name, 'Prerequisite'
     #help_prerequisite.help ?
-    - offer_options = Partner.find_by_id(TAPJOY_PARTNER_ID).offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @survey_offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
-    - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
-    = f.select :prerequisite_offer_id, offer_options
+    - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_PARTNER_ID).offers.first)
+    - prerequisites_options = offer_options
+    - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+    = f.select :prerequisite_offer_id, prerequisites_options
     = error_message_on @survey_offer, :prerequisite_offer_id
   .field
-    = f.label :name, 'Negative Prerequisite'
-    #help_negative_prerequisite.help ?
-    - offer_options = Partner.find_by_id(TAPJOY_PARTNER_ID).offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @survey_offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
-    - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_id.blank?))
-    = f.select :negative_prerequisite_offer_id, offer_options
-    = error_message_on @survey_offer, :negative_prerequisite_offer_id
-
-
-
+    = f.label :name, 'Negative Prerequisites'
+    #help_negative_prerequisites.help ?
+    - negative_prerequisites_options = offer_options
+    - negative_prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_ids.blank?))
+    = f.select :negative_prerequisite_offer_ids, negative_prerequisites_options
+    = error_message_on @survey_offer, :negative_prerequisite_offer_ids
   .field
     = f.label :bid
     #help_bid.help ?
@@ -65,6 +63,10 @@
     What format the question should be presented in.
   #help_possible_responses_content{:name => 'Possible Responses'}
     What response options the user will see, separated by semi-colons.
+  #help_prerequisite_content{:name => 'Prerequisite Offer'}
+    Choose prerequisite offer so that offer will only show up if user has completed prerequisite offer.
+  #help_negative_prerequisites_content{:name => 'Negative Prerequisites'}
+    Choose negative prerequisite offers so that offer will only show up if user has not completed any of the negative prerequisite offers.
 
 - content_for :page_styles do
   :plain

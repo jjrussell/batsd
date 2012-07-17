@@ -10,26 +10,23 @@
       %td
         = f.text_field :name, :size => 50
         = error_message_on @generic_offer, :name
-
     %tr
       %th
         = f.label :name, 'Prerequisite'
-        #help_prerequisite.help ?
       %td
-        - offer_options = @generic_offer.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @generic_offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
-        - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
-        = f.select :prerequisite_offer_id, offer_options
+        - offer_options = options_for_prerequisites(@generic_offer)
+        - prerequisites_options = offer_options
+        - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+        = f.select :prerequisite_offer_id, prerequisites_options
         = error_message_on @generic_offer, :prerequisite_offer_id
     %tr
       %th
-        = f.label :name, 'Negative Prerequisite'
-        #help_negative_prerequisite.help ?
+        = f.label :name, 'Negative Prerequisites'
       %td
-        - offer_options = @generic_offer.partner.offers.sort { |a, b| a.name <=> b.name }.reject { |offer| offer.id == @generic_offer.id }.collect { |offer| [ "#{offer.name} -#{offer.name_suffix}-#{offer.item_type}", offer.id ] }
-        - offer_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_id.blank?))
-        = f.select :negative_prerequisite_offer_id, offer_options
-        = error_message_on @generic_offer, :negative_prerequisite_offer_id
-
+        - negative_prerequisites_options = offer_options
+        - negative_prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_ids.blank?))
+        = f.select :negative_prerequisite_offer_ids, negative_prerequisites_options
+        = error_message_on @generic_offer, :negative_prerequisite_offer_ids
     %tr
       %th= f.label :category
       %td
