@@ -102,7 +102,7 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
   def TJCPPA
     respond_to do |format|
       format.h do
-        render :text => @app.generate_actions_file, :format => Mime::TEXT
+        send_data(@app.generate_actions_file, :filename => "TJCPPA.h", :type => "text/plain")
       end
     end
   end
@@ -110,12 +110,12 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
   def TapjoyPPA
     respond_to do |format|
       format.java do
-        render :text => @app.generate_actions_file, :format => Mime::TEXT
+        send_data(@app.generate_actions_file, :filename => "TapjoyPPA.java", :type => "text/plain")
       end
     end
   end
 
-private
+  private
 
   def setup
     @app = find_app(params[:app_id])

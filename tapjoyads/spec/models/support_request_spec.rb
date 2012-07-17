@@ -43,6 +43,11 @@ describe SupportRequest do
         @support_request.managed_currency.should == @currency.tapjoy_managed?
       end
 
+      it "stores the offer's payment" do
+        @support_request.fill_from_params(@params, @app, @currency, @offer, @user_agent)
+        @support_request.offer_value.should == @offer.payment
+      end
+
       context 'with a click association' do
         before :each do
           @support_request.stub(:get_last_click).and_return(@click)
@@ -75,6 +80,11 @@ describe SupportRequest do
       it "leaves click_id blank" do
         @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
         @support_request.click_id.should be_blank
+      end
+
+      it "leaves offer_value blank" do
+        @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+        @support_request.offer_value.should be_blank
       end
     end
 
@@ -188,6 +198,11 @@ describe SupportRequest do
         currency = Currency.find_in_cache(@click.currency_id)
         @support_request.managed_currency.should == currency.try(:tapjoy_managed?)
       end
+
+      it "stores the click model's advertiser_amount" do
+        @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.offer_value.should == @click.advertiser_amount
+      end
     end
 
     context 'when no click is provided' do
@@ -219,6 +234,11 @@ describe SupportRequest do
       it "leaves offer_id blank" do
         @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
         @support_request.offer_id.should be_blank
+      end
+
+      it "leaves offer_value blank" do
+        @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.offer_value.should be_blank
       end
 
       it "leaves click_id blank" do
