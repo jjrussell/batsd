@@ -5,6 +5,8 @@ class FullscreenAdController < ApplicationController
   prepend_before_filter :decrypt_data_param
 
   def index
+    raise params[:preview].inspect
+
     @platform = Device.device_type_to_platform(device_type)
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     currency_id = params[:currency_id].blank? ? params[:publisher_app_id] : params[:currency_id]
@@ -18,6 +20,16 @@ class FullscreenAdController < ApplicationController
     return unless verify_records(required_records)
 
     @now = params[:viewed_at].present? ? Time.zone.at(params[:viewed_at].to_f) : Time.zone.now
+
+    unless (@for_preview = (params[:preview].to_s == 'true'))
+      web_request = WebRequest.new(:time => @now)
+      web_request.put_values('featured_offer_impression', params, ip_address, geoip_data, request.headers['User-Agent'])
+      web_request.offer_id = @offer.id
+      web_request.viewed_at = @now
+      web_request.save
+
+      @offer.queue_impression_tracking_requests # for third party tracking vendors
+    end
 
     render :layout => "blank" if @offer.featured_custom_creative?
   end
