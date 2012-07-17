@@ -57,22 +57,22 @@
       = property_row('App Update', updated, nil, @offer.item.recently_released? ? 'warning' : nil)
   - else
     = property_row(@offer.url_overridden? ? 'Overridden destination url' : 'Destination url', link_to(truncate(@offer.url, :length => 60), @offer.url))
-  - property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
-  - property_row('Daily budget', @offer.daily_budget, 0)
-  - property_row('Overall budget', @offer.overall_budget, 0)
+  = property_row('Price', number_to_currency(@offer.price / 100.0), nil, @offer.expensive? ? 'warning' : nil)
+  = property_row('Daily budget', @offer.daily_budget, 0)
+  = property_row('Overall budget', @offer.overall_budget, 0)
   - show_rate_string = number_to_percentage(((@offer.show_rate || 0) * 100.0), :precision => 1)
   - if @offer.show_rate < 0.001
     - show_rate_string << " -  #{label_tag('show_rate_reasons', link_to('Show Reasons','', :id => :view_show_rate_reasons), :id => 'show_rate_reasons')}"
-  - property_row('Show rate',  show_rate_string, "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
-  - property_row('Min CVR', @offer.min_conversion_rate, nil)
+  = property_row('Show rate', show_rate_string, "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
+  = property_row('Min CVR', @offer.min_conversion_rate, nil)
   - if @offer.countries
     = property_row('Countries', @offer.countries, '', @offer.all_blacklisted? ? 'incomplete' : '')
   - if @offer.countries_blacklist.present?
     = property_row('Not available in', @offer.countries_blacklist.to_json, '[]', @offer.all_blacklisted? ? 'incomplete' : '')
-  - property_row('Regions', @offer.regions, '')
-  - property_row('DMA Codes', @offer.dma_codes, '')
-  - property_row('Cities', @offer.cities, '')
-  - property_row('Carriers', @offer.carriers, '')
+  = property_row('Regions', @offer.regions, '')
+  = property_row('DMA Codes', @offer.dma_codes, '')
+  = property_row('Cities', @offer.cities, '')
+  = property_row('Carriers', @offer.carriers, '')
   - if @srr_ratio
     = property_row("Offer Health", "#{@srr_ratio}")
   - else
