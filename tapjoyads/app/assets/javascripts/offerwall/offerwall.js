@@ -252,8 +252,8 @@
      */
     configLayout: function(){
 
-      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>'; 
-        
+      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>';
+
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
       !$.data.showCurrentApp ? $.header.className += ' hide-current-app' : '';
@@ -327,7 +327,7 @@
             if(pagesFetched == autoLoadLimit){
               if($.loadMore){
                 try {
-                  $.loadMore.parentNode.style.display = 'block'; 
+                  $.loadMore.parentNode.style.display = 'block';
                 }catch(err){}
               }
             }
@@ -420,7 +420,7 @@
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
         item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="' + ($.data.squircles ? 'overlay' : 'rounded') +'"></div><img class="cover" src="' + item.iconURL + '" />';
-        
+
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
@@ -432,7 +432,7 @@
         li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offerTemplate + '</a>';
 
         $.offersContainer.appendChild(li);
-        
+
         if(item.wifi.length != 0){
           $.each($.find('.icon', li), function(el){
             el.className += ' mtn';
