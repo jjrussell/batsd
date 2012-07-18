@@ -1,6 +1,6 @@
 module Offer::Rejecting
 
-  GUN_AND_BLOOD_ID = '127095d1-42fc-480c-a65d-b5724003daf0'
+  NON_LIMITED_CURRENCY_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0', '91631942-cfb8-477a-aed8-48d6ece4a23f', 'e3d2d144-917e-4c5b-b64f-0ad73e7882e7', 'b9cdd8aa-632d-4633-866a-0b10d55828c0'])
 
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
@@ -285,7 +285,7 @@ module Offer::Rejecting
 
   def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
-    return false if currency.id == GUN_AND_BLOOD_ID && show_rate > 0
+    return false if NON_LIMITED_CURRENCY_IDS.include?(currency.id) && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand

@@ -10,6 +10,9 @@
   = "#{number_to_currency(@offer.min_bid / 100.0)}."
 
   Higher bids will result in more installs.
+- if @offer.rewarded?
+  %p.description
+    Please note, due to our scale, we can deliver hundreds of conversions in a short period of time. Tapjoy recommends a budget of $500 - $1,000 per day to prevent your campaign from going over budget.
 
 = render('dashboard/apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
 = render('dashboard/apps/offers_shared/form')

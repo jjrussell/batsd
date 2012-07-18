@@ -61,7 +61,7 @@ authorization do
     includes :devices
     includes :file_sharer
     has_permission_on :dashboard_search, :to => [ :gamers ]
-    has_permission_on :dashboard_tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures ]
+    has_permission_on :dashboard_tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures, :view_conversion_attempt ]
     has_permission_on :dashboard_tools_gamers, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
@@ -69,7 +69,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account ]
+    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion ]
   end
 
   role :money do
@@ -96,7 +96,7 @@ authorization do
   end
 
   role :reporting do
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons ]
     has_permission_on :dashboard_search, :to => [ :offers, :brands ]
   end
 
@@ -119,7 +119,7 @@ authorization do
     includes :customer_service
     includes :file_sharer
     has_permission_on :dashboard_users, :to => [ :approve ]
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio ]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons]
     has_permission_on :dashboard_search, :to => [ :offers, :partners, :users, :currencies ]
     has_permission_on :dashboard_tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures ]
     has_permission_on :dashboard_tools_enable_offer_requests, :to => [ :index, :update ]

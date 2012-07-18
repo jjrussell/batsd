@@ -6,14 +6,14 @@
   %p.offertext
     - if @offer.item_type == 'App'
       = featured_offer_text(@offer, @currency)
-  = link_to((params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'image-link') do
+  = link_to((@for_preview ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :s => @offer.get_icon_url(:source => :cloudfront, :size => '256'), :class => 'icon', :id => 'icon' }
     .offername= @offer.truncated_name
   .clear
-  = link_to(t('text.featured.skip'), (params[:preview] == 'true' ? '#' : 'dismiss'), :class => 'skip', :id => 'skip')
-  = link_to(featured_offer_action_text(@offer), (params[:preview] == 'true' ? '#' : get_click_url(@offer)), :class => 'download')
+  = link_to(t('text.featured.skip'), (@for_preview ? '#' : 'dismiss'), :class => 'skip', :id => 'skip')
+  = link_to(featured_offer_action_text(@offer), (@for_preview ? '#' : get_click_url(@offer)), :class => 'download')
   .showOffers
-    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), (params[:preview] == 'true' ? '#' : 'showOffers'))
+    = link_to(@currency.hide_rewarded_app_installs? ? '' : t('text.featured.show_more_apps'), (@for_preview ? '#' : 'showOffers'))
 
   .adsby
     %span= t('text.shared.ads_by')
@@ -30,7 +30,7 @@
       main = document.getElementById('main');
       skip = document.getElementById('skip');
       skip.onclick = function() {
-  - if params[:preview] == true
+  - if @for_preview
     :plain
         return false;
   - else

@@ -729,6 +729,17 @@ class Offer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
   end
 
+  def get_disabled_reasons
+    reasons = []
+    reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
+    reasons << 'User Disabled' unless self.user_enabled
+    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment
+    reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value.to_i > 0
+    reasons << 'Tracking for' unless self.tracking_for.nil?
+
+    reasons
+  end
+
   private
 
   def calculated_min_bid
