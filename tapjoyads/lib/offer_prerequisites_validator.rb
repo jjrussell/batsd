@@ -5,7 +5,7 @@ class OfferPrerequisitesValidator < ActiveModel::Validator
       record.errors[:prerequisite_offer_id] << 'prerequisite offer can not be the same as negative prerequisite offer.' if record.get_negative_prerequisite_offer_ids.include?(record.prerequisite_offer_id)
     end
     if record.get_negative_prerequisite_offer_ids.present?
-      get_negative_prerequisite_offer_ids.each do |id|
+      record.get_negative_prerequisite_offer_ids.each do |id|
         if Offer.find_by_id(id).nil?
           record.errors[:negative_prerequisite_offer_ids] << 'can not find one of the negative prerequisite offers.'
           break

@@ -23,9 +23,8 @@
       %th
         = f.label :name, 'Negative Prerequisites'
       %td
-        - negative_prerequisites_options = offer_options
-        - negative_prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_ids.blank?))
-        = f.select :negative_prerequisite_offer_ids, negative_prerequisites_options
+        = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'video_offer[negative_prerequisite_offer_ids][]')
+        = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @generic_offer, :negative_prerequisite_offer_ids
     %tr
       %th= f.label :category

@@ -149,9 +149,8 @@
           = f.label :name, 'Negative Prerequisites'
           #help_negative_prerequisites.help ?
         %td
-          - negative_prerequisites_options = offer_options
-          - negative_prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || negative_prerequisite_offer_ids.blank?))
-          = f.select :negative_prerequisite_offer_ids, negative_prerequisites_options
+          = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'offer[negative_prerequisite_offer_ids][]')
+          = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
           = error_message_on @offer, :negative_prerequisite_offer_ids
     %tr
       %th
