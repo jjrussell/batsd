@@ -29,8 +29,6 @@ First configure Git and get the Tapjoy repo.
 
 Setup git following these instructions: http://help.github.com/mac-set-up-git/
 
-NOTE: You already have git installed from the Xcode step.
-
 In github, fork tapjoyserver repository:
 
   * main repo location: `https://github.com/Tapjoy/tapjoyserver`
