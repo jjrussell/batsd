@@ -47,10 +47,9 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
   create_table "app_metadata_mappings", :id => false, :force => true do |t|
-    t.string  "id",              :limit => 36,                    :null => false
-    t.string  "app_id",          :limit => 36,                    :null => false
-    t.string  "app_metadata_id", :limit => 36,                    :null => false
-    t.boolean "is_primary",                    :default => false
+    t.string  "id",              :limit => 36, :null => false
+    t.string  "app_id",          :limit => 36, :null => false
+    t.string  "app_metadata_id", :limit => 36, :null => false
   end
 
   add_index "app_metadata_mappings", ["app_id", "app_metadata_id"], :name => "index_app_metadata_mappings_on_app_id_and_app_metadata_id", :unique => true
@@ -247,7 +246,6 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
-    t.text     "store_whitelist",                                                                                           :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
