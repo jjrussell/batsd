@@ -22,8 +22,8 @@
                                .$$$$$$$$:
 ```
 
-Environment Setup
-=================
+Environment Setup for OSX 10.7 Lion
+===================================
 
 Install Xcode
 -------------
@@ -100,32 +100,110 @@ git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
 
 It is important that it's named "tapjoy" for deploy script to work
 
-Setting up VM
+Install RVM
+-----------
+
+RVM is important so we don't mess with the system's ruby, and can use the most recent version of Ruby 1.8.7.
+
+Install RVM:
+
+```
+bash -s stable < <(curl -s https://raw.github.com/wayneeseguin/rvm/master/binscripts/rvm-installer)
+```
+
+Load RVM into bash:
+
+```
+echo '[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function' >> ~/.bash_profile
+source ~/.bash_profile # to reload ~/.bash_profile
+rvm get head # to update rvm
+```
+
+Install Ruby 1.8.7
+------------------
+
+First install the osx-gcc-installer:
+
+```
+https://github.com/kennethreitz/osx-gcc-installer/downloads
+```
+
+Install the current version of 1.8.7 as the default:
+
+```
+rvm install 1.8.7
+rvm use 1.8.7 --default
+```
+
+Sometimes there are issues with this with readline not working correctly. If
+you're having trouble, try this:
+
+```
+rvm pkg install readline
+rvm reinstall 1.8.7 -C --with-readline-dir=$rvm_path/usr
+```
+
+Install MySQL
 -------------
 
-We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
-install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
-
-Now setup librarian and vagrant:
+Install MySQL:
 
 ```
-gem install vagrant
-gem install librarian
-librarian-chef install
-vagrant up
+brew install mysql
 ```
 
-SSH into the vm:
+Follow the post-install directions. (Type `brew info mysql` to see them again)
+
+Install memcached
+-----------------
+
+Install memcached:
 
 ```
-vagrant ssh
+brew install memcached
 ```
 
-Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
+Follow the post-install directions. (Type `brew info memcached` to see them again)
+
+
+Install redis
+-----------------
+
+Install redis:
 
 ```
-cd /vagrant
-rvmsudo bundle
+brew install redis
+```
+
+Follow the post-install directions. (Type `brew info redis` to see them again)
+
+
+Setup repo
+----------
+
+This adds the GeoIP database, puts in the local configuration yaml files, and sets up our custom pre-commit hook.
+
+```
+./setup_repo.sh
+```
+
+Install required gems
+---------------------
+
+```
+brew install imagemagick # required for rmagick gem
+bundle install
+```
+
+Set up accounts and database
+----------------------------
+
+Create developer account at `dashboard.tapjoy.com` and have someone give you the "admin" role
+
+Sync prod db with local db (this will overwrite any pre-existing changes)
+
+```
+mkdir tmp
 rake db:create
 rake db:sync
 ```
@@ -139,17 +217,32 @@ To make sure everything is set up correctly, run the test suite:
 rake
 ```
 
-If any tests fail, ask for help in Flowdock.
+If any tests fail, ask for help in Campfire.
 
-Running the server
-------------------
+Running locally
+---------------
 
-Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver` directory by running:
+Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
 
 ```
 foreman start
 ```
 
-To access, go to [http://127.0.0.1:6000](http://127.0.0.1:6000).
+If you need to restart the application, simply `ctrl+c` and then re-run the command.
 
-[Some information on stopping the VM](http://vagrantup.com/v1/docs/getting-started/teardown.html)
+To access directly, go to [http://127.0.0.1:8080]().
+
+
+Optional steps
+==============
+
+.rvmrc file
+-----------
+
+If you would like to run projects with different gemsets or rubies, it can be helpful to have a .rvmrc file in the project. This will make it so whenever the folder is opened, the correct ruby + gemset will be used.
+
+Here is an example .rvmrc that uses `ruby-1.8.7p357` and a `tapjoyserver` gemset:
+
+```
+rvm ruby-1.8.7-p357@tapjoyserver
+```
