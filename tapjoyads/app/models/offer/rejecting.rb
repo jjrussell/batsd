@@ -253,9 +253,9 @@ module Offer::Rejecting
 
   def prerequisites_not_complete?(device)
     return false if prerequisite_offer_id.blank? && get_negative_prerequisite_offer_ids.blank?
-    return false if prerequisite_offer_id.present? && offer_complete?(prerequisite_offer, device)
-    return false if get_negative_prerequisite_offer_ids.present? && get_negative_prerequisite_offer_ids.all?{ |id| !offer_complete?(id, device) }
-    true
+    return true if prerequisite_offer_id.present? && !offer_complete?(prerequisite_offer, device)
+    return true if get_negative_prerequisite_offer_ids.present? && get_negative_prerequisite_offer_ids.any?{ |id| offer_complete?(id, device) }
+    false
   end
 
   def offer_complete?(offer, device, app_version = nil)
