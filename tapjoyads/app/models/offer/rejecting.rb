@@ -248,7 +248,7 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
-    offer_complete?(@offer, device, app_version)
+    offer_complete?(self, device, app_version)
   end
 
   def prerequisites_not_complete?(device)

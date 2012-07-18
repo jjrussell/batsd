@@ -315,7 +315,8 @@ describe Dashboard::OffersController do
           :min_os_version, :screen_layout_sizes, :countries, :tapjoy_enabled,
           :allow_negative_balance, :pay_per_click, :name, :name_suffix, :show_rate,
           :min_conversion_rate, :device_types, :publisher_app_whitelist, :overall_budget,
-          :min_bid_override, :dma_codes, :regions, :carriers, :cities ]
+          :min_bid_override, :dma_codes, :regions, :carriers, :cities, :prerequisite_offer_id,
+          :exclusion_prerequisite_offer_ids ]
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @offer = mock('offer')
         @controller.stub(:log_activity).with(@offer)
