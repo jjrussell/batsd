@@ -28,9 +28,9 @@ describe FluentDataController do
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        partner.stub(:apps).and_return(['apps'])
-        app = Factory.create(:app)
-        App.stub(:find).and_return(['extra_apps'])
+        @app = FactoryGirl.create(:app)
+        partner.stub(:apps).and_return([@app])
+        App.stub(:find).and_return([@app])
         start_time.stub(:iso8601).and_return('2012-12-31')
         Appstats.stub(:new).and_return('test')
       end
@@ -47,7 +47,7 @@ describe FluentDataController do
 
       it 'has instance variable @appstats_list' do
         get(:index, @params)
-        assigns(:appstats_list).should == [['apps', 'test'],['extra_apps', 'test']]
+        assigns(:appstats_list).should == [[@app, 'test'],[@app, 'test']]
       end
     end
   end

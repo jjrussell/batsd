@@ -25,11 +25,12 @@ describe PocketgemsDataController do
         }
         zone = Time.stub(:zone).and_return(time_zone)
         start_time = zone.stub(:parse).and_return(time_now)
-        start_time.stub(:iso8601).and_return('2012-12-31')
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        partner.stub(:offers).and_return('pocketgems_offers')
+        @offer = FactoryGirl.create(:app).primary_offer
+        partner.stub(:offers).and_return([@offer])
+        start_time.stub(:iso8601).and_return('2012-12-31')
         Appstats.stub(:new).and_return('pocketgems_test')
       end
 
@@ -50,7 +51,7 @@ describe PocketgemsDataController do
 
       it 'has instance variable @appstats_list' do
         get(:index, @params)
-        assigns(:appstats_list).should == [['pocketgems_offers', 'pocketgems_test']]
+        assigns(:appstats_list).should == [[@offer, 'pocketgems_test']]
       end
     end
   end
