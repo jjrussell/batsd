@@ -86,6 +86,8 @@ module Offer::Rejecting
     %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc) => %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc),
     # The Times
     %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb) => %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb),
+    # Crickler 2 iOS
+    %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf) => %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
