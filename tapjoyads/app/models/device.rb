@@ -1,7 +1,7 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
 
-  attr_reader :parsed_apps
+  attr_reader :parsed_apps, :is_temporary
 
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
@@ -40,7 +40,13 @@ class Device < SimpledbShardedResource
     put('open_udid', new_value)
   end
 
+  def android_id=(new_value)
+    @create_device_identifiers ||= (self.android_id != new_value)
+    put('android_id', new_value)
+  end
+
   def initialize(options = {})
+    @is_temporary = options.delete(:is_temporary) { false }
     super({ :load_from_memcache => true }.merge(options))
   end
 
@@ -59,6 +65,7 @@ class Device < SimpledbShardedResource
     fix_app_json
     fix_publisher_user_ids_json
     fix_display_multipliers_json
+    load_apps_from_temporary_device if @is_temporary
   end
 
   def handle_connect!(app_id, params)
@@ -118,7 +125,7 @@ class Device < SimpledbShardedResource
       self.country = params[:country]
     end
 
-    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user'))
+    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
       save
     end
 
@@ -220,9 +227,17 @@ class Device < SimpledbShardedResource
   end
 
   def save(options = {})
+    create_identifiers = options.delete(:create_identifiers) { true }
+    if @is_temporary
+      temp_device = TemporaryDevice.new(:key => self.key)
+      temp_device.apps = self.parsed_apps.merge(temp_device.apps)
+      temp_device.save
+      return
+    end
+
     remove_old_skips
     return_value = super({ :write_to_memcache => true }.merge(options))
-    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
     @create_device_identifiers = false
     return_value
   end
@@ -253,6 +268,7 @@ class Device < SimpledbShardedResource
       device_identifier.udid = key
       device_identifier.save!
     end
+    merge_temporary_devices!(all_identifiers)
   end
 
   def copy_mac_address_device!
@@ -325,6 +341,26 @@ class Device < SimpledbShardedResource
   end
 
   private
+
+  def merge_temporary_devices!(all_identifiers)
+    orig_apps = self.parsed_apps.clone
+    all_identifiers.each do |identifier|
+      temp_device = TemporaryDevice.find(identifier)
+      if temp_device
+        @parsed_apps.merge!(temp_device.apps)
+        temp_device.delete_all
+      end
+    end
+    self.apps = @parsed_apps
+
+    save!(:create_identifiers => false) unless orig_apps == self.parsed_apps
+  end
+
+  def load_apps_from_temporary_device
+    temp_device = TemporaryDevice.new(:key => self.key)
+    @parsed_apps = self.parsed_apps.merge(temp_device.apps)
+    self.apps = @parsed_apps
+  end
 
   def fix_parser_error(attribute, search_from = :left)
     str = get(attribute)

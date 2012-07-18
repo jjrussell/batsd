@@ -3,16 +3,16 @@ class ConnectController < ApplicationController
   before_filter :reject_banned_udids
 
   def index
-    lookup_udid
+    lookup_udid(set_temporary_udid = true)
     required_param = [:app_id]
     required_param << :udid unless params[:identifiers_provided]
 
     return unless verify_params(required_param)
     return unless params[:udid].present?
 
-    device = Device.new(:key => params[:udid])
+    device = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
 
-    unless device.has_app?(params[:app_id])
+    unless device.has_app?(params[:app_id]) && !device.is_temporary
       click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
       if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
