@@ -21,11 +21,11 @@
         = error_message_on @generic_offer, :prerequisite_offer_id
     %tr
       %th
-        = f.label :name, 'Negative Prerequisites'
+        = f.label :name, 'Exclusion Prerequisites'
       %td
-        = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'video_offer[negative_prerequisite_offer_ids][]')
-        = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
-        = error_message_on @generic_offer, :negative_prerequisite_offer_ids
+        = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'video_offer[exclusion_prerequisite_offer_ids][]')
+        = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+        = error_message_on @generic_offer, :exclusion_prerequisite_offer_ids
     %tr
       %th= f.label :category
       %td

@@ -46,7 +46,7 @@ class ActionOffer < ActiveRecord::Base
 
   delegate :get_offer_device_types, :store_id, :store_url, :wifi_required?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
-  json_set_field :negative_prerequisite_offer_ids
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def toggle_user_enabled
     primary_offer.toggle_user_enabled
@@ -68,7 +68,7 @@ class ActionOffer < ActiveRecord::Base
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.icon_id_override = app_id
     offer.save!
   end
@@ -87,7 +87,7 @@ class ActionOffer < ActiveRecord::Base
       end
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids if negative_prerequisite_offer_ids_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.save! if offer.changed?
     end
   end

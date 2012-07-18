@@ -146,12 +146,12 @@
           = error_message_on @offer, :prerequisite_offer_id
       %tr
         %th
-          = f.label :name, 'Negative Prerequisites'
-          #help_negative_prerequisites.help ?
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
         %td
-          = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'offer[negative_prerequisite_offer_ids][]')
-          = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @offer, :negative_prerequisite_offer_ids
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @offer, :exclusion_prerequisite_offer_ids
     %tr
       %th
         = f.label(:show_rate)
@@ -394,9 +394,9 @@
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
   #help_prerequisite_content{:name => 'Prerequisite Offer'}
-    Choose prerequisite offer so that offer will only show up if user has completed prerequisite offer.
-  #help_negative_prerequisites_content{:name => 'Negative Prerequisites'}
-    Choose negative prerequisite offers so that offer will only show up if user has not completed any of the negative prerequisite offers.
+    This offer will only be shown to users who have already completed the prerequisite offer.
+  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

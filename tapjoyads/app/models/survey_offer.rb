@@ -42,7 +42,7 @@ class SurveyOffer < ActiveRecord::Base
 
   scope :visible, :conditions => { :hidden => false }
 
-  json_set_field :negative_prerequisite_offer_ids
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def bid
     if @bid_price
@@ -137,7 +137,7 @@ class SurveyOffer < ActiveRecord::Base
       :tapjoy_enabled   => true,
       :multi_complete   => false,
       :prerequisite_offer_id => prerequisite_offer_id,
-      :negative_prerequisite_offer_ids => negative_prerequisite_offer_ids,
+      :exclusion_prerequisite_offer_ids => exclusion_prerequisite_offer_ids,
     })
     offer.id = id
     offer.save!
@@ -165,7 +165,7 @@ class SurveyOffer < ActiveRecord::Base
     offer.hidden           = hidden
     offer.bid              = @bid_price unless @bid_price.blank?
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.save! if offer.changed?
   end
 

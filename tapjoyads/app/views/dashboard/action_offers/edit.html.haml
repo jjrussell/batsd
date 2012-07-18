@@ -63,12 +63,12 @@
           = error_message_on @action_offer, :prerequisite_offer_id
       %tr
         %th
-          = f.label :name, 'Negative Prerequisites'
-          #help_negative_prerequisites.help ?
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
         %td
-          = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'action_offer[negative_prerequisite_offer_ids][]')
-          = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @action_offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @action_offer, :negative_prerequisite_offer_ids
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'action_offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @action_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @action_offer, :exclusion_prerequisite_offer_ids
       %tr
         %th
           = f.label :instructions, 'Instructions'
@@ -174,15 +174,11 @@
       Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
   #help_prerequisite_content{ :name => 'Prerequisite' }
     This action will only be shown to users who have already completed the prerequisite offer.
-  #help_negative_prerequisite_content{ :name => 'Prerequisite' }
-    This action will only be shown to users who have NOT completed the negative prerequisite offer.
+  #help_exclusion_prerequisite_content{ :name => 'Exclusion Prerequisite' }
+    This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_min_os_version_content{:name => 'Minimum OS Version'}
     Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
-  #help_prerequisite_content{:name => 'Prerequisite Offer'}
-    Choose prerequisite offer so that offer will only show up if user has completed prerequisite offer.
-  #help_negative_prerequisites_content{:name => 'Negative Prerequisites'}
-    Choose negative prerequisite offers so that offer will only show up if user has not completed any of the negative prerequisite offers.
 
 - if !@offer.tapjoy_enabled? && @enable_request.new_record?
   = form_for(@enable_request, :html => { :class => 'tjform' }) do |f|

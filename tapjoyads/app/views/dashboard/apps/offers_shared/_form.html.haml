@@ -72,12 +72,12 @@
           = error_message_on @offer, :prerequisite_offer_id
       %tr
         %th
-          = f.label :name, 'Negative Prerequisites'
-          #help_negative_prerequisites.help ?
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
         %td
-          = f.hidden_field(:hidden_negative_prerequisite_offer_ids, :value => '', :name => 'offer[negative_prerequisite_offer_ids][]')
-          = f.chosen_select(:negative_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_negative_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @offer, :negative_prerequisite_offer_ids
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @offer, :exclusion_prerequisite_offer_ids
       %tr{ :class => (@app.store_id? ? '' : 'hidden')}
         %th
           = f.label "View Ads"
@@ -172,9 +172,9 @@
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
   #help_prerequisite_content{:name => 'Prerequisite Offer'}
-    Choose prerequisite offer so that offer will only show up if user has completed prerequisite offer.
-  #help_negative_prerequisites_content{:name => 'Negative Prerequisites'}
-    Choose negative prerequisite offers so that offer will only show up if user has not completed any of the negative prerequisite offers.
+    This offer will only be shown to users who have already completed the prerequisite offer.
+  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_view_ads_content{:name => 'View Ads'}
     Shows previews of how offers will be displayed to users. Previews are available for multiple screen resolutions.
   #help_balance_content{:name => 'Balance'}

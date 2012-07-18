@@ -38,7 +38,7 @@ class VideoOffer < ActiveRecord::Base
 
   scope :visible, :conditions => { :hidden => false }
 
-  json_set_field :negative_prerequisite_offer_ids
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def update_buttons
     offers.each do |offer|
@@ -73,7 +73,7 @@ class VideoOffer < ActiveRecord::Base
     offer.bid          = offer.min_bid
     offer.name_suffix  = 'Video'
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.save!
   end
 
@@ -82,7 +82,7 @@ class VideoOffer < ActiveRecord::Base
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids if negative_prerequisite_offer_ids_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?

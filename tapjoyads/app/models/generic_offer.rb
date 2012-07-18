@@ -42,7 +42,7 @@ class GenericOffer < ActiveRecord::Base
 
   scope :visible, :conditions => { :hidden => false }
 
-  json_set_field :negative_prerequisite_offer_ids
+  json_set_field :exclusion_prerequisite_offer_ids
 
   private
 
@@ -57,7 +57,7 @@ class GenericOffer < ActiveRecord::Base
     offer.instructions = instructions
     offer.third_party_data = third_party_data
     offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.save!
   end
 
@@ -70,7 +70,7 @@ class GenericOffer < ActiveRecord::Base
       offer.instructions = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.third_party_data = third_party_data if third_party_data_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.negative_prerequisite_offer_ids = negative_prerequisite_offer_ids if negative_prerequisite_offer_ids_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end

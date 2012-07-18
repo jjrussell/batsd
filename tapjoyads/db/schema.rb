@@ -13,18 +13,18 @@
 ActiveRecord::Schema.define(:version => 20120713140237) do
 
   create_table "action_offers", :id => false, :force => true do |t|
-    t.string   "id",                              :limit => 36,                    :null => false
-    t.string   "partner_id",                      :limit => 36,                    :null => false
-    t.string   "app_id",                          :limit => 36,                    :null => false
-    t.string   "name",                                                             :null => false
+    t.string   "id",                               :limit => 36,                    :null => false
+    t.string   "partner_id",                       :limit => 36,                    :null => false
+    t.string   "app_id",                           :limit => 36,                    :null => false
+    t.string   "name",                                                              :null => false
     t.text     "instructions"
-    t.boolean  "hidden",                                        :default => false, :null => false
+    t.boolean  "hidden",                                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "variable_name",                                                    :null => false
-    t.string   "prerequisite_offer_id",           :limit => 36
-    t.integer  "price",                                         :default => 0
-    t.text     "negative_prerequisite_offer_ids",                                  :null => false
+    t.string   "variable_name",                                                     :null => false
+    t.string   "prerequisite_offer_id",            :limit => 36
+    t.integer  "price",                                          :default => 0
+    t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
   end
 
   add_index "action_offers", ["app_id"], :name => "index_action_offers_on_app_id"
@@ -495,21 +495,21 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
   add_index "gamers", ["twitter_id"], :name => "index_gamers_on_twitter_id"
 
   create_table "generic_offers", :id => false, :force => true do |t|
-    t.string   "id",                              :limit => 36,                    :null => false
-    t.string   "partner_id",                      :limit => 36,                    :null => false
-    t.string   "name",                                                             :null => false
+    t.string   "id",                               :limit => 36,                    :null => false
+    t.string   "partner_id",                       :limit => 36,                    :null => false
+    t.string   "name",                                                              :null => false
     t.text     "description"
-    t.integer  "price",                                         :default => 0
-    t.string   "url",                                                              :null => false
+    t.integer  "price",                                          :default => 0
+    t.string   "url",                                                               :null => false
     t.string   "third_party_data"
-    t.boolean  "hidden",                                        :default => false, :null => false
+    t.boolean  "hidden",                                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "instructions"
     t.string   "category"
     t.string   "trigger_action"
-    t.string   "prerequisite_offer_id",           :limit => 36
-    t.text     "negative_prerequisite_offer_ids",                                  :null => false
+    t.string   "prerequisite_offer_id",            :limit => 36
+    t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -736,12 +736,10 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
-    t.string   "app_metadata_id",                   :limit => 36
     t.string   "prerequisite_offer_id",             :limit => 36
-    t.text     "negative_prerequisite_offer_ids",                                                                  :null => false
+    t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
   end
 
-  add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
@@ -1036,15 +1034,15 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
   add_index "spend_shares", ["id"], :name => "index_spend_shares_on_id", :unique => true
 
   create_table "survey_offers", :id => false, :force => true do |t|
-    t.string   "id",                              :limit => 36,                    :null => false
-    t.string   "partner_id",                      :limit => 36,                    :null => false
-    t.string   "name",                                                             :null => false
-    t.boolean  "hidden",                                        :default => false, :null => false
+    t.string   "id",                               :limit => 36,                    :null => false
+    t.string   "partner_id",                       :limit => 36,                    :null => false
+    t.string   "name",                                                              :null => false
+    t.boolean  "hidden",                                         :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "locked",                                        :default => false, :null => false
-    t.string   "prerequisite_offer_id",           :limit => 36
-    t.text     "negative_prerequisite_offer_ids",                                  :null => false
+    t.boolean  "locked",                                         :default => false, :null => false
+    t.string   "prerequisite_offer_id",            :limit => 36
+    t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
   end
 
   add_index "survey_offers", ["id"], :name => "index_survey_offers_on_id", :unique => true
@@ -1122,15 +1120,15 @@ ActiveRecord::Schema.define(:version => 20120713140237) do
   add_index "video_buttons", ["video_offer_id"], :name => "index_video_buttons_on_video_offer_id"
 
   create_table "video_offers", :id => false, :force => true do |t|
-    t.string   "id",                              :limit => 36,                    :null => false
-    t.string   "partner_id",                      :limit => 36,                    :null => false
-    t.string   "name",                                                             :null => false
-    t.boolean  "hidden",                                        :default => false, :null => false
+    t.string   "id",                               :limit => 36,                    :null => false
+    t.string   "partner_id",                       :limit => 36,                    :null => false
+    t.string   "name",                                                              :null => false
+    t.boolean  "hidden",                                         :default => false, :null => false
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "prerequisite_offer_id",           :limit => 36
-    t.text     "negative_prerequisite_offer_ids",                                  :null => false
+    t.string   "prerequisite_offer_id",            :limit => 36
+    t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true

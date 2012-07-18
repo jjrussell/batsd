@@ -49,7 +49,7 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
     safe_attributes = [
       :name,
       :prerequisite_offer_id,
-      :negative_prerequisite_offer_ids,
+      :exclusion_prerequisite_offer_ids,
       :instructions,
       :primary_offer_attributes_id,
       :primary_offer_attributes_bid,

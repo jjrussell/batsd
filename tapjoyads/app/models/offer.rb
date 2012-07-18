@@ -256,7 +256,7 @@ class Offer < ActiveRecord::Base
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers, :cities, :negative_prerequisite_offer_ids
+    :approved_sources, :carriers, :cities, :exclusion_prerequisite_offer_ids
 
   def clone
     return super if new_record?
