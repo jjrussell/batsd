@@ -150,6 +150,6 @@ Using Unicorn and Foreman, you can run the application directly from the `tapjoy
 foreman start
 ```
 
-To access, go to [http://127.0.0.1:6000](http://127.0.0.1:6000).
+To access, go to [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
 [Some information on stopping the VM](http://vagrantup.com/v1/docs/getting-started/teardown.html)
