@@ -7,12 +7,12 @@ class Dashboard::OffersController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
-                               :min_os_version, :screen_layout_sizes, :countries]
+                               :min_os_version, :screen_layout_sizes, :countries,
+                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids ]
   ELEVATED_SAFE_ATTRIBUTES = BASE_SAFE_ATTRIBUTES | [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
                                :name, :name_suffix, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-                               :dma_codes, :regions, :carriers, :cities,
-                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids ]
+                               :dma_codes, :regions, :carriers, :cities ]
 
   def new
     offer_params = {}
