@@ -144,7 +144,7 @@ If any tests fail, ask for help in Flowdock.
 Running the server
 ------------------
 
-Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver` directory by running:
+Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
 
 ```
 foreman start
