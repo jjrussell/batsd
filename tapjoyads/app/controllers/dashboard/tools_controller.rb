@@ -398,7 +398,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     return unless verify_records([ @publisher_app ])
 
     if params[:udid]
-      device = Device.find(params[:udid])
+      device = Device.new(:key => params[:udid])
       @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
       render and return unless @publisher_user_id.nil?
     end
