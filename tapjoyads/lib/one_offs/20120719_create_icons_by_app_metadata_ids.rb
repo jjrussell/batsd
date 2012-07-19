@@ -7,9 +7,10 @@ class OneOffs
 
       ['src', '256', '114', '57'].each do |path|
         origin_icon_obj = bucket.objects["icons/#{path}/#{old_icon_id}.jpg"]
-        next if !origin_icon_obj.exists?
-        origin_icon_blob = origin_icon_obj.read
-        bucket.objects["icons/#{path}/#{new_icon_id}.jpg"].write(:data => origin_icon_blob, :acl => :public_read)
+        if origin_icon_obj.exists?
+          origin_icon_blob = origin_icon_obj.read
+          bucket.objects["icons/#{path}/#{new_icon_id}.jpg"].write(:data => origin_icon_blob, :acl => :public_read)
+        end
 
         if path == '57'
           origin_icon_obj = bucket.objects["icons/57/#{old_icon_id}.png"]
@@ -18,7 +19,6 @@ class OneOffs
           bucket.objects["icons/57/#{new_icon_id}.png"].write(:data => origin_icon_blob, :acl => :public_read)
         end
       end
-      break
     end
   end
 
