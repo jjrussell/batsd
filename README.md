@@ -75,6 +75,7 @@ Setup the database by syncing the production db with the vm db (this will overwr
 ```
 cd /vagrant
 rvmsudo bundle
+bundle
 rake db:create
 rake db:sync
 ```
