@@ -42,7 +42,7 @@
 class Gamer < ActiveRecord::Base
   include UuidPrimaryKey
 
-  has_many :gamer_devices, :dependent => :destroy
+  has_many :gamer_devices, :dependent => :destroy, :order => 'name'
   has_many :invitations, :dependent => :destroy
   has_many :app_reviews, :as => :author, :dependent => :destroy
 
@@ -54,7 +54,7 @@ class Gamer < ActiveRecord::Base
   has_one :gamer_profile, :dependent => :destroy
   has_one :referrer_gamer, :class_name => 'Gamer', :primary_key => :referred_by, :foreign_key => :id
 
-  delegate :birthdate, :birthdate?, :birthdate=, :city, :city?, :country, :country?, 
+  delegate :birthdate, :birthdate?, :birthdate=, :city, :city?, :country, :country?,
            :facebook_id, :facebook_id?, :facebook_id=, :fb_access_token=,
            :fb_access_token, :favorite_category, :favorite_category?, :favorite_game, :favorite_game?,
            :gender, :gender?, :postal_code, :postal_code?, :referral_count, :nickname, :nickname=,
@@ -245,6 +245,11 @@ class Gamer < ActiveRecord::Base
     devices.map(&:device_data)
   end
 
+  def referrer_click
+    return nil unless referrer.present? && referrer != 'tjreferrer:' && referrer.starts_with?('tjreferrer:')
+    Click.new :key => referrer.gsub('tjreferrer:', '')
+  end
+
   def reward_click(click)
     Downloader.get_with_retry("#{API_URL}/offer_completed?click_key=#{click.key}")
   end
@@ -369,7 +374,6 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-
   def generate_confirmation_token
     self.confirmation_token = Authlogic::Random.friendly_token
   end
@@ -385,8 +389,4 @@ class Gamer < ActiveRecord::Base
     end
   end
 
-  def referrer_click
-    return nil unless referrer.present? && referrer != 'tjreferrer:' && referrer.starts_with?('tjreferrer:')
-    Click.new :key => referrer.gsub('tjreferrer:', '')
-  end
 end

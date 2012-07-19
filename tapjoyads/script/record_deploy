@@ -8,7 +8,7 @@ class DeployRecorder
     @options = {
       :environment => 'staging',
       :version => 'master',
-      :app_names => [ 'TapjoyStaging']
+      :app_names => [ 'TapjoyStaging' ]
     }
 
     option_parser = OptionParser.new do |opts|
@@ -16,7 +16,7 @@ class DeployRecorder
         case environment
         when 'production'
           @options[:environment] = 'production'
-          @options[:app_names] = [ 'TapjoyApiWeb', 'TapjoyApiJobs', 'TapjoyWebsite', 'TapjoyDashboard']
+          @options[:app_names] = [ 'TapjoyApiWeb', 'TapjoyApiJobs', 'TapjoyDashboard' ]
         when 'util'
           @options[:environment] = 'production'
           @options[:app_names] = [ 'TapjoyUtil' ]

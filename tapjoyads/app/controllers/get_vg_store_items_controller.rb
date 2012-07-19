@@ -30,7 +30,7 @@ class GetVgStoreItemsController < ApplicationController
   def user_account
   end
 
-private
+  private
 
   def setup
     return unless verify_params([:app_id, :udid, :publisher_user_id])

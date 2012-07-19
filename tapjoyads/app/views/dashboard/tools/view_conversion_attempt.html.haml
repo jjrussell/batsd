@@ -1,0 +1,68 @@
+- @page_title = 'Conversion Attempt'
+
+%h1= @page_title
+%table.with-border
+  %tbody
+    %tr
+      %th Time
+      %td= @attempt.created.to_s(:pub_ampm_sec)
+    %tr
+      %th Click Key
+      %td= @attempt.click_key
+    %tr
+      %th Resolution
+      %td= @attempt.resolution
+    - if @attempt.resolution == 'force_converted'
+      %tr
+        %th Force Converted By
+        %td= @attempt.force_converted_by
+    - if @attempt.block_reason?
+      %tr
+        %th Block Reason
+        %td
+          = @attempt.block_reason
+    - if @attempt.final_risk_score
+      %tr
+        %th Final Risk Score
+        %td= "%.2f (Threshold: #{RiskScore::HIGH_RISK_THRESHOLD})" % @attempt.final_risk_score
+      %tr
+        %th System Entities Offset
+        %td= "%.2f" % @attempt.system_entities_offset
+      %tr
+        %th Individual Entities Offset
+        %td= "%.2f" % @attempt.individual_entities_offset
+      %tr
+        %th Rules Offset
+        %td= "%.2f" % @attempt.rules_offset
+%h3
+  Risk Profiles
+%table.with-border
+  %thead
+    %tr
+      %td Profile
+      %td Offset
+      %td Weight
+  %tbody
+    - @attempt.risk_profiles.each do |key, hash|
+      %tr
+        %td= key
+        %td= hash['offset']
+        %td= hash['weight']
+%h3
+  Rules Matched
+%table.with-border
+  %thead
+    %tr
+      %td Rule Name
+      %td Offset
+      %td Actions
+      %td Message
+  %tbody
+    - @attempt.rules_matched.each do |key, hash|
+      %tr
+        %td= key
+        %td= hash['offset']
+        %td= hash['actions'] ? hash['actions'].join(', ') : ''
+        %td= hash['message']
+
+- content_for :page_head, stylesheet_link_tag('tools')

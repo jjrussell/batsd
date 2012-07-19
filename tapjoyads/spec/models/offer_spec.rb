@@ -1029,7 +1029,8 @@ describe Offer do
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
+          now = Time.zone.now
+          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', "#{now.to_i}.#{now.usec}")).once
         end
       end
 
@@ -1062,19 +1063,19 @@ describe Offer do
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(@ts.to_i.to_s)
+          @offer.queue_impression_tracking_requests(@ts.to_i)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(@ts.to_i.to_s)
+          @offer.queue_click_tracking_requests(@ts.to_i)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(@ts.to_i.to_s)
+          @offer.queue_conversion_tracking_requests(@ts.to_i)
         end
       end
     end
@@ -1085,6 +1086,28 @@ describe Offer do
 
     it 'matches URL for Rails statz_url helper' do
       @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
+    end
+  end
+
+  describe '#all_blacklisted?' do
+    context 'without whitelist' do
+      it { should_not be_all_blacklisted }
+    end
+
+    context 'with whitelist' do
+      before :each do
+        subject.stub(:get_countries).and_return(['US'])
+      end
+
+      it { should_not be_all_blacklisted }
+
+      context 'with conflicting blacklist' do
+        before :each do
+          subject.stub(:countries_blacklist).and_return(['US'])
+        end
+
+        it { should be_all_blacklisted }
+      end
     end
   end
 end

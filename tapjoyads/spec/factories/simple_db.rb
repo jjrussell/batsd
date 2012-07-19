@@ -31,4 +31,26 @@ FactoryGirl.define do
     publisher_user_id "bill"
     currency_reward    100
   end
+
+  factory :device_identifier do
+    key { Factory.next(:guid) }
+    udid ''
+  end
+
+  factory :game_state do
+    key           { FactoryGirl.generate(:udid) }
+    udids         { 5.times { [] << FactoryGirl.generate(:udid) } }
+    version       1
+  end
+
+  factory :point_purchases do
+    key           { FactoryGirl.generate(:udid) }
+    points        100
+    virtual_goods { FactoryGirl.create(:virtual_good) }
+  end
+
+  factory :game_state_mapping do
+    key               { FactoryGirl.generate(:udid) }
+    publisher_user_id UUIDTools::UUID.random_create.to_s
+  end
 end

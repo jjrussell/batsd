@@ -79,6 +79,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
+API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoyads.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
@@ -98,6 +99,8 @@ NUM_DEVICE_IDENTIFIER_DOMAINS = 100
 NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50
+NUM_CONVERSION_ATTEMPT_DOMAINS = 50
+NUM_RISK_PROFILE_DOMAINS = 100
 
 mail_chimp = YAML::load_file("#{Rails.root}/config/mail_chimp.yaml")['production']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']

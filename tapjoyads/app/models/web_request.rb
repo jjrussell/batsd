@@ -46,10 +46,12 @@ class WebRequest < SyslogMessage
   self.define_attr :udid
   self.define_attr :mac_address
   self.define_attr :sha2_udid
+  self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
   self.define_attr :open_udid
   self.define_attr :open_udid_count
+  self.define_attr :udid_via_lookup, :type => :bool
   self.define_attr :app_id
   self.define_attr :offer_id
   self.define_attr :advertiser_app_id
@@ -98,6 +100,33 @@ class WebRequest < SyslogMessage
   self.define_attr :offerwall_max_items, :type => :int
   self.define_attr :survey_question_id
   self.define_attr :survey_answer
+  self.define_attr :conversion_attempt_key
+  self.define_attr :resolution
+  self.define_attr :block_reason
+  self.define_attr :system_offset, :type => :float
+  self.define_attr :individual_offset, :type => :float
+  self.define_attr :rules_offset, :type => :float
+  self.define_attr :risk_score, :type => :float
+  self.define_attr :publisher_profile_offset, :type => :float
+  self.define_attr :publisher_profile_weight, :type => :int
+  self.define_attr :app_profile_offset, :type => :float
+  self.define_attr :app_profile_weight, :type => :int
+  self.define_attr :advertiser_profile_offset, :type => :float
+  self.define_attr :advertiser_profile_weight, :type => :int
+  self.define_attr :offer_profile_offset, :type => :float
+  self.define_attr :offer_profile_weight, :type => :int
+  self.define_attr :country_profile_offset, :type => :float
+  self.define_attr :country_profile_weight, :type => :int
+  self.define_attr :ipaddr_profile_offset, :type => :float
+  self.define_attr :ipaddr_profile_weight, :type => :int
+  self.define_attr :device_profile_offset, :type => :float
+  self.define_attr :device_profile_weight, :type => :int
+  self.define_attr :user_profile_offset, :type => :float
+  self.define_attr :user_profile_weight, :type => :int
+  self.define_attr :rule_name
+  self.define_attr :rule_offset, :type => :int
+  self.define_attr :rule_actions
+  self.define_attr :rule_message
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -116,10 +145,12 @@ class WebRequest < SyslogMessage
     self.udid                 = params[:udid]
     self.mac_address          = params[:mac_address]
     self.sha2_udid            = params[:sha2_udid]
+    self.sha1_udid            = params[:sha1_udid]
     self.sha1_mac_address     = params[:sha1_mac_address]
     self.android_id           = params[:android_id]
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
+    self.udid_via_lookup      = params[:udid_via_lookup]
     self.currency_id          = params[:currency_id]
     self.app_version          = params[:app_version]
     self.device_os_version    = params[:device_os_version] || params[:os_version]
@@ -131,7 +162,7 @@ class WebRequest < SyslogMessage
     self.advertiser_app_id    = params[:advertiser_app_id]
     self.displayer_app_id     = params[:displayer_app_id]
     self.device_ip            = params[:device_ip]
-    self.type                 = params[:type]
+    self.type                 = params[:type] if params[:type].present?
     self.publisher_user_id    = params[:publisher_user_id]
     self.virtual_good_id      = params[:virtual_good_id]
     self.source               = params[:source]

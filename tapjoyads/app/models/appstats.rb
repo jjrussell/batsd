@@ -434,7 +434,7 @@ class Appstats
     return start_time, end_time, granularity
   end
 
-private
+  private
 
   def self.get_times(start_time_string, end_time_string, use_utc = true)
     now = use_utc ? Time.now.utc : Time.zone.now

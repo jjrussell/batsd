@@ -49,6 +49,7 @@ module ActsAsCacheable
         end
 
         def find_in_cache(id, do_lookup = !Rails.env.production?)
+          return nil unless id =~ UUID_REGEX
           object = Mc.distributed_get(cache_key_for(id))
           if object.nil? && do_lookup
             object = find_by_id(id)

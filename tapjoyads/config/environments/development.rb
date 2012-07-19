@@ -51,6 +51,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = 'dev_'
 API_URL = local_config['api_url'] || 'http://localhost:3000'
+API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
@@ -64,6 +65,8 @@ NUM_DEVICE_IDENTIFIER_DOMAINS = 2
 NUM_GAME_STATE_DOMAINS = 2
 NUM_GAME_STATE_MAPPING_DOMAINS = 2
 NUM_PUBLISHER_USER_DOMAINS = 2
+NUM_CONVERSION_ATTEMPT_DOMAINS = 2
+NUM_RISK_PROFILE_DOMAINS = 2
 
 mail_chimp = YAML::load_file("#{Rails.root}/config/mail_chimp.yaml")['development']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']

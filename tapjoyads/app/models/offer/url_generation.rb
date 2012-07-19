@@ -36,7 +36,11 @@ module Offer::UrlGeneration
       :os_version            => os_version
     }
 
-    "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+    if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
+      "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    else
+      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+    end
   end
 
   def complete_action_url(options)
@@ -120,6 +124,7 @@ module Offer::UrlGeneration
     mac_address        = options.delete(:mac_address)        { nil }
     device_type        = options.delete(:device_type)        { nil }
     offerwall_rank     = options.delete(:offerwall_rank)     { nil }
+    view_id            = options.delete(:view_id)            { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -161,6 +166,7 @@ module Offer::UrlGeneration
       :os_version         => os_version,
       :device_type        => device_type,
       :offerwall_rank     => offerwall_rank,
+      :view_id            => view_id
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

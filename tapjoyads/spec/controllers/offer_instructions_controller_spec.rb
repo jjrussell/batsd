@@ -1,0 +1,78 @@
+require 'spec_helper'
+
+describe OfferInstructionsController do
+  describe '#index' do
+    context 'invalid params' do
+      before :each do
+        ApplicationController.stub(:verify_params).and_return(false)
+      end
+
+      it 'responds with 400' do
+        get(:index)
+        should respond_with(400)
+      end
+    end
+
+    context 'invalid records' do
+      before :each do
+        ApplicationController.stub(:verify_params).and_return(true)
+        ApplicationController.stub(:verify_records).and_return(false)
+        offer = FactoryGirl.create(:app).primary_offer
+        Offer.stub(:find_in_cache).and_return(offer)
+        currency = FactoryGirl.create(:currency)
+        Currency.stub(:find_in_cache).and_return(currency)
+      end
+
+      it 'responds with 400' do
+        get(:index)
+        should respond_with(400)
+      end
+    end
+
+    context 'valid params and records' do
+      before :each do
+        ApplicationController.stub(:verify_params).and_return(true)
+        @offer = FactoryGirl.create(:app).primary_offer
+        Offer.stub(:find_in_cache).and_return(@offer)
+        @currency = FactoryGirl.create(:currency)
+        Currency.stub(:find_in_cache).and_return(@currency)
+        ApplicationController.stub(:verify_records).and_return(true)
+        @offer.stub(:complete_action_url).and_return('some_website_url')
+        @params = {
+          :data                  => ObjectEncryptor.encrypt(:data => 'some_data'),
+          :id                    => @offer[:id],
+          :udid                  => UUIDTools::UUID.random_create.to_s,
+          :publisher_app_id      => @currency.app.id,
+          :click_key             => '5',
+          :itunes_link_affiliate => 'itunes',
+          :os_version            => '1.0'
+        }
+      end
+
+      it 'responds with 200' do
+        get(:index, @params)
+        should respond_with(200)
+      end
+
+      it 'has the iphone layout' do
+       get(:index, @params)
+       response.should render_template('layouts/iphone')
+      end
+
+      it 'assigns @complete_action_url to a website url' do
+       get(:index, @params)
+       assigns(:complete_action_url).should == 'some_website_url'
+      end
+
+      it 'assigns @offer to the record found in Offer cache' do
+       get(:index, @params)
+       assigns(:offer).should == @offer
+      end
+
+      it 'assigns @currency to the record found in Currency cache' do
+       get(:index, @params)
+       assigns(:currency).should == @currency
+      end
+    end
+  end
+end

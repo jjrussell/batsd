@@ -43,7 +43,6 @@ en:
   date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
-      - ~
       - Jan
       - Feb
       - Mar
@@ -62,7 +61,6 @@ en:
       long: "%B %d, %Y"
       short: "%b %d"
     month_names:
-      - ~
       - January
       - February
       - March
@@ -222,6 +220,8 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
+      terms: "Terms of Use"
+      updated: "Privacy Policy [Updated]"
     games:
       apps: Apps
       about_body: "A better way to love the apps you have and find the apps you'll love."
@@ -431,6 +431,7 @@ en:
       social_to_top: "TOP &#8679;"
       spread_mobile_joy: "Spread mobile joy"
       start_discovering: "Start discovering with Tapjoy for free"
+      tap_here: "Tap Here"
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
@@ -477,8 +478,9 @@ en:
         video: Watch this video.
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
-      deep_link_part_1: Tap here to visit 
+      deep_link_part_1: Tap here to visit
       deep_link_part_2: for more free offers!
+      earn: Earn
       earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}."
@@ -496,6 +498,7 @@ en:
       powered: Powered By Tapjoy
       previous: "Previous %{items}"
       privacy: Privacy Policy
+      tap_here: Tap Here
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
@@ -544,6 +547,7 @@ en:
       none: None
       offers_by: "Offers by Tapjoy"
       ok: OK
+      or: or
       options: Options
       other: Other
       password: Password
@@ -607,7 +611,13 @@ en:
     pm: pm
   user_event:
     error:
-      bad_params: "Could not find app or device. Check your app_id and udid paramters."
-      bad_event: "Error parsing the event info. For shutdown events, ensure the data field is empty or nonexistent. For IAP events, ensure you provided an item name, a currency name, and a valid float for the price."
+      invalid_app_id: "App ID '%{app_id}' could not be found. Check 'app_id' and try again."
+      missing_fields: "Expected attribute(s) %{missing_fields_string} not found."
+      undefined_fields: "Attribute(s) %{undefined_fields_string} are undefined for this event type."
+      invalid_field: "'%{field}' is not of type '%{type}'."
+      invalid_event_type: "Invalid event type ID."
+      no_device: "Device missing in request."
+      verification_failed: "Parameter verification failed."
+      no_verifier: "Verifier missing in request."
     success:
       created: "Successfully saved user event."

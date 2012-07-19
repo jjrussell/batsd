@@ -1,11 +1,11 @@
 %div{:class => "close #{@platform}", :id => 'close'}
-  = link_to(params[:preview] == true ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
+  = link_to(@for_preview ? '#' : 'dismiss', :class => 'close', :id => 'close-link') do
     .close_inner#close_inner x
 #main
-  = link_to((params[:preview] == true ? '#' : get_click_url(@offer)), :class => 'image-link') do
+  = link_to((@for_preview ? '#' : get_click_url(@offer)), :class => 'image-link') do
     %img{ :src => "#{CLOUDFRONT_URL}/images/blank.png", :class => 'creative', :id => 'creative' }
 .buttons#buttons
-  = link_to(featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier]), (params[:preview] == true ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
+  = link_to(featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier]), (@for_preview ? '#' : get_click_url(@offer)), :class => 'download gradient', :id => 'download')
 
 - content_for :page_javascript do
   :plain
@@ -38,7 +38,7 @@
       skip = document.getElementById('close-link');
       skip.onclick = function() {
 
-  - if params[:preview] == true
+  - if @for_preview
     :plain
         return false;
   - else
@@ -53,7 +53,7 @@
   - @offer.banner_creatives.each do |size|
     :plain
         availableCreativeSizes.push("#{size}".split('x'));
-        availableCreatives.push("#{@offer.banner_creative_url(:size => size, :format => 'jpeg', :bust_cache => (params[:preview] == true))}");
+        availableCreatives.push("#{@offer.banner_creative_url(:size => size, :format => 'jpeg', :bust_cache => @for_preview)}");
 
   :plain
 

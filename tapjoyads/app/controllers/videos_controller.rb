@@ -24,14 +24,13 @@ class VideosController < ApplicationController
 
     return unless verify_records([ @video_offer, @offer ])
 
-    @video_buttons = @video_offer.video_buttons.reject { |button| !button.enabled? }.sort_by(&:ordinal)[0..1]
+    @video_buttons = @video_offer.video_buttons_for_device_type(device_type)[0..1]
   end
 
   private
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    params[:source] ||= 'video'
     return unless verify_params([ :app_id, :udid, :currency_id, :publisher_user_id ])
 
     @device = Device.new(:key => params[:udid])

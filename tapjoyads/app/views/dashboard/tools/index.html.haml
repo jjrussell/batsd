@@ -41,7 +41,7 @@
     %li= link_to 'SQS Lengths', sqs_lengths_tools_path
     %li= link_to 'SDB Metadata', sdb_metadata_tools_path
     %li= link_to 'SES Status', ses_status_tools_path
-    %li= link_to 'Job Configuration', tools_jobs_path
+    %li= link_to 'Timeshadow - Job Configuration', 'https://timeshadow.tapjoy.net'
     %li= link_to 'Recommenders', tools_recommenders_path
     %li= link_to 'Fix stuck rewards', fix_rewards_tools_path
 
@@ -59,6 +59,8 @@
   %ul
     - if permitted_to? :index, :dashboard_tools_offer_lists                 # account_mgr
       %li= link_to 'View Offer Lists', tools_offer_lists_path
+    - if permitted_to? :index, :dashboard_tools_optimized_offer_lists       # account_mgr
+      %li= link_to 'View Optimized Offer Lists', tools_optimized_offer_lists_path
     - if permitted_to? :index, :dashboard_tools_generic_offers              # account_mgr
       %li= link_to 'View Generic Offers', tools_generic_offers_path
     - if permitted_to? :edit, :dashboard_statz                              # account_mgr

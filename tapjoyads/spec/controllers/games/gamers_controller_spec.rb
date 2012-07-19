@@ -43,6 +43,16 @@ describe Games::GamersController do
       should_respond_with_json_error(403)
     end
 
+    context 'with invalid params' do
+      before :each do
+        @options[:gamer][:zomg_hax0r] = "Robert'); DROP TABLE students; --"
+      end
+
+      it 'ignores invalid params' do
+        lambda { post 'create', @options }.should_not raise_exception
+      end
+    end
+
     context 'when referrer present' do
       before :each do
         @gamer = FactoryGirl.create(:gamer)

@@ -55,7 +55,9 @@ module ToolsHelper
   def click_tr_class(click, reward)
     classes = []
     if click.installed_at?
-      if (reward && reward.successful?)
+      if click.force_convert
+        classes << 'forced'
+      elsif (reward && reward.successful?)
         classes << 'rewarded'
       else
         classes << 'rewarded-failed'
@@ -84,12 +86,29 @@ module ToolsHelper
     time.nil? ? '-' : time.to_s(:pub_abbr_ampm_sec)
   end
 
+  def link_install_to_attempt(click)
+    if click.block_reason?
+      display = click.block_reason
+    elsif click.installed_at?
+      display = click_timestamp(click, :installed_at)
+    end
+
+    if display
+      attempt = ConversionAttempt.new(:key => click.reward_key)
+      if attempt.is_new
+        display
+      else
+        link_to(display, view_conversion_attempt_tools_path(:conversion_attempt_key => attempt.key))
+      end
+    end
+  end
+
   def wfh_classes(wfh)
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
   end
 
-  def formatted_items_for_tracking(partner)
-    partner.trackable_items.map do |item|
+  def formatted_items_for_tracking(items)
+    items.map do |item|
       type = item.class.name.to_s.gsub(/Offer$/, '')
       platform = if item.respond_to?(:platform_name)
                    item.platform_name

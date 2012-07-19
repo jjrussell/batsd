@@ -3,6 +3,8 @@ class ServerWhitelist
     '38.104.224.62',                         # Tapjoy SF added 2012.06.04
     '38.104.183.198',                        # Tapjoy Atlanta added 2012.06.04
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
+    '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
+    '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
     '209.120.212.22',                        # Adperio added 2012.05.22
@@ -37,6 +39,11 @@ class ServerWhitelist
     '79.125.122.234',                        # HasOffers Europe added 2012.05.22
     ['176.34.107.49', '176.34.107.63'],      # HasOffers Europe added 2012.05.22
     ['64.8.20.35', '64.8.20.36'],            # Websponsors added 2012.05.24
+    ['69.25.171.0', '69.25.171.127'],        # Impact Radius added 2012.06.18
+    ['50.56.137.44', '50.56.137.45'],        # Lucky Pacific added 2012.07.10
+    ['50.56.42.244', '50.56.42.245'],        # Lucky Pacific added 2012.07.10
+    ['184.106.48.88', '184.106.48.89'],      # Lucky Pacific added 2012.07.10
+    ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
   ]
 
   def self.ip_whitelist_includes?(ip_address)
