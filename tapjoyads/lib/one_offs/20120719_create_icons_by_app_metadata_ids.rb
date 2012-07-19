@@ -1,6 +1,5 @@
 class OneOffs
   def self.create_icons_by_app_metadata_ids
-    print "begin"
     App.live.each do |app|
       old_icon_id = Offer.hashed_icon_id(app.id)
       new_icon_id = Offer.hashed_icon_id(app.primary_app_metadata.id)
