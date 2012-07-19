@@ -219,7 +219,8 @@ include GetOffersHelper
       :all_videos           => params[:all_videos],
       :algorithm            => @algorithm,
       :algorithm_options    => @algorithm_options,
-      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
+      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
+      :market_name          => params[:market_name]
     )
   end
 

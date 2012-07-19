@@ -11,6 +11,11 @@
         = f.text_field :name, :size => 50
         = error_message_on @video_offer, :name
     %tr
+      %th= f.label :app_targeting
+      %td
+        = f.check_box :app_targeting
+        = error_message_on @video_offer, :app_targeting
+    %tr
       %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
       %td= file_field_tag :video
     - if !@video_offer.new_record?

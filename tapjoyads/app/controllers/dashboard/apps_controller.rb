@@ -17,19 +17,22 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def new
     @app = App.new
     @app.platform = 'iphone'
+    @store_options = AppStore.android_store_options
   end
 
   def search
     if params[:term].present?
       begin
         platform = params[:platform]
-        case platform
+        case platform.downcase
         when 'windows'
           country = params[:language]
         when 'iphone'
           country = params[:country]
+        when 'android'
+          store_name = params[:store_name]
         end
-        render :json => AppStore.search(params[:term], platform, country)
+        render :json => AppStore.search(params[:term], platform, store_name, country)
       rescue
         render :json => { :error => true }
       end
@@ -38,6 +41,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
 
   def show
     @integrated = @app.primary_offer.integrated?
+    @store_options = AppStore.android_store_options if @app.platform == 'android'
     flash.now[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 
@@ -49,17 +53,28 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.platform = params[:app][:platform]
     @app.name = params[:app][:name]
 
-    app_store_data = {}
-    if params[:state] == 'live' && params[:app][:store_id].present?
-      unless app_store_data = @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
+    if params[:state] == 'live' && params[:store_id].present?
+      store_name = params[:android_store_name] if params[:android_store_name] && @app.platform == 'android'
+      store_name ||= App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+      unless app_metadata = @app.add_app_metadata(store_name, params[:store_id], true)
+        flash.now[:error] = 'Failed to create primary distribution.'
+        render :action => "new" and return
+      end
+
+      begin
+        app_metadata.update_from_store(params[:country])
+      rescue
+        logger.error("exception: #{$!}")
+        $@.each do |line|
+          logger.error("  #{line}")
+        end
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        render :action => "new"
-        return
+        render :action => "new" and return
       end
     end
 
     if @app.save
-      @app.download_icon(app_store_data[:icon_url])
+#      @app.download_icon(app_store_data[:icon_url])
       flash[:notice] = 'App was successfully created.'
       redirect_to(@app)
     else
@@ -74,11 +89,28 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.name = params[:app][:name]
     @app.protocol_handler = params[:app][:protocol_handler] if permitted_to? :edit, :dashboard_statz
 
-    if params[:state] == 'live' && params[:app][:store_id].present?
-      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
+    if params[:state] == 'live' && params[:store_id].present?
+      store_name = @app.store_name || params[:android_store_name] || App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+      app_metadata = if @app.app_metadatas.find_by_store_name(store_name)
+        @app.update_app_metadata(store_name, params[:store_id])
+      else
+        @app.add_app_metadata(store_name, params[:store_id], true)
+      end
+
+      unless app_metadata.present?
+        flash.now[:error] = 'Failed to update primary distribution.'
+        render :action => "show" and return
+      end
+
+      begin
+        app_metadata.update_from_store(params[:country])
+      rescue
+        logger.error("exception: #{$!}")
+        $@.each do |line|
+          logger.error("  #{line}")
+        end
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        render :action => "show"
-        return
+        render :action => "show" and return
       end
     end
 

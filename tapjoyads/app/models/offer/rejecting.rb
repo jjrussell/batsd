@@ -97,7 +97,7 @@ module Offer::Rejecting
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist)
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
@@ -123,11 +123,14 @@ module Offer::Rejecting
       { :method => :source_reject?, :parameters => [source], :reason => 'source' },
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
     ]
     reject_reasons(reject_functions)
   end
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version,
+      direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -157,7 +160,9 @@ module Offer::Rejecting
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
     partner_has_no_funds? ||
-    rewarded_offerwall_non_rewarded_reject?(currency, source)
+    rewarded_offerwall_non_rewarded_reject?(currency, source) ||
+    app_store_reject?(store_whitelist) ||
+    distribution_reject?(store_name)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -386,4 +391,13 @@ module Offer::Rejecting
     sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
   end
 
+  def app_store_reject?(store_whitelist)
+    store_whitelist.present? && app_metadata_store_name && !store_whitelist.include?(app_metadata_store_name)
+  end
+
+  def distribution_reject?(store_name)
+    cached_item =  item_type.constantize.respond_to?(:find_in_cache) ? item_type.constantize.find_in_cache(item_id) : nil
+    return cached_item.distribution_reject?(store_name) if cached_item.respond_to?('distribution_reject?')
+    false
+  end
 end

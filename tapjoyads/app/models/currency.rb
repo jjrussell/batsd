@@ -210,6 +210,11 @@ class Currency < ActiveRecord::Base
   end
   memoize :get_test_device_ids
 
+  def get_store_whitelist
+    Set.new(store_whitelist.split(';'))
+  end
+  memoize :get_store_whitelist
+
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
   end

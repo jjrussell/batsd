@@ -127,6 +127,7 @@ class WebRequest < SyslogMessage
   self.define_attr :rule_offset, :type => :int
   self.define_attr :rule_actions
   self.define_attr :rule_message
+  self.define_attr :market_name
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -182,6 +183,7 @@ class WebRequest < SyslogMessage
     self.geoip_country        = geoip_data[:country]
     self.sdk_type             = params[:sdk_type]
     self.plugin               = params[:plugin]
+    self.market_name          = params[:market_name]
   end
 
   def save

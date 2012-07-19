@@ -7,7 +7,7 @@
 %h3 Add App
 
 = form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = f.hidden_field :store_id
+  = hidden_field_tag :store_id, @app.store_id, :id => 'app_store_id'
   %table
     %tbody
       %tr
@@ -22,6 +22,10 @@
         %td= f.select :platform, platforms.invert.to_a.sort_by(&:last), { :selected => @app.platform }, { :id => 'app_platform' }
       - if permitted_to?(:edit, :dashboard_statz)
         = render 'select_country'
+      - if permitted_to?(:new, :dashboard_app_metadatas)
+        %tr#android_market.app_data.hidden
+          %th Market
+          %td= select_tag :android_store_name, options_for_select(@store_options ? @store_options : {}, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
       %tr
         %th
           Name
