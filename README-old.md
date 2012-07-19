@@ -181,11 +181,9 @@ Follow the post-install directions. (Type `brew info redis` to see them again)
 Setup repo
 ----------
 
-This adds the GeoIP database, puts in the local configuration yaml files, and sets up our custom pre-commit hook.
+Add the GeoIP database
 
-```
-./setup_repo.sh
-```
+Put in the local configuration yaml files.
 
 Install required gems
 ---------------------
