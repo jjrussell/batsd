@@ -60,6 +60,7 @@ files.each do |f|
 
     if (f =~ /\.min\.js$/) # for .min.js files, we want to go back and remove last linebreak
       `perl -i -pe 'chomp if eof' #{f}`
+      `git add #{f}`
     end
   end
 end
