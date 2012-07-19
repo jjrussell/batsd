@@ -89,15 +89,6 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
     redirect_to :action => :new
   end
 
-  def make_primary
-    if @app.change_primary_app_metadata(@app.primary_app_metadata, @app_metadata)
-      flash[:notice] = "Changed primary app metadata."
-    else
-      flash[:error] = "Failed to change primary app metadata."
-    end
-    redirect_to :action => :new
-  end
-
   private
 
   def setup

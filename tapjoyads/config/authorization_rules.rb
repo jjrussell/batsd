@@ -25,7 +25,7 @@ authorization do
   end
 
   role :android_distribution_config do
-    has_permission_on :dashboard_app_metadatas, :to => [ :new, :create, :show, :update, :remove, :make_primary ]
+    has_permission_on :dashboard_app_metadatas, :to => [ :new, :create, :show, :update, :remove ]
   end
 
   role :tools do

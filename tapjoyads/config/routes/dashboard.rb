@@ -78,7 +78,6 @@ Tapjoyad::Application.routes.draw do
         resources :app_metadatas, :only => [:show, :update, :new, :create] do
           member do
             get :remove
-            get :make_primary
           end
         end
         resources :reengagement_offers, :except => [:show] do
