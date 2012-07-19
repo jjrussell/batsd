@@ -25,7 +25,7 @@ module UserEventTypes
 
 
     # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
-    
+
     :invalid => {
     },
 
