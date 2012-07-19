@@ -397,6 +397,12 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
+    if params[:udid]
+      device = Device.find(params[:udid])
+      @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
+      render and return unless @publisher_user_id.nil?
+    end
+
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
       click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
