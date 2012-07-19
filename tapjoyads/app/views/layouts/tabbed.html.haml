@@ -83,6 +83,9 @@
         = navigation(tabs)
 
       #content
+        .flash#flash_notice
+          Check out Tapjoy Insights, a special report covering the latest trends in mobile app marketing and monetization. 
+          = link_to "Download Now", "http://info.tapjoy.com/wp-content/uploads/2012/07/TapjoyInsightsJuly2012-3.pdf"
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
