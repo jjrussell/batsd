@@ -97,7 +97,7 @@ Running the server
 Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
 
 ```
-foreman start
+rails s thin
 ```
 
 To access, go to [http://127.0.0.1:8080](http://127.0.0.1:8080).
