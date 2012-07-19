@@ -477,15 +477,17 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     if click.is_new
       flash[:error] = "Click not found"
       redirect_to :action => :device_info and return
-    end
+    else
+      attempt = ConversionAttempt.new(:key => click.reward_key)
+      if attempt.resolution == 'force_converted'
+        flash[:error] = "Conversion has already been forced"
+        redirect_to :action => :device_info, :click_key => click.key and return
+      end
 
-    attempt = ConversionAttempt.new(:key => click.reward_key)
-    if attempt.is_new || attempt.resolution == 'converted'
-      flash[:error] = "Only blocked conversions can be force converted"
-      redirect_to :action => :device_info, :click_key => click.key and return
-    elsif attempt.resolution == 'force_converted'
-      flash[:error] = "Conversion has already been forced"
-      redirect_to :action => :device_info, :click_key => click.key and return
+      if !click.block_reason?
+        flash[:error] = "Only blocked conversions can be force converted"
+        redirect_to :action => :device_info, :click_key => click.key and return
+      end
     end
 
     click.force_convert = true

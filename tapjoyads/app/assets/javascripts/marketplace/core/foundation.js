@@ -214,7 +214,7 @@
       },
       isNodeList: function(obj){
         return Tap.type(obj) === 'nodelist';
-      },      
+      },
       isNumeric: function(obj){
         return !isNaN(parseFloat(obj)) && isFinite(obj);
       },
@@ -335,10 +335,10 @@
         }catch(error){}
 
         return query;
-      }      
+      }
     });
 
-    // pub-sub 
+    // pub-sub
     Tap.apply(Tap, {
       stack: {},
       publish: function(channel, args){
