@@ -14,6 +14,7 @@ Author: Jia Feng
 Note:
 (1) There's an one-off
 (2) Don't forget to update generic offer's (609f5b88-80a9-48a7-ac98-d2a304bf9952) destination url form '/gamers/earn/TJM_EID?data=DATA' to '/earn/TJM_EID?data=DATA', since we set the tjm routes slightly different now.
+(3) The offer is for devices that have connected to a TJM account, but that TJM account haven't link to Facebook or for devices that haven't connected to any TJM account
 
 ## Test Environment Setup
 ### Test on Local
