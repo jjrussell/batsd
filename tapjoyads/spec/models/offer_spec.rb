@@ -1029,7 +1029,8 @@ describe Offer do
     context "without a provided timestamp" do
       before :each do
         @urls.each do |url|
-          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', Time.zone.now.to_i.to_s)).once
+          now = Time.zone.now
+          Downloader.should_receive(:queue_get_with_retry).with(url.sub('[timestamp]', "#{now.to_i}.#{now.usec}")).once
         end
       end
 
