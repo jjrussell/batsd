@@ -1,48 +1,146 @@
 class UserEvent < WebRequest
-  include UserEventTypes
+  include TypeConverters
 
-  DEVICE_KEYS_TO_TRY = [ :udid, :mac_address, :android_id, :serial_id, :sha1_mac_address ]
+  EVENT_TYPE_KEYS = [
+    :invalid, :iap, :shutdown
+  ]
+
+  EVENT_TYPE_MAP = {
+
+    # structure of this map:
+    #
+    # :event_type_name => {
+    #   :field_1 => :data_type_1,
+    #   :field_2 => :data_type_2,
+
+    #   :REQUIRED => [ :field_x, :field_y ],
+    #   :ALTERNATIVES => {
+    #     :field_a => [ :field_b, :field_c ],
+    #     :field_b => [ :field_a, :field_c ],
+    #     :field_c => [ :field_a, :field_b ],
+    #   }
+    # }
+    #
+    # :data_type_X MUST match a key in TypeConverters::TYPES
+
+    # The :REQUIRED array denotes what fields are required for that event type
+    # The :ALTERNATIVES map consists of keys with possible alternates and arrays of valid alternatives to that key
+
+    # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
+    
+    :invalid => {
+    },
+
+    :iap => {
+      :currency_code  => :string,
+      :name           => :string,
+      :item_id        => :string,
+      :price          => :float,
+      :quantity       => :int,
+
+      :REQUIRED       => [ :currency_code, :name, :item_id, :price, :quantity ],
+      :ALTERNATIVES   => {
+        :item_id        => [ :name ],
+        :name           => [ :item_id ],
+      }
+    },
+
+    :shutdown => {
+    },
+
+  }
+
+  EVENT_TYPE_MAP.freeze()
+  EVENT_TYPE_KEYS.freeze()
+
+  # Exception specific to UserEvent for returning custom errors to client devices
+  class UserEventInvalid < RuntimeError
+  end
 
   # add new event type fields here with their required types
-  # make sure to assign them within #put_values() below
-  # make sure changes here are reflected in user_event_types.rb
+  # make sure to assign them at the bottom of #put_values() below
+  # make sure changes here are reflected in the mapping above
   self.define_attr :name
+  self.define_attr :currency_code
+  self.define_attr :item_id
   self.define_attr :quantity, :type => :int
   self.define_attr :price,    :type => :float
 
-  def put_values(args, ip_address, geoip_data, user_agent)
-
-    # Use '' because the raised error message will show that event_type_id is blank and ''.to_i() computes to 0
-    event_type_id = (args.delete(:event_type_id) { '' }).to_i
-    if event_type_id > 0
-      args[:type] = UserEventTypes::EVENT_TYPE_KEYS[event_type_id]
-    else
-      raise "#{event_type_id} is not a valid 'event_type_id'."
+  def initialize(event_type, event_data = {})
+    if event_type == :invalid || !EVENT_TYPE_KEYS.include?(event_type)
+      raise UserEventInvalid, I18n.t('user_event.error.invalid_event_type')
     end
 
-    app = App.find_in_cache(args[:app_id])
-    raise "App ID '#{args[:app_id]}' could not be found. Check 'app_id' and try again." unless app.present?    # TODO use i18n?
-    device_id_key = DEVICE_KEYS_TO_TRY.detect { |key| args[key].present? }
-    raise I18n.t('user_event.error.no_device') unless device_id_key.present?
-    event_descriptor = UserEventTypes::EVENT_TYPE_MAP[args[:type]]
-    missing_field, required_type = event_descriptor.detect { |field, type| args[field].blank? }
-    raise "Expected attribute '#{missing_field}' of type '#{required_type}' not found." if missing_field
-    invalid_field, required_type = event_descriptor.detect { |field, type| !TypeConverters::TYPES[type].from_string(args[field], true) }
-    raise "Error assigning '#{invalid_field}' attribute. The value '#{args[invalid_field]}' is not of type '#{required_type}'." if invalid_field
+    super()
+    validate!(event_type, event_data)
+    self.type = event_type
 
-    remote_verifier_hash = args.delete(:verifier)
-    raise I18n.t('user_event.error.no_verifier') unless remote_verifier_hash.present?
-    local_verifier_string = [ app.id, args[device_id_key], app.secret_key, UserEventTypes::EVENT_TYPE_IDS[args[:type]] ].join(':')
-    raise I18n.t('user_event.error.verification_failed') unless Digest::SHA256.hexdigest(local_verifier_string) == remote_verifier_hash
+    event_data.each do |field, value|
+      send("#{field}=", value)
+    end
 
-    # assign new event type fields here
-    # make sure to define new attributes with `self.define_attr` in the above block
-    # make sure changes here are reflected in user_event_types.rb
-    self.name     = args.delete(:name)
-    self.quantity = args.delete(:quantity)
-    self.price    = args.delete(:price)
+    # MAKE SURE TO CALL #.put_values() AFTER #.new() TO POPULATE GENERAL WEB REQUEST PARAMS BEFORE SAVING!!!
+  end
 
-    super(nil, args, ip_address, geoip_data, user_agent)
+  def self.generate_verifier_key(app_id, device_id, secret_key, event_type_id, event_data = {})
+    verifier_array = [ app_id, device_id, secret_key, event_type_id ] 
+    if event_data.present?
+      event_data.keys.sort.map { |key| verifier_array << event_data[key] }
+    end
+    Digest::SHA256.hexdigest(verifier_array.join(':'))
+  end
+
+  private
+
+  def validate!(event_type, event_data = {})
+    event_descriptor        = {}
+    required_fields         = []
+    alternative_fields_map  = {}
+
+    EVENT_TYPE_MAP[event_type].each do |event_specific_field, data_type|
+      case event_specific_field
+      when :REQUIRED      then required_fields        = data_type
+      when :ALTERNATIVES  then alternative_fields_map = data_type
+      else event_descriptor[event_specific_field]     = data_type
+      end
+    end
+
+    check_for_missing_fields!(event_descriptor, required_fields, alternative_fields_map, event_data)
+    check_for_undefined_fields!(event_descriptor, event_data)
+    check_for_invalid_fields!(event_descriptor, event_data)
+  end
+
+  def check_for_missing_fields!(event_descriptor, required_fields = [], alternative_fields_map = {}, event_data = {})
+    missing_fields = required_fields.reject do |field|
+      event_data[field].present? || alternative_fields_map[field].present? && alternative_fields_map[field].any? { |alt| event_data[alt].present? }
+    end
+
+    if missing_fields.present?
+      error_msg_data = { :missing_fields_string => missing_fields.join(', ') }
+      raise UserEventInvalid, I18n.t('user_event.error.missing_fields', error_msg_data)
+    end
+  end
+
+  def check_for_undefined_fields!(event_descriptor, event_data = {})
+    return unless event_data.present?
+    undefined_fields = event_data.keys.reject { |key| event_descriptor.has_key?(key) }
+
+    if undefined_fields.present?
+      error_msg_data = { :undefined_fields_string => undefined_fields.join(', ') }
+      raise UserEventInvalid, I18n.t('user_event.error.undefined_fields', error_msg_data)
+    end
+  end
+
+  def check_for_invalid_fields!(event_descriptor, event_data = {})
+    return unless event_data.present?
+    invalid_fields = event_data.reject { |field, value| TypeConverters::TYPES[event_descriptor[field]].from_string(value, true) }
+
+    if invalid_fields.present?
+      error_msgs = invalid_fields.keys.map do |field|
+        I18n.t('user_event.error.invalid_field', { :field => field, :type => event_descriptor[field] })
+      end
+      raise UserEventInvalid, error_msgs.join("\n")
+    end
   end
 
 end

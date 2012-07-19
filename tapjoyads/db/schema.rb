@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(:version => 20120702012559) do
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
+    t.string   "primary_currency_id",           :limit => 36
     t.boolean  "uses_non_html_responses",                     :default => false, :null => false
   end
 
