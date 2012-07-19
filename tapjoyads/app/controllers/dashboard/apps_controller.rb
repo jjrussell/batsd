@@ -64,10 +64,6 @@ class Dashboard::AppsController < Dashboard::DashboardController
       begin
         app_metadata.update_from_store(params[:country])
       rescue
-        logger.error("exception: #{$!}")
-        $@.each do |line|
-          logger.error("  #{line}")
-        end
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
         render :action => "new" and return
       end
@@ -105,10 +101,6 @@ class Dashboard::AppsController < Dashboard::DashboardController
       begin
         app_metadata.update_from_store(params[:country])
       rescue
-        logger.error("exception: #{$!}")
-        $@.each do |line|
-          logger.error("  #{line}")
-        end
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
         render :action => "show" and return
       end
