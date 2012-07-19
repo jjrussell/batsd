@@ -5,7 +5,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -56,6 +56,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
     rewards = @offer.num_clicks_rewarded
     support_requests = @offer.num_support_requests
     render :text => support_request_ratio_text(support_requests, rewards)
+  end
+
+  def show_rate_reasons
+    render :text => get_show_rate_reasons.join('; ')
   end
 
   def update
@@ -159,5 +163,29 @@ class Dashboard::StatzController < Dashboard::DashboardController
     @last_updated_start = Time.zone.at(Mc.get("statz.#{prefix}.last_updated_start.#{@timeframe}") || 0)
     @last_updated_end = Time.zone.at(Mc.get("statz.#{prefix}.last_updated_end.#{@timeframe}") || 0)
     @cached_stats = Mc.distributed_get("statz.#{prefix}.cached_stats.#{@timeframe}") || []
+  end
+
+  def get_show_rate_reasons
+    reasons = []
+    now = Time.zone.now
+    end_of_day = Time.parse('00:00 CST', now + 18.hours).utc
+    start_of_day = end_of_day - 1.day
+    stat_types = %w(paid_installs)
+    appstats = Appstats.new(@offer.id, :start_time => start_of_day, :end_time => end_of_day, :stat_types => stat_types)
+    num_installs_today = appstats.stats['paid_installs'].sum
+
+    if @offer.over_daily_budget?(num_installs_today)
+      reasons << 'Pushed too many installs. Overriding any calculations and setting show rate to 0.'
+    end
+
+    if @offer.has_overall_budget?
+      start_time = Time.zone.parse('2010-01-01')
+      stat_types = %w(paid_installs)
+      appstats_overall = Appstats.new(offer.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
+      total_installs = appstats_overall.stats['paid_installs'].sum
+      reasons << 'App over overall_budget. Overriding any calculations and setting show rate to 0.' if total_installs > @offer.overall_budget
+    end
+
+    reasons
   end
 end

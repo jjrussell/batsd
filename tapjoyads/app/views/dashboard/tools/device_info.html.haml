@@ -138,6 +138,8 @@
     %span.not-rewarded Won't reward (#{@not_rewarded_count})
     +
     %span.blocked Blocked (#{@blocked_count})
+    +
+    %span.forced Forced (#{@force_converted_count})
   Showing
   %b #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date).to_s(:pub)}
   %table.with-border
@@ -151,7 +153,6 @@
           %td User
         %td Resolve
         %td Details
-        %td Click ID
     %tbody
       - @clicks.each do |click|
         - reward = @rewards[click.reward_key]
@@ -159,16 +160,15 @@
           %td.small
             %nobr= click_timestamp(click, :clicked_at)
           %td{ :class => install_td_class(click) }
-            - if click.block_reason?
-              = click.block_reason
-            - else
-              = click_timestamp(click, :installed_at)
+            = link_install_to_attempt(click)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
           - if permitted_to? :view_pub_user_account, :dashboard_tools
             %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
           %td
-            - if click.manually_resolved_at? && click.installed_at?
+            - if click.force_convert && click.installed_at?
+              Force converted
+            - elsif click.manually_resolved_at? && click.installed_at?
               Manually awarded
             - elsif click.installed_at? || click.type =~ /install_jailbroken/
               Already awarded
@@ -177,6 +177,9 @@
                 Blocked device
               - else
                 Won't reward
+              - if permitted_to?(:force_conversion, :dashboard_tools)
+                = form_tag force_conversion_tools_path(:click_key => click.id) do
+                  = submit_tag 'Force'
             - else
               = form_tag resolve_clicks_tools_path(:click_id => click.id) do
                 = submit_tag 'Award'
@@ -187,13 +190,14 @@
                 %li= "Reward ID: #{reward.key}"
               %li= link_to('show more', '#', :class => 'show-click-detail')
               - click_info_ul(click, reward)
-          %td
-            = clippy(click.key)
       %tr
-        %td{:colspan => 7}
-          - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
-          = button_to text, '#', :class => 'next-clicks'
-          * Please note that there may not be more clicks.
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
+          %td{:colspan => 7}
+        - else
+          %td{:colspan => 6}
+        - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
+        = button_to text, '#', :class => 'next-clicks'
+        * Please note that there may not be more clicks.
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.

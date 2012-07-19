@@ -15,7 +15,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       @partners = current_user.partners.order('created_at DESC').includes([ :offers, :users ]).paginate(:page => params[:page])
     elsif params[:q]
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).includes([ :offers, :users ]).paginate(:page => params[:page]).uniq
+      @partners = Partner.search(query).includes(:offers).paginate(:page => params[:page]).uniq
     else
       @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
     end
@@ -154,7 +154,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
     Partner.transaction do
       if @transfer.transfer_type.to_i == 4
-        payout, order, marketing_order = @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes) 
+        payout, order, marketing_order = @partner.build_recoupable_marketing_credit(@transfer.amount.to_i, @transfer.internal_notes)
       else
         payout, order, marketing_order = @partner.build_transfer(@transfer.amount.to_i, @transfer.internal_notes)
       end

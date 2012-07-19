@@ -102,5 +102,7 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def setup
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
+  rescue ArgumentError
+    redirect_to :date => '', :end_date => '', :granularity => ''
   end
 end

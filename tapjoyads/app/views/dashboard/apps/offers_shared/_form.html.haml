@@ -73,7 +73,7 @@
             = link_to("Preview ads", offer_creative_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
       %tr
         %th
-          = f.label :daily_budget, 'Daily Budget'
+          = f.label :daily_budget, 'Conversions Cap'
           #help_daily.help ?
         %td
           = label_tag :daily_budget_off, 'Unlimited'
@@ -157,7 +157,7 @@
     Shows previews of how offers will be displayed to users. Previews are available for multiple screen resolutions.
   #help_balance_content{:name => 'Balance'}
     Current balance available.
-  #help_daily_content{:name => 'Daily Budget'}
+  #help_daily_content{:name => 'Conversions Cap'}
     The maximum number of installs per day.
   #help_bid_content{:name => 'Bid'}
     The amount you are willing to pay for an install. A higher bid will result in more traffic. The minimum bid is

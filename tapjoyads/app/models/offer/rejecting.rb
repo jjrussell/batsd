@@ -1,5 +1,7 @@
 module Offer::Rejecting
 
+  NON_LIMITED_CURRENCY_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0', '91631942-cfb8-477a-aed8-48d6ece4a23f', 'e3d2d144-917e-4c5b-b64f-0ad73e7882e7', 'b9cdd8aa-632d-4633-866a-0b10d55828c0'])
+
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
     [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
@@ -77,6 +79,15 @@ module Offer::Rejecting
     %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb) => %w(1e4f446b-b079-409e-af75-ec24e611a2df 77f15116-b275-4c67-9665-6b2c1d1921eb),
     # 60 Second Insurance
     %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8) => %w(026d1990-3e2e-4380-80c2-47e8924700e5 ea48b327-20ce-4792-91d8-47efab04eac8),
+    # Forces of War
+    %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182) =>
+    %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182),
+    # Badoo
+    %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc) => %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc),
+    # The Times
+    %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb) => %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb),
+    # Crickler 2 iOS
+    %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf) => %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -117,7 +128,7 @@ module Offer::Rejecting
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device, type) ||
+    show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -261,8 +272,9 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device, type)
+  def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
+    return false if NON_LIMITED_CURRENCY_IDS.include?(currency.id) && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand

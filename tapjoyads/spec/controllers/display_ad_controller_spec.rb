@@ -117,6 +117,13 @@ describe DisplayAdController do
         obj_ad_bg.stub(:read).and_return(ad_bg)
       end
 
+      it 'should mark the pub app as using non-html responses' do
+        message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+        Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+
+        get(:index, @params)
+      end
+
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).once
 

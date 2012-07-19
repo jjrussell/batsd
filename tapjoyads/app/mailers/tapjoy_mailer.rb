@@ -9,6 +9,13 @@ class TapjoyMailer < ActionMailer::Base
     body(:error => error)
   end
 
+  def alert(message, rows)
+    from 'Tapjoy <noc@tapjoy.com>'
+    recipients [ 'aaron@tapjoy.com', 'chris.compeau@tapjoy.com' ]
+    subject "[ALERT] #{message}"
+    body :rows => rows
+  end
+
   def sms_sent(phone, message)
     from 'Tapjoy <noreply@tapjoy.com>'
     recipients "dev@tapjoy.com"
@@ -141,7 +148,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def partner_name_change_notification(partner, name_was, acct_mgr_email, partner_link)
     from 'Tapjoy <noreply@tapjoy.com>'
-    recipients 'accounting@tapjoy.com'
+    recipients 'fianancepartnernamechange@tapjoy.com'
     content_type 'text/html'
     subject 'Partner Name Change Notification'
     body(:partner => partner, :name_was => name_was, :acct_mgr_email => acct_mgr_email, :partner_link => partner_link)

@@ -100,14 +100,18 @@ class ApplicationController < ActionController::Base
     return if params[:udid].present?
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:sha1_udid]) if params[:sha1_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
     lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
     lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
     lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
+    params[:identifiers_provided] = lookup_keys.any?
+
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
       unless identifier.new_record?
+        params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break
       end
@@ -121,6 +125,7 @@ class ApplicationController < ActionController::Base
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
     downcase_param(:open_udid)
     downcase_param(:app_id)
@@ -210,6 +215,10 @@ class ApplicationController < ActionController::Base
 
   def reject_banned_ips
     render :text => '' if BANNED_IPS.include?(ip_address)
+  end
+
+  def reject_banned_udids
+    render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
   end
 
   def log_activity(object, options={})
@@ -302,10 +311,4 @@ class ApplicationController < ActionController::Base
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
   end
 
-  protected
-
-  # see http://www.agilereasoning.com/2011/04/23/side-efffects-of-rails-security-fix/
-  def handle_unverified_request
-    raise ActionController::InvalidAuthenticityToken
-  end
 end

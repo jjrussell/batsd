@@ -63,6 +63,7 @@ describe Device do
 
     it 'creates the device identifiers' do
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.key)).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
@@ -267,6 +268,17 @@ describe Device do
     end
   end
 
+  context 'Display multipliers' do
+    before :each do
+      @device = Device.new
+    end
+
+    it 'updates display_multiplier' do
+      @device.set_display_multiplier('app_id', 'foo')
+      @device.display_multipliers['app_id'].should == 'foo'
+    end
+  end
+
   context 'Jailbreak detection' do
     before :each do
       @non_jb_device = FactoryGirl.create(:device)
@@ -333,6 +345,90 @@ describe Device do
 
     it 'matches URL for Rails device_info_tools_url helper' do
       @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
+    end
+  end
+
+  describe '#fix_parser_error' do
+    before :each do
+      @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
+      @device = FactoryGirl.create :device, :apps => @correct_app_ids
+    end
+
+    context 'with extra chars at the end' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json + "D")
+        @fixed = @device.send(:fix_parser_error, 'apps')
+      end
+
+      it 'returns proper JSON' do
+        lambda {JSON.load(@fixed)}.should_not raise_exception
+      end
+
+      it 'returns correct data' do
+        @fixed.should == @correct_app_ids.to_json
+      end
+    end
+
+    context 'with missing end-bracket' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json[0..-2])
+        @fixed = @device.send(:fix_parser_error, 'apps')
+      end
+
+      it 'returns properJSON' do
+        lambda {JSON.load(@fixed)}.should_not raise_exception
+      end
+
+      it 'returns mostly correct data' do
+        @fixed.each do |key, value|
+          value.should == @correct_app_ids[key]
+        end
+      end
+    end
+  end
+
+  describe '#after_initialize' do
+    before :each do
+      @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
+      @correct_user_ids = {'1' => '{a}', '2' => 'b'}
+      @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
+    end
+
+    context 'with bad app JSON data' do
+      before :each do
+        @device.put('apps', @correct_app_ids.to_json + "D")
+      end
+
+      it 'reads correct publisher_user_ids' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.should == @correct_user_ids
+      end
+
+      it 'reads correct apps' do
+        @device.send :after_initialize
+        @device.apps.should == @correct_app_ids
+      end
+    end
+
+    context 'with bad publisher user ids JSON data' do
+      before :each do
+        @device.put('publisher_user_ids', @correct_user_ids.to_json + "D")
+      end
+
+      it 'reads correct publisher_user_id' do
+        @device.send :after_initialize
+        @device.publisher_user_ids.should == @correct_user_ids
+      end
+
+      it 'reads correct apps' do
+        @device.send :after_initialize
+        @device.apps.should == @correct_app_ids
+      end
+
+      it 'should store correct raw data in publisher_user_ids' do
+        @device.send :after_initialize
+        @device.get('publisher_user_ids').should == @correct_user_ids.to_json
+      end
     end
   end
 end

@@ -9,9 +9,8 @@
   .offers-wrapper
     %ul#offers
       - @video_buttons.each do |button|
-        - offer = button.tracking_item.primary_offer
         %li
-          %a{:href => get_click_url(button.tracking_offer)}
+          %a{:href => get_click_url(button.tracking_offer, :source => 'secondary')}
             .reward.gradient
               - if @currency.get_reward_amount(button.tracking_offer) > 0
                 %span.earn= t('text.shared.earn_verb')
@@ -19,13 +18,13 @@
                 %span.points= t('text.offerwall.points')
               - else
                 %span.big= t('text.shared.tap_here')
-              %span.free= visual_cost(offer)
+              %span.free= visual_cost(button.tracking_offer)
 
             .offer
               .icon
                 .rounded
-                %img.cover{:src => offer.get_icon_url(:source => :cloudfront, :size => '57')}
-                - if offer.wifi_only?
+                %img.cover{:src => button.tracking_offer.get_icon_url(:source => :cloudfront, :size => '57')}
+                - if button.tracking_offer.wifi_only?
                   .wifi WiFi
               .about
                 .title= button.name

@@ -4,6 +4,9 @@ class DisplayAdController < ApplicationController
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
+    if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
+      @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+    end
   end
 
   def webview
@@ -60,23 +63,23 @@ class DisplayAdController < ApplicationController
     end
 
     device = Device.new(:key => params[:udid])
-    publisher_app = App.find_in_cache(params[:app_id])
+    @publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
     currency = nil if currency.present? && currency.app_id != params[:app_id]
-    return unless verify_records([ publisher_app, currency ], :render_missing_text => false)
+    return unless verify_records([ @publisher_app, currency ], :render_missing_text => false)
 
-    params[:publisher_app_id] = publisher_app.id
-    params[:displayer_app_id] = publisher_app.id
+    params[:publisher_app_id] = @publisher_app.id
+    params[:displayer_app_id] = @publisher_app.id
     params[:source] = 'display_ad'
 
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
 
     if currency.get_test_device_ids.include?(params[:udid])
-      offer = publisher_app.test_offer
+      offer = @publisher_app.test_offer
     else
       offer = OfferList.new(
-        :publisher_app       => publisher_app,
+        :publisher_app       => @publisher_app,
         :device              => device,
         :currency            => currency,
         :device_type         => params[:device_type],
@@ -93,7 +96,7 @@ class DisplayAdController < ApplicationController
 
     if offer.present?
       @click_url = offer.click_url(
-        :publisher_app     => publisher_app,
+        :publisher_app     => @publisher_app,
         :publisher_user_id => params[:publisher_user_id],
         :udid              => params[:udid],
         :currency_id       => currency.id,
@@ -106,13 +109,13 @@ class DisplayAdController < ApplicationController
       width, height = parse_size(params[:size])
 
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.display_ad_image_url(:publisher_app_id => publisher_app.id,
+        @image_url = offer.display_ad_image_url(:publisher_app_id => @publisher_app.id,
                                                 :width => width,
                                                 :height => height,
                                                 :currency_id => currency.id,
                                                 :display_multiplier => params[:display_multiplier])
       else
-        @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
+        @image = get_ad_image(@publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
       @offer = offer
