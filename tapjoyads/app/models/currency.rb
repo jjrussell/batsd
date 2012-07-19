@@ -278,11 +278,11 @@ class Currency < ActiveRecord::Base
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :conditions => [ "tapjoy_enabled = ?", true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+    currencies = Currency.find_all_by_app_id(app_id, :conditions => [ 'tapjoy_enabled = ?', true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
     memcache_distributed_put(app_id, currencies)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :conditions => [ "tapjoy_enabled = ?", true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+      currencies = Currency.find_all_by_app_id(app_id_was, :conditions => [ 'tapjoy_enabled = ?', true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
       memcache_distributed_put(app_id_was, currencies)
     end
   end
