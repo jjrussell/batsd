@@ -278,17 +278,21 @@ class Currency < ActiveRecord::Base
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
+    currencies = Currency.find_all_by_app_id(app_id, :conditions => [ "tapjoy_enabled = ?", true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+    memcache_distributed_put(app_id, currencies)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
-      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
+      currencies = Currency.find_all_by_app_id(app_id_was, :conditions => [ "tapjoy_enabled = ?", true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+      memcache_distributed_put(app_id_was, currencies)
     end
   end
 
   def clear_cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
+    memcache_distributed_put(app_id, currencies)
+  end
+
+  def memcache_distributed_put(app_id, currencies)
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
   end
 
