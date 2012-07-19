@@ -1,4 +1,4 @@
-class Job::MasterCacheOptimizedOffersController < Job::JobController  
+class Job::MasterCacheOptimizedOffersController < Job::JobController
 
   def index
     OptimizedOfferList.cache_all
