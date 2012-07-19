@@ -30,7 +30,7 @@ class ExactTarget
         :currency_name            => "GOLD COINS",
         :facebook_signup          => 0,
         :gamer_email              => "gamer_email@tapjoy.com",
-        :linked                   => 1,
+        :linked                   => 0,
         :publisher_icon_url       => "https://s3.amazonaws.com/tapjoy/icons/SIZE/ICON_ID.jpg",
         :publisher_app_name       => "PUBLISHER APP NAME",
         :recommendation1_icon_url => "https://s3.amazonaws.com/tapjoy/icons/SIZE/AN_APP.jpg",
@@ -49,9 +49,9 @@ class ExactTarget
         :offer3_name              => "Yet Another Offer",
         :offer3_type              => "App",
         :offer3_amount            => 300,
-        :show_detailed_email      => 1,
-        :show_offer_data          => 1,
-        :show_recommendations     => 1,
+        :show_detailed_email      => 0,
+        :show_offer_data          => 0,
+        :show_recommendations     => 0,
       }
     }
 
