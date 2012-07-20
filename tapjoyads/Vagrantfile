@@ -40,7 +40,7 @@ Vagrant::Config.run do |config|
   # config.vm.share_folder "v-data", "/vagrant_data", "../data"
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
-  # path, and data_bags path (all relative to this Vagrantfile), and adding 
+  # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
   config.vm.provision :chef_solo do |chef|
@@ -67,7 +67,7 @@ Vagrant::Config.run do |config|
         ]
       },
       :mysql => {
-        :server_root_password => 'taptaptap'
+        :server_root_password => ''
       }
     }
   end
