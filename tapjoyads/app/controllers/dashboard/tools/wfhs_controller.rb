@@ -46,7 +46,7 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
     @wfh = Wfh.new(params[:wfh])
 
     if @wfh.save
-      send_notification(@wfh, current_user.employee) # if Rails.env.production?
+      send_notification(@wfh, current_user.employee) if Rails.env.production?
       redirect_to_index('Wfh was successfully created.')
     else
       render :action => "new"
