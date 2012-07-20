@@ -7,7 +7,7 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
 
   def index
     products_team = Employee.products_team
-    grouped_team = products_team.group_by{ |employee| employee.location[0] }
+    grouped_team = products_team.reject(&:deskless?).group_by{ |employee| employee.location[0] }
     @team = grouped_team.keys.sort.map do |row_num|
       row = []
       grouped_team[row_num].each do |employee|
@@ -46,6 +46,7 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
     @wfh = Wfh.new(params[:wfh])
 
     if @wfh.save
+      send_notification(@wfh, current_user.employee) # if Rails.env.production?
       redirect_to_index('Wfh was successfully created.')
     else
       render :action => "new"
@@ -75,5 +76,12 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
 
   def redirect_to_index(notice)
     redirect_to({ :action => 'index' }, :notice => notice)
+  end
+
+  def send_notification(wfh, employee)
+    data = wfh.notification_data
+    data[:link] = tools_wfhs_url
+    flowdock_api_url = "https://api.flowdock.com/v1/messages/team_inbox/#{FLOWDOCK_API_KEY}"
+    Downloader.post(flowdock_api_url, data)
   end
 end
