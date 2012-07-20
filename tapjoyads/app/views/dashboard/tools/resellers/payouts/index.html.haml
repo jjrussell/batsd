@@ -20,7 +20,7 @@
 
 #filtered.hidden
   Information updated in:
-  = select_date(@start_date || Time.zone.now, :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = select_date((@start_date || Time.zone.now), :order => [:year, :month], :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
   = submit_tag('Update', :id => :date_submit)
   = submit_tag('Reset', :id => :date_reset)
 #unfiltered.hidden
@@ -49,7 +49,7 @@
         %td= number_to_currency(reseller.pending_earnings / 100.0)
         %td= number_to_currency(reseller.pending_earnings / 100.0 - reseller.next_payout_amount / 100.0)
         %td= number_to_currency(reseller.next_payout_amount / 100.0)
-        %td= link_to 'Manage Payouts', tools_payouts_path(:reseller_id => reseller.id)
+        %td= link_to 'View Partners', tools_payouts_path(:reseller_id => reseller.id)
 
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
