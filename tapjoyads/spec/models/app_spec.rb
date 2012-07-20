@@ -341,54 +341,6 @@ describe App do
     end
   end
 
-  describe '#change_primary_app_metadata' do
-    before :each do
-      @app = FactoryGirl.create(:app)
-      @app.primary_app_metadata.update_attributes(:store_name => 'android.GooglePlay')
-      @app.add_app_metadata('android.GFan', 'xyz123', false)
-      @app.reload
-    end
-
-    context 'when to metadata is non existent' do
-      it "fails and returns false" do
-        metadata = AppMetadata.new(:store_name => 'iphone.AppStore', :store_id => 'xyz123')
-        status = @app.change_primary_app_metadata(@app.primary_app_metadata, metadata)
-        @app.reload
-        @app.primary_app_metadata.store_name.should == 'android.GooglePlay'
-        status.should be_false
-      end
-    end
-
-    context 'when from metadata is not primary metadata' do
-      it "fails and returns false" do
-        metadata = @app.app_metadatas.find_by_store_name('android.GFan')
-        status = @app.change_primary_app_metadata(metadata, @app.primary_app_metadata)
-        @app.reload
-        @app.primary_app_metadata.store_name.should == 'android.GooglePlay'
-        status.should be_false
-      end
-    end
-
-    context 'when both app metadatas are the same' do
-      it "fails and returns false" do
-        status = @app.change_primary_app_metadata(@app.primary_app_metadata, @app.primary_app_metadata)
-        @app.reload
-        @app.primary_app_metadata.store_name.should == 'android.GooglePlay'
-        status.should be_false
-      end
-    end
-
-    it "changes the primary metadata" do
-      metadata = @app.app_metadatas.find_by_store_name('android.GFan')
-      status = @app.change_primary_app_metadata(@app.primary_app_metadata, metadata)
-      @app.reload
-      @app.primary_app_metadata.should == metadata
-      metadata = @app.app_metadatas.find_by_store_name('android.GooglePlay')
-      @app.primary_app_metadata.should_not == metadata
-      status.should be_true
-    end
-  end
-
   context 'with Offers' do
     before :each do
       @app = FactoryGirl.create(:app)

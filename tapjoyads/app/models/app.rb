@@ -250,27 +250,6 @@ class App < ActiveRecord::Base
     true
   end
 
-  def change_primary_app_metadata(from, to)
-    return false unless primary_app_metadata == from && from.id != to.id
-
-    from_mapping = app_metadata_mappings.find_by_app_metadata_id(from.id)
-    to_mapping = app_metadata_mappings.find_by_app_metadata_id(to.id)
-    return false unless from_mapping.present? && to_mapping.present?
-
-    from_mapping.update_attributes(:is_primary => false)
-    to_mapping.update_attributes(:is_primary => true)
-    update_attributes(:name => to.name)
-
-    from_offers = from_mapping.offers
-    to_offers = to_mapping.offers
-    from_offers.each do |offer|
-      offer.update_from_app_metadata(to)
-    end
-    to_offers.each do |offer|
-      offer.update_from_app_metadata(from)
-    end
-  end
-
   def fill_app_store_data(data)
     self.name = data[:title]
   end
