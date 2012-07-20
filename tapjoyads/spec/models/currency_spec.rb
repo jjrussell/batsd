@@ -377,6 +377,17 @@ describe Currency do
         @currency.get_reward_amount(@offer).should == 50
       end
     end
+
+    context 'when given a low offer' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @offer.update_attributes({:payment => 1})
+      end
+
+      it 'rounds up to 1' do
+        @currency.get_reward_amount(@offer).should == 1
+      end
+    end
   end
 
   describe '#get_displayer_amount' do

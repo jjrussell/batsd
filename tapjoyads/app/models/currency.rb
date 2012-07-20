@@ -144,6 +144,11 @@ class Currency < ActiveRecord::Base
 
   def get_reward_amount(offer)
     return 0 unless rewarded? && offer.rewarded?
+    [get_raw_reward_value(offer), 1.0].max.to_i
+  end
+
+  def get_raw_reward_value(offer)
+    return 0 unless rewarded? && offer.rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value
@@ -152,7 +157,7 @@ class Currency < ActiveRecord::Base
     else
       reward_value = get_publisher_amount(offer)
     end
-    [reward_value * conversion_rate / 100.0, 1.0].max.to_i
+    reward_value  * conversion_rate / 100.0
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
