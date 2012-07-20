@@ -27,7 +27,8 @@ class FullscreenAdController < ApplicationController
       web_request.viewed_at = @now
       web_request.save
 
-      @offer.queue_impression_tracking_requests(:ip_address => ip_address) # for third party tracking vendors
+      # for third party tracking vendors
+      @offer.queue_impression_tracking_requests(:ip_address => ip_address, :udid => params[:udid])
     end
 
     render :layout => "blank" if @offer.featured_custom_creative?

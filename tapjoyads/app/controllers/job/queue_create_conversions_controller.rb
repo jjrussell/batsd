@@ -19,7 +19,10 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
 
     # for third party tracking vendors
     if reward.offer.conversion_tracking_urls.any? # only do click lookup if necessary
-      reward.offer.queue_conversion_tracking_requests(:timestamp => reward.created.to_i, :ip_address => reward.click.try(:ip_address))
+      reward.offer.queue_conversion_tracking_requests(
+        :timestamp  => reward.created.to_i,
+        :ip_address => reward.click.try(:ip_address),
+        :udid       => reward.udid)
     end
   end
 

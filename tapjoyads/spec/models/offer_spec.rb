@@ -1013,7 +1013,7 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]']
+      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]']
       now = Time.zone.now
       Timecop.freeze(now)
 
@@ -1030,7 +1030,8 @@ describe Offer do
       before :each do
         now = Time.zone.now
         @urls.each do |url|
-          result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '')
+          uid = Device.advertiser_device_id(nil, @offer.partner_id)
+          result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
@@ -1058,27 +1059,29 @@ describe Offer do
       before :each do
         @ts = 1.hour.from_now
         @ip_address = '127.0.0.1'
+        @udid = 'udid'
         @urls.each do |url|
-          result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address)
+          uid = Device.advertiser_device_id(@udid, @offer.partner_id)
+          result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address)
+          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address)
+          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address)
+          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
         end
       end
     end
