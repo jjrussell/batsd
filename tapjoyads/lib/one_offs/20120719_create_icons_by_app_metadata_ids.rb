@@ -29,7 +29,7 @@ class OneOffs
       end
     end
     puts "total app prcessed: #{app_count}, icon copied: #{icon_count}"
-    puts "End time: #{start_time}, end time : #{Time.now}"
+    puts "Start time: #{start_time}, end time : #{Time.now}"
   end
 
 end
