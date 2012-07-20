@@ -62,7 +62,7 @@ class AppMetadata < ActiveRecord::Base
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
 
     fill_app_store_data(data)
-    #save_screenshots(data[:screenshot_urls])
+    save_screenshots(data[:screenshot_urls])
     self.save!
 
     app_metadata_mappings.each do |mapping|
