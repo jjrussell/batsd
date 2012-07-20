@@ -51,7 +51,8 @@ class AppStore
       :name      => 'Google Play',
       :platform  => 'android',
       :store_url => 'market://search?q=STORE_ID',
-      :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID'
+      :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID',
+      :exclusive => true
     }),
     'android.GFan' => AppStore.new({
       :id        => 'android.GFan',
