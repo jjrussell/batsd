@@ -7,6 +7,7 @@ describe Job::QueueCreateConversionsController do
     publisher_app = FactoryGirl.create(:app)
     advertiser_app = FactoryGirl.create(:app)
     @offer = advertiser_app.primary_offer
+    @click = FactoryGirl.create(:click, :ip_address => '127.0.0.1')
     @reward = FactoryGirl.create(:reward,
       :type => 'offer',
       :publisher_app_id => publisher_app.id,
@@ -19,11 +20,26 @@ describe Job::QueueCreateConversionsController do
       :tapjoy_amount => 1)
     Reward.should_receive(:find).with('reward_key', :consistent => true).and_return(@reward)
     @reward.stub(:offer).and_return(@offer)
+    @reward.stub(:click).and_return(@click)
   end
 
-  it 'enqueues conversion tracking GET requests properly' do
-    @offer.should_receive(:queue_conversion_tracking_requests).with(@reward.created.to_i).once
+  context 'without conversion tracking urls' do
+    it 'does not enqueue conversion tracking GET requests' do
+      @offer.should_not_receive(:queue_conversion_tracking_requests)
 
-    get(:run_job, :message => 'reward_key')
+      get(:run_job, :message => 'reward_key')
+    end
+  end
+
+  context 'with conversion tracking urls' do
+    before :each do
+      @offer.update_attributes!(:conversion_tracking_urls => 'http://www.example.com')
+    end
+
+    it 'enqueues conversion tracking GET requests properly' do
+      @offer.should_receive(:queue_conversion_tracking_requests).with(:timestamp => @reward.created.to_i, :ip_address => @click.ip_address).once
+
+      get(:run_job, :message => 'reward_key')
+    end
   end
 end
