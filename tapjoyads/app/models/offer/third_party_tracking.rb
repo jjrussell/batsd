@@ -53,7 +53,7 @@ module Offer::ThirdPartyTracking
 
     def queue_#{method_name.sub(/urls$/, 'requests')}(*args)
       macros = args.extract_options!
-      macros[:uid] = Click.hashed_key(format_as_click_key(:udid => macros.delete(:udid)))
+      macros[:uid] = Device.advertiser_device_id(macros.delete(:udid), partner_id)
 
       send("#{method_name}", true, macros).each do |url|
         Downloader.queue_get_with_retry(url)

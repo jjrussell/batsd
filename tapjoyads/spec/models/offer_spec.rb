@@ -1030,7 +1030,7 @@ describe Offer do
       before :each do
         now = Time.zone.now
         @urls.each do |url|
-          uid = Click.hashed_key(@offer.format_as_click_key({}))
+          uid = Device.advertiser_device_id(nil, @offer.partner_id)
           result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
@@ -1061,7 +1061,7 @@ describe Offer do
         @ip_address = '127.0.0.1'
         @udid = 'udid'
         @urls.each do |url|
-          uid = Click.hashed_key(@offer.format_as_click_key(:udid => @udid))
+          uid = Device.advertiser_device_id(@udid, @offer.partner_id)
           result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
