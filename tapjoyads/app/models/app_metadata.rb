@@ -184,7 +184,7 @@ class AppMetadata < ActiveRecord::Base
   end
 
   def fill_app_store_data(data)
-    blacklist = AppStore.prepare_countries_blacklist(store_id, PLATFORMS[store_name])
+    blacklist = AppStore.prepare_countries_blacklist(store_id, store.platform)
     self.name                = data[:title]
     self.price               = (data[:price].to_f * 100).round
     self.description         = data[:description]
