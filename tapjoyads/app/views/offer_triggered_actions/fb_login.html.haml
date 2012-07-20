@@ -15,34 +15,44 @@
           $('.reward-button').click(function (event) {
             event.preventDefault();
 
-            FB.login(function (response) {
+            FB.getLoginStatus(function (response) {
               if (response.authResponse) {
-                FB.api('/me', function (response) {
-                  checkPermission(function () {
-                    $.ajax({
-                      url: redirectUrl,
-                      dataType: "jsonp",
-                      success: function (d) {
-                        if (d.success) {
-                          if (d.message) {
-                            $('.error').text(d.message).show();
-                          } else {
-                            window.location = completeActionUrl;
-                          }
-                        } else {
+                afterFbLogin();
+              } else {
+                FB.login(function (response) {
+                  if (response.authResponse) {
+                    afterFbLogin();
+                  } else {
+                    $('.error').text('Please grant us permissions.').show();
+                  }
+                }, {scope: 'publish_stream,email,user_birthday'});
+              }
+            });
+
+            function afterFbLogin () {
+              FB.api('/me', function (response) {
+                checkPermission(function () {
+                  $.ajax({
+                    url: redirectUrl,
+                    dataType: "jsonp",
+                    success: function (d) {
+                      if (d.success) {
+                        if (d.message) {
                           $('.error').text(d.message).show();
+                        } else {
+                          window.location = completeActionUrl;
                         }
-                      },
-                      error: function () {
-                        $('.error').text('There is an issue, please try again later.').show();
+                      } else {
+                        $('.error').text(d.message).show();
                       }
-                    });
+                    },
+                    error: function () {
+                      $('.error').text('There is an issue, please try again later.').show();
+                    }
                   });
                 });
-              } else {
-               $('.error').text('Please grant us permissions.').show();
-              }
-            }, {scope: 'publish_stream,email,user_birthday'});
+              });
+            }
           });
         });
       }
