@@ -79,7 +79,7 @@
       #content
         .flash#flash_notice
           Check out Tapjoy Insights, a special report covering the latest trends in mobile app marketing and monetization. 
-          = link_to "Download Now", "http://bitly.com/NDFU6F"
+          = link_to "Download Now", "http://bitly.com/NDFU6F", :target=>"_blank"
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:
