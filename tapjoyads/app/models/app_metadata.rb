@@ -125,20 +125,8 @@ class AppMetadata < ActiveRecord::Base
     categories.first.humanize if categories.present?
   end
 
-  def save_icon!(icon_src_blob)
-    primary_offer.save_icon!(icon_src_blob)
-  end
-
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
-  end
-
-  private
-
-  def save_icon(url)
-    return if url.blank? || offers.blank?
-    icon_src_blob = download_blob(url)
-    offers.first.save_icon!(icon_src_blob, id) if icon_src_blob
   end
 
   def save_screenshots(screenshot_urls)
@@ -156,6 +144,14 @@ class AppMetadata < ActiveRecord::Base
     delete_screenshots(self.get_screenshots - new_screenshots)
     self.screenshots = new_screenshots
     save if changed?
+  end
+
+  private
+
+  def save_icon(url)
+    return if url.blank? || offers.blank?
+    icon_src_blob = download_blob(url)
+    offers.first.save_icon!(icon_src_blob, id) if icon_src_blob
   end
 
   def download_blob(url)
