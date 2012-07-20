@@ -526,16 +526,32 @@ describe Currency do
       @currency.dashboard_app_currency_url.should ==  "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@currency.app_id}/currencies/#{@currency.id}"
     end
   end
-  
+
   describe '#cache_by_app_id' do
-    before :each do
-      @currency = FactoryGirl.create :currency
+    context 'tapjoy_enabled = true' do
+      before :each do
+        @currency = FactoryGirl.create(:currency)
+      end
+
+      it 'caches currencies before saving them' do
+        Currency.any_instance.should_receive(:run_callbacks).with(:cache)
+        Mc.should_receive(:distributed_put)
+        @currency.send(:cache_by_app_id)
+      end
     end
 
-    it 'caches currencies before saving them' do
-      Currency.any_instance.should_receive(:run_callbacks).with(:cache)
-      Mc.should_receive(:distributed_put)
-      @currency.send(:cache_by_app_id)
+    context 'tapjoy_enabled = false' do
+      before :each do
+        @currency = FactoryGirl.create(:currency)
+        @currency.tapjoy_enabled = false
+        @currency.save
+      end
+
+      it 'should have an empty array returned when tapjoy_enabled is false' do
+        Currency.any_instance.should_not_receive(:run_callbacks).with(:cache) #since blank array currencies
+        Mc.should_receive(:distributed_put).with("mysql.app_currencies.#{@currency.app_id}.#{Currency.acts_as_cacheable_version}", [], false, 1.day)
+        @currency.send(:cache_by_app_id)
+      end
     end
   end
 end
