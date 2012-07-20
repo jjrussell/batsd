@@ -271,28 +271,8 @@ class App < ActiveRecord::Base
     end
   end
 
-  def fill_app_store_data(data, app_metadata_id)
+  def fill_app_store_data(data)
     self.name = data[:title]
-    download_icon(data[:icon_url], app_metadata_id) unless new_record?
-  end
-
-  #TODO: associate icons with app metadata
-  def download_icon(url, app_metadata_id)
-    return if url.blank?
-
-    begin
-      icon_src_blob = Downloader.get(url, :timeout => 30)
-    rescue Exception => e
-      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
-      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
-    else
-      metadata = AppMetadata.find_by_id(app_metadata_id)
-      if metadata.present? && metadata.offers.present?
-        metadata.offers.each do |o|
-          o.save_icon!(icon_src_blob, app_metadata_id)
-        end
-      end
-    end
   end
 
   def get_icon_url(options = {})

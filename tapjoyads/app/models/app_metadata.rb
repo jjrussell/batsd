@@ -67,7 +67,8 @@ class AppMetadata < ActiveRecord::Base
 
     app_metadata_mappings.each do |mapping|
       if mapping.is_primary
-        mapping.app.fill_app_store_data(data, mapping.app_metadata.id)
+        mapping.app.fill_app_store_data(data)
+        mapping.app_metadata.download_icon(data[:icon_url]) unless mapping.app.new_record?
         mapping.app.save!
       end
     end
@@ -147,6 +148,21 @@ class AppMetadata < ActiveRecord::Base
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def download_icon(url)
+    return if url.blank?
+
+    begin
+      icon_src_blob = Downloader.get(url, :timeout => 30)
+    rescue Exception => e
+      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
+      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app_metadata_id #{id}. Error: #{e}")
+    else
+      if offers.present?
+        offers.first.save_icon!(icon_src_blob, id)
+      end
+    end
   end
 
   private
