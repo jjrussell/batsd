@@ -235,6 +235,6 @@ class OfferList
   def rejections_for(offer)
     offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
   end
 end

@@ -62,7 +62,7 @@ class VideoOffer < ActiveRecord::Base
 
   def has_video_button_for_store?(store_name)
     video_buttons.each do |button|
-      return true if button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name = store_name
+      return true if button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name == store_name
     end
     false
   end

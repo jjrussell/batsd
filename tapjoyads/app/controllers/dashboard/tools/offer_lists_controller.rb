@@ -3,7 +3,7 @@ class Dashboard::Tools::OfferListsController < Dashboard::DashboardController
   current_tab :tools
   filter_access_to :all
 
-  OFFER_LIST_KEYS = %w( type device_type platform_name udid source currency_id )
+  OFFER_LIST_KEYS = %w( type device_type platform_name udid source currency_id market_name )
 
   def index
     if params[:type]

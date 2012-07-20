@@ -97,7 +97,7 @@ module Offer::Rejecting
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist)
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
@@ -124,6 +124,7 @@ module Offer::Rejecting
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
+      { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
     ]
     reject_reasons(reject_functions)
   end
@@ -396,6 +397,7 @@ module Offer::Rejecting
   end
 
   def distribution_reject?(store_name)
+    return false unless store_name
     cached_item =  item_type.constantize.respond_to?(:find_in_cache) ? item_type.constantize.find_in_cache(item_id) : nil
     return cached_item.distribution_reject?(store_name) if cached_item.respond_to?('distribution_reject?')
     false
