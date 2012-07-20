@@ -37,8 +37,6 @@ class Reward < SimpledbShardedResource
 
   belongs_to :offer
 
-  belongs_to :offer
-
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
   end
