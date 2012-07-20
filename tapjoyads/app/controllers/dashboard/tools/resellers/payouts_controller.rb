@@ -8,6 +8,21 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
     @freeze_enabled = PayoutFreeze.enabled?
   end
 
+  def create
+    failed_payouts = []
+    @reseller = Reseller.find(params[:reseller_id])
+
+    @reseller.partners.each do |partner|
+      payout = partner.make_payout(partner.next_payout_amount / 100.0)
+      failed_payouts << partner.name unless payout.persisted?
+
+      log_activity(payout)
+      log_activity(partner) if payout.persisted?
+    end
+
+    render :json => { :success => failed_payouts.empty? }
+  end
+
   def export
     data = [
       "Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount," <<

@@ -297,7 +297,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
         namespace :resellers do
-          resources :payouts, :only => [:index] do
+          resources :payouts, :only => [:index, :create] do
             collection do
               get :export
             end

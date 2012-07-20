@@ -88,6 +88,7 @@ authorization do
     includes :payops
     has_permission_on :dashboard_tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
     has_permission_on :dashboard_tools_payouts, :to => [ :create, :confirm_payouts ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :create, :disable ]
   end
 

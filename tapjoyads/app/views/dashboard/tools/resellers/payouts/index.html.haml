@@ -49,7 +49,15 @@
         %td= number_to_currency(reseller.pending_earnings / 100.0)
         %td= number_to_currency(reseller.pending_earnings / 100.0 - reseller.next_payout_amount / 100.0)
         %td= number_to_currency(reseller.next_payout_amount / 100.0)
-        %td= link_to 'View Partners', tools_payouts_path(:reseller_id => reseller.id)
+        %td
+          - if true || permitted_to?(:create, :dashboard_tools_resellers_payouts)
+            = form_tag tools_resellers_payouts_path, :method => :post, :class => 'json' do
+              = hidden_field_tag :reseller_id, reseller.id
+              = submit_tag 'Create Payouts'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+              %span.status
+          - else
+            &nbsp;
 
 %div{ :class => 'popup', :style => 'display:none'}
 - content_for :page_javascript do
@@ -81,7 +89,7 @@
 
       $('#date').datepicker();
       $('form.json').submit(function() {
-        if (!confirm('Are you sure?')) { return false; }
+        if (!confirm('Are you sure? This will create payouts for all of this reseller\'s partners')) { return false; }
 
         var spinner = $(this).find('img.spinner');
         var submit = $(this).find('input.submit');
@@ -125,6 +133,9 @@
       border: 1px solid gray;
       padding: 5px;
       font-size: 12px;
+    }
+    table form.json {
+      display: inline;
     }
 
     span.enabled {
