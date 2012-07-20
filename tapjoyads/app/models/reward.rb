@@ -32,6 +32,10 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
   self.sdb_attr :mac_address
+  self.sdb_attr :device_type
+  self.sdb_attr :offerwall_rank
+
+  belongs_to :offer
 
   belongs_to :offer
 
