@@ -256,7 +256,7 @@ class App < ActiveRecord::Base
 
   def get_icon_url(options = {})
     if primary_app_metadata.present?
-      Offer.get_icon_url({ :icon_id => Offer.hashed_icon_id(primary_app_metadata.id) }.merge(options))
+      primary_app_metadata.get_icon_url(options)
     else
       Offer.get_icon_url({ :icon_id => Offer.hashed_icon_id(id) }.merge(options))
     end
