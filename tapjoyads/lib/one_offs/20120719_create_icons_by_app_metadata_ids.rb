@@ -3,12 +3,14 @@ class OneOffs
     app_count = 0
     icon_count = 0
     start_time = Time.now
-    
+    new_icon_ids = {}
     App.live.each do |app|
       puts "#{app_count}: #{app.name}"
       app_count += 1
       old_icon_id = Offer.hashed_icon_id(app.id)
       new_icon_id = Offer.hashed_icon_id(app.primary_app_metadata.id)
+      next if new_icon_ids[new_icon_id].present?
+
       bucket  = S3.bucket(BucketNames::TAPJOY)
 
       ['src', '256', '114', '57'].each do |path|
@@ -26,10 +28,12 @@ class OneOffs
             puts "error: App: #{app.name}, can't find icons/57/#{old_icon_id}.png"
           end
         end
+        new_icon_ids[new_icon_id] = true
       end
     end
     puts "total app prcessed: #{app_count}, icon copied: #{icon_count}"
     puts "Start time: #{start_time}, end time : #{Time.now}"
+    puts "#{new_icon_ids.keys}"
   end
 
 end
