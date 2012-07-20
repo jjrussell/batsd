@@ -31,8 +31,6 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
       render :action => "show" and return
     end
 
-    @app_metadata.download_icon(app_store_data[:icon_url])
-
     flash[:notice] = 'Distribution was successfully updated.'
     redirect_to app_app_metadata_path(:app_id => @app.id, :id => @app_metadata.id)
   end
@@ -65,8 +63,6 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
       flash.now[:error] = "Grabbing app data from app store failed. Please try again."
       render_new_on_error and return
     end
-
-    app_metadata.download_icon(app_store_data[:icon_url])
 
     flash[:notice] = 'Distribution was successfully created.'
     redirect_to app_app_metadata_path(:app_id => @app.id, :id => app_metadata.id)

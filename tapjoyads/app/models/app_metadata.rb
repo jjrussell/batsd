@@ -62,34 +62,17 @@ class AppMetadata < ActiveRecord::Base
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
 
     fill_app_store_data(data)
+    save_icon(data[:icon_url])
     save_screenshots(data[:screenshot_urls])
     self.save!
 
     app_metadata_mappings.each do |mapping|
       if mapping.is_primary
         mapping.app.fill_app_store_data(data)
-        mapping.app_metadata.download_icon(data[:icon_url]) unless mapping.app.new_record?
         mapping.app.save!
       end
     end
     data
-  end
-
-  def save_screenshots(screenshot_urls)
-    return if screenshot_urls.nil? || screenshot_urls.empty?
-    new_screenshots = []
-    screenshot_urls.each do |screenshot_url|
-      screenshot_blob = download_blob(screenshot_url)
-      next if screenshot_blob.nil?
-
-      screenshot_hash = hashed_blob(Digest::MD5.hexdigest(screenshot_blob))
-      new_screenshots << screenshot_hash
-      upload_screenshot(screenshot_blob, screenshot_hash) unless self.get_screenshots.include?(screenshot_hash)
-    end
-
-    delete_screenshots(self.get_screenshots - new_screenshots)
-    self.screenshots = new_screenshots
-    save if changed?
   end
 
   def hashed_blob(checksum)
@@ -150,22 +133,30 @@ class AppMetadata < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
   end
 
-  def download_icon(url)
-    return if url.blank?
+  private
 
-    begin
-      icon_src_blob = Downloader.get(url, :timeout => 30)
-    rescue Exception => e
-      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
-      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app_metadata_id #{id}. Error: #{e}")
-    else
-      if offers.present?
-        offers.first.save_icon!(icon_src_blob, id)
-      end
-    end
+  def save_icon(url)
+    return if url.blank? || offers.blank?
+    icon_src_blob = download_blob(url)
+    offers.first.save_icon!(icon_src_blob, id) if icon_src_blob
   end
 
-  private
+  def save_screenshots(screenshot_urls)
+    return if screenshot_urls.nil? || screenshot_urls.empty?
+    new_screenshots = []
+    screenshot_urls.each do |screenshot_url|
+      screenshot_blob = download_blob(screenshot_url)
+      next if screenshot_blob.nil?
+
+      screenshot_hash = hashed_blob(Digest::MD5.hexdigest(screenshot_blob))
+      new_screenshots << screenshot_hash
+      upload_screenshot(screenshot_blob, screenshot_hash) unless self.get_screenshots.include?(screenshot_hash)
+    end
+
+    delete_screenshots(self.get_screenshots - new_screenshots)
+    self.screenshots = new_screenshots
+    save if changed?
+  end
 
   def download_blob(url)
     return nil if url.blank?
