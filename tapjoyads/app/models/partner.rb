@@ -258,6 +258,20 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def make_payout(amount)
+    cutoff_date = self.payout_cutoff_date - 1.day
+    amount = (amount.to_f * 100).round
+    payout = self.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+
+    if payout.save
+      payout_threshold = payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE
+      self.payout_threshold = payout_threshold > Partner::BASE_PAYOUT_THRESHOLD ? payout_threshold : Partner::BASE_PAYOUT_THRESHOLD
+      self.save
+    end
+
+    payout
+  end
+
   def reset_balances
     Partner.transaction do
       reload(:lock => 'FOR UPDATE')

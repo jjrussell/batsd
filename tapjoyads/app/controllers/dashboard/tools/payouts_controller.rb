@@ -27,17 +27,11 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
 
   def create
     partner = Partner.find(params[:partner_id])
-    cutoff_date = partner.payout_cutoff_date - 1.day
-    amount = (params[:amount].to_f * 100).round
-    payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    payout = partner.make_payout(params[:amount])
     log_activity(payout)
-    if (payout_saved = payout.save)
-      log_activity(partner)
-      payout_threshold = payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE
-      partner.payout_threshold = payout_threshold > Partner::BASE_PAYOUT_THRESHOLD ? payout_threshold : Partner::BASE_PAYOUT_THRESHOLD
-      partner.save
-    end
-    render :json => { :success => payout_saved }
+    log_activity(partner) if payout.persisted?
+
+    render :json => { :success => payout.persisted? }
   end
 
   def confirm_payouts
