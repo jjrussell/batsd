@@ -13,9 +13,9 @@ class Job::QueueMailChimpUpdatesController < Job::SqsReaderController
       MailChimp.update(json["email"], json["merge_tags"])
     # todo: remove "create" in a day or so
     when "create"
-      MailChimp.add_partner(Partner.find_by_id(json["partner_id"]))
+      MailChimp.add_partner(Partner.find_by_id!(json["partner_id"]))
     when "add_user"
-      MailChimp.add_user(User.find_by_id(json["user_id"]))
+      MailChimp.add_user(User.find_by_id!(json["user_id"]))
     end
   end
 
