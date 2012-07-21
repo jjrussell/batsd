@@ -24,8 +24,6 @@
         %tr
           %th Market
           %td= select_tag :store_name, options_for_select(@store_options, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
-        - if permitted_to?(:edit, :statz) && @app.platform == 'iphone'
-          = render :partial => 'select_country'
         %tr
           %th
             Name
