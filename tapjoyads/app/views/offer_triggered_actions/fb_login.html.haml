@@ -23,7 +23,7 @@
                   if (response.authResponse) {
                     afterFbLogin();
                   } else {
-                    $('.error').text('Please grant us permissions.').show();
+                    $('.error').text('Please login Facebook and grant us permissions.').show();
                   }
                 }, {scope: 'publish_stream,email,user_birthday'});
               }
