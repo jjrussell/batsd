@@ -27,7 +27,7 @@ class UserEvent < WebRequest
     # The :ALTERNATIVES map consists of keys with possible alternates and arrays of valid alternatives to that key
 
     # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
-    
+
     :invalid => {
     },
 
@@ -83,7 +83,7 @@ class UserEvent < WebRequest
   end
 
   def self.generate_verifier_key(app_id, device_id, secret_key, event_type_id, event_data = {})
-    verifier_array = [ app_id, device_id, secret_key, event_type_id ] 
+    verifier_array = [ app_id, device_id, secret_key, event_type_id ]
     if event_data.present?
       event_data.keys.sort.map { |key| verifier_array << event_data[key] }
     end

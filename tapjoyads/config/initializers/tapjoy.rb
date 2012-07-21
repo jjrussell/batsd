@@ -82,7 +82,8 @@ RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems 
 # Pre-load all of our models to prevent issues with Marshal
 # We do this last to make sure everything is initialized that models may require
 
-Dir["#{Rails.root}/app/models/*.rb"].each do |file|
-  model = File.basename(file).gsub(/\.rb$/, '')
+model_dir = "#{Rails.root}/app/models/"
+Dir[File.join(model_dir, "**/*.rb")].each do |file|
+  model = file.gsub(model_dir, "").gsub(/\.rb$/, '')
   require_dependency model
 end

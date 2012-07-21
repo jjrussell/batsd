@@ -29,6 +29,18 @@ class Device < SimpledbShardedResource
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
 
+  # We want a consistent "device id" to report to partners/3rd parties,
+  # but we don't want to reveal internal IDs. We also want to make
+  # the values unique between partners so that no 'collusion' can
+  # take place.
+  def self.advertiser_device_id(udid, advertiser_partner_id)
+    Digest::MD5.hexdigest("#{udid}.#{advertiser_partner_id}" + UDID_SALT)
+  end
+
+  def advertiser_device_id(advertiser_partner_id)
+    Device.advertiser_device_id(key, advertiser_partner_id)
+  end
+
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
