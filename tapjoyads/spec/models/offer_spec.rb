@@ -235,6 +235,16 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
 
+  it 'rejects rewarded offers that are close to zero' do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.send(:miniscule_reward_reject?, currency).should be_true
+  end
+
+  it "doesn't reject rewarded offers that are close to 1" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 18})
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
+
   it "excludes the appropriate columns for the for_offer_list scope" do
     offer = Offer.for_offer_list.find(@offer.id)
     fetched_cols = offer.attribute_names & Offer.column_names
