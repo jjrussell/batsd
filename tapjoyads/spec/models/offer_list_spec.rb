@@ -129,36 +129,73 @@ describe OfferList do
     context 'first page' do
 
       context 'with a deeplink offer' do
-        before :each do
-          @deeplink = @currency.deeplink_offer
-          @deeplink.partner.balance = 100
-          OptimizedOfferList.stub(:get_offer_list).and_return([])
-          Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+
+        context 'balance > 0' do
+          before :each do
+            @deeplink = @currency.deeplink_offer
+            @deeplink.partner.balance = 100
+            OptimizedOfferList.stub(:get_offer_list).and_return([])
+            Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+          end
+
+          it 'returns the deeplink offer in the offerwall' do
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
+          end
+
+          it 'correctly inserts deeplink offers in small lists' do
+            RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            offers, remaining = list.get_offers(0,5)
+            offers.should == [@deeplink.primary_offer]
+          end
+
+          it 'skips the deeplink offer when not on the offerwall' do
+            list = OfferList.new({:source => 'featured'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..4]
+          end
+
+          it 'skips the deeplink offer on android' do
+            list = OfferList.new({:device_type => 'android'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..4]
+          end
         end
 
-        it 'returns the deeplink offer in the offerwall' do
-          list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 5)
-          offers.should == @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
-        end
+        context 'balance = 0' do
+          before :each do
+            @deeplink = @currency.deeplink_offer
+            @deeplink.partner.balance = 0
+            OptimizedOfferList.stub(:get_offer_list).and_return([])
+            Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+          end
 
-        it 'correctly inserts deeplink offers in small lists' do
-          RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
-          list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          offers, remaining = list.get_offers(0,5)
-          offers.should == [@deeplink.primary_offer]
-        end
+          it 'returns the deeplink offer in the offerwall' do
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
+          end
 
-        it 'skips the deeplink offer when not on the offerwall' do
-          list = OfferList.new({:source => 'featured'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 5)
-          offers.should == @offers[0..4]
-        end
+          it 'correctly inserts deeplink offers in small lists' do
+            RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            offers, remaining = list.get_offers(0,5)
+            offers.should == [@deeplink.primary_offer]
+          end
 
-        it 'skips the deeplink offer on android' do
-          list = OfferList.new({:device_type => 'android'}.merge(@base_params))
-          offers, remaining = list.get_offers(0, 5)
-          offers.should == @offers[0..4]
+          it 'skips the deeplink offer when not on the offerwall' do
+            list = OfferList.new({:source => 'featured'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..4]
+          end
+
+          it 'skips the deeplink offer on android' do
+            list = OfferList.new({:device_type => 'android'}.merge(@base_params))
+            offers, remaining = list.get_offers(0, 5)
+            offers.should == @offers[0..4]
+          end
         end
       end
 

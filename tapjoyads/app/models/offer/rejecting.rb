@@ -92,7 +92,7 @@ module Offer::Rejecting
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce) =>
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce),
     # Fan Samsung on Facebook
-    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) => 
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) =>
     %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79),
   }
 
@@ -133,7 +133,7 @@ module Offer::Rejecting
     reject_reasons(reject_functions)
   end
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, budget)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
