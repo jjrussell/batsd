@@ -56,7 +56,7 @@ class ActionOffer < ActiveRecord::Base
     offer.device_types = app_metadata.get_offer_device_types
     offer.price        = offer_price(app_metadata)
     offer.bid          = offer.min_bid
-    offer.name_suffix  = 'action (#{app_metadata.store_name})'
+    offer.name_suffix  = "action (#{app_metadata.store.name})"
     offer.app_metadata = app_metadata
     offer.save!
   end
