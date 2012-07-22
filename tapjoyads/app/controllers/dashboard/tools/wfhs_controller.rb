@@ -46,7 +46,7 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
     @wfh = Wfh.new(params[:wfh])
 
     if @wfh.save
-      send_notification(@wfh, current_user.employee) if Rails.env.production?
+      send_notification(@wfh) if Rails.env.production?
       redirect_to_index('Wfh was successfully created.')
     else
       render :action => "new"
@@ -78,7 +78,7 @@ class Dashboard::Tools::WfhsController < Dashboard::DashboardController
     redirect_to({ :action => 'index' }, :notice => notice)
   end
 
-  def send_notification(wfh, employee)
+  def send_notification(wfh)
     data = wfh.notification_data
     data[:link] = tools_wfhs_url
     flowdock_api_url = "https://api.flowdock.com/v1/messages/team_inbox/#{FLOWDOCK_API_KEY}"
