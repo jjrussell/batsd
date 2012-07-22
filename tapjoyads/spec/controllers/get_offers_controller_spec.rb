@@ -130,6 +130,7 @@ describe GetOffersController do
         publisher_app.add_app_metadata('android.GFan', 'def789')
         @currency = FactoryGirl.create(:currency, :app => publisher_app)
         @offer1 = FactoryGirl.create(:generic_offer).primary_offer
+        @offer1.update_attributes(:payment => 10)
         @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
         app = FactoryGirl.create(:app, :platform => 'android')
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
@@ -144,6 +145,7 @@ describe GetOffersController do
       end
 
       it 'returns all offers by default' do
+        AppStore.find('android.GooglePlay').stub(:exclusive?).and_return(false)
         get(:index, @params)
         assigns(:offer_list).should == [@offer1, @offer2, @offer3]
       end
