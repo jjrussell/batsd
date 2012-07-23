@@ -51,13 +51,14 @@ class ActionOffer < ActiveRecord::Base
   end
 
   def create_offer_from_app_metadata(app_metadata)
-    offer              = build_offer
-    offer.url          = app_metadata.store_url
-    offer.device_types = app_metadata.get_offer_device_types
-    offer.price        = offer_price(app_metadata)
-    offer.bid          = offer.min_bid
-    offer.name_suffix  = "action (#{app_metadata.store.name})"
-    offer.app_metadata = app_metadata
+    offer                  = build_offer
+    offer.url              = app_metadata.store_url
+    offer.device_types     = app_metadata.get_offer_device_types
+    offer.price            = offer_price(app_metadata)
+    offer.bid              = offer.min_bid
+    offer.name_suffix      = "action (#{app_metadata.store.name})"
+    offer.icon_id_override = app_metadata.id
+    offer.app_metadata     = app_metadata
     offer.save!
   end
 
@@ -86,20 +87,19 @@ class ActionOffer < ActiveRecord::Base
     offer.name             = name
     offer.instructions     = instructions
     offer.third_party_data = prerequisite_offer_id
-    offer.icon_id_override = app_id
-
     offer
   end
 
   def create_primary_offer
-    offer              = build_offer
-    offer.id           = id
-    offer.url          = app.store_url
-    offer.device_types = app.primary_offer.device_types
-    offer.price        = offer_price
-    offer.bid          = offer.min_bid
-    offer.name_suffix  = 'action'
-    offer.app_metadata = app.primary_app_metadata if app.primary_app_metadata
+    offer                  = build_offer
+    offer.id               = id
+    offer.url              = app.store_url
+    offer.device_types     = app.primary_offer.device_types
+    offer.price            = offer_price
+    offer.bid              = offer.min_bid
+    offer.name_suffix      = 'action'
+    offer.icon_id_override = app.primary_app_metadata.id
+    offer.app_metadata     = app.primary_app_metadata if app.primary_app_metadata
     offer.save!
   end
 
