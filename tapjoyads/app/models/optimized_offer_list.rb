@@ -45,11 +45,17 @@ class OptimizedOfferList
       cache_key = cache_key_for_options(options_for_s3_key(key))
       offers_json = s3_json_offer_data(key)
       Mc.distributed_delete(cache_key) and return if offers_json['enabled'] == 'false'
+      match_result = key.match(/^([0-9]+)\..*/)
+      algorithm_id = (match_result && (match_result.size > 1)) ? match_result[1].to_i : Offer::EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
 
       offers = offers_json['offers'].collect do |offer_hash|
         begin
           Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
             offer.rank_score = offer_hash['rank_score']
+            unless algorithm_id == EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
+              optimization_info = offer.required_optimization_info(algorithm_id, offer_hash)
+              offer.show_rate = offer.calculate_show_rate(algorithm_id, optimization_info, false)
+            end
           end.for_caching
         rescue
           puts "Error with #{offer_hash.inspect}" and next
