@@ -82,6 +82,8 @@
           = error_message_on @credit_card, :amount
       %tr
         %td{ :colspan => 2 }= f.submit 'Add Funds'
+  %P
+    Warning! Please note any active campaigns will immediately begin delivering when you add funds.
 
 .hidden
   #help_credit_card_content{ :name => 'Credit Card' } The credit card you wish you use.
