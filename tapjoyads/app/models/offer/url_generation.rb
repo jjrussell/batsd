@@ -38,6 +38,8 @@ module Offer::UrlGeneration
 
     if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
       "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Protocol Handler'
+      "#{API_URL}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
     else
       "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
     end

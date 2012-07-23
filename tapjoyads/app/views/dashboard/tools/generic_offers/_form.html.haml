@@ -44,4 +44,9 @@
         = error_message_on @generic_offer, :trigger_action
         .inline_help Specify the action need to be triggered, please keep this field empty if it is a regular generic offer.
     %tr
+      %th= f.label :protocol_handler
+      %td
+        = f.text_field :protocol_handler, :size => 50
+        = error_message_on @generic_offer, :protocol_handler
+    %tr
       %td{ :colspan => 2 }= f.submit @generic_offer.new_record? ? 'Create Generic Offer' : 'Update Generic Offer'

@@ -6,8 +6,8 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      var iURL = "#{@impression_tracking_url.first}",
-          src = '<iframe src="'+ iURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      var ctURL = "#{@click_tracking_url.first}",
+          src = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
       $("body").append(src);
       window.cURL = "#{@conversion_tracking_url.first}";
       window.rURL = "#{@complete_action_url}";

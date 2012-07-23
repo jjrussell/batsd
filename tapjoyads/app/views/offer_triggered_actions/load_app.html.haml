@@ -1,0 +1,38 @@
+- @load_facebook = false
+- @load_facebook_sdk = false
+
+- @page_title = "#{t('text.instructions.title')} - #{@offer.name}"
+
+.ui-joy-mask
+  .ui-joy-panel#panel
+    .earn-block
+      .reward
+        %span.earn= t('text.instructions.earn_currency_html', :amount_and_currency => '')
+        %span.big= @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
+        %span.points= @currency.name
+        %span.free= visual_cost(@offer)
+
+    .grey-box
+      .facebook
+        = image_tag @offer.get_icon_url(:source => :cloudfront, :size => '57')
+      .heading= @offer.name
+    .instructions
+      %ul.steps
+        %li
+          = @offer.instructions
+
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var ctURL = "#{@click_tracking_url.first}",
+          src = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      $("body").append(src);
+      window.cURL = "#{@conversion_tracking_url.first}";
+      window.rURL = "#{@complete_action_url}";
+      var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
+      fbOpts["subscribeEdgeCreate"] = true;
+      if (fbOpts) {
+        initiateFacebook(fbOpts);
+      }
+    });

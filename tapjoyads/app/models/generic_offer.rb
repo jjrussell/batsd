@@ -23,7 +23,7 @@ class GenericOffer < ActiveRecord::Base
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
-  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like', 'Protocol Handler' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
