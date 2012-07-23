@@ -16,14 +16,14 @@ class OneOffs
       ['src', '256', '114', '57'].each do |path|
         origin_icon_obj = bucket.objects["icons/#{path}/#{old_icon_id}.jpg"]
         begin
-          bucket.objects["icons/#{path}/#{old_icon_id}.jpg"].copy_to(bucket.objects["icons/#{path}/#{new_icon_id}.jpg"],  {:acl => :public_read })
+          bucket.objects["icons/#{path}/#{old_icon_id}.jpg"].copy_to(bucket.objects["icons/#{path}/#{new_icon_id}.jpg"], { :acl => :public_read })
         rescue
           puts "error: App: #{app.name}, can't find icons/#{path}/#{old_icon_id}.jpg"
         end
 
         if path == '57'
           begin
-            bucket.objects["icons/57/#{old_icon_id}.png"].copy_to(bucket.objects["icons/57/#{new_icon_id}.png"],  {:acl => :public_read })
+            bucket.objects["icons/57/#{old_icon_id}.png"].copy_to(bucket.objects["icons/57/#{new_icon_id}.png"], { :acl => :public_read })
           rescue
             puts "error: App: #{app.name}, can't find icons/57/#{old_icon_id}.png"
           end
