@@ -98,7 +98,7 @@ module Offer::ShowRateAlgorithms
   end
 
   def calcuate_show_rate_101(optimization_info={}, log_info=true)
-    unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_converion_rate.present?
+    unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"
     end
 
