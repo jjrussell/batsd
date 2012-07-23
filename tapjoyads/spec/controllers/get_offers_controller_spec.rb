@@ -177,6 +177,7 @@ describe GetOffersController do
 
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
+      json_offer['isFree'     ].should == true
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
       json_offer['Payout'     ].should == 5
