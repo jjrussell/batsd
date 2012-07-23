@@ -826,7 +826,7 @@ class Offer < ActiveRecord::Base
 
   def cleanup_url
     if (url_overridden_changed? || url_changed?) && !url_overridden?
-      if item_type == 'App' && app_metadata
+      if %w(App ActionOffer).include?(item_type) && app_metadata
         self.url = app_metadata.store_url
       elsif %w(App ActionOffer RatingOffer).include?(item_type)
         self.url = self.item.store_url
