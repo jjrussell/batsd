@@ -133,7 +133,7 @@ module Offer::Rejecting
     reject_reasons(reject_functions)
   end
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, budget)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     selective_opt_out_reject?(device) ||
@@ -162,7 +162,7 @@ module Offer::Rejecting
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
-    partner_has_no_funds? ||
+    partner_has_no_funds?(currency) ||
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     miniscule_reward_reject?(currency)
   end
@@ -207,8 +207,12 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
-  def partner_has_no_funds?
-    partner_balance < 0
+  def partner_has_no_funds?(currency)
+    not_charging_and_no_balance?(currency) ? false : partner_balance <= 0
+  end
+
+  def not_charging_and_no_balance?(currency)
+    !currency.charges?(self) && partner_balance <= 0
   end
 
   private

@@ -83,10 +83,10 @@ class OfferList
       weights = selectable_offers.collect { |o| o.rank_score + weight_scale }
       offer = selectable_offers.weighted_rand(weights)
       return offer if offer.nil?
-      if @currency.get_advertiser_amount(offer) == 0
-        postcache_reject?(offer, true) ? selectable_offers.delete(offer) : offer
+      if postcache_reject?(offer)
+        selectable_offers.delete(offer)
       else
-        postcache_reject?(offer) ? selectable_offers.delete(offer) : offer
+        return offer
       end
     end
   end
@@ -104,18 +104,10 @@ class OfferList
       optimized_offers.each_with_index do |offer, i|
         return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
 
-        if @currency.get_advertiser_amount(offer) == 0
-          unless optimization_reject?(offer, true) || found_offer_item_ids.include?(offer.item_id)
-            returned_offers << offer if found_offers >= start
-            found_offer_item_ids << offer.item_id
-            found_offers += 1
-          end
-        else
-          unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
-            returned_offers << offer if found_offers >= start
-            found_offer_item_ids << offer.item_id
-            found_offers += 1
-          end
+        unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
+          returned_offers << offer if found_offers >= start
+          found_offer_item_ids << offer.item_id
+          found_offers += 1
         end
       end
     end
@@ -123,18 +115,10 @@ class OfferList
     augmented_offer_list.each_with_index do |offer, i|
       return [ returned_offers, augmented_offer_list.length - i ] if found_offers >= offers_to_find
 
-      if @currency.get_advertiser_amount(offer) == 0
-        unless postcache_reject?(offer, true) || found_offer_item_ids.include?(offer.item_id)
-          returned_offers << offer if found_offers >= start
-          found_offer_item_ids << offer.item_id
-          found_offers += 1
-        end
-      else
-        unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
-          returned_offers << offer if found_offers >= start
-          found_offer_item_ids << offer.item_id
-          found_offers += 1
-        end
+      unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
+        returned_offers << offer if found_offers >= start
+        found_offer_item_ids << offer.item_id
+        found_offers += 1
       end
     end
 
@@ -204,14 +188,8 @@ class OfferList
 
     if @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
       rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id) #BUG: should be @publisher_app.enabled_rating_offer_id
-      if @currency.get_advertiser_amount(rate_app_offer) == 0
-        if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer, true)
-          all_offers << rate_app_offer
-        end
-      else
-        if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer, true)
-          all_offers << rate_app_offer
-        end
+      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
+        all_offers << rate_app_offer
       end
     end
 
@@ -219,7 +197,7 @@ class OfferList
 
     if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer, true)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
         all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
       end
     end
@@ -227,14 +205,14 @@ class OfferList
     all_offers.compact
   end
 
-  def optimization_reject?(offer, budget = false)
-    postcache_reject?(offer, budget) || trueoffer.hide_rewarded_app_installs_reject?(@hide_rewarded_app_installs)
+  def optimization_reject?(offer)
+    postcache_reject?(offer) || offer.hide_rewarded_app_installs_reject?(@hide_rewarded_app_installs)
   end
 
-  def postcache_reject?(offer, budget = false)
+  def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, budget)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
   end
 
   def can_be_promoted?(offer)

@@ -5,6 +5,7 @@ describe GetOffersController do
 
   describe '#index' do
     before :each do
+      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
       @currency = FactoryGirl.create(:currency)
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
@@ -151,6 +152,7 @@ describe GetOffersController do
 
   describe '#webpage' do
     before :each do
+      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
@@ -209,6 +211,7 @@ describe GetOffersController do
 
   describe '#featured' do
     before :each do
+      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
       RailsCache.stub(:get).and_return(nil)
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
@@ -324,6 +327,7 @@ describe GetOffersController do
 
   describe '#setup' do
     before :each do
+      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = FactoryGirl.create(:app).primary_offer
