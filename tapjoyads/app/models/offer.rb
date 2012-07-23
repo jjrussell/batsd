@@ -458,24 +458,6 @@ class Offer < ActiveRecord::Base
     Mc.delete("icon.s3.#{id}")
     paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
-
-    if item_type == 'App' && app.present? && app.primary_app_metadata.present?
-      app_metadata_id = app.primary_app_metadata.id
-      meta_icon_id = Offer.hashed_icon_id(app_metadata_id)
-      meta_src_icon_obj = bucket.objects["icons/src/#{meta_icon_id}.jpg"]
-      existing_meta_icon_blob = meta_src_icon_obj.exists? ? meta_src_icon_obj.read : ''
-
-      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read }) 
-      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-
-      Mc.delete("icon.s3.#{app_metadata_id}")
-      paths = ["icons/256/#{meta_icon_id}.jpg", "icons/114/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.png"]
-      CloudFront.invalidate(id, paths) if existing_meta_icon_blob.present?
-    end
-
   end
 
   def save(perform_validation = true)
