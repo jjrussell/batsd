@@ -15,7 +15,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     offer = Offer.find_in_cache(click.offer_id, true)
     currency = Currency.find_in_cache(click.currency_id, true)
 
-    if click.installed_at? || (offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) ||
+    if click.installed_at? ||
+      (!click.force_convert && offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) ||
       (!click.force_convert && click.block_reason?)
       return
     end
@@ -105,6 +106,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
     reward.mac_address            = click.mac_address
+    reward.device_type            = click.device_type
+    reward.offerwall_rank         = click.offerwall_rank
 
     begin
       reward.save!(:expected_attr => { 'type' => nil })
@@ -164,6 +167,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.exp               = reward.exp
     web_request.viewed_at         = reward.viewed_at
     web_request.click_key         = reward.click_key
+    web_request.device_type       = reward.device_type
+    web_request.offerwall_rank    = reward.offerwall_rank
     web_request.save
   end
 

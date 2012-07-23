@@ -67,7 +67,7 @@
         month: '<div class="ui-joy-datepicker-month mon{0}" data-month="{0}"><a href="javascript:void(0);">{1}</a></div>',
         day: '<div class="ui-joy-datepicker-day day{0}" data-day="{0}"><a href="javascript:void(0);">{0}</a></div>',
         year: '<div class="ui-joy-datepicker-year y{0} {2}" data-year="{1}"><a href="javascript:void(0);">{1}</a></div>'
-      }      
+      }
     }
   };
 

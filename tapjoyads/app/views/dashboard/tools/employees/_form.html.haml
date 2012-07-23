@@ -10,7 +10,8 @@
         = f.check_box(:active)
   .field
     = f.label(:office)
-    = f.select(:office, options_for_select(Employee::OFFICES, @employee.office))
+    - offices = Employee::OFFICES | [@employee.office]
+    = f.select(:office, options_for_select(offices, @employee.office))
     = error_message_on @employee, :office
   - if permitted_to?(:index, :dashboard_tools_employees)
     .field

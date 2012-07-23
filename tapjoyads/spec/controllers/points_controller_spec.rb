@@ -3,7 +3,6 @@ require 'spec_helper'
 describe PointsController do
   describe '#award' do
     before :each do
-      enable_sdb
       @app = FactoryGirl.create(:app)
       @currency = FactoryGirl.create(:currency, :id => @app.id)
       @params = {

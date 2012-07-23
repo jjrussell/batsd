@@ -22,6 +22,8 @@ public/assets/*
 **.orig
 .rspec
 public/translations
+cookbooks
+.vagrant
 
 # Bundler
 vendor/bundle

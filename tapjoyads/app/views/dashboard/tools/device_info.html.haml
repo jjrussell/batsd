@@ -153,7 +153,6 @@
           %td User
         %td Resolve
         %td Details
-        %td Click ID
     %tbody
       - @clicks.each do |click|
         - reward = @rewards[click.reward_key]
@@ -191,13 +190,14 @@
                 %li= "Reward ID: #{reward.key}"
               %li= link_to('show more', '#', :class => 'show-click-detail')
               - click_info_ul(click, reward)
-          %td
-            = clippy(click.key)
       %tr
-        %td{:colspan => 7}
-          - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
-          = button_to text, '#', :class => 'next-clicks'
-          * Please note that there may not be more clicks.
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
+          %td{:colspan => 7}
+        - else
+          %td{:colspan => 6}
+        - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
+        = button_to text, '#', :class => 'next-clicks'
+        * Please note that there may not be more clicks.
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.

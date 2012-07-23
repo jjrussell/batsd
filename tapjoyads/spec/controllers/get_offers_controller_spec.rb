@@ -32,7 +32,9 @@ describe GetOffersController do
     end
 
     it 'should queue up tracking url calls' do
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address => @controller.send(:ip_address),
+        :udid       => 'stuff').once
 
       get(:index, @params)
     end
@@ -117,6 +119,7 @@ describe GetOffersController do
 
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
+      json_offer['isFree'     ].should == true
       json_offer['Amount'     ].should == '5'
       json_offer['Name'       ].should == @offer.name
       json_offer['Payout'     ].should == 5
@@ -181,7 +184,9 @@ describe GetOffersController do
 
     it 'should queue up tracking url calls' do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address => @controller.send(:ip_address),
+        :udid       => 'stuff').once
 
       get(:webpage, @params)
     end

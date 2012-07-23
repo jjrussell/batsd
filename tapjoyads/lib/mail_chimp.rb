@@ -44,7 +44,7 @@ class MailChimp
   end
 
   def self.add_user(user)
-    return unless user.can_email
+    return unless user && user.can_email
     partner = user.partners.first
     name = partner.contact_name
     name = user.email if name.blank?
