@@ -1,6 +1,8 @@
 class UserEvent < WebRequest
   include TypeConverters
 
+  EVENT_PATH = "event"
+
   EVENT_TYPE_KEYS = [
     :invalid, :iap, :shutdown
   ]
@@ -73,13 +75,17 @@ class UserEvent < WebRequest
 
     super()
     validate!(event_type, event_data)
-    self.type = event_type
+    self.type = "event_#{event_type}"
 
     event_data.each do |field, value|
       send("#{field}=", value)
     end
 
     # MAKE SURE TO CALL #.put_values() AFTER #.new() TO POPULATE GENERAL WEB REQUEST PARAMS BEFORE SAVING!!!
+  end
+
+  def put_values(params, ip_address, geoip_data, user_agent)
+    super(EVENT_PATH, params, ip_address, geoip_data, user_agent)
   end
 
   def self.generate_verifier_key(app_id, device_id, secret_key, event_type_id, event_data = {})

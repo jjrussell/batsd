@@ -7,7 +7,7 @@ class UserEventsController < ApplicationController
   def create
     begin
       event = UserEvent.new(@type, @event_data)
-      event.put_values(nil, params, ip_address, geoip_data, request.headers['User-Agent'])
+      event.put_values(params, ip_address, geoip_data, request.headers['User-Agent'])
       event.save
       render :text => "#{I18n.t('user_event.success.created')}\n", :status => :ok
     rescue UserEvent::UserEventInvalid => error
