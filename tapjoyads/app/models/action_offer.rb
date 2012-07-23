@@ -64,7 +64,7 @@ class ActionOffer < ActiveRecord::Base
 
   def update_offers_for_app_metadata(old_app_metadata, new_app_metadata)
     offers.find_all_by_app_metadata_id(old_app_metadata.id).each do |offer|
-      offer.name_suffix = 'action (#{new_app_metadata.store_name})' if offer.name_suffix == 'action (#{old_app_metadata.store_name})'
+      offer.name_suffix = "action (#{new_app_metadata.store_name})" if offer.name_suffix == "action (#{old_app_metadata.store_name})"
       offer.update_from_app_metadata(new_app_metadata)
     end
   end
@@ -97,7 +97,7 @@ class ActionOffer < ActiveRecord::Base
     offer.device_types     = app.primary_offer.device_types
     offer.price            = offer_price
     offer.bid              = offer.min_bid
-    offer.name_suffix      = 'action'
+    offer.name_suffix      = "action"
     offer.icon_id_override = app.primary_app_metadata.id
     offer.app_metadata     = app.primary_app_metadata if app.primary_app_metadata
     offer.save!
