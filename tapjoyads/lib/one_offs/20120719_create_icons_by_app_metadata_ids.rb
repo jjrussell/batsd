@@ -17,6 +17,7 @@ class OneOffs
         origin_icon_obj = bucket.objects["icons/#{path}/#{old_icon_id}.jpg"]
         begin
           bucket.objects["icons/#{path}/#{old_icon_id}.jpg"].copy_to(bucket.objects["icons/#{path}/#{new_icon_id}.jpg"], { :acl => :public_read })
+          icon_count += 1
         rescue
           puts "error: App: #{app.name}, can't find icons/#{path}/#{old_icon_id}.jpg"
         end
@@ -24,16 +25,16 @@ class OneOffs
         if path == '57'
           begin
             bucket.objects["icons/57/#{old_icon_id}.png"].copy_to(bucket.objects["icons/57/#{new_icon_id}.png"], { :acl => :public_read })
+            icon_count += 1
           rescue
             puts "error: App: #{app.name}, can't find icons/57/#{old_icon_id}.png"
           end
         end
-        new_icon_ids[new_icon_id] = true
       end
+      new_icon_ids[new_icon_id] = true
     end
     puts "total app prcessed: #{app_count}, icon copied: #{icon_count}"
     puts "Start time: #{start_time}, end time : #{Time.now}"
-    puts "#{new_icon_ids.keys}"
   end
 
 end
