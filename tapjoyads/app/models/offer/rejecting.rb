@@ -91,9 +91,14 @@ module Offer::Rejecting
     # CoffeeTable - Catalog Shopping for iPad
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce) =>
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce),
+    # Fan Samsung on Facebook
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) => 
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
+
+  MINISCULE_REWARD_THRESHOLD = 0.1
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
@@ -123,6 +128,7 @@ module Offer::Rejecting
       { :method => :source_reject?, :parameters => [source], :reason => 'source' },
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
     ]
     reject_reasons(reject_functions)
   end
@@ -157,7 +163,8 @@ module Offer::Rejecting
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
     partner_has_no_funds? ||
-    rewarded_offerwall_non_rewarded_reject?(currency, source)
+    rewarded_offerwall_non_rewarded_reject?(currency, source) ||
+    miniscule_reward_reject?(currency)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -386,4 +393,9 @@ module Offer::Rejecting
     sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
   end
 
+  def miniscule_reward_reject?(currency)
+    currency && currency.rewarded? && rewarded? &&
+      currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
+      item_type != 'DeeplinkOffer'
+  end
 end
