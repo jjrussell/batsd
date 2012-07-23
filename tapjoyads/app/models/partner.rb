@@ -258,6 +258,10 @@ class Partner < ActiveRecord::Base
     end
   end
 
+  def leftover_payout_amount
+    pending_earnings - next_payout_amount
+  end
+
   def make_payout(amount)
     cutoff_date = self.payout_cutoff_date - 1.day
     amount = (amount.to_f * 100).round

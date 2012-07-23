@@ -37,6 +37,10 @@ class Reseller < ActiveRecord::Base
     end
   end
 
+  def leftover_payout_amount
+    pending_earnings - next_payout_amount
+  end
+
   def update_partners_and_currencies
     if rev_share_changed?
       partners.each do |p|

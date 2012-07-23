@@ -47,7 +47,7 @@
           = link_to reseller.id, tools_payouts_path(:reseller_id => reseller.id)
 
         %td= number_to_currency(reseller.pending_earnings / 100.0)
-        %td= number_to_currency(reseller.pending_earnings / 100.0 - reseller.next_payout_amount / 100.0)
+        %td= number_to_currency(reseller.leftover_payout_amount / 100.0)
         %td= number_to_currency(reseller.next_payout_amount / 100.0)
         %td
           - if true || permitted_to?(:create, :dashboard_tools_resellers_payouts)
