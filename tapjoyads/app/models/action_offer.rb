@@ -65,6 +65,7 @@ class ActionOffer < ActiveRecord::Base
   def update_offers_for_app_metadata(old_app_metadata, new_app_metadata)
     offers.find_all_by_app_metadata_id(old_app_metadata.id).each do |offer|
       offer.name_suffix = "action (#{new_app_metadata.store_name})" if offer.name_suffix == "action (#{old_app_metadata.store_name})"
+      offer.icon_id_override = new_app_metadata.id if offer.icon_id_override == old_app_metadata.id
       offer.update_from_app_metadata(new_app_metadata)
     end
   end
