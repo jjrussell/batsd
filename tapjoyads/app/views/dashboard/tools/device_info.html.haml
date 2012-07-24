@@ -30,6 +30,9 @@
 
 - if @device.present?
   %h3 Device
+  = form_tag({ :action => 'recreate_device_identifiers', :udid => params[:udid] }, { :class => 'tjform' }) do
+    = submit_tag 'Recreate Identifiers'
+
   = form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
     %table
       %tbody
