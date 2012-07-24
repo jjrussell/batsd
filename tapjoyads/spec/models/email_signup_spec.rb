@@ -3,7 +3,6 @@ require 'spec_helper'
 describe EmailSignup do
 
   before :each do
-    enable_sdb
     @email_signup = FactoryGirl.create(:email_signup)
     @email_address = @email_signup.email_address
   end

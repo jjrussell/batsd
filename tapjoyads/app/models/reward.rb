@@ -32,6 +32,10 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
   self.sdb_attr :mac_address
+  self.sdb_attr :device_type
+  self.sdb_attr :offerwall_rank
+
+  belongs_to :offer
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
@@ -115,10 +119,6 @@ class Reward < SimpledbShardedResource
     return nil if click_key.blank?
 
     Click.new(:key => click_key)
-  end
-
-  def offer
-    Offer.find_by_id(offer_id)
   end
 
 end

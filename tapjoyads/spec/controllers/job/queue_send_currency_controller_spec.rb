@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
-    enable_sdb
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
     @mock_response.stub(:status).and_return('OK')
