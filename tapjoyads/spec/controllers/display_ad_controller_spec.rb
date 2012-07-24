@@ -170,7 +170,7 @@ describe DisplayAdController do
 
           response.content_type.should == 'application/json'
           Base64.decode64(assigns['image']).should == custom_banner
-          expect { JSON.parse(response.body) }.should_not raise_error
+          expect { JSON.parse(response.body) }.not_to raise_error
         end
 
         it 'returns proper image data in xml' do
