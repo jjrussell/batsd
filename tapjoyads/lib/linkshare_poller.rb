@@ -12,7 +12,6 @@ class LinksharePoller
   DOWNLOAD_SUCCESS          = "Successfully downloaded results from Linkshare."
 
   SIGNATURE_ACTIVITY_REPORT = 11
-  REGION_ID                 = 1
   CLICK_KEY_COLUMN          = 0
   SALES_COLUMN              = 4
 
@@ -42,7 +41,7 @@ class LinksharePoller
     edate ||= Date.today
     bdate ||= edate - 7.days
     retries = 5
-    url = "#{BASE_URL}bdate=#{bdate.to_s(:linkshare)}&edate=#{edate.to_s(:linkshare)}&nid=#{REGION_ID}&reportid=#{SIGNATURE_ACTIVITY_REPORT}&token=#{TAPJOY_SECRET_KEY}"
+    url = "#{BASE_URL}bdate=#{bdate.to_s(:linkshare)}&edate=#{edate.to_s(:linkshare)}&reportid=#{SIGNATURE_ACTIVITY_REPORT}&token=#{TAPJOY_SECRET_KEY}"
     Rails.logger.info("Attempting Linkshare data download via #{url}.")
     begin
       open(url).read
