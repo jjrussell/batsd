@@ -736,6 +736,10 @@ class Offer < ActiveRecord::Base
     reasons
   end
 
+  def creatives_dict
+    super || {}
+  end
+
   private
 
   def calculated_min_bid

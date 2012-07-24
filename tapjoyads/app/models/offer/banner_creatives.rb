@@ -102,7 +102,7 @@ module Offer::BannerCreatives
     format ||= banner_creative_format(size)
     #need to check for nil prior to record migration, as creatives_dict might not exist yet. remove after migration.
     if creatives_dict.present? && creatives_dict.include?(size)
-      "banner_creatives/#{self.creatives_dict[size]}"
+      "banner_creatives/#{self.creatives_dict[size]}.#{format}"
     #after full migration we can remove the stuff below.
     else
       "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
@@ -118,17 +118,9 @@ module Offer::BannerCreatives
     url
   end
 
-  def banner_creative_s3_object(size, format = nil, params = {:create => false})
+  def banner_creative_s3_object(size, format = nil)
     format ||= banner_creative_format(size)
     bucket = S3.bucket(BucketNames::TAPJOY)
-    #TODO: remove this nil check later for performance after we do our migration, after we know for sure that creatives_dict is instantiated as a hash
-    if self.creatives_dict.nil?
-      self.creatives_dict = {}
-    end
-    if params[:create]
-      #TODO: this is where we name the uploaded image, right now we are just appending the time to make it unique. maybe hash on the uploaded image instead or something.
-      self.creatives_dict[size] = "#{Offer.hashed_icon_id(id)}_#{Time.now.to_i.to_s}_#{size}.#{format}"
-    end
     bucket.objects[banner_creative_path(size, format)]
   end
 
@@ -275,7 +267,7 @@ module Offer::BannerCreatives
     raise BannerSyncError.new("New file has invalid dimensions.", "custom_creative_#{size}_blob") if [width, height] != [creative.columns, creative.rows]
 
     begin
-      banner_creative_s3_object(size, format, {:create => true}).write(:data => creative.to_blob { self.quality = 85 }, :acl => :public_read)
+      banner_creative_s3_object(size, format).write(:data => creative.to_blob { self.quality = 85 }, :acl => :public_read)
     rescue
       raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.", "custom_creative_#{size}_blob")
     end
