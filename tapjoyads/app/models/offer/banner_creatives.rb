@@ -106,7 +106,7 @@ module Offer::BannerCreatives
 
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
-    hash = '#{creatives_dict[size]}.#{format}' ||  'banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}'
+    hash = "banner_creatives/#{creatives_dict[size]}.#{format}" ||  "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
   def banner_creative_url(options)
