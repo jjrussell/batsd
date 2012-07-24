@@ -44,6 +44,17 @@ describe ConnectController do
           response.body.should include('PackageNames')
         end
       end
+
+      context 'blacklisted udid' do
+        before :each do
+          @params = { :app_id     => 'test_app',
+                      :udid       => '358673013795895'}
+        end
+        it 'returns 403 forbidden' do
+          get(:index, @params)
+          response.response_code.should == 403
+        end
+      end
     end
 
     context 'without required parameters' do
@@ -82,17 +93,6 @@ describe ConnectController do
           Device.should_receive(:new).with(:key => 'sha2_test_device', :is_temporary => true).and_return(@device)
           get(:index, @params)
           response.body.should include('Success')
-        end
-      end
-
-      context 'blacklisted udid' do
-        before :each do
-          @params = { :app_id     => 'test_app',
-                      :udid       => '358673013795895'}
-        end
-        it 'returns 403 forbidden' do
-          get(:index, @params)
-          response.response_code.should == 403
         end
       end
     end
