@@ -76,10 +76,12 @@ module Offer::BannerCreatives
     self.approved_banner_creatives = approved_banner_creatives.reject { |c| c == size }
   end
 
-  def add_banner_creative(size)
+  def add_banner_creative(image_data, size)
     return unless banner_creative_sizes.include?(size)
     return if has_banner_creative?(size)
     self.banner_creatives += [size]
+    self.send("banner_creative_#{size}_blob=", image_data)
+    self.creatives_dict.merge!({size, "#{Offer.hashed_icon_id(self.id)}_#{Digest::SHA2.hexdigest(image_data).slice(0,6)}_#{size}"})
   end
 
   def approve_banner_creative(size)
