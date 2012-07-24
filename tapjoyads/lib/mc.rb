@@ -69,7 +69,6 @@ class Mc
     missing_caches = []
     dead_caches = []
     error_caches = []
-    constants_loaded = Set.new
 
     cache = caches.first
     cache = cache.clone if clone
@@ -108,12 +107,8 @@ class Mc
         Rails.logger.info("Memcached::SystemError: #{e.message}")
       rescue ArgumentError => e
         if e.message.match /undefined class\/module (.+)$/
-          constant_to_load = $1
-          if !constants_loaded.include?(constant_to_load)
-            constants_loaded << constant_to_load
-            constant_to_load.constantize
-            retry
-          end
+          $1.constantize
+          retry
         end
         Rails.logger.info("ArgumentError: #{e.message}")
       end
