@@ -301,7 +301,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def recreate_device_identifiers
-    device = Device.new(:key => params[:udid])
+    device = Device.find(params[:udid])
     if device.nil?
       flash[:error] = "Unable to find a device with UDID: #{params[:udid]}"
     else
