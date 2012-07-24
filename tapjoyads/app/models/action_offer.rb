@@ -99,7 +99,7 @@ class ActionOffer < ActiveRecord::Base
     offer.price            = offer_price
     offer.bid              = offer.min_bid
     offer.name_suffix      = "action"
-    offer.icon_id_override = app.primary_app_metadata.id
+    offer.icon_id_override = app.primary_app_metadata.id if app.primary_app_metadata
     offer.app_metadata     = app.primary_app_metadata if app.primary_app_metadata
     offer.save!
   end
