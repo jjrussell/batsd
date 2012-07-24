@@ -15,6 +15,12 @@ Tapjoyad::Application.routes.draw do
     end
   end
 
+  namespace :api do
+    namespace :data do
+      resources :devices, :only => [:show]
+    end
+  end
+
   match 'adways_data' => 'adways_data#index'
   match 'brooklyn_packet_data' => 'brooklyn_packet_data#index'
   match 'Connect' => 'connect#index'
