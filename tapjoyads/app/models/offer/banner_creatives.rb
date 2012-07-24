@@ -29,6 +29,10 @@ module Offer::BannerCreatives
     EOS
   end
 
+  def creatives_dict
+    super || {}
+  end
+
   def can_change_banner_creatives?
     !rewarded? || featured?
   end
@@ -80,8 +84,8 @@ module Offer::BannerCreatives
     return unless banner_creative_sizes.include?(size)
     return if has_banner_creative?(size)
     self.banner_creatives += [size]
-    self.send("banner_creative_#{size}_blob=", image_data)
-    self.creatives_dict.merge!({size, "#{Offer.hashed_icon_id(self.id)}_#{Digest::SHA2.hexdigest(image_data).slice(0,6)}_#{size}"})
+    send("banner_creative_#{size}_blob=", image_data)
+    self.creatives_dict = creatives_dict.merge(size => "#{Offer.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
   end
 
   def approve_banner_creative(size)
@@ -102,13 +106,7 @@ module Offer::BannerCreatives
 
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
-    #need to check for nil prior to record migration, as creatives_dict might not exist yet. remove after migration.
-    if creatives_dict.present? && creatives_dict.include?(size)
-      "banner_creatives/#{self.creatives_dict[size]}.#{format}"
-    #after full migration we can remove the stuff below.
-    else
-      "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
-    end
+    hash = '#{creatives_dict[size]}.#{format}' ||  'banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}'
   end
 
   def banner_creative_url(options)
