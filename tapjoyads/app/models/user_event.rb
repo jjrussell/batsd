@@ -1,6 +1,8 @@
 class UserEvent < WebRequest
   include TypeConverters
 
+  EVENT_PATH = "event"
+
   EVENT_TYPE_KEYS = [
     :invalid, :iap, :shutdown
   ]
@@ -27,7 +29,7 @@ class UserEvent < WebRequest
     # The :ALTERNATIVES map consists of keys with possible alternates and arrays of valid alternatives to that key
 
     # add a new `self.define_attr` line in user_event.rb for each new attribute defined here
-    
+
     :invalid => {
     },
 
@@ -73,7 +75,7 @@ class UserEvent < WebRequest
 
     super()
     validate!(event_type, event_data)
-    self.type = event_type
+    self.type = "event_#{event_type}"
 
     event_data.each do |field, value|
       send("#{field}=", value)
@@ -82,8 +84,12 @@ class UserEvent < WebRequest
     # MAKE SURE TO CALL #.put_values() AFTER #.new() TO POPULATE GENERAL WEB REQUEST PARAMS BEFORE SAVING!!!
   end
 
+  def put_values(params, ip_address, geoip_data, user_agent)
+    super(EVENT_PATH, params, ip_address, geoip_data, user_agent)
+  end
+
   def self.generate_verifier_key(app_id, device_id, secret_key, event_type_id, event_data = {})
-    verifier_array = [ app_id, device_id, secret_key, event_type_id ] 
+    verifier_array = [ app_id, device_id, secret_key, event_type_id ]
     if event_data.present?
       event_data.keys.sort.map { |key| verifier_array << event_data[key] }
     end

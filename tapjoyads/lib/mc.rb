@@ -62,7 +62,9 @@ class Mc
   # Gets object from cache which matches key.
   # If no object is found, then control is yielded, and the object
   # returned from the yield block is returned.
-  def self.get(key, clone = false, caches = nil)
+  def self.get(keys, clone = false, caches = nil, &block)
+    keys = keys.to_a
+    key  = keys.shift
     caches ||= [ @@cache ]
     missing_caches = []
     dead_caches = []
@@ -122,11 +124,15 @@ class Mc
       end
     end
 
-    if value.nil? && block_given?
-      value = yield
+    if value.nil?
+      if keys.present?
+        value = Mc.get(keys, clone, caches, &block)
+      elsif block_given?
+        value = yield
+      end
     end
 
-    return value
+    value
   end
 
   def self.distributed_get(key, clone = false)
