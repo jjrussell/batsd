@@ -127,8 +127,8 @@ describe Partner do
 
         @currency1.reload
         @currency2.reload
-        @currency1.spend_share.should == 0.42
-        @currency2.spend_share.should == 0.42
+        @currency1.spend_share.should == 0.3822
+        @currency2.spend_share.should == 0.3822
       end
 
       it "updates its currencies's direct_pay_share when saved" do
@@ -409,12 +409,12 @@ describe Partner do
     before :each do
       @partner = FactoryGirl.create :partner
     end
-    
+
     it 'must have a name' do
       @partner.name = ' '
       @partner.should_not be_valid
     end
-    
+
     it 'must not have tapjoy in the name' do
       @partner.name = ' Tapjoy '
       @partner.should_not be_valid
