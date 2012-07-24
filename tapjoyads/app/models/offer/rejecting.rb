@@ -208,11 +208,7 @@ module Offer::Rejecting
   end
 
   def partner_has_no_funds?(currency)
-    not_charging_and_no_balance?(currency) ? false : partner_balance <= 0
-  end
-
-  def not_charging_and_no_balance?(currency)
-    !currency.charges?(self) && partner_balance <= 0
+    currency.charges?(self) && partner_balance <= 0
   end
 
   private
