@@ -249,7 +249,7 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
     when 'offerwall'
-      :ow_redesign if params[:action] == 'webpage'
+      :show_rate_237 if params[:action] == 'webpage'
     else
       nil
     end
@@ -268,8 +268,9 @@ include GetOffersHelper
     end
 
     case params[:exp]
-    when 'ow_redesign'
-      params[:redesign] = true
+    when 'show_rate_237'
+      @algorithm = '237'
+      #params[:redesign] = true
     end
   end
 

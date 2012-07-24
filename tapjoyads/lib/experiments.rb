@@ -2,7 +2,7 @@ class Experiments
 
   OFFERWALL_REDESIGN_EXPERIMENT_IDS =  {}
   (0...10).each do |key|
-    OFFERWALL_REDESIGN_EXPERIMENT_IDS[key] = 'ow_redesign'
+    OFFERWALL_REDESIGN_EXPERIMENT_IDS[key] = 'show_rate_237'
   end
   OFFERWALL_REDESIGN_EXPERIMENT_IDS.default = 'ow_control'
   class << OFFERWALL_REDESIGN_EXPERIMENT_IDS

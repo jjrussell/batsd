@@ -1,6 +1,6 @@
 module Offer::ShowRateAlgorithms
 
-  EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 101
+  EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 0
   DELIVERY_ASAP_SHOW_RATE_ALGO_ID = 237
 
   attr_accessor :recent_clicks, :recent_installs
@@ -97,7 +97,7 @@ module Offer::ShowRateAlgorithms
     ret_show_rate
   end
 
-  def calcuate_show_rate_101(optimization_info={}, log_info=true)
+  def calcuate_show_rate_0(optimization_info={}, log_info=true)
     unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"
     end
