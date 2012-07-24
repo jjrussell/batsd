@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: earnings_adjustments
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  amount     :integer(4)      not null
+#  notes      :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class EarningsAdjustment < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -9,7 +21,7 @@ class EarningsAdjustment < ActiveRecord::Base
 
   after_create :update_balance
 
-  named_scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
+  scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
   def <=> other
     created_at <=> other.created_at

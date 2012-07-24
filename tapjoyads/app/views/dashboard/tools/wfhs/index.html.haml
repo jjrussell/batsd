@@ -1,0 +1,33 @@
+#wfh_list
+  %h1
+    = Time.zone.today.to_s(:amd)
+    Dev/Prod availability
+  - @team.each_with_index do |row, row_num|
+    .clear
+      - row.each_with_index do |employee, col_num|
+        - if employee && @wfhs[employee.id]
+          - wfh = @wfhs[employee.id].first
+        .desk{ :class => desk_classes(employee, wfh, col_num) }
+          - if wfh
+            = raw wfh_span(wfh)
+          - if employee
+            = link_to_employee(employee)
+    - if row_num.odd?
+      .clear
+      .blank
+
+  %h3 Not here today:
+  %ul
+    - @not_here_today.each do |employee|
+      - wfh = @wfhs[employee.id].first
+      %li= raw wfh_li(wfh)
+  %h3 Coming up:
+  %ul
+    - @wfh_week.each do |wfh|
+      %li= raw wfh_li(wfh, true)
+  %h3 Actions:
+  %ul
+    %li= link_to 'New WFH', new_tools_wfh_path
+    %li= link_to 'List my WFH', wfhs_tools_employee_path(current_user.employee)
+
+- content_for :page_head, stylesheet_link_tag('tools')

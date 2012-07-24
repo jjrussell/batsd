@@ -10,10 +10,25 @@
       log : function(result, message){
         // Get around YUI compressor
         var cnsl = window.console;
-        if(window.ENVIRONMENT !== "development") { return; }
-        if(cnsl && cnsl.log){
+
+        if(cnsl && cnsl.log && window.ENVIRONMENT.toLowerCase() === 'development'){
           cnsl.log(result +' :: '+ message);
         }
+      },
+
+      googleLog : function (category, action, label, value) {
+        var args;
+        if(typeof _gaq === "object" && _gaq.push) {
+          args = Array.prototype.slice.call(arguments);
+          _gaq.push(["_trackEvent"].concat(args));
+        }
+      },
+
+      trackEvent : function(tracking_url) {
+        $.ajax({
+          url: tracking_url,
+          timeout: 15000
+        });
       },
 
       mask: function(){
@@ -114,12 +129,38 @@
         return res;
       },
 
+      customError: function (msg, options, name) {
+        var info = "",
+            i,
+            TapjoyCustomError,
+            stringify = (window.JSON && window.JSON.stringify) || function (t) { return t; };
+
+        options = options || {};
+        name = name || "TapjoyCustomError";
+
+        TapjoyCustomError = function (n, m) {
+          this.name = n;
+          this.message = m;
+        };
+        TapjoyCustomError.prototype = Error.prototype;
+
+        for (i in options) {
+          if (options.hasOwnProperty(i)) {
+            info += "\n[ " + i + ": " + stringify(options[i]) + " ]";
+          }
+        }
+
+        msg = info ? msg + info : msg;
+
+        return new TapjoyCustomError(name, msg);
+      },
+
       basicTemplate: function(tpl, object) {
         object = object || {};
         return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
           // undefined is bad m'kay
           if(object[key] === undefined) {
-            throw TJG.utils.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
+            throw this.customError("No matching arg for template: ", {key: key, template: tpl, props: object});
           }
           return object[key];
         });
@@ -178,34 +219,34 @@
           return func.call(this, data);
         };
       },
-      
-	    debounce: function(fn, delay, execASAP, scope){
-	      var timeout;
 
-	      return function debounced() {
-	        var obj = scope || this,
-	            args = arguments;
+      debounce: function(fn, delay, execASAP, scope){
+        var timeout;
 
-	        function delayedFn(){
-	          if(!execASAP){
-	            fn.apply(obj, args);
-	          }
+        return function debounced() {
+          var obj = scope || this,
+              args = arguments;
 
-	          timeout = null;
-	        }
+          function delayedFn(){
+            if(!execASAP){
+              fn.apply(obj, args);
+            }
 
-	        if(timeout){
-	          clearTimeout(timeout);
-	        }else if(execASAP){
-	          fn.apply(obj, args);
-	        }
+            timeout = null;
+          }
 
-	        timeout = setTimeout(delayedFn, delay || 100);
-	      };
-	    },
+          if(timeout){
+            clearTimeout(timeout);
+          }else if(execASAP){
+            fn.apply(obj, args);
+          }
+
+          timeout = setTimeout(delayedFn, delay || 100);
+        };
+      },
 
       Storage: {
-        set: function(k) {
+        set: function(k,v) {
           try {
             localStorage[k] = v;
             return true;
@@ -221,6 +262,30 @@
         },
         reset: function() {
           localStorage.clear();
+        }
+      },
+
+      ViewPort: {
+        belowView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var fold = $(window).height() + $(window).scrollTop() + padding;
+          return fold <= $(el).offset().top - threshold;
+        },
+
+        aboveView: function(el, cfg) {
+          var padding = (cfg && cfg.padding) ? cfg.padding : 0;
+          var threshold = (cfg && cfg.threshold) ? cfg.threshold : 0;
+          var top = $(window).scrollTop() + padding;
+          return top >= $(el).offset().top + $(el).height() - threshold;
+        },
+
+        aboveInView: function(el, cfg) {
+          return !this.belowView(el, cfg) || this.aboveView(el, cfg);
+        },
+
+        inView: function(el, cfg) {
+          return !this.belowView(el, cfg);
         }
       },
 
@@ -254,12 +319,39 @@
         remove: function(k) {
           this.set(k, "", -1);
         }
+      },
+
+      Scrolling: {
+        isTouchDevice: function() {
+          try{
+            document.createEvent("TouchEvent");
+            return true;
+          } catch(e) {
+            return false;
+          }
+        },
+        touchScroll: function(id) {
+          if (!this.isTouchDevice()) {
+            return false;
+          }
+
+          var el = document.getElementById(id),
+              start = 0;
+
+          el.addEventListener('touchstart', function(event) {
+            start = this.scrollTop + event.touches[0].pageY;
+            event.preventDefault();
+          }, false);
+          el.addEventListener('touchmove', function(event) {
+            this.scrollTop = start - event.touches[0].pageY;
+            event.preventDefault();
+          }, false);
+        }
       }
     }
   });
 
   Tap.log = Tap.alias(Tap.Utils, 'log');
-  Tap.ls = Tap.alias(Tap.Utils.Storage, 'ls');
 
   $.fn.extend({
     preventHighlight: function(){

@@ -1,6 +1,20 @@
+# == Schema Information
+#
+# Table name: video_offers
+#
+#  id         :string(36)      not null, primary key
+#  partner_id :string(36)      not null
+#  name       :string(255)     not null
+#  hidden     :boolean(1)      default(FALSE), not null
+#  video_url  :string(255)
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class VideoOffer < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable :url => lambda { |ctx| video_url.present? ? video_url : nil }
 
   has_many :offers, :as => :item
   has_many :video_buttons
@@ -8,7 +22,7 @@ class VideoOffer < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :video_buttons
+  set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
@@ -18,40 +32,26 @@ class VideoOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
+  scope :visible, :conditions => { :hidden => false }
 
   def update_buttons
     offers.each do |offer|
-      offer.third_party_data = xml_for_buttons if valid_for_update_buttons?
+      offer.third_party_data = xml_for_buttons
       offer.save! if offer.changed?
     end
   end
 
-  def valid_for_update_buttons?
-    video_buttons.enabled.size <= 2
+  def video_buttons_for_device_type(device_type)
+    block_rewarded = (Device.device_type_to_platform(device_type) == 'ios')
+    video_buttons.reject do |button|
+      button.disabled? ||
+        (device_type.present? && button.reject_device_type?(device_type, block_rewarded))
+    end.sort_by(&:ordinal)
   end
 
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => video_url.present? ? video_url : nil,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
+  def available_trackable_items(selected_id=nil)
+    ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
+    partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }
   end
 
   private
@@ -89,7 +89,7 @@ class VideoOffer < ActiveRecord::Base
     buttons_xml = buttons.inject([]) do |result, button|
       result << button.xml_for_offer
     end
-    buttons_xml.to_s
+    buttons_xml.join
   end
 
   def video_exists
@@ -99,4 +99,12 @@ class VideoOffer < ActiveRecord::Base
     errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
 
+  private
+
+  def cache_video_buttons_and_tracking_offers
+    video_buttons.each do |button|
+      button.tracking_offer
+      button.tracking_item
+    end
+  end
 end

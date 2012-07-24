@@ -3,16 +3,21 @@
 
 base_dir = File.expand_path("../../../", __FILE__)
 server_type = `#{base_dir}/server/server_type.rb`
-big_server = %w(masterjobs jobs).include?(server_type)
 
 app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir
 
-if big_server
+if server_type == 'masterjobs'
+  worker_processes 24
+  timeout 43200
+elsif server_type == 'jobserver'
   worker_processes 36
   timeout 43200
 elsif server_type == "dev"
   worker_processes 2
+  timeout 90
+elsif server_type == 'webserver'
+  worker_processes 8
   timeout 90
 else
   worker_processes 10
@@ -25,7 +30,11 @@ preload_app true
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-listen("/tmp/tapjoy.socket", :backlog => 2048)
+if server_type == "dev"
+  listen "0.0.0.0:8080"
+else
+  listen("/tmp/tapjoy.socket", :backlog => 2048)
+end
 
 # feel free to point this anywhere accessible on the filesystem
 user 'webuser', 'webuser'  unless server_type == "dev"
@@ -34,12 +43,8 @@ user 'webuser', 'webuser'  unless server_type == "dev"
 FileUtils.mkdir_p("#{app_dir}/pids")
 pid "#{app_dir}/pids/unicorn_#{Process.pid}.pid"
 
-# Use the local logs for dev
-if server_type == "dev"
-  FileUtils.mkdir_p("#{app_dir}/log/unicorn")
-  stderr_path "#{app_dir}/log/unicorn/stderr.log"
-  stdout_path "#{app_dir}/log/unicorn/stdout.log"
-else
+# When in dev, send logs to the console
+unless server_type == "dev"
   stderr_path "/mnt/log/unicorn/stderr.log"
   stdout_path "/mnt/log/unicorn/stdout.log"
 end
@@ -87,7 +92,5 @@ after_fork do |server, worker|
   defined?(Mc) and Mc.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
-
-  # Redis and Memcached would go here but their connections are established
-  # on demand, so the master never opens a socket
+  $redis.client.reconnect
 end

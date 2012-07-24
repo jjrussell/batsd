@@ -48,12 +48,20 @@ class ClickController < ApplicationController
   def video
     create_click('video')
     handle_pay_per_click
+    handle_multi_complete_video
 
     render :text => 'OK'
   end
 
   def survey
     create_click('survey')
+    handle_pay_per_click
+
+    redirect_to(destination_url)
+  end
+
+  def deeplink
+    create_click('deeplink')
     handle_pay_per_click
 
     redirect_to(destination_url)
@@ -77,6 +85,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@test_offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -99,6 +108,7 @@ class ClickController < ApplicationController
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
+    test_reward.mac_address       = params[:mac_address]
     test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -109,6 +119,8 @@ class ClickController < ApplicationController
   end
 
   private
+
+  APPS_WITH_BAD_PUB_USER_ID = Set.new(%w(469f7523-3b99-4b42-bcfb-e18d9c3c4576 c522ed90-8764-4d3e-ba9a-0499836ee20d))
 
   def reengagement_setup
     params[:advertiser_app_id] = params[:publisher_app_id]
@@ -147,8 +159,8 @@ class ClickController < ApplicationController
 
     @device = Device.new(:key => params[:udid])
 
-    # Hottest App sends the same publisher_user_id for every click
-    if params[:publisher_app_id] == '469f7523-3b99-4b42-bcfb-e18d9c3c4576'
+    # These apps send the same publisher_user_id for every click
+    if APPS_WITH_BAD_PUB_USER_ID.include?(params[:publisher_app_id])
       params[:publisher_user_id] = params[:udid]
     end
   end
@@ -161,7 +173,11 @@ class ClickController < ApplicationController
     end
     return if recently_clicked?
 
-    wr_path = params[:source] == 'featured' ? 'featured_offer_click' : 'offer_click'
+    wr_path = case params[:source]
+              when 'tj_games'      then 'tjm_offer_click'
+              when 'featured'      then 'featured_offer_click'
+              else                      'offer_click'
+              end
     build_web_request(wr_path)
   end
 
@@ -196,7 +212,7 @@ class ClickController < ApplicationController
     end
 
     completed = @device.has_app?(app_id_for_device)
-    unless completed || @offer.item_type == 'VideoOffer'
+    unless completed || @offer.video_offer?
       publisher_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
       other_udids = publisher_user.udids - [ @device.key ]
       other_udids.each do |udid|
@@ -246,6 +262,8 @@ class ClickController < ApplicationController
 
   def create_click(type)
     click = Click.new(:key => click_key)
+
+    click.maintain_history
     click.delete('installed_at') if click.installed_at?
     click.clicked_at             = @now
     click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
@@ -275,8 +293,14 @@ class ClickController < ApplicationController
     click.advertiser_reseller_id = @offer.reseller_id || ''
     click.spend_share            = @currency.get_spend_share(@offer)
     click.local_timestamp        = params[:local_timestamp] if params[:local_timestamp].present?
+    click.mac_address            = params[:mac_address]
+    click.offerwall_rank         = params[:offerwall_rank]
+    click.device_type            = params[:device_type]
+    click.geoip_country          = geoip_data[:country]
 
     click.save
+
+    @offer.queue_click_tracking_requests(:ip_address => ip_address, :udid => click.udid) # for third party tracking vendors
   end
 
   def handle_pay_per_click
@@ -302,6 +326,7 @@ class ClickController < ApplicationController
       :itunes_link_affiliate => @itunes_link_affiliate,
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
+      :os_version            => params[:os_version]
     })
   end
 
@@ -310,14 +335,13 @@ class ClickController < ApplicationController
   end
 
   def click_key
-    return @click_key if @click_key.present?
+    @click_key ||= @offer.format_as_click_key(params.slice(:udid, :advertiser_app_id, :gamer_id))
+  end
 
-    @click_key = if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    elsif @offer.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
-    else
-      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+  def handle_multi_complete_video
+    app_id_for_device = params[:advertiser_app_id]
+    if @offer.multi_complete? && @device.has_app?(app_id_for_device)
+      @device.unset_last_run_time!(app_id_for_device)
     end
   end
 

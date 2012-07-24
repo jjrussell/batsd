@@ -3,7 +3,7 @@ require 'spec_helper'
 describe EmailSignup do
 
   before :each do
-    @email_signup = Factory(:email_signup)
+    @email_signup = FactoryGirl.create(:email_signup)
     @email_address = @email_signup.email_address
   end
 
@@ -25,13 +25,14 @@ describe EmailSignup do
   describe '.count' do
     context 'when given multiple signups' do
       before :each do
-        @count = EmailSignup.count(:consistent => true)
+        @stamp = Time.zone.now
+        @count = EmailSignup.count(:consistent => true, :where => "sent_date = '#{@stamp.to_f}'")
         @num = 5
-        @num.times { Factory(:email_signup) }
+        @num.times { FactoryGirl.create(:email_signup, :sent_date => @stamp) }
       end
 
       it 'returns the correct count' do
-        EmailSignup.count(:consistent => true).should == @count + @num
+        EmailSignup.count(:consistent => true, :where => "sent_date = '#{@stamp.to_f}'").should == @count + @num
       end
     end
   end

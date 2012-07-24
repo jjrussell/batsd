@@ -8,7 +8,7 @@ class DeployRecorder
     @options = {
       :environment => 'staging',
       :version => 'master',
-      :app_names => [ 'TapjoyStaging']
+      :app_names => [ 'TapjoyStaging' ]
     }
 
     option_parser = OptionParser.new do |opts|
@@ -16,7 +16,7 @@ class DeployRecorder
         case environment
         when 'production'
           @options[:environment] = 'production'
-          @options[:app_names] = [ 'TapjoyApiWeb', 'TapjoyApiJobs', 'TapjoyWebsite', 'TapjoyDashboard']
+          @options[:app_names] = [ 'TapjoyApiWeb', 'TapjoyApiJobs', 'TapjoyDashboard' ]
         when 'util'
           @options[:environment] = 'production'
           @options[:app_names] = [ 'TapjoyUtil' ]
@@ -45,7 +45,7 @@ class DeployRecorder
 
   def record_deploy
     @options[:app_names].each do |app_name|
-      system("vendor/gems/newrelic_rpm-3.3.0/bin/newrelic deployments -a #{app_name} -e #{@options[:environment]} -r #{@options[:version]}")
+      system("newrelic deployments -a #{app_name} -e #{@options[:environment]} -r #{@options[:version]}")
     end
   end
 

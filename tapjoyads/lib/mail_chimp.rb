@@ -44,6 +44,7 @@ class MailChimp
   end
 
   def self.add_user(user)
+    return unless user && user.can_email
     partner = user.partners.first
     name = partner.contact_name
     name = user.email if name.blank?
@@ -56,6 +57,12 @@ class MailChimp
       'IS_PUB' => partner.has_publisher_offer? ? 'true' : 'false',
       'CAN_EMAIL' => 'true'
     }
-    chimp.list_subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, user.email, hash)
+    begin
+      chimp.list_subscribe(MAIL_CHIMP_PARTNERS_LIST_ID, user.email, hash)
+    rescue Hominid::APIError => e
+      raise unless e.to_s =~ /has been banned/
+      user.can_email = false
+      user.save!
+    end
   end
 end

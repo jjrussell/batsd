@@ -1,9 +1,12 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe Offer do
 
   it { should have_many :advertiser_conversions }
   it { should have_many :rank_boosts }
+  it { should have_many :sales_reps }
   it { should belong_to :partner }
   it { should belong_to :item }
 
@@ -23,8 +26,7 @@ describe Offer do
   it { should validate_numericality_of :payment_range_high }
 
   before :each do
-    fake_the_web
-    @app = Factory :app
+    @app = FactoryGirl.create :app
     @offer = @app.primary_offer
   end
 
@@ -34,11 +36,10 @@ describe Offer do
     @offer.payment.should == 500
   end
 
-
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns true
+        Offer.any_instance.stub(:app_offer?).and_return true
         @offer.partner.premier_discount = 10
       end
 
@@ -62,7 +63,7 @@ describe Offer do
 
     context "to a non app offer item" do
       before :each do
-        Offer.any_instance.stubs(:app_offer?).returns false
+        Offer.any_instance.stub(:app_offer?).and_return false
         @offer.partner.premier_discount = 10
       end
 
@@ -106,7 +107,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.countries = ["GB"].to_json
-    @offer.get_countries(true)
+    @offer.get_countries
     geoip_data = { :primary_country => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :primary_country => "GB" }
@@ -142,7 +143,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.regions = ["CA"].to_json
-    @offer.get_regions(true)
+    @offer.get_regions
     geoip_data = { :region => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :region => "CA" }
@@ -160,7 +161,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.dma_codes = ["123"].to_json
-    @offer.get_dma_codes(true)
+    @offer.get_dma_codes
     geoip_data = { :dma_code => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :dma_code => "123" }
@@ -178,7 +179,7 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == false
 
     @offer.cities = ["San Francisco"].to_json
-    @offer.get_cities(true)
+    @offer.get_cities
     geoip_data = { :city => nil }
     @offer.send(:geoip_reject?, geoip_data).should == true
     geoip_data = { :city => "San Francisco" }
@@ -229,10 +230,19 @@ describe Offer do
     @offer.send(:sdkless_reject?, '8.2.0').should be_false
   end
 
-
   it "doesn't reject on source when approved_sources is empty" do
     @offer.send(:source_reject?, 'foo').should be_false
     @offer.send(:source_reject?, 'offerwall').should be_false
+  end
+
+  it 'rejects rewarded offers that are close to zero' do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.send(:miniscule_reward_reject?, currency).should be_true
+  end
+
+  it "doesn't reject rewarded offers that are close to 1" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 18})
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
   it "excludes the appropriate columns for the for_offer_list scope" do
@@ -253,7 +263,8 @@ describe Offer do
                                   'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities'
+                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
+                                  'click_tracking_urls', 'conversion_tracking_urls'
                                 ].sort
   end
 
@@ -279,7 +290,7 @@ describe Offer do
 
   context "with a paid app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 150})
       @offer = @app.primary_offer
     end
@@ -319,7 +330,7 @@ describe Offer do
 
   context "with a free app item" do
     before :each do
-      @app = Factory(:app)
+      @app = FactoryGirl.create(:app)
       @app.primary_app_metadata.update_attributes({:price => 0})
       @offer = @app.primary_offer
     end
@@ -359,18 +370,18 @@ describe Offer do
 
   context "with a video item" do
     before :each do
-      @video = Factory(:video_offer)
+      @video = FactoryGirl.create(:video_offer)
       @offer = @video.primary_offer
     end
 
-    it "has a min_bid of 4" do
-      @offer.min_bid.should == 4
+    it "has a min_bid of 2" do
+      @offer.min_bid.should == 2
     end
   end
 
   context "with an action offer item" do
     before :each do
-      @action = Factory(:action_offer)
+      @action = FactoryGirl.create(:action_offer)
       @offer = @action.primary_offer
     end
 
@@ -407,12 +418,23 @@ describe Offer do
 
   context "with a generic offer item" do
     before :each do
-      @generic = Factory(:generic_offer)
+      @generic = FactoryGirl.create(:generic_offer)
       @offer = @generic.primary_offer
     end
 
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
+    end
+
+    describe "url generation" do
+      describe '#complete_action_url' do
+        it "should substitute tokens in the URL" do
+          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
+          source = @offer.source_token('12345')
+          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+        end
+      end
     end
   end
 
@@ -672,9 +694,9 @@ describe Offer do
       @offer.banner_creatives = ['320x50', '640x100', '768x90']
       @offer.approved_banner_creatives = ['320x50', '1x1']
 
-      @valid_remove   = @offer.add_banner_approval(Factory(:user), '320x50')
-      @valid_keep     = @offer.add_banner_approval(Factory(:user), '640x100')
-      @invalid_remove = @offer.add_banner_approval(Factory(:user), '2x2')
+      @valid_remove   = @offer.add_banner_approval(FactoryGirl.create(:user), '320x50')
+      @valid_keep     = @offer.add_banner_approval(FactoryGirl.create(:user), '640x100')
+      @invalid_remove = @offer.add_banner_approval(FactoryGirl.create(:user), '2x2')
 
       @offer.send(:sync_creative_approval)
       @offer.approvals.reload
@@ -703,14 +725,14 @@ describe Offer do
     context 'with store_id missing' do
       context 'when tapjoy-enabling' do
         it 'is false' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.tapjoy_enabled = true
           @offer.should_not be_valid
-          @offer.errors.on(:tapjoy_enabled).should =~ /store id/i
+          @offer.errors[:tapjoy_enabled].join.should =~ /store id/i
         end
 
         it 'can be made true with store_id' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(false)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(false)
           @offer.should be_valid
         end
       end
@@ -719,14 +741,14 @@ describe Offer do
         it 'is true' do
           @offer.tapjoy_enabled = true
           @offer.save!
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.should be_valid
         end
       end
 
       context 'when not tapjoy-enabling' do
         it 'is true' do
-          Offer.any_instance.stubs(:missing_app_store_id?).returns(true)
+          Offer.any_instance.stub(:missing_app_store_id?).and_return(true)
           @offer.should be_valid
         end
       end
@@ -778,7 +800,7 @@ describe Offer do
   describe '#missing_app_store_id?' do
     context 'with non app-related item' do
       it 'is false' do
-        @offer.stubs(:app_offer?).returns(false)
+        @offer.stub(:app_offer?).and_return(false)
         @offer.should_not be_missing_app_store_id
       end
     end
@@ -786,7 +808,7 @@ describe Offer do
     context 'with App item' do
       context 'and overridden url' do
         it 'is false' do
-          @offer.stubs(:url_overridden).returns(true)
+          @offer.stub(:url_overridden).and_return(true)
           @offer.should_not be_missing_app_store_id
         end
       end
@@ -794,14 +816,14 @@ describe Offer do
       context 'and url not overridden' do
         context 'with App with store_id' do
           it 'is false' do
-            @offer.item.stubs(:store_id).returns('foo')
+            @offer.item.stub(:store_id).and_return('foo')
             @offer.should_not be_missing_app_store_id
           end
         end
 
         context 'with App with missing store_id' do
           it 'is true' do
-            @offer.item.stubs(:store_id).returns(nil)
+            @offer.item.stub(:store_id).and_return(nil)
             @offer.should be_missing_app_store_id
           end
         end
@@ -811,8 +833,8 @@ describe Offer do
 
   context "An App Offer for a free app" do
     before :each do
-      Offer.any_instance.stubs(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = Factory(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+      Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
+      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
     end
 
     context "with banner_creatives" do
@@ -823,16 +845,16 @@ describe Offer do
 
       it "fails if asset data not provided" do
         @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].should == "320x480 custom creative file not provided."
+        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
+        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
       end
 
       it "uploads assets to s3 when data is provided" do
         @offer.banner_creative_480x320_blob = "image_data"
         @offer.banner_creative_320x480_blob = "image_data"
 
-        @offer.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
-        @offer.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
 
         @offer.save!
       end
@@ -842,14 +864,14 @@ describe Offer do
           def read; return "image_data"; end
         end
 
-        @offer.stubs(:banner_creative_s3_object).with("480x320").returns(S3Object.new)
-        @offer.stubs(:banner_creative_s3_object).with("320x480").returns(S3Object.new)
+        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(S3Object.new)
+        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(S3Object.new)
+
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
+        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
 
         clone = @offer.clone
         clone.bid = clone.min_bid
-
-        clone.expects(:upload_banner_creative!).with("image_data", "480x320").returns(nil)
-        clone.expects(:upload_banner_creative!).with("image_data", "320x480").returns(nil)
 
         clone.save!
       end
@@ -858,6 +880,7 @@ describe Offer do
 
   describe '#calculate_target_installs' do
     before :each do
+      @offer.daily_budget = 0
       @offer.allow_negative_balance = false
       @offer.partner.balance = 1_000_00
       @num_installs_today = 1
@@ -893,6 +916,24 @@ describe Offer do
         expected = @offer.daily_budget - @num_installs_today
         target = @offer.calculate_target_installs(@num_installs_today)
         target.should == expected
+      end
+
+      context 'when self-promote only' do
+        before :each do
+          @offer.self_promote_only = true
+        end
+
+        it 'should be infinity' do
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should_not be_finite
+        end
+
+        it 'should be limited by daily budget' do
+          @offer.daily_budget = 100
+          expected = @offer.daily_budget - @num_installs_today
+          target = @offer.calculate_target_installs(@num_installs_today)
+          target.should == expected
+        end
       end
     end
 
@@ -947,13 +988,142 @@ describe Offer do
     end
 
     it "still doesn't like long multibyte names" do
-      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
+      @offer.update_attributes(:name => '在这儿IM 人脉既是财富 在这儿IM 人脉既是财富在这儿IM 人脉既是财富 在这儿IM 人脉既是财富')
       Offer.for_display_ads.should_not include(@offer)
     end
 
     it "stops complaining about name length if the creatives are approved" do
       @offer.update_attributes({:name => 'Long name xxxxxxxxxxxxxxxxxx', :approved_banner_creatives => ['320x50']})
       Offer.for_display_ads.should include(@offer)
+    end
+  end
+
+  context "third_party_tracking_url methods" do
+    describe 'impression_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.impression_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.impression_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'click_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.click_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.click_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+
+    describe 'conversion_tracking_urls' do
+      it "should trim and remove dups" do
+        @offer.conversion_tracking_urls = ['https://dummyurl.com?ts=[timestamp]', '  https://dummyurl.com?ts=[timestamp]  ']
+        @offer.conversion_tracking_urls.should == ['https://dummyurl.com?ts=[timestamp]']
+      end
+    end
+  end
+
+  context "queue_third_party_tracking_request methods" do
+    before(:each) do
+      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]']
+      now = Time.zone.now
+      Timecop.freeze(now)
+
+      @offer.impression_tracking_urls = @urls
+      @offer.click_tracking_urls = @urls
+      @offer.conversion_tracking_urls = @urls
+    end
+
+    after(:each) do
+      Timecop.return
+    end
+
+    context "without provided values" do
+      before :each do
+        now = Time.zone.now
+        @urls.each do |url|
+          uid = Device.advertiser_device_id(nil, @offer.partner_id)
+          result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
+          Downloader.should_receive(:queue_get_with_retry).with(result).once
+        end
+      end
+
+      describe ".queue_impression_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_impression_tracking_requests
+        end
+      end
+
+      describe ".queue_click_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_click_tracking_requests
+        end
+      end
+
+      describe ".queue_conversion_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_conversion_tracking_requests
+        end
+      end
+    end
+
+    context "with provided values" do
+      before :each do
+        @ts = 1.hour.from_now
+        @ip_address = '127.0.0.1'
+        @udid = 'udid'
+        @urls.each do |url|
+          uid = Device.advertiser_device_id(@udid, @offer.partner_id)
+          result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
+          Downloader.should_receive(:queue_get_with_retry).with(result).once
+        end
+      end
+
+      describe ".queue_impression_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+        end
+      end
+
+      describe ".queue_click_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+        end
+      end
+
+      describe ".queue_conversion_tracking_requests" do
+        it "should queue up the proper GET requests" do
+          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+        end
+      end
+    end
+  end
+
+  describe '#dashboard_statz_url' do
+    include Rails.application.routes.url_helpers
+
+    it 'matches URL for Rails statz_url helper' do
+      @offer.dashboard_statz_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/statz/#{@offer.id}"
+    end
+  end
+
+  describe '#all_blacklisted?' do
+    context 'without whitelist' do
+      it { should_not be_all_blacklisted }
+    end
+
+    context 'with whitelist' do
+      before :each do
+        subject.stub(:get_countries).and_return(['US'])
+      end
+
+      it { should_not be_all_blacklisted }
+
+      context 'with conflicting blacklist' do
+        before :each do
+          subject.stub(:countries_blacklist).and_return(['US'])
+        end
+
+        it { should be_all_blacklisted }
+      end
     end
   end
 end

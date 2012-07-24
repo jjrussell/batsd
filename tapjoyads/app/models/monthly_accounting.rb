@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: monthly_accountings
+#
+#  id                         :string(36)      not null, primary key
+#  partner_id                 :string(36)      not null
+#  month                      :integer(4)      not null
+#  year                       :integer(4)      not null
+#  beginning_balance          :integer(4)      not null
+#  ending_balance             :integer(4)      not null
+#  website_orders             :integer(4)      not null
+#  invoiced_orders            :integer(4)      not null
+#  marketing_orders           :integer(4)      not null
+#  transfer_orders            :integer(4)      not null
+#  spend                      :integer(4)      not null
+#  beginning_pending_earnings :integer(4)      not null
+#  ending_pending_earnings    :integer(4)      not null
+#  payment_payouts            :integer(4)      not null
+#  transfer_payouts           :integer(4)      not null
+#  earnings                   :integer(4)      not null
+#  created_at                 :datetime
+#  updated_at                 :datetime
+#  earnings_adjustments       :integer(4)      not null
+#  bonus_orders               :integer(4)      default(0), not null
+#
+
 class MonthlyAccounting < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -8,8 +34,8 @@ class MonthlyAccounting < ActiveRecord::Base
   validates_numericality_of :year, :only_integer => true, :allow_nil => false, :greater_than => 2007
   validates_uniqueness_of :partner_id, :scope => [ :month, :year ]
 
-  named_scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
-  named_scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
+  scope :since, lambda { |time| { :conditions => ["(year = ? AND month >= ?) OR (year > ?)", time.year, time.month, time.year] } }
+  scope :prior_to, lambda { |time| { :conditions => ["(year = ? AND month < ?) OR (year < ?)", time.year, time.month, time.year] } }
 
   def self.expected_count
     now = Time.zone.now
@@ -41,11 +67,12 @@ class MonthlyAccounting < ActiveRecord::Base
     self.invoiced_orders   = orders[1] || 0
     self.marketing_orders  = orders[2] || 0
     self.transfer_orders   = orders[3] || 0
+    self.recoupable_marketing_orders = orders[4] || 0
     self.bonus_orders      = orders[5] || 0
     Partner.using_slave_db do
       self.spend = partner.advertiser_conversions.created_between(start_time, end_time).sum(:advertiser_amount)
     end
-    self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders + spend
+    self.ending_balance = beginning_balance + website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders + recoupable_marketing_orders + spend
 
     # pending earnings components
     payouts = {}
@@ -54,13 +81,15 @@ class MonthlyAccounting < ActiveRecord::Base
     end
     self.payment_payouts  = (payouts[1] || 0) * -1
     self.transfer_payouts = (payouts[3] || 0) * -1
+    self.recoupable_marketing_payouts = (payouts[4] || 0) * -1
+    self.dev_credit_payouts = (payouts[6] || 0) * -1
     Partner.using_slave_db do
       self.earnings = partner.publisher_conversions.created_between(start_time, end_time).sum(:publisher_amount)
     end
     EarningsAdjustment.using_slave_db do
       self.earnings_adjustments = partner.earnings_adjustments.created_between(start_time, end_time).sum(:amount)
     end
-    self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + earnings + earnings_adjustments
+    self.ending_pending_earnings = beginning_pending_earnings + payment_payouts + transfer_payouts + dev_credit_payouts + earnings + earnings_adjustments
 
     save!
   end
@@ -74,11 +103,11 @@ class MonthlyAccounting < ActiveRecord::Base
   end
 
   def total_orders
-    website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders
+    website_orders + invoiced_orders + marketing_orders + transfer_orders + bonus_orders + recoupable_marketing_orders
   end
 
   def total_payouts
-    payment_payouts + transfer_payouts
+    payment_payouts + transfer_payouts + dev_credit_payouts
   end
 
   def <=> other

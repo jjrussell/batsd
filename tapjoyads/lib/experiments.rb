@@ -1,13 +1,26 @@
 class Experiments
-  EXPERIMENTS = {
-    :default => '0',
-    :papaya_on => '1',
-    :papaya_off => '2'
-  }
 
-  def self.choose(udid)
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS =  {}
+  (0...10).each do |key|
+    OFFERWALL_REDESIGN_EXPERIMENT_IDS[key] = 'ow_redesign'
+  end
+  OFFERWALL_REDESIGN_EXPERIMENT_IDS.default = 'ow_control'
+  class << OFFERWALL_REDESIGN_EXPERIMENT_IDS
+    def length
+      100
+    end
+  end
+
+  EXPERIMENTS = { :ow_redesign => OFFERWALL_REDESIGN_EXPERIMENT_IDS }
+
+  def self.choose(udid, options = {})
     if udid.present?
-      udid.hash % 2 == 0 ? EXPERIMENTS[:papaya_on] : EXPERIMENTS[:papaya_off]
+      experiment = options[:experiment]
+      experiment_ids = EXPERIMENTS[experiment]
+      return nil if experiment_ids.blank?
+      udid_index = Digest::MD5.hexdigest("#{udid}#{experiment}").hex % experiment_ids.length
+
+      experiment_ids[udid_index]
     end
   end
 
@@ -31,8 +44,8 @@ class Experiments
     date = start_time.to_date
 
     while date <= end_time.to_date + 2.days && date <= Time.zone.now.to_date
-      offerwall_views += WebRequest.count "path = '[offers]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
-      clicks += WebRequest.count "path = '[offer_click]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      offerwall_views += WebRequest.count "(path = '[offers]' OR path = '[tjm_offers]') AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
+      clicks += WebRequest.count "(path = '[offer_click]' OR path = '[tjm_offer_click]') AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       conversions += WebRequest.count "path = '[reward]' AND #{viewed_at_condition_vertica} AND exp = '#{experiment_id}'"
       date += 1.day
     end

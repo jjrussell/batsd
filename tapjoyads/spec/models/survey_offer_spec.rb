@@ -10,10 +10,8 @@ describe SurveyOffer do
   it { should validate_presence_of :name }
 
   before :each do
-    fake_the_web
-
-    @partner = Factory(:partner, :id => TAPJOY_PARTNER_ID)
-    @survey_offer = Factory(:survey_offer)
+    @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
+    @survey_offer = FactoryGirl.create(:survey_offer)
   end
 
   it 'accepts nested attributes for survey_questions' do
@@ -23,7 +21,7 @@ describe SurveyOffer do
   it 'validates presence of bid_price on create' do
     survey_offer = SurveyOffer.new(:name => 'bob')
     survey_offer.save.should be_false
-    survey_offer.errors.on(:bid_price).should == "can't be blank"
+    survey_offer.errors[:bid_price].join.should == "can't be blank"
   end
 
   describe 'callbacks' do
@@ -57,13 +55,13 @@ describe SurveyOffer do
 
     it 'creates the offer icon' do
       #fake_object = FakeObject.new('icons/checkbox.jpg')
-      #Offer.any_instance.expects(:save_icon!).with(fake_object.read)
+      #Offer.any_instance.should_receive(:save_icon!).with(fake_object.read)
       #survey_offer = SurveyOffer.new(:name => 'bob', :bid_price => 0)
       #survey_offer.save
     end
 
     it 'updates the primary_offer after update' do
-      partner = Factory(:partner)
+      partner = FactoryGirl.create(:partner)
 
       @survey_offer.update_attributes({
         :partner    => partner,
@@ -72,7 +70,7 @@ describe SurveyOffer do
         :bid        => 5,
       })
 
-      @survey_offer.survey_questions << Factory(:survey_question)
+      @survey_offer.survey_questions << FactoryGirl.create(:survey_question)
       @survey_offer.reload
 
       primary_offer = @survey_offer.primary_offer
@@ -141,8 +139,8 @@ describe SurveyOffer do
   end
 
   it 'removes blank questions' do
-    question_1 = Factory(:survey_question, :survey_offer => @survey_offer)
-    question_2 = Factory(:survey_question, :survey_offer => @survey_offer)
+    question_1 = FactoryGirl.create(:survey_question, :survey_offer => @survey_offer)
+    question_2 = FactoryGirl.create(:survey_question, :survey_offer => @survey_offer)
 
     @survey_offer.survey_questions.sort { |a,b| a.id <=> b.id }.should == [question_1, question_2].sort { |a,b| a.id <=> b.id }
 

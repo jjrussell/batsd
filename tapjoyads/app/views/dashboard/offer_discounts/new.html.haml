@@ -1,0 +1,42 @@
+- @page_title = 'Create Offer Discount'
+
+%h1= "#{link_to(@partner.name, @partner)} :: Create Offer Discount"
+
+.metadata
+  Current Offer Discount:
+  = "#{@partner.premier_discount}%"
+
+= form_for [ @partner, @offer_discount ], :html => { :class => 'tjform' } do |f|
+  %table
+    %tr
+      %th
+        = f.label :expires_on, 'Expires On'
+        #help_expires_on.help ?
+      %td
+        = f.text_field :expires_on
+        = error_message_on @offer_discount, :expires_on
+    %tr
+      %th
+        = f.label :amount, 'Amount'
+        #help_amount.help ?
+      %td
+        = f.text_field :amount
+        = error_message_on @offer_discount, :amount
+    %tr
+      %th
+      %td
+        = "Will apply to #{@partner.discount_all_offer_types? ? 'all offer types' : 'App and Pay-Per-Action offers only'}"
+        = link_to('(change)', edit_partner_path(@partner))
+
+    %tr
+      %td{ :colspan => 2 }= f.submit 'Create Offer Discount'
+
+.hidden
+  #help_expires_on_content{ :name => 'Expires On' } When the discount should expire.
+  #help_amount_content{ :name => 'Amount' } The amount (in cents or percentage) of the discount.
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#offer_discount_expires_on').datepicker()
+    });

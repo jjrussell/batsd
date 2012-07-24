@@ -47,17 +47,18 @@ while time < end_time do
         if File.exists?(logfile_path)
           ses.send_email(
             :from      => 'Syslog-ng <noreply@tapjoy.com>',
-            :to        => 'dev@tapjoy.com',
+            :to        => 'noc@tapjoy.com',
             :subject   => 'FAILED: Web-request upload',
             :body_text => "Failed to upload: #{tmpfile_path}")
         else
           File.rename(tmpfile_path, logfile_path)
         end
+        File.rename(gzipfile_path, "#{gzipfile_path}-failed")
       end
+    else
+      File.delete(gzipfile_path)
+      File.rename(tmpfile_path, "#{logfile_path}.uploaded.#{unique_id}")
     end
-
-    File.delete(gzipfile_path)
-    File.rename(tmpfile_path, "#{logfile_path}.uploaded.#{unique_id}")
   end
 
   delete_time = time - 172800 # 48 hours

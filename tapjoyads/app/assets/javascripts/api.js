@@ -1,0 +1,11 @@
+//= require marketplace/core/jquery
+//= require marketplace/core/foundation
+//= require marketplace/core/objects
+//= require marketplace/core/components
+//= require marketplace/core/strings
+//= require marketplace/core/arrays
+//= require marketplace/core/functions
+//= require marketplace/core/helpers
+//= require marketplace/core/utilities
+//= require marketplace/core/mobile
+//= require marketplace/components/button/button

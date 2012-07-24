@@ -8,23 +8,4 @@ unless hostname =~ /^ip-|^domU-/
   exit
 end
 
-security_groups = `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n")
-if security_groups.include? 'testserver'
-  server_type = 'test'
-elsif security_groups.include? 'jobserver'
-  server_type = 'jobs'
-elsif security_groups.include? 'masterjobs'
-  server_type = 'masterjobs'
-elsif security_groups.include? 'webserver'
-  server_type = 'web'
-elsif security_groups.include? 'memcached'
-  server_type = 'memcached'
-elsif security_groups.include? 'website'
-  server_type = 'website'
-elsif security_groups.include? 'dashboard'
-  server_type = 'dashboard'
-elsif security_groups.include? 'util'
-  server_type = 'util'
-end
-
-print server_type
+print `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n").reject {|g| g == "tapbase"}.first

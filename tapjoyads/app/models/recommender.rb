@@ -69,8 +69,10 @@ class Recommender  #Interface for all recommenders.
      list[0...n]
    end
 
-  def parse_recommendations_file(file_name, &blk)
-    S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read.each do |row|
+  def parse_recommendations_file(file_name, zipped=false, &blk)
+    file = S3.bucket(BucketNames::TAPJOY_GAMES).objects[file_name].read
+    file = Zlib::GzipReader.new(StringIO.new(file)) if zipped
+    file.each_line do |row|
       yield(row.chomp)
     end
   end

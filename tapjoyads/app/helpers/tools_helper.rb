@@ -1,6 +1,25 @@
 module ToolsHelper
+  def breadcrumb(*links)
+    first = true
+    content_tag :ul, :class => 'breadcrumb' do
+      links.collect do |link|
+        if first
+          # don't show the divider
+          first = false
+          link
+        else
+          "<span class='divider'> / </span> #{link}"
+        end
+      end
+    end
+  end
+
+  def location_str(employee)
+    employee.location.nil? ? '' : employee.location.inspect
+  end
+
   def click_info_ul(click, reward)
-    concat("<ul class='nobr hidden'>")
+    safe_concat("<ul class='nobr hidden'>")
     concat_li_timestamp("Viewed at", click.viewed_at)
     concat_li_timestamp("Clicked at", click.clicked_at)
     concat_li_timestamp("Installed at", click.installed_at)
@@ -14,14 +33,31 @@ module ToolsHelper
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
     concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
+    concat_li("Source", click.source)
     concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
-    concat("</ul>")
+    if click.last_clicked_at?
+      safe_concat("<ul>")
+      click.last_clicked_at.each_with_index do |last_click_time, idx|
+        concat_li_timestamp("Previous click #{idx + 1}", last_click_time)
+      end
+      safe_concat("</ul>")
+    end
+    if click.last_installed_at?
+      safe_concat("<ul>")
+      click.last_installed_at.each_with_index do |last_install_time, idx|
+        concat_li_timestamp("Previous install #{idx + 1}", last_install_time)
+      end
+      safe_concat("</ul>")
+    end
+    safe_concat("</ul>")
   end
 
   def click_tr_class(click, reward)
     classes = []
     if click.installed_at?
-      if (reward && reward.successful?)
+      if click.force_convert
+        classes << 'forced'
+      elsif (reward && reward.successful?)
         classes << 'rewarded'
       else
         classes << 'rewarded-failed'
@@ -50,14 +86,47 @@ module ToolsHelper
     time.nil? ? '-' : time.to_s(:pub_abbr_ampm_sec)
   end
 
+  def link_install_to_attempt(click)
+    if click.block_reason?
+      display = click.block_reason
+    elsif click.installed_at?
+      display = click_timestamp(click, :installed_at)
+    end
+
+    if display
+      attempt = ConversionAttempt.new(:key => click.reward_key)
+      if attempt.is_new
+        display
+      else
+        link_to(display, view_conversion_attempt_tools_path(:conversion_attempt_key => attempt.key))
+      end
+    end
+  end
+
   def wfh_classes(wfh)
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
+  end
+
+  def formatted_items_for_tracking(items)
+    items.map do |item|
+      type = item.class.name.to_s.gsub(/Offer$/, '')
+      platform = if item.respond_to?(:platform_name)
+                   item.platform_name
+                 elsif item.respond_to?(:get_platform)
+                   item.get_platform
+                 elsif item.respond_to?(:primary_offer)
+                   item.primary_offer.get_platform
+                 else
+                   'N/A'
+                 end
+      ["#{type} - #{item.name} - #{platform}", "#{item.class}:#{item.id}"]
+    end
   end
 
   private
 
   def concat_li(name, value)
-    concat("<li>#{name}: <nobr>#{value}</nobr></li>")
+    safe_concat("<li>#{name}: <nobr>#{value}</nobr></li>")
   end
 
   def concat_li_timestamp(name, time)
@@ -65,6 +134,6 @@ module ToolsHelper
   end
 
   def concat_li_currency(name, amount)
-    concat_li(name, number_to_currency(amount/100.0))
+    concat_li(name, number_to_currency(amount.to_f / 100.0))
   end
 end

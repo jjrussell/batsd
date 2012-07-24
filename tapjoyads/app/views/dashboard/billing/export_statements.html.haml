@@ -1,0 +1,5 @@
+- if current_user.employee?
+  Date,Payments,Payouts,Transfers,Adjustments,Dev_Credits
+- else
+  Date,Payments,Payouts,Transfers,Adjustments
+= render :partial => 'statement', :collection => @statements, :locals => {:format => :csv}

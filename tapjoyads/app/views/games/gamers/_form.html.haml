@@ -1,0 +1,41 @@
+= form_for([ :games, @gamer ], :url => games_gamer_path, :method => :post, :html => { :class => 'js-watch-valid ajax-submit', 'data-root-url' => WEBSITE_URL }) do |f|
+  - if params[:data].present?
+    = hidden_field_tag :data, params[:data]
+  - if params[:src].present?
+    = hidden_field_tag :src, params[:src]
+  .fields
+    .field
+      = f.text_field :nickname, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.name'), :required => ""
+    .field
+      - locale_info = {:months => {:long => t('date.month_names'), :short => t('date.abbr_month_names')}}
+      %input.ui-date-picker{ :type => 'text', :placeholder => t('text.games.birthdate'), :required => "", 'data-locale-info' => locale_info.to_json}
+    .field
+      = f.email_field :email, "autocorrect" => "off", "autocapitalize" => "off", :placeholder => t('text.shared.email'), :required => ""
+    .field
+      %label{ :for => "password", :class => "hidden" }
+        = t('text.shared.password')
+      = f.password_field :password, :placeholder => t('text.shared.new_password'), :required => ""
+    - if device_type.nil?
+      .button-bar
+        .hidden
+          = radio_button :platform, :default, :ios, :required => :true, :checked => true
+          = radio_button :platform, :default, :android, :required => :true
+        .field.button-group
+          .platform-choice.ui-joy-button.secondary.no-rounded-right{:value => :ios}
+            = label_tag :default_platform_ios, t("text.shared.ios")
+          .platform-choice.ui-joy-button.secondary.no-rounded-left{:value => :android}
+            = label_tag :default_platform_android, t("text.shared.android")
+    = hidden_field :platform, :detected, :class => 'platform-detected'
+    #tos-row.clearfix
+      .field.field_tos
+        .field_checkbox.left
+          = f.check_box :terms_of_service, :required => 'required', 'data-must-check' => true
+        .field_tos_text.left
+          = f.label :terms_of_service, t("text.games.tos_acknowledge_html",
+            :terms_of_use => link_to(t("text.games.terms_of_use_href"), games_tos_path, :target => '_blank'),
+            :privacy_policy => link_to(t("text.games.privacy_policy_href"), games_privacy_path, :target => '_blank'))
+
+        = f.hidden_field :referrer, :value => params[:referrer]
+    = f.submit t('text.shared.login_verb'), :class => 'hidden-submit'
+
+

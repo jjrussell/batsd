@@ -3,7 +3,7 @@
     My Profile
   .content_box
     .interior
-      - form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
+      = form_for([ :games, :gamer, @gamer_profile ], :url => games_gamer_gamer_profile_path, :html => { :method => "put" }) do |f|
         .field
           = f.label :name, "#{t('text.shared.name')}: "
           = f.text_field :name

@@ -1,0 +1,31 @@
+module SpecHelpers
+  def login_as(user)
+    UserSession.create(user)
+  end
+
+  def games_login_as(user)
+    GamerSession.create(user)
+  end
+
+  def should_respond_with_json_error(code)
+    should respond_with(code)
+    should respond_with_content_type(:json)
+    result = JSON.parse(response.body)
+    result['success'].should be_false
+    result['error'].should be_present
+  end
+
+  def should_respond_with_json_success(code)
+    should respond_with(code)
+    should respond_with_content_type(:json)
+    result = JSON.parse(response.body)
+    result['success'].should be_true
+    result['error'].should_not be_present
+  end
+
+  def enable_sdb
+    warn 'WARNING: Enabling the real simpledb during tests is slow and prone to errors. Please make your test work with the fake simpledb by not calling `enable_sdb`.'
+    RightAws::SdbInterface.unstub!(:new)
+    SimpledbResource.reset_connection
+  end
+end

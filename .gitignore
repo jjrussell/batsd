@@ -2,4 +2,5 @@
 .rvmrc
 .swp
 .idea
-
+.rbenv-version
+.powder

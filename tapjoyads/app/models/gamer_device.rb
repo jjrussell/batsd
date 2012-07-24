@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: gamer_devices
+#
+#  id          :string(36)      not null, primary key
+#  gamer_id    :string(36)      not null
+#  device_id   :string(255)     not null
+#  name        :string(255)     not null
+#  created_at  :datetime
+#  updated_at  :datetime
+#  device_type :string(255)
+#
+
 class GamerDevice < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -14,10 +27,14 @@ class GamerDevice < ActiveRecord::Base
     'iPhone3,1'  => 'iPhone 4',
     'iPhone3,3'  => 'iPhone 4',
     'iPhone4,1'  => 'iPhone 4S',
+    'iPhone5,1'  => 'iPhone 5',
     'iPad1,1'    => 'iPad',
     'iPad2,1'    => 'iPad 2 Wi-Fi',
     'iPad2,2'    => 'iPad 2 3G',
     'iPad2,3'    => 'iPad 2 3G',
+    'iPad3,1'    => 'iPad Wi-Fi',
+    'iPad3,2'    => 'iPad 4G',
+    'iPad3,3'    => 'iPad 4G',
     'iPhone'     => 'iPhone',
     'iPad'       => 'iPad',
     'iPod'       => 'iPod Touch',
@@ -38,10 +55,14 @@ class GamerDevice < ActiveRecord::Base
     'iPhone3,1'  => 'iphone',
     'iPhone3,3'  => 'iphone',
     'iPhone4,1'  => 'iphone',
+    'iPhone5,1'  => 'iphone',
     'iPad1,1'    => 'ipad',
     'iPad2,1'    => 'ipad',
     'iPad2,2'    => 'ipad',
     'iPad2,3'    => 'ipad',
+    'iPad3,1'    => 'ipad',
+    'iPad3,2'    => 'ipad',
+    'iPad3,3'    => 'ipad',
     'iPhone'     => 'iphone',
     'iPad'       => 'ipad',
     'iPod'       => 'ipod',
@@ -74,6 +95,12 @@ class GamerDevice < ActiveRecord::Base
       :device_type => device_type,
       :data        => ObjectEncryptor.encrypt(data),
     }
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.device_id}"
   end
 
   private

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe User do
-  subject { Factory(:user) }
+  subject { FactoryGirl.create(:user) }
 
   describe '.has_many' do
     it { should have_many(:role_assignments) }
@@ -18,10 +18,12 @@ describe User do
     it { should validate_uniqueness_of(:username) }
   end
 
+  it { should validate_presence_of(:time_zone) }
+
   describe '#role_symbols' do
     context 'given a regular user' do
       before :each do
-        @user = Factory(:user)
+        @user = FactoryGirl.create(:user)
       end
 
       it 'includes the partner role' do
@@ -31,7 +33,7 @@ describe User do
 
     context 'given an admin user' do
       before :each do
-        @admin = Factory(:admin)
+        @admin = FactoryGirl.create(:admin)
       end
 
       it 'has the partner role' do
@@ -43,5 +45,4 @@ describe User do
       end
     end
   end
-
 end

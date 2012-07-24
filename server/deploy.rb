@@ -4,14 +4,15 @@
 
 require 'yaml'
 
-if ENV['PWD'] != '/home/webuser/tapjoyserver'
-  puts "This script must be run from /home/webuser/tapjoyserver"
-  exit
-end
+# This points to /<dir>/tapjoyserver
+base_dir = File.expand_path("../../", __FILE__)
+
 if ENV['USER'] != 'webuser'
   puts "This script must be run by webuser."
   exit
 end
+
+Dir.chdir base_dir
 
 if File.exists?('deploy.lock')
   puts "Deploying to this server has been locked."
@@ -19,23 +20,29 @@ if File.exists?('deploy.lock')
   exit
 end
 
+system "git checkout deploy"
+
 server_type = `server/server_type.rb`
 current_version = YAML::load_file('server/version.yaml')['current']
 deploy_version = ARGV.first || current_version
 
 puts "Deploying version: #{deploy_version}"
 
-system "git checkout master"
 system "git pull --quiet"
-system "git pull --tags origin master"
+system "git pull --tags origin deploy"
 system "git checkout #{deploy_version}"
+if deploy_version == 'master'
+  system "git pull --tags origin master"
+end
 
-if server_type == 'jobs' || server_type == 'masterjobs'
-  `cp tapjoyads/config/newrelic-jobs.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'test'
+if server_type == 'jobserver'
+  `cp tapjoyads/config/newrelic-queues.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'masterjobs'
+  `cp tapjoyads/config/newrelic-cron.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
-elsif server_type == 'web'
+elsif server_type == 'webserver'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
@@ -46,7 +53,7 @@ elsif server_type == 'util'
   `cp tapjoyads/config/local-util.yml tapjoyads/config/local.yml`
 end
 
-if server_type == 'web'
+if server_type == 'webserver'
   `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
   `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
@@ -54,7 +61,18 @@ else
   `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
 end
 
-puts "Restarting unicorn"
-system "server/start_or_reload_unicorn.rb"
+Dir.chdir "tapjoyads" do
+  if server_type == "dev"
+    `bundle install`
+  else
+    `bundle install --deployment`
+  end
 
-system "server/restart_job_daemon.rb"
+  puts "Updating GeoIPCity Data"
+  system "../server/update_geoip.rb"
+
+  puts "Restarting unicorn"
+  system "../server/start_or_reload_unicorn.rb"
+
+  system "../server/restart_job_daemon.rb"
+end

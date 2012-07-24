@@ -38,6 +38,7 @@ class AgencyApi::PartnersController < AgencyApiController
     log_activity(user)
     user.username = params[:email]
     user.email = params[:email]
+    user.country = 'API'
     tmp_password = UUIDTools::UUID.random_create.to_s
     user.password = tmp_password
     user.password_confirmation = tmp_password
@@ -57,12 +58,13 @@ class AgencyApi::PartnersController < AgencyApiController
     partner.save!
 
     user.current_partner = partner
+    user.state = 'approved'
     user.save!
 
     PartnerAssignment.create!(:user => user, :partner => partner)
     PartnerAssignment.create!(:user => @agency_user, :partner => partner)
 
-    TapjoyMailer.deliver_new_secondary_account(user.email, "#{DASHBOARD_URL}/password-reset/#{user.perishable_token}/edit")
+    TapjoyMailer.new_secondary_account(user.email, "#{DASHBOARD_URL}/password-reset/#{user.perishable_token}/edit").deliver
 
     save_activity_logs
     render_success({ :partner_id => partner.id })

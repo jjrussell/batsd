@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Order do
 
   before :each do
-    @order = Factory(:order)
+    @order = FactoryGirl.create(:order)
   end
 
   describe '.belongs_to' do
@@ -15,13 +15,13 @@ describe Order do
     it { should validate_presence_of :note }
     it { should validate_numericality_of :amount }
     it { should ensure_inclusion_of(:status).in_range(Order::STATUS_CODES.keys) }
-    it { should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys) }
+    it { should ensure_inclusion_of(:payment_method).in_range(Order::PAYMENT_METHODS.keys.sort) }
   end
 
   describe 'an invoice' do
     it 'is created if the client exists in freshbooks' do
-      FreshBooks.expects(:get_client_id).returns(5)
-      FreshBooks.expects(:create_invoice).returns(7)
+      FreshBooks.should_receive(:get_client_id).and_return(5)
+      FreshBooks.should_receive(:create_invoice).and_return(7)
 
       @order.status.should == 1
       @order.invoice_id.should == nil
@@ -35,8 +35,8 @@ describe Order do
     end
 
     it 'is not created if there is not a freshbooks client' do
-      FreshBooks.expects(:get_client_id).returns(nil)
-      FreshBooks.expects(:create_invoice).never
+      FreshBooks.should_receive(:get_client_id).and_return(nil)
+      FreshBooks.should_receive(:create_invoice).never
 
       @order.status.should == 1
       @order.create_freshbooks_invoice!
@@ -44,14 +44,14 @@ describe Order do
     end
 
     it 'deals if the client disappears from freshbooks' do
-      FreshBooks.expects(:get_client_id).times(2).returns(2, nil)
-      FreshBooks.expects(:create_invoice).once
+      FreshBooks.should_receive(:get_client_id).exactly(2).times.and_return(2, nil)
+      FreshBooks.should_receive(:create_invoice).once
 
       @order.status.should == 1
       @order.create_freshbooks_invoice!
       @order.status.should == 1
 
-      order = Factory(:order, :partner => @order.partner)
+      order = FactoryGirl.create(:order, :partner => @order.partner)
       order.status.should == 1
       order.create_freshbooks_invoice!
       order.status.should == 0
@@ -59,10 +59,10 @@ describe Order do
   end
 
   it 'increases the balance for a partner' do
-    partner = Factory(:partner)
+    partner = FactoryGirl.create(:partner)
     partner.balance.should == 0
     partner.orders.count.should == 0
-    Factory(:order, :partner => partner, :amount => 100)
+    FactoryGirl.create(:order, :partner => partner, :amount => 100)
     partner.reload
     partner.balance.should == 100
     partner.orders.count.should == 1

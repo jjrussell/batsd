@@ -24,7 +24,7 @@ class Games::PasswordResetsController < GamesController
   def update
     if @gamer.safe_update_attributes(params[:gamer], [ :password, :password_confirmation ])
       flash[:notice] = "Password successfully updated."
-      redirect_to games_root_path
+      redirect_to games_path
     else
       render :action => :edit
     end
@@ -35,7 +35,7 @@ private
   def require_no_gamer
     unless current_gamer.nil?
       flash[:error] = "You must be logged out to reset passwords."
-      redirect_to games_root_path
+      redirect_to games_path
     end
   end
 

@@ -1,31 +1,39 @@
 require 'extensions'
 require 'notifier'
 
-GEOIP = GeoIP.new("#{Rails.root}/data/GeoIPCity.dat")
+GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
+# I kinda fucked this up, but it's already deployed with the - in it
+# This basically makes it work with dev systems that only have the regular
+# .dat file.
+geoip_tag = (GEOIP_VERSION == '' ? '' : '-')
+GEOIP = GeoIP.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
+BANNED_UDIDS = Set.new(['358673013795895', '004999010640000'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
 
 MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
+EPHEMERAL_HEALTHZ_FILE = "#{Rails.root}/tmp/eph_test.txt"
 
 # SDK URLs
-ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v8.1.7.zip'
-ANDROID_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Android_v8.1.7.zip'
-ANDROID_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyVirtualGoodsSDK_Android_v8.1.7.zip'
-ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_Android_v8.1.7.zip'
-ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.1.7.zip'
-ANDROID_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_Android.zip'
+ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v8.2.1.zip'
+ANDROID_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Android_v8.2.1.zip'
+ANDROID_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyVirtualGoodsSDK_Android_v8.2.1.zip'
+ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_Android_v8.2.1.zip'
+ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.2.1.zip'
+ANDROID_MARMALADE_EXTENSION = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyMarmaladePlugin_Android_v8.2.1.zip'
 
-IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.1.7.zip'
-IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.1.7.zip'
-IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.1.7.zip'
-IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.1.7.zip'
-IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.1.6.zip'
+IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.2.0.zip'
+IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.2.0.zip'
+IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.2.0.zip'
+IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.2.0.zip'
+IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.2.0.zip'
 IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_iOS.zip'
+IPHONE_ADOBE_AIR_PLUGIN    = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectAdobeAIRPlugin_v8.2.0.zip'
 
-WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.0.zip'
-WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.0.zip'
+WINDOWS_CONNECT_SDK = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_Windows_v2.0.1.zip'
+WINDOWS_OFFERS_SDK  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Windows_v2.0.1.zip'
 
 SDKLESS_MIN_LIBRARY_VERSION = '8.2.0'
 
@@ -50,6 +58,8 @@ AWS.config(
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
 MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
+Sprockets::Tj.init_assets
+
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
@@ -59,3 +69,21 @@ BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAA
 TJM_SESSION_TIMEOUT = 1.hour.to_i
 
 HOSTNAME = `hostname`.strip
+
+Dir.chdir Rails.root do
+  GIT_REV = `git rev-parse --verify HEAD`.strip
+  GIT_BRANCH = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`.split.last.strip rescue ''
+end
+
+# Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
+# to the list of transient problems which will automatically get retried by RightAws.
+RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
+
+# Pre-load all of our models to prevent issues with Marshal
+# We do this last to make sure everything is initialized that models may require
+
+model_dir = "#{Rails.root}/app/models/" 
+Dir[File.join(model_dir, "**/*.rb")].each do |file|
+  model = file.gsub(model_dir, "").gsub(/\.rb$/, '')
+  require_dependency model
+end

@@ -1,3 +1,5 @@
+require 'logging'
+
 class SimpledbResource
 
   include Simpledb
@@ -5,7 +7,8 @@ class SimpledbResource
   cattr_reader :sdb
   attr_accessor :key, :attributes, :this_domain_name, :is_new, :key_hash
   cattr_accessor :domain_name, :key_format
-  superclass_delegating_accessor :domain_name, :key_format
+  superclass_delegating_accessor :domain_name
+  superclass_delegating_accessor :key_format
   class_inheritable_accessor :attribute_names
 
   def self.reset_connection
@@ -105,6 +108,10 @@ class SimpledbResource
     @key = key
   end
 
+  def persisted?
+    true
+  end
+
   def new_record?
     @is_new
   end
@@ -159,7 +166,7 @@ class SimpledbResource
       put('updated-at', now.to_f.to_s)
     end
 
-    Rails.logger.info_with_time("Saving to sdb, domain: #{this_domain_name}") do
+    log_info_with_time("Saving to sdb, domain: #{this_domain_name}") do
       self.write_to_memcache if save_to_memcache
       self.write_to_sdb(expected_attr) if save_to_sdb
       @is_new = false
@@ -174,6 +181,7 @@ class SimpledbResource
     end
     raise e
   rescue Exception => e
+    raise e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     else
@@ -194,7 +202,7 @@ class SimpledbResource
     Sqs.send_message(QueueNames::FAILED_SDB_SAVES, message)
     Rails.logger.info "Successfully added to sqs. Message: #{message}"
   ensure
-    Rails.logger.flush
+    Rails.logger.flush if Rails.logger.respond_to?(:flush)
   end
 
   ##
@@ -362,6 +370,10 @@ class SimpledbResource
 
     domain_name = get_real_domain_name(domain_name)
 
+    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
+    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
+    where = where.is_a?(String) ? where : sanitize_conditions(where)
+
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
 
@@ -408,6 +420,10 @@ class SimpledbResource
     hydra.disable_memoization
 
     domain_name = get_real_domain_name(domain_name)
+
+    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
+    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
+    where = where.is_a?(String) ? where : sanitize_conditions(where)
 
     query = "SELECT count(*) FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
@@ -466,6 +482,10 @@ class SimpledbResource
 
     domain_name = get_real_domain_name(domain_name)
 
+    # if only a string is provided, process it as-is (otherwise sanitization won't allow unescaped chars such as '%')
+    # we can remove this if we properly rewrite all the existing simple-db query conditions at some point
+    where = where.is_a?(String) ? where : sanitize_conditions(where)
+
     query = "SELECT #{attrs} FROM `#{domain_name}`"
     query += " WHERE #{where}" if where
     query += " ORDER BY #{order_by}" if order_by
@@ -522,6 +542,13 @@ class SimpledbResource
   rescue => e
     Rails.logger.error("Error while processing query: #{query}")
     raise e
+  end
+
+  def self.sanitize_conditions(*ary)
+    return nil if ary.compact.empty?
+    ary = ary.first.is_a?(Array) ? ary.first : ary
+    ary = [ary.first, *ary[1..-1].map(&:to_s)] # SimpleDB expects all values to be strings
+    ActiveRecord::Base.sanitize_conditions(ary)
   end
 
   def self.create_domain(domain_name)
@@ -644,7 +671,7 @@ protected
       end
     rescue RightAws::AwsError => e
       if e.message.starts_with?("NoSuchDomain") && !Rails.env.production?
-        Rails.logger.info_with_time("Creating new domain: #{@this_domain_name}") do
+        log_info_with_time("Creating new domain: #{@this_domain_name}") do
           sdb_interface.create_domain(@this_domain_name)
         end
         retry

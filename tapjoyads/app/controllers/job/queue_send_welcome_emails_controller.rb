@@ -10,8 +10,8 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
     device_info = Marshal.restore(Base64::decode64(message.body))
 
     gamer = Gamer.find(device_info.delete(:gamer_id))
-
-    mail = GamesMarketingMailer.create_welcome_email(gamer, device_info)
+    email_type = device_info.delete(:email_type) || 'welcome'
+    mail = GamesMarketingMailer.send("create_#{email_type}_email", gamer, device_info)
     GamesMarketingMailer.deliver(mail) if EmailVerifier.check_recipients(mail)
   end
 

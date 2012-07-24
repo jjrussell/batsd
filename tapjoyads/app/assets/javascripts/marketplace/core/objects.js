@@ -15,7 +15,7 @@
       format: function(tpl, object){
         object = object || {};
 
-        return tpl.replace(/%{(.+?)}/g, function(pattern, key) {
+        return tpl.replace(/{(.+?)}/g, function(pattern, key) {
           return !object[key] ? '' : object[key];
         });
       },

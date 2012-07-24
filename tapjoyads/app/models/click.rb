@@ -1,4 +1,7 @@
 class Click < SimpledbShardedResource
+
+  MAX_HISTORY = 20
+
   belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :displayer_app, :class_name => 'App'
@@ -44,11 +47,27 @@ class Click < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :client_timestamp,  :type => :time
+  self.sdb_attr :mac_address
+  self.sdb_attr :last_clicked_at, :type => :time, :force_array => true, :replace => false
+  self.sdb_attr :last_installed_at, :type => :time, :force_array => true, :replace => false
+  self.sdb_attr :offerwall_rank
+  self.sdb_attr :device_type
+  self.sdb_attr :geoip_country
+  self.sdb_attr :force_convert, :type => :bool
+  self.sdb_attr :force_converted_by
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
     "clicks_#{domain_number}"
+  end
+
+  def self.hashed_key(key)
+    Digest::MD5.hexdigest(key.to_s + CLICK_KEY_SALT)
+  end
+
+  def hashed_key
+    Click.hashed_key(key)
   end
 
   def rewardable?
@@ -79,6 +98,9 @@ class Click < SimpledbShardedResource
     end
     save!
 
+    d = Device.new(:key => udid)
+    d.unset_last_run_time!(advertiser_app_id)
+
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
   end
 
@@ -87,6 +109,46 @@ class Click < SimpledbShardedResource
       type != 'video' &&
       !offer.pay_per_click? &&
       (installed_at - clicked_at) < threshold
+  end
+
+  def advertiser_app
+    begin
+      App.find_in_cache(advertiser_app_id, true)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+  end
+
+  def maintain_history
+    if clicked_at?
+      while last_clicked_at.size >= MAX_HISTORY
+        delete('last_clicked_at', get('last_clicked_at', :force_array => true).sort.first)
+      end
+      self.last_clicked_at = clicked_at
+    end
+    if installed_at?
+      while last_installed_at.size >= MAX_HISTORY
+        delete('last_installed_at', get('last_installed_at', :force_array => true).sort.first)
+      end
+      self.last_installed_at = installed_at
+    end
+  end
+
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_device_info_tool_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/tools/device_info?click_key=#{self.key}"
+  end
+
+  def update_partner_live_dates!
+    [
+      [publisher_partner,  publisher_amount],
+      [advertiser_partner, advertiser_amount]
+    ].each do |partner, amount|
+      if partner.present? && amount > 0
+        partner.update_attributes!(:live_date => clicked_at) unless partner.live_date.present?
+      end
+    end
   end
 
   private
@@ -98,4 +160,5 @@ class Click < SimpledbShardedResource
       "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
+
 end

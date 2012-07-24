@@ -12,32 +12,8 @@ namespace :admin do
 
   desc "Copies the production database to the development database"
   task :sync_db do
-    raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
-
-    database_yml = YAML::load_file("config/database.yml")
-    source       = database_yml['production_slave']
-    dest         = database_yml[Rails.env]
-    dump_file    = "tmp/#{source['database']}.sql"
-    dump_file2   = "tmp/#{source['database']}2.sql"
-
-    print("Backing up the production database... ")
-    time = Benchmark.realtime do
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --ignore-table=#{source['database']}.gamers --ignore-table=#{source['database']}.gamer_profiles --ignore-table=#{source['database']}.gamer_devices --ignore-table=#{source['database']}.conversions --ignore-table=#{source['database']}.payout_infos #{source['database']} > #{dump_file}")
-      system("mysqldump -u #{source['username']} --password=#{source['password']} -h #{source['host']} --single-transaction --no-data #{source['database']} gamers gamer_profiles gamer_devices conversions payout_infos > #{dump_file2}")
-    end
-    puts("finished in #{time} seconds.")
-
-    Rake.application.invoke_task('db:drop')
-    Rake.application.invoke_task('db:create')
-
-    print("Restoring backup to the #{Rails.env} database... ")
-    time = Benchmark.realtime do
-      system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file}")
-      system("mysql -u #{dest['username']} --password=#{dest['password']} -h #{dest['host']} #{dest['database']} < #{dump_file2}")
-    end
-    puts("finished in #{time} seconds.")
-    system("rm -f #{dump_file}")
-    system("rm -f #{dump_file2}")
+    puts "DEPRECATED: use `rake db:sync`"
+    Rake::Task['db:sync'].execute
   end
 
   desc "Force chef client run"

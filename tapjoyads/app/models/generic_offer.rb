@@ -1,7 +1,29 @@
+# == Schema Information
+#
+# Table name: generic_offers
+#
+#  id               :string(36)      not null, primary key
+#  partner_id       :string(36)      not null
+#  name             :string(255)     not null
+#  description      :text
+#  price            :integer(4)      default(0)
+#  url              :string(255)     not null
+#  third_party_data :string(255)
+#  hidden           :boolean(1)      default(FALSE), not null
+#  created_at       :datetime
+#  updated_at       :datetime
+#  instructions     :text
+#  category         :string(255)
+#  trigger_action   :string(255)
+#
+
 class GenericOffer < ActiveRecord::Base
   include UuidPrimaryKey
+  acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
-  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video' ]
+  CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
+
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -14,31 +36,7 @@ class GenericOffer < ActiveRecord::Base
   after_create :create_primary_offer
   after_update :update_offers
 
-  named_scope :visible, :conditions => { :hidden => false }
-
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types = options.delete(:device_types) { Offer::ALL_DEVICES.to_json }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => third_party_data,
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
-  end
+  scope :visible, :conditions => { :hidden => false }
 
   private
 

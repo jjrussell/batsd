@@ -1,8 +1,12 @@
 class DisplayAdController < ApplicationController
 
-  before_filter :set_device_type, :set_publisher_user_id, :setup, :except => :image
+  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
+  after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
+    if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
+      @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
+    end
   end
 
   def webview
@@ -51,31 +55,33 @@ class DisplayAdController < ApplicationController
 
     now = Time.zone.now
 
-    if params[:size].blank? || params[:size] == '320x50'
-      # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
-      unless params[:action] == 'webview' || request.format == :json || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
+    # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
+    # (except certain scenarios)
+    if ((params[:size].blank? || (params[:size] == '320x50' &&
+      params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
+      params[:action] != 'webview' && request.format != :json &&
+      params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
         params[:size] = '640x100'
-      end
     end
 
     device = Device.new(:key => params[:udid])
-    publisher_app = App.find_in_cache(params[:app_id])
+    @publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
     currency = nil if currency.present? && currency.app_id != params[:app_id]
-    return unless verify_records([ publisher_app, currency ], :render_missing_text => false)
+    return unless verify_records([ @publisher_app, currency ], :render_missing_text => false)
 
-    params[:publisher_app_id] = publisher_app.id
-    params[:displayer_app_id] = publisher_app.id
+    params[:publisher_app_id] = @publisher_app.id
+    params[:displayer_app_id] = @publisher_app.id
     params[:source] = 'display_ad'
 
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
 
     if currency.get_test_device_ids.include?(params[:udid])
-      offer = publisher_app.test_offer
+      offer = @publisher_app.test_offer
     else
       offer = OfferList.new(
-        :publisher_app       => publisher_app,
+        :publisher_app       => @publisher_app,
         :device              => device,
         :currency            => currency,
         :device_type         => params[:device_type],
@@ -92,25 +98,30 @@ class DisplayAdController < ApplicationController
 
     if offer.present?
       @click_url = offer.click_url(
-        :publisher_app     => publisher_app,
+        :publisher_app     => @publisher_app,
         :publisher_user_id => params[:publisher_user_id],
         :udid              => params[:udid],
         :currency_id       => currency.id,
         :source            => 'display_ad',
         :viewed_at         => now,
         :displayer_app_id  => params[:app_id],
-        :primary_country   => geoip_data[:primary_country]
+        :primary_country   => geoip_data[:primary_country],
+        :mac_address       => params[:mac_address]
       )
       width, height = parse_size(params[:size])
 
       if params[:action] == 'webview' || params[:details] == '1'
-        @image_url = offer.display_ad_image_url(publisher_app.id, width, height, currency.id, params[:display_multiplier])
+        @image_url = offer.display_ad_image_url(:publisher_app_id => @publisher_app.id,
+                                                :width => width,
+                                                :height => height,
+                                                :currency_id => currency.id,
+                                                :display_multiplier => params[:display_multiplier])
       else
-        @image = get_ad_image(publisher_app, offer, width, height, currency, params[:display_multiplier])
+        @image = get_ad_image(@publisher_app, offer, width, height, currency, params[:display_multiplier])
       end
 
+      @offer = offer
       if params[:details] == '1'
-        @offer = offer
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
@@ -172,7 +183,9 @@ class DisplayAdController < ApplicationController
       font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
       if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
-        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name} download \\n#{offer.name}"
+        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}"
+        text << ' download' if text.length <= 20
+        text << "\n#{offer.name}"
       else
         text = offer.name
       end
@@ -230,4 +243,8 @@ class DisplayAdController < ApplicationController
     end
   end
 
+  def queue_impression_tracking
+    # for third party tracking vendors
+    @offer.queue_impression_tracking_requests(:ip_address => ip_address, :udid => params[:udid]) if @offer.present?
+  end
 end

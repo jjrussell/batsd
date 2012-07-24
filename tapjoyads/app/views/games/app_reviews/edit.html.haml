@@ -5,6 +5,6 @@
 
 - content_for :page_javascript do
   :plain
-    $(function($) {
+    (function($){
       $('.write_review').css('border-bottom', '0px');
-    });
+    })(jQuery);

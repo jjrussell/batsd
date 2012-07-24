@@ -12,7 +12,7 @@ describe OfferEvent do
 
   context "when scheduled for the future" do
     before :each do
-      @event = Factory(:offer_event, :scheduled_for => 1.hour.from_now)
+      @event = FactoryGirl.create(:offer_event, :scheduled_for => 1.hour.from_now)
     end
 
     it "is scoped as 'upcoming'" do
@@ -26,9 +26,9 @@ describe OfferEvent do
 
   context "when scheduled for the past" do
     before :each do
-      @event = Factory(:offer_event)
+      @event = FactoryGirl.create(:offer_event)
       @event.scheduled_for = 1.hour.ago
-      @event.save(false)
+      @event.save(:validate => false)
     end
 
     it "is scoped as 'to_run' and 'upcoming'" do

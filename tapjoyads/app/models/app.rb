@@ -1,6 +1,7 @@
 class App < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
+  acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { |ctx| get_offer_device_types.to_json }, :url => :store_url
 
   ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
   BETA_PLATFORMS    = {}
@@ -9,7 +10,18 @@ class App < ActiveRecord::Base
       code.match(/[A-Z]{2}/) && code != 'KP'
     end.map do |name, code|
       ["#{code} -- #{name}", code]
-    end.sort.unshift(["Select a country", ""])
+    end.sort
+  WINDOWS_ACCEPT_LANGUAGES = Set.new(%w(
+      es-ar en-au nl-be fr-be pt-br en-ca fr-ca es-cl es-co cs-cz da-dk de-de
+      es-es fr-fr en-hk en-in id-id en-ie it-it hu-hu ms-my es-mx nl-nl en-nz
+      nb-no de-at es-pe en-ph pl-pl pt-pt de-ch en-sg en-za fr-ch fi-fi sv-se
+      en-gb en-us zh-cn el-gr zh-hk ja-jp ko-kr ru-ru zh-tw
+    ))
+  WINDOWS_ACCEPT_LANGUAGES_OPTIONS = WINDOWS_ACCEPT_LANGUAGES.map do |pair|
+    country_index = GeoIP::CountryCode.index(pair[3, 2].upcase)
+    country_name = GeoIP::CountryName[country_index]
+    [ "#{country_name} - #{pair[0, 2]}", pair ]
+  end.sort
   PLATFORM_DETAILS = {
     'android' => {
       :expected_device_types => Offer::ANDROID_DEVICES,
@@ -22,7 +34,7 @@ class App < ActiveRecord::Base
       :info_url => 'https://play.google.com/store/apps/details?id=STORE_ID',
       :store_url => 'market://search?q=STORE_ID',
       :default_actions_file_name => "TapjoyPPA.java",
-      :versions => [ '1.5', '1.6', '2.0', '2.1', '2.2', '2.3', '3.0' ],
+      :versions =>  %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0),
       :cell_download_limit_bytes => 99.gigabyte,
       :screen_layout_sizes => { 'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3', 'extra large (720x960)' => '4' }
     },
@@ -37,7 +49,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
       :default_actions_file_name => "TJCPPA.h",
-      :versions => [ '2.0', '2.1', '2.2', '3.0', '3.1', '3.2', '4.0', '4.1', '4.2', '4.3', '5.0' ],
+      :versions => %w( 2.0 2.1 2.2 3.0 3.1 3.2 4.0 4.1 4.2 4.3 5.0 5.1 6.0 ),
       :cell_download_limit_bytes => 50.megabytes
     },
     'windows' => {
@@ -51,7 +63,7 @@ class App < ActiveRecord::Base
       :info_url => 'http://windowsphone.com/s?appId=STORE_ID',
       :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
       :default_actions_file_name => '', #TODO fill this out
-      :versions => [ '7.0' ],
+      :versions => %w( 7.0 ),
       :cell_download_limit_bytes => 20.megabytes
     },
   }
@@ -73,10 +85,11 @@ class App < ActiveRecord::Base
   has_many :non_rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded"
   has_one :primary_non_rewarded_featured_offer, :class_name => 'Offer', :as => :item, :conditions => "featured AND NOT rewarded", :order => "created_at"
   has_many :action_offers
+  has_many :deeplink_offers
   has_many :non_rewarded_offers, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured"
   has_one :primary_non_rewarded_offer, :class_name => 'Offer', :as => :item, :conditions => "NOT rewarded AND NOT featured", :order => "created_at"
   has_many :app_metadata_mappings
-  has_many :app_metadatas, :through => :app_metadata_mappings
+  has_many :app_metadatas, :through => :app_metadata_mappings, :readonly => false
   has_one :primary_app_metadata,
     :through => :app_metadata_mappings,
     :source => :app_metadata,
@@ -85,38 +98,33 @@ class App < ActiveRecord::Base
 
   belongs_to :partner
 
-  cache_associations :app_metadatas, :primary_app_metadata
+  set_callback :cache_associations, :before, :primary_app_metadata
+  set_callback :cache_associations, :before, :app_metadatas
 
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
   validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
 
-  before_validation_on_create :generate_secret_key
+  before_validation :generate_secret_key, :on => :create
 
   after_create :create_primary_offer
   after_update :update_all_offers
   after_update :update_currencies
   after_save :clear_dirty_flags
 
-  named_scope :visible, :conditions => { :hidden => false }
-  named_scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
-  named_scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
-  named_scope :live, :joins => [ :app_metadatas ], :conditions =>
+  scope :visible, :conditions => { :hidden => false }
+  scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
+  scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
+  scope :live, :joins => [ :app_metadatas ], :conditions =>
     "#{AppMetadata.quoted_table_name}.store_id IS NOT NULL"
 
   delegate :conversion_rate, :to => :primary_currency, :prefix => true
   delegate :store_id, :store_id?, :description, :age_rating, :file_size_bytes, :supported_devices, :supported_devices?,
-    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
+    :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist, :languages,
     :to => :primary_app_metadata, :allow_nil => true
-  delegate :name, :to => :partner, :prefix => true
+  delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
 
-  # TODO: remove these columns from apps table definition and remove this method
-  TO_BE_DELETED = %w(description price store_id age_rating file_size_bytes supported_devices released_at user_rating categories countries_blacklist papaya_user_count)
-  def self.columns
-    super.reject do |c|
-      TO_BE_DELETED.include?(c.name)
-    end
-  end
+  memoize :partner_name, :partner_dashboard_partner_url
 
   def is_ipad_only?
     supported_devices? && JSON.load(supported_devices).all?{ |i| i.match(/^ipad/i) }
@@ -139,7 +147,7 @@ class App < ActiveRecord::Base
   end
 
   def virtual_goods
-    VirtualGood.select(:where => "app_id = '#{self.id}'")[:items]
+    VirtualGood.select(:where => "app_id = '#{self.id}'", :limit => 1000)[:items]
   end
 
   def has_virtual_goods?
@@ -204,7 +212,7 @@ class App < ActiveRecord::Base
       if (data.nil?) # might not be available in the US market
         data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
       end
-    rescue Patron::HostResolutionError
+    rescue Patron::HostResolutionError, RuntimeError
       return false
     end
     return false if data.nil?
@@ -335,6 +343,12 @@ class App < ActiveRecord::Base
     !!(file_size_bytes && file_size_bytes > download_limit)
   end
 
+  def update_promoted_offers(offer_ids)
+    success = true
+    currencies.each { |currency| success &= currency.update_promoted_offers(offer_ids)}
+    success
+  end
+
   def update_offers
     offers.each do |offer|
       offer.partner_id = partner_id
@@ -398,33 +412,14 @@ class App < ActiveRecord::Base
     test_video_offer
   end
 
-  def create_tracking_offer_for(tracked_for, options = {})
-    device_types   = options.delete(:device_types)   { get_offer_device_types.to_json }
-    url_overridden = options.delete(:url_overridden) { false }
-    url            = options.delete(:url)            { store_url }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+  # For use within TJM (since dashboard URL helpers aren't available within TJM)
+  def dashboard_app_url
+    uri = URI.parse(DASHBOARD_URL)
+    "#{uri.scheme}://#{uri.host}/apps/#{self.id}"
+  end
 
-    offer = Offer.new({
-      :item             => self,
-      :tracking_for     => tracked_for,
-      :partner          => partner,
-      :name             => name,
-      :url_overridden   => url_overridden,
-      :url              => url,
-      :device_types     => device_types,
-      :price            => 0,
-      :bid              => 0,
-      :min_bid_override => 0,
-      :rewarded         => false,
-      :name_suffix      => 'tracking',
-      :third_party_data => store_id,
-      :age_rating       => age_rating,
-      :wifi_only        => wifi_required?
-    })
-    offer.id = tracked_for.id
-    offer.save!
-
-    offer
+  def rewardable_currencies
+    @rewardable_currencies ||= currencies.reject{ |c| c.conversion_rate <= 0 }
   end
 
   private
@@ -435,7 +430,6 @@ class App < ActiveRecord::Base
     self.save!
     reengagement_campaign.map(&:update_offers)
   end
-
 
   def generate_secret_key
     return if secret_key.present?
@@ -467,8 +461,8 @@ class App < ActiveRecord::Base
   def update_all_offers
     clear_association_cache
     update_offers if store_id_changed || partner_id_changed? || name_changed? || hidden_changed?
-    update_rating_offer if rating_offer.present? && (store_id_changed || name_changed?)
-    update_action_offers if store_id_changed || name_changed? || hidden_changed?
+    update_rating_offer if rating_offer.present? && (store_id_changed || partner_id_changed? || name_changed?)
+    update_action_offers if store_id_changed || partner_id_changed? || hidden_changed?
   end
 
   def update_currencies

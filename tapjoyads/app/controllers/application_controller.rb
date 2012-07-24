@@ -1,77 +1,98 @@
+# Multiple STI subclasses in one file needs this line to be findable in development mode
+require_dependency 'review_moderation_vote'
+
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :geoip_data
+  helper_method :geoip_data, :downcase_param
 
-  before_filter :set_time_zone
+  before_filter :check_uri if MACHINE_TYPE == 'website'
+  before_filter :force_utc
+  before_filter :set_readonly_db
   before_filter :fix_params
   before_filter :set_locale
   before_filter :reject_banned_ips
+
+  # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
+  # after_filter :store_response
 
   # See ActionController::RequestForgeryProtection for details
   # Uncomment the :secret if you're not using the cookie session store
   protect_from_forgery # :secret => 'f9a08830b0e4e7191cd93d2e02b08187'
 
-  # See ActionController::Base for details
-  # Uncomment this to filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "password").
-  filter_parameter_logging :password, :password_confirmation
+  def set_readonly_db
+    ActiveRecord::Base.readonly = Rails.configuration.db_readonly_hostnames.include?(request.host_with_port)
+  end
 
   private
 
-  def verify_params(required_params, options = {})
-    render_missing_text = options.delete(:render_missing_text) { true }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+  def redis_write
+    @redis_write ||= Redis.new(:host => 'redis.tapjoy.net')
+  end
 
-    if params[:udid] == 'null' || params[:app_id] == 'todo todo todo todo'
-      render :text => "missing required params", :status => 400 if render_missing_text
-      return false
-    end
-
-    all_params = true
-    required_params.each do |param|
-      if params[param].blank?
-        all_params = false
-        break
+  def store_response
+    if response.content_type == 'application/json'
+      begin
+        JSON.parse(response.body)
+      rescue JSON::ParserError
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.json'
+        redis_write.sadd key, response.body
+      end
+    elsif response.content_type == 'application/xml'
+      begin
+        ::XmlSimple.xml_in(response.body)
+      rescue ArgumentError
+        key = [
+          'rails3',
+          'responses',
+          request.path_parameters[:controller],
+          request.path_parameters[:action],
+        ].join('/') + '.xml'
+        redis_write.sadd key, response.body
       end
     end
-
-    if render_missing_text && !all_params
-      render :text => "missing required params", :status => 400
-    end
-    return all_params
   end
 
-  def verify_records(required_records, options = {})
+  def verify_params(required_params, options = { })
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    required_records.each do |record|
-      next unless record.nil?
-
-      render :text => "record not found", :status => 500 if render_missing_text
-      return false
-    end
-    true
+    param_missing = required_params.any?{ |param| params[param].blank? } || params[:udid] == 'null'
+    render :text => 'missing required params', :status => 400 if render_missing_text && param_missing
+    !param_missing
   end
 
-  def set_time_zone
+  def verify_records(required_records, options = { })
+    render_missing_text = options.delete(:render_missing_text) { true }
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    record_missing = required_records.any?( &:nil? )
+    render :text => 'record not found', :status => 400 if render_missing_text && record_missing
+    !record_missing
+  end
+
+  def force_utc
     Time.zone = 'UTC'
   end
 
   def set_locale
+    I18n.locale = get_locale || I18n.default_locale
+  end
+
+  # detect the locale info from the params and return the proper one
+  #
+  # @return [String] Locale detected from the language_code param
+  def get_locale
     language_code = params[:language_code]
-    I18n.locale = nil
-    if AVAILABLE_LOCALES.include?(language_code)
-      I18n.locale = language_code
-    elsif language_code.present? && language_code['-']
-      language_code = language_code.split('-').first
-      if AVAILABLE_LOCALES.include?(language_code)
-        I18n.locale = language_code
-      end
+    if language_code.present?
+      language_code = language_code.split('-').first if language_code['-']
+      language_code.downcase
     end
   end
 
@@ -79,20 +100,34 @@ class ApplicationController < ActionController::Base
     return if params[:udid].present?
     lookup_keys = []
     lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
+    lookup_keys.push(params[:sha1_udid]) if params[:sha1_udid].present?
     lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
+    lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
+    lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
+    lookup_keys.push(params[:android_id]) if params[:android_id].present?
+
+    params[:identifiers_provided] = lookup_keys.any?
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
       unless identifier.new_record?
+        params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break
       end
+    end
+
+    if params[:udid].blank? && params[:mac_address].present?
+      params[:udid] = params[:mac_address]
     end
   end
 
   def fix_params
     downcase_param(:udid)
     downcase_param(:sha2_udid)
+    downcase_param(:sha1_udid)
+    downcase_param(:sha1_mac_address)
+    downcase_param(:open_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -123,7 +158,7 @@ class ApplicationController < ActionController::Base
   end
 
   def downcase_param(p)
-    params[p] = params[p].downcase if params[p]
+    params[p] = params[p].downcase if params[p].is_a?(String)
   end
 
   def set_param(to, from, lower = false)
@@ -182,6 +217,10 @@ class ApplicationController < ActionController::Base
     render :text => '' if BANNED_IPS.include?(ip_address)
   end
 
+  def reject_banned_udids
+    render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
+  end
+
   def log_activity(object, options={})
     included_methods = options.delete(:included_methods) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -224,8 +263,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def choose_experiment
-    params[:exp] = Experiments.choose(params[:udid]) unless params[:exp].present?
+  def choose_experiment(experiment)
+    params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end
 
   def decrypt_data_param
@@ -253,10 +292,23 @@ class ApplicationController < ActionController::Base
   def generate_verifier(more_data = [])
     hash_bits = [
       params[:app_id],
-      params[:udid],
+      request.query_parameters[:udid] || params[:mac_address],
       params[:timestamp],
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
+
+  def device_type
+    @device_type ||= HeaderParser.device_type(request.user_agent)
+  end
+
+  def os_version
+    @os_version ||= HeaderParser.os_version(request.user_agent)
+  end
+
+  def check_uri
+    redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
+  end
+
 end

@@ -1,0 +1,87 @@
+%thead
+  %tr
+    %th{:width => '400px'} App
+    %th{:width => '150px'} Partner
+    %th Request
+    %th{:width => '150px'} Action
+%tbody
+  - enable_requests.each do |req|
+    - offer = req.offer
+    - item = offer.item
+    - partner = offer.partner
+    - issues = @issues[item.id]
+    %tr
+      %td
+        .app-icon= image_tag(offer.get_icon_url, :size => '57x57')
+        .app-name
+          .links.right
+            #{link_to("offer", url_to_offer_item(offer))}
+            %br/
+            #{link_to("last run times", last_run_times_statz_path(offer))}
+          %span
+            = image_tag(platform_icon_url(item))
+            = link_to(truncate(offer.name_with_suffix, :length => 30), statz_path(offer))
+
+        %strong App Price:
+        - if offer.is_paid?
+          = number_to_currency(offer.price/100.0)
+        - else
+          Free
+        - if item.store_id.nil?
+          (NO STORE ID)
+        - else
+          (#{link_to(item.store_id, item.store_url)})
+        %br/
+        %strong Pay / Bid:
+        = number_to_currency(offer.payment/100.0)
+        \/
+        = number_to_currency(offer.bid/100.0)
+        %br/
+
+        .clear
+        - unless issues.blank?
+          .issues
+            %strong Potential Issues:
+            %ul
+              - issues.each do |issue|
+                %li{:class => issue[:type]}= issue[:message]
+      %td
+        %strong Name:
+        = link_to(partner.name? ? partner.name : '(no name)', partner)
+        .info{:class => (partner.balance < 1000) ? 'bad' : ''}
+          %strong Balance:
+          = number_to_currency(partner.balance / 100.0)
+      %td
+        %strong Who:
+        - body = "#{url_to_offer_item(offer)}"
+        = mail_to(req.requested_by.email, nil, :subject => "#{offer.name}", :body => body)
+        .info{:class => (7.days.since(req.created_at) < Time.zone.now) ? 'bad' : ''}
+          %strong When:
+          = req.created_at.to_s(:mdy_ampm)
+        .numeric
+          epoch_time
+          = req.created_at.to_i
+        %strong Status:
+        = req.status_text
+        - if req.status == EnableOfferRequest::STATUS_ASSIGNED
+          to
+          = mail_to(req.assigned_to.email, req.assigned_to.email.split('@').first)
+        %br/
+        %br/
+        .links
+          = link_to('Activity Log', activities_path(:object_id => req.id))
+      %td
+        - if req.assigned_to.nil?
+          = form_for([ :tools, req ]) do |f|
+            = hidden_field_tag(:do, 'assign')
+            = f.submit('Assign to myself')
+        - elsif req.assigned_to == current_user
+          = form_for([ :tools, req ]) do |f|
+            = hidden_field_tag(:do, 'approve')
+            = f.submit('Approve', :class => 'accept-request')
+          = form_for([ :tools, req ]) do |f|
+            = hidden_field_tag(:do, 'reject')
+            = f.submit('Reject', :class => 'reject-request')
+          = form_for([ :tools, req ]) do |f|
+            = hidden_field_tag(:do, 'unassign')
+            = f.submit('Unassign')

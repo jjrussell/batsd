@@ -59,7 +59,12 @@ class SyslogMessage
     @attributes = {}
     @id         = options.delete(:id)   || UUIDTools::UUID.random_create.to_s
     self.time   = options.delete(:time) || Time.zone.now
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    raise "Unknown options #{options.keys.join(', ')}" if options.present?
+  end
+
+  def replace_path(replacement)
+    @attributes[:path] = [ replacement ]
+    replacement
   end
 
   def save

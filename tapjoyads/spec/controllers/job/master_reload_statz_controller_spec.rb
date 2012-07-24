@@ -1,16 +1,28 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::MasterReloadStatzController do
+  let(:stats_hash) do
+    hash = Hash.new([100,200,300])
+    hash['arpdau'] = nil
+    hash
+  end
+
   before :each do
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    time = Time.zone.today + 1.day
+    Timecop.freeze(time.to_time(:utc))
     @start_time = Time.zone.now - 1.day
     @end_time = Time.zone.now
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
+    Mc.flush('totally_serious')
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe '#index' do
     it 'saves memcache values' do
-      100.times { Factory(:email_offer) }
+      100.times { FactoryGirl.create(:email_offer) }
       stub_vertica
       get(:index)
 
@@ -82,28 +94,28 @@ describe Job::MasterReloadStatzController do
 
     it 'generates combined ranks' do
       apps = [
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'iphone'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'iphone'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'android'),
-        Factory(:app,
+        FactoryGirl.create(:app,
           :platform => 'android'),
       ]
 
       app_metadatas = [
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'ios.free',
           :price => 0),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'ios.paid',
           :price => 1),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'android.free',
           :store_name => 'Google Play',
           :price => 0),
-        Factory(:app_metadata,
+        FactoryGirl.create(:app_metadata,
           :store_id => 'android.paid',
           :store_name => 'Google Play',
           :price => 1),
@@ -137,10 +149,10 @@ describe Job::MasterReloadStatzController do
 
   describe '#partner_index' do
     before :each do
-      @partner = Factory(:partner)
+      @partner = FactoryGirl.create(:partner)
 
       @mock_appstats = mock()
-      @mock_appstats.stubs(:stats).returns(stats_hash)
+      @mock_appstats.stub(:stats).and_return(stats_hash)
     end
 
     it 'saves partner values' do
@@ -150,35 +162,40 @@ describe Job::MasterReloadStatzController do
       get(:partner_index)
 
       expected_stats = {
-        "account_mgr"           => "",
-        "balance"               => "$0.00",
-        "clicks"                => "600",
-        "cvr"                   => "100.0%",
-        "display_conversions"   => "600",
-        "display_cvr"           => "100.0%",
-        "display_ecpm"          => "$10.00",
-        "display_revenue"       => "$6.00",
-        "display_views"         => "600",
-        "est_gross_revenue"     => "$12.00",
-        "featured_conversions"  => "600",
-        "featured_cvr"          => "100.0%",
-        "featured_ecpm"         => "$10.00",
-        "featured_revenue"      => "$6.00",
-        "featured_views"        => "600",
-        "new_users"             => "600",
-        "offerwall_conversions" => "600",
-        "offerwall_cvr"         => "100.0%",
-        "offerwall_ecpm"        => "$10.00",
-        "offerwall_revenue"     => "$6.00",
-        "offerwall_views"       => "600",
-        "paid_installs"         => "600",
-        "partner"               => @partner.name,
-        "rev_share"             => "50.0%",
-        "sales_rep"             => "",
-        "sessions"              => "600",
-        "spend"                 => "$-6.00",
-        "total_revenue"         => "$6.00",
-        "arpdau"                => "-",
+        "account_mgr"               => "",
+        "balance"                   => "$0.00",
+        "clicks"                    => "600",
+        "cvr"                       => "100.0%",
+        "display_conversions"       => "600",
+        "display_cvr"               => "100.0%",
+        "display_ecpm"              => "$10.00",
+        "display_revenue"           => "$6.00",
+        "display_views"             => "600",
+        "est_gross_revenue"         => "$12.00",
+        "featured_conversions"      => "600",
+        "featured_cvr"              => "100.0%",
+        "featured_ecpm"             => "$10.00",
+        "featured_revenue"          => "$6.00",
+        "featured_views"            => "600",
+        "new_users"                 => "600",
+        "offerwall_conversions"     => "600",
+        "offerwall_cvr"             => "100.0%",
+        "offerwall_ecpm"            => "$10.00",
+        "offerwall_revenue"         => "$6.00",
+        "offerwall_views"           => "600",
+        "tjm_offerwall_conversions" => "600",
+        "tjm_offerwall_cvr"         => "100.0%",
+        "tjm_offerwall_ecpm"        => "$10.00",
+        "tjm_offerwall_revenue"     => "$6.00",
+        "tjm_offerwall_views"       => "600",
+        "paid_installs"             => "600",
+        "partner"                   => @partner.name,
+        "rev_share"                 => "50.0%",
+        "sales_rep"                 => "",
+        "sessions"                  => "600",
+        "spend"                     => "-$6.00",
+        "total_revenue"             => "$6.00",
+        "arpdau"                    => "-",
       }
 
       actual_stats = Mc.get('statz.partner.cached_stats.24_hours')
@@ -201,6 +218,7 @@ describe Job::MasterReloadStatzController do
 
       zero_keys = [
         'rewards_opened',
+        'tjm_rewards_opened',
         'featured_offers_opened',
         'display_clicks',
         'paid_clicks',
@@ -208,7 +226,7 @@ describe Job::MasterReloadStatzController do
       zero_hash = {}
       zero_keys.each { |key| zero_hash[key] = [0] }
 
-      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      @mock_appstats.stub(:stats).and_return(stats_hash.merge(zero_hash))
       stub_appstats
 
       zero_keys = [
@@ -248,8 +266,8 @@ describe Job::MasterReloadStatzController do
       stub_conversions
       stub_appstats
 
-      admin_user = Factory(:admin)
-      admin_user2 = Factory(:admin)
+      admin_user = FactoryGirl.create(:admin)
+      admin_user2 = FactoryGirl.create(:admin, :email => 'admin0123@tapjoy.com')
 
       @partner.account_managers = [admin_user, admin_user2]
       @partner.sales_rep = admin_user
@@ -274,7 +292,7 @@ describe Job::MasterReloadStatzController do
       Mc.get('statz.partner.cached_stats.24_hours').should be_nil
 
       hash = stats_hash.merge('paid_installs' => [0])
-      @mock_appstats.stubs(:stats).returns(hash)
+      @mock_appstats.stub(:stats).and_return(hash)
       stub_appstats
 
       get :partner_index
@@ -290,11 +308,12 @@ describe Job::MasterReloadStatzController do
 
       zero_hash = {
         'rewards' => [0],
+        'tjm_rewards' => [0],
         'featured_published_offers' => [0],
         'display_conversions' => [0],
       }
 
-      @mock_appstats.stubs(:stats).returns(stats_hash.merge(zero_hash))
+      @mock_appstats.stub(:stats).and_return(stats_hash.merge(zero_hash))
       stub_appstats
 
       get :partner_index
@@ -364,7 +383,7 @@ def stub_vertica(start_time = nil, end_time = nil)
     }
   end
 
-  @worst_offer = Factory(:app).primary_offer
+  @worst_offer = FactoryGirl.create(:app).primary_offer
   stats_to_be_cached << {
     'offer_id' => @worst_offer.id,
     'spend' => 0,
@@ -388,16 +407,16 @@ def stub_vertica(start_time = nil, end_time = nil)
   end
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', :select => 'max(time)').
-    returns([{ :max => Time.zone.parse('2011-02-15') }])
+    and_return([{ :max => Time.zone.now }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', money_options(start_time, end_time)).
-    returns([{
+    and_return([{
       :count => 1,
       :adv_amount => 1,
       :pub_amount => 1,
@@ -406,16 +425,16 @@ def stub_vertica(start_time = nil, end_time = nil)
     }])
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', advertiser_options(start_time, end_time)).
-    returns(adv_stats)
+    and_return(adv_stats)
 
   VerticaCluster.
-    expects(:query).
+    should_receive(:query).
     once.
     with('analytics.actions', publisher_options(start_time, end_time)).
-    returns(pub_stats)
+    and_return(pub_stats)
 end
 
 def query_conditions(start_time, end_time)
@@ -424,15 +443,6 @@ def query_conditions(start_time, end_time)
     "time >= '#{start_time.to_s(:db)}'",
     "time < '#{end_time.to_s(:db)}'",
   ]
-end
-
-def stats_hash
-  return @hash if @hash
-  @hash = {}
-  stats_keys.each do |key|
-    @hash[key] = [100,200,300]
-  end
-  @hash
 end
 
 def stats_keys
@@ -445,6 +455,12 @@ def stats_keys
       'rewards_ctr',
       'rewards_cvr',
       'offerwall_ecpm',
+      'tjm_rewards',
+      'tjm_rewards_opened',
+      'tjm_rewards_revenue',
+      'tjm_rewards_ctr',
+      'tjm_rewards_cvr',
+      'tjm_offerwall_ecpm',
       'featured_ctr',
       'featured_cvr',
       'featured_fill_rate',
@@ -475,24 +491,24 @@ def percentage(value)
 end
 
 def stub_appstats(granularity = :hourly)
-  Appstats.expects(:new).
-    times(4).
-    with(@partner.id, has_entry(:granularity, granularity)).
-    returns(@mock_appstats)
+    Appstats.should_receive(:new).
+    exactly(4).times.
+    with(@partner.id, hash_including(:granularity=>granularity)).
+    and_return(@mock_appstats)
 end
 
 def stub_conversions(start_time = nil, end_time = nil)
   start_time ||= @start_time
   end_time ||= @end_time
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('publisher', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 
   Conversion.slave_connection.
-    expects(:select_values).
+    should_receive(:select_values).
     with(conversion_query('advertiser', start_time, end_time)).
-    at_least(1).
-    returns([@partner.id])
+    at_least(:once).
+    and_return([@partner.id])
 end

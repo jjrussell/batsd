@@ -8,9 +8,29 @@ class GamesController < ApplicationController
   before_filter :setup_tjm_request
   after_filter :save_tjm_request
 
-  helper_method :current_gamer, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info
+  helper_method :current_gamer, :get_locale_filename, :set_gamer, :current_device_id, :current_device_id_cookie, :current_device, :current_recommendations, :has_multiple_devices, :show_login_page, :device_type, :geoip_data, :os_version, :social_feature_redirect_path, :get_friends_info, :get_local_tracking_url
 
   protected
+
+  def set_show_partners_bar_in_footer
+    @show_partners_bar_in_footer = true
+  end
+
+  def set_exclude_social_from_submenu
+    @exclude_social_from_submenu = true
+  end
+
+  def set_exclude_help_from_submenu
+    @exclude_help_from_submenu = true
+  end
+
+  def set_show_nav_bar_quad_menu
+    @show_nav_bar_quad_menu = true
+  end
+
+  def set_show_nav_bar_login_button
+    @show_nav_bar_login_button = true
+  end
 
   def get_friends_info(ids)
     Gamer.find_all_by_id(ids).map do |friend|
@@ -28,25 +48,29 @@ class GamesController < ApplicationController
   end
 
   def set_locale
-    I18n.locale = (get_language_codes.concat(http_accept_language) & AVAILABLE_LOCALES_ARRAY).first
+    I18n.locale = (get_language_codes.concat(http_accept_language).push(I18n.default_locale.to_s) & I18n.available_locales.map(&:to_s)).first
+  end
+
+  def get_locale_filename
+    dev_bust = Rails.configuration.i18n_js_cache ? "" : Time.now.to_i
+    "#{I18n.locale}-#{t('hash',:locale => I18n.default_locale)}#{t('hash')}#{dev_bust}"
   end
 
   def get_language_codes
     return [] unless params[:language_code]
-
-    code = params[:language_code]
-
+    code = params[:language_code].downcase
     [ code, code.split(/-/).first ].uniq
   end
 
   def http_accept_language
     # example env[HTTP_ACCEPT_LANGUAGE] string: en,en-US;q=0.8,es;q=0.6,zh;q=0.4
     splits = []
+    unset_priority = 2.0
     language_list = request.env['HTTP_ACCEPT_LANGUAGE'].split(/\s*,\s*/).map do |pair|
       language, quality = pair.split(/;q=/)
       raise "Not correctly formatted" unless language =~ /^[a-z\-]+$/i
-      language = language.downcase.gsub(/-[a-z]+$/i) { |i| i.upcase }
-      quality = 1.0 unless quality.to_s =~ /\d+(\.\d+)?$/
+      language = language.downcase
+      quality = unset_priority -= 0.1 unless quality.to_s =~ /\d+(\.\d+)?$/
       result = [ - quality.to_f, language ]
       splits << [ - (quality.to_f - 0.1), language.split(/-/).first ] if language =~ /-/
       result
@@ -89,7 +113,10 @@ class GamesController < ApplicationController
 
   def has_permissions?
     begin
-      unless current_facebook_user.has_permission?(:offline_access) && current_facebook_user.has_permission?(:publish_stream)
+      unless current_facebook_user.has_permission?(:offline_access) &&
+        current_facebook_user.has_permission?(:publish_stream) &&
+        current_facebook_user.has_permission?(:email) &&
+        current_facebook_user.has_permission?(:user_birthday)
         @error_msg = t('grant_permissions_for_invite')
       end
     rescue
@@ -129,8 +156,8 @@ class GamesController < ApplicationController
       render :json => { :success => false, :error => t('text.games.twitter_forbidden_error') }
     when Twitter::Unauthorized
       current_gamer.dissociate_account!(Invitation::TWITTER)
-      render :json => { :success => false, :errorRedirectPath => games_social_get_twitter_friends_path } and return if params[:ajax].present?
-      redirect_to games_social_get_twitter_friends_path
+      render :json => { :success => false, :errorRedirectPath => games_social_twitter_start_oauth_path } and return if params[:ajax].present?
+      redirect_to games_social_twitter_start_oauth_path
     when Twitter::InternalServerError, Twitter::BadGateway, Twitter::ServiceUnavailable
       render :json => { :success => false, :error => t('text.games.twitter_internal_error') } and return if params[:ajax].present?
       flash[:error] = t('text.games.twitter_internal_error')
@@ -160,15 +187,21 @@ class GamesController < ApplicationController
   def require_gamer
     unless current_gamer
       path = url_for(params.merge(:only_path => true))
-      options = { :path => path } unless path == games_root_path
+      options = { :path => path } unless path == games_path
       options[:referrer] = params[:referrer] if params[:referrer].present?
-      redirect_to games_login_path(options)
+      options[:state] = params[:state] if params[:state].present?
+      if request.xhr?
+        render :json=> "Unauthorized", :status => 401
+      else
+        redirect_to games_login_path(options)
+      end
     end
   end
 
   def render_login_page
     @gamer_session ||= GamerSession.new
-    @gamer ||= Gamer.new
+    @login_form_class_name = "show" if params[:state]=='login-form'
+    @non_login_form_class_name = "hide" if params[:state]=='login-form'
     render 'games/gamer_sessions/new'
   end
 
@@ -183,7 +216,7 @@ class GamesController < ApplicationController
 
   def social_feature_redirect_path
     return request.env['HTTP_REFERER'] if request.env['HTTP_REFERER']
-    "#{WEBSITE_URL}#{games_social_index_path}"
+    "#{WEBSITE_URL}#{games_social_root_path}"
   end
 
   def current_gamer
@@ -191,7 +224,10 @@ class GamesController < ApplicationController
   end
 
   def current_device_id
-    if session[:current_device_id]
+    if params[:udid]
+      @current_device_id = params[:udid]
+      session[:current_device_id] = ObjectEncryptor.encrypt(@current_device_id) if @current_device_id.present?
+    elsif session[:current_device_id]
       @current_device_id = ObjectEncryptor.decrypt(session[:current_device_id])
     end
     if @current_device_id.nil?
@@ -239,14 +275,6 @@ class GamesController < ApplicationController
     current_gamer.devices.size > 1
   end
 
-  def device_type
-    @device_type ||= HeaderParser.device_type(request.user_agent)
-  end
-
-  def os_version
-    @os_version ||= HeaderParser.os_version(request.user_agent)
-  end
-
   def select_layout
     if params[:ajax].present?
       nil
@@ -261,7 +289,6 @@ class GamesController < ApplicationController
       session[:tjms_stime] = now.to_i
       session[:tjms_id]    = UUIDTools::UUID.random_create.hexdigest
     end
-
     tjm_request_options = {
       :time       => now,
       :session    => session,
@@ -272,12 +299,14 @@ class GamesController < ApplicationController
       :gamer      => current_gamer,
       :device_id  => current_device_id,
     }
+    @tjm_social_request = TjmRequest.new(tjm_request_options.merge(:is_social => true)) if params[:referrer].present?
     @tjm_request = TjmRequest.new(tjm_request_options)
 
     session[:tjms_ltime] = now
   end
 
   def save_tjm_request
+    @tjm_social_request.save if @tjm_social_request.present?
     @tjm_request.save if @tjm_request.present?
   end
 
@@ -286,6 +315,28 @@ class GamesController < ApplicationController
     session[:tjms_stime].blank? ||
     session[:tjms_ltime].blank? ||
     Time.zone.at(session[:tjms_ltime].to_i) < now - TJM_SESSION_TIMEOUT
+  end
+
+  def get_local_tracking_url(path, controller=nil, action=nil, url=nil)
+    request_params = {}
+    request_params[:request_path] = path if path.present?
+    request_params[:request_controller] = controller if controller.present?
+    request_params[:request_action] = action if action.present?
+    request_params[:request_url] = url if url.present?
+    request_params.empty? ? nil : "#{games_record_local_request_path}?data=#{ObjectEncryptor.encrypt(request_params)}"
+  end
+
+  def record_recommended_apps
+    return unless @tjm_request
+    current_recommendations.each_with_index do |app, index|
+      recommendation_tjm_request = @tjm_request.clone
+      recommendation_tjm_request.app_id         = app.id
+      recommendation_tjm_request.list_rank      = index
+      recommendation_tjm_request.display_path   = recommendation_tjm_request.path
+
+      recommendation_tjm_request.replace_path('tjm_recommendation_impression')
+      recommendation_tjm_request.save
+    end
   end
 
 end

@@ -1,12 +1,11 @@
-- @hide_login = true
 
 #privacy.current
   .nav
     .nav_container.clearfix
-      %a{ :href => games_root_path, :class => 'slideright' }
+      %a{ :href => games_path, :class => 'slideright' }
         .logo
   #static.container
     .content.narrow.pad
       .content_box
         %div
-          = render :partial => 'documents/privacy_policy'
+          = render :partial => '/homepage/documents/privacy_policy'

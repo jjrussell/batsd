@@ -2,14 +2,10 @@ require 'spec_helper'
 
 describe Click do
   before :each do
-    SimpledbResource.reset_connection
+    @click = FactoryGirl.create(:click)
   end
-
+  
   describe "#url_to_resolve" do
-    before :each do
-      @click = Factory(:click)
-    end
-
     context "when generic click" do
       before :each do
         @click.type = 'generic'
@@ -29,6 +25,42 @@ describe Click do
         expected = "#{API_URL}/connect?app_id=#{@click.advertiser_app_id}&udid=#{@click.udid}&consistent=true"
         @click.send(:url_to_resolve).should == expected
       end
+    end
+  end
+
+  describe '#dashboard_device_info_tool_url' do
+    include Rails.application.routes.url_helpers
+    
+    it 'matches URL for Rails device_info_tools_url helper' do
+      @click.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?click_key=#{@click.key}"
+    end
+  end
+
+  describe '#update_partner_live_dates' do
+    before :each do
+      @stamp = Time.zone.now
+      @click.clicked_at = @stamp
+      @publisher = FactoryGirl.create(:partner)
+      @click.publisher_amount = 10
+      @publisher.save!
+      @click.publisher_partner_id = @publisher.id
+
+      @advertiser = FactoryGirl.create(:partner)
+      @click.advertiser_amount = 20
+      @advertiser.save!
+      @click.advertiser_partner_id = @advertiser.id
+    end
+
+    it 'updates the live date for the publisher' do
+      @click.update_partner_live_dates!
+      @publisher.reload
+      @publisher.live_date.to_s.should == @stamp.to_s
+    end
+
+    it 'updates the live date for the advertiser' do
+      @click.update_partner_live_dates!
+      @advertiser.reload
+      @advertiser.live_date.to_s.should == @stamp.to_s
     end
   end
 end

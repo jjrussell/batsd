@@ -103,6 +103,10 @@ input[type=submit][disabled], input[type=button][disabled] {
   background: -moz-linear-gradient(top,  #fff,  #ccc);
 }
 
+input[type=text].error {
+  border-color: red !important;
+}
+
 #main {
   padding: 10px 15px;
   margin: 10px auto;
@@ -194,6 +198,10 @@ div.flash {
 #flash_notice, .flash.notice {
   border: 2px solid #328F0D;
   color: #328F0D;
+}
+#flash_message {
+  border: 2px solid #388DFF;
+  color: #388DFF;
 }
 #flash_error {
   border: 2px solid #F31;

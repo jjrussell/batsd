@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Partner do
-  subject { Factory(:partner) }
+  subject { FactoryGirl.create(:partner) }
 
   it 'associates' do
     should have_many(:orders)
@@ -26,31 +26,32 @@ describe Partner do
     should validate_numericality_of(:next_payout_amount)
     should validate_numericality_of(:rev_share)
     should validate_numericality_of(:direct_pay_share)
+    should validate_presence_of(:name)
   end
 
   describe 'A Partner' do
     before :each do
       mock_slave = mock()
-      mock_slave.stubs(:execute)
-      Partner.stubs(:slave_connection).returns(mock_slave)
-      @partner = Factory(:partner, :pending_earnings => 10000, :balance => 10000)
-      @app = Factory(:app, :partner => @partner)
+      mock_slave.stub(:execute)
+      Partner.stub(:slave_connection).and_return(mock_slave)
+      @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       cutoff_date = @partner.payout_cutoff_date
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => cutoff_date)
-      Factory(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date - 1))
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => cutoff_date)
+      FactoryGirl.create(:conversion, :publisher_app => @app, :publisher_amount => 100, :created_at => (cutoff_date + 1))
       @partner.reload
     end
 
     it 'adds account_mgr as account manager' do
-      manager_role = Factory(:user_role, :name => "account_mgr")
-      manager_user = Factory(:user, :user_roles => [manager_role])
+      manager_role = UserRole.find_by_name("account_mgr")
+      manager_user = FactoryGirl.create(:user, :user_roles => [manager_role])
       @partner.users << manager_user
       @partner.account_managers.length.should == 1
     end
 
     it 'adds normal users but not as account manager' do
-      @partner.users << Factory(:user)
+      @partner.users << FactoryGirl.create(:user)
       @partner.account_managers.length.should == 0
     end
 
@@ -61,8 +62,8 @@ describe Partner do
 
     context 'with MonthlyAccoutings' do
       before :each do
-        reference_time = Conversion.accounting_cutoff_time - 1
-        monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => reference_time.month, :year => reference_time.year)
+        @reference_time = Conversion.accounting_cutoff_time - 1
+        monthly_accounting = MonthlyAccounting.new(:partner => @partner, :month => @reference_time.month, :year => @reference_time.year)
         monthly_accounting.calculate_totals!
       end
 
@@ -80,6 +81,11 @@ describe Partner do
         @partner.reset_balances
         @partner.pending_earnings.should == 300
         @partner.balance.should == 0
+      end
+
+      it "returns available MonthlyAccounting" do
+        @monthly_accounting = @partner.monthly_accounting(@reference_time.year, @reference_time.month)
+        @monthly_accounting.should_not be_nil
       end
     end
 
@@ -111,8 +117,8 @@ describe Partner do
 
     context 'with currencies' do
       before :each do
-        @currency1 = Factory(:currency, :partner => @partner)
-        @currency2 = Factory(:currency, :partner => @partner)
+        @currency1 = FactoryGirl.create(:currency, :partner => @partner)
+        @currency2 = FactoryGirl.create(:currency, :partner => @partner)
       end
 
       it "updates its currencies's spend_share when saved" do
@@ -212,10 +218,10 @@ describe Partner do
 
     context 'when assigning a reseller user' do
       before :each do
-        @partner.users << Factory(:user)
-        @reseller = Factory(:reseller)
-        @reseller_user = Factory(:user, :reseller => @reseller)
-        @currency = Factory(:currency, :partner => @partner)
+        @partner.users << FactoryGirl.create(:user)
+        @reseller = FactoryGirl.create(:reseller)
+        @reseller_user = FactoryGirl.create(:user, :reseller => @reseller)
+        @currency = FactoryGirl.create(:currency, :partner => @partner)
       end
 
       it "modifies reseller of partner and partner's dependent records" do
@@ -235,8 +241,183 @@ describe Partner do
         @currency.reseller.should be_nil
         @app.primary_offer.reseller.should be_nil
       end
-
     end
 
+    context "with promoted offers" do
+      before :each do
+        @partner = FactoryGirl.create(:partner)
+        @offer1 = FactoryGirl.create(:app, :partner => @partner).primary_offer.target
+        @offer2 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+        @offer3 = FactoryGirl.create(:app, :partner => @partner, :platform => 'android').primary_offer
+        @offer4 = FactoryGirl.create(:app, :partner => @partner).primary_offer
+        Offer.any_instance.stub(:can_be_promoted?).and_return(true)
+      end
+
+      it "returns available offers with correct platform" do
+        @partner.reload
+        available_offers = @partner.offers_for_promotion
+        available_offers[:windows].should == []
+        available_offers[:android].should == [ @offer3 ]
+        available_offers[:iphone].should include @offer1
+        available_offers[:iphone].should include @offer2
+        available_offers[:iphone].should include @offer4
+      end
+    end
+
+    describe '#discount_expires_on' do
+      context 'when no applied_offer_discounts' do
+        before :each do
+          @partner.stub(:applied_offer_discounts).and_return([])
+        end
+
+        it 'will be nil' do
+          @partner.discount_expires_on.should be_nil
+        end
+      end
+
+      context 'when there are applied_offer_discounts' do
+        before :each do
+          @one_day = 1.day.ago
+          applied_discounts = [stub('expiration1', :expires_on => 2.days.ago),
+                               stub('expiration2', :expires_on => @one_day),
+                               stub('expiration3', :expires_on => 3.days.ago)]
+
+          @partner.stub(:applied_offer_discounts).and_return(applied_discounts)
+        end
+
+        it 'will be the most recent expiration' do
+          @partner.discount_expires_on.should == @one_day
+        end
+      end
+    end
+
+    describe '#applied_offer_discounts' do
+      it 'will only return active discounts' do
+        first= mock('first', :active? => false)
+        second = mock('second', :active? => true, :amount => 2)
+        third = mock('third', :active? => true, :amount => 5)
+        offer_discounts = [first, second, third]
+        @partner.stub(:premier_discount).and_return(5)
+        @partner.stub(:offer_discounts).and_return(offer_discounts)
+        @partner.applied_offer_discounts.should == [third]
+      end
+    end
+
+    describe '#sales_rep_is_employee' do
+      before :each do
+        @sales_rep = mock('sales_rep')
+        @partner.stub(:sales_rep).and_return(@sales_rep)
+      end
+
+      context 'when sales rep is an employee' do
+        before :each do
+          @sales_rep.stub(:employee?).and_return(true)
+        end
+
+        it 'has no errors' do
+          @partner.stub(:errors).never
+          @partner.send(:sales_rep_is_employee)
+        end
+      end
+
+      context 'when sales rep is not an employee' do
+        before :each do
+          @sales_rep.stub(:employee?).and_return(false)
+        end
+
+        it 'has an error' do
+          errors = mock('errors')
+          errors.stub(:add).with(:sales_rep, 'must be an employee').once
+          @partner.stub(:errors).and_return(errors)
+          @partner.send(:sales_rep_is_employee)
+        end
+      end
+    end
+
+    describe '.verify_balances' do
+      context 'when alert on mismatch' do
+        before :each do
+          Partner.stub(:find).with(@partner.id).and_return(@partner)
+        end
+
+        context 'when partner balance changed' do
+          it 'notifies of balance change' do
+            @partner.stub(:balance_was).and_return(10000)
+            @partner.stub(:balance).and_return(0)
+            @partner.stub(:balance_changed?).and_return(true)
+            @partner.stub(:pending_earnings_changed?).and_return(false)
+            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Balance mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            p = Partner.verify_balances(@partner.id, true)
+          end
+        end
+
+        context 'when partner pending earnings changed' do
+          it 'notifies of a pending earnings change' do
+            @partner.stub(:pending_earnings_was).and_return(10000)
+            @partner.stub(:pending_earnings).and_return(0)
+            @partner.stub(:balance_changed?).and_return(false)
+            @partner.stub(:pending_earnings_changed?).and_return(true)
+            @partner.stub(:add_payout_confirmations)
+            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
+            p = Partner.verify_balances(@partner.id, true)
+          end
+        end
+      end
+    end
+
+    describe '#confirm_for_payout' do
+      before :each do
+        @partner.payout_threshold_confirmation = false
+      end
+
+      context 'when user has proper role' do
+        before :each do
+          @user = FactoryGirl.create(:admin)
+        end
+
+        it 'remains confirmed the partner' do
+          @partner.confirm_for_payout(@user)
+          @partner.payout_threshold_confirmation.should be_true
+        end
+      end
+
+      context 'when user does not have proper role' do
+        before :each do
+          @user = FactoryGirl.create(:agency_user)
+        end
+
+        it 'does not confirm the partner' do
+          @partner.confirm_for_payout(@user)
+          @partner.payout_threshold_confirmation.should be_false
+        end
+      end
+    end
+  end
+
+  describe '#dashboard_partner_url' do
+    include Rails.application.routes.url_helpers
+    before :each do
+      @partner = FactoryGirl.create :partner
+    end
+
+    it 'matches URL for Rails partner_url helper' do
+      @partner.dashboard_partner_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/partners/#{@partner.id}"
+    end
+  end
+
+  describe 'validate_each name' do
+    before :each do
+      @partner = FactoryGirl.create :partner
+    end
+    
+    it 'must have a name' do
+      @partner.name = ' '
+      @partner.should_not be_valid
+    end
+    
+    it 'must not have tapjoy in the name' do
+      @partner.name = ' Tapjoy '
+      @partner.should_not be_valid
+    end
   end
 end

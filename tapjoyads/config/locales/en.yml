@@ -1,16 +1,7 @@
 ---
 en:
-  authlogic:
-    error_messages:
-      password_invalid: Password is invalid
-      login_not_found: Email is invalid
   activerecord:
     errors:
-      models:
-        gamer_sessions:
-          attributes:
-            password: Password
-            email: Email
       full_messages:
         format: "%{attribute} %{message}"
       messages:
@@ -35,15 +26,23 @@ en:
         too_long: "is too long (maximum is %{count} characters)"
         too_short: "is too short (minimum is %{count} characters)"
         wrong_length: "is the wrong length (should be %{count} characters)"
+      models:
+        gamer_sessions:
+          attributes:
+            email: Email
+            password: Password
       template:
         body: "There were problems with the following fields:"
         header:
           one: "1 error prohibited this %{model} from being saved"
           other: "%{count} errors prohibited this %{model} from being saved"
+  authlogic:
+    error_messages:
+      login_not_found: "is invalid"
+      password_invalid: "is invalid"
   date:
     abbr_day_names: "Sun Mon Tue Wed Thu Fri Sat"
     abbr_month_names:
-      - ~
       - Jan
       - Feb
       - Mar
@@ -62,7 +61,6 @@ en:
       long: "%B %d, %Y"
       short: "%b %d"
     month_names:
-      - ~
       - January
       - February
       - March
@@ -222,11 +220,10 @@ en:
       copyright: "Copyright &copy; %{year} Tapjoy, Inc. All Rights Reserved. Tapjoy and the Tapjoy logo are trademarks or registered trademarks of Tapjoy, Inc. All third party logos and trademarks mentioned are the property of their respective owners."
       developers: Developers
       privacy: "Privacy Policy"
+      terms: "Terms of Use"
+      updated: "Privacy Policy [Updated]"
     games:
-      invalid_emails: The email(s) provided were invalid
-      provide_single_email: Please provide at least one email
-      reactivated_account: Your account has been reactivated!
-      scheduled_for_deletion: 'Your account has been deactivated and scheduled for deletion!'
+      apps: Apps
       about_body: "A better way to love the apps you have and find the apps you'll love."
       about_title: "\"Somehow it knows exactly what apps I like.\""
       account_created_body: "Your Tapjoy account was successfully created!"
@@ -243,6 +240,16 @@ en:
         one: "%{name} has already registered, you are now following him/her."
         other: "%{name} have already registered, you are now following them."
       amount_and_currency: "%{amount} %{currency}"
+      amount_and_currency_earn: "Earn %{amount} %{currency}"
+      apps: Apps
+      app_review_concern_reported: "Concern Reported"
+      app_review_h_no: "No"
+      app_review_h_yes: "Yes"
+      app_review_more: more...
+      app_review_num_voters: "from %{count} voters"
+      app_review_report_concern: "Report concern"
+      app_review_thanks_for_feedback: "Thank you for your feedback"
+      app_review_was_helpful: "Was this review helpful?"
       back_to_top: "Back to Top"
       birthdate: Birthdate
       browse_offers: "Browse Offers"
@@ -261,9 +268,14 @@ en:
       connect_your_device: "Please connect your device"
       connected_to_facebook: "Connected to Facebook"
       connected_to_twitter: "Connected to Twitter"
-      contact_support: "Contact Support"
+      contact_support_incomplete_offers_label: "Having trouble with a specific offer?"
+      contact_support_no_incomplete_offers_label: "We didn't find any offers tied to your device."
+      contact_support_page_title: "Contact Support"
+      contact_support_select_offer_button: "Choose an Offer"
+      contact_support_thanks: "Thank you for contacting our support.  One of our agents will get back to you as soon as possible."
       contact_us: "Contact Us"
       cookies_required: "Please enable cookies in your browser"
+      try_again_with_cookies: "Please log in and try again. You must have cookies enabled."
       deactivate: Deactivate
       del_acct_confirm: "Click on the button below to deactivate your account. Once an account has been deactivated for %{days_before_deletion} days, it will be completely deleted. We cannot recover your account once it has been deleted."
       delete_my_account: "Delete My Account"
@@ -290,6 +302,7 @@ en:
       errno_error: "There was a connection issue. Please try again later."
       error_mark_as_favorite: "Error marking app as Favorite"
       error_unmark_as_favorite: "Error unmarking app as Favorite"
+      facebook_connect_failed: "Failed to connect to your Facebook profile"
       failed_to_change_linked: "Failed to change linked account."
       favorite_app: "Favorite App"
       favorite_apps: "Favorite Apps"
@@ -298,10 +311,6 @@ en:
       feedback: Feedback
       find_and_invite_friends: "Find and Invite Friends"
       find_friends_from_facebook: "Find friends from Facebook"
-      post_to_facebook: Post to Facebook!
-      facebook_connect_failed: Failed to connect to your Facebook profile
-      please_connect_facebook: Please connect your Facebook account
-      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       find_friends_from_twitter: "Find friends from Twitter"
       find_friends_on_tapjoy: "Find friends already using Tapjoy via other networks"
       find_more_friends: "Find more friends"
@@ -309,16 +318,18 @@ en:
       follow_us: "follow us"
       forgot_pass: "Forgot Password?"
       free: Free!
-      friend_filter_label: 'Start Typing a Name'
+      friend_filter_label: "Start Typing a Name"
       generic_issue: "There was an issue. Please try again."
       get_app: "Get App"
       get_it: "Get it!"
+      grant_permissions_for_invite: "Please grant us both permissions before sending out an invite."
       grant_us_access: "Please authorize us/grant us both permissions before sending out an invite."
       how_it_works_body: "All your games are listed below. Click the buttons next to the apps to start earning currency."
       how_it_works_title: "How does it work?"
-      install_and_run: "Install and run %{name}"
+      install_and_run: "Install and run"
       install_android_app: "Download the Tapjoy app on your Android device to get started."
       install_profile: "Install your profile on the next page and begin discovering the apps you love!"
+      invalid_emails: "The email(s) provided were invalid"
       invalid_fields: "Invalid entry"
       invite: "Invite Your Friends!"
       invite_by_email: "Invite by Email"
@@ -350,6 +361,10 @@ en:
       load_more: "Load More"
       loading: Loading...
       log_in_tapjoy: "Log in to Tapjoy"
+      log_in_title: "Log In"
+      log_in_text: "Get more out of your apps with Tapjoy.  Earn rewards and discover more today.  Please log in to Tapjoy to proceed"
+      log_in_not_a_member: "Not a member? Sign Up"
+      log_in_with_facebook: "Log in with Facebook"
       mark_as_favorite: "Add to Favorites"
       member_since: "Member since %{date}"
       meta_description: "Tapjoy: The destination for mobile apps and games on Android, iPhone and iPad."
@@ -362,6 +377,9 @@ en:
       no_device: "No device"
       no_javascript: "Please go into your browser settings and enable JavaScript to continue using Tapjoy."
       none_selected: "None Selected"
+      offer_complete_detail: "You've earned %{amount_and_currency} in %{app_name} by completing the %{offer_name} offer. Tap the button below to continue earning more rewards for %{app_name}."
+      offer_compelete_earned: "Earned"
+      offer_complete_earn_more: "Earn More %{currency_name}"
       on_my: "on my %{device_name}"
       oops: Oops!
       or_learn_more: "or learn more"
@@ -369,13 +387,17 @@ en:
       our_tos_changed: "Our %{terms_of_use} have changed. Please review and indicate your agreement below."
       password_changed: "Your password has been changed."
       password_non_match: "Password and Confirmation do not match"
+      please_connect_facebook: "Please connect your Facebook account"
       post_to_facebook: "Post to Facebook!"
       post_to_facebook_content: "Check out Tapjoy where you can discover the best new apps and games, while also earning currency in apps you love. It's free to join so visit tapjoy.com today to start getting app recommendations just for you."
       privacy_policy_href: "privacy policy"
+      privacy_tos: "Privacy Policy"
       profile: Me
       profile_error: "There was an error updating your profile."
       profile_update: "Your profile has been updated."
       provide_other_email: "Please provide an email other than yourself"
+      provide_single_email: "Please provide at least one email"
+      reactivated_account: "Your account has been reactivated!"
       recipients_label: "Use commas to separate multiple emails"
       recommend_apps: "Tapjoy personalizes app recommendations for you based on the apps you love to use."
       recommendations: Recommendations
@@ -384,13 +406,14 @@ en:
       report_bug: "Report Bug"
       reset_password_message: "Enter the email address associated with your account and we will send you a link to reset your password."
       reset_password_message_submit: "You should receive an email with instructions to reset your password in the next few minutes."
-      reset_password_retry: "If you are still having problems logging in, you can %{reset_password_url} or email"
+      reset_password_retry_html: "If you are still having problems logging in, you can %{reset_password_url} or email"
       reset_password_retry_url_text: "request another password reset email"
       review_app_name: "Review %{app_name}"
       review_created: "Successfully reviewed this app."
       review_issue: "There was an issue. Please try again later."
       review_updated: "App review was successfully updated."
       reviewed_already: "You have already reviewed this app."
+      scheduled_for_deletion: "Your account has been deactivated and scheduled for deletion!"
       select_current_device: "Please select your current device"
       select_device: "Please select your device"
       select_friend: "Please select at least one friend before sending out an invite"
@@ -398,8 +421,9 @@ en:
       share_on_twitter: "Share on Twitter"
       share_with_everyone: "Share with everyone"
       share_with_your_friends: "Share with your friends"
-      social_need_authorize_error: "Please authorize us before sending out an invite."
+      sign_up_with_facebook: "Sign up with Facebook"
       social_invite_friend_error: "There was an issue with inviting your friend, please try again later."
+      social_need_authorize_error: "Please authorize us before sending out an invite."
       social_networks: "Social Networks"
       social_settings: "Social Settings"
       social_to_next: "NEXT %{page_size}"
@@ -407,23 +431,27 @@ en:
       social_to_top: "TOP &#8679;"
       spread_mobile_joy: "Spread mobile joy"
       start_discovering: "Start discovering with Tapjoy for free"
+      tap_here: "Tap Here"
       tap_that: "Just tap %{icon} and select %{button}"
       tapjoy_picks: "Tapjoy Picks"
       terms_of_use_href: "terms of use"
+      terms_of_use_tos: "Terms of Use"
       thanks_contact_support: "Thank you for contacting our support. One of our agents will get back to you as soon as possible."
-      thanks_contact_us: "Thank you for contacting us. We'll will get back to you as soon as possible."
+      thanks_contact_us: "Thank you for contacting us. We'll get back to you as soon as possible."
       thanks_feedback: "Thanks for your feedback!"
       thanks_report_bug: "Thank you for reporting the bug. We'll examine and verify it as soon as possible."
       thats_you: "that's you"
       tos_acknowledge_html: "By checking this box I assert that I agree to the %{terms_of_use} & %{privacy_policy}"
       tos_change_acknowledge: "By checking this box I assert that I agree to the terms of service."
+      tos_survey_html: "I agree to the %{terms_of_use} and %{privacy_policy}"
       twitter_at_least_one_friend_error: "You must select at least one friend before sending out an invite"
+      twitter_account_protected_error: "We are unable to fetch your Twitter Followers list. Please check your Twitter privacy settings and make sure the 'Protect my Tweets' box is unchecked."
       twitter_authenticate_error: "Error while authenticating via TWITTER. The service did not return valid data."
       twitter_forbidden_error: "Requests are being denied due to update limits."
-      twitter_internal_error: "Something happened to Twttier. Please try again later"
-      twitter_invite_msg: "has invited you to join Tapjoy, the BEST place to find the hottest apps. Signing up is free!"
-      twitter_invite_title: "Please Select Twitter Friends to Invite via DM"
       twitter_general_error: "Something happened to Twitter. Please try again later."
+      twitter_internal_error: "Something happened to Twitter. Please try again later."
+      twitter_invite_msg: "@%{name} has invited you to join Tapjoy! Earn rewards in your apps and discover new apps you'll love for free!"
+      twitter_invite_title: "Please select Twitter friends to invite via Direct Message"
       unable_to_process: "Sorry we are unable to process your request"
       unlock_mobile_joy: "Unlock Mobile Joy"
       unmark_as_favorite: "Remove from Favorites"
@@ -438,31 +466,46 @@ en:
       amount_and_currency: "%{amount} %{currency}"
       continue_link: "Click here to continue."
       download_action: here
-      download_link: "If you don't have this app, click %{download_action} to download it."
-      earn_currency: "Earn %{amount_and_currency}"
-      footer: "After completing these steps, you will earn %{amount_and_currency}."
+      download_link_html: "If you don't have this app, click %{download_action} to download it."
+      earn_currency_html: "Earn %{amount_and_currency}"
+      footer_html: "After completing these steps, you will earn %{amount_and_currency}."
       header: "Follow these steps to earn %{currency}:"
       title: Instructions
     offerwall:
+      actions:
+        download: Download and run this app.
+        steps: Complete a series of steps.
+        video: Watch this video.
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
+      deep_link_part_1: Tap here to visit
+      deep_link_part_2: for more free offers!
+      earn: Earn
+      earn_currency_html: "Earn %{amount} %{currency}"
       free: Free
-      instructions: "Engage in any of the following actions to receive %{currency}"
+      instructions: "Engage in any of the following actions to receive %{currency}."
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
       load_error: "Please try again."
-      load_more: "Load some more!"
+      load_more: "Load More Offers"
       loading: Loading...
       missing_currency: "Missing %{currency}?"
+      missing_credits: Missing Contract Credits
       more_offers: "Want to see more offers? Visit Tapjoy to earn rewards and personal app recommendations!"
       next: "Next %{items}"
+      offers_by: Offers by
+      points: Points
       popular_apps: "Popular Apps"
+      powered: Powered By Tapjoy
       previous: "Previous %{items}"
+      privacy: Privacy Policy
+      tap_here: Tap Here
       title: "Earn %{currency}"
       wifi_required: "Wifi Required"
       wifi_warning: "This app requires a wifi connection to download."
+      visit: Visit Tapjoy
     shared:
       about_link: "About Tapjoy"
-      ads_by: "Ads by"
+      ads_by: "Powered by"
       android: Android
       back: Back
       blog: Blog
@@ -502,7 +545,9 @@ en:
       new_password: "New Password"
       nickname: Nickname
       none: None
+      offers_by: "Offers by Tapjoy"
       ok: OK
+      or: or
       options: Options
       other: Other
       password: Password
@@ -564,3 +609,15 @@ en:
       long: "%B %d, %Y %I:%M %p %Z"
       short: "%d %b %H:%M"
     pm: pm
+  user_event:
+    error:
+      invalid_app_id: "App ID '%{app_id}' could not be found. Check 'app_id' and try again."
+      missing_fields: "Expected attribute(s) %{missing_fields_string} not found."
+      undefined_fields: "Attribute(s) %{undefined_fields_string} are undefined for this event type."
+      invalid_field: "'%{field}' is not of type '%{type}'."
+      invalid_event_type: "Invalid event type ID."
+      no_device: "Device missing in request."
+      verification_failed: "Parameter verification failed."
+      no_verifier: "Verifier missing in request."
+    success:
+      created: "Successfully saved user event."

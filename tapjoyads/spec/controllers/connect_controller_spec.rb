@@ -1,25 +1,20 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe ConnectController do
-  integrate_views
-
-  before :each do
-    fake_the_web
-    Sqs.stubs(:send_message)
-  end
+  render_views
 
   describe '#index' do
     context 'with required parameters' do
       before :each do
-        app = Factory(:app)
+        app = FactoryGirl.create(:app)
         offer = app.primary_offer
-        device = Factory(:device)
+        device = FactoryGirl.create(:device)
         device.sdkless_clicks = { offer.third_party_data => { 'click_time' => (Time.zone.now - 1.hour).to_i, 'item_id' => offer.id }}
 
         @params = { :app_id => 'test_app',
                     :udid   => 'test_device' }
 
-        Device.stubs(:new).returns(device)
+        Device.stub(:new).and_return(device)
       end
 
       it "returns an XML response" do
@@ -41,7 +36,7 @@ describe ConnectController do
 
       context 'with SDK-less parameters' do
         before :each do
-          controller.stubs(:sdkless_supported?).returns(true)
+          controller.stub(:sdkless_supported?).and_return(true)
         end
 
         it "returns SDK-less click package names" do
@@ -55,6 +50,36 @@ describe ConnectController do
       it "returns an error code" do
         get(:index)
         response.response_code.should == 400
+      end
+    end
+
+    context 'when device identifiers are provided' do
+      before :each do
+        @params = { :app_id      => 'test_app',
+                    :sha2_udid   => 'sha2_test_device' }
+      end
+
+      context 'when the lookup succeeds' do
+        before :each do
+          device = FactoryGirl.create(:device)
+          identifier = FactoryGirl.create(:device_identifier, :udid => 'test_device')
+          DeviceIdentifier.stub(:new).and_return(identifier)
+          Device.should_receive(:new).and_return(device)
+        end
+
+        it 'returns success' do
+          get(:index, @params)
+          response.body.should include('Success')
+        end
+      end
+
+      context 'when the lookup fails' do
+      it 'returns success, but doesnt do the connect' do
+        Device.should_not_receive(:new)
+
+        get(:index, @params)
+        response.body.should include('Success')
+      end
       end
     end
   end

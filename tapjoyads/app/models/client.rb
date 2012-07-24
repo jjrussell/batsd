@@ -1,3 +1,13 @@
+# == Schema Information
+#
+# Table name: clients
+#
+#  id         :string(36)      not null, primary key
+#  name       :string(255)     not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+
 class Client < ActiveRecord::Base
   include UuidPrimaryKey
 
@@ -6,7 +16,7 @@ class Client < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :case_sensitive => false
 
-  named_scope :ordered_by_name, :order => :name
+  scope :ordered_by_name, :order => :name
 
   before_destroy :remove_from_partners
 

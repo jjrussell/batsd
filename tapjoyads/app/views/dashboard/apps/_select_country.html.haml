@@ -1,0 +1,13 @@
+%tr#appstore_country_toggle.hidden
+  %th
+    Country of Appstore
+    #help_country.help ?
+  %td
+    = select_tag 'app_country', options_for_select(App::APPSTORE_COUNTRIES_OPTIONS, 'US'), :class => 'wide'
+    = select_tag 'app_language', options_for_select(App::WINDOWS_ACCEPT_LANGUAGES_OPTIONS, 'en-us'), :class => 'wide'
+    .hidden
+      #help_country_content{ :name => 'Country' }
+        %ul
+          %li Country availability of the app, if the app is not available worldwide (i.e. only CA for beta testing).
+          %li NOTE: Remember to set country targeting for any campaigns.
+          %li NOTE: Country settings don't apply to Android.

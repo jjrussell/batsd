@@ -24,8 +24,8 @@
   .container
     %ul.list-button-container.flush.nbb.big
       %li.list-button.charcoal.soft-gray-gradient
-        - link_to games_gamer_profile_path(current_gamer) do
+        = link_to games_gamer_profile_path(current_gamer) do
           = t('text.shared.my_profile')
       %li.list-button.charcoal.soft-gray-gradient
-        - link_to games_social_index_path do
+        = link_to games_social_root_path do
           = t('text.games.social_settings')

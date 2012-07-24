@@ -22,242 +22,84 @@
                                .$$$$$$$$:
 ```
 
-Environment Setup:
-==================
+Environment Setup
+=================
 
-Setup PATH and MANPATH
-----------------------
-* edit `/etc/paths` to look like...
+First configure Git and get the Tapjoy repo.
 
-```
-    /usr/local/bin
-    /usr/bin
-    /bin
-    /usr/sbin
-    /sbin
-```
+Setup git following these instructions: http://help.github.com/mac-set-up-git/
 
-* edit `/etc/manpaths` to look like...
+In github, fork tapjoyserver repository:
 
-```
-    /usr/local/man
-    /usr/local/share/man
-    /usr/share/man
-```
-
-* restart your terminal to pull in the new paths
-
-Install osx-gcc
--------------
-* Download and install [osx-gcc](https://github.com/kennethreitz/osx-gcc-installer/downloads).
-
-Git configurations
-------------------
-* Create github.com account if necessary
-* In github, fork main tapjoyserver repository
-  * main repo location: `https://github.com/Tapjoy/tapjoyserver` (may need to be given access)
+  * main repo location: `https://github.com/Tapjoy/tapjoyserver`
   * click "Fork"
-* Add your SSH key to github
-  * see Account Settings->SSH Public Keys->Need help with public keys? for full instructions
-* Clone your forked repo locally
+
+Clone your forked repo locally
+
 
 ```
 git clone git@github.com:[your github nickname]/tapjoyserver.git
 ```
 
-* Add main tapjoyserver repo as remote repo (for updating your code with the latest)
+Add main tapjoyserver repo as remote repo (for updating your code with the latest):
 
 ```
 git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
 ```
 
-* important that it's named "tapjoy" for deploy script to work
+It is important that it's named "tapjoy" for deploy script to work
 
-
-Downgrade rubygems
-------------------
-* Uninstall existing versions if necessary
-  * use `gem list` to determine if versions exist
-  * if applicable, use `gem uninstall rubygems-update -v [version]` to remove
-
-```
-sudo gem install rubygems-update -v 1.3.7
-sudo update_rubygems _1.3.7_
-```
-
-Install MySQL
+Setting up VM
 -------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/mysql-5.1.56-osx10.6-x86_64.dmg`
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/my.cnf`
-* copy `my.cnf` to `/etc/my.cnf`
-* run the main installer in the mysql dmg
-* run the startup item installer in the mysql dmg
-* run the pref pane in the mysql dmg
 
-Add mysql to the `PATH` and `MANPATH`
--------------------------------------
-* create the file `/etc/paths.d/mysql` with the following line...
+We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
+install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
+
+Now setup librarian and vagrant:
 
 ```
-    /usr/local/mysql/bin
+gem install vagrant
+gem install librarian
+librarian-chef install
+vagrant up
 ```
 
-* create the file `/etc/manpaths.d/mysql` with the following line...
+SSH into the vm:
 
 ```
-    /usr/local/mysql/man
+vagrant ssh
 ```
 
-
-Start MySQL
------------
-* start MySQL via the pref pane in System Preferences
-
-
-Install memcached and ImageMagick
----------------------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/magick-installer.sh`
-* run `magick-installer.sh` (this will install memcached and ImageMagick and all dependencies)
-
-Setup memcached to start on boot
---------------------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/Memcached.applescript`
-* open the applescript and save the script as an Application in your `/Applications` directory
-* open the System Preferences and navigate to the Users & Groups section
-* add the Memcached app as a Login Item for your user account
-* run the Memcached app manually to start the process
-
-Copy config files into place
-----------------------------
+Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
 
 ```
-    cp tapjoyserver/tapjoyads/config/newrelic-test.yml tapjoyserver/tapjoyads/config/newrelic.yml
-    cp tapjoyserver/tapjoyads/config/database-default.yml tapjoyserver/tapjoyads/config/database.yml
-    mkdir tapjoyserver/tapjoyads/tmp
-    mkdir tapjoyserver/tapjoyads/log
-    cp tapjoyserver/tapjoyads/config/local-default.yml tapjoyserver/tapjoyads/config/local.yml
+cd /vagrant
+rvmsudo bundle
+bundle
+rake db:create
+rake db:sync
 ```
 
-open `local.yml` and change the urls to point to the local address of the app (ex: `http://tapjoy.local` or `http://localhost:3000`)
+Running the tests
+-----------------
 
-Download GeoIP database
------------------------
-* download `http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz`
-* extract database file and move it into place
+To make sure everything is set up correctly, run the test suite:
 
 ```
-    gunzip GeoLiteCity.dat.gz
-    mv GeoLiteCity.dat tapjoyserver/tapjoyads/data/GeoIPCity.dat
+rake
 ```
 
-Install required gems
----------------------
+If any tests fail, ask for help in Flowdock.
+
+Running the server
+------------------
+
+Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
 
 ```
-sudo env ARCHFLAGS="-arch x86_64" gem install memcached -v 1.2.7
-sudo env ARCHFLAGS="-arch x86_64" gem install mysql -v 2.8.1 -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
-sudo gem install rcov -v 0.9.10
-sudo gem install -v 2.3.14 rails
-sudo gem install json -v 1.5.3
-sudo gem install rdoc
-sudo gem install rdoc-data
-sudo rdoc-data --install
-```
-Then from within the tapjoyserver/tapjoyads directory:
-```
-sudo rake gems:install
+rails s thin
 ```
 
-Set up accounts and database
-----------------------------
-* Create developer account at `dashboard.tapjoy.com` and have someone give you the "admin" role
-* Sync prod db with local db (this will overwrite any pre-existing changes)
+To access, go to [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
-```
-rake admin:sync_db
-```
-
-* Now you have an admin account in production and locally
-
-Download desired editor (most people use TextMate) and set it to use soft tabs (2 spaces)
------------------------------------------------------------------------------------------
-*  Instructions for TextMate:
-  * TextMate -> Preferences -> Advanced -> Shell Variables
-  * Add `TM_SOFT_TABS` with value of YES (make sure it doesn't convert the TM to a ™ symbol)
-  * Add `TM_TAB_SIZE` with value of 2
-  * See `http://manual.macromates.com/en/environment_variables.html` if curious about other TextMate shell variables
-
-RECOMMENDED: Set git pre-commit hook to run
-----------------------------------------
-* The pre-commit hook runs before any git commit.
-* It automatically strips trailing whitespace and adds newlines to the end of files, which is compliant with our style guide.
-
-```
-cp tapjoyserver/setup/pre-commit tapjoyserver/.git/hooks/
-```
-
-Alternatively, use `ln -s` instead of `cp` so any updates to the script in the repo get automatically changed in the git folder.
-
-OPTIONAL: to install Passenger (so you can use alternate local domains instead of `http://localhost:3000`)
---------------------------------------------------------------------------------------------------------
-
-```
-sudo gem install passenger
-sudo passenger-install-apache2-module (follow on-screen instructions)
-```
-
-* Open `/etc/apache2/httpd.conf` and remove the '#' in front of `Include /private/etc/apache2/extra/httpd-vhosts.conf`
-* Open `/etc/apache2/extra/httpd-vhosts.conf` and replace contents with the following:
-
-```
-    # My Virtual Hosts
-    NameVirtualHost *:80
-
-    <VirtualHost *:80>
-      DocumentRoot "/path/to/tapjoyserver/tapjoyads/public"
-      ServerName tapjoy.local
-      RailsEnv development
-      RailsBaseURI /
-      <Directory "/path/to/tapjoyserver/tapjoyads/public">
-        Options FollowSymLinks
-        Options -MultiViews
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-      </Directory>
-    </VirtualHost>
-
-    <VirtualHost *:80>
-      DocumentRoot "/Library/WebServer/Documents"
-      ServerName localhost
-    </VirtualHost>
-```
-
-* Open `/etc/hosts` and add `127.0.0.1   tapjoy.local` to the end of the file
-* To start Apache in OSX, System Preferences -> Sharing -> Check checkbox for 'Web Sharing'
-
-OPTIONAL: To install sinatra-rubygems (for easy access to local gem Rdocs)
---------------------------------------------------------------------------
-
-```
-sudo gem install sinatra
-git clone git://github.com/jnewland/sinatra-rubygems.git
-```
-
-* Open `/etc/apache2/extra/httpd-vhosts.conf` and append the following to the end:
-
-```
-  <VirtualHost *:80>
-    DocumentRoot "/path/to/sinatra-rubygems/public"
-    ServerName gems.local
-    RackEnv production
-    RackBaseURI /
-    <Directory "/path/to/sinatra-rubygems/public">
-      Order allow,deny
-      Allow from all
-    </Directory>
-  </VirtualHost>
-```
-
-* Open `/etc/hosts` and add `127.0.0.1   gems.local` to the end of the file
-* To restart Apache: `sudo apachectl restart`
+[Some information on stopping the VM](http://vagrantup.com/v1/docs/getting-started/teardown.html)

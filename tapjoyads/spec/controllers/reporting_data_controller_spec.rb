@@ -1,19 +1,12 @@
 require 'spec_helper'
-require 'rexml/document'
-
-include REXML   # So we can avoid REXML prefix
 
 describe ReportingDataController do
-  before :each do
-    fake_the_web
-  end
-
   describe '#index' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @user.partners << @partner
-      @partner.offers << Factory(:app).primary_offer
+      @partner.offers << FactoryGirl.create(:app).primary_offer
     end
 
     context 'with missing params' do
@@ -52,7 +45,7 @@ describe ReportingDataController do
 
     context 'with valid params, xml' do
       before :each do
-        get(:index, :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
+        get(:index, :format => 'xml', :date => "2011-02-15", :username => @user.username, :api_key => @user.api_key, :partner_id => @partner.id)
       end
       it 'has a successful xml response' do
         should respond_with(200)
@@ -81,33 +74,33 @@ describe ReportingDataController do
 
       it 'defaults to UTC when param is invalid' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => 'invalid')
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone").each do |node|
           node.text.should == '(GMT+00:00) Casablanca'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0'
         end
       end
 
       it 'shifts values left by 8 with timezone=-8' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :timezone => '-8')
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone") do |node|
           node.text.should == '(GMT-08:00) Pacific Time (US & Canada)'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
         end
       end
 
       it 'defaults to user timezone when no timezone specified' do
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
-        xml = Document.new response.body
-        xml.elements.each("MarketingData/Timezone") do |node|
+        xml = Hpricot(response.body)
+        xml.search("MarketingData/Timezone").each do |node|
           node.text.should == '(GMT+00:00) UTC'
         end
-        xml.elements.each("MarketingData/App/SessionsHourly") do |node|
+        xml.search("MarketingData/App/SessionsHourly").each do |node|
           node.text.should == '0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0'
         end
       end
@@ -119,14 +112,14 @@ describe ReportingDataController do
 
     context 'with cache param' do
       it 'calls Mc.get_and_put' do
-        Mc.expects(:get_and_put).once
+        Mc.should_receive(:get_and_put).once
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key, :cache => '1')
       end
     end
 
     context 'without cache param' do
       it 'does not call Mc.get_and_put' do
-        Mc.expects(:get_and_put).never
+        Mc.should_receive(:get_and_put).never
         get(:index, :format => 'xml', :date => "2011-01-01", :username => @user.username, :api_key => @user.api_key)
       end
     end
@@ -134,13 +127,13 @@ describe ReportingDataController do
 
   describe '#udids with data' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @partner.users << @user
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @partner.offers << @offer
-      UdidReports.stubs(:get_daily_report).returns('a,b,c')
-      UdidReports.stubs(:get_monthly_report).returns('a,b,c')
+      UdidReports.stub(:get_daily_report).and_return('a,b,c')
+      UdidReports.stub(:get_monthly_report).and_return('a,b,c')
     end
 
     context 'with missing params' do
@@ -218,10 +211,10 @@ describe ReportingDataController do
 
   describe '#udids without data' do
     before :each do
-      @partner = Factory(:partner)
-      @user = Factory(:user)
+      @partner = FactoryGirl.create(:partner)
+      @user = FactoryGirl.create(:user)
       @partner.users << @user
-      @offer = Factory(:app).primary_offer
+      @offer = FactoryGirl.create(:app).primary_offer
       @partner.offers << @offer
     end
 

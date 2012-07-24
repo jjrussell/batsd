@@ -1,0 +1,90 @@
+- @page_title = 'Add App'
+- platforms = App::ALLOWED_PLATFORMS
+- if permitted_to?(:edit, :dashboard_statz)
+  - App::BETA_PLATFORMS.each do |key, value|
+    - platforms[key] = value + " (Admin only)"
+
+%h3 Add App
+
+= form_for(@app, :html => { :class => 'tjform' }) do |f|
+  = f.hidden_field :store_id
+  %table
+    %tbody
+      %tr
+        %th
+          Application State
+          #help_application_state.help ?
+        %td= select_tag 'state', options_for_select({ 'Not Live' => 'not_live', 'Live' => 'live' }, 'not_live'), :id => 'app_state'
+      %tr
+        %th
+          Platform
+          #help_platform.help ?
+        %td= f.select :platform, platforms.invert.to_a.sort_by(&:last), { :selected => @app.platform }, { :id => 'app_platform' }
+      - if permitted_to?(:edit, :dashboard_statz)
+        = render 'select_country'
+      %tr
+        %th
+          Name
+          #help_name.help ?
+        %td
+          = f.text_field :name
+          = error_message_on @app, :name
+          #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
+      %tr.app_data.hidden
+        %th Store ID
+        %td
+          %a#app_store_link{ :target => '_blank' }
+      %tr.app_data.hidden
+        %th Icon
+        %td#app_icon &nbsp;
+      %tr.app_data.hidden
+        %th Price
+        %td#app_price
+      %tr.app_data.hidden
+        %th Description
+        %td#app_description
+      %tr
+        %td{ :colspan => 2 }= f.submit 'Add App'
+
+.hidden
+  #help_application_state_content{:name => 'Application State'}
+    %li Not live: The app has not been submitted or approved yet.
+    %li
+      Live: The app has been approved, and is currently listed in the
+      %span{:id => 'app_store_name'} #{@app.store_name}.
+  #help_platform_content{:name => 'Platform'}
+    Platform on which this app runs.
+  #help_name_content{:name => 'Name'}
+    App name
+
+- content_for :page_head, stylesheet_link_tag('apps')
+- content_for :included_javascripts, javascript_include_tag('tapjoy/apps')
+
+/
+  Start of DoubleClick Floodlight Tag: Please do not remove
+  Activity name of this tag: Tapjoy B2B Conversion Floodlight
+  URL of the webpage where the tag is expected to be placed: https://dashboard.tapjoy.com/dashboard/apps/new
+  This tag must be placed between the <body> and </body> tags, as close as possible to the opening tag.
+  Creation Date: 06/06/2012
+%script{ :type => "text/javascript" }
+  :plain
+    var axel = Math.random() + "";
+    var a = axel * 10000000000000;
+    document.write('<iframe src="https://fls.doubleclick.net/activityi;src=3509778;type=b2bco010;cat=tapjo366;ord=' + a + '?" width="1" height="1" frameborder="0" style="display:none"></iframe>');
+%noscript
+  %iframe{ :src => "https://fls.doubleclick.net/activityi;src=3509778;type=b2bco010;cat=tapjo366;ord=1?", :width => "1", :height => "1", :frameborder => "0", :style => "display:none"}
+/ End of DoubleClick Floodlight Tag: Please do not remove
+/ Tracking for new leads for google analytics same as DoubleClick Floodlight Tag: Please do not remove
+:javascript
+  var google_conversion_id = 1038130893;
+  var google_conversion_language = "en";
+  var google_conversion_format = "3";
+  var google_conversion_color = "ffffff";
+  var google_conversion_label = "aMtyCPPBjgMQzb2C7wM";
+  var google_conversion_value = 0;
+%script{:src => "https://www.googleadservices.com/pagead/conversion.js", :type => "text/javascript"}
+%noscript
+  %div{:style => "display:inline;"}
+    %img{:alt => "", :height => "1", :src => "https://www.googleadservices.com/pagead/conversion/1038130893/?value=0&label=aMtyCPPBjgMQzb2C7wM&guid=ON&script=0", :style => "border-style:none;", :width => "1"}/
+/ End of google analytics tag: Please do not remove

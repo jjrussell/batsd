@@ -1,0 +1,92 @@
+%h1= @page_title
+
+%h4= link_to 'Back', tools_clients_path
+
+%h4 Add partner
+#search_query
+  = label_tag(:partners_name_search_box, 'by partner name or ID:')
+  = text_field_tag(:partners_name_search_box, '', :size => 40)
+#search_results.hidden
+  = form_tag add_partner_tools_client_path(@client) do
+    %table
+      %tbody
+        %tr
+          %td.right= label_tag(:partner_id, 'Partner ID')
+          %td= text_field_tag(:partner_id, '', :size => 60, :readonly => true)
+        %tr
+          %td.right= label_tag(:partner_name)
+          %td= text_field_tag(:partner_name, '', :size => 60, :readonly => true)
+    .left= submit_tag('Add')
+  .left= button_to('Cancel', '#', :id => 'reset_partner_search')
+  .clear
+
+%h4 All partners
+%table.tablesorter#partners
+  %thead
+    %tr
+      %th.action &nbsp;
+      %th Name
+      %th Balance
+      %th Pending<br/> Earnings
+      %th Offers
+  %tbody
+    - @client.partners.each do |partner|
+      %tr
+        %td
+          - path = remove_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
+          = button_to('Remove', path, :method => 'post', :confirm => 'Are you sure?')
+          = form_tag(make_current_partner_path(partner)) do
+            - if current_partner == partner
+              = submit_tag('Acting as', :class => 'act_as_button', :disabled => true)
+            - else
+              = submit_tag('Act as', :class => 'act_as_button')
+        %td.text= link_to(partner.name||'(no name)', partner)
+        %td.money= number_to_currency(partner.balance/100.0)
+        %td.money= number_to_currency(partner.pending_earnings/100.0)
+        %td.offers
+          - offers = partner.offers.sort_by{|p| [p.get_platform, p.name]}
+          - offers[0..4].each do |o|
+            .offer
+              = image_tag(o.get_icon_url, :size => '20x20')
+              = image_tag(platform_icon_url(o))
+              = link_to_offer(o)
+              - if o.tapjoy_enabled? || o.user_enabled?
+                (#{o.tapjoy_enabled? ? 'T' : ''}#{o.user_enabled? ? 'U' : ''})
+          - if offers.length > 5
+            .show_more (#{link_to("Show #{partner.offers.length-5} more", '#', :class => 'show_all_apps')})
+            .hidden
+              - offers[5..-1].each do |o|
+                .offer
+                  = image_tag(o.get_icon_url, :size => '20x20')
+                  = image_tag(platform_icon_url(o))
+                  = link_to_offer(o)
+                  - if o.tapjoy_enabled? || o.user_enabled?
+                    (#{o.tapjoy_enabled? ? 'T' : ''}#{o.user_enabled? ? 'U' : ''})
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('.show_all_apps').click(function(){
+        $(this).parent().siblings('div.hidden').slideDown();
+        $(this).parent().hide();
+        return false;
+      });
+
+      $('#partners_name_search_box').focus().autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          $('#search_query').hide();
+          $('#search_results').show();
+          $('#partner_name').val(ui.item.partner_name);
+          $('#partner_id').val(ui.item.partner_id);
+        }
+      });
+      $('#reset_partner_search').click(function(){
+        $('#search_query').show();
+        $('#search_results').hide();
+        $('#partners_name_search_box').val($('#partner_name').val());
+        return false;
+      });
+    });

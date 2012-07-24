@@ -1,38 +1,41 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe Job::QueueSendCurrencyController do
   before :each do
-    @controller.expects(:authenticate).at_least_once.returns(true)
+    @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
-    @mock_response.stubs(:status).returns('OK')
+    @mock_response.stub(:status).and_return('OK')
 
     # prevents any callback_urls from actually getting called
-    Downloader.stubs(:get).returns(@mock_response)
-    Resolv.expects(:getaddress).at_least_once.returns(true)
-    Time.zone.stubs(:now).returns(Time.zone.parse('2011-02-15'))
+    Downloader.stub(:get).and_return(@mock_response)
+    Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
 
-    @currency = Factory(:currency, :callback_url => 'http://www.whatwhat.com')
+    @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.whatwhat.com')
 
     @reward = FactoryGirl.build(
       :reward,
       :currency_id => @currency.id,
-      :publisher_app_id => @currency.id
+      :publisher_app_id => @currency.id,
+      :created => Time.zone.parse('2011-02-15')
     )
     @reward.save
+  end
+
+  after :each do
+    Timecop.return
   end
 
   describe 'with ExpectedAttributeError' do
     it 'should raise if reward has not already been updated' do
       Reward.
-        any_instance.expects(:save!).
+        any_instance.should_receive(:save!).
         with(
           :expected_attr => {'sent_currency' => nil}
         ).
-        raises(Simpledb::ExpectedAttributeError)
+        and_raise(Simpledb::ExpectedAttributeError)
 
-      lambda {
-        get(:run_job, :message => @reward.id)
-      }.should raise_error(Simpledb::ExpectedAttributeError)
+      $redis.should_receive(:sadd).with('queue:send_currency:failures', @reward.id)
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should return if reward is already updated' do
@@ -41,19 +44,17 @@ describe Job::QueueSendCurrencyController do
 
       Reward.
         any_instance.
-        expects(:save).
-        raises(Simpledb::ExpectedAttributeError)
+        should_receive(:save).
+        and_raise(Simpledb::ExpectedAttributeError)
 
-      lambda {
-        get(:run_job, :message => @reward.id)
-      }.should_not raise_error
+      get(:run_job, :message => @reward.id)
     end
   end
 
   describe 'with Downloader errors' do
     before :each do
       class TestingError < RuntimeError; end
-      Downloader.expects(:get_strict).at_least_once.raises(TestingError)
+      Downloader.should_receive(:get_strict).at_least(:once).and_raise(TestingError)
 
       @mc_time = Time.zone.now.to_i / 1.hour
       @fail_count_key = "send_currency_failure.#{@currency.id}.#{@mc_time}"
@@ -61,9 +62,9 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should record an error for Downloader' do
-      lambda {
+      expect {
         get(:run_job, :message => @reward.id)
-      }.should raise_error(TestingError)
+      }.to raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
       failures[@currency.id].should == Set.new(@reward.key)
@@ -75,9 +76,9 @@ describe Job::QueueSendCurrencyController do
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 0
 
       message = "not attempting to ping the callback for #{@currency.id}"
-      lambda {
+      expect {
         get(:run_job, :message => @reward.id)
-      }.should raise_error(SkippedSendCurrency, message)
+      }.to raise_error(SkippedSendCurrency, message)
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 1
     end
@@ -85,12 +86,12 @@ describe Job::QueueSendCurrencyController do
     it 'should record errors for multiple currencies' do
       get(:run_job, :message => @reward.id) rescue TestingError
 
-      currency = Factory(:currency, :callback_url => 'https://www.whatnot.com')
-      reward = Factory(:reward, :currency_id => currency.id)
+      currency = FactoryGirl.create(:currency, :callback_url => 'https://www.whatnot.com')
+      reward = FactoryGirl.create(:reward, :currency_id => currency.id)
 
-      lambda {
+      expect {
         get(:run_job, :message => reward.id)
-      }.should raise_error(TestingError)
+      }.to raise_error(TestingError)
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
 
@@ -103,7 +104,7 @@ describe Job::QueueSendCurrencyController do
 
       get(:run_job, :message => @reward.id) rescue TestingError
 
-      reward = Factory(:reward, :currency_id => @currency.id)
+      reward = FactoryGirl.create(:reward, :currency_id => @currency.id)
       @controller.instance_variable_set('@bad_callbacks', Set.new)
 
       get(:run_job, :message => reward.id) rescue TestingError
@@ -123,14 +124,18 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should delete sent_currency from reward' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.should == nil
     end
 
     it 'should increase @num_reads on error' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      expect {
+        get(:run_job, :message => @reward.id)
+      }.to raise_error(TestingError)
 
       num_reads = @controller.instance_variable_get('@num_reads')
       num_reads.should == 100
@@ -151,39 +156,29 @@ describe Job::QueueSendCurrencyController do
 
   describe 'without errors' do
     before :each do
-      Downloader.expects(:get_strict).returns(@mock_response)
+      Downloader.should_receive(:get_strict).and_return(@mock_response)
     end
 
     it 'should save the reward' do
       Currency.
-        expects(:find_in_cache).
+        should_receive(:find_in_cache).
         with(@currency.id, true).
-        returns(@currency)
+        and_return(@currency)
 
       get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.sent_currency.should == Time.zone.now
+      reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
       reward.send_currency_status.should == 'OK'
-    end
-
-    it 'should delete the callback url' do
-      HashWithIndifferentAccess.
-        any_instance.
-        expects(:delete).
-        with(:callback_url).
-        times(2)
-
-      get(:run_job, :message => @reward.id)
     end
 
     it 'should not reward twice' do
       get(:run_job, :message => @reward.id)
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.sent_currency.should == Time.zone.now
+      reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
 
-      Currency.expects(:find_in_cache).never
+      Currency.should_receive(:find_in_cache).never
       get(:run_job, :message => reward.id)
     end
   end
@@ -229,27 +224,28 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
         "id=#{@reward.key}",
         "verifier=#{verifier}",
       ]
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
 
     it 'should send offer data if currency says so' do
-      app = Factory(:app)
+      app = FactoryGirl.create(:app)
       offer = app.primary_offer
 
       @currency.update_attribute(:id, app.id)
       @currency.update_attribute(:send_offer_data, true)
 
-      Currency.expects(:find_in_cache).returns(@currency)
+      Currency.should_receive(:find_in_cache).and_return(@currency)
 
       @reward.currency_id = @currency.id
       @reward.offer_id = offer.id
@@ -259,6 +255,7 @@ describe Job::QueueSendCurrencyController do
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
         "storeId=#{CGI::escape(offer.store_id_for_feed)}",
         "application=#{CGI::escape(offer.name)}",
         "rev=1.5",
@@ -266,14 +263,14 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       Offer.
-        expects(:find_in_cache).
+        should_receive(:find_in_cache).
         with(offer.id, true).
-        returns(offer)
+        and_return(offer)
 
       get(:run_job, :message => @reward.id)
     end
@@ -282,18 +279,19 @@ describe Job::QueueSendCurrencyController do
       @currency.callback_url << '?'
       @currency.save!
 
-      Currency.expects(:find_in_cache).returns(@currency)
+      Currency.should_receive(:find_in_cache).and_return(@currency)
 
       url_params = [
         "snuid=#{@reward.publisher_user_id}",
         "currency=#{@reward.currency_reward}",
+        "mac_address=",
       ]
       callback_url = "#{@currency.callback_url}&#{url_params.join('&')}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -304,7 +302,7 @@ describe Job::QueueSendCurrencyController do
       @currency.update_attribute(:callback_url, Currency::PLAYDOM_CALLBACK_URL)
 
       @url_start = "http://offer-dynamic-lb.playdom.com/tapjoy/mob/"
-      @url_end = "/fp/main?snuid=bill&currency=#{@reward.currency_reward}"
+      @url_end = "/fp/main?snuid=bill&currency=#{@reward.currency_reward}&mac_address="
     end
 
     it 'should set callback for facebook' do
@@ -314,9 +312,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}facebook#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -328,9 +326,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}myspace#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end
@@ -342,9 +340,9 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@url_start}myspace#{@url_end}"
 
       Downloader.
-        expects(:get_strict).
+        should_receive(:get_strict).
         with(callback_url, { :timeout => 20 }).
-        returns(@mock_response)
+        and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
     end

@@ -4,10 +4,10 @@ describe AgencyApi::AppsController do
 
   describe '#index' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
-      @app = Factory(:app, :partner => @partner)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       @valid_params = {
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key,
@@ -37,7 +37,7 @@ describe AgencyApi::AppsController do
 
     context 'with an invalid partner_id' do
       before :each do
-        partner2 = Factory(:partner)
+        partner2 = FactoryGirl.create(:partner)
         get(:index, @valid_params.merge(:partner_id => partner2.id))
       end
 
@@ -61,25 +61,15 @@ describe AgencyApi::AppsController do
 
   describe '#show' do
     before :each do
-      agency_user = Factory(:agency_user)
-      partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => partner)
-      @app = Factory(:app, :partner => partner)
+      @app = FactoryGirl.create(:app, :partner => partner)
       @valid_params = {
         :id => @app.id,
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key
       }
-    end
-
-    context 'with missing params' do
-      before :each do
-        get(:show)
-      end
-
-      it 'responds with error' do
-        should_respond_with_json_error(400)
-      end
     end
 
     context 'with bad credentials' do
@@ -104,7 +94,7 @@ describe AgencyApi::AppsController do
 
     context 'with an app_id belonging to an invalid partner' do
       before :each do
-        app2 = Factory(:app)
+        app2 = FactoryGirl.create(:app)
         get(:show, @valid_params.merge(:id => app2.id))
       end
 
@@ -133,8 +123,8 @@ describe AgencyApi::AppsController do
 
   describe '#create' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
       @valid_params = {
         :agency_id => agency_user.id,
@@ -165,7 +155,7 @@ describe AgencyApi::AppsController do
     end
     context 'with an invalid partner_id' do
       before :each do
-        partner2 = Factory(:partner)
+        partner2 = FactoryGirl.create(:partner)
         post(:create, @valid_params.merge(:partner_id => partner2.id))
       end
 
@@ -199,7 +189,7 @@ describe AgencyApi::AppsController do
       end
 
       it 'assigns store id' do
-        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
+        Sqs.should_receive(:send_message).with(QueueNames::GET_STORE_INFO, /(\w+-){4}\w+/)
         post(:create, @valid_params.merge(:store_id => 'wah!'))
         result = JSON.parse(response.body)
         result['success'].should be_true
@@ -208,8 +198,8 @@ describe AgencyApi::AppsController do
       end
 
       it 'saves activity logs' do
-        controller.expects :log_activity
-        controller.expects :save_activity_logs
+        controller.should_receive :log_activity
+        controller.should_receive :save_activity_logs
         post(:create, @valid_params)
       end
     end
@@ -217,26 +207,16 @@ describe AgencyApi::AppsController do
 
   describe '#update' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
-      @app = Factory(:app, :partner => @partner)
+      @app = FactoryGirl.create(:app, :partner => @partner)
       @valid_params = {
         :id => @app.id,
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key,
         :name => 'foo'
       }
-    end
-
-    context 'with missing params' do
-      before :each do
-        put(:update)
-      end
-
-      it 'responds with error' do
-        should_respond_with_json_error(400)
-      end
     end
 
     context 'with bad credentials' do
@@ -263,7 +243,7 @@ describe AgencyApi::AppsController do
 
     context 'with an id belonging to an invalid partner' do
       before :each do
-        app2 = Factory(:app)
+        app2 = FactoryGirl.create(:app)
         put(:update, @valid_params.merge(:id => app2.id))
       end
 
@@ -274,15 +254,14 @@ describe AgencyApi::AppsController do
 
     context 'with invalid app' do
       before :each do
-        @app.platform = 'pizza'
-        @app.send(:update_without_callbacks)
+        @app.update_attribute(:platform, 'pizza')
         put(:update, @valid_params)
       end
 
       it 'responds with error' do
         should_respond_with_json_error(400)
         result = JSON.parse(response.body)
-        result['error'].join(' ').should == 'platform is not included in the list'
+        result['error']['platform'].first.should == 'is not included in the list'
       end
     end
 
@@ -300,13 +279,13 @@ describe AgencyApi::AppsController do
       end
 
       it 'saves activity logs' do
-        controller.expects :log_activity
-        controller.expects :save_activity_logs
+        controller.should_receive :log_activity
+        controller.should_receive :save_activity_logs
         put(:update, @valid_params)
       end
 
       it 'changes store id' do
-        Sqs.expects(:send_message).with(QueueNames::GET_STORE_INFO, regexp_matches(/(\w+-){4}\w+/))
+        Sqs.should_receive(:send_message).with(QueueNames::GET_STORE_INFO, /(\w+-){4}\w+/)
         put(:update, @valid_params.merge(:store_id => 'wah!'))
         result = JSON.parse(response.body)
         result['success'].should be_true

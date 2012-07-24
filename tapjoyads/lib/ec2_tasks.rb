@@ -2,7 +2,6 @@ class Ec2Tasks
   require 'yaml'
   require 'rubygems'
   require 'right_aws'
-  require 'lib/extensions/right_elb_interface'
 
   def self.get_dns_names(group_id)
     get_field_values([ :dns_name ], group_id).collect { |value_hash| value_hash[:dns_name] }
@@ -21,7 +20,7 @@ class Ec2Tasks
     field_names << :aws_groups
     field_values = []
     ec2.describe_instances.each do |instance|
-      if instance[:aws_state] == 'running' && instance[:aws_groups].include?(group_id)
+      if instance[:aws_state] == 'running' && instance[:groups].any? { |g| g[:group_name] == group_id }
         value_hash = {}
         field_names.each do |field_name|
           value_hash[field_name] = instance[field_name]

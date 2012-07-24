@@ -1,0 +1,3 @@
+<% action = @decrement_capacity ? "Removed" : "Replaced" %>
+
+$('#<%= @instance_id %>_details').html('<h3><%= action %> <%= @instance_id %></h3>');

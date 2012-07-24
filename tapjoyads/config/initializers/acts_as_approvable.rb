@@ -1,4 +1,4 @@
-require 'approvable_sources'
+load 'approvable_sources.rb'
 
 ActsAsApprovable.view_language = 'haml'
 ActsAsApprovable::Ownership.configure(:source => ApprovableSources)

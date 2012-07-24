@@ -8,7 +8,10 @@
   %body
     #header_wrapper
       #header
-        %a#logo{:href => "/"}
+        - if XMAN
+          %a{:href => "/", :id => XMAN}
+        - else
+          %a#logo{:href => "/"}
         #nav
           %a#nav_home.nav_link{:href => "/"}
           %a#nav_developers.nav_link{:href => "/site/app_developers"}

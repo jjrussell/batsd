@@ -31,6 +31,11 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :publisher_reseller_id
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
+  self.sdb_attr :mac_address
+  self.sdb_attr :device_type
+  self.sdb_attr :offerwall_rank
+
+  belongs_to :offer
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
@@ -95,4 +100,25 @@ class Reward < SimpledbShardedResource
   def successful?
     send_currency_status == 'OK' || send_currency_status == '200'
   end
+
+  def fix_conditional_check_failed
+    if sent_currency.present? && send_currency_status.present?
+      'Already awarded'
+    elsif sent_currency.nil? && send_currency_status.nil?
+      'Everything is ok'
+    elsif sent_currency.present? && send_currency_status.nil?
+      delete('sent_currency')
+      save!
+      'Deleted sent_currency'
+    else
+      'Something weird has happened'
+    end
+  end
+
+  def click
+    return nil if click_key.blank?
+
+    Click.new(:key => click_key)
+  end
+
 end

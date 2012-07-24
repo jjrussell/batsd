@@ -1,6 +1,6 @@
 - @press_title = @press_release.content_title
 - @press_subtitle = @press_release.content_subtitle
-= @press_release.content
+= @press_release.content.html_safe
 
 - content_for :additional_info do
   %h2 About Tapjoy

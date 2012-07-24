@@ -1,6 +1,6 @@
 - if @click_url.present? && @image.present?
-  = {"ClickURL" => @click_url, "Image" => @image}.to_json
+  = {"ClickURL" => @click_url, "Image" => @image}.to_json.html_safe
 - elsif @click_url.present? && @offer.present? && @amount.present? && @image_url.present?
-  = {"ClickURL" => @click_url, "Cost" => visual_cost(@offer), "Amount" => @amount, "IconURL" => @offer.get_icon_url(:source => :cloudfront, :size => '57'), "Name" => @offer.name, "ImageURL" => @image_url}.to_json
+  = {"ClickURL" => @click_url, "Cost" => visual_cost(@offer), "Amount" => @amount, "IconURL" => @offer.get_icon_url(:source => :cloudfront, :size => '57'), "Name" => @offer.name, "ImageURL" => @image_url}.to_json.html_safe
 - else
   = {}.to_json

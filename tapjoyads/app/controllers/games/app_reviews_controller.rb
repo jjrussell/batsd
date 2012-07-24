@@ -65,7 +65,9 @@ class Games::AppReviewsController < GamesController
   def update_app_review
     currency = Currency.find(ObjectEncryptor.decrypt(params[:app_review][:eid]))
 
-    @app_review.user_rating = params[:app_review][:user_rating]
+    @app_review.user_rating = params[:app_review][:user_rating] || 0
+    @app_review.text = params[:app_review][:text]
+
     @app_review.app_id = currency.app_id
     @app_review.app_metadata = currency.app.primary_app_metadata
     @app_review.author = current_gamer

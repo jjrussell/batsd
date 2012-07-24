@@ -2,15 +2,23 @@ xml.instruct!
 xml.TapjoyVideos do
   @offer_list.each do |offer|
     xml.TapjoyVideo do
-        xml.OfferID offer.id
-        xml.Name offer.name
-        xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-        xml.CurrencyName @currency.name
-        xml.VideoURL offer.url
-        xml.IconURL offer.video_icon_url
-        xml.Buttons do
-          xml << offer.third_party_data
+      xml.OfferID offer.id
+      xml.Name offer.name
+      xml.Amount @currency.get_visual_reward_amount(offer, params[:display_multiplier])
+      xml.CurrencyName @currency.name
+      xml.VideoURL offer.url
+      xml.IconURL offer.video_icon_url
+      xml.Buttons do
+        button_xml = ""
+        offer.video_button_tracking_offers.each do |o|
+          builder = Builder::XmlMarkup.new
+          button_xml << builder.Button do |button|
+            button.tag!("Name", o.name)
+            button.tag!("URL", get_click_url(o))
+          end
         end
+        xml << button_xml
+      end
     end
   end
 end

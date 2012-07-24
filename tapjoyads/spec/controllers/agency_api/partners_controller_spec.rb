@@ -1,11 +1,11 @@
-require 'spec/spec_helper'
+require 'spec_helper'
 
 describe AgencyApi::PartnersController do
 
   describe '#index' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner,
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner,
         :balance => 10,
         :pending_earnings => 11,
         :name => 'name',
@@ -45,8 +45,8 @@ describe AgencyApi::PartnersController do
 
   describe '#show' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner,
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner,
         :balance => 10,
         :pending_earnings => 11,
         :name => 'name',
@@ -60,11 +60,6 @@ describe AgencyApi::PartnersController do
       }
     end
 
-    it 'responds with error given missing params' do
-      get(:show)
-      should_respond_with_json_error(400)
-    end
-
     it 'responds with error given bad credentials' do
       get(:show, @valid_params.merge(:api_key => 'foo'))
       should_respond_with_json_error(403)
@@ -76,7 +71,7 @@ describe AgencyApi::PartnersController do
     end
 
     it 'responds with error given partner_id from another agency' do
-      partner2 = Factory(:partner)
+      partner2 = FactoryGirl.create(:partner)
       get(:show, @valid_params.merge(:id => partner2.id))
       should_respond_with_json_error(403)
     end
@@ -95,8 +90,8 @@ describe AgencyApi::PartnersController do
 
   describe '#create' do
     before :each do
-      @reseller = Factory(:reseller)
-      agency_user = Factory(:agency_user, :reseller => @reseller)
+      @reseller = FactoryGirl.create(:reseller)
+      agency_user = FactoryGirl.create(:agency_user, :reseller => @reseller)
       @valid_params = {
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key,
@@ -116,7 +111,7 @@ describe AgencyApi::PartnersController do
     end
 
     it 'responds with error given an existing user email' do
-      Factory(:user, :email => 'email@example.com')
+      FactoryGirl.create(:user, :email => 'email@example.com')
       post(:create, @valid_params)
       should_respond_with_json_error(400)
     end
@@ -137,9 +132,9 @@ describe AgencyApi::PartnersController do
 
   describe '#link' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @user = Factory(:user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @user = FactoryGirl.create(:user)
+      @partner = FactoryGirl.create(:partner)
       @partner.users << @user
       @valid_params = {
         :agency_id => agency_user.id,
@@ -170,7 +165,7 @@ describe AgencyApi::PartnersController do
     end
 
     it 'responds with error for a user with too many partner accounts' do
-      partner2 = Factory(:partner)
+      partner2 = FactoryGirl.create(:partner)
       partner2.users << @user
       post(:link, @valid_params)
       should_respond_with_json_error(400)
@@ -186,8 +181,8 @@ describe AgencyApi::PartnersController do
 
   describe '#update' do
     before :each do
-      agency_user = Factory(:agency_user)
-      @partner = Factory(:partner)
+      agency_user = FactoryGirl.create(:agency_user)
+      @partner = FactoryGirl.create(:partner)
       @partner.users << agency_user
       @valid_params = {
         :id => @partner.id,
@@ -195,11 +190,6 @@ describe AgencyApi::PartnersController do
         :api_key => agency_user.api_key,
         :name => 'partner_rename',
       }
-    end
-
-    it 'responds with error given missing params' do
-      put(:update)
-      should_respond_with_json_error(400)
     end
 
     it 'responds with error given bad credentials' do
@@ -213,7 +203,7 @@ describe AgencyApi::PartnersController do
     end
 
     it 'responds with error given id belonging to invalid partner' do
-      partner2 = Factory(:partner)
+      partner2 = FactoryGirl.create(:partner)
       put(:update, @valid_params.merge(:id => partner2.id))
       should_respond_with_json_error(403)
     end
