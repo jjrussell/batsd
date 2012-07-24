@@ -22,8 +22,6 @@
               - if offer.app_offer?
                 = image_tag(platform_icon_url(offer))
                 = offer.self_promote_only? ? '[SELF]' : ''
-              - else
-                = ''
             -#Bid
             %td
               = number_to_currency(offer.bid / 100.0)
@@ -33,4 +31,4 @@
             -#StatZ **INTERNAL**
             %td
               = permitted_to?(:show, :dashboard_statz) ? link_to('Z', statz_path(offer)) : ''
-|
+

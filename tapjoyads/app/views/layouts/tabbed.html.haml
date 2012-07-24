@@ -26,7 +26,8 @@
           - link_text = "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns".html_safe
           - link_class = "soft-link #{current_partner_active_offers.blank? ? 'inactive' : ''}"
           = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
-          #{render 'shared/active_campaigns'}
+          = render 'shared/active_campaigns'
+          |
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
             |
