@@ -103,11 +103,11 @@ describe OfferList do
     before :each do
       @offers = []
       10.times { @offers << FactoryGirl.create(:video_offer).primary_offer }
+      @offers.each { |x| x.partner.balance = 10; x.save }
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(@offers)
       @currency = FactoryGirl.create(:currency)
       @app = @currency.app
       @base_params = {:device => FactoryGirl.create(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
-      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
     end
 
     context 'with a bad device' do

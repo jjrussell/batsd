@@ -9,15 +9,13 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
-  before :each do
-    Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
-  end
   render_views
 
   describe 'hitting display ad controller' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
