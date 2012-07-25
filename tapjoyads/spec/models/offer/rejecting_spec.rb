@@ -1,49 +1,54 @@
 require 'spec_helper'
-include Offer::Rejecting
 
-module Offer::Rejecting
-  describe Offer::Rejecting do
-    describe 'partner_has_no_funds?' do
+class DummyClass
+end
+
+describe Offer::Rejecting do
+  before :each do
+    @dummy_class = DummyClass.new
+    @dummy_class.extend(Offer::Rejecting)
+  end
+  describe 'has_no_partner_funds?' do
+    before :each do
+      @currency = FactoryGirl.create(:currency)
+    end
+    context 'charges > 0' do
       before :each do
-        @currency = FactoryGirl.create(:currency)
+        @dummy_class.stub(:partner_id).and_return('partner_id')
+        @dummy_class.stub(:payment).and_return(30)
       end
-      context 'charges > 0 and balance > 0' do
+      context 'balance > 0' do
         before :each do
-          Offer::Rejecting.stub(:partner_id).and_return('partner_id')
-          Offer::Rejecting.stub(:payment).and_return(30)
-          Offer::Rejecting.stub(:partner_balance).and_return(30)
+          @dummy_class.stub(:partner_balance).and_return(30)
         end
-        it 'should return false' do
-          Offer::Rejecting.partner_has_no_funds?(@currency).should == false
-        end
+        subject { @dummy_class }
+        it { should_not have_no_partner_funds(@currency) }
       end
-      context 'charges > 0 and balance <= 0' do
+      context 'balance <= 0' do
         before :each do
-          Offer::Rejecting.stub(:partner_id).and_return('partner_id')
-          Offer::Rejecting.stub(:payment).and_return(30)
-          Offer::Rejecting.stub(:partner_balance).and_return(0)
+          @dummy_class.stub(:partner_balance).and_return(0)
         end
-        it 'should return true' do
-          Offer::Rejecting.partner_has_no_funds?(@currency).should == true
-        end
+        subject { @dummy_class }
+        it { should have_no_partner_funds(@currency) }
       end
-      context 'charges <= 0 and balance > 0' do
-        before :each do
-          Offer::Rejecting.stub(:partner_id).and_return(@currency.partner_id)
-          Offer::Rejecting.stub(:partner_balance).and_return(30)
-        end
-        it 'should return false' do
-          Offer::Rejecting.partner_has_no_funds?(@currency).should == false
-        end
+    end
+    context 'charges <= 0' do
+      before :each do
+        @dummy_class.stub(:partner_id).and_return(@currency.partner_id)
       end
-      context 'charges <= 0 and balance <= 0' do
+      context 'balance > 0' do
         before :each do
-          Offer::Rejecting.stub(:partner_id).and_return(@currency.partner_id)
-          Offer::Rejecting.stub(:partner_balance).and_return(0)
+          @dummy_class.stub(:partner_balance).and_return(30)
         end
-        it 'should return false since they are not being charged and have no budget' do
-          Offer::Rejecting.partner_has_no_funds?(@currency).should == false
+        subject { @dummy_class }
+        it { should_not have_no_partner_funds(@currency) }
+      end
+      context 'balance <= 0' do
+        before :each do
+          @dummy_class.stub(:partner_balance).and_return(0)
         end
+        subject { @dummy_class }
+        it { should_not have_no_partner_funds(@currency) }
       end
     end
   end

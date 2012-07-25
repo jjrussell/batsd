@@ -162,7 +162,7 @@ module Offer::Rejecting
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
-    partner_has_no_funds?(currency) ||
+    has_no_partner_funds?(currency) ||
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     miniscule_reward_reject?(currency)
   end
@@ -207,7 +207,7 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
-  def partner_has_no_funds?(currency)
+  def has_no_partner_funds?(currency)
     currency.charges?(self) && partner_balance <= 0
   end
 
