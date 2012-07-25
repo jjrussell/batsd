@@ -13,7 +13,7 @@ class Experiments
 
   RANKING_EXPERIMENT_IDS = %w(a_ranking b_ranking c_ranking)
 
-  EXPERIMENTS = { :ow_redesign => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
+  EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
 
   def self.choose(udid, options = {})
     if udid.present?
