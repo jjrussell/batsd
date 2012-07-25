@@ -78,12 +78,3 @@ end
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
-
-# Pre-load all of our models to prevent issues with Marshal
-# We do this last to make sure everything is initialized that models may require
-
-model_dir = "#{Rails.root}/app/models/" 
-Dir[File.join(model_dir, "**/*.rb")].each do |file|
-  model = file.gsub(model_dir, "").gsub(/\.rb$/, '')
-  require_dependency model
-end

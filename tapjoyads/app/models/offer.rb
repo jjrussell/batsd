@@ -1,5 +1,3 @@
-require_dependency 'video_button'
-
 class Offer < ActiveRecord::Base
   include UuidPrimaryKey
   include Offer::Ranking
