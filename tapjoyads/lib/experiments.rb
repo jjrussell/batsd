@@ -12,6 +12,7 @@ class Experiments
   end
 
   RANKING_EXPERIMENT_IDS = %w(a_ranking b_ranking c_ranking)
+  RANKING_EXPERIMENT_IDS.default = 'ow_control'
 
   EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
 
