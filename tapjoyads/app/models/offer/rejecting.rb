@@ -319,7 +319,7 @@ module Offer::Rejecting
   def minimum_bid_reject?(currency, type)
     return false unless currency
     min_bid = case type
-    when Offer::DEFAULT_OFFER_TYPE
+    when Offer::DEFAULT_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE
       currency.minimum_offerwall_bid
     when Offer::FEATURED_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid
