@@ -14,7 +14,7 @@ class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
   FIXED_RATIO = 0.91
-  ALGORITHM_TRANSITION_DATE = Time.parse('2012-07-01 00:00:00 UTC').to_date
+  ALGORITHM_TRANSITION_DATE = Time.parse('2012-07-26 00:00:00 UTC').to_date
 
   OLD_MIN_RATIO = 0.8
 
