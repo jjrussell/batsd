@@ -82,8 +82,7 @@ module Offer::BannerCreatives
 
   def add_banner_creative(image_data, size)
     return unless banner_creative_sizes.include?(size)
-    return if has_banner_creative?(size)
-    self.banner_creatives += [size]
+    self.banner_creatives += [size] unless has_banner_creative?(size)
     send("banner_creative_#{size}_blob=", image_data)
     self.creatives_dict = creatives_dict.merge(size => "#{Offer.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
   end
@@ -106,7 +105,7 @@ module Offer::BannerCreatives
 
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
-    hash = "banner_creatives/#{creatives_dict[size]}.#{format}" ||  "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
+    "banner_creatives/#{creatives_dict[size]}.#{format}" || "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
   def banner_creative_url(options)
@@ -247,7 +246,7 @@ module Offer::BannerCreatives
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
   end
 
-  #upload still updates all of the old datastructures, as well as populates the new one.
+  #upload still updates all of the old columns, as well as populates the new one.
   def upload_banner_creative!(blob, size, format = nil)
     format ||= banner_creative_format(size)
     begin
