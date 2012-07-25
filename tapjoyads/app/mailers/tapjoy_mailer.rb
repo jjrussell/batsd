@@ -11,7 +11,7 @@ class TapjoyMailer < ActionMailer::Base
 
   def alert(message, rows)
     from 'Tapjoy <noc@tapjoy.com>'
-    recipients [ 'aaron@tapjoy.com', 'chris.compeau@tapjoy.com', 'phil.oneill@tapjoy.com', 'sf_devrel@tapjoy.com' ]
+    recipients [ 'aaron@tapjoy.com', 'chris.compeau@tapjoy.com' ]
     subject "[ALERT] #{message}"
     body :rows => rows
   end
