@@ -15,6 +15,7 @@ describe DisplayAdController do
     before :each do
       RailsCache.stub(:get).and_return(nil)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
