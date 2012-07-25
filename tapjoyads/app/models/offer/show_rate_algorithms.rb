@@ -1,7 +1,8 @@
 module Offer::ShowRateAlgorithms
 
-  EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 0
+  EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 101
   DELIVERY_ASAP_SHOW_RATE_ALGO_ID = 237
+  DEFAULT_SHOW_RATE_ALGO_ID = EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
 
   attr_accessor :recent_clicks, :recent_installs
   attr_accessor :calculated_conversion_rate, :calculated_min_conversion_rate, :cvr_timeframe
@@ -69,7 +70,7 @@ module Offer::ShowRateAlgorithms
   #----------------------------------------------------------------
   # Different show rate algorithms
   #----------------------------------------------------------------
-  def required_optimization_info(algorithm_id, offer_hash)
+  def extract_optimization_info(algorithm_id, offer_hash)
     # This should probably be class method, but included in this file to centralize all show_rate related methods
     case algorithm_id
       when Offer::EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
@@ -97,7 +98,7 @@ module Offer::ShowRateAlgorithms
     ret_show_rate
   end
 
-  def calcuate_show_rate_0(optimization_info={}, log_info=true)
+  def calcuate_show_rate_101(optimization_info={}, log_info=true)
     unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"
     end
