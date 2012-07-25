@@ -9,6 +9,9 @@ def read_asset(name, directory='banner_ads')
 end
 
 describe DisplayAdController do
+  before :each do
+    Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
+  end
   render_views
 
   describe 'hitting display ad controller' do

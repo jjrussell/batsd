@@ -565,4 +565,27 @@ describe Currency do
       end
     end
   end
+
+  describe '#charges?' do
+    context 'advertiser amount is not 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+      end
+
+      it 'returns true because there is a charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == true
+      end
+    end
+
+    context 'advertiser amount is 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @currency.stub(:partner_id).and_return(@offer.partner_id)
+      end
+
+      it 'returns false becauses there is no charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == false
+      end
+    end
+  end
 end

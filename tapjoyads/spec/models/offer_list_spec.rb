@@ -107,6 +107,7 @@ describe OfferList do
       @currency = FactoryGirl.create(:currency)
       @app = @currency.app
       @base_params = {:device => FactoryGirl.create(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
+      Offer.any_instance.stub(:partner_has_no_funds?).and_return(false)
     end
 
     context 'with a bad device' do
