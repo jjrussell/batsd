@@ -3,7 +3,7 @@ class ConnectController < ApplicationController
   before_filter :reject_banned_udids
 
   def index
-    lookup_udid(set_temporary_udid = true)
+    lookup_udid(true)
     required_param = [:app_id]
     required_param << :udid unless params[:identifiers_provided]
 
