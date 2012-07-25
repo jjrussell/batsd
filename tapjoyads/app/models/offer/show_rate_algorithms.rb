@@ -1,7 +1,9 @@
 module Offer::ShowRateAlgorithms
 
+  ORIGINAL_SHOW_RATE_ALGO_ID = 0
   EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 101
   DELIVERY_ASAP_SHOW_RATE_ALGO_ID = 237
+
   DEFAULT_SHOW_RATE_ALGO_ID = EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
 
   attr_accessor :recent_clicks, :recent_installs
@@ -58,12 +60,12 @@ module Offer::ShowRateAlgorithms
     @recent_clicks > 200 && @calculated_conversion_rate < @calculated_min_conversion_rate
   end
 
-  def calculate_show_rate(algorithm_id=EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID, optimization_info={}, log_info=true)
+  def calculate_show_rate(algorithm_id=DEFAULT_SHOW_RATE_ALGO_ID, optimization_info={}, log_info=true)
     send("calcuate_show_rate_#{algorithm_id}", optimization_info, log_info)
   end
 
-  def calculate_default_show_rate(log_info)
-    send("calculate_show_rate_#{EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID}", optimization_info, log_info)
+  def calculate_original_show_rate(optimization_info={}, log_info=true)
+    send("calculate_show_rate_#{ORIGINAL_SHOW_RATE_ALGO_ID}", optimization_info, log_info)
   end
 
 
@@ -85,20 +87,24 @@ module Offer::ShowRateAlgorithms
 
   def calculate_show_rate_237(optimization_info={}, log_info=true)
     new_show_rate = optimization_info[:show_rate_new]
-    return calculate_default_show_rate(optimization_info, log_info) unless new_show_rate.present?
+    return calculate_original_show_rate(optimization_info, log_info) unless new_show_rate.present?
 
     use_even_distribution = optimization_info[:even_distribution_show_rate]  # if ever an offer has the choice to choose show rate algorithm
 
     if new_show_rate > 0 and !use_even_distribution
       ret_show_rate = new_show_rate
     else
-      ret_show_rate = calculate_default_show_rate(optimization_info, log_info)
+      ret_show_rate = calculate_original_show_rate(optimization_info, log_info)
     end
 
     ret_show_rate
   end
 
   def calcuate_show_rate_101(optimization_info={}, log_info=true)
+    calculate_original_show_rate(optimization_info, log_info)
+  end
+
+  def calculate_show_rate_0(optimization_info={}, log_info=true)
     unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"
     end
