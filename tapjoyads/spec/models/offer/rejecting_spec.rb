@@ -8,7 +8,7 @@ describe Offer::Rejecting do
     @dummy_class = DummyClass.new
     @dummy_class.extend(Offer::Rejecting)
   end
-  describe 'has_no_partner_funds?' do
+  describe '#has_insufficient_funds?' do
     before :each do
       @currency = FactoryGirl.create(:currency)
     end
@@ -22,14 +22,14 @@ describe Offer::Rejecting do
           @dummy_class.stub(:partner_balance).and_return(30)
         end
         subject { @dummy_class }
-        it { should_not have_no_partner_funds(@currency) }
+        it { should_not have_insufficient_funds(@currency) }
       end
       context 'balance <= 0' do
         before :each do
           @dummy_class.stub(:partner_balance).and_return(0)
         end
         subject { @dummy_class }
-        it { should have_no_partner_funds(@currency) }
+        it { should have_insufficient_funds(@currency) }
       end
     end
     context 'charges <= 0' do
@@ -41,14 +41,14 @@ describe Offer::Rejecting do
           @dummy_class.stub(:partner_balance).and_return(30)
         end
         subject { @dummy_class }
-        it { should_not have_no_partner_funds(@currency) }
+        it { should_not have_insufficient_funds(@currency) }
       end
       context 'balance <= 0' do
         before :each do
           @dummy_class.stub(:partner_balance).and_return(0)
         end
         subject { @dummy_class }
-        it { should_not have_no_partner_funds(@currency) }
+        it { should_not have_insufficient_funds(@currency) }
       end
     end
   end
