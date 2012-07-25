@@ -114,7 +114,10 @@ include GetOffersHelper
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
-    if params[:json] == '1'
+    if params[:format] == 'html'
+      @offer = @offer_list.find { |o| not o.nil? } if @offer_list.any?
+      render :layout => "iphone"
+    elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
       render :template => 'get_offers/installs_redirect'
