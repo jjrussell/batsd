@@ -15,6 +15,7 @@ describe DisplayAdController do
     before :each do
       RailsCache.stub(:get).and_return(nil)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
@@ -171,7 +172,7 @@ describe DisplayAdController do
 
           response.content_type.should == 'application/json'
           Base64.decode64(assigns['image']).should == custom_banner
-          expect { JSON.parse(response.body) }.should_not raise_error
+          expect { JSON.parse(response.body) }.not_to raise_error
         end
 
         it 'returns proper image data in xml' do

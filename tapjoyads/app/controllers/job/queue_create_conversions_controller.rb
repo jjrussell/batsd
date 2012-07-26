@@ -31,7 +31,7 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     begin
       conversion.save!
     rescue ActiveRecord::RecordInvalid, ActiveRecord::StatementInvalid => e
-      if conversion.errors[:id] == 'has already been taken' || e.message =~ /Duplicate entry.*index_conversions_on_id/
+      if conversion.errors[:id] == ['has already been taken'] || e.message =~ /Duplicate entry.*index_conversions_on_id/
         Rails.logger.info "Duplicate Conversion: #{e.class} when saving conversion: '#{conversion.id}'"
       else
         raise e

@@ -1,6 +1,51 @@
 require 'spec_helper'
 
 describe Mc do
+  describe '.get' do
+    context 'for a non-existant type' do
+      it 'raises a NameError when loading the constant' do
+        error = ArgumentError.new("undefined class/module SomethingFake")
+        cache = Memcached.new
+        cache.stub(:get).with('key1').and_raise(error)
+        lambda { Mc.get('key1', false, [cache]) }.should raise_error(NameError)
+      end
+    end
+
+    context 'with multiple keys' do
+      context 'with first key a miss' do
+        it 'returns second key val' do
+          cache = Memcached.new
+          cache.stub(:get).with('key1').and_raise(Memcached::NotFound)
+          cache.stub(:get).with('key2').and_return('val')
+          Mc.get(['key1', 'key2'], false, [cache]).should == 'val'
+        end
+
+        it 'only adds last key found' do
+          missing_cache = FakeMemcached.new
+          cache = FakeMemcached.new
+          missing_cache.should_receive(:get).twice.and_raise(Memcached::NotFound)
+          cache.should_receive(:get).with('key1').and_raise(Memcached::NotFound)
+          cache.should_receive(:get).with('key2').and_return('val')
+          missing_cache.should_not_receive(:add).with('key1', 'val', 1.week.to_i)
+          missing_cache.should_receive(:add).with('key2', 'val', 1.week.to_i)
+          Mc.get(['key1', 'key2'], false, [missing_cache, cache]).should == 'val'
+        end
+      end
+
+      context 'with all keys a miss' do
+        it 'returns yield' do
+          cache = Memcached.new
+          cache.stub(:get).with('key1').and_raise(Memcached::NotFound)
+          res = Mc.get(['key1', 'key2']) do
+            'yielded_val'
+          end
+
+          res.should == 'yielded_val'
+        end
+      end
+    end
+  end
+
   it "gets and saves" do
     Mc.put('key', 'value')
     Mc.get('key').should == 'value'

@@ -41,7 +41,11 @@ class Employee < ActiveRecord::Base
   has_many :wfhs
 
   def location
-    desk_location.split(',').map(&:to_i) unless desk_location.blank?
+    desk_location.split(',').map(&:to_i) unless deskless?
+  end
+
+  def deskless?
+    desk_location.blank?
   end
 
   def location=(array)

@@ -235,6 +235,16 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
 
+  it 'rejects rewarded offers that are close to zero' do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.send(:miniscule_reward_reject?, currency).should be_true
+  end
+
+  it "doesn't reject rewarded offers that are close to 1" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 18})
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
+
   it "excludes the appropriate columns for the for_offer_list scope" do
     offer = Offer.for_offer_list.find(@offer.id)
     fetched_cols = offer.attribute_names & Offer.column_names
@@ -1033,6 +1043,7 @@ describe Offer do
         user_agent = @offer.source_token(nil)
 
         @urls.each do |url|
+          uid = Device.advertiser_device_id(nil, @offer.partner_id)
           result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
           result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
@@ -1068,6 +1079,7 @@ describe Offer do
         user_agent = @offer.source_token(@publisher_app_id)
 
         @urls.each do |url|
+          uid = Device.advertiser_device_id(@udid, @offer.partner_id)
           result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
           result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once

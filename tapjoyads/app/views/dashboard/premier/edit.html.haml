@@ -42,10 +42,10 @@
           - if @is_new
             = label_tag :agree, "I agree to the Terms and Conditions above."
           - else
-            = label_tag :agree, "I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}."
+            = label_tag :agree, "I agree to the #{link_to("Terms and Conditions", "javascript:showTerms()")}.".html_safe
     %tr
       %td.right
-        %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'
+        %b= f.label :exclusivity_level, 'Exclusivity&nbsp;Length'.html_safe
       %td
         = f.select :exclusivity_level_type, options_for_select(@levels, @default_level), {}, :disabled => true
         = error_message_on @partner, :exclusivity_level_type
@@ -63,7 +63,10 @@
 
   = f.submit @submit_text, :class => 'join', :disabled => true
 
-  #premier_disabled_message After recent reviews, we have decided to retire our Premier program. Partners that have previously opted in to the program will be supported through their current terms. Our rationale for this change is straight-forward - with the recent reduction of minimum bid pricing, we think this better enables all of our advertisers (large and small) to more predictably reach their ROI goals in a balanced marketplace without the need for systematic bid discounts.
+  #premier_disabled_message
+    The Premier Program is now retired. Partners that have previously opted in to the program
+    %b are still committed to
+    and will be supported through their current terms.
 
 - content_for :page_javascript do
   :plain

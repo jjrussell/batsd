@@ -66,6 +66,10 @@ class Click < SimpledbShardedResource
     Digest::MD5.hexdigest(key.to_s + CLICK_KEY_SALT)
   end
 
+  def hashed_key
+    Click.hashed_key(key)
+  end
+
   def rewardable?
     !(new_record? || installed_at? || clicked_at < (Time.zone.now - 2.days))
   end

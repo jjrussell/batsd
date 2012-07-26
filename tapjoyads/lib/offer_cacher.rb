@@ -93,7 +93,7 @@ class OfferCacher
       loop do
         offer_group = Mc.distributed_get_and_put("#{mc_key}.#{group}", false, 1.day) do
           bucket = S3.bucket(BucketNames::OFFER_DATA)
-          Marshal.restore(bucket.objects["#{s3_key}.#{group}"].read)
+          Marshal.safe_restore(bucket.objects["#{s3_key}.#{group}"].read)
         end
         offers |= offer_group
         break unless offer_group.length == GROUP_SIZE

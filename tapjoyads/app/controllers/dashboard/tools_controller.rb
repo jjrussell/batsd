@@ -300,6 +300,17 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
+  def recreate_device_identifiers
+    device = Device.find(params[:udid])
+    if device.nil?
+      flash[:error] = "Unable to find a device with UDID: #{params[:udid]}"
+    else
+      Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => device.key}.to_json)
+      flash[:notice] = "The identifiers for the device #{device.key} should be recreated soon."
+    end
+    redirect_to :action => :device_info, :udid => params[:udid]
+  end
+
   def managed_partner_ids
     Mc.get_and_put('managed_partners', false, 1.minute) do
       User.account_managers.map(&:partners).flatten.uniq.map(&:id)
