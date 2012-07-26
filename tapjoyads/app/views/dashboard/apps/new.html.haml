@@ -7,7 +7,6 @@
 %h3 Add App
 
 = form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = f.hidden_field :store_id
   %table
     %tbody
       %tr
@@ -32,9 +31,15 @@
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
         %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
       %tr.app_data.hidden
-        %th Store ID
+        %th
+          Store ID
+          #help_store_id.help ?
         %td
-          %a#app_store_link{ :target => '_blank' }
+          - if permitted_to?(:edit, :dashboard_statz)
+            = f.text_field :store_id, :placeholder => 'INTERNAL: Manual override'
+          - else
+            = f.hidden_field :store_id
+            %a#app_store_link{ :target => '_blank' }
       %tr.app_data.hidden
         %th Icon
         %td#app_icon &nbsp;
@@ -57,6 +62,11 @@
     Platform on which this app runs.
   #help_name_content{:name => 'Name'}
     App name
+  #help_store_id_content{:name => 'Store ID'}
+    Store ID associated with the app.
+    - if permitted_to?(:edit, :dashboard_statz)
+      %strong DO NOT CHANGE THIS FIELD
+      unless you know what you are doing.
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')
@@ -76,7 +86,7 @@
   %iframe{ :src => "https://fls.doubleclick.net/activityi;src=3509778;type=b2bco010;cat=tapjo366;ord=1?", :width => "1", :height => "1", :frameborder => "0", :style => "display:none"}
 / End of DoubleClick Floodlight Tag: Please do not remove
 / Tracking for new leads for google analytics same as DoubleClick Floodlight Tag: Please do not remove
-:javascirpt
+:javascript
   var google_conversion_id = 1038130893;
   var google_conversion_language = "en";
   var google_conversion_format = "3";

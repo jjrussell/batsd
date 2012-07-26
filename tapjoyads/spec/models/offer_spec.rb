@@ -289,7 +289,7 @@ describe Offer do
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls',
+                                  'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
                                 ].sort
   end
@@ -647,7 +647,7 @@ describe Offer do
   describe '#add_banner_creative' do
     context 'given a valid size' do
       before(:each) do
-        @offer.add_banner_creative('320x50')
+        @offer.add_banner_creative('image_data', '320x50')
       end
 
       it 'adds the banner creative size' do
@@ -657,15 +657,49 @@ describe Offer do
       it 'does not approve the banner' do
         @offer.approved_banner_creatives.should_not include('320x50')
       end
+
+      it 'adds the banner creative URL' do
+        @offer.creatives_dict.should include('320x50')
+      end
     end
 
     context 'given an invalid size' do
       before(:each) do
-        @offer.add_banner_creative('1x1')
+        @offer.add_banner_creative('image_data', '1x1')
       end
 
       it 'does not add the banner creative' do
         @offer.banner_creatives.should_not include('1x1')
+      end
+
+      it 'does not add the banner creative URL' do
+        @offer.creatives_dict.should_not include('1x1')
+      end
+    end
+  end
+
+  describe '#banner_creative_path' do
+    context 'given size populated in creatives_dict' do
+      before(:each) do
+        @offer.banner_creatives = ['320x50']
+        @offer.creatives_dict = {'320x50' => 'test_path'}
+      end
+
+      it 'should return the stored path in creatives_dict' do
+        @offer.banner_creative_path('320x50', 'jpeg').should == 'banner_creatives/test_path.jpeg'
+      end
+    end
+    context 'given size populated only in banner_creatives' do
+      before(:each) do
+        @offer.banner_creatives = ['320x50']
+        @offer.creatives_dict = {}
+        @offer.id = 'test_id'
+      end
+
+      it 'should return the statically generated path from hashed_icon_id' do
+
+        @offer.id.should == 'test_id'
+        @offer.banner_creative_path('320x50', 'jpeg').should == 'banner_creatives/c068de1ea2c424641fbab45932b4244ab1793651be22a6a5bc0aff5dc4f9ade4_320x50.jpeg'
       end
     end
   end

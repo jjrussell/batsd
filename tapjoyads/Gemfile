@@ -81,6 +81,7 @@ group :development do
   gem 'ruby_gntp'
   gem 'pry'
   gem 'pry-rails'
+  gem 'awesome_print'
   gem 'pry-remote'
   gem 'pry-nav'
   gem 'ruby18_source_location', :platforms => :ruby_18
