@@ -152,6 +152,7 @@ include GetOffersHelper
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
+    params[:format] = 'xml' if params[:format].blank?
   end
 
   def setup
