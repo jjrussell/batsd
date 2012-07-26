@@ -185,6 +185,19 @@ class TapjoyMailer < ActionMailer::Base
     offer_creative_updated(:rejected, email_address, offer, size, offer_link)
   end
 
+  def email_coupon_offer(email_address, barcode, expires_at, redemption_code, description, name, advertiser)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject 'Tapjoy coupon request'
+    body( :barcode         => barcode,
+          :description     => description,
+          :redemption_code => redemption_code,
+          :expries_on      => expires_at,
+          :name            => name,
+          :advertiser      => advertiser )
+  end
+
   private
   def offer_creative_updated(status, email_address, offer, size, offer_link)
     from('Tapjoy <noreply@tapjoy.com>')

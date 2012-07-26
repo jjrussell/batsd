@@ -71,9 +71,9 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
+    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
     t.text     "languages"
     t.text     "screenshots"
@@ -205,6 +205,39 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
 
+  create_table "coupons", :id => false, :force => true do |t|
+    t.string   "id",                          :limit => 36,                    :null => false
+    t.string   "provider_id",                 :limit => 36,                    :null => false
+    t.string   "partner_id",                  :limit => 36,                    :null => false
+    t.string   "prerequisite_offer_id",       :limit => 36
+    t.string   "name",                                                         :null => false
+    t.text     "description"
+    t.text     "fine_print"
+    t.string   "illustration_url"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.string   "discount_type"
+    t.string   "discount_value"
+    t.string   "advertiser_id"
+    t.string   "advertiser_name"
+    t.string   "advertiser_url"
+    t.text     "advertiser_description"
+    t.string   "vouchers_expire_type"
+    t.date     "vouchers_expire_date"
+    t.string   "vouchers_expire_time_unit"
+    t.integer  "vouchers_expire_time_amount"
+    t.string   "url"
+    t.text     "instructions"
+    t.integer  "price",                                     :default => 0
+    t.boolean  "hidden",                                    :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "coupons", ["id"], :name => "index_coupons_on_id"
+  add_index "coupons", ["partner_id"], :name => "index_coupons_on_partner_id"
+  add_index "coupons", ["prerequisite_offer_id"], :name => "index_coupons_on_prerequisite_offer_id"
+
   create_table "creative_approval_queue", :force => true do |t|
     t.string "offer_id", :limit => 36, :null => false
     t.string "user_id",  :limit => 36
@@ -246,8 +279,8 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
+    t.text     "promoted_offers",                                                                                           :null => false
     t.text     "store_whitelist",                                                                                           :null => false
   end
 
@@ -509,9 +542,9 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.text     "instructions"
     t.string   "category"
     t.string   "trigger_action"
+    t.string   "protocol_handler"
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
-    t.string   "protocol_handler"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -714,36 +747,36 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.boolean  "rewarded",                                                                      :default => true
     t.string   "reseller_id",                       :limit => 36
+    t.boolean  "rewarded",                                                                      :default => true
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.boolean  "url_overridden",                                                                :default => false, :null => false
-    t.text     "banner_creatives"
-    t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.text     "banner_creatives"
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "dma_codes",                                                                                        :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "wifi_only",                                                                     :default => false, :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "approved_banner_creatives"
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.boolean  "sdkless",                                                                       :default => false
-    t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
+    t.string   "app_metadata_id",                   :limit => 36
+    t.text     "carriers",                                                                                         :null => false
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
+    t.integer  "audition_factor",                                                               :default => 3,     :null => false
+    t.string   "source_offer_id",                   :limit => 36
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
-    t.string   "app_metadata_id",                   :limit => 36
-    t.string   "source_offer_id",                   :limit => 36
-    t.integer  "audition_factor",                                                               :default => 3,     :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -839,9 +872,9 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.boolean  "approved_publisher",                                                        :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                       :default => false,     :null => false
-    t.string   "reseller_id",                   :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
+    t.string   "reseller_id",                   :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                  :limit => 36
     t.decimal  "max_deduction_percentage",                    :precision => 8, :scale => 6, :default => 1.0,       :null => false
@@ -1136,14 +1169,31 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "app_targeting",                                  :default => false, :null => false
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
-    t.boolean  "app_targeting",                                  :default => false, :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
   add_index "video_offers", ["partner_id"], :name => "index_video_offers_on_partner_id"
   add_index "video_offers", ["prerequisite_offer_id"], :name => "index_video_offers_on_prerequisite_offer_id"
+
+  create_table "vouchers", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                    :null => false
+    t.string   "click_key",       :limit => 36,                    :null => false
+    t.string   "ref_id",          :limit => 36,                    :null => false
+    t.string   "coupon_id",       :limit => 36,                    :null => false
+    t.string   "redemption_code",                                  :null => false
+    t.date     "acquired_at",                                      :null => false
+    t.date     "expires_at",                                       :null => false
+    t.string   "barcode_url",                                      :null => false
+    t.string   "email_address",                                    :null => false
+    t.boolean  "completed",                     :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "vouchers", ["id"], :name => "index_vouchers_on_id"
 
   create_table "wfhs", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false

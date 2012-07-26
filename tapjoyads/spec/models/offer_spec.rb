@@ -10,6 +10,7 @@ describe Offer do
   it { should belong_to :partner }
   it { should belong_to :item }
   it { should belong_to :prerequisite_offer }
+  it { should belong_to :coupon }
 
   it { should validate_presence_of :partner }
   it { should validate_presence_of :item }
@@ -1533,12 +1534,6 @@ describe Offer do
         end
       end
     end
-    context 'Has a reward value with no payment' do
-      it 'should return an array with \'Has a reward value with no Payment\'' do
-        @offer.payment = 0
-        @offer.get_disabled_reasons.should == ['Has a reward value with no Payment']
-      end
-    end
   end
 
   context "show_rate_algorithms" do
@@ -1665,6 +1660,38 @@ describe Offer do
       subject.tracking_for = nil
       subject.save.should be_false
       subject.errors[:tracking_for_id].should be
+    end
+  end
+
+  describe '#show_in_active_campaigns?' do
+    context 'VideoOffer, App, GenericOffer, ActionOffer, Coupon' do
+      it 'should return true if item_type is in context' do
+        ['VideoOffer', 'App', 'GenericOffer', 'ActionOffer', 'Coupon'].each do |offer|
+          @offer.item_type = offer
+          @offer.show_in_active_campaigns?.should be_true
+        end
+      end
+    end
+    context 'Unrelated offer' do
+      it 'should return false' do
+        @offer.item_type = 'FailOffer'
+        @offer.show_in_active_campaigns?.should be_false
+      end
+    end
+  end
+
+  describe '#is_coupon?' do
+    context 'is a coupon' do
+      it 'should return true' do
+        @offer.item_type = 'Coupon'
+        @offer.is_coupon?.should be_true
+      end
+    end
+    context 'is not a coupon' do
+      it 'should return false' do
+        @offer.item_type = 'ActionOffer'
+        @offer.is_coupon?.should be_false
+      end
     end
   end
 end

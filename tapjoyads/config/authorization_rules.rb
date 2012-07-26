@@ -210,5 +210,7 @@ authorization do
     has_permission_on :dashboard_tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :dashboard_tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
+    has_permission_on :dashboard_tools_coupons, :to => [ :index, :new, :create, :show, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
   end
 end

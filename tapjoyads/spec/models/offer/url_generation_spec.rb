@@ -1,7 +1,9 @@
 require 'spec_helper'
 
-describe Offer::UrlGeneration do
+class DummyClass
+end
 
+describe Offer::UrlGeneration do
   before :each do
     @dummy_class = Object.new
     @dummy_class.extend(Offer::UrlGeneration)
@@ -9,6 +11,43 @@ describe Offer::UrlGeneration do
     @app      = Factory :app
     @offer    = @app.primary_offer
     @currency = Factory :currency
+    @dummy_class = DummyClass.new
+    @dummy_class.extend(Offer::UrlGeneration)
+    @app = FactoryGirl.create :app
+    @offer = @app.primary_offer
+    @params = { :udid => '123456',
+                :publisher_app_id => 'app_id',
+                :currency => 'gold' }
+    subject { Offer::UrlGeneration }
+    ObjectEncryptor.stub(:encrypt).and_return('some_data')
+  end
+
+  describe '#destination_url' do
+    context 'Coupon' do
+      it 'should call the instructions_url and return a valid url' do
+        @offer.item_type = 'Coupon'
+        @offer.destination_url(@params).should == "#{API_URL}/coupon_instructions/new?data=some_data"
+      end
+    end
+  end
+
+  describe '#instructions_url' do
+    context 'Coupon' do
+      it 'should return a valid url to coupon_instructions' do
+        @offer.item_type = 'Coupon'
+        @offer.instructions_url(@params).should == "#{API_URL}/coupon_instructions/new?data=some_data"
+      end
+    end
+  end
+
+  describe '#preview_display_ad_image_url' do
+    it 'should add key param to url ' do
+      url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                          :width => 320,
+                                          :height => 50 })
+      params = CGI::parse(URI(url).query)
+      params["key"].first.should == @offer.display_ad_image_hash(nil)
+    end
   end
 
   describe '#display_ad_image_url' do
@@ -31,16 +70,6 @@ describe Offer::UrlGeneration do
         params = CGI::parse(url)
         params["key"].first.should == @offer.display_ad_image_hash(nil)
       end
-    end
-  end
-
-  describe '#preview_display_ad_image_url' do
-    it 'should add key param to url ' do
-      url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
-                                          :width => 320,
-                                          :height => 50 })
-      params = CGI::parse(URI(url).query)
-      params["key"].first.should == @offer.display_ad_image_hash(nil)
     end
   end
 
@@ -216,4 +245,27 @@ describe Offer::UrlGeneration do
     end
   end
 
+  describe '#complete_action_url' do
+    context 'Coupon' do
+      it 'should return a valid url to coupons complete action' do
+        @offer.item_type = 'Coupon'
+        @offer.complete_action_url(@params).should == "#{API_URL}/coupons/complete?data=some_data"
+      end
+    end
+  end
+
+  describe '#click_url' do
+    before :each do
+      @click_params = { :publisher_app => 'pub_app', :publisher_user_id => '123',
+                        :udid => '123456', :currency_id => 'curr',
+                        :source => 'phone', :viewed_at => Time.now }
+
+    end
+    context 'item_type is Coupon' do
+      it 'should return a valid url to coupons complete action' do
+        @offer.item_type = 'Coupon'
+        @offer.click_url(@click_params).should == "#{API_URL}/click/coupon?data=some_data"
+      end
+    end
+  end
 end

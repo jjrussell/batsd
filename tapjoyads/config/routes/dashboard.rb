@@ -264,6 +264,12 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :premier_partners, :only => [:index]
+        resources :coupons do
+          member do
+            put :toggle_enabled
+          end
+        end
+        resources :vouchers, :only => [:show]
         resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
         resources :orders, :only => [:new, :create] do
           collection do
