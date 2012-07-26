@@ -730,7 +730,7 @@ ActiveRecord::Schema.define(:version => 20120719235233) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
-    t.string   "creatives_dict"
+    t.text     "creatives_dict"
   end
 
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
