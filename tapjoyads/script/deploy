@@ -56,9 +56,10 @@ class Deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
     if @options[:version].nil?
-      check_syntax
+     check_syntax
       create_deploy_tag
     end
+    check_schema if @options[:environment] == 'production'
     system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
     system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
     system("git checkout master")
@@ -88,6 +89,16 @@ class Deploy
       exit 1
     end
     puts "Syntax Check: PASSED"
+  end
+  
+  def check_schema
+    system("rake DATABASE=production_slave db:schema:dump_database")
+    if `git status` =~ /db\/schema.rb/
+      puts "Schema Check: FAILED"
+      puts "db/schema.rb file is incorrect - make sure migrations have been run and that db/schema.rb is correct"
+      exit 1
+    end
+    puts "Schema Check: PASSED"
   end
 
   def update_working_copy
