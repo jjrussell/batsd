@@ -1118,6 +1118,20 @@ describe Offer do
       @retarget_offer = retarget_generic_offer.primary_offer
     end
 
+    context 'when TAPJOY_GAMES_REGISTRATION_OFFER_ID and LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer are not completed' do
+      before :each do
+        @device.unset_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        @device.unset_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
+
+        registration_generic_offer = Factory(:generic_offer, :id => TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        @registration_offer = registration_generic_offer.primary_offer
+      end
+
+      it 'rejects offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
+        @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == true
+      end
+    end
+
     context 'when LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer completed' do
       before :each do
         @device.set_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)

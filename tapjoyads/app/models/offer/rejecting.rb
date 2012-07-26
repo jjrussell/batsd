@@ -85,6 +85,7 @@ module Offer::Rejecting
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
+  TAPJOY_GAMES_OFFERS = [ TAPJOY_GAMES_REGISTRATION_OFFER_ID, LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID]
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
@@ -349,12 +350,11 @@ module Offer::Rejecting
   end
 
   def tapjoy_games_retargeting_reject?(device)
+    has_tjm = device.present? ? device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID) : false
     if TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
-      return TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && device && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) && !device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
-    elsif item_id == TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      return device && (device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID))
-    elsif item_id == LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID
-      return device && (device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID))
+      return device && !has_tjm
+    elsif TAPJOY_GAMES_OFFERS.include?(item_id)
+      return device && has_tjm
     end
   end
 
