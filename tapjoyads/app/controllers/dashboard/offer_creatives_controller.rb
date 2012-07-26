@@ -21,8 +21,7 @@ class Dashboard::OfferCreativesController < Dashboard::DashboardController
       return return_to_form
     end
 
-    @offer.send("banner_creative_#{@image_size}_blob=", image_data)
-    @offer.add_banner_creative(@image_size)
+    @offer.add_banner_creative(image_data, @image_size)
 
     if needs_approval = !permitted_to?(:edit, :dashboard_statz)
       @offer.add_banner_approval(current_user, @image_size)

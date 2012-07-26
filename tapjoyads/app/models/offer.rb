@@ -379,6 +379,10 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def show_in_active_campaigns?
+    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
+  end
+
   def video_icon_url(options = {})
     if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
