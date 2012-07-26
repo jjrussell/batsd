@@ -331,7 +331,7 @@ Tapjoyad::Application.routes.draw do
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
-        resources :network_costs, :only => [:index, :new, :create]
+        resources :network_costs, :only => [:index]
         resources :partner_program_statz, :only => [:index] do
           collection do
             get :export

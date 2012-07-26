@@ -378,6 +378,10 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def show_in_active_campaigns?
+    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
+  end
+
   def video_icon_url(options = {})
     if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
@@ -462,11 +466,11 @@ class Offer < ActiveRecord::Base
       meta_src_icon_obj = bucket.objects["icons/src/#{meta_icon_id}.jpg"]
       existing_meta_icon_blob = meta_src_icon_obj.exists? ? meta_src_icon_obj.read : ''
 
-      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read }) 
-      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
+      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read })
+      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read })
 
       Mc.delete("icon.s3.#{app_metadata_id}")
       paths = ["icons/256/#{meta_icon_id}.jpg", "icons/114/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.png"]

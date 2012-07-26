@@ -452,12 +452,14 @@ describe Currency do
       end
 
       it 'copies values from its partner' do
-        @currency.save!
-        @currency.spend_share.should == 0.42
-        @currency.direct_pay_share.should == 0.8
-        @currency.disabled_partners.should == 'foo'
-        @currency.offer_whitelist.should == 'bar'
-        @currency.use_whitelist.should == true
+        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
+          @currency.save!
+          @currency.spend_share.should == 0.3822
+          @currency.direct_pay_share.should == 0.8
+          @currency.disabled_partners.should == 'foo'
+          @currency.offer_whitelist.should == 'bar'
+          @currency.use_whitelist.should == true
+        end
       end
     end
 
@@ -562,6 +564,29 @@ describe Currency do
         Currency.any_instance.should_not_receive(:run_callbacks).with(:cache) #since blank array currencies
         Mc.should_receive(:distributed_put).with("mysql.app_currencies.#{@currency.app_id}.#{Currency.acts_as_cacheable_version}", [], false, 1.day)
         @currency.send(:cache_by_app_id)
+      end
+    end
+  end
+
+  describe '#charges?' do
+    context 'advertiser amount is not 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+      end
+
+      it 'returns true because there is a charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == true
+      end
+    end
+
+    context 'advertiser amount is 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @currency.stub(:partner_id).and_return(@offer.partner_id)
+      end
+
+      it 'returns false becauses there is no charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == false
       end
     end
   end
