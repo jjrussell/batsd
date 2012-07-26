@@ -59,6 +59,7 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     case item_type
     when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
@@ -72,7 +73,6 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
-      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       if has_variable_payment?
         extra_params = {

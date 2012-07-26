@@ -68,7 +68,10 @@ DISTRIBUTED_MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
-  'localhost:21211'
+  'localhost:21210', # couchbase us-east-1b
+  'localhost:21211', # couchbase us-east-1c
+  'localhost:21212', # couchbase us-east-1d
+  'localhost:21213', # couchbase us-east-1e
 ]
 
 SPROCKETS_CONFIG = {
@@ -96,6 +99,7 @@ NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
 NUM_DEVICE_IDENTIFIER_DOMAINS = 100
+NUM_TEMPORARY_DEVICE_DOMAINS = 10
 NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50
@@ -135,3 +139,4 @@ Sass::Plugin.options[:style] = :compressed
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '114d3e0c-c8f3-4f42-b016-2b2f81723cd8'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
+FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'

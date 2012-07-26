@@ -92,7 +92,7 @@ module Offer::Rejecting
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce) =>
     %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce),
     # Fan Samsung on Facebook
-    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) => 
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) =>
     %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79),
   }
 
@@ -162,7 +162,7 @@ module Offer::Rejecting
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
-    partner_has_no_funds? ||
+    has_insufficient_funds?(currency) ||
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     miniscule_reward_reject?(currency)
   end
@@ -207,8 +207,8 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
-  def partner_has_no_funds?
-    partner_balance < 0
+  def has_insufficient_funds?(currency)
+    currency.charges?(self) && partner_balance <= 0
   end
 
   private
@@ -319,7 +319,7 @@ module Offer::Rejecting
   def minimum_bid_reject?(currency, type)
     return false unless currency
     min_bid = case type
-    when Offer::DEFAULT_OFFER_TYPE
+    when Offer::DEFAULT_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE
       currency.minimum_offerwall_bid
     when Offer::FEATURED_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid

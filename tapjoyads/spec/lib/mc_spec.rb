@@ -2,6 +2,15 @@ require 'spec_helper'
 
 describe Mc do
   describe '.get' do
+    context 'for a non-existant type' do
+      it 'raises a NameError when loading the constant' do
+        error = ArgumentError.new("undefined class/module SomethingFake")
+        cache = Memcached.new
+        cache.stub(:get).with('key1').and_raise(error)
+        lambda { Mc.get('key1', false, [cache]) }.should raise_error(NameError)
+      end
+    end
+
     context 'with multiple keys' do
       context 'with first key a miss' do
         it 'returns second key val' do

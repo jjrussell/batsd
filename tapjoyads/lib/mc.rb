@@ -106,6 +106,10 @@ class Mc
       rescue Memcached::SystemError => e
         Rails.logger.info("Memcached::SystemError: #{e.message}")
       rescue ArgumentError => e
+        if e.message.match /undefined class\/module (.+)$/
+          $1.constantize
+          retry
+        end
         Rails.logger.info("ArgumentError: #{e.message}")
       end
     end
