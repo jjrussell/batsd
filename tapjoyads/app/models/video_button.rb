@@ -73,7 +73,8 @@ class VideoButton < ActiveRecord::Base
   end
 
   def update_tracking_offer
-    return unless options = tracking_item_options(tracking_item)
-    tracking_offer.update_attributes(options)
+    if options = tracking_item_options(tracking_item)
+      tracking_offer.update_attributes(options)
+    end
   end
 end
