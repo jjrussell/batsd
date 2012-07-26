@@ -462,11 +462,11 @@ class Offer < ActiveRecord::Base
       meta_src_icon_obj = bucket.objects["icons/src/#{meta_icon_id}.jpg"]
       existing_meta_icon_blob = meta_src_icon_obj.exists? ? meta_src_icon_obj.read : ''
 
-      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read }) 
-      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
+      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read })
+      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read })
 
       Mc.delete("icon.s3.#{app_metadata_id}")
       paths = ["icons/256/#{meta_icon_id}.jpg", "icons/114/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.png"]
