@@ -52,7 +52,7 @@ class VideoButton < ActiveRecord::Base
 
   def tracking_item_options(item)
     offer = item.primary_offer
-    return unless offer.present? && self.rewarded? && offer.rewarded?
+    return nil unless offer.present? && self.rewarded? && offer.rewarded?
 
     {
       :bid          => offer.bid,
