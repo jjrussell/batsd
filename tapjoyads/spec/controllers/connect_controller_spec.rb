@@ -61,25 +61,28 @@ describe ConnectController do
 
       context 'when the lookup succeeds' do
         before :each do
-          device = FactoryGirl.create(:device)
+          @device = FactoryGirl.create(:device)
           identifier = FactoryGirl.create(:device_identifier, :udid => 'test_device')
           DeviceIdentifier.stub(:new).and_return(identifier)
-          Device.should_receive(:new).and_return(device)
         end
 
         it 'returns success' do
+          Device.stub(:new).and_return(@device)
           get(:index, @params)
           response.body.should include('Success')
         end
       end
 
       context 'when the lookup fails' do
-      it 'returns success, but doesnt do the connect' do
-        Device.should_not_receive(:new)
+        before :each do
+          @device = FactoryGirl.create(:device)
+        end
 
-        get(:index, @params)
-        response.body.should include('Success')
-      end
+        it 'creates a temporary device' do
+          Device.should_receive(:new).with(:key => 'sha2_test_device', :is_temporary => true).and_return(@device)
+          get(:index, @params)
+          response.body.should include('Success')
+        end
       end
     end
   end

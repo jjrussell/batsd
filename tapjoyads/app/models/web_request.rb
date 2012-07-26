@@ -52,6 +52,7 @@ class WebRequest < SyslogMessage
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool
+  self.define_attr :udid_is_temporary, :type => :bool
   self.define_attr :app_id
   self.define_attr :offer_id
   self.define_attr :advertiser_app_id
@@ -152,6 +153,7 @@ class WebRequest < SyslogMessage
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
     self.udid_via_lookup      = params[:udid_via_lookup]
+    self.udid_is_temporary    = params[:udid_is_temporary]
     self.currency_id          = params[:currency_id]
     self.app_version          = params[:app_version]
     self.device_os_version    = params[:device_os_version] || params[:os_version]

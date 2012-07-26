@@ -285,6 +285,10 @@ class Currency < ActiveRecord::Base
     "#{uri.scheme}://#{uri.host}/apps/#{self.app_id}/currencies/#{self.id}"
   end
 
+  def charges?(offer)
+    get_advertiser_amount(offer) != 0
+  end
+
   private
 
   def cache_by_app_id

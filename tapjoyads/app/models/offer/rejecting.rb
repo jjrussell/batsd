@@ -166,7 +166,7 @@ module Offer::Rejecting
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
-    partner_has_no_funds? ||
+    has_insufficient_funds?(currency) ||
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     app_store_reject?(store_whitelist) ||
     distribution_reject?(store_name) ||
@@ -213,8 +213,8 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
-  def partner_has_no_funds?
-    partner_balance < 0
+  def has_insufficient_funds?(currency)
+    currency.charges?(self) && partner_balance <= 0
   end
 
   private
@@ -325,7 +325,7 @@ module Offer::Rejecting
   def minimum_bid_reject?(currency, type)
     return false unless currency
     min_bid = case type
-    when Offer::DEFAULT_OFFER_TYPE
+    when Offer::DEFAULT_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE
       currency.minimum_offerwall_bid
     when Offer::FEATURED_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid
