@@ -73,7 +73,7 @@ class DisplayAdController < ApplicationController
     params[:publisher_app_id] = @publisher_app.id
     params[:displayer_app_id] = @publisher_app.id
     params[:source] = 'display_ad'
-    params[:format] = 'xml' unless request.format.html?
+    params[:format] = 'xml' unless params[:format] == 'html'
 
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
