@@ -56,7 +56,7 @@ class Deploy
     puts "#{@options[:environment].upcase} deploy"
     update_working_copy
     if @options[:version].nil?
-     check_syntax
+      check_syntax
       create_deploy_tag
     end
     check_schema if @options[:environment] == 'production'
