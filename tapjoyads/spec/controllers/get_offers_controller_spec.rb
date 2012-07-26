@@ -5,6 +5,7 @@ describe GetOffersController do
 
   describe '#index' do
     before :each do
+      Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
@@ -29,6 +30,10 @@ describe GetOffersController do
         :app_id => @currency.app.id,
       }
 
+    end
+
+    after :each do
+      Timecop.return
     end
 
     it 'should queue up tracking url calls' do

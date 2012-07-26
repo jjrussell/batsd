@@ -14,7 +14,7 @@ class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
   FIXED_RATIO = 0.91
-  ALGORITHM_TRANSITION_DATE = Time.parse('2012-07-26 00:00:00 UTC').to_date
+  ALGORITHM_TRANSITION_DATE = Time.parse('2012-07-27 00:00:00 UTC').to_date
 
   OLD_MIN_RATIO = 0.8
 
@@ -30,7 +30,9 @@ class SpendShare < ActiveRecord::Base
   scope :over_range, lambda { |start_time, end_time| { :conditions => ["effective_on >= ? AND effective_on <= ?", start_time.to_date, end_time.to_date] } }
 
   def self.current_ratio
-    FIXED_RATIO
+    Mc.distributed_get_and_put("spend_share.ratio.#{Time.now.utc.to_date}") do
+      current.ratio
+    end
   end
 
   def self.current
@@ -50,7 +52,7 @@ class SpendShare < ActiveRecord::Base
   end
 
   def self.create_for_date!(date)
-    if date < ALGORITHM_TRANSITION_DATE  #old algorithm was based on actual costs
+    if date < ALGORITHM_TRANSITION_DATE  # old algorithm was based on actual costs
       sum_network_costs    = NetworkCost.for_date(date).sum(:amount)
       orders               = Order.created_between(date - 30.days, date)
       sum_all_orders       = orders.collect(&:amount).sum + sum_network_costs
@@ -64,7 +66,7 @@ class SpendShare < ActiveRecord::Base
       end
 
       ratio = [uncapped_ratio, OLD_MIN_RATIO].max
-    else #now a fixed percentage
+    else # now a fixed percentage
       ratio = FIXED_RATIO
       uncapped_ratio = FIXED_RATIO
     end

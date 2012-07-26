@@ -452,12 +452,14 @@ describe Currency do
       end
 
       it 'copies values from its partner' do
-        @currency.save!
-        @currency.spend_share.should == 0.3822
-        @currency.direct_pay_share.should == 0.8
-        @currency.disabled_partners.should == 'foo'
-        @currency.offer_whitelist.should == 'bar'
-        @currency.use_whitelist.should == true
+        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
+          @currency.save!
+          @currency.spend_share.should == 0.3822
+          @currency.direct_pay_share.should == 0.8
+          @currency.disabled_partners.should == 'foo'
+          @currency.offer_whitelist.should == 'bar'
+          @currency.use_whitelist.should == true
+        end
       end
     end
 

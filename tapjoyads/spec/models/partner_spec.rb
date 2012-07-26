@@ -122,13 +122,15 @@ describe Partner do
       end
 
       it "updates its currencies's spend_share when saved" do
-        @partner.rev_share = 0.42
-        @partner.save!
+        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
+          @partner.rev_share = 0.42
+          @partner.save!
 
-        @currency1.reload
-        @currency2.reload
-        @currency1.spend_share.should == 0.3822
-        @currency2.spend_share.should == 0.3822
+          @currency1.reload
+          @currency2.reload
+          @currency1.spend_share.should == 0.3822
+          @currency2.spend_share.should == 0.3822
+        end
       end
 
       it "updates its currencies's direct_pay_share when saved" do
