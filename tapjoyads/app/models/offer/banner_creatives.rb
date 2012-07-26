@@ -30,7 +30,7 @@ module Offer::BannerCreatives
   end
 
   def creatives_dict
-    super rescue {}
+    super || {} rescue {}
   end
 
   def can_change_banner_creatives?
