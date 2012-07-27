@@ -1,5 +1,6 @@
 class ExactTargetMailer
 
-  ## Coming soon!
+  ## This class will eventually present an ActionMailer-esque interface
+  ## for using ExactTarget to send emails.
 
 end

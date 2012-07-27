@@ -2,9 +2,13 @@ test:
   access_key_id: 'AKIAJ4NUC2YHELP5TU5Q'
   secret_access_key: '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'
 
+# dev:
+#   access_key_id: 'AKIAJ4NUC2YHELP5TU5Q'
+#   secret_access_key: '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'
+
 dev:
-  access_key_id: 'AKIAJ4NUC2YHELP5TU5Q'
-  secret_access_key: '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'
+  access_key_id: 'AKIAI372462WO5Q64J4Q'
+  secret_access_key: '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'
 
 staging:
   access_key_id: 'AKIAJ4NUC2YHELP5TU5Q'

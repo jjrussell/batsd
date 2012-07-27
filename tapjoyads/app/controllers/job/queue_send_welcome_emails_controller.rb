@@ -16,5 +16,17 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
     mailer = TransactionalMailer.new
     mailer.welcome_email(gamer, device_info)
+
+    # device_info
+    # => {:os_version=>nil,
+    #  :gamer_id=>"acb59e3c-e832-4613-9450-7359b4fda120",
+    #  :accept_language_str=>"en-US,en;q=0.8",
+    #  :device_type=>nil,
+    #  :user_agent_str=>
+    #   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_4) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11",
+    #  :selected_devices=>"ios",
+    #  :geoip_data=>
+    #   {:user_country_code=>nil, :carrier_country_code=>nil, :primary_country=>nil}}
+    #
   end
 end

@@ -4,27 +4,22 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
 
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
-    #detailed_email = @facebook_signup ? true : rand(2) == 1
     detailed_email = true
     @linked &&= detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:token] = gamer.confirmation_token
-    #@confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
-    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
+    @confirmation_url = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     # mail :to => gamer.email, :from => 'Tapjoy <noreply@tapjoy.com>', :subject => 'Welcome to Tapjoy!'
 
-    options = {
-      :account_id     => ExactTargetApi::TAPJOY_CONSUMER_ACCOUNT_ID,
-      # :priority       => "High",
-    }
+    # Gather dynamic data for ExactTarget's email template
     data = {
       :android_device           => @android_device ? 1 : 0,
-      :confirmation_url         => "https://www.tapjoy.com/confirm?token=CONFIRMATION_TOKEN",
+      :confirmation_url         => @confirmation_url,
       :currency_id              => "CURRENCY_ID",
       :currency_name            => "GOLD COINS",
       :facebook_signup          => @facebook_signup ? 1 : 0,
-      :gamer_email              => "gamer_email@tapjoy.com",
+      :gamer_email              => gamer.email,
       :linked                   => @linked ? 1 : 0,
       :publisher_icon_url       => "https://s3.amazonaws.com/tapjoy/icons/SIZE/ICON_ID.jpg",
       :publisher_app_name       => "PUBLISHER APP NAME",
@@ -48,9 +43,14 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
       :show_offer_data          => @offer_data.any? ? 1 : 0,
       :show_recommendations     => @recommendations.any? ? 1 : 0,
     }
+    options = {
+      :account_id     => ExactTargetApi::TAPJOY_CONSUMER_ACCOUNT_ID,
+      # :priority       => "High",
+    }
 
+    Rails.logger.info "Data: #{data.inspect}"
     et = ExactTargetApi.new
-    et.send_triggered_email('brian.stebar@tapjoy.com', ET_TJM_WELCOME_EMAIL_ID, data, options)
+    et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, data, options)
   end
 
   private

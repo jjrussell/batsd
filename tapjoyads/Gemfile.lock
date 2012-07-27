@@ -215,12 +215,9 @@ GEM
     multipart-post (1.1.0)
     mysql (2.8.1)
     newrelic_rpm (3.3.0)
-<<<<<<< HEAD
     nokogiri (1.5.5)
-=======
-    nokogiri (1.5.0)
     nori (1.1.2)
->>>>>>> Started ExactTarget model abstraction; cached ET WSDL in project; started refactoring welcome email templates
+    nori (1.1.2)
     oauth (0.4.5)
     parallel (0.5.17)
     parallel_tests (0.8.4)
@@ -291,9 +288,7 @@ GEM
     ruby_gntp (0.3.4)
     rubyzip (0.9.9)
     sass (3.1.15)
-<<<<<<< HEAD
     selenium-webdriver (2.24.0)
-=======
     savon (1.1.0)
       akami (~> 1.2.0)
       builder (>= 2.1.2)
@@ -303,7 +298,6 @@ GEM
       nori (~> 1.1.0)
       wasabi (~> 2.5.0)
     selenium-webdriver (2.22.2)
->>>>>>> Started ExactTarget model abstraction; cached ET WSDL in project; started refactoring welcome email templates
       childprocess (>= 0.2.5)
       libwebsocket (~> 0.1.3)
       multi_json (~> 1.0)
