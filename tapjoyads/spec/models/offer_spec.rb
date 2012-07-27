@@ -433,7 +433,7 @@ describe Offer do
           source = @offer.source_token('12345')
           uid = Device.advertiser_device_id('x', @offer.partner_id)
           options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{udid}"
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
         end
       end
     end
