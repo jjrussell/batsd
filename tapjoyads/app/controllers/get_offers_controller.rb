@@ -273,13 +273,11 @@ include GetOffersHelper
         @algorithm = '237'
         #params[:redesign] = true
       else
-        app = App.find(params[:app_id])
         case params[:exp]
           when 'a_ranking'
             @algorithm = nil
           when 'b_ranking'
             @algorithm = '101'
-            @currency = app.primary_currency.id
             @algorithm_options = {:skip_country => true}
           when 'c_ranking'
             @algorithm = '101'
