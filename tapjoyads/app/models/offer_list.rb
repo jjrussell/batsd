@@ -86,7 +86,7 @@ class OfferList
     #   end
     # end
 
-    @store_whitelist.merge(@currency.store_whitelist.split(';')) if @currency && @currency.store_whitelist.present?
+    @store_whitelist.merge(@currency.get_store_whitelist) if @currency && @currency.get_store_whitelist.present?
   end
 
   def weighted_rand

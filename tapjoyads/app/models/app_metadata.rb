@@ -56,7 +56,7 @@ class AppMetadata < ActiveRecord::Base
     begin
       data = AppStore.fetch_app_by_id(store_id, store.platform, store.id, country)
       # TODO: fix this: if data.nil? # might not be available in the US market
-        # TODO: fix this: data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
+      # TODO: fix this: data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
     rescue Patron::HostResolutionError, RuntimeError
     end
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
