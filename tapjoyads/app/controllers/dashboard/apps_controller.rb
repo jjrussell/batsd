@@ -17,7 +17,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def new
     @app = App.new
     @app.platform = 'iphone'
-    @store_options = AppStore.android_store_options
+    initialize_store_options
   end
 
   def search
@@ -41,7 +41,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
 
   def show
     @integrated = @app.primary_offer.integrated?
-    @store_options = AppStore.android_store_options if @app.platform == 'android'
+    initialize_store_options
     flash.now[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 
@@ -58,6 +58,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
       store_name ||= App::PLATFORM_DETAILS[@app.platform][:default_store_name]
       unless app_metadata = @app.add_app_metadata(store_name, params[:store_id], true)
         flash.now[:error] = 'Failed to create primary distribution.'
+        initialize_store_options
         render :action => "new" and return
       end
 
@@ -65,6 +66,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
         app_metadata.update_from_store(params[:country])
       rescue
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
+        initialize_store_options
         render :action => "new" and return
       end
     end
@@ -74,6 +76,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
       redirect_to(@app)
     else
       flash.now[:error] = 'Your app was not created.'
+      initialize_store_options
       render :action => "new"
     end
   end
@@ -94,6 +97,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
 
       unless app_metadata.present?
         flash.now[:error] = 'Failed to update primary distribution.'
+        initialize_store_options
         render :action => "show" and return
       end
 
@@ -101,6 +105,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
         app_metadata.update_from_store(params[:country])
       rescue
         flash.now[:error] = "Grabbing app data from app store failed. Please try again."
+        initialize_store_options
         render :action => "show" and return
       end
     end
@@ -110,6 +115,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
       redirect_to(@app)
     else
       flash.now[:error] = 'Update unsuccessful.'
+      initialize_store_options
       render :action => "show"
     end
   end
@@ -163,6 +169,10 @@ class Dashboard::AppsController < Dashboard::DashboardController
   end
 
   private
+
+  def initialize_store_options
+    @store_options = AppStore.android_store_options
+  end
 
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?
