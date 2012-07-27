@@ -119,13 +119,17 @@ describe GetOffersController do
       it 'returns only the highest ranked offer' do
         app = FactoryGirl.create(:app)
         offer1 = app.primary_offer
+        offer1.partner.balance = 10
         offer2 = offer1.clone
         offer2.save
+        offer2.partner.balance = 10
         offer3 = offer1.clone
         offer3.save
         offer3.stub(:rank_score).and_return(100000)
+        offer3.partner.balance = 10
         offer4 = offer1.clone
         offer4.save
+        offer4.partner.balance = 10
         OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
 
         get(:index, @params)
@@ -141,10 +145,13 @@ describe GetOffersController do
         @currency = FactoryGirl.create(:currency, :app => publisher_app)
         @offer1 = FactoryGirl.create(:generic_offer).primary_offer
         @offer1.update_attributes(:payment => 10)
+        @offer1.partner.balance = 10
         @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
+        @offer2.partner.balance = 10
         app = FactoryGirl.create(:app, :platform => 'android')
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
+        @offer3.partner.balance = 10
         OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
         @params = {
           :udid => 'stuff',
