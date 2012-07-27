@@ -734,7 +734,7 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
-    t.string   "creatives_dict"
+    t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
   end

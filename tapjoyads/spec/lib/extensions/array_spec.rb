@@ -20,7 +20,7 @@ describe Array do
       probabilities[:b] = counts[:b]/iterations.to_f
       probabilities[:c] = counts[:c]/iterations.to_f
 
-      tolerance = 0.0025
+      tolerance = 0.0035
       probabilities[:a].should be_within(tolerance).of(0.3)
       probabilities[:b].should be_within(tolerance).of(0.1)
       probabilities[:c].should be_within(tolerance).of(0.6)
