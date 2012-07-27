@@ -220,7 +220,7 @@ include GetOffersHelper
       :algorithm            => @algorithm,
       :algorithm_options    => @algorithm_options,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
-      :market_name          => params[:market_name]
+      :store_name           => params[:store_name]
     )
   end
 

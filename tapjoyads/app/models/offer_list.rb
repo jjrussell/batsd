@@ -23,7 +23,7 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
-    @app_store_name             = AppStore::SDK_MARKET_NAMES[options.delete(:market_name)]
+    @app_store_name             = AppStore::SDK_STORE_NAMES[options.delete(:store_name)]
     @algorithm                  = options.delete(:algorithm)
     @algorithm_options          = options.delete(:algorithm_options)
 

@@ -161,7 +161,7 @@ describe GetOffersController do
       end
 
       it 'returns targeted offers for exclusive stores' do
-        @params[:market_name] = 'gfan'
+        @params[:store_name] = 'gfan'
         get(:index, @params)
         assigns(:offer_list).should == [@offer1, @offer3]
       end

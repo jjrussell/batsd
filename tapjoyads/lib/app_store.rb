@@ -71,7 +71,7 @@ class AppStore
     }),
   }
 
-  SDK_MARKET_NAMES = {
+  SDK_STORE_NAMES = {
     'gfan' => 'android.GFan'
   }
 

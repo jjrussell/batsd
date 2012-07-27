@@ -60,6 +60,6 @@ Allow an Android app to have multiple distributions on different app stores.  Fo
 4. Run `OfferCacher.cache_offers(true)` in rails console
 5. Go to statz page for GFan publisher app
 6. Click on "View Offerwall" link under Currency section to view offerwall
-7. Add extra parameter to indicate app store source: `&market_name=gfan`
+7. Add extra parameter to indicate app store source: `&store_name=gfan`
 8. Only generic offers and GFan store offers should appear.  No Google Play offers should be visible.
 
