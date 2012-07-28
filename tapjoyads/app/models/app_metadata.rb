@@ -143,7 +143,7 @@ class AppMetadata < ActiveRecord::Base
 
     delete_screenshots(self.get_screenshots - new_screenshots)
     self.screenshots = new_screenshots
-    save if changed?
+    save! if changed?
   end
 
   private

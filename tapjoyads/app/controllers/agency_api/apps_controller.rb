@@ -46,19 +46,21 @@ class AgencyApi::AppsController < AgencyApiController
       render_error(app.errors, 400) and return
     end
 
-    if params[:store_id].present?
-      store_name = params[:store_name] ? params[:store_name] : App::PLATFORM_DETAILS[app.platform][:default_store_name]
-
-      unless app_metadata = app.add_app_metadata(store_name, params[:store_id], true)
-        render_error("failed to create app metadata", 400) and return
+    App.transaction do
+      if params[:store_id].present?
+        store_name = params[:store_name] ? params[:store_name] : App::PLATFORM_DETAILS[app.platform][:default_store_name]
+        app_metadata = app.add_app_metadata(store_name, params[:store_id], true)
+        Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
       end
-      Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
+      app.save!
     end
-
-    app.save!
 
     save_activity_logs
     render_success({ :app_id => app.id, :app_secret_key => app.secret_key })
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    render_error("failed to create app", 400)
   end
 
   def update
@@ -78,24 +80,25 @@ class AgencyApi::AppsController < AgencyApiController
       render_error(app.errors, 400) and return
     end
 
-    if params[:store_id].present?
-      if app.primary_app_metadata
-        app_metadata = app.update_app_metadata(app.primary_app_metadata.store_name, params[:store_id])
-      else
-        store_name = params[:store_name] ? params[:store_name] : App::PLATFORM_DETAILS[app.platform][:default_store_name]
-        app_metadata = app.add_app_metadata(store_name, params[:store_id], true)
+    App.transaction do
+      if params[:store_id].present?
+        if app.primary_app_metadata
+          app_metadata = app.update_app_metadata(app.primary_app_metadata.store_name, params[:store_id])
+        else
+          store_name = params[:store_name] ? params[:store_name] : App::PLATFORM_DETAILS[app.platform][:default_store_name]
+          app_metadata = app.add_app_metadata(store_name, params[:store_id], true)
+        end
+        Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
       end
-
-      unless app_metadata
-        render_error("failed to update app metadata", 400) and return
-      end
-      Sqs.send_message(QueueNames::GET_STORE_INFO, app_metadata.id)
+      app.save!
     end
-
-    app.save!
 
     save_activity_logs
     render_success
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    render_error("failed to update app", 400)
   end
 
 end

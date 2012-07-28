@@ -184,7 +184,7 @@ class App < ActiveRecord::Base
 
   def update_app_metadata(store_name, store_id)
     app_metadata = app_metadatas.find_by_store_name(store_name)
-    return unless app_metadata.present?
+    raise "update_app_metadata called with invalid #{store_name}" unless app_metadata.present?
 
     unless app_metadata.store_id == store_id
       mapping = app_metadata_mappings.find_by_app_metadata_id(app_metadata.id)
@@ -194,7 +194,6 @@ class App < ActiveRecord::Base
       offers.find_all_by_app_metadata_id(app_metadata.id).each do |offer|
         offer.update_from_app_metadata(mapping.app_metadata, name)
       end
-
       action_offers.each do |action_offer|
         action_offer.update_offers_for_app_metadata(app_metadata, mapping.app_metadata)
       end
@@ -210,15 +209,13 @@ class App < ActiveRecord::Base
     return if app_metadatas.find_by_store_name(store_name).present?
 
     new_metadata = AppMetadata.find_or_initialize_by_store_name_and_store_id(store_name, store_id)
-    if new_metadata.new_record?
-      return unless new_metadata.save
-    end
+    new_metadata.save! if new_metadata.new_record?
 
     mapping = AppMetadataMapping.new
     mapping.app = self
     mapping.app_metadata = new_metadata
     mapping.is_primary = primary
-    return unless mapping.save
+    mapping.save!
 
     if primary
       offers.each do |offer|

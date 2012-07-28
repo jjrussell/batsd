@@ -53,32 +53,41 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.platform = params[:app][:platform]
     @app.name = params[:app][:name]
 
-    if params[:state] == 'live' && params[:store_id].present?
-      store_name = params[:android_store_name] if params[:android_store_name] && @app.platform == 'android'
-      store_name ||= App::PLATFORM_DETAILS[@app.platform][:default_store_name]
-      unless app_metadata = @app.add_app_metadata(store_name, params[:store_id], true)
-        flash.now[:error] = 'Failed to create primary distribution.'
-        initialize_store_options
-        render :action => "new" and return
+    App.transaction do
+      if params[:state] == 'live' && params[:store_id].present?
+        store_name = params[:android_store_name] if params[:android_store_name] && @app.platform == 'android'
+        store_name ||= App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+        begin
+          app_metadata = @app.add_app_metadata(store_name, params[:store_id], true)
+        rescue
+          @error_message = 'Failed to create primary distribution.'
+          raise
+        end
+
+        begin
+          app_metadata.update_from_store(params[:country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
+        end
       end
 
       begin
-        app_metadata.update_from_store(params[:country])
+        @app.save!
       rescue
-        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        initialize_store_options
-        render :action => "new" and return
+        @error_message = 'Your app was not created.'
+        raise
       end
     end
 
-    if @app.save
-      flash[:notice] = 'App was successfully created.'
-      redirect_to(@app)
-    else
-      flash.now[:error] = 'Your app was not created.'
-      initialize_store_options
-      render :action => "new"
-    end
+    flash[:notice] = 'App was successfully created.'
+    redirect_to(@app)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    initialize_store_options
+    render :action => "new"
   end
 
   def update
@@ -87,37 +96,44 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.name = params[:app][:name]
     @app.protocol_handler = params[:app][:protocol_handler] if permitted_to? :edit, :dashboard_statz
 
-    if params[:state] == 'live' && params[:store_id].present?
-      store_name = @app.store_name || params[:android_store_name] || App::PLATFORM_DETAILS[@app.platform][:default_store_name]
-      app_metadata = if @app.app_metadatas.find_by_store_name(store_name)
-        @app.update_app_metadata(store_name, params[:store_id])
-      else
-        @app.add_app_metadata(store_name, params[:store_id], true)
-      end
+    App.transaction do
+      if params[:state] == 'live' && params[:store_id].present?
+        store_name = @app.store_name || params[:android_store_name] || App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+        begin
+          app_metadata = if @app.app_metadatas.find_by_store_name(store_name)
+            @app.update_app_metadata(store_name, params[:store_id])
+          else
+            @app.add_app_metadata(store_name, params[:store_id], true)
+          end
+        rescue
+          @error_message = 'Failed to update primary distribution.'
+          raise
+        end
 
-      unless app_metadata.present?
-        flash.now[:error] = 'Failed to update primary distribution.'
-        initialize_store_options
-        render :action => "show" and return
+        begin
+          app_metadata.update_from_store(params[:country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
+        end
       end
 
       begin
-        app_metadata.update_from_store(params[:country])
+        @app.save
       rescue
-        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        initialize_store_options
-        render :action => "show" and return
+        @error_message = 'Update unsuccessful.'
+        raise
       end
     end
 
-    if @app.save
-      flash[:notice] = 'App was successfully updated.'
-      redirect_to(@app)
-    else
-      flash.now[:error] = 'Update unsuccessful.'
-      initialize_store_options
-      render :action => "show"
-    end
+    flash[:notice] = 'App was successfully updated.'
+    redirect_to(@app)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    initialize_store_options
+    render :action => "show"
   end
 
   def archive

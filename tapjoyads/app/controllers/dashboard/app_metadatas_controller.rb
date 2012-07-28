@@ -12,27 +12,37 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
 
   def update
     log_activity(@app_metadata)
+    @orig_app_metadata = @app_metadata
 
     if params[:store_id].blank?
       flash.now[:error] = 'A live app must be selected.'
       render :action => "show" and return
     end
 
-    unless app_metadata = @app.update_app_metadata(params[:store_name], params[:store_id])
-      flash.now[:error] = 'Update unsuccessful.'
-      render :action => "show" and return
-    end
-    @app_metadata = app_metadata
+    AppMetadata.transaction do
+      begin
+        @app_metadata = @app.update_app_metadata(params[:store_name], params[:store_id])
+      rescue
+        @error_message = 'Update unsuccessful.'
+        raise
+      end
 
-    begin
-      app_store_data = @app_metadata.update_from_store(params[:country])
-    rescue
-      flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-      render :action => "show" and return
+      begin
+        app_store_data = @app_metadata.update_from_store(params[:country])
+      rescue
+        @error_message = "Grabbing app data from app store failed. Please try again."
+        raise
+      end
     end
 
     flash[:notice] = 'Distribution was successfully updated.'
     redirect_to app_app_metadata_path(:app_id => @app.id, :id => @app_metadata.id)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    @app_metadata = @orig_app_metadata
+    render :action => "show" and return
   end
 
   def new
@@ -51,24 +61,34 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
       render_new_on_error and return
     end
 
-    unless app_metadata = @app.add_app_metadata(params[:store_name], params[:store_id])
-      flash.now[:error] = 'Failed to create distribution.'
-      render_new_on_error and return
-    end
-    log_activity(app_metadata)
+    AppMetadata.transaction do
+      begin
+        @app_metadata = @app.add_app_metadata(params[:store_name], params[:store_id])
+        log_activity(@app_metadata)
+      rescue
+        @error_message = 'Failed to create distribution.'
+        raise
+      end
 
-    begin
-      app_store_data = app_metadata.update_from_store(params[:country])
-    rescue
-      flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-      render_new_on_error and return
+      begin
+        app_store_data = @app_metadata.update_from_store(params[:country])
+      rescue
+        @error_message = "Grabbing app data from app store failed. Please try again."
+        raise
+      end
     end
 
     flash[:notice] = 'Distribution was successfully created.'
-    redirect_to app_app_metadata_path(:app_id => @app.id, :id => app_metadata.id)
+    redirect_to app_app_metadata_path(:app_id => @app.id, :id => @app_metadata.id)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    render_new_on_error and return
   end
 
   def remove
+    log_activity(@app_metadata)
     if @app.remove_app_metadata(@app_metadata)
       flash[:notice] = "Metadata removed."
     else
