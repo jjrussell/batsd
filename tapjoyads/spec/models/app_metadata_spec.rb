@@ -115,7 +115,7 @@ describe AppMetadata do
 
       @app_metadata.should_receive(:upload_screenshot).exactly(3).times
       @app_metadata.should_receive(:delete_screenshots).with(Set.new)
-      @app_metadata.should_receive(:save)
+      @app_metadata.should_receive(:save!)
     end
 
     it 'saves the screenshots' do

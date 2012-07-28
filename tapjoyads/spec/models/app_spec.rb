@@ -200,11 +200,7 @@ describe App do
 
     context 'when updating non-existent metadata' do
       it "fails" do
-        metadata = @app.update_app_metadata('android.GFan', 'xyz123')
-        @app.reload
-        metadata.should be_nil
-        @app.app_metadatas.count.should == 1
-        @app.primary_app_metadata.store_id.should_not == 'xyz123'
+        lambda {metadata = @app.update_app_metadata('android.GFan', 'xyz123')}.should raise_error
       end
     end
 
