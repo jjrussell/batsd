@@ -5,8 +5,8 @@ class ReportingDataController < ApplicationController
 
   before_filter :lookup_user_and_authenticate
 
-  rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420, :unless => proc {|c| c.params[:cache] == '1'}
-  rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
+  rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}.#{c.params[:page].to_i.to_s}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420, :unless => proc {|c| c.params[:cache] == '1'}
+  rate_limit :udids, :key => proc { |c| "#{c.params[:username]}.#{c.params[:offer_id]}.#{c.params[:page].to_i.to_s}" }, :max_calls => 2, :time_limit => 1.hour, :wait_time => 1.hour, :status => 420
 
   before_filter :lookup_stats, :only => :index
 
@@ -41,7 +41,7 @@ class ReportingDataController < ApplicationController
     send_data(data, :type => 'text/csv', :filename => "#{offer.id}_#{params[:date]}.csv")
   end
 
-private
+  private
 
   def lookup_user_and_authenticate
     params[:username] = params[:email] if params[:username].blank?
