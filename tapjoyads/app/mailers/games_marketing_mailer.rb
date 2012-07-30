@@ -35,12 +35,11 @@ class GamesMarketingMailer < ActionMailer::Base
 
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
-    #@detailed_email = @facebook_signup ? true : rand(2) == 1
-    @detailed_email = true
+    @detailed_email = @facebook_signup ? true : rand(2) == 1
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
-    device_info[:token] = gamer.confirmation_token
-    #@confirmation_link = "#{WEBSITE_URL}/confirm?data=#{ObjectEncryptor.encrypt(device_info)}"
+    device_info[:id] = gamer.confirmation_token
+    EmailConfirmData.create!(device_info)
     @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     sendgrid_category "Welcome Email, #{@linked ? "Linked for Device Type #{@gamer_device.device_type}" : "Not Linked"}, #{device_info[:content]}"

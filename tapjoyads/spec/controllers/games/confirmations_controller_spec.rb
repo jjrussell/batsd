@@ -9,7 +9,7 @@ describe Games::ConfirmationsController do
     before :each do
       @gamer = FactoryGirl.create(:gamer)
     end
-    context 'with valid data' do
+    context 'with valid data param' do
       it 'redirects to url with tracking params' do
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'test_campaign'})
         get(:create, :data => data)
@@ -22,7 +22,7 @@ describe Games::ConfirmationsController do
                              :data         => data)
       end
     end
-    context 'with valid data for confirm only message' do
+    context 'with valid data param for confirm only message' do
       it 'queues post confirm message' do
         Sqs.should_receive(:send_message)
         data = ObjectEncryptor.encrypt({:token => @gamer.confirmation_token, :content => 'confirm_only'})
@@ -30,11 +30,36 @@ describe Games::ConfirmationsController do
       end
     end
     context 'with valid token only' do
-      it 'redirects to url without tracking params' do
-        get(:create, :token => @gamer.confirmation_token)
-        response.code.should == "302"
-        request.session[:flash][:notice].should == 'Email address confirmed.'
-        response.redirect_url.should == games_root_url
+      context 'when EmailConfirmData isnt found' do
+        it 'redirects to url without tracking params' do
+          EmailConfirmData.should_receive(:get).and_return(nil);
+          get(:create, :token => @gamer.confirmation_token)
+          response.code.should == "302"
+          request.session[:flash][:notice].should == 'Email address confirmed.'
+          response.redirect_url.should == games_root_url
+        end
+      end
+      context 'when EmailConfirmData is found' do
+        context 'for confirm only' do
+          it 'redirects to url with tracking params' do
+            EmailConfirmData.should_receive(:get).and_return(EmailConfirmData.new(:content => 'confirm_only', :id => @gamer.confirmation_token));
+            get(:create, :token => @gamer.confirmation_token)
+            response.code.should == "302"
+            request.session[:flash][:notice].should == 'Email address confirmed.'
+            response.redirect_url.should == games_root_url(:utm_campaign => 'welcome_email',
+                               :utm_medium   => 'email',
+                               :utm_source   => 'tapjoy',
+                               :utm_content  => 'confirm_only')
+          end
+          it 'queues post confirm message' do
+            data = EmailConfirmData.new(:content => 'confirm_only', :id => @gamer.confirmation_token)
+            EmailConfirmData.should_receive(:get).and_return(data)
+            message = Base64::encode64(Marshal.dump({ :gamer_id => @gamer.id, :email_type => 'post_confirm' }.merge(data)))
+            Sqs.should_receive(:send_message).with(QueueNames::SEND_WELCOME_EMAILS, message)
+
+            get(:create, :token => @gamer.confirmation_token)
+          end
+        end
       end
     end
     context 'with invalid token' do
