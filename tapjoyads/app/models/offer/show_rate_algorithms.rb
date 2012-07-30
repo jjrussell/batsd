@@ -155,7 +155,7 @@ module Offer::ShowRateAlgorithms
       new_show_rate = 0
     end
 
-    Rails.logger.info "New show_rate: #{new_show_rate}"
+    Rails.logger.info "New show_rate: #{new_show_rate}" if log_info
     new_show_rate
   end
 
