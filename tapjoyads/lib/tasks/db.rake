@@ -22,8 +22,8 @@ namespace :db do
   desc "Copies the production database to the development database"
   task :sync do
     download
-    import_files
-    remove_files
+    import_tmp_files
+    remove_tmp_files
   end
 
   task :download do
@@ -31,7 +31,7 @@ namespace :db do
   end
 
   task :import do
-    import_files
+    import_tmp_files
   end
 
   task :remove_tmp_files do
@@ -63,7 +63,7 @@ namespace :db do
     puts("finished in #{time} seconds.")
   end
 
-  def import_files
+  def import_tmp_files
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
 
     Rake.application.invoke_task('db:drop')
