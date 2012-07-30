@@ -239,7 +239,10 @@ include GetOffersHelper
         web_request.save
 
         # for third party tracking vendors
-        offer.queue_impression_tracking_requests(:ip_address => ip_address, :udid => params[:udid])
+        offer.queue_impression_tracking_requests(
+          :ip_address       => ip_address,
+          :udid             => params[:udid],
+          :publisher_app_id => params[:app_id])
       end
     end
   end

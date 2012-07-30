@@ -408,6 +408,11 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
+    if params[:udid]
+      device = Device.new(:key => params[:udid])
+      @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
+    end
+
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
       click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
@@ -415,10 +420,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
         redirect_to :action => :device_info, :udid => params[:udid] and return
       else
-        @publisher_user_id = click.publisher_user_id
+        @publisher_user_id ||= click.publisher_user_id
       end
     else
-      @publisher_user_id = support_request.publisher_user_id
+      @publisher_user_id ||= support_request.publisher_user_id
     end
   end
 
