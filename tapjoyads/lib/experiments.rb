@@ -1,16 +1,6 @@
 class Experiments
 
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  {}
-  (0...49).each do |key|
-    OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS[key] = 'show_rate_237'
-  end
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS.default = 'ow_control'
-  class << OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS
-    def length
-      100
-    end
-  end
-
+  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(ow_optimization ow_control)
   RANKING_EXPERIMENT_IDS = %w(a_ranking b_ranking c_ranking)
 
   EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }

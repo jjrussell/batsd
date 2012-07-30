@@ -248,11 +248,12 @@ include GetOffersHelper
 
   def set_offerwall_experiment
     experiment = case params[:source]
-    when 'offerwall'
-      :ranking if params[:action] == 'index'              # for in-app
-      :show_rate_237 if params[:action] == 'webpage'      # for TJM
-    else
-      nil
+      when 'offerwall'
+        :ranking              # for in-app
+      when 'tj_games'
+        :show_rate_237        # for TJM
+      else
+        nil
     end
 
     choose_experiment(experiment)
@@ -269,20 +270,18 @@ include GetOffersHelper
     end
 
     case params[:exp]
-      when 'show_rate_237'
+      when 'ow_control'
+        @algorithm = nil
+      when 'ow_optimization'
         @algorithm = '237'
-        #params[:redesign] = true
-      else
-        case params[:exp]
-          when 'a_ranking'
-            @algorithm = nil
-          when 'b_ranking'
-            @algorithm = '101'
-            @algorithm_options = {:skip_country => true}
-          when 'c_ranking'
-            @algorithm = '101'
-            @algorithm_options = {:skip_country => true, :skip_currency => true}
-        end
+      when 'a_ranking'
+        @algorithm = nil
+      when 'b_ranking'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true}
+      when 'c_ranking'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
   end
 
