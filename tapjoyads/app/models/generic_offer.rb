@@ -15,6 +15,7 @@
 #  instructions     :text
 #  category         :string(255)
 #  trigger_action   :string(255)
+#  protocol_handler :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base

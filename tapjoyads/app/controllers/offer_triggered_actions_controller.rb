@@ -5,8 +5,7 @@ class OfferTriggeredActionsController < ApplicationController
   layout 'offer_instructions', :only => [ :load_app, :fb_login, :fb_visit ]
 
   def load_app
-    puts "*" * 50
-    puts @offer.generic_offer_protocol_handler
+    @protocol_handler_url = @offer.generic_offer_protocol_handler
   end
 
   def fb_login

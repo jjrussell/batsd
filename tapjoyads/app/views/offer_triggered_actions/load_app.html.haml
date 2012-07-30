@@ -2,6 +2,7 @@
 - @load_facebook_sdk = false
 
 - @page_title = "#{t('text.instructions.title')} - #{@offer.name}"
+- amount_and_currency = content_tag(:b, t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name))
 
 .ui-joy-mask
   .ui-joy-panel#panel
@@ -13,26 +14,36 @@
         %span.free= visual_cost(@offer)
 
     .grey-box
-      .facebook
+      .app-logo
         = image_tag @offer.get_icon_url(:source => :cloudfront, :size => '57')
       .heading= @offer.name
     .instructions
-      %ul.steps
-        %li
-          = @offer.instructions
+      .content= @offer.instructions.html_safe
+    .padit
+      .reward-button.click-action
+        %span= t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency)
 
+
+%iframe#loader{ :style => 'display: none', :height => '0', :width => '0' }
 
 - content_for :page_javascript do
   :plain
     $(function($){
-      var ctURL = "#{@click_tracking_url.first}",
-          src = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
-      $("body").append(src);
-      window.cURL = "#{@conversion_tracking_url.first}";
-      window.rURL = "#{@complete_action_url}";
-      var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
-      fbOpts["subscribeEdgeCreate"] = true;
-      if (fbOpts) {
-        initiateFacebook(fbOpts);
-      }
+      $('.click-action').click(function(e) {
+        var phUrl = #{@protocol_handler_url.to_json.html_safe};
+        var fallbackUrl = #{@complete_action_url.to_json.html_safe};
+        var appversion = navigator.appVersion,
+            idevice = (/iphone|ipad|ipod/gi).test(appversion),
+            android = (/android/gi).test(appversion);
+
+        if (idevice || android) {
+          $('#loader').attr('src', phUrl);
+          window.setTimeout(function(){ 
+            window.location.replace(fallbackUrl);
+          }, 50);
+        }
+        else {
+          window.location.href = fallbackUrl;
+        }
+      });
     });
