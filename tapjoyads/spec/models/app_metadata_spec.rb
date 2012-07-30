@@ -133,7 +133,7 @@ describe AppMetadata do
       @app_metadata.should_receive(:upload_screenshot).with('blob4', @app_metadata.hashed_blob(Digest::MD5.hexdigest('blob4')))
       @app_metadata.should_receive(:delete_screenshots).with(Set.new([@app_metadata.hashed_blob(Digest::MD5.hexdigest('blob2')),
                                                              @app_metadata.hashed_blob(Digest::MD5.hexdigest('blob3'))]))
-      @app_metadata.should_receive(:save)
+      @app_metadata.should_receive(:save!)
 
       @app_metadata.save_screenshots(@screenshot_urls)
     end
