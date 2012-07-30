@@ -54,7 +54,10 @@ class OptimizedOfferList
             offer.rank_score = offer_hash['rank_score']
             unless algorithm_id == DEFAULT_SHOW_RATE_ALGO_ID
               optimization_info = offer.extract_optimization_info(algorithm_id, offer_hash)
-              offer.show_rate = offer.calculate_show_rate(algorithm_id, optimization_info, false)
+              new_info = offer.recalculate_info(algorithm_id, optimization_info, false)
+              new_info.each do |key, value|
+                offer.send("#{key}=", value)
+              end
             end
           end.for_caching
         rescue

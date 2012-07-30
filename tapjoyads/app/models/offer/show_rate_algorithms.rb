@@ -1,6 +1,5 @@
 module Offer::ShowRateAlgorithms
 
-  ORIGINAL_SHOW_RATE_ALGO_ID = 0
   EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 101
   DELIVERY_ASAP_SHOW_RATE_ALGO_ID = 237
 
@@ -60,12 +59,12 @@ module Offer::ShowRateAlgorithms
     @recent_clicks > 200 && @calculated_conversion_rate < @calculated_min_conversion_rate
   end
 
-  def calculate_show_rate(algorithm_id=DEFAULT_SHOW_RATE_ALGO_ID, optimization_info={}, log_info=true)
+  def recalculate_show_rate(algorithm_id=DEFAULT_SHOW_RATE_ALGO_ID, optimization_info={}, log_info=true)
     send("calcuate_show_rate_#{algorithm_id}", optimization_info, log_info)
   end
 
   def calculate_original_show_rate(optimization_info={}, log_info=true)
-    send("calculate_show_rate_#{ORIGINAL_SHOW_RATE_ALGO_ID}", optimization_info, log_info)
+    send("calculate_show_rate_#{Offer::ORIGINAL_ALGO_ID}", optimization_info, log_info)
   end
 
 

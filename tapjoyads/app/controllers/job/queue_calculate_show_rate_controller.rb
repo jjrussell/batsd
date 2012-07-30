@@ -26,7 +26,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       TapjoyMailer.deliver_low_conversion_rate_warning(offer, stats)
     end
 
-    new_show_rate = offer.calculate_show_rate(algorithm_id, {}, log_info)
+    new_show_rate = offer.recalculate_show_rate(algorithm_id, {}, log_info)
 
     offer.conversion_rate = conversion_rate
     offer.show_rate = new_show_rate
