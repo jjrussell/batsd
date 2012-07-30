@@ -20,25 +20,11 @@ namespace :db do
   DUMP_FILE2   = "tmp/#{SOURCE['database']}2.sql"
 
   desc "Copies the production database to the development database"
-  task :sync do
-    download
-    import_tmp_files
-    remove_tmp_files
-  end
+
+  task :sync => [:download, :import, :remove_tmp_files]
 
   task :download do
-    download
-  end
 
-  task :import do
-    import_tmp_files
-  end
-
-  task :remove_tmp_files do
-    remove_tmp_files
-  end
-
-  def download
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
     print("Backing up the production database... ")
     tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos )
@@ -63,7 +49,7 @@ namespace :db do
     puts("finished in #{time} seconds.")
   end
 
-  def import_tmp_files
+  task :import do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
 
     Rake.application.invoke_task('db:drop')
@@ -83,7 +69,7 @@ namespace :db do
     puts("finished in #{time} seconds.")
   end
 
-  def remove_tmp_files
+  task :remove_tmp_files do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
     system("rm -f #{DUMP_FILE}")
     system("rm -f #{DUMP_FILE2}")
