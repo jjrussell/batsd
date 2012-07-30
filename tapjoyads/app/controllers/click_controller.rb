@@ -300,7 +300,8 @@ class ClickController < ApplicationController
 
     click.save
 
-    @offer.queue_click_tracking_requests(:ip_address => ip_address, :udid => click.udid) # for third party tracking vendors
+    # for third party tracking vendors
+    @offer.queue_click_tracking_requests(params.slice(:udid, :publisher_app_id).merge(:ip_address => ip_address))
   end
 
   def handle_pay_per_click

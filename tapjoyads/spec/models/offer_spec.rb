@@ -429,10 +429,11 @@ describe Offer do
     describe "url generation" do
       describe '#complete_action_url' do
         it "should substitute tokens in the URL" do
-          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
+          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE&uid=TAPJOY_EXTERNAL_UID'
           source = @offer.source_token('12345')
+          uid = Device.advertiser_device_id('x', @offer.partner_id)
           options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
         end
       end
     end
@@ -1057,7 +1058,7 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]']
+      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]&ua=[user_agent]']
       now = Time.zone.now
       Timecop.freeze(now)
 
@@ -1073,9 +1074,13 @@ describe Offer do
     context "without provided values" do
       before :each do
         now = Time.zone.now
+        uid = Click.hashed_key(@offer.format_as_click_key({}))
+        user_agent = @offer.source_token(nil)
+
         @urls.each do |url|
           uid = Device.advertiser_device_id(nil, @offer.partner_id)
           result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
+          result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
@@ -1104,28 +1109,45 @@ describe Offer do
         @ts = 1.hour.from_now
         @ip_address = '127.0.0.1'
         @udid = 'udid'
+        uid = Click.hashed_key(@offer.format_as_click_key(:udid => @udid))
+        @publisher_app_id = 'pub_app_id'
+        user_agent = @offer.source_token(@publisher_app_id)
+
         @urls.each do |url|
           uid = Device.advertiser_device_id(@udid, @offer.partner_id)
           result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
+          result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_impression_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_click_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_conversion_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
     end
