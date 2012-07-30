@@ -37,11 +37,6 @@ class ExactTargetApi
     xml = Builder::XmlMarkup.new
     namespaces = { "xmlns:par" => "http://exacttarget.com/wsdl/partnerAPI" }
 
-    # xml.par :Options do |xml|
-    #   xml.par :RequestType, "Asynchronous"
-    #   xml.par :QueuePriority, "High"
-    # end
-
     xml.par :Objects, namespaces, "xsi:type" => "par:TriggeredSend" do |xml|
       if options[:account_id].present?
         xml.par :Client do |xml|
