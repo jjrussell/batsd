@@ -1244,8 +1244,8 @@ describe Offer do
         expect {@offer.has_low_conversion_rate?}.not_to raise_error
       end
 
-      it "should raise error for calculate_show_rate if calculate_conversion_rate! has not been called", :show_rate do
-        expect {@offer.recalculate_show_rate}.to raise_error("Required attributes are not calculated yet")
+      it "should raise error for calculate_original_show_rate if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.calculate_original_show_rate}.to raise_error("Required attributes are not calculated yet")
       end
 
       it "should not raise error for calculate_show_rate if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do

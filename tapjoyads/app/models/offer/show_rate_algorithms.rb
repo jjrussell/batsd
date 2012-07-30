@@ -59,8 +59,12 @@ module Offer::ShowRateAlgorithms
     @recent_clicks > 200 && @calculated_conversion_rate < @calculated_min_conversion_rate
   end
 
-  def recalculate_show_rate(algorithm_id=DEFAULT_SHOW_RATE_ALGO_ID, optimization_info={}, log_info=true)
-    send("calcuate_show_rate_#{algorithm_id}", optimization_info, log_info)
+  def recalculate_show_rate(optimization_info={}, log_info=true)
+    if (optimization_info[:show_rate_new] && optimization_info[:show_rate_new] > 0)
+      optimization_info[:show_rate_new]
+    else
+      self.show_rate
+    end
   end
 
   def calculate_original_show_rate(optimization_info={}, log_info=true)
@@ -71,38 +75,6 @@ module Offer::ShowRateAlgorithms
   #----------------------------------------------------------------
   # Different show rate algorithms
   #----------------------------------------------------------------
-  def extract_optimization_info(algorithm_id, offer_hash)
-    # This should probably be class method, but included in this file to centralize all show_rate related methods
-    case algorithm_id
-      when Offer::EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
-        optimization_info = {}
-      when Offer::DELIVERY_ASAP_SHOW_RATE_ALGO_ID
-        optimization_info = {:show_rate_new => offer_hash[:show_rate_new]}
-      else
-        optimization_info = {}
-    end
-    optimization_info
-  end
-
-  def calculate_show_rate_237(optimization_info={}, log_info=true)
-    new_show_rate = optimization_info[:show_rate_new]
-    return calculate_original_show_rate(optimization_info, log_info) unless new_show_rate.present?
-
-    use_even_distribution = optimization_info[:even_distribution_show_rate]  # if ever an offer has the choice to choose show rate algorithm
-
-    if new_show_rate > 0 and !use_even_distribution
-      ret_show_rate = new_show_rate
-    else
-      ret_show_rate = calculate_original_show_rate(optimization_info, log_info)
-    end
-
-    ret_show_rate
-  end
-
-  def calcuate_show_rate_101(optimization_info={}, log_info=true)
-    calculate_original_show_rate(optimization_info, log_info)
-  end
-
   def calculate_show_rate_0(optimization_info={}, log_info=true)
     unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"

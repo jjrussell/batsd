@@ -763,12 +763,6 @@ class Offer < ActiveRecord::Base
     reasons
   end
 
-  def recalculate_info(algorithm_id=ORIGINAL_ALGO_ID, optimization_info={}, log_info=true)
-    # Add more recalculation for other fields when necessary, e.g. recalculate_rank_score, etc.
-    new_show_rate = recalculate_show_rate(algorithm_id, optimization_info, log_info)
-    {:show_rate => new_show_rate}
-  end
-
   private
 
   def calculated_min_bid

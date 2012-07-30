@@ -51,13 +51,9 @@ class OptimizedOfferList
       offers = offers_json['offers'].collect do |offer_hash|
         begin
           Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
-            offer.rank_score = offer_hash['rank_score']
-            unless algorithm_id == DEFAULT_SHOW_RATE_ALGO_ID
-              optimization_info = offer.extract_optimization_info(algorithm_id, offer_hash)
-              new_info = offer.recalculate_info(algorithm_id, optimization_info, false)
-              new_info.each do |key, value|
-                offer.send("#{key}=", value)
-              end
+            new_info = offer.optimization_override(offer_hash, false)
+            new_info.each do |key, value|
+              offer.send("#{key}=", value)
             end
           end.for_caching
         rescue

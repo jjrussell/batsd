@@ -10,7 +10,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
     offer = Offer.find(message.body)
 
     return if offer.payment == 0
-    algorithm_id, log_info = Offer::EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID, true
+    log_info = true
 
     offer.calculate_conversion_rate!(log_info)
     conversion_rate = offer.calculated_conversion_rate
@@ -26,7 +26,7 @@ class Job::QueueCalculateShowRateController < Job::SqsReaderController
       TapjoyMailer.deliver_low_conversion_rate_warning(offer, stats)
     end
 
-    new_show_rate = offer.recalculate_show_rate(algorithm_id, {}, log_info)
+    new_show_rate = offer.calculate_original_show_rate({}, log_info)
 
     offer.conversion_rate = conversion_rate
     offer.show_rate = new_show_rate
