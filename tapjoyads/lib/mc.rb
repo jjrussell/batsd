@@ -144,7 +144,15 @@ class Mc
       yield if block_given?
     end
 
-    return value
+    if value.is_a? String
+      begin
+        Marshal.restore(value)
+      rescue TypeError
+        value
+      end
+    else
+      value
+    end
   end
 
   # Adds the value to memcached, not replacing an existing value
