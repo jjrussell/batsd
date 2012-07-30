@@ -1,10 +1,5 @@
 module Offer::ShowRateAlgorithms
 
-  EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID = 101
-  DELIVERY_ASAP_SHOW_RATE_ALGO_ID = 237
-
-  DEFAULT_SHOW_RATE_ALGO_ID = EVEN_DISTRIBUTION_SHOW_RATE_ALGO_ID
-
   attr_accessor :recent_clicks, :recent_installs
   attr_accessor :calculated_conversion_rate, :calculated_min_conversion_rate, :cvr_timeframe
 

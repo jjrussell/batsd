@@ -46,7 +46,6 @@ class OptimizedOfferList
       offers_json = s3_json_offer_data(key)
       Mc.distributed_delete(cache_key) and return if offers_json['enabled'] == 'false'
       match_result = key.match(/^([0-9]+)\..*/)
-      algorithm_id = (match_result && (match_result.size > 1)) ? match_result[1].to_i : Offer::DEFAULT_SHOW_RATE_ALGO_ID
 
       offers = offers_json['offers'].collect do |offer_hash|
         begin
