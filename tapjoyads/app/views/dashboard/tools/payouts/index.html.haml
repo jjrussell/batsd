@@ -28,6 +28,8 @@
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
 = form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
+  - if params[:reseller_id].present?
+    = hidden_field_tag(:reseller_id, params[:reseller_id])
   = submit_tag('Export to CSV')
 = submit_tag('Print All', :id => :print_all)
 %br
@@ -102,6 +104,14 @@
 - content_for :page_javascript do
   :plain
     $(function($) {
+      var redirect = function(query) {
+        var path = '#{tools_payouts_path}';
+        if (query instanceof Object) {
+          path += '?' + $.param(query);
+        }
+        window.location = path;
+      };
+
       if (#{@start_date.blank?}) {
         $('#unfiltered').show();
       } else {
@@ -112,15 +122,24 @@
         $('#filtered').show();
         return false;
       });
-      $('#date_submit').click(function(){
-        var year = $('select#date_year').val();
-        var month = $('select#date_month').val();
-        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
+      $('#date_submit').click(function() {
+        var query = {
+          year:  $('select#date_year').val(),
+          month: $('select#date_month').val()
+        };
+        if (reseller = $('#reseller_id').val()) {
+          query['reseller_id'] = reseller;
+        }
+        redirect(query);
       });
       $('#date_reset').click(function(){
         $('#filtered').hide();
         if (#{@start_date.present?}) {
-          location.href = location.href.split('?')[0];
+          var query;
+          if (reseller = $('#reseller_id').val()) {
+            query = {reseller_id:  reseller};
+          }
+          redirect(query);
         } else {
           $('#unfiltered').show();
         }
@@ -163,17 +182,19 @@
         delay: 250,
         minLength: 2,
         select: function(event, ui) {
-          location.href = '#{tools_payouts_path}?partners_filter='+ ui.item.partner_id;
+          redirect({partners_filter: ui.item.partner_id});
         }
       };
       $('#partners').focus().autocomplete(options);
       $('input.clear_filter').click(function(){
-          window.location ='#{tools_payouts_path}';
+        redirect();
       });
       $('select#confirm_filter').change(function() {
-        var location = '#{tools_payouts_path}?'
-        location += 'confirm_filter=' + $(this).val();
-        window.location = location;
+        var query = {confirm_filter: $(this).val()};
+        if (reseller = $('#reseller_id').val()) {
+          query['reseller_id'] = reseller;
+        }
+        redirect(query);
       });
       $('#print_all').click(function() {
         var url ='#{tools_payouts_path}?print=true';
