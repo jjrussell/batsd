@@ -98,6 +98,8 @@ module Offer::Rejecting
     %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6) => %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6),
     # Intuit GoPayment (Android)
     %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19) => %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19),
+    # Ebay (Generic to CPI)
+    %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09) => %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
