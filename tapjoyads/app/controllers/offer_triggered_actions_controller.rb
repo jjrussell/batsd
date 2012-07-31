@@ -14,6 +14,9 @@ class OfferTriggeredActionsController < ApplicationController
   end
 
   def fb_visit
+    @impression_tracking_urls = @offer.impression_tracking_urls
+    @click_tracking_urls = @offer.click_tracking_urls
+    @conversion_tracking_urls = @offer.conversion_tracking_urls
   end
 
   private
@@ -24,9 +27,6 @@ class OfferTriggeredActionsController < ApplicationController
     @offer = Offer.find_in_cache params[:id]
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
     return unless verify_records([ @currency, @offer ])
-    @impression_tracking_url = @offer.impression_tracking_urls
-    @click_tracking_url = @offer.click_tracking_urls
-    @conversion_tracking_url = @offer.conversion_tracking_urls
 
     @complete_action_url = @offer.complete_action_url({
       :udid                  => params[:udid],

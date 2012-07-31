@@ -4,6 +4,6 @@ class AddProtocolHandlerToGenericOffer < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :protocol_handler, :trigger_action
+    remove_column :generic_offers, :protocol_handler
   end
 end
