@@ -435,7 +435,6 @@ class App < ActiveRecord::Base
   def update_all_offers
     clear_association_cache
     update_offers if partner_id_changed? || name_changed? || hidden_changed?
-    # TODO: Should rating offers be updated as app_metadata changes?
     update_rating_offer if rating_offer.present? && (partner_id_changed? || name_changed?)
     update_action_offers if partner_id_changed? || hidden_changed?
   end
