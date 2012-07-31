@@ -1,7 +1,7 @@
 class Experiments
 
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(ow_optimization ow_control)
-  RANKING_EXPERIMENT_IDS = %w(a_ranking b_ranking c_ranking)
+  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(a_optimization b_optimization)
+  RANKING_EXPERIMENT_IDS = %w(a_offerwall b_offerwall c_offerwall)
 
   EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
 

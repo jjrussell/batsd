@@ -270,16 +270,18 @@ include GetOffersHelper
     end
 
     case params[:exp]
-      when 'ow_control'
-        @algorithm = nil
-      when 'ow_optimization'
+      when 'a_optimization'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'b_optimization'
         @algorithm = '237'
-      when 'a_ranking'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'a_offerwall'
         @algorithm = nil
-      when 'b_ranking'
+      when 'b_offerwall'
         @algorithm = '101'
         @algorithm_options = {:skip_country => true}
-      when 'c_ranking'
+      when 'c_offerwall'
         @algorithm = '101'
         @algorithm_options = {:skip_country => true, :skip_currency => true}
     end

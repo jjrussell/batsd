@@ -62,15 +62,10 @@ module Offer::ShowRateAlgorithms
     end
   end
 
-  def calculate_original_show_rate(optimization_info={}, log_info=true)
-    send("calculate_show_rate_#{Offer::ORIGINAL_ALGO_ID}", optimization_info, log_info)
-  end
-
-
   #----------------------------------------------------------------
   # Different show rate algorithms
   #----------------------------------------------------------------
-  def calculate_show_rate_0(optimization_info={}, log_info=true)
+  def calculate_original_show_rate(optimization_info={}, log_info=true)
     unless @recent_clicks.present? and @cvr_timeframe.present? and @calculated_conversion_rate.present?
       raise "Required attributes are not calculated yet"
     end
