@@ -1,0 +1,11 @@
+= @message
+
+- @rows.each do |row|
+  - if @fields
+    - @fields.each do |field|
+      = "#{field}: #{row[field.to_sym]}"
+  - else
+    - row.each_pair do |key,value|
+      = "#{key}:  #{value}"
+  = '-----------------'
+

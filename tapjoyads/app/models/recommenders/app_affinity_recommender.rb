@@ -33,7 +33,7 @@ class Recommenders::AppAffinityRecommender < Recommender
       # where recommendations has the form app,weight;app,weight;...;app,weight
       app_id, recommendations = recs.split(/[;,]/, 2)
       next if recommendations.nil?
-      Mc.put("s3.recommendations.app_affinity.by_app.#{app_id}", parse_recommendations(recommendations).map{ |x| { :explanation => app_id }.merge(x) }) rescue puts "error parsing recommendations for app \n#{recs}"
+      Mc.distributed_put("s3.recommendations.app_affinity.by_app.#{app_id}", parse_recommendations(recommendations).map{ |x| { :explanation => app_id }.merge(x) }) rescue puts "error parsing recommendations for app \n#{recs}"
     end
   end
 

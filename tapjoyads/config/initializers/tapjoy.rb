@@ -8,6 +8,10 @@ GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
 geoip_tag = (GEOIP_VERSION == '' ? '' : '-')
 GEOIP = GeoIP.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2'])
+BANNED_UDIDS = Set.new(['358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8', # UDID and SHA2 of that UDID in pairs.
+  '004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26bcea38cd6f73b6439a1398ead513a',
+  '012345678901237', 'f413dceae5ffc62ade872a6697e31a23d43b3e3c83ad45303c6e63e8cfb0a1e4',
+  '355195000000017', '6f2493936ac99c3068d4da6eca711926c496df66500362dceb4b745a63084cf5'])
 
 UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/

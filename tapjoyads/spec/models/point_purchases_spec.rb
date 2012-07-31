@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe PointPurchases do
   before :each do
-    enable_sdb
   end
 
   context "A Point Purchase" do

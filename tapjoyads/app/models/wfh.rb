@@ -50,4 +50,27 @@ class Wfh < ActiveRecord::Base
     [ employee_id, start_date, end_date ] <=>
     [ other.employee_id, other.start_date, other.end_date ]
   end
+
+  def notification_data
+    if multi_day?
+      date_range = "from #{start_date.to_s} to #{end_date.to_s}"
+    else
+      date_range = "on #{start_date.to_s}"
+    end
+
+    subject = "New WFH for #{employee.full_name}"
+    message = CATEGORIES.select{|k,v| v == category}.first.first
+    content = "I will be #{message.downcase} #{date_range}"
+    content << "<br/><br/><b>Description:</b> #{description}" if description?
+
+    {
+      :source => 'WFH Bot',
+      :from_address => employee.email,
+      :subject => subject,
+      :content => content,
+      :from_name => employee.full_name,
+      :project => 'Tapjoy Dashboard',
+      :tags => 'wfh',
+    }
+  end
 end

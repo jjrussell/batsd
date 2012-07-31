@@ -32,13 +32,13 @@
     $t.config = config;
 
     $t.container = $t.config.container = $(container);
-    
+
     $t.container.bind('focus', function(){
 
       if(!$t.mask){
         $t.create();
       }else{
-        
+
         $('.ui-joy-datepicker-mask').hide();
 
         $t.mask.show();
@@ -71,7 +71,7 @@
       hidden.attr({
         type: 'text',
         hidden: true,
-        name: $t.config.name || $t.container.attr('name') || 'datepicker_' + Math.floor((Math.random()*10000)+1) 
+        name: $t.config.name || $t.container.attr('name') || 'datepicker_' + Math.floor((Math.random()*10000)+1)
       })
       .addClass('ui-joy-datepicker-hidden')
       .appendTo($t.container);
@@ -192,13 +192,13 @@
           'ss': ss,
           's': s
         };
-      
+
       for(fragment in map){
         keys.push(fragment);
       }
-      
+
       regex = new RegExp('(' + keys.join('|') + ')', 'g');
-      
+
         return (format || $t.config.dateOutput).replace(regex, function(pattern, value) {
           return map[value] || '';
         });
@@ -210,7 +210,7 @@
     months: function(){
       var $t = this,
           months = [];
-      
+
       for(var i = 0, k = $t.config.months.long.length; i < k; i++){
         months.push(Tap.String.format($t.config.templates.month, i, $t.config.months.long[i]));
       }
@@ -221,11 +221,11 @@
         $t.set(this);
       });
     },
-    
+
     next: function(){
       var $t = this,
           index = $t.index + 1;
-      
+
       $t.tabs_.removeClass('active');
       $t.tabs_.eq(index).addClass('active');
 
@@ -246,7 +246,7 @@
       el.addClass('active');
 
       if(anchor.html() !== '&nbsp;'){
-        $t[type] = data; 
+        $t[type] = data;
       }
 
       if(type === 'month'){
@@ -297,14 +297,14 @@
 
       $t.tabs_.eq(0).addClass('active');
     },
-    
+
     total: function(year, month){
       return 32 - new Date(year, month, 32).getDate();
     },
 
     update: function(){
       var $t = this;
-      $t.hidden.attr('value', $t.format(new Date($t.year, parseInt($t.month, 0), $t.day), $t.config.hiddenOutput)); 
+      $t.hidden.attr('value', $t.format(new Date($t.year, parseInt($t.month, 0), $t.day), $t.config.hiddenOutput));
 
       if($t.month !== undefined && $t.day !== undefined && $t.year !== undefined && $t.year !== '&nbsp;'){
         $t.submit.removeClass('disabled');
@@ -354,7 +354,7 @@
           cls = 'ui-joy-datepicker-left-arrow';
           year = '&nbsp;';
         }
-      
+
         years.push(Tap.String.format($t.config.templates.year, i, year, cls));
       }
 
@@ -375,7 +375,7 @@
         $t.years();
         $('a:contains("' + $t.year + '")', $t.yearsContainer).parent().addClass('active');
       });
-    }    
+    }
   });
 
   Tap.apply(Tap, {

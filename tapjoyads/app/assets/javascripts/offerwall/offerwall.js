@@ -45,13 +45,21 @@
         "<div class='app-desc'><h1>{currentAppName}</h1>{message}</div>",
         "<div>{banner}</div>"
       ],
-      offers: [
+      offersReward: [
         "<div class='reward'>"+
           "<span class='earn'>{earn}</span>"+
           "<span class='big'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
-        "</div>",
+        "</div>"
+      ],
+      offersNonReward: [
+        "<div class='reward'>"+
+          "<span class='big'>"+ i18n.t("tap_here") +"</span>"+
+          "<span class='free'>{cost}</span>"+
+        "</div>"
+      ],
+      offers: [
         "<div class='offer'>"+
           "<div class='icon'>"+
             "{pricetag}"+
@@ -244,8 +252,8 @@
      */
     configLayout: function(){
 
-      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>'; 
-        
+      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>';
+
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
       !$.data.showCurrentApp ? $.header.className += ' hide-current-app' : '';
@@ -253,7 +261,6 @@
       if(!$.data.showBanner){
         $.header.style.display = 'none';
       }
-
       if($.data.autoload && $.loadMore){
         try {
           $.loadMore.parentNode.style.display = 'none';
@@ -320,7 +327,7 @@
             if(pagesFetched == autoLoadLimit){
               if($.loadMore){
                 try {
-                  $.loadMore.parentNode.style.display = 'block'; 
+                  $.loadMore.parentNode.style.display = 'block';
                 }catch(err){}
               }
             }
@@ -403,7 +410,8 @@
         var li = document.createElement('li'),
             item = data[i],
             type = item.type.toLowerCase(),
-            connector = item.redirectURL.match(/\?/) ? '&' : '?';
+            connector = item.redirectURL.match(/\?/) ? '&' : '?',
+            offerTemplate;
 
         item.free = $.labels.text.free;
         item.points = $.data.currencyName;
@@ -412,15 +420,19 @@
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
         item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="' + ($.data.squircles ? 'overlay' : 'rounded') +'"></div><img class="cover" src="' + item.iconURL + '" />';
-        
+
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
         }
-        
-        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + $.format($.tpl.offers[0], item) + $.format($.tpl.offers[1], item) + '</a>';
+        if (!$.data.rewarded) {
+          offerTemplate = $.format($.tpl.offersNonReward[0], item) + $.format($.tpl.offers[0], item);
+        }else{
+          offerTemplate = $.format($.tpl.offersReward[0], item) + $.format($.tpl.offers[0], item);
+        }
+        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offerTemplate + '</a>';
 
         $.offersContainer.appendChild(li);
-        
+
         if(item.wifi.length != 0){
           $.each($.find('.icon', li), function(el){
             el.className += ' mtn';

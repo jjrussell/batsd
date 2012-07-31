@@ -23,26 +23,10 @@
         .right
           = current_user.username
           |
-          - link_text = "<span id='number_of_active_offers'>#{current_partner_active_app_offers.length}</span> active campaigns".html_safe
-          - link_class = "soft-link #{current_partner_active_app_offers.blank? ? 'inactive' : ''}"
+          - link_text = "<span id='number_of_active_offers'>#{current_partner_active_offers.length}</span> active campaigns".html_safe
+          - link_class = "soft-link #{current_partner_active_offers.blank? ? 'inactive' : ''}"
           = link_to_function link_text, '$.noop()', :class => link_class, :id => 'active_campaigns'
-          - unless current_partner_active_app_offers.blank?
-            #active_campaigns_box.hidden
-              %table{:cellspacing => 0}
-                %tbody
-                  - current_partner_active_app_offers.each do |offer|
-                    %tr
-                      %td
-                        = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
-                          = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
-                      %td
-                        = link_to offer.name, url_to_offer_item(offer)
-                      %td.offer-type
-                        = image_tag(platform_icon_url(offer))
-                        = offer.self_promote_only? ? '[SELF]' : ''
-                      %td
-                        = number_to_currency(offer.bid / 100.0)
-
+          = render 'shared/active_campaigns'
           |
           - if premier_enabled?
             = mail_to "premiersupport@tapjoy.com", "Support", :subject => "Premier Support"
@@ -77,6 +61,9 @@
         = navigation(tabs)
 
       #content
+        .flash#flash_notice
+          Check out Tapjoy Insights, a special report covering the latest trends in mobile app marketing and monetization.
+          = link_to "Download Now", "http://bitly.com/NDFU6F", :target=>"_blank"
         - flash.each do |name, msg|
           .flash{ :id => "flash_#{name}", :title => "Click to dismiss this message" }
             %strong #{name.to_s.humanize}:

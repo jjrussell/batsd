@@ -59,10 +59,12 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
+    final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
     case item_type
     when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
-      final_url.gsub!('TAPJOY_HASHED_KEY', Digest::MD5.hexdigest(click_key.to_s + CLICK_KEY_SALT))
+      final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
         final_url.sub!('market://search?q=', subbed_string)
@@ -72,7 +74,6 @@ module Offer::UrlGeneration
     when 'GenericOffer'
       advertiser_app_id = click_key.to_s.split('.')[1]
       final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
-      final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
       final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
       final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
       final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
@@ -278,13 +279,15 @@ module Offer::UrlGeneration
     "#{uri.scheme}://#{uri.host}/statz/#{self.id}"
   end
 
-  def format_as_click_key( params )
-    if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
-      "#{params[:gamer_id]}.#{params[:advertiser_app_id]}"
-    elsif self.item_type == 'GenericOffer' && params[:advertiser_app_id] != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      Digest::MD5.hexdigest("#{params[:udid]}.#{params[:advertiser_app_id]}")
+  def format_as_click_key(params)
+    item_id_str = params[:advertiser_app_id] || item_id
+
+    if item_id_str == TAPJOY_GAMES_INVITATION_OFFER_ID
+      "#{params[:gamer_id]}.#{item_id_str}"
+    elsif item_type == 'GenericOffer' && item_id_str != TAPJOY_GAMES_REGISTRATION_OFFER_ID
+      Digest::MD5.hexdigest("#{params[:udid]}.#{item_id_str}")
     else
-      "#{params[:udid]}.#{params[:advertiser_app_id]}"
+      "#{params[:udid]}.#{item_id_str}"
     end
   end
 end

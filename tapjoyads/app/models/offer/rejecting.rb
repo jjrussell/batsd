@@ -1,5 +1,7 @@
 module Offer::Rejecting
 
+  NON_LIMITED_CURRENCY_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0', '91631942-cfb8-477a-aed8-48d6ece4a23f', 'e3d2d144-917e-4c5b-b64f-0ad73e7882e7', 'b9cdd8aa-632d-4633-866a-0b10d55828c0'])
+
   ALREADY_COMPLETE_IDS = {
     # Tap Farm
     [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424' ] => [ '4ddd4e4b-123c-47ed-b7d2-7e0ff2e01424', 'bad4b0ae-8458-42ba-97ba-13b302827234', '403014c2-9a1b-4c1d-8903-5a41aa09be0e' ],
@@ -82,10 +84,28 @@ module Offer::Rejecting
     %w(eb973f19-f5cc-440b-918c-1695c73e5fa2 33b20a4d-4660-4ca8-b1a7-138bb8fb1771 c7704a06-9f30-461d-b41c-d35766d491e9 f517e10a-132f-4a29-9d6b-8b2da5c2ee81 ec130850-0262-4dd6-8fd2-9f0e970bc7bf be05ed4f-945f-4dc7-b6d0-4ae033df27f7 cd7a58dc-32b0-4838-b06a-41ccf2288182),
     # Badoo
     %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc) => %w(7139ae3a-c5d1-43ed-873c-83ab440a152c 0eafb2b0-16a1-426c-90c5-ac0ef7af2abc),
+    # The Times
+    %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb) => %w(523bde45-1abb-487c-8cef-3e32a189034f 43adf090-10e4-4775-a006-00301e5df1eb),
+    # Crickler 2 iOS
+    %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf) => %w(2533d812-1685-4f44-b121-a7126bd83ba8 1dd2a86d-42d0-454f-94d4-5b79a02b52cf),
+    # CoffeeTable - Catalog Shopping for iPad
+    %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce) =>
+    %w(5dfbe67b-8033-4b8f-8db7-349838d7eb57 86ba87a2-c605-4fac-bb6a-e1983f9de44e c0ffa993-9ad4-48bc-9e74-a43316cc80e1 27acb266-7f9b-424d-97da-c05ea1fe58ce),
+    # Fan Samsung on Facebook
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79) =>
+    %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79),
+    # Quickable for Craiglist eBay Android
+    %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6) => %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6),
+    # Intuit GoPayment (Android)
+    %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19) => %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19),
+    # Ebay (Generic to CPI)
+    %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09) => %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
   TAPJOY_GAMES_OFFERS = [ TAPJOY_GAMES_REGISTRATION_OFFER_ID, LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID]
+
+  MINISCULE_REWARD_THRESHOLD = 0.1
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
@@ -93,6 +113,7 @@ module Offer::Rejecting
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
+      { :method => :prerequisites_not_complete?, :parameters => [device], :reason => 'prerequisites_not_complete' },
       { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out' },
       { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter' },
       { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
@@ -115,6 +136,7 @@ module Offer::Rejecting
       { :method => :source_reject?, :parameters => [source], :reason => 'source' },
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
     ]
     reject_reasons(reject_functions)
   end
@@ -122,8 +144,9 @@ module Offer::Rejecting
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
+    prerequisites_not_complete?(device) ||
     selective_opt_out_reject?(device) ||
-    show_rate_reject?(device, type) ||
+    show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
@@ -148,8 +171,9 @@ module Offer::Rejecting
     carriers_reject?(mobile_carrier_code) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
-    partner_has_no_funds? ||
-    rewarded_offerwall_non_rewarded_reject?(currency, source)
+    has_insufficient_funds?(currency) ||
+    rewarded_offerwall_non_rewarded_reject?(currency, source) ||
+    miniscule_reward_reject?(currency)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -192,8 +216,8 @@ module Offer::Rejecting
     hide_rewarded_app_installs && rewarded? && Offer::REWARDED_APP_INSTALL_OFFER_TYPES.include?(item_type)
   end
 
-  def partner_has_no_funds?
-    partner_balance < 0
+  def has_insufficient_funds?(currency)
+    currency.charges?(self) && partner_balance <= 0
   end
 
   private
@@ -243,11 +267,22 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
-    return false if multi_complete? || device.nil?
+    offer_complete?(self, device, app_version)
+  end
 
-    app_id_for_device = item_id
-    if item_type == 'RatingOffer'
-      app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
+  def prerequisites_not_complete?(device)
+    return false if prerequisite_offer_id.blank? && get_exclusion_prerequisite_offer_ids.blank?
+    return true if prerequisite_offer_id.present? && !offer_complete?(prerequisite_offer, device)
+    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_by_id(id), device) }
+    false
+  end
+
+  def offer_complete?(offer, device, app_version = nil)
+    return false if offer.nil? || offer.multi_complete? || device.nil?
+
+    app_id_for_device = offer.item_id
+    if offer.item_type == 'RatingOffer'
+      app_id_for_device = RatingOffer.get_id_with_app_version(app_id_for_device, app_version)
     end
 
     ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
@@ -267,8 +302,9 @@ module Offer::Rejecting
     device && device.opt_out_offer_types.include?(item_type)
   end
 
-  def show_rate_reject?(device, type)
+  def show_rate_reject?(device, type, currency)
     return false if type == Offer::VIDEO_OFFER_TYPE
+    return false if NON_LIMITED_CURRENCY_IDS.include?(currency.id) && show_rate > 0
     srand( (device.key + (Time.now.to_f / 1.hour).to_i.to_s + id).hash )
     should_reject = rand > show_rate
     srand
@@ -303,7 +339,7 @@ module Offer::Rejecting
   def minimum_bid_reject?(currency, type)
     return false unless currency
     min_bid = case type
-    when Offer::DEFAULT_OFFER_TYPE
+    when Offer::DEFAULT_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE
       currency.minimum_offerwall_bid
     when Offer::FEATURED_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE
       currency.minimum_featured_bid
@@ -382,4 +418,9 @@ module Offer::Rejecting
     sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
   end
 
+  def miniscule_reward_reject?(currency)
+    currency && currency.rewarded? && rewarded? &&
+      currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
+      item_type != 'DeeplinkOffer'
+  end
 end

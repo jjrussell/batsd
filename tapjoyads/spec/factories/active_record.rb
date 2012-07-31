@@ -212,6 +212,7 @@ FactoryGirl.define do
     association :partner
     name 'TAPJOY_BUCKS'
     callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
+    conversion_rate 100
   end
 
   factory :monthly_accounting do

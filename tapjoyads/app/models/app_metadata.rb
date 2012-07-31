@@ -87,6 +87,7 @@ class AppMetadata < ActiveRecord::Base
   end
 
   def fill_app_store_data(data)
+    blacklist = AppStore.prepare_countries_blacklist(store_id, PLATFORMS[store_name])
     self.name                = data[:title]
     self.price               = (data[:price].to_f * 100).round
     self.description         = data[:description]
@@ -96,7 +97,7 @@ class AppMetadata < ActiveRecord::Base
     self.user_rating         = data[:user_rating]
     self.categories          = data[:categories]
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
-    self.countries_blacklist = AppStore.prepare_countries_blacklist(store_id, PLATFORMS[store_name])
+    self.countries_blacklist = blacklist unless blacklist.nil?
     self.languages           = data[:languages]
   end
 

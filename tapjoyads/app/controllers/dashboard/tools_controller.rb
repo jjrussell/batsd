@@ -221,6 +221,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @not_rewarded_count = 0
       @blocked_count = 0
       @rewarded_failed_clicks_count = 0
+      @force_converted_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
@@ -229,7 +230,9 @@ class Dashboard::ToolsController < Dashboard::DashboardController
           @clicks << click unless click.tapjoy_games_invitation_primary_click?
           if click.installed_at?
             @rewards[click.reward_key] = Reward.find(click.reward_key)
-            if @rewards[click.reward_key] && @rewards[click.reward_key].successful?
+            if click.force_convert
+              @force_converted_count += 1
+            elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
               @rewarded_clicks_count += 1
             else
               @rewarded_failed_clicks_count += 1
@@ -294,6 +297,17 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     device.banned = params[:banned] == '1'
     device.save
     flash[:notice] = 'Device successfully updated.'
+    redirect_to :action => :device_info, :udid => params[:udid]
+  end
+
+  def recreate_device_identifiers
+    device = Device.find(params[:udid])
+    if device.nil?
+      flash[:error] = "Unable to find a device with UDID: #{params[:udid]}"
+    else
+      Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => device.key}.to_json)
+      flash[:notice] = "The identifiers for the device #{device.key} should be recreated soon."
+    end
     redirect_to :action => :device_info, :udid => params[:udid]
   end
 
@@ -394,6 +408,11 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
+    if params[:udid]
+      device = Device.new(:key => params[:udid])
+      @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
+    end
+
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
       click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
@@ -401,10 +420,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
         redirect_to :action => :device_info, :udid => params[:udid] and return
       else
-        @publisher_user_id = click.publisher_user_id
+        @publisher_user_id ||= click.publisher_user_id
       end
     else
-      @publisher_user_id = support_request.publisher_user_id
+      @publisher_user_id ||= support_request.publisher_user_id
     end
   end
 
@@ -459,6 +478,43 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       flash[:error] = "Failed to detach device."
     end
     redirect_to :action => :view_pub_user_account, :publisher_app_id => params[:publisher_app_id], :publisher_user_id => params[:publisher_user_id]
+  end
+
+  def view_conversion_attempt
+    @attempt = ConversionAttempt.new(:key => params[:conversion_attempt_key])
+    if @attempt.is_new
+      flash[:error] = "Conversion attempt not found"
+      redirect_to :action => :device_info and return
+    end
+  end
+
+  def force_conversion
+    click = Click.new(:key => params[:click_key])
+    if click.is_new
+      flash[:error] = "Click not found"
+      redirect_to :action => :device_info and return
+    else
+      attempt = ConversionAttempt.new(:key => click.reward_key)
+      if attempt.resolution == 'force_converted'
+        flash[:error] = "Conversion has already been forced"
+        redirect_to :action => :device_info, :click_key => click.key and return
+      end
+
+      if !click.block_reason?
+        flash[:error] = "Only blocked conversions can be force converted"
+        redirect_to :action => :device_info, :click_key => click.key and return
+      end
+    end
+
+    click.force_convert = true
+    click.force_converted_by = current_user.username
+    click.save
+
+    message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+    Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+
+    flash[:message] = "Force conversion request sent. It may take some time for this request to be processed."
+    redirect_to :action => :device_info, :click_key => click.key
   end
 
   private

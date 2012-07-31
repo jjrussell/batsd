@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-require 'lib/ec2_tasks'
+require File.expand_path('../../config/application', __FILE__)
+require 'ec2_tasks'
 require 'resolv'
 
 unless ARGV[0] && ARGV[1]
