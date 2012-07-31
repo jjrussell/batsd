@@ -16,6 +16,22 @@
         = f.check_box :app_targeting
         = error_message_on @video_offer, :app_targeting
     %tr
+      %th
+        = f.label :name, 'Prerequisite'
+      %td
+        - offer_options = options_for_prerequisites(@video_offer)
+        - prerequisites_options = offer_options
+        - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+        = f.select :prerequisite_offer_id, prerequisites_options
+        = error_message_on @video_offer, :prerequisite_offer_id
+    %tr
+      %th
+        = f.label :name, 'Exclusion Prerequisites'
+      %td
+        = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'video_offer[exclusion_prerequisite_offer_ids][]')
+        = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @video_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+        = error_message_on @video_offer, :exclusion_prerequisite_offer_ids
+    %tr
       %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
       %td= file_field_tag :video
     - if !@video_offer.new_record?

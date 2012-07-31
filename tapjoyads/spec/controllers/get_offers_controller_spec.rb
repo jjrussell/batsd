@@ -7,6 +7,7 @@ describe GetOffersController do
     before :each do
       Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
+      @currency.update_attributes({:external_publisher => true})
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10

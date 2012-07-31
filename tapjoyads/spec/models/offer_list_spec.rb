@@ -133,6 +133,7 @@ describe OfferList do
 
         context 'balance > 0' do
           before :each do
+            @currency.update_attributes({:external_publisher => true})
             @deeplink = @currency.deeplink_offer
             @deeplink.partner.balance = 100
             OptimizedOfferList.stub(:get_offer_list).and_return([])
@@ -159,10 +160,17 @@ describe OfferList do
             list = OfferList.new({:device_type => 'android'}.merge(@base_params))
             list.get_offers(0, 5).should include @offers[0..4]
           end
+
+          it 'skips deeplink offer if currency not marked as external publisher' do
+            @currency.update_attributes({:external_publisher => false})
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
+          end
         end
 
         context 'balance = 0, deeplink offers are still displayed in the offerwall' do
           before :each do
+            @currency.update_attributes({:external_publisher => true})
             @deeplink = @currency.deeplink_offer
             @deeplink.partner.balance = 0
             OptimizedOfferList.stub(:get_offer_list).and_return([])
@@ -188,6 +196,12 @@ describe OfferList do
           it 'skips the deeplink offer on android' do
             list = OfferList.new({:device_type => 'android'}.merge(@base_params))
             list.get_offers(0, 5).should include @offers[0..4]
+          end
+
+          it 'skips deeplink offer if currency not marked as external publisher' do
+            @currency.update_attributes({:external_publisher => false})
+            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+            list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
           end
         end
       end
@@ -223,6 +237,7 @@ describe OfferList do
     context 'second page' do
       context 'with a deeplink and rating offer' do
         before :each do
+          @currency.update_attributes({:external_publisher => true})
           @deeplink = @currency.deeplink_offer
           Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
           @rating = FactoryGirl.create(:rating_offer)

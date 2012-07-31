@@ -16,6 +16,7 @@
 #
 
 class ActionOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_trackable :device_types => lambda { |ctx| app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { |ctx| app.store_url }
 
@@ -31,6 +32,7 @@ class ActionOffer < ActiveRecord::Base
   validates_presence_of :instructions
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_with OfferPrerequisitesValidator
 
   scope :visible, :conditions => { :hidden => false }
 
@@ -44,6 +46,8 @@ class ActionOffer < ActiveRecord::Base
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
 
   delegate :get_offer_device_types, :store_id, :store_url, :wifi_required?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
+
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def toggle_user_enabled
     primary_offer.toggle_user_enabled
@@ -83,11 +87,13 @@ class ActionOffer < ActiveRecord::Base
   private
 
   def build_offer
-    offer                  = Offer.new(:item => self)
-    offer.partner          = partner
-    offer.name             = name
-    offer.instructions     = instructions
-    offer.third_party_data = prerequisite_offer_id
+    offer                                  = Offer.new(:item => self)
+    offer.partner                          = partner
+    offer.name                             = name
+    offer.instructions                     = instructions
+    offer.third_party_data                 = prerequisite_offer_id
+    offer.prerequisite_offer_id            = prerequisite_offer_id
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer
   end
 
@@ -114,17 +120,19 @@ class ActionOffer < ActiveRecord::Base
 
   def update_offers
     offers.each do |offer|
-      offer.partner_id         = partner_id if partner_id_changed?
-      offer.name               = name if name_changed?
-      offer.instructions       = instructions if instructions_changed? && !offer.instructions_overridden?
-      offer.hidden             = hidden if hidden_changed?
+      offer.partner_id              = partner_id if partner_id_changed?
+      offer.name                    = name if name_changed?
+      offer.instructions            = instructions if instructions_changed? && !offer.instructions_overridden?
+      offer.hidden                  = hidden if hidden_changed?
       if prerequisite_offer_id_changed?
-        offer.third_party_data = prerequisite_offer_id
-        offer.price            = offer_price(offer.app_metadata)
+        offer.third_party_data      = prerequisite_offer_id
+        offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+        offer.price                 = offer_price(offer.app_metadata)
         if offer.price_changed? && offer.bid < offer.min_bid
-          offer.bid            = offer.min_bid
+          offer.bid                 = offer.min_bid
         end
       end
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.save! if offer.changed?
     end
   end
