@@ -157,7 +157,7 @@ authorization do
     includes :account_mgr
     has_permission_on :dashboard_tools_clients, :to => [ :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
     has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
-    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :index, :export ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :index ]
     has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
