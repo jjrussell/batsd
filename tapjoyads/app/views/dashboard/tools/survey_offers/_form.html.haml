@@ -6,6 +6,21 @@
     #help_name.help ?
     = f.text_field :name
     = error_message_on(@survey_offer, :name)
+
+  .field
+    = f.label :name, 'Prerequisite'
+    #help_prerequisite.help ?
+    - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_PARTNER_ID).offers.first)
+    - prerequisites_options = offer_options
+    - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+    = f.select :prerequisite_offer_id, prerequisites_options
+    = error_message_on @survey_offer, :prerequisite_offer_id
+  .field
+    = f.label :name, 'Exclusion Prerequisites'
+    #help_exclusion_prerequisites.help ?
+    = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'survey_offer[exclusion_prerequisite_offer_ids][]')
+    = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @survey_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+    = error_message_on @survey_offer, :exclusion_prerequisite_offer_ids
   .field
     = f.label :bid
     #help_bid.help ?
@@ -47,6 +62,10 @@
     What format the question should be presented in.
   #help_possible_responses_content{:name => 'Possible Responses'}
     What response options the user will see, separated by semi-colons.
+  #help_prerequisite_content{:name => 'Prerequisite Offer'}
+    This offer will only be shown to users who have already completed the prerequisite offer.
+  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
 
 - content_for :page_styles do
   :plain

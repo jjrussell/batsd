@@ -130,6 +130,8 @@ describe App do
     before :each do
       @action_offer = FactoryGirl.create(:action_offer)
       @app = @action_offer.app
+      @action_offer.partner = @app.partner
+      @action_offer.save
     end
 
     it 'updates action offer hidden field' do

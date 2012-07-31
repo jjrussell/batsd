@@ -1,4 +1,5 @@
 class Offer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   include Offer::Ranking
   include Offer::Rejecting
@@ -103,9 +104,11 @@ class Offer < ActiveRecord::Base
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -177,6 +180,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -252,7 +256,7 @@ class Offer < ActiveRecord::Base
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers, :cities
+    :approved_sources, :carriers, :cities, :exclusion_prerequisite_offer_ids
 
   def clone
     return super if new_record?

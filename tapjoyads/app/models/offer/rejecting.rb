@@ -108,6 +108,7 @@ module Offer::Rejecting
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
+      { :method => :prerequisites_not_complete?, :parameters => [device], :reason => 'prerequisites_not_complete' },
       { :method => :selective_opt_out_reject?, :parameters => [device], :reason => 'selective_opt_out' },
       { :method => :flixter_reject?, :parameters => [publisher_app, device], :reason => 'flixter' },
       { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
@@ -138,6 +139,7 @@ module Offer::Rejecting
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
+    prerequisites_not_complete?(device) ||
     selective_opt_out_reject?(device) ||
     show_rate_reject?(device, type, currency) ||
     flixter_reject?(publisher_app, device) ||
@@ -260,11 +262,22 @@ module Offer::Rejecting
   end
 
   def already_complete?(device, app_version = nil)
-    return false if multi_complete? || device.nil?
+    offer_complete?(self, device, app_version)
+  end
 
-    app_id_for_device = item_id
-    if item_type == 'RatingOffer'
-      app_id_for_device = RatingOffer.get_id_with_app_version(item_id, app_version)
+  def prerequisites_not_complete?(device)
+    return false if prerequisite_offer_id.blank? && get_exclusion_prerequisite_offer_ids.blank?
+    return true if prerequisite_offer_id.present? && !offer_complete?(prerequisite_offer, device)
+    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_by_id(id), device) }
+    false
+  end
+
+  def offer_complete?(offer, device, app_version = nil)
+    return false if offer.nil? || offer.multi_complete? || device.nil?
+
+    app_id_for_device = offer.item_id
+    if offer.item_type == 'RatingOffer'
+      app_id_for_device = RatingOffer.get_id_with_app_version(app_id_for_device, app_version)
     end
 
     ALREADY_COMPLETE_IDS.each do |target_ids, ids_to_reject|
