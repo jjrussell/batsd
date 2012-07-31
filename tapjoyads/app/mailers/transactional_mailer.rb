@@ -10,35 +10,12 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     device_info[:token] = gamer.confirmation_token
     @confirmation_url = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
-    # Gather dynamic data for ExactTarget's email template
+    # Gather required data for the ET data extension
     data = {
       :android_device           => @android_device ? 1 : 0,
       :confirmation_url         => @confirmation_url,
-      :currency_id              => @offer_data.any? ? @offer_data.keys.first : '',
-      :currency_name            => @offer_data.any? ? @offer_data.first.second["CurrencyName"] : '',
-      :facebook_signup          => @facebook_signup ? 1 : 0,
-      :gamer_email              => gamer.email,
       :linked                   => @linked ? 1 : 0,
-      :publisher_icon_url       => @offer_data.any? ? @offer_data.first.second[:external_publisher].get_icon_url : '',
-      :publisher_app_name       => @offer_data.any? ? @offer_data.first.second[:external_publisher].app_name : '',
-      :recommendation1_icon_url => @recommendations.any? && @recommendations[0].present? ? @recommendations[0].icon_url : '',
-      :recommendation1_name     => @recommendations.any? && @recommendations[0].present? ? @recommendations[0].name : '',
-      :recommendation2_icon_url => @recommendations.any? && @recommendations[1].present? ? @recommendations[1].icon_url : '',
-      :recommendation2_name     => @recommendations.any? && @recommendations[1].present? ? @recommendations[1].name : '',
-      :recommendation3_icon_url => @recommendations.any? && @recommendations[2].present? ? @recommendations[2].icon_url : '',
-      :recommendation3_name     => @recommendations.any? && @recommendations[2].present? ? @recommendations[2].name : '',
-      :offer1_icon_url          => @offer_data.any? && @offer_data.first.second["OfferArray"][0].present? ? @offer_data.first.second["OfferArray"][0]["IconURL"]  : '',
-      :offer1_name              => @offer_data.any? && @offer_data.first.second["OfferArray"][0].present? ? @offer_data.first.second["OfferArray"][0]["Name"]  : '',
-      :offer1_type              => @offer_data.any? && @offer_data.first.second["OfferArray"][0].present? ? @offer_data.first.second["OfferArray"][0]["Type"]  : '',
-      :offer1_amount            => @offer_data.any? && @offer_data.first.second["OfferArray"][0].present? ? @offer_data.first.second["OfferArray"][0]["Amount"]  : '',
-      :offer2_icon_url          => @offer_data.any? && @offer_data.first.second["OfferArray"][1].present? ? @offer_data.first.second["OfferArray"][1]["IconURL"]  : '',
-      :offer2_name              => @offer_data.any? && @offer_data.first.second["OfferArray"][1].present? ? @offer_data.first.second["OfferArray"][1]["Name"]  : '',
-      :offer2_type              => @offer_data.any? && @offer_data.first.second["OfferArray"][1].present? ? @offer_data.first.second["OfferArray"][1]["Type"]  : '',
-      :offer2_amount            => @offer_data.any? && @offer_data.first.second["OfferArray"][1].present? ? @offer_data.first.second["OfferArray"][1]["Amount"]  : '',
-      :offer3_icon_url          => @offer_data.any? && @offer_data.first.second["OfferArray"][2].present? ? @offer_data.first.second["OfferArray"][2]["IconURL"]  : '',
-      :offer3_name              => @offer_data.any? && @offer_data.first.second["OfferArray"][2].present? ? @offer_data.first.second["OfferArray"][2]["Name"]  : '',
-      :offer3_type              => @offer_data.any? && @offer_data.first.second["OfferArray"][2].present? ? @offer_data.first.second["OfferArray"][2]["Type"]  : '',
-      :offer3_amount            => @offer_data.any? && @offer_data.first.second["OfferArray"][2].present? ? @offer_data.first.second["OfferArray"][2]["Amount"]  : '',
+      :facebook_signup          => @facebook_signup ? 1 : 0,
       :show_detailed_email      => detailed_email ? 1 : 0,
       :show_offer_data          => @offer_data.any? ? 1 : 0,
       :show_recommendations     => @recommendations.any? ? 1 : 0,
@@ -47,6 +24,49 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
       :account_id     => ExactTargetApi::TAPJOY_CONSUMER_ACCOUNT_ID,
     }
 
+    # Gather optional data for the ET data extension
+    if @offer_data.any?
+      data[:currency_id]        = @offer_data.keys.first
+      data[:currency_name]      = @offer_data.first.second["CurrencyName"]
+      data[:publisher_icon_url] = @offer_data.first.second[:external_publisher].get_icon_url
+      data[:publisher_app_name] = @offer_data.first.second[:external_publisher].app_name
+
+      offer_array = @offer_data.first.second["OfferArray"]
+      if offer_array.first.present?
+        data[:offer1_icon_url]  = offer_array.first["IconURL"]
+        data[:offer1_name]      = offer_array.first["Name"]
+        data[:offer1_type]      = offer_array.first["Type"]
+        data[:offer1_amount]    = offer_array.first["Amount"]
+      end
+      if offer_array.second.present?
+        data[:offer2_icon_url]  = offer_array.second["IconURL"]
+        data[:offer2_name]      = offer_array.second["Name"]
+        data[:offer2_type]      = offer_array.second["Type"]
+        data[:offer2_amount]    = offer_array.second["Amount"]
+      end
+      if offer_array.third.present?
+        data[:offer3_icon_url]  = offer_array.third["IconURL"]
+        data[:offer3_name]      = offer_array.third["Name"]
+        data[:offer3_type]      = offer_array.third["Type"]
+        data[:offer3_amount]    = offer_array.third["Amount"]
+      end
+    end
+    if @recommendations.any?
+      if @recommendations.first.present?
+        data[:recommendation1_icon_url] = @recommendations.first.icon_url
+        data[:recommendation1_name]     = @recommendations.first.name
+      end
+      if @recommendations.second.present?
+        data[:recommendation2_icon_url] = @recommendations.second.icon_url
+        data[:recommendation2_name]     = @recommendations.second.name
+      end
+      if @recommendations.third.present?
+        data[:recommendation3_icon_url] = @recommendations.third.icon_url
+        data[:recommendation3_name]     = @recommendations.third.name
+      end
+    end
+
+    # Make ExactTarget do the rest of the work
     et = ExactTargetApi.new
     status = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, data, options)
   end

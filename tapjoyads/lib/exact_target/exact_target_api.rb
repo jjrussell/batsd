@@ -15,7 +15,7 @@ class ExactTargetApi
   def get_system_status
     response = @client.request :get_system_status
     if response.success?
-      response.to_array(:system_status_response_msg, :results, :result, :system_status).first
+      response.to_array(:system_status_response_msg, :results, :result).first
     end
   end
 
