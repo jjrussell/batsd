@@ -96,6 +96,8 @@ module Offer::Rejecting
     %w(f9c0217d-68f1-478e-83ba-39add5361738 e0fedb0d-7c87-468b-9ad6-1514c5ccb613 6182794e-6ca7-4dd5-9428-af0179af65f7 99385d2c-7009-4c1d-85f9-c62dcf44d736 9be7aeac-107a-4845-b0f6-5f037047f86b ccb5f45a-c9fc-4fc8-9024-3a5063471dc9 d44721b9-327c-4a67-81ea-6fefd2bf5f79),
     # Quickable for Craiglist eBay Android
     %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6) => %w(d166d4a2-605b-4a42-8e82-26d4a5f7a482 2e320aa6-ebfc-42a5-abc9-9fb71d928ec6),
+    # Intuit GoPayment (Android)
+    %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19) => %w(31e2aedc-28b8-4bf3-8bd9-37d44ff5f4b0 7da49023-1016-4f02-a2dc-c3e5ec06ec19),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
