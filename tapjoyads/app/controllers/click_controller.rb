@@ -175,6 +175,7 @@ class ClickController < ApplicationController
 
     wr_path = case params[:source]
               when 'tj_games'      then 'tjm_offer_click'
+              when 'tj_display'    then 'tj_display_offer_click'
               when 'featured'      then 'featured_offer_click'
               else                      'offer_click'
               end
