@@ -61,15 +61,13 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def has_video_button_for_store?(store_name)
-    video_buttons.each do |button|
-      return true if button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name == store_name
+    video_buttons.any? do |button|
+      button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name == store_name
     end
-    false
   end
 
   def distribution_reject?(store_name)
-    return false unless app_targeting?
-    !has_video_button_for_store?(store_name)
+    app_targeting? && !has_video_button_for_store?(store_name)
   end
 
   private
