@@ -124,13 +124,13 @@ class ActionOffer < ActiveRecord::Base
       offer.name                    = name if name_changed?
       offer.instructions            = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.hidden                  = hidden if hidden_changed?
+      offer.price                   = offer_price(offer.app_metadata)
+      if offer.price_changed? && offer.bid < offer.min_bid
+        offer.bid                   = offer.min_bid
+      end
       if prerequisite_offer_id_changed?
         offer.third_party_data      = prerequisite_offer_id
         offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
-        offer.price                 = offer_price(offer.app_metadata)
-        if offer.price_changed? && offer.bid < offer.min_bid
-          offer.bid                 = offer.min_bid
-        end
       end
       offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.save! if offer.changed?
