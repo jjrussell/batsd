@@ -94,6 +94,7 @@
           %td
             %span{ :id => 'custom_url_scheme' }
               = @app.launch_url
+            = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
             = link_to_function 'Edit', :onclick => 'edit_custom_url_scheme();'
       %tr.app_data.hidden
         %th Icon
@@ -167,6 +168,8 @@
     edit_custom_url_scheme = function() {
       url = prompt('Please enter a Custom URL Scheme', $.trim($('#custom_url_scheme').text()));
       if (url != null) {
+        $('#custom_url_scheme').hide();
+        $('#spinner').show();
         url = $.trim(url);
         $.ajax({
           type: "POST",
@@ -182,9 +185,13 @@
             } else {
               alert('Unable to update the Custom URL Scheme, please try again later.');
             }
+            $('#custom_url_scheme').show();
+            $('#spinner').hide();
           },
           error: function(error) {
             alert('Unable to update the Custom URL Scheme, please try again later.');
+            $('#custom_url_scheme').show();
+            $('#spinner').hide();
           }
         });
       }

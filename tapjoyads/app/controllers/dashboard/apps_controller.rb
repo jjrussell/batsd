@@ -175,14 +175,15 @@ class Dashboard::AppsController < Dashboard::DashboardController
 
   def set_custom_url_scheme
     unless params[:app_id].present? && params[:custom_url_scheme] && current_partner.apps.map(&:id).include?(params[:app_id])
-      render :json => { :success => false } and return
+      render(:json => { :success => false, :error => ['Missing required params'] }, :status => 403) and return
     end
-    app = App.find(params[:app_id])
-    if app
+    begin
+      app = App.find(params[:app_id])
       app.custom_url_scheme = params[:custom_url_scheme]
-      render :json => { :success => app.save} and return
+      render :json => { :success => app.save}
+    rescue
+      render(:json => { :success => false, :error => ['Unable to find the given app'] }, :status => 403) and return
     end
-    render :json => { :success => false } and return
   end
 
   def integrate_check

@@ -138,4 +138,26 @@ describe Dashboard::AppsController do
       end
     end
   end
+
+  describe '#set_custom_url_scheme' do
+    context 'with a valid partner app' do
+      it 'sets the custom url scheme' do
+        app = @partner.apps.last
+        options = { :app_id => app.id, :custom_url_scheme => 'CUSTOM_URL_SCHEME' }
+        get(:set_custom_url_scheme, options)
+        should_respond_with_json_success(200)
+
+        app= App.find(app.id)
+        app.custom_url_scheme.should == 'CUSTOM_URL_SCHEME'
+      end
+    end
+
+    context 'without a partner app' do
+      it 'returns an error' do
+        options = { :app_id => FactoryGirl.create(:app).id, :custom_url_scheme => 'CUSTOM_URL_SCHEME' }
+        get(:set_custom_url_scheme, options)
+        should_respond_with_json_error(403)
+      end
+    end
+  end
 end
