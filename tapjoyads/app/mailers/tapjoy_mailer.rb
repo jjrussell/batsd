@@ -9,11 +9,11 @@ class TapjoyMailer < ActionMailer::Base
     body(:error => error)
   end
 
-  def alert(message, rows)
+  def alert(alert, rows)
     from 'Tapjoy <noc@tapjoy.com>'
-    recipients [ 'aaron@tapjoy.com', 'chris.compeau@tapjoy.com' ]
-    subject "[ALERT] #{message}"
-    body :rows => rows
+    recipients alert[:recipients]
+    subject "[ALERT] #{alert[:message]}"
+    body :rows => rows, :fields => alert[:fields]
   end
 
   def sms_sent(phone, message)
