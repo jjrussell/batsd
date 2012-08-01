@@ -1208,4 +1208,51 @@ describe Offer do
       end
     end
   end
+
+  context "show_rate_algorithms" do
+    describe "#calculate_conversion_rate!" do
+      it "should calculate the conversion rate and set the attr_accessor variables", :show_rate do
+        @offer.recent_clicks.should be_nil
+        @offer.recent_installs.should be_nil
+        @offer.calculated_conversion_rate.should be_nil
+        @offer.cvr_timeframe.should be_nil
+
+        @offer.calculate_conversion_rate!
+
+        @offer.recent_clicks.should_not be_nil
+        @offer.recent_installs.should_not be_nil
+        @offer.calculated_conversion_rate.should_not be_nil
+        @offer.cvr_timeframe.should_not be_nil
+      end
+
+      it "should calculate the min conversion rate and set the attr_accessor variable", :show_rate do
+        @offer.calculate_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should be_nil
+        @offer.calculate_min_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should_not be_nil
+      end
+
+      it "should raise error for has_low_conversion_rate? if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.has_low_conversion_rate?}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for has_low_conversion_rate? if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.has_low_conversion_rate?}.not_to raise_error
+      end
+
+      it "should raise error for calculate_original_show_rate if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.calculate_original_show_rate}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for calculate_show_rate if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.recalculate_show_rate}.to_not raise_error
+      end
+    end
+  end
 end
