@@ -81,16 +81,14 @@ include GetOffersHelper
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    if params[:redesign].present?
-      set_redesign_parameters
-      if params[:json] == '1'
-        if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
-          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-        end
-        render :json => @final.to_json, :callback => params[:callback] and return
-      else
-        render :template => 'get_offers/webpage_redesign' and return
+    set_redesign_parameters
+    if params[:json] == '1'
+      if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
+        @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
+      render :json => @final.to_json, :callback => params[:callback] and return
+    else
+      render :template => 'get_offers/webpage_redesign' and return
     end
   end
 
