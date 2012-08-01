@@ -256,8 +256,8 @@ FactoryGirl.define do
 
   factory :action_offer do
     name         'do something'
-    association  :partner
     association  :app
+    partner      { app.partner }
     instructions '1. do some stuff'
   end
 
