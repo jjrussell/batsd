@@ -54,9 +54,9 @@ module Offer::ShowRateAlgorithms
     @recent_clicks > 200 && @calculated_conversion_rate < @calculated_min_conversion_rate
   end
 
-  def recalculate_show_rate(optimization_info={}, log_info=true)
-    if (optimization_info[:show_rate_new] && optimization_info[:show_rate_new] > 0)
-      optimization_info[:show_rate_new]
+  def recalculate_show_rate(offer_hash={}, log_info=true)
+    if (offer_hash['show_rate_new'] && offer_hash['show_rate_new'] > 0)
+      offer_hash['show_rate_new'].to_d
     else
       self.show_rate
     end
