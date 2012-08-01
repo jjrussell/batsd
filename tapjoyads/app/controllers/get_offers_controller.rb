@@ -81,16 +81,14 @@ include GetOffersHelper
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    if params[:redesign].present?
-      set_redesign_parameters
-      if params[:json] == '1'
-        if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
-          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-        end
-        render :json => @final.to_json, :callback => params[:callback] and return
-      else
-        render :template => 'get_offers/webpage_redesign' and return
+    set_redesign_parameters
+    if params[:json] == '1'
+      if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
+        @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
+      render :json => @final.to_json, :callback => params[:callback] and return
+    else
+      render :template => 'get_offers/webpage_redesign' and return
     end
   end
 
@@ -249,10 +247,12 @@ include GetOffersHelper
 
   def set_offerwall_experiment
     experiment = case params[:source]
-    when 'offerwall'
-      :ow_redesign if params[:action] == 'webpage'
-    else
-      nil
+      when 'offerwall'
+        :ranking              # for in-app
+      when 'tj_games'
+        :show_rate_237        # for TJM
+      else
+        nil
     end
 
     choose_experiment(experiment)
@@ -269,8 +269,20 @@ include GetOffersHelper
     end
 
     case params[:exp]
-    when 'ow_redesign'
-      params[:redesign] = true
+      when 'a_optimization'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'b_optimization'
+        @algorithm = '237'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'a_offerwall'
+        @algorithm = nil
+      when 'b_offerwall'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true}
+      when 'c_offerwall'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
   end
 
