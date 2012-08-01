@@ -82,8 +82,8 @@
           = error_message_on @credit_card, :amount
       %tr
         %td{ :colspan => 2 }= f.submit 'Add Funds'
-  %p
-    Warning! Please note any active campaigns will immediately begin delivering when you add funds.
+  %p{:style => 'color:red' }
+    Warning! Please note that all campaigns that were previous inactive due to low funds will become active again. Please double check the listed active campaigns at the header of the dashboard to confirm the correct active campaigns are enabled.
 
 .hidden
   #help_credit_card_content{ :name => 'Credit Card' } The credit card you wish you use.
