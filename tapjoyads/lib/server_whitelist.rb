@@ -5,6 +5,7 @@ class ServerWhitelist
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
     '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
     '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
+    '184.170.255.101',                       # Tapjoy support server added 2012.08.01
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
     '209.120.212.22',                        # Adperio added 2012.05.22
