@@ -46,9 +46,9 @@
         "<div>{banner}</div>"
       ],
       offersReward: [
-        "<div class='reward'>"+
+        "<div class='reward clearfix'>"+
           "<span class='earn'>{earn}</span>"+
-          "<span class='big'>{payout}</span>"+
+          "<span class='big'>{payout}000000</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
@@ -60,7 +60,7 @@
         "</div>"
       ],
       offers: [
-        "<div class='offer'>"+
+        "<div class='offer clearfix'>"+
           "<div class='icon'>"+
             "{pricetag}"+
             "{cover}"+
@@ -429,6 +429,7 @@
         }else{
           offerTemplate = $.format($.tpl.offersReward[0], item) + $.format($.tpl.offers[0], item);
         }
+        li.className = 'offer-item clearfix';
         li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offerTemplate + '</a>';
 
         $.offersContainer.appendChild(li);
