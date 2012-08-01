@@ -55,8 +55,8 @@ module Offer::ShowRateAlgorithms
   end
 
   def recalculate_show_rate(offer_hash={}, log_info=true)
-    if (offer_hash['show_rate_new'] && offer_hash['show_rate_new'] > 0)
-      offer_hash['show_rate_new'].to_d
+    if (offer_hash['show_rate_new'] && (show_rate_new = offer_hash['show_rate_new'].to_f) > 0)
+      show_rate_new
     else
       self.show_rate
     end
