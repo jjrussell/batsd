@@ -21,9 +21,10 @@ Tapjoyad::Application.routes.draw do
     match :test_video_offer
   end
   # TODO: make display_ad routes better
-  match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
-  match 'display_ad/webview' => 'display_ad#webview'
-  match 'display_ad/image'   => 'display_ad#image'
+  match 'display_ad(/index)'    => 'display_ad#index', :defaults => { :format => 'xml'}
+  match 'display_ad/webview'    => 'display_ad#webview'
+  match 'display_ad/image'      => 'display_ad#image'
+  match 'impression'            => 'impression#index'
   resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
       match :index

@@ -4,6 +4,7 @@ class DisplayAdController < ApplicationController
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
+    @encrypted_params = ObjectEncryptor.encrypt_url(request.fullpath).split('?')[1]
     if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
@@ -58,10 +59,10 @@ class DisplayAdController < ApplicationController
     # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
     # (except certain scenarios)
     if ((params[:size].blank? || (params[:size] == '320x50' &&
-      params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
-      params[:action] != 'webview' && request.format != :json &&
-      params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
-        params[:size] = '640x100'
+                                  params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
+        params[:action] != 'webview' && request.format != :json &&
+        params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
+      params[:size] = '640x100'
     end
 
     device = Device.new(:key => params[:udid])
