@@ -45,6 +45,7 @@ class ServerWhitelist
     ['50.56.42.244', '50.56.42.245'],        # Lucky Pacific added 2012.07.10
     ['184.106.48.88', '184.106.48.89'],      # Lucky Pacific added 2012.07.10
     ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
+    '50.16.235.141',                         # Ring Revenue added 2012.08.02
   ]
 
   def self.ip_whitelist_includes?(ip_address)
