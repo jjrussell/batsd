@@ -180,9 +180,9 @@ class Dashboard::AppsController < Dashboard::DashboardController
     begin
       app = App.find(params[:app_id])
       app.custom_url_scheme = params[:custom_url_scheme]
-      render :json => { :success => app.save}
+      render :json => { :success => app.save }
     rescue
-      render(:json => { :success => false, :error => ['Unable to find the given app'] }, :status => 403) and return
+      render(:json => { :success => false }, :status => 403) and return
     end
   end
 

@@ -156,7 +156,8 @@ describe Dashboard::AppsController do
       it 'returns an error' do
         options = { :app_id => FactoryGirl.create(:app).id, :custom_url_scheme => 'CUSTOM_URL_SCHEME' }
         get(:set_custom_url_scheme, options)
-        should_respond_with_json_error(403)
+        response.should_not be_success
+        response.code.should == '403'
       end
     end
   end
