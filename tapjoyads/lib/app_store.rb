@@ -214,7 +214,8 @@ class AppStore
   def self.search_android_market(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
-      items = Hpricot(response.body)/"div.container-contents.apps"/"ul"/"li"
+      items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
+      items = Hpricot(response.body)/"div.container-contents.apps"/"ul"/"li" if items.blank?
       return items.map do |item|
         icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
         icon_url    = (icon_link/"img").attr('src')
