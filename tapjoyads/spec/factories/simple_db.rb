@@ -10,6 +10,7 @@ FactoryGirl.define do
 
   factory :device do
     key               { FactoryGirl.generate(:udid) }
+    apps              { }
   end
 
   factory :publisher_user do
