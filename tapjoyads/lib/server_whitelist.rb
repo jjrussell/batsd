@@ -5,6 +5,7 @@ class ServerWhitelist
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
     '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
     '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
+    '184.170.255.101',                       # Tapjoy support server added 2012.08.01
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
     '209.120.212.22',                        # Adperio added 2012.05.22
@@ -44,6 +45,7 @@ class ServerWhitelist
     ['50.56.42.244', '50.56.42.245'],        # Lucky Pacific added 2012.07.10
     ['184.106.48.88', '184.106.48.89'],      # Lucky Pacific added 2012.07.10
     ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
+    '50.16.235.141',                         # Ring Revenue added 2012.08.02
   ]
 
   def self.ip_whitelist_includes?(ip_address)
