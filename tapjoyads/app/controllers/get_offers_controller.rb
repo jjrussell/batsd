@@ -14,6 +14,7 @@ include GetOffersHelper
   OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0',  # Gun & Blood
                                           '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
                                           'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
+                                          'b7256806-0b7c-4711-9d0b-f58676f8d5eb',  # Skout
                                           'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
   OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
                                           'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
@@ -247,12 +248,10 @@ include GetOffersHelper
 
   def set_offerwall_experiment
     experiment = case params[:source]
-      when 'offerwall'
-        :ranking              # for in-app
-      when 'tj_games'
-        :show_rate_237        # for TJM
-      else
-        nil
+    when 'offerwall'
+      :ow_redesign if params[:action] == 'webpage'
+    else
+      nil
     end
 
     choose_experiment(experiment)
@@ -269,20 +268,8 @@ include GetOffersHelper
     end
 
     case params[:exp]
-      when 'a_optimization'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
-      when 'b_optimization'
-        @algorithm = '237'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
-      when 'a_offerwall'
-        @algorithm = nil
-      when 'b_offerwall'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true}
-      when 'c_offerwall'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
+    when 'ow_redesign'
+      params[:redesign] = true
     end
   end
 
