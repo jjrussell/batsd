@@ -4,6 +4,7 @@ module Offer::BannerCreatives
     base.class_eval do
       serialize :banner_creatives, Array
       serialize :approved_banner_creatives, Array
+      serialize :creatives_dict, Hash
 
       const_set(:DISPLAY_AD_SIZES, ['320x50', '640x100', '768x90']) # data stored as pngs
       const_set(:FEATURED_AD_SIZES, ['960x640', '640x960', '480x320', '320x480']) # data stored as jpegs
@@ -26,6 +27,10 @@ module Offer::BannerCreatives
         super || []
       end
     EOS
+  end
+
+  def creatives_dict
+    super || {}
   end
 
   def can_change_banner_creatives?
@@ -75,10 +80,11 @@ module Offer::BannerCreatives
     self.approved_banner_creatives = approved_banner_creatives.reject { |c| c == size }
   end
 
-  def add_banner_creative(size)
+  def add_banner_creative(image_data, size)
     return unless banner_creative_sizes.include?(size)
-    return if has_banner_creative?(size)
-    self.banner_creatives += [size]
+    self.banner_creatives += [size] unless has_banner_creative?(size)
+    send("banner_creative_#{size}_blob=", image_data)
+    self.creatives_dict = creatives_dict.merge(size => "#{Offer.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
   end
 
   def approve_banner_creative(size)
@@ -99,7 +105,7 @@ module Offer::BannerCreatives
 
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
-    "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
+    creatives_dict.include?(size) ? "banner_creatives/#{creatives_dict[size]}.#{format}" : "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
   def banner_creative_url(options)
@@ -240,6 +246,7 @@ module Offer::BannerCreatives
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
   end
 
+  #upload still updates all of the old columns, as well as populates the new one.
   def upload_banner_creative!(blob, size, format = nil)
     format ||= banner_creative_format(size)
     begin

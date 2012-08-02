@@ -195,7 +195,7 @@ class OfferList
 
     all_offers += default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
 
-    if @currency && @currency.rewarded? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
       if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
         all_offers.insert(DEEPLINK_POSITION, deeplink_offer)

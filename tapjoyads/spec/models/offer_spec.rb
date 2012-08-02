@@ -9,6 +9,7 @@ describe Offer do
   it { should have_many :sales_reps }
   it { should belong_to :partner }
   it { should belong_to :item }
+  it { should belong_to :prerequisite_offer }
 
   it { should validate_presence_of :partner }
   it { should validate_presence_of :item }
@@ -96,6 +97,30 @@ describe Offer do
   it "doesn't allow bids below min_bid" do
     @offer.bid = @offer.min_bid - 5
     @offer.should_not be_valid
+  end
+
+  it "rejects depending on prerequisites" do
+    device = Factory(:device)
+    app = FactoryGirl.create :app
+    prerequisite_offer = app.primary_offer
+    @offer.send(:prerequisites_not_complete?, device).should == false
+    @offer.update_attributes({ :prerequisite_offer_id => prerequisite_offer.id })
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(app.id)
+    @offer.send(:prerequisites_not_complete?, device).should == false
+
+    exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
+    exclusion_offer2 = (FactoryGirl.create :generic_offer).primary_offer
+    exclusion_offer3 = (FactoryGirl.create :video_offer).primary_offer
+    @offer.exclusion_prerequisite_offer_ids = "[\"#{exclusion_offer1.id}\", \"#{exclusion_offer2.id}\", \"#{exclusion_offer3}\"]"
+    @offer.get_exclusion_prerequisite_offer_ids
+    @offer.send(:prerequisites_not_complete?, device).should == false
+    device.set_last_run_time(exclusion_offer1.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(exclusion_offer2.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(exclusion_offer3.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
   end
 
   it "rejects depending on primary country" do
@@ -264,7 +289,8 @@ describe Offer do
                                   'interval', 'banner_creatives', 'dma_codes', 'regions',
                                   'wifi_only', 'approved_sources', 'approved_banner_creatives',
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls'
+                                  'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
+                                  'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
                                 ].sort
   end
 
@@ -429,10 +455,11 @@ describe Offer do
     describe "url generation" do
       describe '#complete_action_url' do
         it "should substitute tokens in the URL" do
-          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
+          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE&uid=TAPJOY_EXTERNAL_UID'
           source = @offer.source_token('12345')
+          uid = Device.advertiser_device_id('x', @offer.partner_id)
           options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
         end
       end
     end
@@ -621,7 +648,7 @@ describe Offer do
   describe '#add_banner_creative' do
     context 'given a valid size' do
       before(:each) do
-        @offer.add_banner_creative('320x50')
+        @offer.add_banner_creative('image_data', '320x50')
       end
 
       it 'adds the banner creative size' do
@@ -631,15 +658,49 @@ describe Offer do
       it 'does not approve the banner' do
         @offer.approved_banner_creatives.should_not include('320x50')
       end
+
+      it 'adds the banner creative URL' do
+        @offer.creatives_dict.should include('320x50')
+      end
     end
 
     context 'given an invalid size' do
       before(:each) do
-        @offer.add_banner_creative('1x1')
+        @offer.add_banner_creative('image_data', '1x1')
       end
 
       it 'does not add the banner creative' do
         @offer.banner_creatives.should_not include('1x1')
+      end
+
+      it 'does not add the banner creative URL' do
+        @offer.creatives_dict.should_not include('1x1')
+      end
+    end
+  end
+
+  describe '#banner_creative_path' do
+    context 'given size populated in creatives_dict' do
+      before(:each) do
+        @offer.banner_creatives = ['320x50']
+        @offer.creatives_dict = {'320x50' => 'test_path'}
+      end
+
+      it 'should return the stored path in creatives_dict' do
+        @offer.banner_creative_path('320x50', 'jpeg').should == 'banner_creatives/test_path.jpeg'
+      end
+    end
+    context 'given size populated only in banner_creatives' do
+      before(:each) do
+        @offer.banner_creatives = ['320x50']
+        @offer.creatives_dict = {}
+        @offer.id = 'test_id'
+      end
+
+      it 'should return the statically generated path from hashed_icon_id' do
+
+        @offer.id.should == 'test_id'
+        @offer.banner_creative_path('320x50', 'jpeg').should == 'banner_creatives/c068de1ea2c424641fbab45932b4244ab1793651be22a6a5bc0aff5dc4f9ade4_320x50.jpeg'
       end
     end
   end
@@ -1023,7 +1084,7 @@ describe Offer do
 
   context "queue_third_party_tracking_request methods" do
     before(:each) do
-      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]']
+      @urls = ['https://dummyurl.com?ts=[timestamp]', 'https://example.com?ts=[timestamp]&ip=[ip_address]&uid=[uid]&ua=[user_agent]']
       now = Time.zone.now
       Timecop.freeze(now)
 
@@ -1039,9 +1100,13 @@ describe Offer do
     context "without provided values" do
       before :each do
         now = Time.zone.now
+        uid = Click.hashed_key(@offer.format_as_click_key({}))
+        user_agent = @offer.source_token(nil)
+
         @urls.each do |url|
           uid = Device.advertiser_device_id(nil, @offer.partner_id)
           result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
+          result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
@@ -1070,28 +1135,45 @@ describe Offer do
         @ts = 1.hour.from_now
         @ip_address = '127.0.0.1'
         @udid = 'udid'
+        uid = Click.hashed_key(@offer.format_as_click_key(:udid => @udid))
+        @publisher_app_id = 'pub_app_id'
+        user_agent = @offer.source_token(@publisher_app_id)
+
         @urls.each do |url|
           uid = Device.advertiser_device_id(@udid, @offer.partner_id)
           result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
+          result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result).once
         end
       end
 
       describe ".queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_impression_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_impression_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
 
       describe ".queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_click_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_click_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
 
       describe ".queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
-          @offer.queue_conversion_tracking_requests(:timestamp => @ts.to_i, :ip_address => @ip_address, :udid => @udid)
+          @offer.queue_conversion_tracking_requests(
+            :timestamp        => @ts.to_i,
+            :ip_address       => @ip_address,
+            :udid             => @udid,
+            :publisher_app_id => @publisher_app_id)
         end
       end
     end
@@ -1123,6 +1205,53 @@ describe Offer do
         end
 
         it { should be_all_blacklisted }
+      end
+    end
+  end
+
+  context "show_rate_algorithms" do
+    describe "#calculate_conversion_rate!" do
+      it "should calculate the conversion rate and set the attr_accessor variables", :show_rate do
+        @offer.recent_clicks.should be_nil
+        @offer.recent_installs.should be_nil
+        @offer.calculated_conversion_rate.should be_nil
+        @offer.cvr_timeframe.should be_nil
+
+        @offer.calculate_conversion_rate!
+
+        @offer.recent_clicks.should_not be_nil
+        @offer.recent_installs.should_not be_nil
+        @offer.calculated_conversion_rate.should_not be_nil
+        @offer.cvr_timeframe.should_not be_nil
+      end
+
+      it "should calculate the min conversion rate and set the attr_accessor variable", :show_rate do
+        @offer.calculate_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should be_nil
+        @offer.calculate_min_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should_not be_nil
+      end
+
+      it "should raise error for has_low_conversion_rate? if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.has_low_conversion_rate?}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for has_low_conversion_rate? if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.has_low_conversion_rate?}.not_to raise_error
+      end
+
+      it "should raise error for calculate_original_show_rate if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.calculate_original_show_rate}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for calculate_show_rate if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.recalculate_show_rate}.to_not raise_error
       end
     end
   end

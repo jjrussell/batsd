@@ -1,4 +1,5 @@
 class Offer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   include Offer::Ranking
   include Offer::Rejecting
@@ -6,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
+  include Offer::ShowRateAlgorithms
   acts_as_cacheable
   acts_as_tracking
   memoize :precache_rank_scores
@@ -103,9 +105,11 @@ class Offer < ActiveRecord::Base
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -177,6 +181,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -252,7 +257,7 @@ class Offer < ActiveRecord::Base
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers, :cities
+    :approved_sources, :carriers, :cities, :exclusion_prerequisite_offer_ids
 
   def clone
     return super if new_record?
@@ -378,6 +383,10 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def show_in_active_campaigns?
+    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
+  end
+
   def video_icon_url(options = {})
     if video_offer? || item_type == 'TestVideoOffer'
       object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
@@ -462,11 +471,11 @@ class Offer < ActiveRecord::Base
       meta_src_icon_obj = bucket.objects["icons/src/#{meta_icon_id}.jpg"]
       existing_meta_icon_blob = meta_src_icon_obj.exists? ? meta_src_icon_obj.read : ''
 
-      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
-      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read }) 
-      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read }) 
+      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read })
+      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read })
+      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read })
 
       Mc.delete("icon.s3.#{app_metadata_id}")
       paths = ["icons/256/#{meta_icon_id}.jpg", "icons/114/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.png"]
