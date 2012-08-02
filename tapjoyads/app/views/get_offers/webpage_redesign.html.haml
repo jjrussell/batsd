@@ -10,10 +10,8 @@
       = @page_title
     %style{ :type => 'text/css' }
       = render 'redesign.css'
-
   %body
-    #header
-    #branding
+    #branding.clearfix
 
     - if @test_offers.present?
       #test_offers
@@ -36,14 +34,14 @@
         #loader_right.loader
 
     .container
-      #more.button.orange
+      #more.button.orange.gradientfix
         = t('text.offerwall.load_more')
 
     .container.nbb
       %p{:id => "moreoffers", :class => "moreoffers"}
         = t('text.offerwall.earn_more')
 
-      #visit.button
+      #visit.button.gradientfix
         = t('text.offerwall.visit')
 
       .center.links
