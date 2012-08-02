@@ -1,6 +1,9 @@
 class ExactTargetApi
   API_USERNAME = 'tapjoy_apiuser'
   API_PASSWORD = 'welcome@2'
+  ##
+  ## TODO: Cache WSDL locally for performance reasons (be refresh regularly)
+  ##
   API_HOSTNAME = 'https://webservice.s6.exacttarget.com/etframework.wsdl'
 
   TAPJOY_CONSUMER_ACCOUNT_ID = 7001723
@@ -14,6 +17,8 @@ class ExactTargetApi
 
   def get_system_status
     response = @client.request :get_system_status
+
+    # Scrub API response of unnecessary SOAP crap
     if response.success?
       response.to_array(:system_status_response_msg, :results, :result).first
     end
@@ -21,14 +26,19 @@ class ExactTargetApi
 
   def send_triggered_email(email_address, interaction_id, data, options)
     ##
-    ## VALIDATE STUFF (like email address)
+    ## TODO: VALIDATE STUFF (like email address)
     ##
 
     response = @client.request :create do
       soap.body = triggered_email_soap_body(email_address, interaction_id, data, options)
     end
 
-    response
+    # Scrub API response of unnecessary SOAP crap
+    if response.success?
+      array = response.to_array(:create_response, :results).first
+      array.delete(:"@xsi:type")
+      array
+    end
   end
 
   private

@@ -2,11 +2,18 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::SEND_WELCOME_EMAILS
+    ##
+    ## TODO: Consolidate all email queues for ET emails into one ET_EMAIL_QUEUE
+    ##
   end
 
   private
 
   def on_message(message)
+    ##
+    ## TODO: Set up an ExactTarget status checking job to store whether or not ET is up.
+    ##       Then modify this job to check the stored status before trying to send mail.
+    ##
     device_info = Marshal.restore(Base64::decode64(message.body))
 
     gamer = Gamer.find(device_info.delete(:gamer_id))
@@ -17,8 +24,12 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
     mailer = TransactionalMailer.new
     mailer.send("#{email_type}_email", gamer, device_info)
 
-    # device_info
-    # => {:os_version=>"2.3.6",zLjY=\n"))
+    ##
+    ## TODO: Check response from mailer call
+    ##
+
+    # device_info =
+    # {:os_version=>"2.3.6",zLjY=\n"))
     #  :gamer_id=>"1f3caa41-9805-4925-a4be-42c06fbd3187",
     #  :accept_language_str=>"en-US",
     #  :device_type=>"android",
@@ -29,7 +40,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
     #   {:user_country_code=>nil, :carrier_country_code=>nil, :primary_country=>nil}}
 
     # device_info
-    # => {:os_version=>"5.1.1",bnRyeTA6D29zX3ZlcnNpb24iCjUuMS4x\n"))
+    # = {:os_version=>"5.1.1",bnRyeTA6D29zX3ZlcnNpb24iCjUuMS4x\n"))
     #  :gamer_id=>"f49d6739-3389-446f-80c3-e98a3888e998",
     #  :accept_language_str=>"en-US,en;q=0.8",
     #  :device_type=>"ipad",

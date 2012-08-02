@@ -34,8 +34,8 @@ end
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
-AWS_ACCOUNT_ID = '266171351246'
-# AWS_ACCOUNT_ID = '331510376354'
+# AWS_ACCOUNT_ID = '266171351246'
+AWS_ACCOUNT_ID = '331510376354'
 
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
@@ -51,8 +51,8 @@ SPROCKETS_CONFIG = {
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 
-# RUN_MODE_PREFIX = 'dev_'
-RUN_MODE_PREFIX = ''
+RUN_MODE_PREFIX = 'dev_'
+# RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'

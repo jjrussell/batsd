@@ -23,6 +23,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     options = {
       :account_id     => ExactTargetApi::TAPJOY_CONSUMER_ACCOUNT_ID,
     }
+    Rails.logger.info "Primary Data: #{data.inspect}"
 
     # Gather optional data for the ET data extension
     if @offer_data.any?
@@ -31,7 +32,10 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
       data[:publisher_icon_url] = @offer_data.first.second[:external_publisher].get_icon_url
       data[:publisher_app_name] = @offer_data.first.second[:external_publisher].app_name
 
+      Rails.logger.info "OfferData: #{@offer_data.inspect}"
       offer_array = @offer_data.first.second["OfferArray"]
+      Rails.logger.info "OfferArray: #{offer_array.inspect}"
+
       if offer_array.first.present?
         data[:offer1_icon_url]  = offer_array.first["IconURL"]
         data[:offer1_name]      = offer_array.first["Name"]
@@ -66,13 +70,26 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
       end
     end
 
+    ##
+    ## TODO: Move mail triggering logic to ExactTargetMailer class
+    ##
+
+    ##
+    ## TODO: Add mail_safe style checks to keep dev emails from escaping into the wild
+    ##
+
     # Make ExactTarget do the rest of the work
     et = ExactTargetApi.new
-    status = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, data, options)
+    response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, data, options)
+    raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
+    response
   end
 
   private
 
+  ##
+  ## TODO: Refactor this to make more sense for ExactTarget integration
+  ##
   def setup_emails(gamer, device_info = {})
     @offer_data = {}
     device, @gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
