@@ -83,7 +83,7 @@ class AppStore
     end
   end
 
-private
+  private
 
   def self.fetch_app_by_id_for_apple(id, country)
     return nil if id.blank?
@@ -214,7 +214,7 @@ private
   def self.search_android_market(term)
     response = request(ANDROID_SEARCH_URL + CGI::escape(term))
     if response.status == 200
-      items = Hpricot(response.body)/"ul.search-results-list"/"li.search-results-item"
+      items = Hpricot(response.body)/"div.container-contents.apps"/"ul"/"li"
       return items.map do |item|
         icon_link   = (item/"div"/"div.thumbnail-wrapper"/"a")
         icon_url    = (icon_link/"img").attr('src')
@@ -224,13 +224,12 @@ private
         price       = (item/:div/:div/:div/'a.buy-button').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
         title       = (details/"a.title").inner_html
         publisher   = (details/'.goog-inline-block'/:a).inner_text
-        description = ""
         {
           :item_id      => item_id,
           :title        => title,
           :icon_url     => icon_url,
           :price        => "%.2f" % price,
-          :description  => description,
+          :description  => '',
           :publisher    => publisher,
         }
       end
