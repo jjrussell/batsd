@@ -175,6 +175,7 @@ class ClickController < ApplicationController
 
     wr_path = case params[:source]
               when 'tj_games'      then 'tjm_offer_click'
+              when 'tj_display'    then 'tj_display_offer_click'
               when 'featured'      then 'featured_offer_click'
               else                      'offer_click'
               end
@@ -296,10 +297,12 @@ class ClickController < ApplicationController
     click.mac_address            = params[:mac_address]
     click.offerwall_rank         = params[:offerwall_rank]
     click.device_type            = params[:device_type]
+    click.geoip_country          = geoip_data[:country]
 
     click.save
 
-    @offer.queue_click_tracking_requests # for third party tracking vendors
+    # for third party tracking vendors
+    @offer.queue_click_tracking_requests(params.slice(:udid, :publisher_app_id).merge(:ip_address => ip_address))
   end
 
   def handle_pay_per_click

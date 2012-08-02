@@ -3,6 +3,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_update_cloudwatch_rpm(/index)' => 'master_update_cloudwatch_rpm#index'
     match 'master_cache_optimized_offers(/index)' => 'master_cache_optimized_offers#index'
     match 'master_activate_editors_picks(/index)' => 'master_activate_editors_picks#index'
+    match 'master_alerts(/index)' => 'master_alerts#index'
     match 'master_android_app_ranks(/index)' => 'master_android_app_ranks#index'
     match 'master_android_market_format(/index)' => 'master_android_market_format#index'
     match 'master_archive_conversions(/index)' => 'master_archive_conversions#index'

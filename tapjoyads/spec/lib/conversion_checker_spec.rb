@@ -1,0 +1,101 @@
+require 'spec_helper'
+
+describe ConversionChecker do
+  before :each do
+    @reward_uuid = UUIDTools::UUID.random_create.to_s
+    @click = FactoryGirl.create(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install', :advertiser_amount => -50)
+  end
+
+  describe '#acceptable_risk?' do
+    it 'returns true if none of the blocking criteria are met' do
+      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+      checker.should be_acceptable_risk
+      checker.risk_message.should be_nil
+    end
+
+    it 'returns false for an invalid Playdom user ID' do
+      Currency.any_instance.stub(:callback_url).and_return(Currency::PLAYDOM_CALLBACK_URL)
+      @click.publisher_user_id = 'BADMOFO'
+      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+      checker.should_not be_acceptable_risk
+      checker.risk_message.should match(/Playdom/)
+    end
+
+    it 'returns false for a pubuser associated with too many udids' do
+      PublisherUser.any_instance.stub(:update!).and_return(false)
+      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+      checker.should_not be_acceptable_risk
+      checker.risk_message.should match(/Udid/)
+    end
+
+    it 'returns false for banned devices' do
+      device = Device.new(:key => @click.udid)
+      device.banned = true
+      device.save
+      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+      checker.should_not be_acceptable_risk
+      checker.risk_message.should match(/Banned/)
+    end
+
+    context 'with multiple devices associated with the pubuser' do
+      before :each do
+        @this_device = FactoryGirl.create(:device)
+        @other_device = FactoryGirl.create(:device)
+        Device.stub(:new).and_return(@this_device, @other_device)
+        pu = PublisherUser.for_click(@click)
+        pu.update!(@this_device.key)
+        pu.update!(@other_device.key)
+      end
+
+      it 'returns false if any of the pubuser\'s devices are banned' do
+        @other_device.banned = true
+        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+        checker.should_not be_acceptable_risk
+        checker.risk_message.should match(/Banned/)
+      end
+
+      context 'a single-complete offer' do
+        before :each do
+          offer = Offer.find_in_cache(@click.offer_id, true)
+          offer.multi_complete = false
+          Offer.stub(:find_in_cache).and_return(offer)
+        end
+
+        it 'returns false if the pubuser already installed on another device' do
+          @other_device.stub(:has_app?).and_return(true)
+          checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+          checker.should_not be_acceptable_risk
+          checker.risk_message.should match(/AlreadyRewarded/)
+        end
+      end
+    end
+
+    context 'when risk management is not enabled for partner' do
+      it 'returns true' do
+        Currency.any_instance.stub(:partner_enable_risk_management?).and_return(false)
+        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+        checker.should be_acceptable_risk
+      end
+    end
+
+    context 'when conversion risk score exceeds high threshold' do
+      it 'returns false' do
+        Currency.any_instance.stub(:partner_enable_risk_management?).and_return(true)
+        RiskScore.any_instance.stub(:too_risky?).and_return(true)
+        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+        checker.should_not be_acceptable_risk
+        checker.risk_message.should match(/risk is too high/)
+      end
+    end
+
+    context 'when rule evaluation returns BLOCK action' do
+      it 'returns false' do
+        Currency.any_instance.stub(:partner_enable_risk_management?).and_return(true)
+        ConversionChecker.any_instance.stub(:blocked_by_rule?).and_return(true)
+        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+        checker.should_not be_acceptable_risk
+        checker.risk_message.should match(/risk is too high/)
+      end
+    end
+  end
+end

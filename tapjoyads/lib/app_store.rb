@@ -49,7 +49,7 @@ class AppStore
       end
       list
     else
-      [] # not supported
+      nil # not supported
     end
   end
 

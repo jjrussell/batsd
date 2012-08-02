@@ -16,6 +16,7 @@
 #
 
 class ActionOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_trackable :device_types => lambda { |ctx| app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { |ctx| app.store_url }
 
@@ -31,6 +32,7 @@ class ActionOffer < ActiveRecord::Base
   validates_presence_of :instructions
   validates_presence_of :prerequisite_offer, :if => Proc.new { |action_offer| action_offer.prerequisite_offer_id? }
   validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0
+  validates_with OfferPrerequisitesValidator
 
   scope :visible, :conditions => { :hidden => false }
 
@@ -43,6 +45,8 @@ class ActionOffer < ActiveRecord::Base
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
 
   delegate :get_offer_device_types, :store_id, :store_url, :wifi_required?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
+
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def toggle_user_enabled
     primary_offer.toggle_user_enabled
@@ -63,6 +67,8 @@ class ActionOffer < ActiveRecord::Base
     offer.bid              = offer.min_bid
     offer.name_suffix      = 'action'
     offer.third_party_data = prerequisite_offer_id
+    offer.prerequisite_offer_id = prerequisite_offer_id
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.icon_id_override = app_id
     offer.save!
   end
@@ -80,6 +86,8 @@ class ActionOffer < ActiveRecord::Base
         offer.bid = offer.min_bid
       end
       offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.save! if offer.changed?
     end
   end

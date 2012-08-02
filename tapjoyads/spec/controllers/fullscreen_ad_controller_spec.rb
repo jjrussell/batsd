@@ -22,6 +22,59 @@ describe FullscreenAdController do
       }
     end
 
+    context 'without preview = true' do
+      it 'records a web request' do
+        now = Time.zone.now
+        Timecop.freeze(now)
+
+        wr = WebRequest.new
+        WebRequest.stub(:new).and_return(wr)
+
+        WebRequest.should_receive(:new).with(:time => Time.zone.now).once
+        wr.should_receive(:put_values).with(
+          'featured_offer_impression',
+          @params.with_indifferent_access.merge(:controller => 'fullscreen_ad', :action => 'index'),
+          @controller.send(:ip_address),
+          @controller.send(:geoip_data),
+          @request.headers['User-Agent']).once
+        wr.should_receive(:save).once
+
+        get(:index, @params)
+
+        wr.offer_id.should == @offer.id
+        wr.viewed_at.to_i.should == Time.zone.now.to_i
+
+        Timecop.return
+      end
+
+      it 'queues up tracking url calls' do
+        @offer.should_receive(:queue_impression_tracking_requests).with(
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
+
+        get(:index, @params)
+      end
+    end
+
+    context 'with preview = true' do
+      before :each do
+        @params.merge!(:preview => true)
+      end
+
+      it 'does not record a web request' do
+        WebRequest.should_not_receive(:new)
+
+        get(:index, @params)
+      end
+
+      it 'does not queue up tracking url calls' do
+        @offer.should_not_receive(:queue_impression_tracking_requests)
+
+        get(:index, @params)
+      end
+    end
+
     it 'renders generated ad template' do
       get(:index, @params)
 

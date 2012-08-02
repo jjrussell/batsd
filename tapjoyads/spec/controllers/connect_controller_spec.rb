@@ -44,12 +44,56 @@ describe ConnectController do
           response.body.should include('PackageNames')
         end
       end
+
+      context 'blacklisted udid' do
+        before :each do
+          @params = { :app_id     => 'test_app',
+                      :udid       => '358673013795895'}
+        end
+        it 'returns 403 forbidden' do
+          get(:index, @params)
+          response.response_code.should == 403
+        end
+      end
     end
 
     context 'without required parameters' do
       it "returns an error code" do
         get(:index)
         response.response_code.should == 400
+      end
+    end
+
+    context 'when device identifiers are provided' do
+      before :each do
+        @params = { :app_id      => 'test_app',
+                    :sha2_udid   => 'sha2_test_device' }
+      end
+
+      context 'when the lookup succeeds' do
+        before :each do
+          @device = FactoryGirl.create(:device)
+          identifier = FactoryGirl.create(:device_identifier, :udid => 'test_device')
+          DeviceIdentifier.stub(:new).and_return(identifier)
+        end
+
+        it 'returns success' do
+          Device.stub(:new).and_return(@device)
+          get(:index, @params)
+          response.body.should include('Success')
+        end
+      end
+
+      context 'when the lookup fails' do
+        before :each do
+          @device = FactoryGirl.create(:device)
+        end
+
+        it 'creates a temporary device' do
+          Device.should_receive(:new).with(:key => 'sha2_test_device', :is_temporary => true).and_return(@device)
+          get(:index, @params)
+          response.body.should include('Success')
+        end
       end
     end
   end

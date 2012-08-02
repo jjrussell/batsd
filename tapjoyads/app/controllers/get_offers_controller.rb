@@ -11,7 +11,11 @@ include GetOffersHelper
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0']) # Gun & Blood
+  OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0',  # Gun & Blood
+                                          '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
+                                          'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
+                                          'b7256806-0b7c-4711-9d0b-f58676f8d5eb',  # Skout
+                                          'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
   OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
                                           'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
                                           '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
@@ -78,16 +82,14 @@ include GetOffersHelper
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    if params[:redesign].present?
-      set_redesign_parameters
-      if params[:json] == '1'
-        unless @publisher_app.uses_non_html_responses
-          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-        end
-        render :json => @final.to_json, :callback => params[:callback] and return
-      else
-        render :template => 'get_offers/webpage_redesign' and return
+    set_redesign_parameters
+    if params[:json] == '1'
+      if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
+        @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
+      render :json => @final.to_json, :callback => params[:callback] and return
+    else
+      render :template => 'get_offers/webpage_redesign' and return
     end
   end
 
@@ -107,7 +109,7 @@ include GetOffersHelper
       @web_request.path = 'featured_offer_shown'
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
@@ -124,7 +126,7 @@ include GetOffersHelper
       @tap_points = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{@currency.id}").points
     end
 
-    unless @publisher_app.uses_non_html_responses
+    if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
@@ -163,9 +165,13 @@ include GetOffersHelper
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
       @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
+      @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
     else
       @currency = Currency.find_in_cache(params[:currency_id])
-      @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
+      if @currency.present?
+        @supports_rewarded = @currency.conversion_rate > 0
+        @currency = nil if @currency.app_id != params[:app_id]
+      end
     end
     @publisher_app = App.find_in_cache(params[:app_id])
     return unless verify_records([ @currency, @publisher_app ])
@@ -230,7 +236,11 @@ include GetOffersHelper
         web_request.offerwall_rank_score = offer.rank_score
         web_request.save
 
-        offer.queue_impression_tracking_requests # for third party tracking vendors
+        # for third party tracking vendors
+        offer.queue_impression_tracking_requests(
+          :ip_address       => ip_address,
+          :udid             => params[:udid],
+          :publisher_app_id => params[:app_id])
       end
     end
   end
@@ -280,10 +290,6 @@ include GetOffersHelper
     params[:library_version] == 'server'
   end
 
-  def queue_impression_tracking
-    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
-  end
-
   def generate_web_request
     if params[:source] == 'tj_games'
       wr_path = 'tjm_offers'
@@ -331,6 +337,7 @@ include GetOffersHelper
     @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
+    @obj[:rewarded]            = @supports_rewarded
 
     @final = @obj.merge(view);
   end

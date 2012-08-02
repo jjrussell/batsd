@@ -43,7 +43,7 @@
         $t.event.element.trigger('doubleTap');
         // empty event object
         $t.event = {};
-      } 
+      }
       else if(($t.event.x2 && Math.abs($t.event.x1 - $t.event.x2) > 30) || ($t.event.y2 && Math.abs($t.event.y1 - $t.event.y2) > 30)){
         // trigger swipe, pass swipe object back
         $t.event.element.trigger('swipe', {
@@ -122,7 +122,7 @@
         // x position
         x1: $t.supportsTouch ? e.touches[0].pageX : e.pageX,
         // y position
-        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY        
+        y1: $t.supportsTouch ? e.touches[0].pageY : e.pageY
       };
 
       // check if press event exists
@@ -151,7 +151,7 @@
           $t[event](e);
         }, false);
       });
-    }    
+    }
   };
 
   // extend jQuery.fn with touch methods

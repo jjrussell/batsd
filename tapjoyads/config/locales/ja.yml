@@ -348,7 +348,7 @@ ja:
       last_played: "最後に開いたアプリ: %{game}"
       link_account_header: "Tapjoyは、使用しているアプリの仮想通貨を獲得しながら、今最も人気のアプリに出会える、ワンストップショップです。 Tapjoyを十分に活用するには、デバイスを接続する必要があります。"
       link_account_messaging: 
-"Tapjoyは、今最も人気のアプリに出会えるあなた専用のアプリのマーケットプレイスです。\nここからはスマートフォンでTapjoyを引き続きお楽しみください。ご利用方法は下記の通りです：\n\niPhoneユーザーの方：　www.tapjoy.com より\nAndroidユーザーの方: Google Play> Tapjoy もしくは　www.tapjoy.com より\n\n* プロフィールを作成すると、Tapjoyからあなたにオススメを提供できるようになります。"      
+"Tapjoyは、今最も人気のアプリに出会えるあなた専用のアプリのマーケットプレイスです。ここからはスマートフォンでTapjoyを引き続きお楽しみください。プロフィールを作成すると、Tapjoyからあなたにオススメを提供できるようになります。TapjoyのサイトへはiPhoneはwww.tapjoy.comから、AndroidはGoogle Play> Tapjoy もしくは www.tapjoy.comからアクセスできます。"      
       link_account_messaging_android_href: "Androidアプリをダウンロードする"
       link_account_messaging_tjm_href: "www.tapjoy.com"
       link_my_facebook: "Facebookをリンク"
@@ -460,8 +460,8 @@ ja:
       title: "手順"
     offerwall:
       actions:
-        download: "このアプリをダウンロードして起動。"
-        steps: "ステップをすべて完了。"
+        download: "インストール後、起動"
+        steps: "アクションをすべて完了"
         video: "このビデオを見る。"
         TJM_link: "ここをタップして%{Tapjoy}で無料オファーをさらにゲット！"
       buy_currency: "%{amount} %{currency}を買う"
@@ -469,7 +469,7 @@ ja:
       buy_currency_html: "%{amount} %{currency}を買う"
       earn_currency: "%{amount} %{currency}を獲得"
       earn: "獲得"
-      earn_more: "もっとオファーが見たい？Tapjoyにアクセスして、ポイントを獲得しながらあなたの好みにマッチしたオススメアプリ情報をゲットしよう"
+      earn_more: "選んで楽しめるサービスがいろいろ！簡単にポイントを獲得！"
       deep_link_part_1: "ここをタップ"
       deep_link_part_2: "して、無料オファーをさらにゲット！"
       earn_currency_html: "%{amount} %{currency} を獲得"
@@ -477,7 +477,7 @@ ja:
       instructions: "次のいずれかのアクションを行うと、%{currency}を獲得できます。"
       instructions_non_rewarded: "Tapjoyで人気アプリを発見！"
       load_error: "もう一度お試しください。"
-      load_more: "もっとオファーを表示"
+      load_more: "もっと表示"
       loading: "読み込み中・・・"
       missing_currency: "%{currency}が受け取れない？"
       missing_credits: "ポイントが受け取れない場合"
@@ -492,7 +492,7 @@ ja:
       title: "%{currency}を獲得"
       wifi_required: "WiFi接続が必要"
       wifi_warning: "このアプリをダウンロードするにはWiFi接続が必要です。"
-      visit: "Tapjoyにアクセス"
+      visit: "マイメニュー"
     shared:
       about_link: "Tapjoyについて"
       ads_by: "Powered by"
