@@ -1208,4 +1208,101 @@ describe Offer do
       end
     end
   end
+
+  describe '#is_enabled?' do
+    context 'Not a deeplink offer' do
+      context 'the offer is enabled' do
+        it 'returns true' do
+          @offer.payment = 0
+          @offer.reward_value = 10
+          @offer.tapjoy_enabled = true
+          @offer.user_enabled = true
+          @offer.is_enabled?.should be_true
+        end
+      end
+      context 'the offer is disabled' do
+        it 'returns false' do
+          @offer.tapjoy_enabled = false
+          @offer.is_enabled?.should be_false
+        end
+      end
+    end
+    context 'A deeplink offer' do
+      before :each do
+        @offer.item_type = 'DeeplinkOffer'
+      end
+      context 'the deeplink offer is enabled' do
+        it 'returns true' do
+          @offer.payment = 0
+          @offer.reward_value = 10
+          @offer.tapjoy_enabled = true
+          @offer.user_enabled = true
+          @offer.is_enabled?.should be_true
+          @offer.is_enabled?.should be_true
+        end
+      end
+      context 'the deeplink offer is disabled' do
+        it 'returns false' do
+          @offer.tapjoy_enabled = false
+          @offer.is_enabled?.should be_false
+        end
+      end
+    end
+  end
+
+  describe '#is_deeplink?' do
+    context 'it is a deeplink offer' do
+      it 'returns true' do
+        @offer.item_type = 'DeeplinkOffer'
+        @offer.is_deeplink?.should be_true
+      end
+    end
+    context 'it is not a deeplink offer' do
+      it 'returns false' do
+        @offer.is_deeplink?.should be_false
+      end
+    end
+  end
+
+  describe '#get_disabled_reasons' do
+    before :each do
+        @offer.tapjoy_enabled = true
+        @offer.user_enabled = true
+        @offer.payment = 1
+        @offer.partner.balance = 10
+        @offer.reward_value = 10
+    end
+    context 'Not tapjoy enabled' do
+      it 'should return an array with \'Tapjoy Disabled\'' do
+        @offer.tapjoy_enabled = false
+        @offer.get_disabled_reasons.should == ['Tapjoy Disabled']
+      end
+    end
+    context 'Not user enabled' do
+      it 'should return an array with \'User Disabled\'' do
+        @offer.user_enabled = false
+        @offer.get_disabled_reasons.should == ['User Disabled']
+      end
+    end
+    context 'Payment is below the partner\'s balance' do
+      context 'deeplink offer' do
+        it 'should return a blank array' do
+          @offer.item_type = 'DeeplinkOffer'
+          @offer.get_disabled_reasons.should == []
+        end
+      end
+      context 'not a deeplink offer' do
+        it 'should return an array with \'Payment below balance\'' do
+          @offer.partner.balance = 0
+          @offer.get_disabled_reasons.should == ['Payment below balance']
+        end
+      end
+    end
+    context 'Has a reward value with no payment' do
+      it 'should return an array with \'Has a reward value with no Payment\'' do
+        @offer.payment = 0
+        @offer.get_disabled_reasons.should == ['Has a reward value with no Payment']
+      end
+    end
+  end
 end
