@@ -166,7 +166,7 @@
 - content_for :page_javascript do
   :plain
     edit_custom_url_scheme = function() {
-      url = prompt('Please enter a Custom URL Scheme', $.trim($('#custom_url_scheme').text()));
+      var url = prompt('Please enter a Custom URL Scheme', $.trim($('#custom_url_scheme').text()));
       if (url != null) {
         $('#custom_url_scheme').hide();
         $('#spinner').show();
