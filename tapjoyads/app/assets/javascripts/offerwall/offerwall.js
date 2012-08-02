@@ -36,19 +36,23 @@
         points: i18n.t("points")
       }
     },
+    cls: {
+      "6":"six",
+      "7":"seven",
+      "8":"eight",
+      "9":"nine"
+    },
     tpl: {
-      header: [
-        "<div class='app-icon'>"+
-          "<div class='overlay'></div>"+
-          "<img src='{currentIconURL}' />"+
-        "</div>"+
-        "<div class='app-desc'><h1>{currentAppName}</h1>{message}</div>",
-        "<div>{banner}</div>"
-      ],
+      banner: ['<div class="clearfix">'+
+                  '<div class="left"><div class="text mt8">{earn} {currency}</div></div>'+
+                  '<div class="right"><div class="text">{offers}&nbsp;</div><div class="logo mr5"><img src="{blank}" /></div></div>'+
+                '</div>',
+                '<div class="text">{offers}&nbsp;</div><div class="logo"><img src="{blank}" /></div>'
+              ],
       offersReward: [
         "<div class='reward clearfix'>"+
           "<span class='earn'>{earn}</span>"+
-          "<span class='big'>{payout}000000</span>"+
+          "<span class='big'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
@@ -80,14 +84,12 @@
     init: function(){
 
       $.data = data;
-      $.header = document.getElementById('header');
       $.banner = document.getElementById('branding');
       $.loader = document.getElementById('loading');
       $.loadMore = document.getElementById('more');
       $.offersContainer = document.getElementById('offers');
       $.visit = document.getElementById('visit');
 
-      $.header.innerHTML = $.format($.tpl.header[0], data);
       $.load(data.offers);
       $.configLayout();
       $.initEvents();
@@ -252,15 +254,20 @@
      */
     configLayout: function(){
 
-      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>';
+      var tpl = $.tpl.banner[$.data.currencyName.length < 6 ? 0 : 1];
+
+      $.banner.innerHTML = $.format(
+        tpl, {
+          blank: $.blank,
+          earn: $.labels.text.earn,
+          currency: $.data.currencyName,
+          offers: $.labels.text.offersby
+        }
+      );
 
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
-      !$.data.showCurrentApp ? $.header.className += ' hide-current-app' : '';
 
-      if(!$.data.showBanner){
-        $.header.style.display = 'none';
-      }
       if($.data.autoload && $.loadMore){
         try {
           $.loadMore.parentNode.style.display = 'none';
@@ -414,12 +421,15 @@
             offerTemplate;
 
         item.free = $.labels.text.free;
-        item.points = $.data.currencyName;
+        item.points = $.data.currencyName.length > 6 ? '' : $.data.currencyName;
         item.earn = $.labels.text.earn;
 
+        item.payout = item.payout + '00000';
+
+console.log(item.payout.length)
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
-        item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="' + ($.data.squircles ? 'overlay' : 'rounded') +'"></div><img class="cover" src="' + item.iconURL + '" />';
+        item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="rounded"></div><img class="cover" src="' + item.iconURL + '" />';
 
         if($.data.showCostBalloon){
           item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
@@ -434,6 +444,18 @@
 
         $.offersContainer.appendChild(li);
 
+        if(item.payout.length > 5 && item.payout.length < 9){
+          $.each($.find('.big', li), function(el){
+            console.log(el);
+            el.className += ' ' + $.cls[item.payout.length];
+          });
+        }else if(item.payout.length > 9){
+          $.each($.find('.big', li), function(el){
+            console.log(el);
+            el.className += ' large';
+          });
+        }
+
         if(item.wifi.length != 0){
           $.each($.find('.icon', li), function(el){
             el.className += ' mtn';
@@ -443,7 +465,6 @@
 
       $.truncate('.title', $.data.maxlength);
     },
-
     /**
      * Display error messaging on failed requests
      */

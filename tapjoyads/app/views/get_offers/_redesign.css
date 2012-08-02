@@ -16,8 +16,24 @@ body {
   padding: 10px;
 }
 
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
 .mtn {
   margin-top: 0 !important;
+}
+
+.mt8 {
+  margin-top: 8px;
+}
+
+.mr5 {
+  margin-right: 5px;
 }
 
 .nbb {
@@ -26,6 +42,20 @@ body {
 
 .center {
   text-align: center;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
 }
 
 .button {
@@ -406,6 +436,26 @@ ul#offers li .reward span.big {
   line-height: 115%;
   margin-top: 1px;
   text-shadow: 0 0 5px rgba(255,255,255, .4), 0 1px 1px rgba(0,0,0, .6);
+}
+
+ul#offers li .reward span.big.six {
+  font-size: 130%;
+  line-height: 150%;
+}
+
+ul#offers li .reward span.big.seven {
+  font-size: 110%;
+  line-height: 170%;
+}
+
+ul#offers li .reward span.big.eight {
+  font-size: 90%;
+  line-height: 190%;
+}
+
+ul#offers li .reward span.big.large {
+  font-size: 80%;
+  line-height: 160%;
 }
 
 ul#offers li .reward .free {
