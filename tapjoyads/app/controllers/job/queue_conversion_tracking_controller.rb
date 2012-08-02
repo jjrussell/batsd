@@ -114,7 +114,12 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     rescue Simpledb::ExpectedAttributeError => e
       return
     end
-    checker.process_conversion(reward)
+
+    begin
+      checker.process_conversion(reward)
+    rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message, request, params)
+    end
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward.key)
