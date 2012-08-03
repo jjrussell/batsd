@@ -54,8 +54,8 @@
               '<div class="rounded"></div><img class="cover" src="{icon}" />'],
       offersReward: [
         "<div class='reward gradientfix clearfix'>"+
-         "<span class='earn {hide_earn}'>{earn}</span>"+
-          "<span class='big {margin}'>{payout}</span>"+
+         "<span class='earn {hide_earn} {earn_margin}'>{earn}</span>"+
+          "<span class='big {payout_margin}'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
@@ -394,11 +394,13 @@
 
         if (len > 20) {
           item.hide_earn = 'hide';
-          item.margin = 'mt5';
+          item.payout_margin = 'mt5';
+          item.earn_margin = 'mt3';
         }
         else if (len > 10) {
           item.hide_earn = 'hide';
-          item.margin = 'mt10';
+          item.payout_margin = 'mt10';
+          item.earn_margin = 'mt3';
         }
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
