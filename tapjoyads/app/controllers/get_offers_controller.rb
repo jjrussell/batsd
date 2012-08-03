@@ -310,7 +310,7 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A1
+    view_id = params[:viewID] || :VIEW_A2
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []

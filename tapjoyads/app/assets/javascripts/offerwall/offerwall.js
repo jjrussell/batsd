@@ -40,7 +40,8 @@
       "6":"six",
       "7":"seven",
       "8":"eight",
-      "9":"nine"
+      "9":"nine",
+      "10":"ten"
     },
     tpl: {
       banner: ['<div class="clearfix">'+
@@ -53,7 +54,7 @@
               '<div class="rounded"></div><img class="cover" src="{icon}" />'],
       offersReward: [
         "<div class='reward gradientfix clearfix'>"+
-         // "<span class='earn'>{earn}</span>"+
+         "<span class='earn {hide_earn}'>{earn}</span>"+
           "<span class='big {margin}'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
@@ -384,14 +385,21 @@
             connector = item.redirectURL.match(/\?/) ? '&' : '?',
             offerType = !$.data.rewarded ? 'offersNonReward' : 'offersReward',
             len = $.data.currencyName.length,
-            offer;
+            offer,
+            size;
 
         item.free = $.labels.text.free;
-        item.points = len > 20 ? '' : $.data.currencyName;
-        item.payout = item.payout;
-        //item.earn = $.label.text.earn;
+        item.points = $.data.currencyName;
+        item.earn = $.labels.text.earn;
 
-        item.margin =  + len > 10 ? 'mt5' : 'mt10';
+        if (len > 20) {
+          item.hide_earn = 'hide';
+          item.margin = 'mt5';
+        }
+        else if (len > 10) {
+          item.hide_earn = 'hide';
+          item.margin = 'mt10';
+        }
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
@@ -404,11 +412,11 @@
 
         $.offersContainer.appendChild(li);
 
-        var size = item.payout.length || 0;
+        size = item.payout.length;
 
         if(size > 5){
           $.each($.find('.big', li), function(el){
-            el.className += ' ' + (size > 5 && size < 9 ? $.cls[size] : size > 9 ? 'large' : '');
+            el.className += ' ' + (size > 5 && size < 9 ? $.cls[size] : size > 9 ? 'large' : 'large');
           });
         }
 
@@ -456,6 +464,18 @@
 
     type: function(obj){
       return !obj || obj == null ? 'null' : toString.call(obj).split(' ').pop().replace(']', '').toLowerCase();
+    },
+
+    addCommas: function(nStr) {
+      nStr += '';
+      x = nStr.split('.');
+      x1 = x[0];
+      x2 = x.length > 1 ? '.' + x[1] : '';
+      var rgx = /(\d+)(\d{3})/;
+      while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      }
+      return x1 + x2;
     }
   };
 

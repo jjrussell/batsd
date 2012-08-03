@@ -56,6 +56,10 @@ body {
   filter: none !important;
 }
 
+.hide, .hidden {
+  display: none !important;
+}
+
 .clearfix {
   *zoom: 1;
 }
@@ -390,7 +394,7 @@ ul#offers li .reward span.points {
 }
 
 ul#offers li .reward span.earn {
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 ul#offers li .reward span.points {
@@ -401,7 +405,7 @@ ul#offers li .reward span.points {
 ul#offers li .reward span.big {
   font-size: 160%;
   font-weight: bold;
-  line-height: 130%;
+  line-height: 100%;
   margin-top: 1px;
   text-shadow: 0 0 5px rgba(255,255,255, .4), 0 1px 1px rgba(0,0,0, .6);
 }
@@ -417,7 +421,12 @@ ul#offers li .reward span.big.seven {
 }
 
 ul#offers li .reward span.big.eight {
-  font-size: 90%;
+  font-size: 105%;
+  line-height: 190%;
+}
+
+ul#offers li .reward span.big.nine {
+  font-size: 100%;
   line-height: 190%;
 }
 
