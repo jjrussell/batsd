@@ -59,8 +59,6 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   def build_data_for_tjm_welcome_email
     # Gather required data for the ET data extension
     offer_array = @offer_data.first.second["OfferArray"]
-    Rails.logger.info "OfferData: #{@offer_data.inspect}"
-    Rails.logger.info "OfferArray: #{offer_array.inspect}"
     @data = {
       :android_device           => @android_device ? 1 : 0,
       :confirmation_url         => @confirmation_url,
@@ -73,7 +71,6 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     @options = {
       :account_id     => ExactTargetApi::TAPJOY_CONSUMER_ACCOUNT_ID,
     }
-    Rails.logger.info "Primary Data: #{@data.inspect}"
 
     # Gather optional data for the ET data extension
     if @offer_data.any?

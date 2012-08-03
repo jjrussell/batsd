@@ -34,7 +34,6 @@ end
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
-# AWS_ACCOUNT_ID = '266171351246'
 AWS_ACCOUNT_ID = '331510376354'
 
 
@@ -52,7 +51,6 @@ SPROCKETS_CONFIG = {
 }
 
 RUN_MODE_PREFIX = 'dev_'
-# RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
@@ -108,3 +106,14 @@ FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 ENV['position_in_class']   = "before"
 ENV['exclude_tests']       = "true"
 ENV['exclude_fixtures']    = "true"
+
+Savon.configure do |config|
+  ##
+  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
+  ##
+  config.log = true
+  config.log_level = :warn
+  config.logger = Rails.logger
+  config.pretty_print_xml = true
+  config.raise_errors = true
+end
