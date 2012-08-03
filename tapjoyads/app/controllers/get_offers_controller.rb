@@ -115,8 +115,12 @@ include GetOffersHelper
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
+
     if params[:format] == 'html'
       @offer = @offer_list.find { |o| not o.nil? } if @offer_list.any?
+      params[:offer_id] = @offer.id
+      params[:impression_id] = UUIDTools::UUID.random_create.to_s
+      @encrypted_params = ObjectEncryptor.encrypt(params)
       render :layout => "iphone"
     elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
