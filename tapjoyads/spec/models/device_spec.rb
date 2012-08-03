@@ -54,11 +54,11 @@ describe Device do
 
   describe '#create_identifiers!' do
     before :each do
-      @device = Factory(:device)
+      @device = FactoryGirl.create(:device)
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
       @device.open_udid = 'test-open-udid'
-      @device_identifier = Factory(:device_identifier)
+      @device_identifier = FactoryGirl.create(:device_identifier)
     end
 
     it 'creates the device identifiers' do
@@ -68,9 +68,27 @@ describe Device do
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
+      @device.should_receive(:merge_temporary_devices!).once
       @device.create_identifiers!
     end
 
+    context 'with a temporary device' do
+      before :each do
+        @app_ids = {'1' => 50, '2' => 60}
+        @device = FactoryGirl.create(:device, :apps => @app_ids)
+        @device.send(:after_initialize)
+        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55, '3' => 30})
+      end
+
+      it 'copies the apps and deletes the temporary device' do
+        TemporaryDevice.stub(:find).with(Digest::SHA2.hexdigest(@device.key)).and_return(@temp_device)
+        TemporaryDevice.stub(:find).with(Digest::SHA1.hexdigest(@device.key)).and_return(nil)
+        @temp_device.should_receive(:delete_all).once
+        @device.should_receive(:save!).with(:create_identifiers => false)
+        @device.create_identifiers!
+        @device.apps.should == { '1' => 50, '2' => 55, '3' => 30 }
+      end
+    end
   end
 
   describe '#handle_sdkless_click!' do
@@ -268,6 +286,17 @@ describe Device do
     end
   end
 
+  context 'Display multipliers' do
+    before :each do
+      @device = Device.new
+    end
+
+    it 'updates display_multiplier' do
+      @device.set_display_multiplier('app_id', 'foo')
+      @device.display_multipliers['app_id'].should == 'foo'
+    end
+  end
+
   context 'Jailbreak detection' do
     before :each do
       @non_jb_device = FactoryGirl.create(:device)
@@ -376,11 +405,59 @@ describe Device do
     end
   end
 
+  describe '#save' do
+    context 'for a new device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid')
+      end
+
+      it 'creates the identifiers' do
+        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => @device.key}.to_json)
+        @device.save
+      end
+
+      it 'doesnt create the identifers if specified' do
+        Sqs.should_not_receive(:send_message)
+        @device.save(:create_identifiers => false)
+      end
+    end
+
+    context 'for a temporary device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid', :is_temporary => true)
+        @device.set_last_run_time('1')
+        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55})
+      end
+
+      it 'tries to save a temporary device' do
+        TemporaryDevice.should_receive(:new).with(:key => 'test_udid').and_return(@temp_device)
+        @temp_device.should_receive(:save)
+        Sqs.should_not_receive(:send_message)
+        @device.save
+        @temp_device.apps.should include('1')
+        @temp_device.apps.should include('2')
+      end
+    end
+  end
+
   describe '#after_initialize' do
     before :each do
       @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
       @correct_user_ids = {'1' => '{a}', '2' => 'b'}
       @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
+    end
+
+    context 'for a temporary device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid', :is_temporary => true)
+        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 50})
+      end
+
+      it 'should load apps from temporary devices' do
+        TemporaryDevice.should_receive(:new).with(:key => @device.key).and_return(@temp_device)
+        @device.send :after_initialize
+        @device.apps.should == {'2' => 50}
+      end
     end
 
     context 'with bad app JSON data' do

@@ -377,6 +377,17 @@ describe Currency do
         @currency.get_reward_amount(@offer).should == 50
       end
     end
+
+    context 'when given a low offer' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @offer.update_attributes({:payment => 1})
+      end
+
+      it 'rounds up to 1' do
+        @currency.get_reward_amount(@offer).should == 1
+      end
+    end
   end
 
   describe '#get_displayer_amount' do
@@ -441,12 +452,14 @@ describe Currency do
       end
 
       it 'copies values from its partner' do
-        @currency.save!
-        @currency.spend_share.should == 0.42
-        @currency.direct_pay_share.should == 0.8
-        @currency.disabled_partners.should == 'foo'
-        @currency.offer_whitelist.should == 'bar'
-        @currency.use_whitelist.should == true
+        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
+          @currency.save!
+          @currency.spend_share.should == 0.3822
+          @currency.direct_pay_share.should == 0.8
+          @currency.disabled_partners.should == 'foo'
+          @currency.offer_whitelist.should == 'bar'
+          @currency.use_whitelist.should == true
+        end
       end
     end
 
@@ -526,16 +539,55 @@ describe Currency do
       @currency.dashboard_app_currency_url.should ==  "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/apps/#{@currency.app_id}/currencies/#{@currency.id}"
     end
   end
-  
+
   describe '#cache_by_app_id' do
-    before :each do
-      @currency = FactoryGirl.create :currency
+    context 'tapjoy_enabled = true' do
+      before :each do
+        @currency = FactoryGirl.create(:currency)
+      end
+
+      it 'caches currencies before saving them' do
+        Currency.any_instance.should_receive(:run_callbacks).with(:cache)
+        Mc.should_receive(:distributed_put)
+        @currency.send(:cache_by_app_id)
+      end
     end
 
-    it 'caches currencies before saving them' do
-      Currency.any_instance.should_receive(:run_callbacks).with(:cache)
-      Mc.should_receive(:distributed_put)
-      @currency.send(:cache_by_app_id)
+    context 'tapjoy_enabled = false' do
+      before :each do
+        @currency = FactoryGirl.create(:currency)
+        @currency.tapjoy_enabled = false
+        @currency.save
+      end
+
+      it 'should have an empty array returned when tapjoy_enabled is false' do
+        Currency.any_instance.should_not_receive(:run_callbacks).with(:cache) #since blank array currencies
+        Mc.should_receive(:distributed_put).with("mysql.app_currencies.#{@currency.app_id}.#{Currency.acts_as_cacheable_version}", [], false, 1.day)
+        @currency.send(:cache_by_app_id)
+      end
+    end
+  end
+
+  describe '#charges?' do
+    context 'advertiser amount is not 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+      end
+
+      it 'returns true because there is a charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == true
+      end
+    end
+
+    context 'advertiser amount is 0' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @currency.stub(:partner_id).and_return(@offer.partner_id)
+      end
+
+      it 'returns false becauses there is no charge to the advertiser for an offer' do
+        @currency.charges?(@offer).should == false
+      end
     end
   end
 end

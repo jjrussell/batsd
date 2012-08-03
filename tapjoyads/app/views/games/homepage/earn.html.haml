@@ -24,7 +24,7 @@
                   - else
                     = t('text.games.unmark_as_favorite')
 
-    - if @app.currencies.size > 1
+    - if @app.rewardable_currencies.size > 1
       .section.dark.clearfix
         #viewSelect.select-container.left.ml5
           .dropdown.left
@@ -34,7 +34,7 @@
           .fix
       #viewSelectMenu.hide
         %ul
-          - @app.currencies.each_with_index do |c, i|
+          - @app.rewardable_currencies.each_with_index do |c, i|
             %li{ :class => "#{"active" if c == @active_currency}" }
               = link_to "#{t('text.games.browse_offers')} - #{c[:name]}", "#target#{i}", :class => "ui-joy-reveal"
     - else
@@ -45,7 +45,7 @@
 
     .container
       .review-area
-        - @app.currencies.each_with_index do |c, i|
+        - @app.rewardable_currencies.each_with_index do |c, i|
           .buffer{ :id => "target#{i}", :class => "#{"hidden" if c != @active_currency}" }
             - url = @external_publisher.get_offerwall_url(@device, c, request.accept_language, request.user_agent, current_gamer && current_gamer.id)
             = render :partial => "offers", :locals => { :offerwall_url => url, :immediate_load => c == @active_currency }

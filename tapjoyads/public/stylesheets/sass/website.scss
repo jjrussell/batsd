@@ -103,6 +103,10 @@ input[type=submit][disabled], input[type=button][disabled] {
   background: -moz-linear-gradient(top,  #fff,  #ccc);
 }
 
+input[type=text].error {
+  border-color: red !important;
+}
+
 #main {
   padding: 10px 15px;
   margin: 10px auto;
@@ -329,13 +333,24 @@ div.help-dialog .ui-dialog-title {
   padding: 2px 0px;
 }
 
+#active_campaigns_box tr:nth-child(odd) {
+  background: #f0f0f0;
+}
+
 #active_campaigns_box tr:hover {
   background-color: #ddd;
 }
 
+#active_campaigns_box tr:nth-child(odd):hover {
+  background-color: #ccc;
+}
+
+
 #active_campaigns_box td {
   padding: 3px;
   max-width: 450px;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 #active_campaigns_box td.offer-type {
   font-size: 10px;

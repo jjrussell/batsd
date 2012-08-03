@@ -62,9 +62,12 @@ NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
 NUM_DEVICES_DOMAINS = 2
 NUM_DEVICE_IDENTIFIER_DOMAINS = 2
+NUM_TEMPORARY_DEVICE_DOMAINS = 2
 NUM_GAME_STATE_DOMAINS = 2
 NUM_GAME_STATE_MAPPING_DOMAINS = 2
 NUM_PUBLISHER_USER_DOMAINS = 2
+NUM_CONVERSION_ATTEMPT_DOMAINS = 2
+NUM_RISK_PROFILE_DOMAINS = 2
 
 mail_chimp = YAML::load_file("#{Rails.root}/config/mail_chimp.yaml")['development']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']
@@ -97,6 +100,7 @@ Sass::Plugin.options[:style] = :nested
 
 TAPJOY_GAMES_INVITATION_OFFER_ID = '8a9e4550-6230-40f4-bd6b-6c376fd37ac3'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
+FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 
 ENV['position_in_class']   = "before"
 ENV['exclude_tests']       = "true"

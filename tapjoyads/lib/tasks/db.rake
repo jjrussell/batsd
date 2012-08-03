@@ -1,4 +1,18 @@
 namespace :db do
+
+  namespace :schema do
+    desc "Create a db/schema.rb file from a specific database"
+    task :dump_database => [:environment, :load_config] do
+      require 'active_record/schema_dumper'
+      filename = ENV['SCHEMA'] || "#{Rails.root}/db/schema.rb"
+      database = ENV['DATABASE'] || Rails.env
+      File.open(filename, "w:utf-8") do |file|
+        ActiveRecord::Base.establish_connection(database)
+        ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+      end
+    end
+  end
+
   desc "Copies the production database to the development database"
   task :sync do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?

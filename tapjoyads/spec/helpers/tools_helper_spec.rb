@@ -11,6 +11,7 @@ describe ToolsHelper do
       @click.stub(:key).and_return(FactoryGirl.generate(:guid))
       @click.stub(:block_reason?).and_return(false)
       @click.stub(:block_reason).and_return(nil)
+      @click.stub(:force_convert).and_return(nil)
     end
 
     it 'checks rewarded click' do

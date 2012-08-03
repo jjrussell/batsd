@@ -5,17 +5,24 @@ describe GetOffersController do
 
   describe '#index' do
     before :each do
+      Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
+      @currency.update_attributes({:external_publisher => true})
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       @offer2 = FactoryGirl.create(:app).primary_offer
       @offer2.countries = ["GB"].to_json
+      @offer2.partner.balance = 10
       @offer2.save
       @offer3 = FactoryGirl.create(:app).primary_offer
       @offer3.countries = ["US"].to_json
+      @offer3.partner.balance = 10
       @offer3.save
       @offer4 = FactoryGirl.create(:app).primary_offer
       @offer4.countries = ["CN"].to_json
+      @offer4.partner.balance = 10
       @offer4.save
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
@@ -31,8 +38,22 @@ describe GetOffersController do
 
     end
 
+    after :each do
+      Timecop.return
+    end
+
     it 'should queue up tracking url calls' do
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
+
+      get(:index, @params)
+    end
+
+    it 'should mark the pub app as using non-html responses' do
+      message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+      Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
 
       get(:index, @params)
     end
@@ -42,32 +63,32 @@ describe GetOffersController do
     #   before :each do
     #     @partner = FactoryGirl.create(:partner)
     #     @app = FactoryGirl.create(:app, :partner => @partner)
-    # 
+    #
     #     @offer1 = FactoryGirl.create(:app, :partner => @partner).primary_offer
     #     @offer2 = FactoryGirl.create(:app, :partner => @partner).primary_offer
     #     @offer3 = FactoryGirl.create(:app, :partner => @partner).primary_offer
     #     @offer4 = FactoryGirl.create(:app, :partner => @partner).primary_offer
     #     @offer5 = FactoryGirl.create(:app, :partner => @partner).primary_offer
-    # 
+    #
     #     App.stub(:find_in_cache).and_return(@app)
     #     Currency.stub(:find_in_cache).and_return(@currency)
     #   end
-    # 
+    #
     #   it "favors the promoted inventory" do
     #     @currency.stub(:partner_get_promoted_offers).and_return([@offer2.id])
     #     @currency.stub(:get_promoted_offers).and_return([@offer3.id])
     #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
-    # 
+    #
     #     get(:index, @params)
     #     offer_list = assigns(:offer_list)
     #     assert( offer_list == [ @offer2, @offer3, @offer1, @offer4, @offer5 ] || offer_list == [ @offer3, @offer2, @offer1, @offer4, @offer5 ] )
     #   end
-    # 
+    #
     #   it "restricts the number of slots used for promotion" do
     #     @offer3.stub(:rank_score).and_return(1004)
     #     @currency.stub(:get_promoted_offers).and_return([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
     #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
-    # 
+    #
     #     get(:index, @params)
     #     assigns(:offer_list)[3].rank_score.should == 1004
     #   end
@@ -110,9 +131,10 @@ describe GetOffersController do
 
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
-      json_offer['Amount'     ].should == '5'
+      json_offer['isFree'     ].should == true
+      json_offer['Amount'     ].should == '4'
       json_offer['Name'       ].should == @offer.name
-      json_offer['Payout'     ].should == 5
+      json_offer['Payout'     ].should == 4
       json_offer['Type'       ].should == 'App'
       json_offer['StoreID'    ].should == @offer.store_id_for_feed
       json_offer['IconURL'    ].should be_present
@@ -151,11 +173,35 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
+    end
+
+    context 'with redesign specified' do
+      before :each do
+        @params.merge!(:redesign => 'true')
+      end
+
+      context 'with json=1' do
+        before :each do
+          @params.merge!(:json => '1')
+        end
+
+        it 'should mark the pub app as using non-html responses' do
+          message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+          Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+
+          get(:index, @params)
+        end
+      end
     end
 
     it 'should queue up tracking url calls' do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
 
       get(:webpage, @params)
     end
@@ -183,6 +229,8 @@ describe GetOffersController do
       @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       controller.stub(:ip_address).and_return('208.90.212.38')
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @params = {
@@ -191,6 +239,13 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+    end
+
+    it 'should mark the pub app as using non-html responses' do
+      message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+      Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+
+      get(:index, @params)
     end
 
     context 'with a featured offer' do
@@ -289,6 +344,7 @@ describe GetOffersController do
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       controller.stub(:ip_address).and_return('208.90.212.38')
       fake_cache_object = double('fake_cache_object')
       fake_cache_object.stub(:value).and_return([@offer])
