@@ -4,7 +4,6 @@ class DisplayAdController < ApplicationController
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
-    @encrypted_params = ObjectEncryptor.encrypt_url(request.fullpath).split('?')[1]
     if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
@@ -54,6 +53,7 @@ class DisplayAdController < ApplicationController
     params[:currency_id] ||= params[:app_id]
     return unless verify_params([ :app_id, :udid, :currency_id ])
 
+
     now = Time.zone.now
 
     # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
@@ -76,6 +76,7 @@ class DisplayAdController < ApplicationController
     params[:source] = 'display_ad'
     params[:format] = 'xml' unless params[:format] == 'html'
 
+    params[:impression_id] = UUIDTools::UUID.random_create.to_s
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
 
@@ -139,6 +140,8 @@ class DisplayAdController < ApplicationController
     end
 
     web_request.save
+    params[:offer_id] = offer.id
+    @encrypted_params = ObjectEncryptor.encrypt(params)
   end
 
   def get_ad_image(publisher, offer, width, height, currency, display_multiplier)

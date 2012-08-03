@@ -1,3 +1,3 @@
 = link_to(@click_url, :class => 'image-link') do
   %img{ :src => "data:image/png;base64, #{@image}" }
-  %iframe{ :src => "/impression?#{@encrypted_params}", 'style' => 'display:none', 'width'=> 1, 'height' => 1, "frameborder" => 0}
+  %iframe{ :src => "/impression?data=#{@encrypted_params}", 'style' => 'display:none', 'width'=> 1, 'height' => 1, "frameborder" => 0}
