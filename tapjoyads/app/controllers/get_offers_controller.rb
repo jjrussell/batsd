@@ -88,7 +88,7 @@ include GetOffersHelper
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
       render :json => @final.to_json, :callback => params[:callback] and return
-    elsif params[:device_type] == 'windows'
+    elsif params[:device_type] == 'WinCE'
       render :template => 'get_offers/webpage' and return
     else
       render :template => 'get_offers/webpage_redesign' and return
