@@ -62,7 +62,7 @@
       ],
       offersNonReward: [
         "<div class='reward gradientfix'>"+
-          "<span class='big'>"+ i18n.t("tap_here") +"</span>"+
+          "<span class='big mt10'>"+ i18n.t("tap_here") +"</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
       ],
