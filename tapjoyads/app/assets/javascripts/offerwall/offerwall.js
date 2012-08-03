@@ -53,7 +53,8 @@
               '<div class="rounded"></div><img class="cover" src="{icon}" />'],
       offersReward: [
         "<div class='reward gradientfix clearfix'>"+
-          "<span class='big mt5'>{payout}</span>"+
+         // "<span class='earn'>{earn}</span>"+
+          "<span class='big {margin}'>{payout}</span>"+
           "<span class='points'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
@@ -382,13 +383,15 @@
             type = item.type.toLowerCase(),
             connector = item.redirectURL.match(/\?/) ? '&' : '?',
             offerType = !$.data.rewarded ? 'offersNonReward' : 'offersReward',
+            len = $.data.currencyName.length,
             offer;
 
-        $.data.currencyName = 'Respect Points';
-
         item.free = $.labels.text.free;
-        item.points = $.data.currencyName.length > 20 ? '' : $.data.currencyName;
+        item.points = len > 20 ? '' : $.data.currencyName;
         item.payout = item.payout;
+        //item.earn = $.label.text.earn;
+
+        item.margin =  + len > 10 ? 'mt5' : 'mt10';
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
@@ -419,8 +422,15 @@
       $.truncate('.title', $.data.maxlength);
     },
 
-    on: function(el, evt, fn){
-      return !msie && el ? el.addEventListener(evt, fn, false) : el.attachEvent('on' + evt, fn);
+    on: function(el, event, fn){
+      var evt;
+
+      if(!msie){
+        evt = el.addEventListener(event, fn, false);
+      }else{
+        evt = el.attachEvent("on" + event, fn);
+      }
+      return evt;
     },
 
     ready: function(fn){
