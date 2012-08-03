@@ -72,6 +72,7 @@ module Offer::ShowRateAlgorithms
 
     old_show_rate = self.show_rate
 
+    now = Time.zone.now
     possible_clicks_per_second = @recent_clicks / @cvr_timeframe / old_show_rate
 
     # Assume a higher click/second rate than reality. This helps ensure that budgets come in slightly
