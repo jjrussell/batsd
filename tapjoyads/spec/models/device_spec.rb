@@ -68,6 +68,7 @@ describe Device do
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
+
       @device.should_receive(:merge_temporary_devices!).once
       @device.create_identifiers!
     end
@@ -77,7 +78,9 @@ describe Device do
         @app_ids = {'1' => 50, '2' => 60}
         @device = FactoryGirl.create(:device, :apps => @app_ids)
         @device.send(:after_initialize)
-        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55, '3' => 30})
+        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55, '3' => 30},
+                                          :publisher_user_ids => {'2' => 'TEST_PUB_ID'},
+                                          :display_multipliers => {'2' => 3})
       end
 
       it 'copies the apps and deletes the temporary device' do
@@ -87,6 +90,8 @@ describe Device do
         @device.should_receive(:save!).with(:create_identifiers => false)
         @device.create_identifiers!
         @device.apps.should == { '1' => 50, '2' => 55, '3' => 30 }
+        @device.publisher_user_ids.should == { '2' => 'TEST_PUB_ID' }
+        @device.display_multipliers.should == { '2' => 3 }
       end
     end
   end
@@ -426,7 +431,15 @@ describe Device do
       before :each do
         @device = Device.new(:key => 'test_udid', :is_temporary => true)
         @device.set_last_run_time('1')
-        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55})
+        @device.set_last_run_time('3')
+        @time = @device.parsed_apps['3']
+        @device.set_publisher_user_id('1', 'TEST_PUB_USER_ID')
+        @device.set_publisher_user_id('3', 'TEST_PUB_USER_ID_NEW')
+        @device.set_display_multiplier('1', 2)
+        @temp_device = FactoryGirl.create(:temporary_device,
+                                          :apps => {'2' => 55, '3' => 60},
+                                          :publisher_user_ids => {'2' => 'PUB_USER_ID', '3' => 'TEST_PUB_OLD'},
+                                          :display_multipliers => {'2' => '1'})
       end
 
       it 'tries to save a temporary device' do
@@ -436,6 +449,16 @@ describe Device do
         @device.save
         @temp_device.apps.should include('1')
         @temp_device.apps.should include('2')
+        @temp_device.apps.should include('3')
+        @temp_device.apps['3'].should == @time
+
+        @temp_device.publisher_user_ids.should include('1')
+        @temp_device.publisher_user_ids.should include('2')
+        @temp_device.publisher_user_ids.should include('3')
+        @temp_device.publisher_user_ids['3'].should == 'TEST_PUB_USER_ID_NEW'
+
+        @temp_device.display_multipliers.should include('1')
+        @temp_device.display_multipliers.should include('2')
       end
     end
   end
@@ -450,13 +473,18 @@ describe Device do
     context 'for a temporary device' do
       before :each do
         @device = Device.new(:key => 'test_udid', :is_temporary => true)
-        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 50})
+        @temp_device = FactoryGirl.create(:temporary_device,
+                       :apps => {'2' => 50},
+                       :publisher_user_ids => {'2' => 'PUB_ID_TEST'},
+                       :display_multipliers => {'2' => 3})
       end
 
       it 'should load apps from temporary devices' do
         TemporaryDevice.should_receive(:new).with(:key => @device.key).and_return(@temp_device)
         @device.send :after_initialize
         @device.apps.should == {'2' => 50}
+        @device.publisher_user_ids.should == {'2' => 'PUB_ID_TEST'}
+        @device.display_multipliers.should == {'2' => 3}
       end
     end
 
