@@ -33,6 +33,15 @@ class ConnectController < ApplicationController
 
     web_request.save
 
+    # Easy access to the params for last run times of apps on admin devices
+    if AdminDevice.where(:udid => params[:udid]).any?
+      AdminDeviceLastRun.set(
+        :udid => params[:udid],
+        :app_id => params[:app_id],
+        :web_request => web_request
+      )
+    end
+
     if sdkless_supported?
       @sdkless_clicks = device.sdkless_clicks
     end

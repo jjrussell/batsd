@@ -55,6 +55,20 @@ describe ConnectController do
           response.response_code.should == 403
         end
       end
+
+      context 'by an admin device' do
+        # We are just checking AdminDevice.where(whatever).any? so [:a_value] is good enough
+        before(:each) { AdminDevice.stub(:where).and_return([:a_value]) }
+
+        it 'updates the AdminDeviceLastRun for this udid and app_id' do
+          get(:index, @params.merge(:connection_type => 'awesome'))
+          response.body.should include('Success')
+
+          last_run = AdminDeviceLastRun.for(@params)
+          last_run.ip_address.should == '0.0.0.0'
+          last_run.connection_type.should == 'awesome'
+        end
+      end
     end
 
     context 'without required parameters' do
