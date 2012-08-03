@@ -7,6 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
+  include Offer::ShowRateAlgorithms
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
@@ -356,7 +357,7 @@ class Offer < ActiveRecord::Base
   end
 
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+    is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
   def can_be_promoted?
@@ -726,6 +727,10 @@ class Offer < ActiveRecord::Base
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
+  def is_deeplink?
+    item_type == 'DeeplinkOffer'
+  end
+
   # We want a consistent "app id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
   # the values unique between partners so that no 'collusion' can
@@ -786,7 +791,7 @@ class Offer < ActiveRecord::Base
     reasons = []
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
-    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment
+    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink?
     reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value.to_i > 0
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
@@ -873,7 +878,7 @@ class Offer < ActiveRecord::Base
   end
 
   def update_enabled_deeplink_offer_id
-    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+    if is_deeplink? && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
       item.currency.save! if item.currency.changed?
     end

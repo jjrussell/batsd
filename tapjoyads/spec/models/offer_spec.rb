@@ -1242,4 +1242,148 @@ describe Offer do
       @offer.find_tracking_offer_for(video_button).source_offer_id = @offer.id
     end
   end
+
+  describe '#is_enabled?' do
+    context 'Not a deeplink offer' do
+      context 'the offer is enabled' do
+        it 'returns true' do
+          @offer.payment = 0
+          @offer.reward_value = 10
+          @offer.tapjoy_enabled = true
+          @offer.user_enabled = true
+          @offer.is_enabled?.should be_true
+        end
+      end
+      context 'the offer is disabled' do
+        it 'returns false' do
+          @offer.tapjoy_enabled = false
+          @offer.is_enabled?.should be_false
+        end
+      end
+    end
+    context 'A deeplink offer' do
+      before :each do
+        @offer.item_type = 'DeeplinkOffer'
+      end
+      context 'the deeplink offer is enabled' do
+        it 'returns true' do
+          @offer.payment = 0
+          @offer.reward_value = 10
+          @offer.tapjoy_enabled = true
+          @offer.user_enabled = true
+          @offer.is_enabled?.should be_true
+          @offer.is_enabled?.should be_true
+        end
+      end
+      context 'the deeplink offer is disabled' do
+        it 'returns false' do
+          @offer.tapjoy_enabled = false
+          @offer.is_enabled?.should be_false
+        end
+      end
+    end
+  end
+
+  describe '#is_deeplink?' do
+    context 'it is a deeplink offer' do
+      it 'returns true' do
+        @offer.item_type = 'DeeplinkOffer'
+        @offer.is_deeplink?.should be_true
+      end
+    end
+    context 'it is not a deeplink offer' do
+      it 'returns false' do
+        @offer.is_deeplink?.should be_false
+      end
+    end
+  end
+
+  describe '#get_disabled_reasons' do
+    before :each do
+        @offer.tapjoy_enabled = true
+        @offer.user_enabled = true
+        @offer.payment = 1
+        @offer.partner.balance = 10
+        @offer.reward_value = 10
+    end
+    context 'Not tapjoy enabled' do
+      it 'should return an array with \'Tapjoy Disabled\'' do
+        @offer.tapjoy_enabled = false
+        @offer.get_disabled_reasons.should == ['Tapjoy Disabled']
+      end
+    end
+    context 'Not user enabled' do
+      it 'should return an array with \'User Disabled\'' do
+        @offer.user_enabled = false
+        @offer.get_disabled_reasons.should == ['User Disabled']
+      end
+    end
+    context 'Payment is below the partner\'s balance' do
+      context 'deeplink offer' do
+        it 'should return a blank array' do
+          @offer.item_type = 'DeeplinkOffer'
+          @offer.get_disabled_reasons.should == []
+        end
+      end
+      context 'not a deeplink offer' do
+        it 'should return an array with \'Payment below balance\'' do
+          @offer.partner.balance = 0
+          @offer.get_disabled_reasons.should == ['Payment below balance']
+        end
+      end
+    end
+    context 'Has a reward value with no payment' do
+      it 'should return an array with \'Has a reward value with no Payment\'' do
+        @offer.payment = 0
+        @offer.get_disabled_reasons.should == ['Has a reward value with no Payment']
+      end
+    end
+  end
+
+  context "show_rate_algorithms" do
+    describe "#calculate_conversion_rate!" do
+      it "should calculate the conversion rate and set the attr_accessor variables", :show_rate do
+        @offer.recent_clicks.should be_nil
+        @offer.recent_installs.should be_nil
+        @offer.calculated_conversion_rate.should be_nil
+        @offer.cvr_timeframe.should be_nil
+
+        @offer.calculate_conversion_rate!
+
+        @offer.recent_clicks.should_not be_nil
+        @offer.recent_installs.should_not be_nil
+        @offer.calculated_conversion_rate.should_not be_nil
+        @offer.cvr_timeframe.should_not be_nil
+      end
+
+      it "should calculate the min conversion rate and set the attr_accessor variable", :show_rate do
+        @offer.calculate_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should be_nil
+        @offer.calculate_min_conversion_rate!
+
+        @offer.calculated_min_conversion_rate.should_not be_nil
+      end
+
+      it "should raise error for has_low_conversion_rate? if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.has_low_conversion_rate?}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for has_low_conversion_rate? if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.has_low_conversion_rate?}.not_to raise_error
+      end
+
+      it "should raise error for calculate_original_show_rate if calculate_conversion_rate! has not been called", :show_rate do
+        expect {@offer.calculate_original_show_rate}.to raise_error("Required attributes are not calculated yet")
+      end
+
+      it "should not raise error for calculate_show_rate if calculate_conversion_rate! and calculate_min_conversion_rate! has been called", :show_rate do
+        @offer.calculate_conversion_rate!
+        @offer.calculate_min_conversion_rate!
+        expect {@offer.recalculate_show_rate}.to_not raise_error
+      end
+    end
+  end
 end
