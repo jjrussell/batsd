@@ -4,20 +4,24 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
 
   def welcome_email(gamer, device_info = {})
     setup_emails(gamer, device_info)
-    detailed_email = true
+    detailed_email = @facebook_signup ? true : rand(2) == 1
     @linked &&= detailed_email
-    device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
-    device_info[:token] = gamer.confirmation_token
-    @confirmation_url = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
+    device_info[:content] = detailed_email ? 'detailed' : 'confirm_only'
+    device_info[:id] = gamer.confirmation_token
+    EmailConfirmData.create!(device_info)
+    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     # Gather required data for the ET data extension
+    offer_array = @offer_data.first.second["OfferArray"]
+    Rails.logger.info "OfferData: #{@offer_data.inspect}"
+    Rails.logger.info "OfferArray: #{offer_array.inspect}"
     data = {
       :android_device           => @android_device ? 1 : 0,
       :confirmation_url         => @confirmation_url,
       :linked                   => @linked ? 1 : 0,
       :facebook_signup          => @facebook_signup ? 1 : 0,
       :show_detailed_email      => detailed_email ? 1 : 0,
-      :show_offer_data          => @offer_data.any? ? 1 : 0,
+      :show_offer_data          => offer_array.any? ? 1 : 0,
       :show_recommendations     => @recommendations.any? ? 1 : 0,
     }
     options = {
@@ -31,10 +35,6 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
       data[:currency_name]      = @offer_data.first.second["CurrencyName"]
       data[:publisher_icon_url] = @offer_data.first.second[:external_publisher].get_icon_url
       data[:publisher_app_name] = @offer_data.first.second[:external_publisher].app_name
-
-      Rails.logger.info "OfferData: #{@offer_data.inspect}"
-      offer_array = @offer_data.first.second["OfferArray"]
-      Rails.logger.info "OfferArray: #{offer_array.inspect}"
 
       if offer_array.first.present?
         data[:offer1_icon_url]  = offer_array.first["IconURL"]

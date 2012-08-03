@@ -29,7 +29,7 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
     ##
 
     # device_info =
-    # {:os_version=>"2.3.6",zLjY=\n"))
+    # {:os_version=>"2.3.6",
     #  :gamer_id=>"1f3caa41-9805-4925-a4be-42c06fbd3187",
     #  :accept_language_str=>"en-US",
     #  :device_type=>"android",
@@ -39,8 +39,8 @@ class Job::QueueSendWelcomeEmailsController < Job::SqsReaderController
     #  :geoip_data=>
     #   {:user_country_code=>nil, :carrier_country_code=>nil, :primary_country=>nil}}
 
-    # device_info
-    # = {:os_version=>"5.1.1",bnRyeTA6D29zX3ZlcnNpb24iCjUuMS4x\n"))
+    # device_info =
+    # {:os_version=>"5.1.1",
     #  :gamer_id=>"f49d6739-3389-446f-80c3-e98a3888e998",
     #  :accept_language_str=>"en-US,en;q=0.8",
     #  :device_type=>"ipad",
