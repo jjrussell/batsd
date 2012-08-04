@@ -1,5 +1,6 @@
 if Rails.env.production?
-  $redis = Redis.new(:host => 'redis.tapjoy.net', :port => 6379)
+  $redis = Redis.new(:host => 'redis.tapjoy.net')
+  $redis_read = Redis.new(:host => 'alpha.redis.tapjoy.net')
 else
-  $redis = Redis.new
+  $redis_read = $redis = Redis.new
 end
