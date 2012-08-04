@@ -736,11 +736,11 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
-    t.string   "app_metadata_id",                   :limit => 36
-    t.string   "source_offer_id",                   :limit => 36
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
+    t.string   "app_metadata_id",                   :limit => 36
+    t.string   "source_offer_id",                   :limit => 36
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -749,8 +749,8 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
-  add_index "offers", ["source_offer_id"], :name => "index_offers_on_source_offer_id"
   add_index "offers", ["prerequisite_offer_id"], :name => "index_offers_on_prerequisite_offer_id"
+  add_index "offers", ["source_offer_id"], :name => "index_offers_on_source_offer_id"
   add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
@@ -1132,9 +1132,9 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "app_targeting",                                  :default => false, :null => false
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
+    t.boolean  "app_targeting",                                  :default => false, :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
