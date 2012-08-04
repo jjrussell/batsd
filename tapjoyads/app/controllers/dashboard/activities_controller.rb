@@ -29,7 +29,7 @@ class Dashboard::ActivitiesController < Dashboard::DashboardController
     where_clause += " and object_type = '#{params[:object_type].capitalize}'" unless params[:object_type].blank?
     where_clause += " and `updated-at` >= '#{start_time}'" if start_time
     where_clause += " and `updated-at` <= '#{end_time}'" if end_time
-    where_clause += " and after_state like '%#{params[:field].downcase}%'" if params[:field].present?
+    where_clause += " and after_state like '%\"#{params[:field].downcase}\":%' and after_state not like '%#{params[:field].downcase}\":null%' and after_state not like '%#{params[:field].downcase}\":\"\"%'" if params[:field].present?
 
     response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => params[:next_token])
     @activities = response[:items]
