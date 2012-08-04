@@ -155,7 +155,7 @@ class Currency < ActiveRecord::Base
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = get_publisher_amount(offer)
+      reward_value = offer.payment * get_spend_share(offer)
     end
     reward_value  * conversion_rate / 100.0
   end

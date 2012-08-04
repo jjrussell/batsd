@@ -265,6 +265,12 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_true
   end
 
+  it "doesn't reject 0.01 offers when the conversion rate is high enough" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 150})
+    @offer.update_attributes(:bid => 1)
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
+
   it "doesn't reject rewarded offers that are close to 1" do
     currency = FactoryGirl.create(:currency, {:conversion_rate => 18})
     @offer.send(:miniscule_reward_reject?, currency).should be_false
