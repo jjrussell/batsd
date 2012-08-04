@@ -1,7 +1,6 @@
-- lb_name = @lb_name
-- @lb_instances[lb_name].each do |lb_instance|
+- @lb_instances[@lb_name].each do |lb_instance|
   - ec2_instance = @ec2_instances[lb_instance[:instance_id]] || {}
-  - instance_output = capture_haml do
+  - instance_output = capture do
     %div{:class => "#{@kiosk ? 'span2' : 'span3'}", :id => "#{lb_instance[:instance_id]}_details"}
       %span.label.right= ec2_instance[:aws_state]
       .well.well-small{:class => "#{lb_instance[:state] == 'OutOfService' ? "alert alert-error" : "alert"}"}
@@ -11,7 +10,7 @@
           %p= lb_instance[:description]
         - unless @kiosk
           %div
-            = link_to 'deregister', elb_deregister_instance_ops_path(:instance_id => lb_instance[:instance_id], :lb_name => lb_name), :class => 'get'
+            = link_to 'deregister', elb_deregister_instance_ops_path(:instance_id => lb_instance[:instance_id], :lb_name => @lb_name), :class => 'get'
             = link_to 'reboot', ec2_reboot_instance_ops_path(:instance_id => lb_instance[:instance_id]), :class => 'get'
             = link_to 'replace', as_terminate_instance_ops_path(:instance_id => lb_instance[:instance_id], :as_group => @as_group[:auto_scaling_group_name]), :class => 'get'
             = link_to 'remove', as_terminate_instance_ops_path(:instance_id => lb_instance[:instance_id], :as_group => @as_group[:auto_scaling_group_name], :decrement_capacity => true), :class => 'get'
