@@ -38,6 +38,11 @@ describe SupportRequest do
         @support_request.offer_id.should == @offer.id
       end
 
+      it "stores whether currency is managed or not", :managed_currency_from_params do
+        @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+        @support_request.managed_currency.should == @currency.tapjoy_managed?
+      end
+
       it "stores the offer's payment" do
         @support_request.fill_from_params(@params, @app, @currency, @offer, @user_agent)
         @support_request.offer_value.should == @offer.payment
@@ -188,6 +193,12 @@ describe SupportRequest do
         @support_request.click_id.should == @click.id
       end
 
+      it "stores whether currency is managed or not", :managed_currency_from_click do
+        @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+        currency = Currency.find_in_cache(@click.currency_id)
+        @support_request.managed_currency.should == currency.try(:tapjoy_managed?)
+      end
+
       it "stores the click model's advertiser_amount" do
         @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
         @support_request.offer_value.should == @click.advertiser_amount
@@ -234,6 +245,12 @@ describe SupportRequest do
         @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
         @support_request.click_id.should be_blank
       end
+
+      it "stores whether currency is managed or not", :managed_currency_from_missing_click do
+        @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
+        currency = Currency.find_in_cache(@params[:currency_id])
+        @support_request.managed_currency.should == currency.try(:tapjoy_managed?)
+      end
     end
 
     it "stores the description message from the params array" do
@@ -270,6 +287,7 @@ describe SupportRequest do
       @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
       @support_request.language_code.should == @params[:language_code]
     end
+
   end
 
   describe '#get_last_click' do
