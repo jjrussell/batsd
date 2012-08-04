@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe FluentDataController do
+describe GogiiDataController do
   describe '#index' do
     before :each do
-      @controller.should_receive(:fluent_authenticate).at_least(:once).and_return(true)
+      @controller.should_receive(:gogii_authenticate).at_least(:once).and_return(true)
     end
     context 'invalid params' do
       before :each do
@@ -28,11 +28,15 @@ describe FluentDataController do
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        @app = FactoryGirl.create(:app)
-        partner.stub(:apps).and_return([@app])
-        App.stub(:find).and_return([@app])
+        @offer = FactoryGirl.create(:app).primary_offer
+        partner.stub(:offers).and_return([@offer])
         start_time.stub(:iso8601).and_return('2012-12-31')
-        Appstats.stub(:new).and_return('test')
+        Appstats.stub(:new).and_return('gogii_test')
+      end
+
+      it 'should render the shared/advertiser_data template' do
+        get(:index, @params)
+        response.should render_template('shared/advertiser_data')
       end
 
       it 'should respond with 200' do
@@ -47,7 +51,7 @@ describe FluentDataController do
 
       it 'has instance variable @appstats_list' do
         get(:index, @params)
-        assigns(:appstats_list).should == [[@app, 'test'],[@app, 'test']]
+        assigns(:appstats_list).should == [[@offer, 'gogii_test']]
       end
     end
   end
