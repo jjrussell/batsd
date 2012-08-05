@@ -11,6 +11,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
   self.sdb_attr :opt_out_offer_types, :replace => false, :force_array => true
   self.sdb_attr :banned, :type => :bool, :default_value => false
+  self.sdb_attr :suspension_expires_at, :type => :time
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :display_multipliers, :type => :json, :default_value => {}, :cgi_escape => true
@@ -352,6 +353,31 @@ class Device < SimpledbShardedResource
   def remove_old_skips(time = Device::SKIP_TIMEOUT)
     temp = self.recent_skips
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
+  end
+
+  def suspend(num_hours)
+    self.suspension_expires_at = Time.now + num_hours.hours
+    save
+  end
+
+  def unsuspend
+    self.delete 'suspension_expires_at'
+    save
+  end
+
+  def suspended?
+    if suspension_expires_at?
+      if suspension_expires_at > Time.now
+        true
+      else
+        self.delete 'suspension_expires_at'
+        save and return false
+      end
+    end
+  end
+
+  def get_suspension_expiration
+    suspension_expires_at if suspended?
   end
 
   private

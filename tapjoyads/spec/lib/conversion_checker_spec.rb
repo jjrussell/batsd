@@ -37,6 +37,14 @@ describe ConversionChecker do
       checker.risk_message.should match(/Banned/)
     end
 
+    it 'returns false for suspended devices' do
+      device = Device.new(:key => @click.udid)
+      device.suspend(24)
+      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+      checker.should_not be_acceptable_risk
+      checker.risk_message.should match(/Suspended/)
+    end
+
     context 'with multiple devices associated with the pubuser' do
       before :each do
         @this_device = FactoryGirl.create(:device)
@@ -52,6 +60,13 @@ describe ConversionChecker do
         checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
         checker.should_not be_acceptable_risk
         checker.risk_message.should match(/Banned/)
+      end
+
+      it 'returns false if any of the pubuser\'s devices are suspended' do
+        @other_device.suspend(24)
+        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
+        checker.should_not be_acceptable_risk
+        checker.risk_message.should match(/Suspended/)
       end
 
       context 'a single-complete offer' do
@@ -78,23 +93,67 @@ describe ConversionChecker do
       end
     end
 
-    context 'when conversion risk score exceeds high threshold' do
-      it 'returns false' do
+    context 'when risk management is enabled for partner' do
+      before :each do
+        @now = Time.now
+        Timecop.freeze(@now)
+        @device = FactoryGirl.create(:device)
+        @device.should_not be_suspended
+        Device.stub(:new).and_return(@device)
         Currency.any_instance.stub(:partner_enable_risk_management?).and_return(true)
-        RiskScore.any_instance.stub(:too_risky?).and_return(true)
-        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
-        checker.should_not be_acceptable_risk
-        checker.risk_message.should match(/risk is too high/)
+        @checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
       end
-    end
 
-    context 'when rule evaluation returns BLOCK action' do
-      it 'returns false' do
-        Currency.any_instance.stub(:partner_enable_risk_management?).and_return(true)
-        ConversionChecker.any_instance.stub(:blocked_by_rule?).and_return(true)
-        checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
-        checker.should_not be_acceptable_risk
-        checker.risk_message.should match(/risk is too high/)
+      context 'and conversion risk score exceeds high threshold' do
+        it 'returns false' do
+          RiskScore.any_instance.stub(:too_risky?).and_return(true)
+          @checker.should_not be_acceptable_risk
+          @checker.risk_message.should match(/risk is too high/)
+        end
+      end
+
+      context 'and rule evaluation returns BLOCK action' do
+        it 'returns false' do
+          actions = Set.new.add('BLOCK')
+          RiskActionSet.any_instance.stub(:actions).and_return(actions)
+          @checker.should_not be_acceptable_risk
+          @checker.risk_message.should match(/risk is too high/)
+        end
+      end
+
+      context 'and rule evaluation returns BAN action' do
+        it 'bans device' do
+          actions = Set.new.add('BAN')
+          RiskActionSet.any_instance.stub(:actions).and_return(actions)
+          @checker.acceptable_risk?
+          @device.should be_banned
+        end
+      end
+
+      context 'and rule evaluation returns SUSPEND24 action' do
+        it 'suspends device for 24 hours' do
+          actions = Set.new.add('SUSPEND24')
+          RiskActionSet.any_instance.stub(:actions).and_return(actions)
+          @checker.acceptable_risk?
+          @device.should be_suspended
+          Timecop.freeze(@now+25.hours)
+          @device.should_not be_suspended
+        end
+      end
+
+      context 'and rule evaluation returns SUSPEND72 action' do
+        it 'suspends device for 72 hours' do
+          actions = Set.new.add('SUSPEND72')
+          RiskActionSet.any_instance.stub(:actions).and_return(actions)
+          @checker.acceptable_risk?
+          @device.should be_suspended
+          Timecop.freeze(@now+73.hours)
+          @device.should_not be_suspended
+        end
+      end
+
+      after :each do
+        Timecop.return
       end
     end
   end

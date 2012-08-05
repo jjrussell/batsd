@@ -20,7 +20,7 @@ module ConversionChecker::Rules
             true
           end
         end,
-        ['BLOCK']
+        ['BLOCK', 'SUSPEND24']
       ),
       RiskRule.new(
         'device_velocity_check_72',
@@ -33,7 +33,7 @@ module ConversionChecker::Rules
             true
           end
         end,
-        ['BLOCK']
+        ['BLOCK', 'SUSPEND24']
       ),
       RiskRule.new(
         'ipaddr_velocity_check_24',

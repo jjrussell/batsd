@@ -296,6 +296,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     device.opted_out = params[:opted_out] == '1'
     device.banned = params[:banned] == '1'
     device.save
+    device.unsuspend if params[:unsuspend] == '1'
     flash[:notice] = 'Device successfully updated.'
     redirect_to :action => :device_info, :udid => params[:udid]
   end
