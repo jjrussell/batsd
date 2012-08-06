@@ -56,7 +56,7 @@
         "<div class='reward gradientfix clearfix'>"+
          "<span class='earn {hide_earn} {earn_margin}'>{earn}</span>"+
           "<span class='big {payout_margin}'>{payout}</span>"+
-          "<span class='points'>{points}</span>"+
+          "<span class='points {points_long}'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
       ],
@@ -392,15 +392,17 @@
         item.points = $.data.currencyName;
         item.earn = $.labels.text.earn;
 
-        if (len > 20) {
+        if (len >= 20) {
           item.hide_earn = 'hide';
           item.payout_margin = 'mt5';
           item.earn_margin = 'mt3';
+          item.points_long = 'long';
         }
-        else if (len > 10) {
+        else if (len >= 10) {
           item.hide_earn = 'hide';
           item.payout_margin = 'mt10';
           item.earn_margin = 'mt3';
+          item.points_long = 'long';
         }
 
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';

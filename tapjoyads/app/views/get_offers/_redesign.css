@@ -384,7 +384,9 @@ ul#offers li .reward span.earn,
 ul#offers li .reward span.points {
   font-size: 90%;
 }
-
+ul#offers li .reward span.points.long {
+  font-size: 80%;  
+}
 ul#offers li .reward span.earn {
   margin-top: 8px;
 }
@@ -397,7 +399,7 @@ ul#offers li .reward span.points {
 ul#offers li .reward span.big {
   font-size: 160%;
   font-weight: bold;
-  line-height: 120%;
+  line-height: 110%;
   margin-top: 1px;
   text-shadow: 0 0 5px rgba(255,255,255, .4), 0 1px 1px rgba(0,0,0, .6);
 }
