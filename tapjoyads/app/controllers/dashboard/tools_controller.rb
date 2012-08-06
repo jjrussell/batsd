@@ -210,6 +210,12 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         return
       end
       @cut_off_date = (params[:cut_off_date] || Time.zone.now).to_i
+      conditions = [
+        "udid = '#{udid}'",
+        "clicked_at < '#{@cut_off_date}'",
+        "clicked_at > '#{@cut_off_date - 1.month}'",
+      ].join(' and ')
+      @clicks = []
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
       @not_rewarded_count = 0
@@ -219,7 +225,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = []
-
       NUM_CLICK_DOMAINS.times do |i|
         Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
           @clicks << click unless click.tapjoy_games_invitation_primary_click?
