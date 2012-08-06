@@ -47,12 +47,12 @@ class VideoButton < ActiveRecord::Base
   end
 
   def rewarded_install?
-    rewarded? && tracking_item.is_a?(App)
+    tracking_offer.rewarded? && tracking_item.is_a?(App)
   end
 
   def tracking_item_options(item)
-    offer = item.primary_offer
-    return nil unless offer.present? && self.rewarded? && offer.rewarded?
+    offer = item.is_a?(Offer) ? item : item.primary_offer
+    return {} unless offer.present? && offer.rewarded?
 
     {
       :bid          => offer.bid,

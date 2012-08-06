@@ -364,10 +364,6 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def trackable_items
-    apps.live.visible + generic_offers.visible + action_offers.visible + video_offers.visible
-  end
-
   def offers_for_promotion
     available_offers = { :android => [], :iphone => [], :windows => [] }
     self.offers.each do |offer|
