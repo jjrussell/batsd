@@ -53,7 +53,6 @@ class DisplayAdController < ApplicationController
     params[:currency_id] ||= params[:app_id]
     return unless verify_params([ :app_id, :udid, :currency_id ])
 
-
     now = Time.zone.now
 
     # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
