@@ -22,6 +22,8 @@ public/assets/*
 **.orig
 .rspec
 public/translations
+db/schema-dev.rb
+db/webserver-dev.sqlite
 cookbooks
 .vagrant
 

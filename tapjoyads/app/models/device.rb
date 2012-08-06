@@ -77,7 +77,7 @@ class Device < SimpledbShardedResource
     fix_app_json
     fix_publisher_user_ids_json
     fix_display_multipliers_json
-    load_apps_from_temporary_device if @is_temporary
+    load_data_from_temporary_device if @is_temporary
   end
 
   def handle_connect!(app_id, params)
@@ -242,7 +242,9 @@ class Device < SimpledbShardedResource
     create_identifiers = options.delete(:create_identifiers) { true }
     if @is_temporary
       temp_device = TemporaryDevice.new(:key => self.key)
-      temp_device.apps = self.parsed_apps.merge(temp_device.apps)
+      temp_device.apps = temp_device.apps.merge(self.parsed_apps)
+      temp_device.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
+      temp_device.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
       temp_device.save
       return
     end
@@ -360,6 +362,8 @@ class Device < SimpledbShardedResource
       temp_device = TemporaryDevice.find(identifier)
       if temp_device
         @parsed_apps.merge!(temp_device.apps)
+        self.publisher_user_ids = temp_device.publisher_user_ids.merge(publisher_user_ids)
+        self.display_multipliers = temp_device.display_multipliers.merge(display_multipliers)
         temp_device.delete_all
       end
     end
@@ -368,9 +372,11 @@ class Device < SimpledbShardedResource
     save!(:create_identifiers => false) unless orig_apps == self.parsed_apps
   end
 
-  def load_apps_from_temporary_device
+  def load_data_from_temporary_device
     temp_device = TemporaryDevice.new(:key => self.key)
-    @parsed_apps = self.parsed_apps.merge(temp_device.apps)
+    @parsed_apps = temp_device.apps.merge(self.parsed_apps)
+    self.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
+    self.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
     self.apps = @parsed_apps
   end
 

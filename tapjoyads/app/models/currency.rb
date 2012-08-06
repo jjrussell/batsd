@@ -155,7 +155,7 @@ class Currency < ActiveRecord::Base
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = get_publisher_amount(offer)
+      reward_value = offer.payment * get_spend_share(offer)
     end
     reward_value  * conversion_rate / 100.0
   end
@@ -214,6 +214,11 @@ class Currency < ActiveRecord::Base
     Set.new(test_devices.split(';'))
   end
   memoize :get_test_device_ids
+
+  def get_store_whitelist
+    Set.new(store_whitelist.split(';'))
+  end
+  memoize :get_store_whitelist
 
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL

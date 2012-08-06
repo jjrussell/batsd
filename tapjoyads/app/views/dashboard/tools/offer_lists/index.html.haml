@@ -14,6 +14,9 @@
       %td= label_tag :platform_name, 'Publisher App Platform'
       %td= select_tag :platform_name, options_for_select(OfferCacher::PLATFORMS, params[:platform_name])
     %tr
+      %td= label_tag :store_name, 'App Store Name'
+      %td= select_tag :store_name, options_for_select(AppStore::SDK_STORE_NAMES.keys.insert(0, nil), params[:store_name])
+    %tr
       %td= label_tag :currency_group_id, 'Currency Group'
       %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
     %tr

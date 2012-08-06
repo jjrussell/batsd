@@ -47,6 +47,7 @@
             = link_to_function(truncate(activity.partner_id, :length => 9), "setValue('partner_id', '#{activity.partner_id}')")
         %td.diff
           - keys = activity.diff_keys
+          - keys = keys.select {|key| key == params[:field]} if params[:field].present?
           - keys.each do |key|
             %p
               %span.diff_key #{key}:

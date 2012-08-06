@@ -9,9 +9,10 @@ class TapjoyMailer < ActionMailer::Base
     body(:error => error)
   end
 
-  def alert(alert, rows)
+  def alert(alert, rows, recipients)
     from 'Tapjoy <noc@tapjoy.com>'
-    recipients alert[:recipients]
+    recipients recipients
+    cc alert[:recipients] unless recipients.sort == alert[:recipients].sort
     subject "[ALERT] #{alert[:message]}"
     body :rows => rows, :fields => alert[:fields]
   end

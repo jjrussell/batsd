@@ -28,8 +28,8 @@ describe EaDataController do
         ApplicationController.stub(:verify_params).and_return(true)
         partner = FactoryGirl.create(:partner)
         Partner.stub(:find).and_return(partner)
-        offers = FactoryGirl.create(:app)
-        partner.stub(:offers).and_return('offers')
+        @offer = FactoryGirl.create(:app).primary_offer
+        partner.stub(:offers).and_return([@offer])
         start_time.stub(:iso8601).and_return('2012-12-31')
         Appstats.stub(:new).and_return('test')
       end
@@ -51,7 +51,7 @@ describe EaDataController do
 
       it 'has instance variable @appstats_list' do
         get(:index, @params)
-        assigns(:appstats_list).should == [['offers', 'test']]
+        assigns(:appstats_list).should == [[@offer, 'test']]
       end
     end
   end

@@ -21,6 +21,7 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :offer_name
   self.sdb_attr :app_id
   self.sdb_attr :currency_id
+  self.sdb_attr :managed_currency, :type => :bool
   self.sdb_attr :offer_id
   self.sdb_attr :click_id
   self.sdb_attr :gamer_id
@@ -76,6 +77,16 @@ class SupportRequest < SimpledbResource
     self.device_type            = device.present? ? device.device_type : params[:device_type]
     self.email_address          = gamer.present? ? gamer.email : params[:email_address]
     self.gamer_id               = gamer.present? ? gamer.id : nil
+
+    unless currency.present?
+      if click.present?
+        currency = Currency.find_in_cache(click.currency_id)
+      else
+        currency = Currency.find_in_cache(params[:currency_id])
+      end
+    end
+
+    self.managed_currency       = currency.try(:tapjoy_managed?)
 
     if click.present?
       self.app_id               = click.offer.item_id

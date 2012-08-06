@@ -24,6 +24,10 @@ authorization do
     has_permission_on :dashboard_partners, :to => [ :index, :show, :make_current, :new, :create, :agency_api ]
   end
 
+  role :android_distribution_config do
+    has_permission_on :dashboard_app_metadatas, :to => [ :new, :create, :show, :update, :remove ]
+  end
+
   role :tools do
     has_permission_on :dashboard_tools, :to => [ :index ]
   end

@@ -1,6 +1,9 @@
 - content_for :apps_layout do
   = render('shared/dropdown_select', :objects => current_partner_apps, :selected => @app, :options => @dropdown_options)
-  = render('dashboard/apps/actions', :app => @app)
+  - if permitted_to?(:new, :dashboard_app_metadatas) && @app.platform == 'android' && @app.primary_app_metadata && (controller.controller_name == 'offers' || (controller.controller_name == 'app_metadatas' && controller.action_name == 'show'))
+    = render('dashboard/apps/distribution_actions', :app => @app)
+  - else
+    = render('dashboard/apps/actions', :app => @app)
 
   #apps_main
     = yield
