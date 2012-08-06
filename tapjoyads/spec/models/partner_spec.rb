@@ -420,4 +420,42 @@ describe Partner do
       @partner.should_not be_valid
     end
   end
+
+  describe '#make_payout' do
+    subject { FactoryGirl.create :partner }
+
+    before :each do
+      @payout = FactoryGirl.build(:payout, :partner => subject, :amount => (49_001.00 * 100).round)
+      @amount = @payout.amount / 100
+    end
+
+    it 'builds a payout' do
+      subject.payouts.should_receive(:build).and_return(@payout)
+      subject.make_payout(@amount)
+    end
+
+    context 'when the payout is valid and saved' do
+      before :each do
+        @payout.stub(:save => true)
+        subject.payouts.stub(:build => @payout)
+      end
+
+      it 'updates the payout threshold' do
+        subject.should_receive(:payout_threshold=).with(@payout.amount * 1.2)
+        subject.make_payout(@amount)
+      end
+    end
+
+    context 'when the payout is not valid' do
+      before :each do
+        @payout.stub(:save => false)
+        subject.payouts.stub(:build => @payout)
+      end
+
+      it 'does not update the payout threshold' do
+        subject.should_not_receive(:payout_threshold=)
+        subject.make_payout(@amount)
+      end
+    end
+  end
 end
