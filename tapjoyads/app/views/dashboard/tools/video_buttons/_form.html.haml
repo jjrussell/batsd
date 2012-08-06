@@ -10,17 +10,11 @@
         = f.hidden_field :video_offer_id
     %tr
       %th
-        = f.label :item_id
+        = f.label :offer
         #help_item.help ?
       %td
-        = f.select :item_id, formatted_items_for_tracking(@video_offer.available_trackable_items(@video_button.item_id)), {:selected => "#{@video_button.item_type}:#{@video_button.item_id}"}
+        = f.select :tracking_source_offer_id, formatted_offers_for_tracking(@video_offer.available_trackable_offers(@video_button)), {:selected => "#{@video_button.tracking_offer.source_offer_id if @video_button.tracking_offer.present?}"}
         = error_message_on @video_button, :item_id
-    %tr
-      %th
-        = f.label :rewarded
-        #help_rewarded.help ?
-      %td
-        = f.check_box :rewarded
     %tr
       %th
         = f.label :ordinal

@@ -117,6 +117,71 @@ describe GetOffersController do
       assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
+    context 'when the same app has multiple offers' do
+      it 'returns only the highest ranked offer' do
+        app = FactoryGirl.create(:app)
+        offer1 = app.primary_offer
+        offer1.partner.balance = 10
+        offer2 = offer1.clone
+        offer2.save
+        offer2.partner.balance = 10
+        offer3 = offer1.clone
+        offer3.save
+        offer3.stub(:rank_score).and_return(100000)
+        offer3.partner.balance = 10
+        offer4 = offer1.clone
+        offer4.save
+        offer4.partner.balance = 10
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
+
+        get(:index, @params)
+        assigns(:offer_list).include?([offer1, offer2, offer4]).should be_false
+        assigns(:offer_list).include?(offer3).should be_true
+      end
+    end
+
+    context 'when targeting app stores' do
+      before :each do
+        publisher_app = FactoryGirl.create(:app, :platform => 'android')
+        publisher_app.add_app_metadata('android.GFan', 'def789')
+        @currency = FactoryGirl.create(:currency, :app => publisher_app)
+        @offer1 = FactoryGirl.create(:generic_offer).primary_offer
+        @offer1.update_attributes(:payment => 10)
+        @offer1.partner.balance = 10
+        @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
+        @offer2.partner.balance = 10
+        app = FactoryGirl.create(:app, :platform => 'android')
+        metadata = app.add_app_metadata('android.GFan', 'xyz123')
+        @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
+        @offer3.partner.balance = 10
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+        @params = {
+          :udid => 'stuff',
+          :publisher_user_id => 'more_stuff',
+          :currency_id => @currency.id,
+          :app_id => @currency.app.id,
+        }
+      end
+
+      it 'returns all offers by default' do
+        AppStore.find('android.GooglePlay').stub(:exclusive?).and_return(false)
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer2, @offer3]
+      end
+
+      it 'returns targeted offers for exclusive stores' do
+        @params[:store_name] = 'gfan'
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer3]
+      end
+
+      it 'returns targeted offers for currency store whitelist' do
+        Currency.any_instance.stub(:store_whitelist).and_return('android.GooglePlay')
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer2]
+      end
+    end
+
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)

@@ -55,9 +55,25 @@ class VideoOffer < ActiveRecord::Base
     end.sort_by(&:ordinal)
   end
 
-  def available_trackable_items(selected_id=nil)
-    ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
-    partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }
+  def available_trackable_offers(selected_video_button)
+    ids_to_exclude = self.video_buttons.map { |r| [ r.item_id, r.tracking_offer.try(:app_metadata_id)] }.compact
+    ids_to_exclude -= [[selected_video_button.item_id, selected_video_button.tracking_offer.try(:app_metadata_id)]]
+    partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at).reject do |r|
+      ids_to_exclude.include?([r.item_id, r.app_metadata_id]) ||
+      r.item.hidden? ||
+      ( r.app_offer? && r.app_metadata_id.blank? ) ||
+      r.item_id == id
+    end
+  end
+
+  def has_video_button_for_store?(store_name)
+    video_buttons.any? do |button|
+      button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name == store_name
+    end
+  end
+
+  def distribution_reject?(store_name)
+    app_targeting? && !has_video_button_for_store?(store_name)
   end
 
   private

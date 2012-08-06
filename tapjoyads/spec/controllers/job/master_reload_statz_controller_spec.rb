@@ -104,27 +104,16 @@ describe Job::MasterReloadStatzController do
           :platform => 'android'),
       ]
 
-      app_metadatas = [
-        FactoryGirl.create(:app_metadata,
-          :store_id => 'ios.free',
-          :price => 0),
-        FactoryGirl.create(:app_metadata,
-          :store_id => 'ios.paid',
-          :price => 1),
-        FactoryGirl.create(:app_metadata,
-          :store_id => 'android.free',
-          :store_name => 'Google Play',
-          :price => 0),
-        FactoryGirl.create(:app_metadata,
-          :store_id => 'android.paid',
-          :store_name => 'Google Play',
-          :price => 1),
+      store_ids = [
+        'ios.free',
+        'ios.paid',
+        'android.free',
+        'android.paid'
       ]
 
       apps.each_index do |i|
-        apps[i].app_metadatas.delete_all
-        apps[i].add_app_metadata(app_metadatas[i])
-        apps[i].reload.save!
+        apps[i].update_app_metadata(apps[i].primary_app_metadata.store_name, store_ids[i])
+        apps[i].primary_app_metadata.update_attributes(:price => store_ids[i].match(/free$/) ? 0 : 1)
       end
 
       stub_vertica

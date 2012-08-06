@@ -21,6 +21,10 @@
         %td= f.select :platform, platforms.invert.to_a.sort_by(&:last), { :selected => @app.platform }, { :id => 'app_platform' }
       - if permitted_to?(:edit, :dashboard_statz)
         = render 'select_country'
+      - if permitted_to?(:new, :dashboard_app_metadatas)
+        %tr#android_market.app_data.hidden
+          %th Market
+          %td= select_tag :android_store_name, options_for_select(@store_options ? @store_options : {}, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
       %tr
         %th
           Name
@@ -36,9 +40,9 @@
           #help_store_id.help ?
         %td
           - if permitted_to?(:edit, :dashboard_statz)
-            = f.text_field :store_id, :placeholder => 'INTERNAL: Manual override'
+            = text_field_tag :store_id, nil, { :placeholder => 'INTERNAL: Manual override', :id => 'app_store_id' }
           - else
-            = f.hidden_field :store_id
+            = hidden_field_tag :store_id, nil, :id => 'app_store_id'
             %a#app_store_link{ :target => '_blank' }
       %tr.app_data.hidden
         %th Icon

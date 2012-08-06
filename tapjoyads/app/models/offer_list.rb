@@ -23,6 +23,7 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
+    @app_store_name             = AppStore::SDK_STORE_NAMES[options.delete(:store_name)]
     @algorithm                  = options.delete(:algorithm)
     @algorithm_options          = options.delete(:algorithm_options)
 
@@ -34,6 +35,8 @@ class OfferList
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
 
+    @store_whitelist = Set.new
+
     if @publisher_app
       @platform_name            = @publisher_app.platform_name
       @normalized_device_type ||=
@@ -43,6 +46,14 @@ class OfferList
         else
           'itouch'
         end
+
+      @app_store_name ||= App::PLATFORM_DETAILS[@publisher_app.platform][:default_store_name]
+      @publisher_app.app_metadata_mappings.each do |mapping|
+        if mapping.app_metadata.store_name == @app_store_name
+          #only check for store exclusivity if a distribution on the store is actually found
+          @store_whitelist << @app_store_name if mapping.app_metadata.store.exclusive?
+        end
+      end
     end
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -74,6 +85,8 @@ class OfferList
     #     promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
     #   end
     # end
+
+    @store_whitelist.merge(@currency.get_store_whitelist) if @currency && @currency.get_store_whitelist.present?
   end
 
   def weighted_rand
@@ -212,7 +225,7 @@ class OfferList
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist,  @app_store_name)
   end
 
   def can_be_promoted?(offer)
@@ -222,6 +235,6 @@ class OfferList
   def rejections_for(offer)
     offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
   end
 end
