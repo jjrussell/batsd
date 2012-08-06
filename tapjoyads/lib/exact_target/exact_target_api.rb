@@ -28,6 +28,9 @@ class ExactTargetApi
     ##
     ## TODO: VALIDATE STUFF (like email address)
     ##
+    ## Note: ET's List Detective should identify bogus email addresses, so we only need
+    ##       to do basic validation
+    ##
 
     response = @client.request :create do
       soap.body = triggered_email_soap_body(email_address, interaction_id, data, options)
