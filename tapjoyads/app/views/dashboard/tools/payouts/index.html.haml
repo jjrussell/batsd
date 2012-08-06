@@ -104,7 +104,7 @@
 - content_for :page_javascript do
   :plain
     var payoutsRedirectPath = '#{tools_payouts_path}';
-    var hasDateFilter = #{@start_date.blank?};
+    var hasDateFilter = #{@start_date.present?};
 - content_for :included_javascripts, javascript_include_tag('tapjoy/payouts')
 
 - content_for :page_styles do
