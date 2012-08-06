@@ -356,7 +356,7 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
-  def recent_clicks(start_time_at, end_time_at)
+  def recent_clicks(start_time_at=Time.zone.now-RECENT_CLICKS_RANGE, end_time_at=Time.zone.now)
     clicks = []
     self.recent_click_hashes.each do |recent_click_hash|
       click = Click.find(recent_click_hash['id'])
