@@ -5,7 +5,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -103,6 +103,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
       last_run_time = device.has_app?(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
       @last_run_times << [ admin_device, last_run_time ]
     end
+  end
+
+  def last_run
+    @last_run = AdminDeviceLastRun.for(:app_id => @offer.item_id, :udid => params[:udid])
   end
 
   def global
