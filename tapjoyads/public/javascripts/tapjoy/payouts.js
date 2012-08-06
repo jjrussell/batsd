@@ -20,10 +20,10 @@ $(function($) {
     } else {
       $('#filtered').show();
     }
-    $('#unfiltered a').click(function(){
+    $('#unfiltered a').click(function(e){
       $('#unfiltered').hide();
       $('#filtered').show();
-      return false;
+      e.preventDefault();
     });
     $('#date_submit').click(function() {
       var query = {
