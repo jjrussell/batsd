@@ -21,7 +21,8 @@ include GetOffersHelper
                                           '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
                                           'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
                                           'b138a117-4b68-4e41-890a-2ea84a83ed38', # Tiny Farm(iOS)
-                                          '0f127143-e23b-46df-9e70-b6e07222d122'  # Songify (Android)
+                                          '0f127143-e23b-46df-9e70-b6e07222d122',  # Songify (Android)
+                                          'b7256806-0b7c-4711-9d0b-f58676f8d5eb',  # Skout
                                         ])
 
   # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
@@ -87,6 +88,8 @@ include GetOffersHelper
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
       render :json => @final.to_json, :callback => params[:callback] and return
+    elsif params[:device_type] == 'WinCE'
+      render :template => 'get_offers/webpage' and return
     else
       render :template => 'get_offers/webpage_redesign' and return
     end
@@ -247,9 +250,9 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
       when 'offerwall'
-        :ranking              # for in-app
+        OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :ranking : nil
       when 'tj_games'
-        :show_rate_237        # for TJM
+        :show_rate_237
       else
         nil
     end
@@ -258,15 +261,6 @@ include GetOffersHelper
   end
 
   def set_algorithm
-    if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
-      @algorithm = '101'
-    end
-
-    if params[:source] == 'tj_games'
-      @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
-    end
-
     case params[:exp]
       when 'a_optimization'
         @algorithm = '101'
@@ -282,6 +276,10 @@ include GetOffersHelper
       when 'c_offerwall'
         @algorithm = '101'
         @algorithm_options = {:skip_country => true, :skip_currency => true}
+    end
+
+    if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
+      @algorithm = '101'
     end
   end
 

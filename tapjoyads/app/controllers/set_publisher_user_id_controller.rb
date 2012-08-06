@@ -1,12 +1,12 @@
 class SetPublisherUserIdController < ApplicationController
 
-  before_filter :lookup_udid
   before_filter :reject_banned_udids
 
   def index
+    lookup_udid(true)
     return unless verify_params([:app_id, :udid, :publisher_user_id])
 
-    device = Device.new(:key => params[:udid])
+    device = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
     device.set_publisher_user_id(params[:app_id], params[:publisher_user_id])
     device.set_display_multiplier(params[:app_id], params[:display_multiplier]) unless params[:display_multiplier].blank?
 

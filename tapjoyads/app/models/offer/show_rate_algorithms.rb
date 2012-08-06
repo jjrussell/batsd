@@ -55,10 +55,10 @@ module Offer::ShowRateAlgorithms
   end
 
   def recalculate_show_rate(offer_hash={}, log_info=true)
-    if (offer_hash['show_rate_new'] && (show_rate_new = offer_hash['show_rate_new'].to_f) > 0)
+    if offer_hash['show_rate_new'] && (show_rate_new = offer_hash['show_rate_new'].to_f) > 0 && show_rate != 0
       show_rate_new
     else
-      self.show_rate
+      show_rate
     end
   end
 
@@ -72,6 +72,7 @@ module Offer::ShowRateAlgorithms
 
     old_show_rate = self.show_rate
 
+    now = Time.zone.now
     possible_clicks_per_second = @recent_clicks / @cvr_timeframe / old_show_rate
 
     # Assume a higher click/second rate than reality. This helps ensure that budgets come in slightly
