@@ -17,7 +17,8 @@
     = link_to('Developer Forum', DEV_FORUM_URL)
 
 = form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = f.hidden_field :store_id, {:value=>@app.store_id}
+  = hidden_field_tag :store_name, @app.store_name
+  = hidden_field_tag :store_id, @app.store_id, :id => 'app_store_id'
   %table
     %tbody
       %tr
@@ -32,6 +33,14 @@
         %td
           = @app.platform_name
           = f.hidden_field :platform
+      - if permitted_to?(:show, :dashboard_app_metadatas) && @app.platform == 'android'
+        %tr.app_data.hidden
+          %th Market
+          %td
+            - if @app.store_id.present?
+              = AppStore.find(@app.store_name).name
+            - else
+              = select_tag :android_store_name, options_for_select(@store_options, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
       - if permitted_to?(:edit, :dashboard_statz) && @app.platform == 'iphone'
         = render 'select_country'
         %tr.admin
@@ -51,7 +60,7 @@
           = f.text_field :name
           = error_message_on @app, :name
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
+        %td= button_to "Search #{@app.store_name ? AppStore.find(@app.store_name).name : ''}", '#', :class => 'search hidden', :id => 'search_button'
       %tr
         %th
           App ID
@@ -73,7 +82,7 @@
       %tr.app_data.hidden
         %th Store ID
         %td
-          - if @app.store_id.present?
+          - if @app.store_id?
             = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
             %a#app_store_link{ :target => '_blank' }
@@ -94,7 +103,7 @@
         = render('dashboard/apps/admin_fields', :f => f)
 
       %tr
-        %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
+        %td{ :colspan => 2 }= f.submit @app.store_name ? "Update from #{AppStore.find(@app.store_name).name}" : 'Save', :id => 'submit_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
@@ -143,19 +152,6 @@
     }
 
 - content_for :page_javascript do
-  :plain
-    $(function($){
-      var toggleSubmitButton = function() {
-        if ($('input#app_store_id').val() && $('select#app_state').val() == 'live') {
-          $('#submit_button').val('Update from #{@app.store_name}');
-        } else {
-          $('#submit_button').val('Save');
-        }
-      };
-      $('select#app_state').change(toggleSubmitButton);
-      $('input#app_store_id').change(toggleSubmitButton);
-    })
-
   - if @app.hidden?
     :plain
       $(function($){

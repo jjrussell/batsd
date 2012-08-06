@@ -128,6 +128,7 @@ class WebRequest < SyslogMessage
   self.define_attr :rule_offset, :type => :int
   self.define_attr :rule_actions
   self.define_attr :rule_message
+  self.define_attr :store_name
   self.define_attr :connection_type
 
   def self.count(conditions = nil)
@@ -185,6 +186,7 @@ class WebRequest < SyslogMessage
     self.geoip_country        = geoip_data[:country]
     self.sdk_type             = params[:sdk_type]
     self.plugin               = params[:plugin]
+    self.store_name           = params[:store_name]
     self.connection_type      = params[:connection_type]
   end
 

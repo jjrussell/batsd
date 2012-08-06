@@ -40,6 +40,7 @@ class ActionOffer < ActiveRecord::Base
 
   before_validation :set_variable_name
   after_create :create_primary_offer
+  after_create :create_secondary_offers
   after_update :update_offers
 
   delegate :user_enabled?, :tapjoy_enabled?, :bid, :min_bid, :daily_budget, :integrated?, :to => :primary_offer
@@ -53,40 +54,84 @@ class ActionOffer < ActiveRecord::Base
     primary_offer.save
   end
 
+  def create_offer_from_app_metadata(app_metadata)
+    offer                  = build_offer
+    offer.url              = app_metadata.store_url
+    offer.device_types     = app_metadata.get_offer_device_types
+    offer.price            = offer_price(app_metadata)
+    offer.bid              = offer.min_bid
+    offer.name_suffix      = "action (#{app_metadata.store.name})"
+    offer.icon_id_override = app_metadata.id
+    offer.app_metadata     = app_metadata
+    offer.save!
+  end
+
+  def update_offers_for_app_metadata(old_app_metadata, new_app_metadata)
+    offers.find_all_by_app_metadata_id(old_app_metadata.id).each do |offer|
+      offer.name_suffix = "action (#{new_app_metadata.store_name})" if offer.name_suffix == "action (#{old_app_metadata.store_name})"
+      offer.icon_id_override = new_app_metadata.id if offer.icon_id_override == old_app_metadata.id
+      offer.update_from_app_metadata(new_app_metadata)
+    end
+  end
+
+  def remove_offers_for_app_metadata(app_metadata)
+    offers.find_all_by_app_metadata_id(app_metadata.id).each do |offer|
+      offer.destroy
+    end
+  end
+
+  def offer_price(app_metadata = nil)
+    (prerequisite_offer_id? ? 0 : (app_metadata ? app_metadata.price : app.price)) + price
+  end
+
   private
 
+  def build_offer
+    offer                                  = Offer.new(:item => self)
+    offer.partner                          = partner
+    offer.name                             = name
+    offer.instructions                     = instructions
+    offer.third_party_data                 = prerequisite_offer_id
+    offer.prerequisite_offer_id            = prerequisite_offer_id
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
+    offer
+  end
+
   def create_primary_offer
-    offer                  = Offer.new(:item => self)
+    offer                  = build_offer
     offer.id               = id
-    offer.partner          = partner
-    offer.name             = name
     offer.url              = app.store_url
-    offer.instructions     = instructions
     offer.device_types     = app.primary_offer.device_types
     offer.price            = offer_price
     offer.bid              = offer.min_bid
-    offer.name_suffix      = 'action'
-    offer.third_party_data = prerequisite_offer_id
-    offer.prerequisite_offer_id = prerequisite_offer_id
-    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
-    offer.icon_id_override = app_id
+    offer.name_suffix      = "action"
+    offer.icon_id_override = app.primary_app_metadata.id if app.primary_app_metadata
+    offer.app_metadata     = app.primary_app_metadata if app.primary_app_metadata
     offer.save!
+  end
+
+  def create_secondary_offers
+    app.app_metadata_mappings.each do |distribution|
+      unless distribution.is_primary
+        create_offer_from_app_metadata(distribution.app_metadata)
+      end
+    end
   end
 
   def update_offers
     offers.each do |offer|
-      offer.partner_id       = partner_id if partner_id_changed?
-      offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
-      offer.url              = app.store_url unless offer.url_overridden?
-      offer.name             = name if name_changed?
-      offer.instructions     = instructions if instructions_changed? && !offer.instructions_overridden?
-      offer.hidden           = hidden if hidden_changed?
-      offer.price            = offer_price
+      offer.partner_id              = partner_id if partner_id_changed?
+      offer.name                    = name if name_changed?
+      offer.instructions            = instructions if instructions_changed? && !offer.instructions_overridden?
+      offer.hidden                  = hidden if hidden_changed?
+      offer.price                   = offer_price(offer.app_metadata)
       if offer.price_changed? && offer.bid < offer.min_bid
-        offer.bid = offer.min_bid
+        offer.bid                   = offer.min_bid
       end
-      offer.third_party_data = prerequisite_offer_id if prerequisite_offer_id_changed?
-      offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      if prerequisite_offer_id_changed?
+        offer.third_party_data      = prerequisite_offer_id
+        offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      end
       offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.save! if offer.changed?
     end
@@ -94,10 +139,6 @@ class ActionOffer < ActiveRecord::Base
 
   def set_variable_name
     self.variable_name = 'TJC_' + name.gsub(/[^[:alnum:]]/, '_').upcase
-  end
-
-  def offer_price
-    (prerequisite_offer_id? ? 0 : app.price) + price
   end
 
 end

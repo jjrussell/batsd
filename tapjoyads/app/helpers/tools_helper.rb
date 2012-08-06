@@ -107,19 +107,19 @@ module ToolsHelper
     [ 'wfh', wfh.category.downcase ].uniq.join(' ')
   end
 
-  def formatted_items_for_tracking(items)
-    items.map do |item|
-      type = item.class.name.to_s.gsub(/Offer$/, '')
-      platform = if item.respond_to?(:platform_name)
-                   item.platform_name
-                 elsif item.respond_to?(:get_platform)
-                   item.get_platform
-                 elsif item.respond_to?(:primary_offer)
-                   item.primary_offer.get_platform
+  def formatted_offers_for_tracking(offers)
+    offers.map do |offer|
+      type = offer.item.class.name.to_s.gsub(/Offer$/, '')
+      platform = if offer.item.respond_to?(:platform_name)
+                   offer.item.platform_name
+                 elsif offer.item.respond_to?(:get_platform)
+                   offer.item.get_platform
+                 elsif offer.item.respond_to?(:primary_offer)
+                   offer.item.primary_offer.get_platform
                  else
                    'N/A'
                  end
-      ["#{type} - #{item.name} - #{platform}", "#{item.class}:#{item.id}"]
+      ["#{type} - #{offer.rewarded? ? 'Rewarded' : 'Non-Rewarded'} - #{offer.name_with_suffix}  - #{platform}#{ ' - ' + offer.app_metadata.store_name if offer.app_metadata.present?}" , "#{offer.id}" ]
     end
   end
 

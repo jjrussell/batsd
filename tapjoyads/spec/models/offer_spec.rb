@@ -260,6 +260,11 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
 
+  it "rejects based on store whitelist" do
+    @offer.send(:app_store_reject?, Set.new.add('iphone.AppStore')).should be_false
+    @offer.send(:app_store_reject?, Set.new.add('iphone.SomeOtherStore')).should be_true
+  end
+
   it 'rejects rewarded offers that are close to zero' do
     currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
     @offer.send(:miniscule_reward_reject?, currency).should be_true
@@ -297,6 +302,7 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
+                                  'app_metadata_id'
                                 ].sort
   end
 
@@ -1212,6 +1218,34 @@ describe Offer do
 
         it { should be_all_blacklisted }
       end
+    end
+  end
+
+  describe '#build_tracking_offer_for' do
+    it 'should pass app_metadata to tracking offer' do
+      video_button = FactoryGirl.create(:video_button)
+      meta = FactoryGirl.create(:app_metadata)
+      @offer.item.should_receive(:build_tracking_offer_for)
+      @offer.build_tracking_offer_for(video_button)
+    end
+  end
+
+  describe '#find_tracking_offer_for' do
+    before :each do
+      VideoButton.any_instance.stub(:tracking_item_options).and_return({})
+    end
+
+    it 'should find tracking offer of item' do
+      video_button = FactoryGirl.create(:video_button)
+      @offer.item.should_receive(:find_tracking_offer_for)
+      @offer.find_tracking_offer_for(video_button)
+    end
+
+    it 'should update tracking offer with data from offer' do
+      video_button = FactoryGirl.create(:video_button)
+      @offer.item.stub(:find_tracking_offer_for).and_return(Offer.new)
+      @offer.find_tracking_offer_for(video_button).app_metadata_id = @offer.app_metadata_id
+      @offer.find_tracking_offer_for(video_button).source_offer_id = @offer.id
     end
   end
 

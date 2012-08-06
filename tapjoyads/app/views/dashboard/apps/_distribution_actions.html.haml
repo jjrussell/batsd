@@ -1,0 +1,25 @@
+#apps_tools.vertical-menu
+  %ul
+    %li= link_to 'Details', app_path(app)
+    %li= link_to 'Distributions', new_app_app_metadata_path(@app)
+    - @app.app_metadatas.each do |meta|
+      %li.inception= link_to meta.store.name, app_app_metadata_path({:app_id => @app.id, :id => meta.id})
+    %li= link_to 'Rewarded Installs', edit_app_offer_path(:id => @distribution.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
+    - if @distribution.primary_offer.present? && @distribution.primary_offer.tapjoy_enabled?
+      %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @distribution.primary_offer), :class => (controller.controller_name == 'offer_events' && @offer == @distribution.primary_offer ? 'selected' : '')
+    - if @app_metadata.price == 0
+      %li= link_to 'Rewarded Featured Installs', @distribution.primary_rewarded_featured_offer ? edit_app_offer_path(@app, @distribution.primary_rewarded_featured_offer) : new_app_offer_path(@app, :app_metadata_id => @app_metadata.id, :offer_type => 'rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && @offer.rewarded?) || params[:offer_type] == 'rewarded_featured')) ? 'selected' : ''
+      - if @distribution.primary_rewarded_featured_offer.present? && @distribution.primary_rewarded_featured_offer.tapjoy_enabled?
+        %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @distribution.primary_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @distribution.primary_rewarded_featured_offer ? 'selected' : '')
+      %li= link_to 'Non-Rewarded Featured Installs', @distribution.primary_non_rewarded_featured_offer ? edit_app_offer_path(@app, @distribution.primary_non_rewarded_featured_offer) : new_app_offer_path(@app, :app_metadata_id => @app_metadata.id, :offer_type => 'non_rewarded_featured'), :class => (controller.controller_name == 'offers' && ((@offer.featured? && !@offer.rewarded?) || params[:offer_type] == 'non_rewarded_featured')) ? 'selected' : ''
+      - if @distribution.primary_non_rewarded_featured_offer.present? && @distribution.primary_non_rewarded_featured_offer.tapjoy_enabled?
+        %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @distribution.primary_non_rewarded_featured_offer), :class => (controller.controller_name == 'offer_events' && @offer == @distribution.primary_non_rewarded_featured_offer ? 'selected' : '')
+      %li= link_to 'Non-Rewarded Installs', @distribution.primary_non_rewarded_offer ? edit_app_offer_path(@app, @distribution.primary_non_rewarded_offer) : new_app_offer_path(@app, :app_metadata_id => @app_metadata.id, :offer_type => 'non_rewarded'), :class => (controller.controller_name == 'offers' && ((!@offer.rewarded? && !@offer.featured?) || params[:offer_type] == 'non_rewarded')) ? 'selected' : ''
+      - if @distribution.primary_non_rewarded_offer.present? && @distribution.primary_non_rewarded_offer.tapjoy_enabled?
+        %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @distribution.primary_non_rewarded_offer), :class => (controller.controller_name == 'offer_events' && @offer == @distribution.primary_non_rewarded_offer ? 'selected' : '')
+
+- content_for :page_styles do
+  :plain
+    #apps_main {
+      margin-left: 160px;
+    }

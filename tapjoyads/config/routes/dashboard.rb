@@ -75,6 +75,11 @@ Tapjoyad::Application.routes.draw do
             post :toggle
           end
         end
+        resources :app_metadatas, :only => [:show, :update, :new, :create] do
+          member do
+            get :remove
+          end
+        end
         resources :reengagement_offers, :except => [:show] do
           collection do
             post :update_status
