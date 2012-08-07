@@ -16,11 +16,11 @@
       start = 25,
       autoLoadLimit = 3,
       pagesFetched = 0,
+      msie = (/msie/i).test(agent),
       url = fetchURL;
 
  var $ = {
     blank: 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==',
-    addEvent: (/msie/i).test(agent) ? 'attachEvent' : 'addEventListener',
     empty: function(){},
     labels: {
       actions:{
@@ -36,33 +36,39 @@
         points: i18n.t("points")
       }
     },
+    cls: {
+      "6":"six",
+      "7":"seven",
+      "8":"eight",
+      "9":"nine",
+      "10":"ten"
+    },
     tpl: {
-      header: [
-        "<div class='app-icon'>"+
-          "<div class='overlay'></div>"+
-          "<img src='{currentIconURL}' />"+
-        "</div>"+
-        "<div class='app-desc'><h1>{currentAppName}</h1>{message}</div>",
-        "<div>{banner}</div>"
-      ],
+      banner: ['<div class="clearfix">'+
+                '<div class="left"><div class="text mt8">{earn} {currency}</div></div>'+
+                  '<div class="right"><div class="text">{offers}&nbsp;</div><div class="logo mr5"><img src="{blank}" /></div></div>'+
+                '</div>',
+                '<div class="text">{offers}&nbsp;</div><div class="logo"><img src="{blank}" /></div>'
+              ],
+      cover: ['<div class="play"></div><img class="frame" src="{icon}" />',
+              '<div class="rounded"></div><img class="cover" src="{icon}" />'],
       offersReward: [
-        "<div class='reward'>"+
-          "<span class='earn'>{earn}</span>"+
-          "<span class='big'>{payout}</span>"+
-          "<span class='points'>{points}</span>"+
+        "<div class='reward gradientfix clearfix'>"+
+         "<span class='earn {hide_earn} {earn_margin}'>{earn}</span>"+
+          "<span class='big {payout_margin}'>{payout}</span>"+
+          "<span class='points {points_long}'>{points}</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
       ],
       offersNonReward: [
-        "<div class='reward'>"+
-          "<span class='big'>"+ i18n.t("tap_here") +"</span>"+
+        "<div class='reward gradientfix'>"+
+          "<span class='big mt10'>"+ i18n.t("tap_here") +"</span>"+
           "<span class='free'>{cost}</span>"+
         "</div>"
       ],
       offers: [
-        "<div class='offer'>"+
+        "<div class='offer clearfix'>"+
           "<div class='icon'>"+
-            "{pricetag}"+
             "{cover}"+
             "{wifi}"+
           "</div>"+
@@ -74,52 +80,6 @@
       ]
     },
 
-    /**
-     * Initialize offerwall
-     */
-    init: function(){
-
-      $.data = data;
-      $.header = document.getElementById('header');
-      $.banner = document.getElementById('branding');
-      $.loader = document.getElementById('loading');
-      $.loadMore = document.getElementById('more');
-      $.offersContainer = document.getElementById('offers');
-      $.visit = document.getElementById('visit');
-
-      $.header.innerHTML = $.format($.tpl.header[0], data);
-      $.load(data.offers);
-      $.configLayout();
-      $.initEvents();
-    },
-
-    /**
-     * Attach events events
-     */
-    initEvents: function(){
-      if($.data.autoload){
-        window[$.addEvent]('scroll', function(){
-          if(pagesFetched < autoLoadLimit){
-            if($.endOfTheLine() && !$.fetching){
-              $.fetch();
-              pagesFetched++;
-            }
-          }
-        });
-      }
-
-      $.visit[$.addEvent]('click', function(){
-        window.location = page;
-      });
-
-      $.loadMore[$.addEvent]('click', function(){
-        $.fetch();
-      }, false);
-    },
-
-    /**
-     * AJAX - it's magical
-     */
     ajax: function(config){
 
       var defaults = {
@@ -137,7 +97,7 @@
         timeout: 0
       };
 
-      var config = $.apply(defaults, config);
+      var config = $.extend(defaults, config);
 
       if(!config.url){
         config.url = toString.call(window.location);
@@ -231,12 +191,9 @@
       return xhr;
     },
 
-    /**
-     * Extends a specific object with new or updated properties
-     */
-    apply: function(object, config, defaults){
+    extend: function(object, config, defaults){
       if(defaults){
-        $.apply(object, defaults);
+        $.extend(object, defaults);
       }
 
       if(object && config && $.type(config) === 'object'){
@@ -247,20 +204,22 @@
       return object;
     },
 
-    /**
-     * Configure layout for A/B testing
-     */
-    configLayout: function(){
+    build: function(){
 
-      $.banner.innerHTML = '<div class="text">' + $.labels.text.offersby + '&nbsp;</div><div class="logo"><img src="' + $.blank + '" /></div>';
+      var tpl = $.tpl.banner[$.data.currencyName.length < 100 ? 0 : 1];
+
+      $.banner.innerHTML = $.format(
+        tpl, {
+          blank: $.blank,
+          earn: $.labels.text.earn,
+          currency: $.data.currencyName,
+          offers: $.labels.text.offersby
+        }
+      );
 
       $.offersContainer.className += ' action-' + $.data.actionLocation + '-side';
       !$.data.showActionLine ? $.offersContainer.className += ' no-action-line' : '';
-      !$.data.showCurrentApp ? $.header.className += ' hide-current-app' : '';
 
-      if(!$.data.showBanner){
-        $.header.style.display = 'none';
-      }
       if($.data.autoload && $.loadMore){
         try {
           $.loadMore.parentNode.style.display = 'none';
@@ -268,35 +227,31 @@
       }
     },
 
-    /**
-     * ForEach method
-     * @param {array} collection
-     * @param {function} callback
-     */
     each: function(array, fn){
       $.every(array, function(item){
         return !fn(item)
       });
     },
 
-    /**
-     * @return {string} Returns the formatted string
-     */
     ellipsis: function(str, len){
-      return str ? str.substr(0, len - 3) + (str.length < len ? "" : "...") : false;
+      return str ? str.substr(0, len - 3) + (str.length < len ? '' : '...') : false;
     },
 
-    /**
-     * Checks to see if you have reached the bottom of the page
-     * @return {boolean} True or false depending on scroll position
-     */
     endOfTheLine: function(){
       return document.body.clientHeight <= window.innerHeight + window.pageYOffset;
     },
 
-    /**
-     *
-     */
+    error: function(){
+      var li = document.createElement('li');
+
+      li.id = 'empty';
+      li.innerHTML = '<div class="error">' + $.labels.text.error + '</div>';
+
+      $.offersContainer.appendChild(li);
+
+      $.emptyEl = li;
+    },
+
     every: function(array, fn, i){
       for(var i = 0, k = array.length; i < k; ++i){
         if(!fn(array[i])){
@@ -307,9 +262,6 @@
       return 1;
     },
 
-    /**
-     * Get some!
-     */
     fetch: function(){
       $.loader.style.display = 'block';
 
@@ -348,18 +300,12 @@
           $.loader.style.display = 'none';
 
           if(!$.emptyEl){
-            $.showLoadingError();
+            $.error();
           }
         }
       });
     },
 
-    /**
-     * Query string for traversing the DOM
-     * @param {string} The selector - what to find - e.g. '#hello' or '.hello' or '#hell .hello'
-     * @param {element} The context or scope (containing element, defaults to document) to execute the query within
-     * @return {array} Returns a collection of elements matching the given selctor
-     */
     find: function(selector, context){
       var query,
           context = context || document;
@@ -377,12 +323,6 @@
       return query;
     },
 
-    /**
-     * Simple HTML/text keyed template formatting method
-     * @param {string} The template or string containing object keys - e.g. '{boobies}'
-     * @param {object} The object containing the keys to replace with their property value
-     * @return {string}
-     */
     format: function(tpl, object){
       object = object || {};
 
@@ -391,13 +331,45 @@
       });
     },
 
-    /**
-     * Iterates through offers list and appends them to the offer wall
-     */
+    init: function(){
+
+      $.data = data;
+      $.banner = document.getElementById('branding');
+      $.loader = document.getElementById('loading');
+      $.loadMore = document.getElementById('more');
+      $.offersContainer = document.getElementById('offers');
+      $.visit = document.getElementById('visit');
+
+      $.load(data.offers);
+      $.build();
+      $.listen();
+    },
+
+    listen: function(){
+      if($.data.autoload){
+        $.on(window, 'scroll', function(){
+          if(pagesFetched < autoLoadLimit){
+            if($.endOfTheLine() && !$.fetching){
+              $.fetch();
+              pagesFetched++;
+            }
+          }
+        });
+      }
+
+      $.on($.visit, 'click', function(){
+        window.location = page;
+      });
+
+      $.on($.loadMore, 'click', function(){
+        $.fetch();
+      });
+    },
+
     load: function(data){
 
       if(data && data.length === 0 && !$.emptyEl){
-        $.showLoadingError();
+        $.error();
         return;
       }
 
@@ -411,27 +383,46 @@
             item = data[i],
             type = item.type.toLowerCase(),
             connector = item.redirectURL.match(/\?/) ? '&' : '?',
-            offerTemplate;
+            offerType = !$.data.rewarded ? 'offersNonReward' : 'offersReward',
+            len = $.data.currencyName.length,
+            offer,
+            size;
 
         item.free = $.labels.text.free;
         item.points = $.data.currencyName;
         item.earn = $.labels.text.earn;
 
+        if (len >= 20) {
+          item.hide_earn = 'hide';
+          item.payout_margin = 'mt5';
+          item.earn_margin = 'mt3';
+          item.points_long = 'long';
+        }
+        else if (len >= 10) {
+          item.hide_earn = 'hide';
+          item.payout_margin = 'mt10';
+          item.earn_margin = 'mt3';
+          item.points_long = 'long';
+        }
+
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
-        item.cover = type === 'video' ? '<div class="play"></div><img class="frame" src="' + item.iconURL + '" />' : '<div class="' + ($.data.squircles ? 'overlay' : 'rounded') +'"></div><img class="cover" src="' + item.iconURL + '" />';
+        item.cover = $.format($.tpl.cover[type === 'video' ? 0 : 1], { icon: item.iconURL });
 
-        if($.data.showCostBalloon){
-          item.pricetag = item.cost !== 'Free' ? '<div class="action-item">'+item.cost+'</div>' : '';
-        }
-        if (!$.data.rewarded) {
-          offerTemplate = $.format($.tpl.offersNonReward[0], item) + $.format($.tpl.offers[0], item);
-        }else{
-          offerTemplate = $.format($.tpl.offersReward[0], item) + $.format($.tpl.offers[0], item);
-        }
-        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offerTemplate + '</a>';
+        offer = $.format($.tpl[offerType][0], item) + $.format($.tpl.offers[0], item);
+
+        li.className = 'offer-item clearfix';
+        li.innerHTML = '<a href="' + item.redirectURL + connector + 'viewID=' + $.data.viewID + '">' + offer + '</a>';
 
         $.offersContainer.appendChild(li);
+
+        size = item.payout.length;
+
+        if(size > 5){
+          $.each($.find('.big', li), function(el){
+            el.className += ' ' + (size > 5 && size < 9 ? $.cls[size] : size > 9 ? 'large' : 'large');
+          });
+        }
 
         if(item.wifi.length != 0){
           $.each($.find('.icon', li), function(el){
@@ -443,35 +434,29 @@
       $.truncate('.title', $.data.maxlength);
     },
 
-    /**
-     * Display error messaging on failed requests
-     */
-    showLoadingError: function(){
-      var li = document.createElement('li');
+    on: function(el, event, fn){
+      var evt;
 
-      li.id = 'empty';
-      li.innerHTML = '<div class="error">' + $.labels.text.error + '</div>';
-
-      $.offersContainer.appendChild(li);
-
-      $.emptyEl = li;
-    },
-
-    /**
-     * DOM ready method
-     * @param {function} Callback function to execute after DOMContentLoaded
-     */
-    ready: function(fn){
-      if((/complete|loaded/).test(document.readyState)){
-        fn.call();
+      if(!msie){
+        evt = el.addEventListener(event, fn, false);
+      }else{
+        evt = el.attachEvent("on" + event, fn);
       }
-
-      document[this.addEvent]('DOMContentLoaded', fn, false);
+      return evt;
     },
 
-    /**
-     * Truncates a string based on defined length and appends ellipsis
-     */
+    ready: function(fn){
+      if(!msie){
+        if((/complete|loaded/).test(document.readyState)){
+          fn.call();
+        }
+
+        document.addEventListener('DOMContentLoaded', fn, false);
+      }else{
+        window.onload = fn;
+      }
+    },
+
     truncate: function(selector, len){
       var query = $.find(selector, document);
 
@@ -481,11 +466,6 @@
       });
     },
 
-    /**
-     * Returns the type of object that has been passed
-     * @param {mixed} Anything
-     * @return {string} Returns object type in string format
-     */
     type: function(obj){
       return !obj || obj == null ? 'null' : toString.call(obj).split(' ').pop().replace(']', '').toLowerCase();
     }
