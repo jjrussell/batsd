@@ -111,7 +111,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
         end
 
         begin
-          app_metadata.update_from_store(params[:country])
+          app_metadata.update_from_store(params[:app_country])
         rescue
           @error_message = "Grabbing app data from app store failed. Please try again."
           raise
