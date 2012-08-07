@@ -26,7 +26,7 @@ The `dev_SendWelcomeEmails` queue is a shared resource in Tapjoy's development e
 2. Click 'Sign Up'.
 3. Fill out the form using your email address and dummy values for the rest of the fields, then submit the form.
   * If you see the 'Welcome to Tapjoy!' message, then the registration was successful.
-4. From your computer, navigate to `http://localhost:8080/dashboard/tools/sqs_lengths` to confirm that the `SendWelcomeEmails` queue now has a message queued.
+4. Navigate to `http://localhost:8080/dashboard/tools/sqs_lengths` to confirm that the `SendWelcomeEmails` queue now has a message queued.
   * If more than one message has been queued, it's likely that another developer has also registered a dummy user.  This is of no concern to this test.
 5. Find the `dev_SendWelcomeEmails` row and click the corresponding 'Run Once' link.
   * If presented with an authentication challenge, refer to `tapjoyads/app/helpers/authentication_helper.rb` to find credentials for the user `internal`.
