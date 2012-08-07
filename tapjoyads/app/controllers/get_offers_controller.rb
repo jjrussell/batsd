@@ -88,8 +88,6 @@ include GetOffersHelper
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
       render :json => @final.to_json, :callback => params[:callback] and return
-    elsif params[:device_type] == 'WinCE'
-      render :template => 'get_offers/webpage' and return
     else
       render :template => 'get_offers/webpage_redesign' and return
     end
@@ -276,7 +274,6 @@ include GetOffersHelper
         @algorithm_options = {:skip_country => true}
       when 'c_offerwall'
         @algorithm = '101'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
 
     if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
@@ -320,7 +317,7 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A1
+    view_id = params[:viewID] || :VIEW_A2
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []
