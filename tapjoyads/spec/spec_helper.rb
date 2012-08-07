@@ -31,7 +31,6 @@ Spork.prefork do
   require 'factory_girl'
   require 'authlogic/test_case'
   require 'hpricot'
-  require 'fake_memcached'
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   RSpec.configure do |config|
@@ -51,7 +50,9 @@ Spork.prefork do
       SimpledbResource.reset_connection
       AWS::S3.stub!(:new => FakeS3.new)
       Sqs.stub(:send_message)
-      Memcached.stub(:new=>FakeMemcached.new)
+      Memcached.stub(:new) {|*args| FakeMemcached.new(*args)}
+      Mc.reset_connection
+      Mc.flush('totally_serious')
     end
     config.after(:suite) do
       DeferredGarbageCollection.stop
