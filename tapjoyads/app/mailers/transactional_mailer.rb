@@ -58,7 +58,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   ##
   def build_data_for_tjm_welcome_email
     # Gather required data for the ET data extension
-    offer_array = @offer_data.first.second["OfferArray"]
+    offer_array = (@offer_data.present? && @offer_data.first.second["OfferArray"].present?) ? @offer_data.first.second["OfferArray"] : []
     @data = {
       :android_device           => @android_device ? 1 : 0,
       :confirmation_url         => @confirmation_url,
