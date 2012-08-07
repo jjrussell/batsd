@@ -305,23 +305,6 @@ include GetOffersHelper
     params[:library_version] == 'server'
   end
 
-  def generate_web_request
-    if params[:source] == 'tj_games'
-      wr_path = 'tjm_offers'
-    elsif params[:source] == 'featured'
-      wr_path = 'featured_offer_requested'
-    else
-      wr_path = 'offers'
-    end
-    web_request = WebRequest.new(:time => @now)
-    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
-    web_request.viewed_at = @now
-    web_request.offerwall_start_index = @start_index
-    web_request.offerwall_max_items = @max_items
-
-    web_request
-  end
-
   def set_redesign_parameters
     view_id = params[:viewID] || :VIEW_A2
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
