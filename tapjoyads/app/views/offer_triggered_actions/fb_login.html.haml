@@ -11,23 +11,31 @@
 
       var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
       if (fbOpts) {
+        var authorized = false;
+
+        function makeLoginLink(response){
+          if (response.authResponse){
+            authorized = true;
+          }
+        }
+
         initiateFacebook(fbOpts, function () {
+          FB.getLoginStatus(makeLoginLink);
+
           $('.reward-button').click(function (event) {
             event.preventDefault();
 
-            FB.getLoginStatus(function (response) {
-              if (response.authResponse) {
-                afterFbLogin();
-              } else {
-                FB.login(function (response) {
-                  if (response.authResponse) {
-                    afterFbLogin();
-                  } else {
-                    $('.error').text('Please login Facebook and grant us permissions.').show();
-                  }
-                }, {scope: 'publish_stream,email,user_birthday'});
-              }
-            });
+            if (authorized) {
+              afterFbLogin();
+            } else {
+              FB.login(function (response) {
+                if (response.authResponse) {
+                  afterFbLogin();
+                } else {
+                  $('.error').text('Please login Facebook and grant us permissions.').show();
+                }
+              }, {scope: 'publish_stream,email,user_birthday'});
+            }
 
             function afterFbLogin () {
               FB.api('/me', function (response) {
