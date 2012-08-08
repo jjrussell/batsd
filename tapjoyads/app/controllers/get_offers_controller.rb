@@ -272,8 +272,6 @@ include GetOffersHelper
       when 'b_offerwall'
         @algorithm = '101'
         @algorithm_options = {:skip_country => true}
-      when 'c_offerwall'
-        @algorithm = '101'
     end
 
     if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
