@@ -356,11 +356,11 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
-  def recent_clicks(start_time_at = Time.zone.now-RECENT_CLICKS_RANGE, end_time_at = Time.zone.now)
+  def recent_clicks(start_time_at = (Time.zone.now-RECENT_CLICKS_RANGE).to_f, end_time_at = Time.zone.now.to_f)
     clicks = []
     self.recent_click_hashes.each do |recent_click_hash|
       click = Click.find(recent_click_hash['id'])
-      next if (click.nil? || click.tapjoy_games_invitation_primary_click?)
+      next unless click
       clicked_at = click.clicked_at.to_f
       cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
       clicks << click unless cutoff
