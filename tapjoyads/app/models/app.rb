@@ -69,6 +69,8 @@ class App < ActiveRecord::Base
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
 
+  VIDEO_CACHING_MODES = %w(manual auto)
+
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
@@ -97,6 +99,7 @@ class App < ActiveRecord::Base
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
   validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_inclusion_of :videos_cache_mode, :in => VIDEO_CACHING_MODES
 
   before_validation :generate_secret_key, :on => :create
 
@@ -385,6 +388,29 @@ class App < ActiveRecord::Base
   def rewardable_currencies
     @rewardable_currencies ||= currencies.reject{ |c| c.conversion_rate <= 0 }
   end
+
+  def videos_cache_on?(connection)
+    return false if videos_disabled?
+    return false if videos_cache_mode == 'auto'
+
+    case connection
+    when 'mobile' then videos_cache_3g?
+    when 'wifi'   then videos_cache_wifi?
+    else false
+    end
+  end
+
+  def videos_stream_on?(connection)
+    return false if videos_disabled?
+
+    case connection
+    when 'mobile' then videos_stream_3g?
+    when 'wifi'   then true
+    else false
+    end
+  end
+
+  def videos_disabled?; not videos_enabled?; end
 
   private
 
