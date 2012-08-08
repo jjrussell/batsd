@@ -35,6 +35,10 @@ class Deploy
         @options[:version] = version
       end
 
+      opts.on('--skip-schema-check') do
+        @options[:skip_schema_check] = true
+      end
+
       opts.on_tail('-h', '--help') do
         print_usage_and_exit
       end
@@ -59,7 +63,7 @@ class Deploy
       check_syntax
       create_deploy_tag
     end
-    check_schema if @options[:environment] == 'production'
+    check_schema if @options[:environment] == 'production' && !@options[:skip_schema_check]
     system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
     system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
     system("git checkout master")
