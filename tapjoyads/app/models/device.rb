@@ -25,9 +25,11 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
+  self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
+  RECENT_CLICKS_RANGE = 30.days
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -352,6 +354,39 @@ class Device < SimpledbShardedResource
   def remove_old_skips(time = Device::SKIP_TIMEOUT)
     temp = self.recent_skips
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
+  end
+
+  def recent_clicks(start_time_at = (Time.zone.now-RECENT_CLICKS_RANGE).to_f, end_time_at = Time.zone.now.to_f)
+    clicks = []
+    self.recent_click_hashes.each do |recent_click_hash|
+      click = Click.find(recent_click_hash['id'])
+      next unless click
+      clicked_at = click.clicked_at.to_f
+      cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
+      clicks << click unless cutoff
+    end
+    clicks
+  end
+
+  def add_click(click)
+    click_id = click.id
+    temp_click_hashes = self.recent_click_hashes
+    end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
+
+    shift_index = 0
+    temp_click_hashes.each_with_index do |temp_click_hash, i|
+      if temp_click_hash['clicked_at'] < end_period
+        shift_index = i+1
+      else
+        break
+      end
+    end
+    temp_click_hashes.shift(shift_index)
+
+    temp_click_hashes << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    self.recent_click_hashes = temp_click_hashes
+    @retry_save_on_fail = true
+    save
   end
 
   private

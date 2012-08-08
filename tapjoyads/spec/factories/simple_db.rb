@@ -9,7 +9,7 @@ FactoryGirl.define do
   end
 
   factory :device do
-    key { FactoryGirl.generate(:udid) }
+    key               { FactoryGirl.generate(:udid) }
   end
 
   factory :publisher_user do
