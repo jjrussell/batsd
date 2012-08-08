@@ -62,6 +62,10 @@ module Tapjoyad
     route_filenames.each do |route|
       config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
     end
+
+    config.assets.enabled = true
+    config.assets.version = '1.0'
+    config.assets.initialize_on_precompile = false
   end
 
 end

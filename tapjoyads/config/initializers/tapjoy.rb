@@ -63,8 +63,6 @@ AWS.config(
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
 MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
-Sprockets::Tj.init_assets
-
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
