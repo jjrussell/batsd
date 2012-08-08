@@ -41,33 +41,29 @@ class FakeSdb
 
   end
 
-  def select(query, next_token, consistent)
+  def select(query, next_token = nil, consistent = nil)
     options = parse_query(query)
-    domain = options.delete(:from).first
-    results = fake_sdb_data(domain)
-    final_results = {}
+    domain = options.delete(:from).first.gsub(/[`"']/, '') # strip quotes
+    records = fake_sdb_data(domain).dup
 
-    options[:where].each do |element|
-      if element.is_a? Array
-        element = element.first if element.first.is_a? Array
-        new_results = results.reject do |key, record|
-          record[element.first] && record[element.first].first != element.last
-        end
-        final_results.merge!(new_results)
-      end
+    if options[:where]
+      # ruby 1.9 has Hash#keep_if, so let's pretend we doo tooo
+      proc = keep_if_proc(options[:where])
+      records.delete_if { |key, record| !proc.call(key, record) }
     end
 
     case options[:select].first
     when '*'
-      array_results = final_results.map { |k, v| { k => v } }
-      { :items => array_results.dup }
+      # this dup is necessary so changing values on the returned
+      # items doesn't change values in the 'database'
+      array_results = records.map { |k, v| { k.dup => v.dup } }
+      { :items => array_results }
     when 'count(*)'
-      { :items => [ { 'Domain' => { 'Count' => [ final_results.count ] } } ] }
+      { :items => [ { 'Domain' => { 'Count' => [ records.count ] } } ] }
     end
   end
 
   private
-
   def parse_query(query)
     query_array = query.split
     options = {}
@@ -81,23 +77,124 @@ class FakeSdb
         options_array = options[:from]
       when /^WHERE$/i
         options[:where] ||= []
-        options_array = []
-        options[:where] << options_array
-      when /^OR$/i
-        options_array = []
-        options[:where] << :or << options_array
+        options_array = options[:where]
       when /^LIMIT$/i
         options_array = []
         options[:limit] ||= [options_array]
       when /^ORDER BY/i
       else
-        options_array << word.gsub('`', '').gsub("'", '')
+        options_array << word
       end
     end
+
+    options[:where] = parse_where(options[:where]) if options[:where]
     options
   end
 
-  private
+  # build an array like
+  # [[column, operator, string], :and, [string, operator, column]]
+  # or recursively like
+  # [[condition, :and, condition], :or, [some more conditions]]
+  def parse_where(tokens)
+    conditions = []
+    current_condition = []
+
+    while token = tokens.shift
+      if token.starts_with?('(')
+        # all the tokens until the closing paren go into an array and recurse
+        group = [token[1..-1]] # strip leading paren
+        group << tokens.shift until tokens.first.ends_with?(')')
+        group << tokens.shift[0..-2] # strip trailing paren
+
+        conditions << parse_where(group)
+      elsif %w{` ' "}.any? { |quote| token.starts_with?(quote) && !token.ends_with?(quote) }
+        # thie
+        quote = token[0..0]
+        str = token
+        str << (' ' + tokens.shift) until str.ends_with(quote)
+
+        str.gsub!(quote, '') # strip quote
+
+        # go round again with this whole string as a token
+        tokens.unshift(str)
+      elsif [/>/i, /</i, />=/i, /<=/i, /=/i].any? { |op| op.match(token) }
+        # symbolize the sql operator so we can use it as a method later
+        current_condition << (token == '=' ? :== : token.to_sym)
+      elsif [/and/i, /or/i].any? { |op| op.match(token) }
+        # this condition is finished, so let's add it
+        conditions << current_condition unless current_condition.empty?
+
+        # and the logical operator
+        conditions << token.downcase.to_sym
+
+        # and refresh current_condition
+        current_condition = []
+      else
+        current_condition << token.gsub(/[`"']/, '') # strip quotes from strings
+      end
+    end
+
+    # we may have one condition left in current_condition
+    conditions << current_condition unless current_condition.empty?
+    conditions
+  end
+
+  # returns a proc that will compare a conditions array returned by parse_where
+  # to a record from the "database"
+  def keep_if_proc(conditions)
+    # split into groups on OR
+    groups = []
+    while conditions.include?(:or)
+      groups << []
+      groups.last << conditions.shift while conditions.first != :or
+      conditions.shift # the :or
+    end
+
+    # the remaining (or only, if there was no :or) group
+    groups << conditions unless conditions.empty?
+
+    Proc.new do |key, record|
+      groups.any? do |conditions| # any OR'd group is good enough
+        conditions.all? do |condition| # but these conditions are AND'd
+          if condition == :and
+            # these don't mean anything anymore
+            true
+          elsif condition[0].is_a?(Array)
+            # parentheses group
+            keep_if_proc([condition[0]]).call(key, record)
+          else
+            # condition is [column, operator (symbol), value]
+            real_value  = condition[0].match(/^itemname/i) ? key : record[condition[0]]
+            operator    = condition[1]
+            test_value  = condition[2]
+            negate      = false
+
+            # != isn't a real method
+            if operator == :'!='
+              operator = :==
+              negate   = true
+            end
+
+            # values can be one element arrays...
+            real_value = real_value.first if real_value.is_a?(Array)
+
+            # convert test value to appropriate type if needed
+            if real_value.is_a?(Fixnum)
+              test_value = test_value.to_i
+            elsif real_value.is_a?(Float)
+              test_value = test_value.to_f
+            end
+
+            # compare
+            bool = real_value.send(operator, test_value)
+
+            # negate if necessary
+            negate ? !bool : bool
+          end
+        end
+      end
+    end
+  end
 
   def fake_sdb_data(domain)
     @fake_sdb_data ||= {}

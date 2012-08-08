@@ -114,25 +114,44 @@ describe Mc do
 
     thread_list = []
     expected_val = ''
-    100.times do
-      expected_val += 'a'
-      thread = Thread.new do
+    Mc.compare_and_swap('foo', true) do |mc_val|
+      'a'
+    end
+
+    Mc.get('foo').should == 'a'
+
+    # Verify retries can occur up to 2 times
+    retries = 0
+    Mc.compare_and_swap('foo', true) do |mc_val|
+      if retries < 2
+        retries += 1;
         Mc.compare_and_swap('foo', true) do |mc_val|
-          if mc_val
-            val = mc_val + 'a'
-          else
-            val = 'a'
-          end
-          val
+          mc_val + 'a'
         end
       end
-      thread_list.push(thread)
+
+      mc_val + 'a'
     end
 
-    thread_list.each do |thread|
-      thread.join
-    end
+    retries.should == 2
+    Mc.get('foo').should == 'aaaa'
 
-    Mc.get('foo').should == expected_val
+    # Can't retry more than 2 times
+    Mc.put('foo', 'a')
+    lambda do
+      retries = 0
+      Mc.compare_and_swap('foo', true) do |mc_val|
+        if retries < 3
+          retries += 1;
+          Mc.compare_and_swap('foo', true) do |mc_val|
+            mc_val + 'a'
+          end
+        end
+
+        mc_val + 'a'
+      end
+    end.should raise_error(Memcached::ConnectionDataExists)
+    retries.should == 3
+    Mc.get('foo').should == 'aaaa'
   end
 end

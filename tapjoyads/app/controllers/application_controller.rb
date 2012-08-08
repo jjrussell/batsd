@@ -29,10 +29,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def redis_write
-    @redis_write ||= Redis.new(:host => 'redis.tapjoy.net')
-  end
-
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -44,7 +40,7 @@ class ApplicationController < ActionController::Base
           request.path_parameters[:controller],
           request.path_parameters[:action],
         ].join('/') + '.json'
-        redis_write.sadd key, response.body
+        $redis.sadd key, response.body
       end
     elsif response.content_type == 'application/xml'
       begin
@@ -56,7 +52,7 @@ class ApplicationController < ActionController::Base
           request.path_parameters[:controller],
           request.path_parameters[:action],
         ].join('/') + '.xml'
-        redis_write.sadd key, response.body
+        $redis.sadd key, response.body
       end
     end
   end

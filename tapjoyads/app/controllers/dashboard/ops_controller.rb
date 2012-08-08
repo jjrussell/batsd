@@ -128,7 +128,7 @@ class Dashboard::OpsController < Dashboard::DashboardController
     respond_to do |format|
       format.json do
         @stats = {}
-        statuses = redis.smembers "api.statuses"
+        statuses = $redis_read.smembers "api.statuses"
         keys = keys_in_time_range "hash.status", statuses, @start_time, @end_time, 3600
 
         first_time = nil
@@ -139,7 +139,7 @@ class Dashboard::OpsController < Dashboard::DashboardController
           next  unless code > 0 && code < 1000
 
           values[code] ||= {}
-          values[code].merge! redis.hgetall(key)
+          values[code].merge! $redis_read.hgetall(key)
         end
 
         statuses.each do |code|
@@ -202,7 +202,7 @@ class Dashboard::OpsController < Dashboard::DashboardController
         last_time = 0
         values = {}
         keys.each do |key|
-          values.merge! redis.hgetall(key)
+          values.merge! $redis_read.hgetall(key)
         end
 
         values.each do |time,value|
@@ -248,17 +248,13 @@ class Dashboard::OpsController < Dashboard::DashboardController
   end
 
   def requests_per_minute
-    rpms = redis.mget(*redis.keys('request_counters:*')).map(&:to_i)
+    rpms = $redis_read.mget(*$redis_read.keys('request_counters:*')).map(&:to_i)
     sum  = ActionController::Base.helpers.number_with_delimiter(rpms.sum)
     mean = ActionController::Base.helpers.number_with_delimiter(rpms.mean.to_i)
     render :json => { :sum => sum, :mean => mean }
   end
 
   private
-
-  def redis
-    @redis ||= Redis.new(:host => "redis.tapjoy.net", :port => 6380)
-  end
 
   def get_as_groups(group_name = nil)
     as_interface = RightAws::AsInterface.new
