@@ -10,9 +10,13 @@ class AdminDeviceLastRun
 
     # The after filter itself
     def track_admin_device
-      if AdminDevice.where(:udid => params[:udid]).any?
+      @device ||= Device.new(
+        :key => params[:udid],
+        :is_temporary => params[:udid_is_temporary].present?
+      )
+
+      if @device.last_run_time_tester?
         __web_request = @web_request || generate_web_request
-        Rails.logger.debug "****\n\n WR is #{__web_request.attributes.keys.inspect}\n\n******"
         AdminDeviceLastRun.set(
           :udid => params[:udid],
           :app_id => params[:app_id],
