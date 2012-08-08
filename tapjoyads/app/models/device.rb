@@ -376,8 +376,8 @@ class Device < SimpledbShardedResource
     end
   end
 
-  def suspension_expiration
-    suspension_expires_at if suspended?
+  def can_view_offers?
+    !(opted_out? || banned? || suspended?)
   end
 
   private
