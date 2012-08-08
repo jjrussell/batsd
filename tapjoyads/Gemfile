@@ -99,7 +99,7 @@ group :test do
   gem 'spork'
   gem 'timecop'
   gem "fakeredis", :require => "fakeredis/rspec"
-  gem 'fakememcached', :git => 'git://github.com/Tapjoy/fakememcached.git', :ref => 'e6e53'
+  gem 'fakememcached', :git => 'git://github.com/Tapjoy/fakememcached.git', :ref => 'f1af1'
 end
 
 group :development, :test do
