@@ -4,6 +4,7 @@ class DisplayAdController < ApplicationController
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
+    return unless verify_records([ @publisher_app ]) if params[:format] == 'html'
     if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
