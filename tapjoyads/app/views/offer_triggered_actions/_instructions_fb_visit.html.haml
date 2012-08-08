@@ -1,5 +1,5 @@
 - @page_title = "#{t('text.instructions.title')} - #{@offer.name}"
-- steps = @offer.instructions.gsub(/\r\n/, "\n").split(/\n+/)
+- steps = @offer.instructions.split(/[\r\n]+/)
 
 .ui-joy-mask
   .ui-joy-panel#panel
@@ -18,7 +18,7 @@
       %ul.steps.fb_like
         - if steps.first.present?
           %li#step-1.animate.grey-box.highlight
-            #count-1.animate.count= 1
+            #count-1.animate.count 1
             .step
               = steps.first
             .padit
