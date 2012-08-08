@@ -64,10 +64,6 @@ MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
 ]
 DISTRIBUTED_MEMCACHE_SERVERS = [
-  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
-  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
   'localhost:21210', # couchbase us-east-1b
   'localhost:21211', # couchbase us-east-1c
   'localhost:21212', # couchbase us-east-1d
@@ -99,6 +95,7 @@ NUM_CLICK_DOMAINS = 50
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
 NUM_DEVICE_IDENTIFIER_DOMAINS = 100
+NUM_TEMPORARY_DEVICE_DOMAINS = 10
 NUM_GAME_STATE_DOMAINS = 300
 NUM_GAME_STATE_MAPPING_DOMAINS = 10
 NUM_PUBLISHER_USER_DOMAINS = 50

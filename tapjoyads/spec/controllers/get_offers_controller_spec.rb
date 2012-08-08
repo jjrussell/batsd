@@ -5,17 +5,24 @@ describe GetOffersController do
 
   describe '#index' do
     before :each do
+      Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
+      @currency.update_attributes({:external_publisher => true})
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       @offer2 = FactoryGirl.create(:app).primary_offer
       @offer2.countries = ["GB"].to_json
+      @offer2.partner.balance = 10
       @offer2.save
       @offer3 = FactoryGirl.create(:app).primary_offer
       @offer3.countries = ["US"].to_json
+      @offer3.partner.balance = 10
       @offer3.save
       @offer4 = FactoryGirl.create(:app).primary_offer
       @offer4.countries = ["CN"].to_json
+      @offer4.partner.balance = 10
       @offer4.save
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
@@ -31,10 +38,15 @@ describe GetOffersController do
 
     end
 
+    after :each do
+      Timecop.return
+    end
+
     it 'should queue up tracking url calls' do
       @offer.should_receive(:queue_impression_tracking_requests).with(
-        :ip_address => @controller.send(:ip_address),
-        :udid       => 'stuff').once
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
 
       get(:index, @params)
     end
@@ -120,9 +132,9 @@ describe GetOffersController do
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
       json_offer['isFree'     ].should == true
-      json_offer['Amount'     ].should == '5'
+      json_offer['Amount'     ].should == '4'
       json_offer['Name'       ].should == @offer.name
-      json_offer['Payout'     ].should == 5
+      json_offer['Payout'     ].should == 4
       json_offer['Type'       ].should == 'App'
       json_offer['StoreID'    ].should == @offer.store_id_for_feed
       json_offer['IconURL'    ].should be_present
@@ -161,6 +173,8 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
     end
 
     context 'with redesign specified' do
@@ -185,8 +199,9 @@ describe GetOffersController do
     it 'should queue up tracking url calls' do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
-        :ip_address => @controller.send(:ip_address),
-        :udid       => 'stuff').once
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
 
       get(:webpage, @params)
     end
@@ -214,6 +229,8 @@ describe GetOffersController do
       @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       controller.stub(:ip_address).and_return('208.90.212.38')
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @params = {
@@ -327,6 +344,7 @@ describe GetOffersController do
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       controller.stub(:ip_address).and_return('208.90.212.38')
       fake_cache_object = double('fake_cache_object')
       fake_cache_object.stub(:value).and_return([@offer])

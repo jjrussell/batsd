@@ -696,7 +696,7 @@ ul#offers.no-action-line li .offer .about .action {
 }
 @media (max-width:520px){
   ul#offers li .offer .about {
-    width: 60%;
+    width: 50%;
   }
 }
 

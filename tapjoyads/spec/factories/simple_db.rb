@@ -37,6 +37,11 @@ FactoryGirl.define do
     udid ''
   end
 
+  factory :temporary_device do
+    key     { Factory.next(:guid) }
+    apps    {}
+  end
+
   factory :game_state do
     key           { FactoryGirl.generate(:udid) }
     udids         { 5.times { [] << FactoryGirl.generate(:udid) } }

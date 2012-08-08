@@ -58,6 +58,7 @@ module Offer::UrlGeneration
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
     final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
+    final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
     case item_type
     when 'App'
       final_url = Linkshare.add_params(final_url, itunes_link_affiliate)

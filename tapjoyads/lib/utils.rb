@@ -161,10 +161,15 @@ class Utils
     # -run Utils::Memcache.advance_last_stats_aggregation_times
     #
     # shortly after XX:30 (all steps must be completed by XX:59)
-    # -run Utils::Memcache.save_state
+    # This should only be run on hashed keys, distributed keys will
+    # filter back in once a new cluster/server is online and ready for
+    # keys.  If you *absolutely must*, don't.
+    #
+    # -run Utils::Memcache.save_hashed_state
     # -deploy new config to util server
     # -verify new memcache servers are functioning (Mc.cache.stats)
-    # -run Utils::Memcache.restore_state
+    # -if you're reusing a memcache server, run Mc.cache.flush
+    # -run Utils::Memcache.restore_hashed_state
     # -deploy new config to production servers
     #
     # shortly after XX+1:05
@@ -173,167 +178,133 @@ class Utils
     # after recount jobs have completed
     # -enable master hourly app stats job
 
+    HASHED_KEYS = %w(
+      statz.last_updated_start.24_hours
+      statz.last_updated_start.7_days
+      statz.last_updated_start.1_month
+      statz.last_updated_end.24_hours
+      statz.last_updated_end.7_days
+      statz.last_updated_end.1_month
+      statz.partner.last_updated_start.24_hours
+      statz.partner.last_updated_start.7_days
+      statz.partner.last_updated_start.1_month
+      statz.partner.last_updated_end.24_hours
+      statz.partner.last_updated_end.7_days
+      statz.partner.last_updated_end.1_month
+      statz.partner-ios.last_updated_start.24_hours
+      statz.partner-ios.last_updated_start.7_days
+      statz.partner-ios.last_updated_start.1_month
+      statz.partner-ios.last_updated_end.24_hours
+      statz.partner-ios.last_updated_end.7_days
+      statz.partner-ios.last_updated_end.1_month
+      statz.partner-windows.last_updated_start.24_hours
+      statz.partner-windows.last_updated_start.7_days
+      statz.partner-windows.last_updated_start.1_month
+      statz.partner-windows.last_updated_end.24_hours
+      statz.partner-windows.last_updated_end.7_days
+      statz.partner-windows.last_updated_end.1_month
+      statz.partner-android.last_updated_start.24_hours
+      statz.partner-android.last_updated_start.7_days
+      statz.partner-android.last_updated_start.1_month
+      statz.partner-android.last_updated_end.24_hours
+      statz.partner-android.last_updated_end.7_days
+      statz.partner-android.last_updated_end.1_month
+      store_ranks.android.overall.free.english
+      store_ranks.android.overall.paid.english
+      store_ranks.ios.overall.free.united_states
+      store_ranks.ios.overall.paid.united_states
+      money.cached_stats
+      money.total_balance
+      money.total_pending_earnings
+      money.last_updated
+    )
+    DISTRIBUTED_KEYS = %w(
+      statz.metadata.24_hours
+      statz.metadata.7_days
+      statz.metadata.1_month
+      statz.stats.24_hours
+      statz.stats.7_days
+      statz.stats.1_month
+      statz.top_metadata.24_hours
+      statz.top_metadata.7_days
+      statz.top_metadata.1_month
+      statz.top_stats.24_hours
+      statz.top_stats.7_days
+      statz.top_stats.1_month
+      statz.money.24_hours
+      statz.money.7_days
+      statz.money.1_month
+      statz.partner.cached_stats.24_hours
+      statz.partner.cached_stats.7_days
+      statz.partner.cached_stats.1_month
+      statz.partner-ios.cached_stats.24_hours
+      statz.partner-ios.cached_stats.7_days
+      statz.partner-ios.cached_stats.1_month
+      statz.partner-windows.cached_stats.24_hours
+      statz.partner-windows.cached_stats.7_days
+      statz.partner-windows.cached_stats.1_month
+      statz.partner-android.cached_stats.24_hours
+      statz.partner-android.cached_stats.7_days
+      statz.partner-android.cached_stats.1_month
+      tools.disabled_popular_offers
+      cached_apps.popular_ios
+      cached_apps.popular_android
+    )
+
     def self.save_state
-      keys = [ 'statz.last_updated_start.24_hours',
-               'statz.last_updated_start.7_days',
-               'statz.last_updated_start.1_month',
-               'statz.last_updated_end.24_hours',
-               'statz.last_updated_end.7_days',
-               'statz.last_updated_end.1_month',
-               'statz.partner.last_updated_start.24_hours',
-               'statz.partner.last_updated_start.7_days',
-               'statz.partner.last_updated_start.1_month',
-               'statz.partner.last_updated_end.24_hours',
-               'statz.partner.last_updated_end.7_days',
-               'statz.partner.last_updated_end.1_month',
-               'statz.partner-ios.last_updated_start.24_hours',
-               'statz.partner-ios.last_updated_start.7_days',
-               'statz.partner-ios.last_updated_start.1_month',
-               'statz.partner-ios.last_updated_end.24_hours',
-               'statz.partner-ios.last_updated_end.7_days',
-               'statz.partner-ios.last_updated_end.1_month',
-               'statz.partner-windows.last_updated_start.24_hours',
-               'statz.partner-windows.last_updated_start.7_days',
-               'statz.partner-windows.last_updated_start.1_month',
-               'statz.partner-windows.last_updated_end.24_hours',
-               'statz.partner-windows.last_updated_end.7_days',
-               'statz.partner-windows.last_updated_end.1_month',
-               'statz.partner-android.last_updated_start.24_hours',
-               'statz.partner-android.last_updated_start.7_days',
-               'statz.partner-android.last_updated_start.1_month',
-               'statz.partner-android.last_updated_end.24_hours',
-               'statz.partner-android.last_updated_end.7_days',
-               'statz.partner-android.last_updated_end.1_month',
-               'store_ranks.android.overall.free.english',
-               'store_ranks.android.overall.paid.english',
-               'store_ranks.ios.overall.free.united_states',
-               'store_ranks.ios.overall.paid.united_states',
-               'money.cached_stats',
-               'money.total_balance',
-               'money.total_pending_earnings',
-               'money.last_updated' ]
-      distributed_keys = [ 'statz.metadata.24_hours',
-                           'statz.metadata.7_days',
-                           'statz.metadata.1_month',
-                           'statz.stats.24_hours',
-                           'statz.stats.7_days',
-                           'statz.stats.1_month',
-                           'statz.top_metadata.24_hours',
-                           'statz.top_metadata.7_days',
-                           'statz.top_metadata.1_month',
-                           'statz.top_stats.24_hours',
-                           'statz.top_stats.7_days',
-                           'statz.top_stats.1_month',
-                           'statz.money.24_hours',
-                           'statz.money.7_days',
-                           'statz.money.1_month',
-                           'statz.partner.cached_stats.24_hours',
-                           'statz.partner.cached_stats.7_days',
-                           'statz.partner.cached_stats.1_month',
-                           'statz.partner-ios.cached_stats.24_hours',
-                           'statz.partner-ios.cached_stats.7_days',
-                           'statz.partner-ios.cached_stats.1_month',
-                           'statz.partner-windows.cached_stats.24_hours',
-                           'statz.partner-windows.cached_stats.7_days',
-                           'statz.partner-windows.cached_stats.1_month',
-                           'statz.partner-android.cached_stats.24_hours',
-                           'statz.partner-android.cached_stats.7_days',
-                           'statz.partner-android.cached_stats.1_month',
-                           'tools.disabled_popular_offers',
-                           'cached_apps.popular_ios',
-                           'cached_apps.popular_android' ]
-      (keys + distributed_keys).each do |key|
+      save_hashed_state
+      save_distributed_state
+    end
+
+    def self.save_hashed_state
+      HASHED_KEYS.each do |key|
         data = Mc.get(key)
-        f = File.open("tmp/mc_#{key}", 'w')
-        f.write(Marshal.dump(data))
-        f.close
+
+        File.open("tmp/mc_#{key}", 'w') do |f|
+          f.write(Marshal.dump(data))
+        end
+      end
+      true
+    end
+
+    def self.save_distributed_state
+      DISTRIBUTED_KEYS.each do |key|
+        data = Mc.distributed_get(key)
+
+        File.open("tmp/mc_#{key}", 'w') do |f|
+          f.write(Marshal.dump(data))
+        end
       end
       true
     end
 
     def self.restore_state
-      keys = [ 'statz.last_updated_start.24_hours',
-               'statz.last_updated_start.7_days',
-               'statz.last_updated_start.1_month',
-               'statz.last_updated_end.24_hours',
-               'statz.last_updated_end.7_days',
-               'statz.last_updated_end.1_month',
-               'statz.partner.last_updated_start.24_hours',
-               'statz.partner.last_updated_start.7_days',
-               'statz.partner.last_updated_start.1_month',
-               'statz.partner.last_updated_end.24_hours',
-               'statz.partner.last_updated_end.7_days',
-               'statz.partner.last_updated_end.1_month',
-               'statz.partner-ios.last_updated_start.24_hours',
-               'statz.partner-ios.last_updated_start.7_days',
-               'statz.partner-ios.last_updated_start.1_month',
-               'statz.partner-ios.last_updated_end.24_hours',
-               'statz.partner-ios.last_updated_end.7_days',
-               'statz.partner-ios.last_updated_end.1_month',
-               'statz.partner-windows.last_updated_start.24_hours',
-               'statz.partner-windows.last_updated_start.7_days',
-               'statz.partner-windows.last_updated_start.1_month',
-               'statz.partner-windows.last_updated_end.24_hours',
-               'statz.partner-windows.last_updated_end.7_days',
-               'statz.partner-windows.last_updated_end.1_month',
-               'statz.partner-android.last_updated_start.24_hours',
-               'statz.partner-android.last_updated_start.7_days',
-               'statz.partner-android.last_updated_start.1_month',
-               'statz.partner-android.last_updated_end.24_hours',
-               'statz.partner-android.last_updated_end.7_days',
-               'statz.partner-android.last_updated_end.1_month',
-               'store_ranks.android.overall.free.english',
-               'store_ranks.android.overall.paid.english',
-               'store_ranks.ios.overall.free.united_states',
-               'store_ranks.ios.overall.paid.united_states',
-               'money.cached_stats',
-               'money.total_balance',
-               'money.total_pending_earnings',
-               'money.last_updated' ]
-      distributed_keys = [ 'statz.metadata.24_hours',
-                           'statz.metadata.7_days',
-                           'statz.metadata.1_month',
-                           'statz.stats.24_hours',
-                           'statz.stats.7_days',
-                           'statz.stats.1_month',
-                           'statz.top_metadata.24_hours',
-                           'statz.top_metadata.7_days',
-                           'statz.top_metadata.1_month',
-                           'statz.top_stats.24_hours',
-                           'statz.top_stats.7_days',
-                           'statz.top_stats.1_month',
-                           'statz.money.24_hours',
-                           'statz.money.7_days',
-                           'statz.money.1_month',
-                           'statz.partner.cached_stats.24_hours',
-                           'statz.partner.cached_stats.7_days',
-                           'statz.partner.cached_stats.1_month',
-                           'statz.partner-ios.cached_stats.24_hours',
-                           'statz.partner-ios.cached_stats.7_days',
-                           'statz.partner-ios.cached_stats.1_month',
-                           'statz.partner-windows.cached_stats.24_hours',
-                           'statz.partner-windows.cached_stats.7_days',
-                           'statz.partner-windows.cached_stats.1_month',
-                           'statz.partner-android.cached_stats.24_hours',
-                           'statz.partner-android.cached_stats.7_days',
-                           'statz.partner-android.cached_stats.1_month',
-                           'tools.disabled_popular_offers',
-                           'cached_apps.popular_ios',
-                           'cached_apps.popular_android' ]
-      Mc.cache.flush
-      (keys + distributed_keys).each do |key|
+      restore_hashed_state
+      restore_distributed_state
+    end
+
+    def self.restore_hashed_state
+      HASHED_KEYS.each do |key|
         f = File.open("tmp/mc_#{key}", 'r')
         data = Marshal.restore(f.read)
         f.close
-        if distributed_keys.include?(key)
-          Mc.distributed_put(key, data)
-        else
-          Mc.put(key, data)
-        end
+
+        Mc.put(key, data)
       end
       OfferCacher.cache_offer_stats
-      OfferCacher.cache_offers
       OfferCacher.cache_papaya_offers
+      true
+    end
+
+    def self.restore_distributed_state
+      DISTRIBUTED_KEYS.each do |key|
+        f = File.open("tmp/mc_#{key}", 'r')
+        data = Marshal.restore(f.read)
+        f.close
+
+        Mc.distributed_put(key, data)
+      end
+      OfferCacher.cache_offers
       SpendShare.current_ratio
       Mc.cache_all
       true

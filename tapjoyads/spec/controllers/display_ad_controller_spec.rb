@@ -15,6 +15,7 @@ describe DisplayAdController do
     before :each do
       RailsCache.stub(:get).and_return(nil)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
@@ -134,8 +135,9 @@ describe DisplayAdController do
 
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address => @controller.send(:ip_address),
-          :udid       => 'stuff').once
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:index, @params)
       end
@@ -209,8 +211,9 @@ describe DisplayAdController do
 
       it 'should queue up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address => @controller.send(:ip_address),
-          :udid       => 'stuff').once
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:webview, @params)
       end

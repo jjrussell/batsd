@@ -12,12 +12,14 @@ class Job::MasterAndroidMarketFormatController < Job::JobController
 
   def test_search
     fields = [:title, :price, :icon_url, :publisher, :item_id]
-    term = 'tapdefense'
+    terms = %w(tapdefense tapjoy)
 
-    data = AppStore.search_android_market(term)
-    if data.blank? || fields.any?{|field| data.first[field].blank?}
-      message = 'Search format may have changed'
-      Notifier.alert_new_relic(AndroidMarketChanged, message)
+    terms.each do |term|
+      data = AppStore.search_android_market(term)
+      if data.blank? || fields.any?{|field| data.first[field].blank?}
+        message = "Search format may have changed searching '#{term}'"
+        Notifier.alert_new_relic(AndroidMarketChanged, message)
+      end
     end
   end
 

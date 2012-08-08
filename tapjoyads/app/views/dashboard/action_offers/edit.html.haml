@@ -56,10 +56,19 @@
           = f.label :name, 'Prerequisite'
           #help_prerequisite.help ?
         %td
-          - offer_options = @app.offers_with_last_run_time.reject { |offer| offer.id == @action_offer.primary_offer.id }.collect { |offer| [ offer.name, offer.id ] }
-          - offer_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.prerequisite_offer_id.blank?))
-          = f.select :prerequisite_offer_id, offer_options
+          - offer_options = options_for_prerequisites_with_app_offer_first(@app, @action_offer)
+          - prerequisites_options = offer_options
+          - prerequisites_options += [ [ "None", "" ] ] if ((permitted_to?(:edit, :dashboard_statz) || @action_offer.prerequisite_offer_id.blank?))
+          = f.select :prerequisite_offer_id, prerequisites_options
           = error_message_on @action_offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
+        %td
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'action_offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @action_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @action_offer, :exclusion_prerequisite_offer_ids
       %tr
         %th
           = f.label :instructions, 'Instructions'
@@ -165,6 +174,8 @@
       Click the button to submit an enable offer request. Please contact #{mail_to "support@tapjoy.com"} if you have any questions.
   #help_prerequisite_content{ :name => 'Prerequisite' }
     This action will only be shown to users who have already completed the prerequisite offer.
+  #help_exclusion_prerequisite_content{ :name => 'Exclusion Prerequisite' }
+    This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_min_os_version_content{:name => 'Minimum OS Version'}
     Your offer will only be shown to devices with an OS at this version or higher.
   #help_screen_layout_sizes_content{ :name => 'Screen Layout Sizes' } Targets this offer to these screen sizes. If no specific screen sizes are selected, all screen sizes will be targeted.
