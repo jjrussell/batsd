@@ -535,12 +535,12 @@ describe Device do
     end
 
     it 'marks device suspended' do
-      @device.suspend(24)
+      @device.suspend!(24)
       @device.suspended?.should be_true
     end
 
     it 'expires suspension after specified time' do
-      @device.suspend(24)
+      @device.suspend!(24)
       Timecop.freeze(@now+25.hours)
       @device.suspended?.should be_false
     end
@@ -553,9 +553,9 @@ describe Device do
   describe '#unsuspend' do
     it "unsuspends device" do
       @device = FactoryGirl.create(:device)
-      @device.suspend(24)
+      @device.suspend!(24)
       @device.suspended?.should be_true
-      @device.unsuspend
+      @device.unsuspend!
       @device.suspended?.should be_false
     end
   end

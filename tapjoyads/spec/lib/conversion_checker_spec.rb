@@ -39,7 +39,7 @@ describe ConversionChecker do
 
     it 'returns false for suspended devices' do
       device = Device.new(:key => @click.udid)
-      device.suspend(24)
+      device.suspend!(24)
       checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
       checker.should_not be_acceptable_risk
       checker.risk_message.should match(/Suspended/)
@@ -63,7 +63,7 @@ describe ConversionChecker do
       end
 
       it 'returns false if any of the pubuser\'s devices are suspended' do
-        @other_device.suspend(24)
+        @other_device.suspend!(24)
         checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
         checker.should_not be_acceptable_risk
         checker.risk_message.should match(/Suspended/)

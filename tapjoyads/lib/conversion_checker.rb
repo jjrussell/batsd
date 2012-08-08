@@ -102,9 +102,9 @@ class ConversionChecker
       @device.banned = true
       @device.save
     elsif @recommended_actions.actions.include?('SUSPEND24')
-      @device.suspend(24)
+      @device.suspend!(24)
     elsif @recommended_actions.actions.include?('SUSPEND72')
-      @device.suspend(72)
+      @device.suspend!(72)
     end
     @risk_score.too_risky? || blocked_by_rule?
   end

@@ -92,7 +92,7 @@
             %th
               Suspension Ends
             %td
-              = @device.get_suspension_expiration.to_s(:pub_ampm_sec)
+              = @device.suspension_expiration.to_s(:pub_ampm_sec)
           - if permitted_to?(:force_conversion, :dashboard_tools)
             %tr
               %th

@@ -355,12 +355,12 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
-  def suspend(num_hours)
+  def suspend!(num_hours)
     self.suspension_expires_at = Time.now + num_hours.hours
     save
   end
 
-  def unsuspend
+  def unsuspend!
     self.delete 'suspension_expires_at'
     save
   end
@@ -376,7 +376,7 @@ class Device < SimpledbShardedResource
     end
   end
 
-  def get_suspension_expiration
+  def suspension_expiration
     suspension_expires_at if suspended?
   end
 
