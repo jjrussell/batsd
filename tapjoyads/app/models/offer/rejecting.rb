@@ -104,11 +104,11 @@ module Offer::Rejecting
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
 
-  MINISCULE_REWARD_THRESHOLD = 0.1
+  MINISCULE_REWARD_THRESHOLD = 0.25
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
@@ -135,12 +135,16 @@ module Offer::Rejecting
       { :method => :source_reject?, :parameters => [source], :reason => 'source' },
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
       { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
+      { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
     ]
     reject_reasons(reject_functions)
   end
 
-  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version, direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version, screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code)
+  def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version,
+      direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
+      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     prerequisites_not_complete?(device) ||
@@ -172,6 +176,8 @@ module Offer::Rejecting
     recently_skipped?(device) ||
     has_insufficient_funds?(currency) ||
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
+    app_store_reject?(store_whitelist) ||
+    distribution_reject?(store_name) ||
     miniscule_reward_reject?(currency)
   end
 
@@ -410,6 +416,17 @@ module Offer::Rejecting
 
   def sdkless_reject?(library_version)
     sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
+  end
+
+  def app_store_reject?(store_whitelist)
+    store_whitelist.present? && app_metadata_store_name && !store_whitelist.include?(app_metadata_store_name)
+  end
+
+  def distribution_reject?(store_name)
+    return false unless store_name
+    cached_item =  item_type.constantize.respond_to?(:find_in_cache) ? item_type.constantize.find_in_cache(item_id) : nil
+    return cached_item.distribution_reject?(store_name) if cached_item.respond_to?('distribution_reject?')
+    false
   end
 
   def miniscule_reward_reject?(currency)

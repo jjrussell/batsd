@@ -47,9 +47,10 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
   create_table "app_metadata_mappings", :id => false, :force => true do |t|
-    t.string "id",              :limit => 36, :null => false
-    t.string "app_id",          :limit => 36, :null => false
-    t.string "app_metadata_id", :limit => 36, :null => false
+    t.string  "id",              :limit => 36,                    :null => false
+    t.string  "app_id",          :limit => 36,                    :null => false
+    t.string  "app_metadata_id", :limit => 36,                    :null => false
+    t.boolean "is_primary",                    :default => false
   end
 
   add_index "app_metadata_mappings", ["app_id", "app_metadata_id"], :name => "index_app_metadata_mappings_on_app_id_and_app_metadata_id", :unique => true
@@ -246,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
+    t.text     "store_whitelist",                                                                                           :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -737,14 +739,18 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
+    t.string   "app_metadata_id",                   :limit => 36
+    t.string   "source_offer_id",                   :limit => 36
   end
 
+  add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
   add_index "offers", ["id"], :name => "index_offers_on_id", :unique => true
   add_index "offers", ["item_id"], :name => "index_offers_on_item_id"
   add_index "offers", ["item_type", "item_id"], :name => "index_offers_on_item_type_and_item_id"
   add_index "offers", ["name"], :name => "index_offers_on_name"
   add_index "offers", ["partner_id"], :name => "index_offers_on_partner_id"
   add_index "offers", ["prerequisite_offer_id"], :name => "index_offers_on_prerequisite_offer_id"
+  add_index "offers", ["source_offer_id"], :name => "index_offers_on_source_offer_id"
   add_index "offers", ["tracking_for_type", "tracking_for_id"], :name => "index_offers_on_tracking_for_type_and_tracking_for_id"
   add_index "offers", ["user_enabled", "tapjoy_enabled"], :name => "index_offers_on_user_enabled_and_tapjoy_enabled"
 
@@ -1128,6 +1134,7 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.datetime "updated_at"
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
+    t.boolean  "app_targeting",                                  :default => false, :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true

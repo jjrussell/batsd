@@ -115,6 +115,7 @@ describe Dashboard::OffersController do
     context 'when app offer is enabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => true)
+        @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
@@ -131,6 +132,7 @@ describe Dashboard::OffersController do
     context 'when app offer is disabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => false)
+        @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')

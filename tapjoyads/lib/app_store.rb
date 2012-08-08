@@ -1,4 +1,5 @@
 class AppStore
+  attr_accessor :id, :name, :platform, :store_url, :info_url
 
   ANDROID_APP_URL     = 'https://play.google.com/store/apps/details?id='
   ANDROID_SEARCH_URL  = 'https://play.google.com/store/search?c=apps&q='
@@ -7,6 +8,8 @@ class AppStore
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
   WINDOWS_APP_IMAGES  = "http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true"
+  GFAN_APP_URL        = "http://api.gfan.com/market/api/getProductDetail"
+  GFAN_SEARCH_URL     = "http://api.gfan.com/market/api/search"
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -20,11 +23,79 @@ class AppStore
     'NZD' => [ 1.29, 2.59, 4.19, 5.29, 6.49 ],
   }
 
+  def initialize(options = {})
+    @id        = options.delete(:id)
+    @name      = options.delete(:name)
+    @platform  = options.delete(:platform)
+    @store_url = options.delete(:store_url)
+    @info_url  = options.delete(:info_url)
+    @exclusive = options.delete(:exclusive)
+
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+  end
+
+  def exclusive?
+    !!@exclusive
+  end
+
+  SUPPORTED_STORES = {
+    'iphone.AppStore' => AppStore.new({
+      :id        => 'iphone.AppStore',
+      :name      => 'App Store',
+      :platform  => 'iphone',
+      :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
+      :info_url  => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8'
+    }),
+    'android.GooglePlay' => AppStore.new({
+      :id        => 'android.GooglePlay',
+      :name      => 'Google Play',
+      :platform  => 'android',
+      :store_url => 'market://search?q=STORE_ID',
+      :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID',
+      :exclusive => true
+    }),
+    'android.GFan' => AppStore.new({
+      :id        => 'android.GFan',
+      :name      => 'GFan (China)',
+      :platform  => 'android',
+      :store_url => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
+      :info_url  => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
+      :exclusive => true
+    }),
+    'windows.Marketplace' => AppStore.new({
+      :id        => 'windows.Marketplace',
+      :name      => 'Marketplace',
+      :platform  => 'windows',
+      :store_url => 'http://social.zune.net/redirect?type=phoneapp&id=STORE_ID',
+      :info_url  => 'http://windowsphone.com/s?appId=STORE_ID'
+    }),
+  }
+
+  SDK_STORE_NAMES = {
+    'gfan' => 'android.GFan'
+  }
+
+  def self.find(id)
+    SUPPORTED_STORES[id]
+  end
+
+  def self.android_store_options
+    store_options = {}
+    SUPPORTED_STORES.each do |key, store|
+      store_options[store.name] = store.id if store.platform == 'android'
+    end
+    store_options
+  end
+
   # returns hash of app info
-  def self.fetch_app_by_id(id, platform, country='')
+  def self.fetch_app_by_id(id, platform, store_name, country='')
     case platform.downcase
     when 'android'
-      self.fetch_app_by_id_for_android(id)
+      if store_name == 'android.GFan'
+        self.fetch_app_by_id_for_gfan(id)
+      else
+        self.fetch_app_by_id_for_android(id)
+      end
     when 'iphone'
       self.fetch_app_by_id_for_apple(id, country)
     when 'windows'
@@ -54,11 +125,15 @@ class AppStore
   end
 
   # returns an array of first 24 App instances matching "term"
-  def self.search(term, platform, country='')
+  def self.search(term, platform, store_name, country='')
     term = term.strip.gsub(/\s/, '+')
     case platform.downcase
     when 'android'
-      self.search_android_market(term.gsub(/-/,' '))
+      if store_name == 'android.GFan'
+        self.search_gfan_app_store(term)
+      else
+        self.search_android_market(term.gsub(/-/,' '))
+      end
     when 'iphone'
       self.search_apple_app_store(term, country)
     when 'windows'
@@ -197,6 +272,31 @@ class AppStore
     end
   end
 
+  def self.fetch_app_by_id_for_gfan(id)
+    data = "<request><p_id>#{id}</p_id><source_type>0</source_type></request>" #Base64 TEA and mappn key pending from Song Peng
+    response = request(GFAN_APP_URL, {}, data)
+
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      product = doc.find('//product').first
+      {
+        :item_id          => id,
+        :title            => CGI::unescapeHTML(product['name']),
+        :description      => CGI::unescapeHTML(product['long_description']),
+        :icon_url         => product['icon_url'],
+        :screenshot_urls  => [1, 2, 3, 4, 5].collect{ |i| product["screenshot_#{i}"] }.reject{ |x| x.blank? },
+        :publisher        => CGI::unescapeHTML(product['author_name']),
+        :price            => product['price'].to_f,
+        :file_size_bytes  => product['app_size'].to_i,
+        :released_at      => Time.at(product['publish_time'][0...10].to_i).strftime('%FT00:00:00Z'),
+        :user_rating      => (product['rating'].to_i / 10.0).to_f,
+        :categories       => [product['product_type']],
+      }
+    else
+      raise "Invalid response."
+    end
+  end
+
   def self.search_apple_app_store(term, country)
     country = 'us' if country.blank?
     response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
@@ -258,11 +358,47 @@ class AppStore
     end
   end
 
-  def self.request(url, params={})
+  def self.search_gfan_app_store(term)
+    list_size = 10
+    data = "<request><size>#{list_size}</size>" +
+      '<start_position>0</start_position>' +
+      '<platform>8</platform>' +
+      '<screen_size>240#320</screen_size>' +
+      "<keyword>#{term}</keyword>" +
+      '<match_type>1</match_type></request>' #Base64 TEA and mappn key pending from Song Peng
+    response = request(GFAN_SEARCH_URL, {}, data)
+
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      return doc.find('//product').map do |product|
+        {
+          :item_id          => product['p_id'],
+          :title            => CGI::unescapeHTML(product['name']),
+          :description      => CGI::unescapeHTML(product['short_description']),
+          :icon_url         => product['icon_url'],
+          :publisher        => CGI::unescapeHTML(product['author_name']),
+          :price            => product['price'].to_f,
+          :file_size_bytes  => product['app_size'].to_i,
+          :user_rating      => (product['rating'].to_i / 10.0).to_f,
+          :categories       => [product['product_type']],
+        }
+      end
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_gfan_store failed for term: #{term}")
+      raise "Invalid response."
+    end
+  end
+
+  def self.request(url, params={}, data=nil)
     unless params.empty?
       url += "?" + params.map { |k, v| [ k, CGI::escape(v) ].join('=') }.join('&')
     end
-    Downloader.get(url, :return_response => true, :timeout => 30)
+    options = { :return_response => true, :timeout => 30 }
+    if data.present?
+      Downloader.post(url, data, options)
+    else
+      Downloader.get(url, options)
+    end
   end
 
   def self.app_info_from_apple(hash)

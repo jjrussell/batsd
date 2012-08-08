@@ -5,6 +5,13 @@ GIT
     distribution (0.7.0)
 
 GIT
+  remote: git://github.com/Tapjoy/fakememcached.git
+  revision: f1af18081af8baabbf109e01ed905219a9714e43
+  ref: f1af1
+  specs:
+    fakememcached (0.1.0)
+
+GIT
   remote: git://github.com/Tapjoy/right_aws.git
   revision: be26b4ab97c49adf3e34feedb322bf10e4dce5d1
   specs:
@@ -369,6 +376,7 @@ DEPENDENCIES
   dynamic_form
   execjs (= 1.3.0)
   factory_girl_rails (= 1.2.0)
+  fakememcached!
   fakeredis
   faraday (= 0.7.4)
   faraday_middleware (= 0.7.0)

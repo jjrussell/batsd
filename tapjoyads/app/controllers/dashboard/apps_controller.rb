@@ -17,19 +17,22 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def new
     @app = App.new
     @app.platform = 'iphone'
+    initialize_store_options
   end
 
   def search
     if params[:term].present?
       begin
         platform = params[:platform]
-        case platform
+        case platform.downcase
         when 'windows'
           country = params[:language]
         when 'iphone'
           country = params[:country]
+        when 'android'
+          store_name = params[:store_name]
         end
-        render :json => AppStore.search(params[:term], platform, country)
+        render :json => AppStore.search(params[:term], platform, store_name, country)
       rescue
         render :json => { :error => true }
       end
@@ -38,6 +41,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
 
   def show
     @integrated = @app.primary_offer.integrated?
+    initialize_store_options
     flash.now[:error] = "You are looking at a deleted app." if @app.hidden?
   end
 
@@ -49,23 +53,41 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.platform = params[:app][:platform]
     @app.name = params[:app][:name]
 
-    app_store_data = {}
-    if params[:state] == 'live' && params[:app][:store_id].present?
-      unless app_store_data = @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
-        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        render :action => "new"
-        return
+    App.transaction do
+      if params[:state] == 'live' && params[:store_id].present?
+        store_name = params[:android_store_name] if params[:android_store_name] && @app.platform == 'android'
+        store_name ||= App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+        begin
+          app_metadata = @app.add_app_metadata(store_name, params[:store_id], true)
+        rescue
+          @error_message = 'Failed to create primary distribution.'
+          raise
+        end
+
+        begin
+          app_metadata.update_from_store(params[:app_country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
+        end
+      end
+
+      begin
+        @app.save!
+      rescue
+        @error_message = 'Your app was not created.'
+        raise
       end
     end
 
-    if @app.save
-      @app.download_icon(app_store_data[:icon_url])
-      flash[:notice] = 'App was successfully created.'
-      redirect_to(@app)
-    else
-      flash.now[:error] = 'Your app was not created.'
-      render :action => "new"
-    end
+    flash[:notice] = 'App was successfully created.'
+    redirect_to(@app)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    initialize_store_options
+    render :action => "new"
   end
 
   def update
@@ -74,21 +96,44 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.name = params[:app][:name]
     @app.protocol_handler = params[:app][:protocol_handler] if permitted_to? :edit, :dashboard_statz
 
-    if params[:state] == 'live' && params[:app][:store_id].present?
-      unless @app.update_from_store({ :store_id => params[:app][:store_id], :country => params[:app_country] })
-        flash.now[:error] = "Grabbing app data from app store failed. Please try again."
-        render :action => "show"
-        return
+    App.transaction do
+      if params[:state] == 'live' && params[:store_id].present?
+        store_name = @app.store_name || params[:android_store_name] || App::PLATFORM_DETAILS[@app.platform][:default_store_name]
+        begin
+          app_metadata = if @app.app_metadatas.find_by_store_name(store_name)
+            @app.update_app_metadata(store_name, params[:store_id])
+          else
+            @app.add_app_metadata(store_name, params[:store_id], true)
+          end
+        rescue
+          @error_message = 'Failed to update primary distribution.'
+          raise
+        end
+
+        begin
+          app_metadata.update_from_store(params[:app_country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
+        end
+      end
+
+      begin
+        @app.save
+      rescue
+        @error_message = 'Update unsuccessful.'
+        raise
       end
     end
 
-    if @app.save
-      flash[:notice] = 'App was successfully updated.'
-      redirect_to(@app)
-    else
-      flash.now[:error] = 'Update unsuccessful.'
-      render :action => "show"
-    end
+    flash[:notice] = 'App was successfully updated.'
+    redirect_to(@app)
+  rescue => e
+    logger.info e.message
+    logger.info e.backtrace.join("\n")
+    flash.now[:error] = @error_message if @error_message
+    initialize_store_options
+    render :action => "show"
   end
 
   def archive
@@ -140,6 +185,10 @@ class Dashboard::AppsController < Dashboard::DashboardController
   end
 
   private
+
+  def initialize_store_options
+    @store_options = AppStore.android_store_options
+  end
 
   def grab_partner_apps
     session[:last_shown_app] ||= current_partner_apps.first.id unless current_partner_apps.empty?

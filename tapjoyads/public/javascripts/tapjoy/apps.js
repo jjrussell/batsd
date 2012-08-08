@@ -1,18 +1,46 @@
 // apps.js
 $(function($){
 
+  // android store dropdown visibility
+  var updateAndroidMarketVisibility = function() {
+    if ($('select#app_state').val() == 'live' && $('select#app_platform').val() == 'android') {
+      $('#android_market').show();
+    } else {
+      $('#android_market').hide();
+    }
+  };
+
   // app state
   var toggleAppState = function() {
-    if ($('select#app_state').val() == 'live') {
-      $('#search_button').show();
-      $('.app_data').show();
-    } else {
+    if ($('select#app_state').val() == 'not_live') {
       $('#search_button').hide();
       $('.app_data').hide();
+    } else {
+      $('#search_button').show();
+      $('.app_data').show();
     }
+    updateAndroidMarketVisibility();
   };
   $('select#app_state').change(toggleAppState);
   toggleAppState();
+
+  // app store name
+  var toggleAppStoreName = function() {
+    if ($('#app_platform').val() == 'android') {
+      var store_name = $('select#app_store_name').val();
+      if (!store_name)
+        store_name = $('#store_name').val();
+      if (store_name == 'android.GFan') {
+        $('#search_button').val('Search GFan (China)');
+        $('span#app_store_name').text('GFan (China).');
+      } else {
+        $('#search_button').val('Search Google Play');
+        $('span#app_store_name').text('Google Play.');
+      }
+    }
+  };
+  $('select#app_store_name').change(toggleAppStoreName);
+  toggleAppStoreName();
 
   // app platform
   var toggleAppPlatform = function() {
@@ -24,8 +52,7 @@ $(function($){
       $('select#app_country').show();
       $('select#app_language').hide();
     } else if (platform == 'android') {
-      $('#search_button').val('Search Google Play');
-      $('span#app_store_name').text('Google Play.');
+      toggleAppStoreName();
       $('tr#appstore_country_toggle').hide();
     } else {
       $('tr#appstore_country_toggle').show();
@@ -34,6 +61,7 @@ $(function($){
       $('select#app_country').hide();
       $('select#app_language').show();
     }
+    updateAndroidMarketVisibility();
   };
   $('select#app_platform').change(toggleAppPlatform);
   toggleAppPlatform();
@@ -114,11 +142,15 @@ $(function($){
     if (term == "") {
       $('#search_results').hide();
     } else {
+      var store_name = $('select#app_store_name').val();
+      if (!store_name)
+        store_name = $('#store_name').val();
       var data = {
-        term:     term,
-        platform: $('#app_platform').val(),
-        country:  $('#app_country').val(),
-        language: $('#app_language').val(),
+        term:       term,
+        platform:   $('#app_platform').val(),
+        store_name: store_name,
+        country:    $('#app_country').val(),
+        language:   $('#app_language').val(),
       };
       $.ajax({
         url: '/apps/search',

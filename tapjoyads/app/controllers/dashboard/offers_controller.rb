@@ -29,12 +29,13 @@ class Dashboard::OffersController < Dashboard::DashboardController
   end
 
   def create
+    object = @distribution ? @distribution : @app
     if params[:offer_type] == 'rewarded_featured'
-      @offer = @app.primary_rewarded_featured_offer || @app.primary_offer.create_rewarded_featured_clone
+      @offer = object.primary_rewarded_featured_offer || object.primary_offer.create_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded_featured'
-      @offer = @app.primary_non_rewarded_featured_offer || @app.primary_offer.create_non_rewarded_featured_clone
+      @offer = object.primary_non_rewarded_featured_offer || object.primary_offer.create_non_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded'
-      @offer = @app.primary_non_rewarded_offer || @app.primary_offer.create_non_rewarded_clone
+      @offer = object.primary_non_rewarded_offer || object.primary_offer.create_non_rewarded_clone
     end
     redirect_to :action => :edit, :id => @offer.id
   end
@@ -107,8 +108,16 @@ class Dashboard::OffersController < Dashboard::DashboardController
 
     if params[:id]
       @offer = @app.offers.find(params[:id])
+      @app_metadata = @offer.app_metadata
+      @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(@app_metadata.id) if @app_metadata
+    elsif params[:app_metadata_id]
+      @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(params[:app_metadata_id])
+      @app_metadata = @distribution.app_metadata
+      @offer = @distribution.primary_offer
     else
       @offer = @app.primary_offer
+      @app_metadata = @app.primary_app_metadata
+      @distribution = @app.app_metadata_mappings.find_by_is_primary(true)
     end
     log_activity(@offer)
   end
