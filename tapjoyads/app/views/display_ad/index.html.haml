@@ -1,3 +1,11 @@
-= link_to(@click_url, :class => 'image-link') do
-  %img{ :src => "data:image/png;base64, #{@image}" }
-  %iframe{ :src => "#{API_URL}#{impression_path}?data=#{@encrypted_params}", 'style' => 'display:none', 'width'=> 1, 'height' => 1, "frameborder" => 0}
+%body
+  = link_to(@click_url, :class => 'image-link') do
+    %img{ :src => "data:image/png;base64, #{@image}" }
+    %iframe{ :src => "#{API_URL}#{impression_path}?data=#{@encrypted_params}", 'style' => 'display:none', 'width'=> 1, 'height' => 1, "frameborder" => 0}
+
+%style{ :type => 'text/css' }
+  :plain
+    body {
+      margin: 0;
+      padding: 0;
+    }

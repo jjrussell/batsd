@@ -1,5 +1,8 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.featured.title', :currency => @currency.name) : ''
 
+#StoreID
+  = CGI::escape(@offer.store_id_for_feed)
+
 #main
   %iframe{ :src => "/#{impression_path}?data=#{@encrypted_params}", 'style' => 'display:none;', 'width'=> 1, 'height' => 1, "frameborder" => 0}
   - if @offer.rewarded? && @currency.rewarded?
@@ -88,6 +91,10 @@
       text-align: center;
       position: relative;
       margin: 8px;
+    }
+
+    #StoreID {
+      display: none;
     }
 
     .offertext {
