@@ -304,6 +304,24 @@ describe Device do
       clicks[0].id.should == click0.id
       clicks[1].id.should == click1.id
     end
+
+    it "gets default recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
+    end
   end
 
   context 'A Device' do
