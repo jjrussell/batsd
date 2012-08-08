@@ -20,7 +20,7 @@
           %li#step-1.animate.grey-box.highlight
             #count-1.animate.count= 1
             .step
-              = steps.first if steps.first.present?
+              = steps.first
             .padit
               #click-action-1
                 #b-facebook
@@ -29,9 +29,8 @@
           .or
             = t('text.shared.or').upcase
           %li#step-2.animate
-            #count-1.animate.count= 2
+            #count-1.animate.count 2
             .step
               = link_to steps.second, @complete_action_url
     .padit
       .error.hide
-
