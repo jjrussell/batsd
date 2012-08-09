@@ -29,7 +29,7 @@ describe Dashboard::SearchController do
 
     context 'with an admin user' do
       before :each do
-        @user = FactoryGirl.create(:admin)
+        @user = FactoryGirl.create(:admin_user)
         partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
       end

@@ -5,7 +5,7 @@ describe Dashboard::Tools::PartnerValidationsController do
 
   before :each do
     activate_authlogic
-    @user = FactoryGirl.create(:admin)
+    @user = FactoryGirl.create(:admin_user)
     @partner = FactoryGirl.create(:partner, :users => [@user])
     login_as(@user)
   end

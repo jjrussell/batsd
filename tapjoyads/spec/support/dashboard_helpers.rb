@@ -25,7 +25,7 @@ module DashboardHelpers
   def capybara_dashboard_admin_login
     partner = FactoryGirl.create(:partner)
     app = FactoryGirl.create(:app, :partner => partner)
-    user = FactoryGirl.create(:admin, :partners => [partner])
+    user = FactoryGirl.create(:admin_user, :partners => [partner])
 
     visit '/dashboard'
     fill_in 'Email Address', :with => user.username

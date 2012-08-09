@@ -24,7 +24,7 @@ describe Dashboard::Tools::UsersController do
 
     context 'when admin' do
       before :each do
-        @user = FactoryGirl.create :admin
+        @user = FactoryGirl.create :admin_user
         @user.current_partner = FactoryGirl.create :partner
         login_as @user
         get(:index)
@@ -51,7 +51,7 @@ describe Dashboard::Tools::UsersController do
 
     context 'when role manager' do
       before :each do
-        user = FactoryGirl.create :role_mgr_user
+        user = FactoryGirl.create :role_manager_user
         user.current_partner = FactoryGirl.create :partner
         login_as user
         get(:show, :id => user.id)
@@ -69,7 +69,7 @@ describe Dashboard::Tools::UsersController do
 
     context 'when admin' do
       before :each do
-        user = FactoryGirl.create :admin
+        user = FactoryGirl.create :admin_user
         user.current_partner = FactoryGirl.create :partner
         login_as user
         get(:show, :id => user.id)

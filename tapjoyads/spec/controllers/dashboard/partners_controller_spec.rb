@@ -7,7 +7,7 @@ describe Dashboard::PartnersController do
 
   context "when creating create transfer" do
     before :each do
-      @user = FactoryGirl.create(:admin)
+      @user = FactoryGirl.create(:admin_user)
       @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       FactoryGirl.create(:app, :partner => @partner)
       FactoryGirl.create(:app, :partner => @partner)
