@@ -897,6 +897,11 @@ class Offer < ActiveRecord::Base
     tracking_offer
   end
 
+  def display_ad_image_hash(currency)
+    currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
+    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+  end
+
   private
 
   def calculated_min_bid
@@ -1019,5 +1024,4 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-
 end

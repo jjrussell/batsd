@@ -622,18 +622,6 @@ describe Offer do
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
     end
-
-    describe "url generation" do
-      describe '#complete_action_url' do
-        it "should substitute tokens in the URL" do
-          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE&uid=TAPJOY_EXTERNAL_UID'
-          source = @offer.source_token('12345')
-          uid = Device.advertiser_device_id('x', @offer.partner_id)
-          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
-        end
-      end
-    end
   end
 
   describe "#create_clone" do

@@ -52,6 +52,7 @@ describe DisplayAdController do
           response.content_type.should == 'image/png'
           response.body.should == @custom_banner
         end
+
       end
 
       context 'with generated ad' do
@@ -87,11 +88,67 @@ describe DisplayAdController do
           get(:image, @params)
           response.content_type.should == 'image/png'
         end
+
+        context 'with old cache key passed and in cache' do
+          before :each do
+            @image_data = 'pretend image source'
+            Mc.should_receive(:distributed_get).and_return(Base64.encode64(@image_data))
+          end
+          it 'should return decoded image data' do
+            get(:image, @params)
+            response.content_type.should == 'image/png'
+            response.body.should == @image_data
+          end
+        end
+
+        context 'with old cache key passed and not in cache' do
+          before :each do
+            @image_data = 'pretend image source'
+          end
+          it 'should return built image' do
+            Magick::Image.any_instance.should_receive(:to_blob).and_return('A Fresh Image')
+            get(:image, @params)
+            response.body.should == 'A Fresh Image'
+          end
+        end
+
+        context 'with new cache key passed and is in old cache' do
+          it 'should return cached image' do
+            display_multiplier = (display_multiplier || 1).to_f
+            old_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}"
+            new_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}.foo"
+            Mc.should_receive(:distributed_get_and_put).with([new_key, old_key], false, 1.day).and_return(Base64.encode64('cached image'))
+            @params[:key] = 'foo'
+            get(:image, @params)
+            response.body.should == 'cached image'
+          end
+        end
+
+        context 'with new cache key passed and is new cache' do
+          it 'should  cached image' do
+            display_multiplier = (display_multiplier || 1).to_f
+            old_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}"
+            new_key = "display_ad.#{@params[:currency_id]}.#{@params[:advertiser_app_id]}.#{@params[:size].downcase}.#{display_multiplier}.foo"
+            Mc.distributed_caches.first.should_receive(:get).once.with(new_key).and_return(Base64.encode64('cached image'))
+            @params[:key] = 'foo'
+            get(:image, @params)
+            response.body.should == 'cached image'
+          end
+        end
+
+        context 'with new cache key passed and is not in cache' do
+          it 'should return built  image' do
+            display_multiplier = (display_multiplier || 1).to_f
+            @params[:key] = 'foo'
+            Magick::Image.any_instance.should_receive(:to_blob).and_return('A Fresh Image')
+            get(:image, @params)
+            response.body.should == 'A Fresh Image'
+          end
+        end
       end
     end
 
     describe '#index' do
-
       before :each do
         td_icon     = read_asset('tap_defense.jpg', 'icons')
         round_mask  = read_asset('round_mask.png',  'display')
@@ -236,7 +293,7 @@ describe DisplayAdController do
           assigns['image_url'].should == @offer.display_ad_image_url(:publisher_app_id => @currency.app.id,
                                                                      :width => 320,
                                                                      :height => 50,
-                                                                     :currency_id => @currency.id)
+                                                                     :currency => @currency)
         end
       end
     end
