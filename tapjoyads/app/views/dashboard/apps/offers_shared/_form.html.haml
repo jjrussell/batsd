@@ -97,7 +97,7 @@
           = label_tag :daily_budget_off, 'Unlimited'
           = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
           &nbsp;
-          = label_tag :daily_budget_on, 'Limit'
+          = label_tag :daily_budget_on, 'Daily Limit'
           = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
           - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
           #daily_budget_fields{ :class => budget_fields_class }

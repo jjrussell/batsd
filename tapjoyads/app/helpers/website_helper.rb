@@ -181,6 +181,18 @@ EOJS
     text + "</p>"
   end
 
+  def instruction_list(text)
+    instructions = sanitize(text.to_s).gsub(/\r/, '').split(/\n+/)
+    instructions.each_with_index do |instruction, index|
+      li = content_tag(:li) do
+        concat content_tag(:div, index + 1, :class => 'count')
+        concat content_tag(:div, instruction, :class => 'step')
+      end
+
+      concat(li)
+    end
+  end
+
   def link_to_generated_actions_header(app, name = nil)
     name ||= app.default_actions_file_name
     link =
