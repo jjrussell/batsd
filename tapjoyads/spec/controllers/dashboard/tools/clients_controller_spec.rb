@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Dashboard::Tools::ClientsController do
   before :each do
     activate_authlogic
-    login_as(FactoryGirl.create(:account_manager_user))
+    login_as(FactoryGirl.create(:account_mgr_user))
     @client = FactoryGirl.create(:client, :name => 'BBB')
     @client2 = FactoryGirl.create(:client, :name => 'AAA')
     @partner = FactoryGirl.create(:partner, :client => @client)

@@ -7,7 +7,7 @@ describe Dashboard::Account::WhitelistController do
 
   context 'on GET to :index' do
     before :each do
-      @user = FactoryGirl.create(:admin_user)
+      @user = FactoryGirl.create(:admin)
       @offer1 = FactoryGirl.create(:app).primary_offer
       @offer2 = FactoryGirl.create(:app).primary_offer
       @offer1.tapjoy_enabled = true
@@ -72,7 +72,7 @@ describe Dashboard::Account::WhitelistController do
 
   context 'on GET to :enable' do
     before :each do
-      @user = FactoryGirl.create(:admin_user)
+      @user = FactoryGirl.create(:admin)
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.tapjoy_enabled = true
       @offer.user_enabled = true
@@ -104,7 +104,7 @@ describe Dashboard::Account::WhitelistController do
 
   context 'on GET to :disable' do
     before :each do
-      @user = FactoryGirl.create(:admin_user)
+      @user = FactoryGirl.create(:admin)
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.tapjoy_enabled = true
       @offer.user_enabled = true

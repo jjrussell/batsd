@@ -374,7 +374,7 @@ describe Partner do
 
       context 'when user has proper role' do
         before :each do
-          @user = FactoryGirl.create(:admin_user)
+          @user = FactoryGirl.create(:admin)
         end
 
         it 'remains confirmed the partner' do

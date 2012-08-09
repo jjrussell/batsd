@@ -4,7 +4,7 @@ describe 'sales_reps' do
   before :each do
     capybara_dashboard_admin_login
     @offer = FactoryGirl.create(:app).primary_offer
-    @account_manager = FactoryGirl.create(:account_manager_user)
+    @account_manager = FactoryGirl.create(:account_mgr_user)
     visit statz_path(@offer)
     click_link "[Sales Reps]"
   end

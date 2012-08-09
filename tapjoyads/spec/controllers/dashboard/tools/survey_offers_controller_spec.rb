@@ -6,7 +6,7 @@ describe Dashboard::Tools::SurveyOffersController do
   before :each do
     flash.stub(:sweep)
     activate_authlogic
-    user = FactoryGirl.create(:admin_user)
+    user = FactoryGirl.create(:admin)
     partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID, :users => [user])
     @survey_question = FactoryGirl.create(:survey_question)
     @survey_offer = @survey_question.survey_offer
