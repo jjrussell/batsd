@@ -172,14 +172,14 @@ class OfferList
     currency_id = @currency.present? ? @currency.id : nil
     currency_id = nil if @algorithm_options[:skip_currency]
 
-    RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@device_type}") do
+    RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@normalized_device_type}") do
       OptimizedOfferList.get_offer_list(
         :algorithm => @algorithm,
         :source => @source,
         :platform => @platform_name,
         :country => country,
         :currency_id => currency_id,
-        :device_type => @device_type
+        :device_type => @normalized_device_type
       )
     end.value
   end
@@ -223,7 +223,7 @@ class OfferList
   end
 
   def postcache_reject?(offer)
-    offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+    offer.postcache_reject?(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist,  @app_store_name)
   end
@@ -233,7 +233,7 @@ class OfferList
   end
 
   def rejections_for(offer)
-    offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+    offer.postcache_rejections(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
   end
