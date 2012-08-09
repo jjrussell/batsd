@@ -98,7 +98,6 @@ describe ConversionChecker do
         @now = Time.now
         Timecop.freeze(@now)
         @device = FactoryGirl.create(:device)
-        @device.should_not be_suspended
         Device.stub(:new).and_return(@device)
         Currency.any_instance.stub(:partner_enable_risk_management?).and_return(true)
         @checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))

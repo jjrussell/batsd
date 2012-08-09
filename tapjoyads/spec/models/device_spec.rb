@@ -600,12 +600,11 @@ describe Device do
     end
   end
 
-  describe '#suspend' do
+  describe '#suspend!' do
     before :each do
       @now = Time.now
       Timecop.freeze(@now)
       @device = FactoryGirl.create(:device)
-      @device.suspended?.should be_false
     end
 
     it 'marks device suspended' do
@@ -624,7 +623,7 @@ describe Device do
     end
   end
 
-  describe '#unsuspend' do
+  describe '#unsuspend!' do
     it "unsuspends device" do
       @device = FactoryGirl.create(:device)
       @device.suspend!(24)
