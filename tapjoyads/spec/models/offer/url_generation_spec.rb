@@ -23,7 +23,7 @@ describe Offer::UrlGeneration do
       @dummy_class.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
       @click_key = 'click.key'
-      @udid = 'udid'
+      @udid = 'my_device_udid'
       @publisher_app_id = 'publisher_app_id'
       @publisher_user_id = 'publisher_user_id'
       @currency = FactoryGirl.create(:currency)
@@ -57,9 +57,10 @@ describe Offer::UrlGeneration do
     end
 
     context 'for ActionOffers' do
-      it 'should not replace any macros' do
+      it 'should not replace the TAPJOY_UDID macro' do
         @dummy_class.stub(:item_type).and_return('ActionOffer')
-        @dummy_class.complete_action_url(@options).should == @dummy_class.url.gsub('TAPJOY_GENERIC_SOURCE', @source)
+        @complete_action_url.gsub!(@udid, 'TAPJOY_UDID') # reverse this... ActionOffers are special-cased
+        @dummy_class.complete_action_url(@options).should == @complete_action_url
       end
     end
 

@@ -73,9 +73,16 @@ module Offer::UrlGeneration
     end
 
     # now we'll replace macros and whatnot
-    final_url = url
+    final_url = url.clone
 
-    # deal with item_type-specific macros
+    # deal with non-item_type-specific macros
+    final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
+    final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
+
+    # Not sure why ActionOffers don't respect this macro, but not going to mess with it, without a full understanding
+    final_url.gsub!('TAPJOY_UDID', udid.to_s) unless item_type == 'ActionOffer'
+
+    # now for item_type-specific macros
     case item_type
       when 'App'
         final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
@@ -85,7 +92,7 @@ module Offer::UrlGeneration
           final_url.sub!('market://search?q=', subbed_string)
         end
       when 'EmailOffer'
-        final_url += "&publisher_app_id=#{publisher_app_id}"
+        final_url << "&publisher_app_id=#{publisher_app_id}"
       when 'GenericOffer'
         advertiser_app_id = click_key.to_s.split('.')[1]
         final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
@@ -98,22 +105,14 @@ module Offer::UrlGeneration
           }
           mark = '?'
           mark = '&' if final_url =~ /\?/
-          final_url += "#{mark}#{extra_params.to_query}"
+          final_url << "#{mark}#{extra_params.to_query}"
         end
+      when 'SurveyOffer'
+        final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
     end
 
-    # now for non-item_type-specific macros
-    final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
-    final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
-
-    # Not sure why ActionOffers don't respect this macro, but not going to mess with it, without a full understanding
-    final_url.gsub!('TAPJOY_UDID', udid.to_s) unless item_type == 'ActionOffer'
-
-    # do this last, since it requires encrypting all params
-    if item_type == 'SurveyOffer'
-      final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
-      return ObjectEncryptor.encrypt_url(final_url)
-    end
+    # this is separated from case statement for code readability / separation of concerns
+    return ObjectEncryptor.encrypt_url(final_url) if item_type == 'SurveyOffer'
 
     final_url
   end
