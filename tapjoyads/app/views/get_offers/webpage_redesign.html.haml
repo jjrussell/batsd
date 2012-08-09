@@ -7,7 +7,7 @@
 %body
   #branding.clearfix
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-    = render :partial => 'currency_selector'
+    = render :partial => 'currency_selector'  
 
   - if @test_offers.present?
     #test_offers
