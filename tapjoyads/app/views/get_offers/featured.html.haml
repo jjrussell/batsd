@@ -1,7 +1,7 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.featured.title', :currency => @currency.name) : ''
 
 #main
-  %iframe{ :src => "/#{impression_path}?data=#{@encrypted_params}", 'style' => 'display:none;', 'width'=> 1, 'height' => 1, "frameborder" => 0}
+  %iframe{ :src => "#{API_URL}#{impression_path}?data=#{@encrypted_params}", 'style' => 'display:none;', 'width'=> 1, 'height' => 1, "frameborder" => 0}
   - if @offer.rewarded? && @currency.rewarded?
     %h1= featured_offer_earn_currency_text(@offer, @currency, params[:display_multiplier])
   %p.offertext
