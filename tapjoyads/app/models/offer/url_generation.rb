@@ -84,7 +84,7 @@ module Offer::UrlGeneration
         final_url += "#{mark}#{extra_params.to_query}"
       end
     when 'ActionOffer'
-      final_url = url
+      final_url = url.gsub('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     when 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
