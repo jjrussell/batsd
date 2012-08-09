@@ -251,19 +251,6 @@ class App < ActiveRecord::Base
     self.name = data[:title]
   end
 
-  def download_icon(url)
-    return unless url.present?
-
-    begin
-      icon_src_blob = Downloader.get(url, :timeout => 30)
-    rescue Exception => e
-      Rails.logger.info "Failed to download icon for url: #{url}. Error: #{e}"
-      Notifier.alert_new_relic(AppDataFetchError, "icon url #{url} for app id #{id}. Error: #{e}")
-    else
-      Offer.upload_icon!(icon_src_blob, id)
-    end
-  end
-
   def get_icon_url(options = {})
     if primary_app_metadata.present?
       primary_app_metadata.get_icon_url(options)

@@ -151,7 +151,7 @@ class AppMetadata < ActiveRecord::Base
   def save_icon(url)
     return if url.blank? || offers.blank?
     icon_src_blob = download_blob(url)
-    offers.first.save_icon!(icon_src_blob) if icon_src_blob
+    Offer.upload_icon!(icon_src_blob, id) if icon_src_blob
   end
 
   def download_blob(url)
