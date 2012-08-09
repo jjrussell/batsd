@@ -1,6 +1,12 @@
 class ApiController < ApplicationController
 
+  prepend_before_filter :verify_auth_token
+
   private
+
+  def verify_auth_token
+    render_json_error(['Invalid access token'], 401) if params[:auth_token].blank? || params[:auth_token] != API_TOKEN
+  end
 
   def get_object_type
     [nil, nil]

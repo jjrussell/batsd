@@ -67,6 +67,9 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['test']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
+tapjoy_credentials = YAML::load_file("#{Rails.root}/config/tapjoy_credentials.yaml")
+API_TOKEN = tapjoy_credentials['test']['api_token']
+
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2
