@@ -157,7 +157,9 @@
         = f.label(:audition_factor)
         #help_audition_factor.help ?
       %td
-        = f.select(:audition_factor, Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }, :include_blank => '')
+        - default_selection = @offer.audition_factor ? @offer.audition_factor : Offer::Optimization::AUDITION_FACTORS[:medium]
+        - selections = options_for_select(Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }, default_selection)
+        = f.select(:audition_factor, selections)
         = error_message_on @offer, :audition_factor
     %tr
       %th
