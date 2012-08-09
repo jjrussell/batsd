@@ -183,12 +183,14 @@ EOJS
 
   def instruction_list(text)
     instructions = sanitize(text.to_s).gsub(/\r/, '').split(/\n+/)
-    instructions.each_with_index.map do |instruction, index|
+    instructions.each_with_index do |instruction, index|
       li = content_tag(:li) do
         concat content_tag(:div, index + 1, :class => 'count')
         concat content_tag(:div, instruction, :class => 'step')
       end
-    end.join('')
+
+      concat(li)
+    end
   end
 
   def link_to_generated_actions_header(app, name = nil)
