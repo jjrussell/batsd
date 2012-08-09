@@ -1,8 +1,14 @@
 require 'spec_helper'
 
+class DummyClass
+end
+
 describe Offer::UrlGeneration do
 
   before :each do
+    @dummy_class = DummyClass.new
+    @dummy_class.extend(Offer::UrlGeneration)
+
     @app      = Factory :app
     @offer    = @app.primary_offer
     @currency = Factory :currency
@@ -18,6 +24,26 @@ describe Offer::UrlGeneration do
         params = CGI::parse(URI(url).query)
         params["key"].first.should == @offer.display_ad_image_hash(@currency)
       end
+    end
+
+    context 'with currency not passed' do
+      it 'should add key param' do
+        url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                            :width => 320,
+                                            :height => 50 })
+        params = CGI::parse(url)
+        params["key"].first.should == @offer.display_ad_image_hash(nil)
+      end
+    end
+  end
+
+  describe '#preview_display_ad_image_url' do
+    it 'should add key param to url ' do
+      url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
+                                          :width => 320,
+                                          :height => 50 })
+      params = CGI::parse(URI(url).query)
+      params["key"].first.should == @offer.display_ad_image_hash(nil)
     end
   end
 
@@ -35,7 +61,7 @@ describe Offer::UrlGeneration do
       @dummy_class.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
       @click_key = 'click.key'
-      @udid = 'my_device_udid'
+      @udid = 'udid'
       @publisher_app_id = 'publisher_app_id'
       @publisher_user_id = 'publisher_user_id'
       @currency = FactoryGirl.create(:currency)
@@ -69,47 +95,76 @@ describe Offer::UrlGeneration do
     end
 
     context 'for ActionOffers' do
-      it 'should not replace the TAPJOY_UDID macro' do
+      it 'should not replace any macros' do
         @dummy_class.stub(:item_type).and_return('ActionOffer')
-        @complete_action_url.gsub!(@udid, 'TAPJOY_UDID') # reverse this... ActionOffers are special-cased
+        @dummy_class.complete_action_url(@options).should == @dummy_class.url.gsub('TAPJOY_GENERIC_SOURCE', @source)
+      end
+    end
+
+    context 'for App offers' do
+      it 'should replace App-offer-specific macros' do
+        @dummy_class.stub(:item_type).and_return('App')
+        Linkshare.should_receive(:add_params).with(@complete_action_url.clone, @itunes_affil).once.and_return(@complete_action_url.clone)
+        @complete_action_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(@click_key))
         @dummy_class.complete_action_url(@options).should == @complete_action_url
       end
     end
 
-    context 'with currency not passed' do
-      it 'should add key param' do
-        url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
-                                            :width => 320,
-                                            :height => 50 })
-        params = CGI::parse(url)
-        params["key"].first.should == @offer.display_ad_image_hash(nil)
+    context 'for EmailOffers' do
+      it 'should append parameters' do
+        @dummy_class.stub(:item_type).and_return('EmailOffer')
+        @complete_action_url << "&publisher_app_id=#{@publisher_app_id}"
+        @dummy_class.complete_action_url(@options).should == @complete_action_url
       end
     end
-  end
 
-  describe '#preview_display_ad_image_url' do
-    it 'should add key param to url ' do
-      url = @offer.display_ad_image_url({ :publisher_app_id => @app.id,
-                                          :width => 320,
-                                          :height => 50 })
-      params = CGI::parse(URI(url).query)
-      params["key"].first.should == @offer.display_ad_image_hash(nil)
-    end
-  end
-
-  describe '#complete_action_url' do
-    context "with a generic offer item" do
-      before :each do
-        @generic = FactoryGirl.create(:generic_offer)
-        @offer = @generic.primary_offer
-      end
-
-      it "should substitute tokens in the URL" do
-        @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE'
-        source = @offer.source_token('12345')
-        options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-        @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}"
+    context 'for GenericOffers' do
+      it 'should replace GenericOffer-specific macros' do
+        @dummy_class.stub(:item_type).and_return('GenericOffer')
+        @dummy_class.stub(:has_variable_payment?).and_return(false)
+        @complete_action_url.gsub!('TAPJOY_GENERIC_INVITE', 'key')
+        @complete_action_url.gsub!('TAPJOY_GENERIC', @click_key)
+        @dummy_class.complete_action_url(@options).should == @complete_action_url
       end
     end
+
+    context 'for SurveyOffers' do
+      it 'should replace SurveyOffer-specific macros, and encrypt the parameters' do
+        @dummy_class.stub(:item_type).and_return('SurveyOffer')
+        @complete_action_url.gsub!('TAPJOY_SURVEY', @click_key)
+        @dummy_class.complete_action_url(@options).should == ObjectEncryptor.encrypt_url(@complete_action_url)
+      end
+    end
+
+    context 'for VideoOffers and TestVideoOffers' do
+      it 'should not replace any macros, and should use a specific url' do
+        @dummy_class.stub(:id).and_return('id')
+        params = {
+          :offer_id           => @dummy_class.id,
+          :app_id             => @publisher_app_id,
+          :currency_id        => @currency.id,
+          :udid               => @udid,
+          :publisher_user_id  => @publisher_user_id
+        }
+        @complete_action_url = "#{API_URL}/videos/#{@dummy_class.id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+
+        @dummy_class.stub(:item_type).and_return('VideoOffer')
+        @dummy_class.complete_action_url(@options.clone).should == @complete_action_url
+
+        @dummy_class.stub(:item_type).and_return('TestVideoOffer')
+        @dummy_class.complete_action_url(@options).should == @complete_action_url
+      end
+    end
+
+    context 'for DeeplinkOffers' do
+      it 'should not replace any macros, and should use a specific url' do
+        @dummy_class.stub(:item_type).and_return('DeeplinkOffer')
+        params = { :udid => @udid, :id => @currency.id, :click_key => @click_key }
+        @complete_action_url = "#{WEBSITE_URL}/earn?data=#{ObjectEncryptor.encrypt(params)}"
+        @dummy_class.complete_action_url(@options).should == @complete_action_url
+      end
+    end
+
   end
+
 end
