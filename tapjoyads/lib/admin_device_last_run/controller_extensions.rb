@@ -13,6 +13,7 @@ class AdminDeviceLastRun
 
         if @device.last_run_time_tester?
           __web_request = @web_request || generate_web_request
+
           AdminDeviceLastRun.set(
             :udid => params[:udid],
             :app_id => params[:app_id],

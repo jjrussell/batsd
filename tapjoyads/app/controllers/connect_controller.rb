@@ -28,6 +28,7 @@ class ConnectController < ApplicationController
     # ivar for the benefit of tracks_admin_devices
     @web_request = WebRequest.new
     @web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
+    @web_request.raw_url = request.url
 
     path_list = device.handle_connect!(params[:app_id], params)
     path_list.each do |path|
