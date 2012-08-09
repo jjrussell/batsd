@@ -24,8 +24,10 @@ class DisplayAdController < ApplicationController
     width, height = parse_size(params[:size])
     size = "#{width}x#{height}"
 
-    keys = [image_key_from_hash(params[:currency_id], offer_id, width, height, params[:display_multiplier], params[:key])]
-    keys << image_key_from_hash(params[:currency_id], offer_id, width, height, params[:display_multiplier]) if params[:key].present?
+    key_options = params.slice(:currency_id, :display_multiplier).merge({:offer_id => offer_id, :width => width, :height => height})
+    keys = [image_key_from_hash(key_options)]
+    keys.unshift(image_key_from_hash(key_options.merge(:hash => params[:key]))) if params[:key].present?
+    
     # always be up to date for previews
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
@@ -148,7 +150,13 @@ class DisplayAdController < ApplicationController
   end
 
   def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
-    key = image_cache_key(currency, offer, width, height, display_multiplier)
+    options = { :currency           => currency.id,
+                :offer              => offer.id,
+                :width              => width,
+                :height             => height,
+                :display_multiplier => display_multiplier,
+                :hash               => offer.display_ad_image_hash(currency)}
+    key = image_key_from_hash(options)
     Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
     # if not found in cache, pass data required to generate
     image_from_cache(key) do
@@ -286,21 +294,13 @@ class DisplayAdController < ApplicationController
   end
 
   ##
-  # Returns the full cache key for the image including a hash based off the offer and currency
-  # requires objects not id's
-  def image_cache_key(currency, offer, width, height, display_multiplier)
-    hash = offer.display_ad_image_hash(currency)
-    image_key_from_hash(currency.id, offer.id, width, height, display_multiplier, hash)
-  end
-
-  ##
   # Returns the image cache key for the image optionaly including image hash,
   # only requires ids not objects
-  def image_key_from_hash(currency_id, offer_id, width, height, display_multiplier, hash = nil)
-    display_multiplier = (display_multiplier || 1).to_f
-    size = "#{width}x#{height}"
-    key = "display_ad.#{currency_id}.#{offer_id}.#{size}.#{display_multiplier}"
-    key << ".#{hash}" unless hash.blank?
+  def image_key_from_hash(options)
+    display_multiplier = (options[:display_multiplier] || 1).to_f
+    size = "#{options[:width]}x#{options[:height]}"
+    key = "display_ad.#{options[:currency_id]}.#{options[:offer_id]}.#{size}.#{display_multiplier}"
+    key << ".#{options[:hash]}" if options[:hash]
     key
   end
 end
