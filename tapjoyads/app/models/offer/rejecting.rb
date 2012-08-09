@@ -105,6 +105,7 @@ module Offer::Rejecting
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
+  TAPJOY_GAMES_OFFERS = [ TAPJOY_GAMES_REGISTRATION_OFFER_ID, LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID]
 
   MINISCULE_REWARD_THRESHOLD = 0.25
 
@@ -393,7 +394,12 @@ module Offer::Rejecting
   end
 
   def tapjoy_games_retargeting_reject?(device)
-    TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id) && device && !device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+    has_tjm = device.present? ? device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID) : false
+    if TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
+      device && !has_tjm
+    elsif TAPJOY_GAMES_OFFERS.include?(item_id)
+      device && has_tjm
+    end
   end
 
   def source_reject?(source)
