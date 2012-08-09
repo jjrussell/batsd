@@ -133,6 +133,25 @@
       %td
         = f.text_area(:account_manager_notes)
         = error_message_on @offer, :account_manager_notes
+    - if @offer.item_type == 'App'
+      %tr
+        %th
+          = f.label :name, 'Prerequisite'
+          #help_prerequisite.help ?
+        %td
+          - offer_options = options_for_prerequisites(@offer)
+          - prerequisites_options = offer_options
+          - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+          = f.select :prerequisite_offer_id, prerequisites_options
+          = error_message_on @offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
+        %td
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @offer, :exclusion_prerequisite_offer_ids
     %tr
       %th
         = f.label(:show_rate)
@@ -185,6 +204,7 @@
         = f.label(:approved_sources)
         #help_approved_sources.help ?
       %td
+        = f.hidden_field(:hidden_approved_sources, :value => '', :name => 'offer[approved_sources][]')
         = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources.to_a), {}, :multiple => true)
         = error_message_on @offer, :approved_sources
     %tr
@@ -260,20 +280,6 @@
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
 
-    - %w(impression click conversion).each do |tracking_type|
-      %tr{ :id => "#{tracking_type}_tracking_urls_row" }
-        %th
-          = f.label(:"#{tracking_type}_tracking_urls", "#{tracking_type.capitalize} Tracking Pixel URLs")
-          .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
-        %td
-          = error_message_on @offer, :"#{tracking_type}_tracking_urls"
-          = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
-      %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
-        %th
-        %td
-          = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
-          = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
-
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
         %th
@@ -315,6 +321,41 @@
           - else
             = f.label(@offer.tracking_for_id)
           = error_message_on @offer, :tracking_for_id
+
+    / tracking pixel urls
+    %tr
+      %th &nbsp;
+      %td &nbsp;
+    %tr
+      %th Tracking Pixel URLs
+      %td
+        %i
+          Tracking Pixel URLs will be called server-side at request time. See individual help content for more info.
+          %br= h("Automatically replaced macros: #{Offer.tracking_macros}")
+          / Trusted tracking vendors are: #{h(Offer.trusted_third_party_tracking_vendors)}
+    - %w(impression click conversion).each do |tracking_type|
+      %tr{ :id => "#{tracking_type}_tracking_urls_row" }
+        %th
+          - type = tracking_type.capitalize
+          - type << '*' if tracking_type == 'click'
+          = f.label(:"#{tracking_type}_tracking_urls", "#{type} Tracking Pixel URLs")
+          .help{ :id => "help_#{tracking_type}_tracking_urls" } ?
+        %td
+          = error_message_on @offer, :"#{tracking_type}_tracking_urls"
+          - if tracking_type == 'click'
+            = h('*Note: "Click" can mean a variety of things. See help content for more info.')
+            %br
+          = link_to('Add URL', '', :class => "add_#{tracking_type}_tracking_url", :onclick => 'return false;')
+      %tr{ :id => "#{tracking_type}_tracking_url_template", :class => 'hidden' }
+        %th
+        %td
+          = text_field_tag("offer[#{tracking_type}_tracking_urls][]", '', :size => 58)
+          = link_to('(remove)', '', :class => "remove_#{tracking_type}_tracking_url", :onclick => 'return false;')
+    %tr
+      %th &nbsp;
+      %td &nbsp;
+    / /tracking pixel urls
+
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
     %tr
@@ -351,9 +392,21 @@
   #help_interval_content{ :name => 'Interval' } The interval for frequency capping.
   #help_url_overridden_content{ :name => 'Override Destination URL' } Allows for manual override of Completion URL field
   #help_url_content{ :name => 'Destination URL' } The URL that the user will be redirected to upon clicking an ad (typically links to Market Place / App store search results page)
-  - %w(impression click conversion).each do |tracking_type|
-    %div{ :id => "help_#{tracking_type}_tracking_urls_content", :name => "Tracking Pixel URLs" }<
-      #{tracking_type.capitalize} Tracking Pixel URLs will be called server-side at request time. Trusted tracking vendors are: #{h(Offer.trusted_third_party_tracking_vendors)}
+  #help_impression_tracking_urls_content{ :name => "Tracking Pixel URLs" }<
+    %p= h('An "impression" will be recorded at the point when the ad is requested to be displayed.')
+    %p With banner ads and featured ads, this is straightforward.
+    %p= h('With our offerwall, however, it\'s important to note that an impression is recorded for each offer listed, so actions such as scrolling offers into view, etc, are not taken into account.')
+  #help_click_tracking_urls_content{ :name => "Tracking Pixel URLs" }<
+    %p= h('The term "click" can mean a variety of things. In this case, it means that the user has clicked on the ad from its initial display point.')
+    %p With banner ads and featured ads, this is straightforward.
+    %p= h('For our offerwall, this means that the user has clicked on the offer within the offerwall. Depending on the offer, this may result in the user being sent directly to an app download (for PPI offers), or to a secondary page such as a video or a "further instructions" page.')
+    %p= h('For CPA offers, to record "click-throughs" to the advertiser\'s site, you should override the Destination URL rather than editing this field.')
+    %p For video offers, this field can be used for recording video starts.
+  #help_conversion_tracking_urls_content{ :name => "Tracking Pixel URLs" }<
+    %p= h('A "conversion" will be recorded when the user has satisfied the conditions necessary to receive a reward.')
+    %p For PPI offers, this will happen when the user installs and runs the advertised app.
+    %p For CPA offers, this will happen when we are alerted by the advertiser that the offer has been completed.
+    %p For video offers, this will happen when the video has finished playing.
   #help_bid_content{ :name => 'Bid' } The bid affects your payment and your offerwall rank.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
   #help_min_os_version_content{:name => 'Minimum OS Version'} Your offer will only be shown to devices with an OS at this version or higher.
@@ -374,6 +427,10 @@
     Keep your text simple and easy for a user to understand.
   #help_tracking_for_id_content{ :name => 'Tracking For Id' } The Object that is tracked by this offer.
   #help_tracking_for_type_content{ :name => 'Tracking For Type' } The type of the object that is tracked by this offer.
+  #help_prerequisite_content{:name => 'Prerequisite Offer'}
+    This offer will only be shown to users who have already completed the prerequisite offer.
+  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

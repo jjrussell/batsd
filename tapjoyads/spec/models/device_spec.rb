@@ -54,11 +54,11 @@ describe Device do
 
   describe '#create_identifiers!' do
     before :each do
-      @device = Factory(:device)
+      @device = FactoryGirl.create(:device)
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
       @device.open_udid = 'test-open-udid'
-      @device_identifier = Factory(:device_identifier)
+      @device_identifier = FactoryGirl.create(:device_identifier)
     end
 
     it 'creates the device identifiers' do
@@ -68,9 +68,32 @@ describe Device do
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
+
+      @device.should_receive(:merge_temporary_devices!).once
       @device.create_identifiers!
     end
 
+    context 'with a temporary device' do
+      before :each do
+        @app_ids = {'1' => 50, '2' => 60}
+        @device = FactoryGirl.create(:device, :apps => @app_ids)
+        @device.send(:after_initialize)
+        @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55, '3' => 30},
+                                          :publisher_user_ids => {'2' => 'TEST_PUB_ID'},
+                                          :display_multipliers => {'2' => 3})
+      end
+
+      it 'copies the apps and deletes the temporary device' do
+        TemporaryDevice.stub(:find).with(Digest::SHA2.hexdigest(@device.key)).and_return(@temp_device)
+        TemporaryDevice.stub(:find).with(Digest::SHA1.hexdigest(@device.key)).and_return(nil)
+        @temp_device.should_receive(:delete_all).once
+        @device.should_receive(:save!).with(:create_identifiers => false)
+        @device.create_identifiers!
+        @device.apps.should == { '1' => 50, '2' => 55, '3' => 30 }
+        @device.publisher_user_ids.should == { '2' => 'TEST_PUB_ID' }
+        @device.display_multipliers.should == { '2' => 3 }
+      end
+    end
   end
 
   describe '#handle_sdkless_click!' do
@@ -224,6 +247,80 @@ describe Device do
       @device.recent_skips.length.should == 100
       @device.remove_old_skips(50.seconds)
       @device.recent_skips.should == []
+    end
+  end
+
+  describe '#add_click' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    it "adds a click to the device", :recent_clicks do
+      @device.recent_click_hashes.length.should == 0
+      click = FactoryGirl.create(:click, :clicked_at => Time.now)
+      @device.add_click(click)
+      recent_click_hashes = @device.recent_click_hashes
+      recent_click_hashes.length.should == 1
+      recent_click_hashes[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    end
+
+    it "pushes off the first click off the device", :recent_clicks do
+      clicks = []
+      @device.recent_click_hashes.length.should == 0
+      num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
+
+      # add the first click with click time older than specified range
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days+1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
+
+      # should push off the older click
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days-1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
+
+      # should retain the last click
+      click = FactoryGirl.create(:click, :clicked_at => Time.now)
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 2
+    end
+
+    it "gets recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks((Time.now-1.month).to_i, Time.now.to_i)
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
+    end
+
+    it "gets default recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
     end
   end
 
@@ -387,11 +484,82 @@ describe Device do
     end
   end
 
+  describe '#save' do
+    context 'for a new device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid')
+      end
+
+      it 'creates the identifiers' do
+        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => @device.key}.to_json)
+        @device.save
+      end
+
+      it 'doesnt create the identifers if specified' do
+        Sqs.should_not_receive(:send_message)
+        @device.save(:create_identifiers => false)
+      end
+    end
+
+    context 'for a temporary device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid', :is_temporary => true)
+        @device.set_last_run_time('1')
+        @device.set_last_run_time('3')
+        @time = @device.parsed_apps['3']
+        @device.set_publisher_user_id('1', 'TEST_PUB_USER_ID')
+        @device.set_publisher_user_id('3', 'TEST_PUB_USER_ID_NEW')
+        @device.set_display_multiplier('1', 2)
+        @temp_device = FactoryGirl.create(:temporary_device,
+                                          :apps => {'2' => 55, '3' => 60},
+                                          :publisher_user_ids => {'2' => 'PUB_USER_ID', '3' => 'TEST_PUB_OLD'},
+                                          :display_multipliers => {'2' => '1'})
+      end
+
+      it 'tries to save a temporary device' do
+        TemporaryDevice.should_receive(:new).with(:key => 'test_udid').and_return(@temp_device)
+        @temp_device.should_receive(:save)
+        Sqs.should_not_receive(:send_message)
+        @device.save
+        @temp_device.apps.should include('1')
+        @temp_device.apps.should include('2')
+        @temp_device.apps.should include('3')
+        @temp_device.apps['3'].should == @time
+
+        @temp_device.publisher_user_ids.should include('1')
+        @temp_device.publisher_user_ids.should include('2')
+        @temp_device.publisher_user_ids.should include('3')
+        @temp_device.publisher_user_ids['3'].should == 'TEST_PUB_USER_ID_NEW'
+
+        @temp_device.display_multipliers.should include('1')
+        @temp_device.display_multipliers.should include('2')
+      end
+    end
+  end
+
   describe '#after_initialize' do
     before :each do
       @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
       @correct_user_ids = {'1' => '{a}', '2' => 'b'}
       @device = FactoryGirl.create :device, :apps => @correct_app_ids, :publisher_user_ids => @correct_user_ids
+    end
+
+    context 'for a temporary device' do
+      before :each do
+        @device = Device.new(:key => 'test_udid', :is_temporary => true)
+        @temp_device = FactoryGirl.create(:temporary_device,
+                       :apps => {'2' => 50},
+                       :publisher_user_ids => {'2' => 'PUB_ID_TEST'},
+                       :display_multipliers => {'2' => 3})
+      end
+
+      it 'should load apps from temporary devices' do
+        TemporaryDevice.should_receive(:new).with(:key => @device.key).and_return(@temp_device)
+        @device.send :after_initialize
+        @device.apps.should == {'2' => 50}
+        @device.publisher_user_ids.should == {'2' => 'PUB_ID_TEST'}
+        @device.display_multipliers.should == {'2' => 3}
+      end
     end
 
     context 'with bad app JSON data' do

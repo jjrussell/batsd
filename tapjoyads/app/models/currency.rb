@@ -144,15 +144,20 @@ class Currency < ActiveRecord::Base
 
   def get_reward_amount(offer)
     return 0 unless rewarded? && offer.rewarded?
+    [get_raw_reward_value(offer), 1.0].max.to_i
+  end
+
+  def get_raw_reward_value(offer)
+    return 0 unless rewarded? && offer.rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = get_publisher_amount(offer)
+      reward_value = offer.payment * get_spend_share(offer)
     end
-    [reward_value * conversion_rate / 100.0, 1.0].max.to_i
+    reward_value  * conversion_rate / 100.0
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
@@ -209,6 +214,11 @@ class Currency < ActiveRecord::Base
     Set.new(test_devices.split(';'))
   end
   memoize :get_test_device_ids
+
+  def get_store_whitelist
+    Set.new(store_whitelist.split(';'))
+  end
+  memoize :get_store_whitelist
 
   def tapjoy_managed?
     callback_url == TAPJOY_MANAGED_CALLBACK_URL
@@ -275,20 +285,28 @@ class Currency < ActiveRecord::Base
     "#{uri.scheme}://#{uri.host}/apps/#{self.app_id}/currencies/#{self.id}"
   end
 
+  def charges?(offer)
+    get_advertiser_amount(offer) != 0
+  end
+
   private
 
   def cache_by_app_id
-    currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
-    Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
+    currencies = Currency.find_all_by_app_id(app_id, :conditions => [ 'tapjoy_enabled = ?', true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+    memcache_distributed_put(app_id, currencies)
 
     if app_id_changed?
-      currencies = Currency.find_all_by_app_id(app_id_was, :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
-      Mc.distributed_put("mysql.app_currencies.#{app_id_was}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
+      currencies = Currency.find_all_by_app_id(app_id_was, :conditions => [ 'tapjoy_enabled = ?', true ], :order => 'ordinal ASC').each { |c| c.run_callbacks(:cache); c }
+      memcache_distributed_put(app_id_was, currencies)
     end
   end
 
   def clear_cache_by_app_id
     currencies = Currency.find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
+    memcache_distributed_put(app_id, currencies)
+  end
+
+  def memcache_distributed_put(app_id, currencies)
     Mc.distributed_put("mysql.app_currencies.#{app_id}.#{Currency.acts_as_cacheable_version}", currencies, false, 1.day)
   end
 

@@ -29,10 +29,6 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def redis_write
-    @redis_write ||= Redis.new(:host => 'redis.tapjoy.net')
-  end
-
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -44,7 +40,7 @@ class ApplicationController < ActionController::Base
           request.path_parameters[:controller],
           request.path_parameters[:action],
         ].join('/') + '.json'
-        redis_write.sadd key, response.body
+        $redis.sadd key, response.body
       end
     elsif response.content_type == 'application/xml'
       begin
@@ -56,7 +52,7 @@ class ApplicationController < ActionController::Base
           request.path_parameters[:controller],
           request.path_parameters[:action],
         ].join('/') + '.xml'
-        redis_write.sadd key, response.body
+        $redis.sadd key, response.body
       end
     end
   end
@@ -96,16 +92,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def lookup_udid
+  def lookup_udid(set_temporary_udid = false)
     return if params[:udid].present?
     lookup_keys = []
-    lookup_keys.push(params[:sha2_udid]) if params[:sha2_udid].present?
-    lookup_keys.push(params[:sha1_udid]) if params[:sha1_udid].present?
-    lookup_keys.push(params[:mac_address]) if params[:mac_address].present?
-    lookup_keys.push(params[:sha1_mac_address]) if params[:sha1_mac_address].present?
-    lookup_keys.push(params[:open_udid]) if params[:open_udid].present?
-    lookup_keys.push(params[:android_id]) if params[:android_id].present?
 
+    DeviceIdentifier::ALL_IDENTIFIERS.each do |identifier|
+      lookup_keys.push(params[identifier]) if params[identifier].present?
+    end
     params[:identifiers_provided] = lookup_keys.any?
 
     lookup_keys.each do |lookup_key|
@@ -119,6 +112,11 @@ class ApplicationController < ActionController::Base
 
     if params[:udid].blank? && params[:mac_address].present?
       params[:udid] = params[:mac_address]
+    end
+
+    if params[:udid].blank? && set_temporary_udid && lookup_keys.any?
+      params[:udid] = lookup_keys.first
+      params[:udid_is_temporary] = true
     end
   end
 

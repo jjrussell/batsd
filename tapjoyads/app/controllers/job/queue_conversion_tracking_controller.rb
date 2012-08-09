@@ -106,13 +106,20 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
     reward.mac_address            = click.mac_address
+    reward.device_type            = click.device_type
+    reward.offerwall_rank         = click.offerwall_rank
 
     begin
       reward.save!(:expected_attr => { 'type' => nil })
     rescue Simpledb::ExpectedAttributeError => e
       return
     end
-    checker.process_conversion(reward)
+
+    begin
+      checker.process_conversion(reward)
+    rescue Exception => e
+      Notifier.alert_new_relic(e.class, e.message, request, params)
+    end
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, reward.key) if offer.rewarded? && currency.callback_url != Currency::NO_CALLBACK_URL
     Sqs.send_message(QueueNames::CREATE_CONVERSIONS, reward.key)
@@ -165,6 +172,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.exp               = reward.exp
     web_request.viewed_at         = reward.viewed_at
     web_request.click_key         = reward.click_key
+    web_request.device_type       = reward.device_type
+    web_request.offerwall_rank    = reward.offerwall_rank
     web_request.save
   end
 

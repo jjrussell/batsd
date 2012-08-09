@@ -5,17 +5,24 @@ describe GetOffersController do
 
   describe '#index' do
     before :each do
+      Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
+      @currency.update_attributes({:external_publisher => true})
       @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       @offer2 = FactoryGirl.create(:app).primary_offer
       @offer2.countries = ["GB"].to_json
+      @offer2.partner.balance = 10
       @offer2.save
       @offer3 = FactoryGirl.create(:app).primary_offer
       @offer3.countries = ["US"].to_json
+      @offer3.partner.balance = 10
       @offer3.save
       @offer4 = FactoryGirl.create(:app).primary_offer
       @offer4.countries = ["CN"].to_json
+      @offer4.partner.balance = 10
       @offer4.save
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
@@ -31,8 +38,15 @@ describe GetOffersController do
 
     end
 
+    after :each do
+      Timecop.return
+    end
+
     it 'should queue up tracking url calls' do
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
 
       get(:index, @params)
     end
@@ -103,6 +117,71 @@ describe GetOffersController do
       assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
+    context 'when the same app has multiple offers' do
+      it 'returns only the highest ranked offer' do
+        app = FactoryGirl.create(:app)
+        offer1 = app.primary_offer
+        offer1.partner.balance = 10
+        offer2 = offer1.clone
+        offer2.save
+        offer2.partner.balance = 10
+        offer3 = offer1.clone
+        offer3.save
+        offer3.stub(:rank_score).and_return(100000)
+        offer3.partner.balance = 10
+        offer4 = offer1.clone
+        offer4.save
+        offer4.partner.balance = 10
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
+
+        get(:index, @params)
+        assigns(:offer_list).include?([offer1, offer2, offer4]).should be_false
+        assigns(:offer_list).include?(offer3).should be_true
+      end
+    end
+
+    context 'when targeting app stores' do
+      before :each do
+        publisher_app = FactoryGirl.create(:app, :platform => 'android')
+        publisher_app.add_app_metadata('android.GFan', 'def789')
+        @currency = FactoryGirl.create(:currency, :app => publisher_app)
+        @offer1 = FactoryGirl.create(:generic_offer).primary_offer
+        @offer1.update_attributes(:payment => 10)
+        @offer1.partner.balance = 10
+        @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
+        @offer2.partner.balance = 10
+        app = FactoryGirl.create(:app, :platform => 'android')
+        metadata = app.add_app_metadata('android.GFan', 'xyz123')
+        @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
+        @offer3.partner.balance = 10
+        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+        @params = {
+          :udid => 'stuff',
+          :publisher_user_id => 'more_stuff',
+          :currency_id => @currency.id,
+          :app_id => @currency.app.id,
+        }
+      end
+
+      it 'returns all offers by default' do
+        AppStore.find('android.GooglePlay').stub(:exclusive?).and_return(false)
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer2, @offer3]
+      end
+
+      it 'returns targeted offers for exclusive stores' do
+        @params[:store_name] = 'gfan'
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer3]
+      end
+
+      it 'returns targeted offers for currency store whitelist' do
+        Currency.any_instance.stub(:store_whitelist).and_return('android.GooglePlay')
+        get(:index, @params)
+        assigns(:offer_list).should == [@offer1, @offer2]
+      end
+    end
+
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
@@ -117,9 +196,10 @@ describe GetOffersController do
 
       json_offer = json['OfferArray'][0]
       json_offer['Cost'       ].should == 'Free'
-      json_offer['Amount'     ].should == '5'
+      json_offer['isFree'     ].should == true
+      json_offer['Amount'     ].should == '4'
       json_offer['Name'       ].should == @offer.name
-      json_offer['Payout'     ].should == 5
+      json_offer['Payout'     ].should == 4
       json_offer['Type'       ].should == 'App'
       json_offer['StoreID'    ].should == @offer.store_id_for_feed
       json_offer['IconURL'    ].should be_present
@@ -158,6 +238,8 @@ describe GetOffersController do
         :app_id => @currency.app.id
       }
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
     end
 
     context 'with redesign specified' do
@@ -181,7 +263,10 @@ describe GetOffersController do
 
     it 'should queue up tracking url calls' do
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
-      @offer.should_receive(:queue_impression_tracking_requests).once
+      @offer.should_receive(:queue_impression_tracking_requests).with(
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'stuff',
+        :publisher_app_id => @currency.app.id).once
 
       get(:webpage, @params)
     end
@@ -209,6 +294,8 @@ describe GetOffersController do
       @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
+      @offer.save
       controller.stub(:ip_address).and_return('208.90.212.38')
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
       @params = {
@@ -322,6 +409,7 @@ describe GetOffersController do
       @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       controller.stub(:ip_address).and_return('208.90.212.38')
       fake_cache_object = double('fake_cache_object')
       fake_cache_object.stub(:value).and_return([@offer])

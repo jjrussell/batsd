@@ -106,7 +106,7 @@ FactoryGirl.define do
   factory :app_metadata do
     thumbs_up  0
     thumbs_down 0
-    store_name 'App Store'
+    store_name 'iphone.AppStore'
     store_id   { FactoryGirl.generate(:name) }
     name       { FactoryGirl.generate(:name) }
   end
@@ -132,12 +132,18 @@ FactoryGirl.define do
     partner { currency.partner }
   end
 
+  factory :non_live_app, :class => App do
+    association :partner
+    name { FactoryGirl.generate(:name) }
+    platform 'iphone'
+  end
+
   factory :app do
     association :partner
     name { FactoryGirl.generate(:name) }
     platform 'iphone'
     after_build do |app|
-      app.add_app_metadata(FactoryGirl.create(:app_metadata))
+      app.add_app_metadata(App::PLATFORM_DETAILS[app.platform][:default_store_name], FactoryGirl.generate(:name), true)
     end
   end
 
@@ -184,11 +190,12 @@ FactoryGirl.define do
     association :partner
     name { FactoryGirl.generate(:name) }
     video_url ''
+    app_targeting false
   end
 
   factory :video_button do
     association :video_offer
-    association :tracking_item, :factory => :app
+    tracking_source_offer { FactoryGirl.create(:app).primary_offer }
     name { FactoryGirl.generate(:name) }
     url 'http://www.tapjoy.com'
     ordinal 1
@@ -212,6 +219,7 @@ FactoryGirl.define do
     association :partner
     name 'TAPJOY_BUCKS'
     callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
+    conversion_rate 100
   end
 
   factory :monthly_accounting do
@@ -248,8 +256,8 @@ FactoryGirl.define do
 
   factory :action_offer do
     name         'do something'
-    association  :partner
     association  :app
+    partner      { app.partner }
     instructions '1. do some stuff'
   end
 

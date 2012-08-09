@@ -77,7 +77,8 @@ describe ClickController do
           :udid => 'stuff',
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
-          :currency_id => @currency.id
+          :currency_id => @currency.id,
+          :publisher_app_id => 'pub_app_id'
         }
         controller.stub(:verify_params).and_return(true)
         Offer.stub(:find_in_cache).and_return(@offer)
@@ -94,7 +95,10 @@ describe ClickController do
       it "queues the offer's click_tracking_urls properly" do
         Click.any_instance.stub(:offer).and_return(@offer)
         @params.merge!(:advertiser_app_id => 'testing click_tracking')
-        @offer.should_receive(:queue_click_tracking_requests).once
+        @offer.should_receive(:queue_click_tracking_requests).with({
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => 'pub_app_id'}.with_indifferent_access).once
 
         get(:generic, @params)
       end
@@ -135,7 +139,8 @@ describe ClickController do
         :udid => 'app_stuff',
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
-        :currency_id => @currency.id
+        :currency_id => @currency.id,
+        :publisher_app_id => 'pub_app_id'
       }
       controller.stub(:verify_params).and_return(true)
       Offer.stub(:find_in_cache).and_return(@offer)
@@ -152,7 +157,10 @@ describe ClickController do
     it "queues the offer's click_tracking_urls properly" do
       Click.any_instance.stub(:offer).and_return(@offer)
       @params.merge!(:advertiser_app_id => 'testing click_tracking')
-      @offer.should_receive(:queue_click_tracking_requests).once
+      @offer.should_receive(:queue_click_tracking_requests).with({
+        :ip_address       => @controller.send(:ip_address),
+        :udid             => 'app_stuff',
+        :publisher_app_id => 'pub_app_id'}.with_indifferent_access).once
 
       get(:app, @params)
     end

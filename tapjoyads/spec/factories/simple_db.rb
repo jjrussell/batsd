@@ -9,7 +9,7 @@ FactoryGirl.define do
   end
 
   factory :device do
-    key { FactoryGirl.generate(:udid) }
+    key               { FactoryGirl.generate(:udid) }
   end
 
   factory :publisher_user do
@@ -35,6 +35,11 @@ FactoryGirl.define do
   factory :device_identifier do
     key { Factory.next(:guid) }
     udid ''
+  end
+
+  factory :temporary_device do
+    key     { Factory.next(:guid) }
+    apps    {}
   end
 
   factory :game_state do

@@ -115,6 +115,7 @@ describe Dashboard::OffersController do
     context 'when app offer is enabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => true)
+        @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
@@ -131,6 +132,7 @@ describe Dashboard::OffersController do
     context 'when app offer is disabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => false)
+        @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
@@ -240,7 +242,9 @@ describe Dashboard::OffersController do
     context 'when not permitted to edit->dashboard_statz' do
       before :each do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(false)
-        @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
+        @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only,
+          :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
+          :exclusion_prerequisite_offer_ids]
 
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @offer = mock('offer')
@@ -312,10 +316,11 @@ describe Dashboard::OffersController do
       before :each do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(true)
         @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
-          :min_os_version, :screen_layout_sizes, :countries, :tapjoy_enabled,
-          :allow_negative_balance, :pay_per_click, :name, :name_suffix, :show_rate,
-          :min_conversion_rate, :device_types, :publisher_app_whitelist, :overall_budget,
-          :min_bid_override, :dma_codes, :regions, :carriers, :cities ]
+          :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
+          :exclusion_prerequisite_offer_ids, :tapjoy_enabled, :allow_negative_balance,
+          :pay_per_click, :name, :name_suffix, :show_rate, :min_conversion_rate,
+          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
+          :dma_codes, :regions, :carriers, :cities ]
         @controller.stub(:find_app).with(@app.id).and_return(@app)
         @offer = mock('offer')
         @controller.stub(:log_activity).with(@offer)

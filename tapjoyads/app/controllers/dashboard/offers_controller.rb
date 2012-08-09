@@ -7,11 +7,12 @@ class Dashboard::OffersController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
-                               :min_os_version, :screen_layout_sizes, :countries]
-  ELEVATED_SAFE_ATTRIBUTES = [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
+                               :min_os_version, :screen_layout_sizes, :countries,
+                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids ]
+  ELEVATED_SAFE_ATTRIBUTES = BASE_SAFE_ATTRIBUTES | [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
                                :name, :name_suffix, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-                               :dma_codes, :regions, :carriers, :cities ] | BASE_SAFE_ATTRIBUTES
+                               :dma_codes, :regions, :carriers, :cities ]
 
   def new
     offer_params = {}
@@ -28,12 +29,13 @@ class Dashboard::OffersController < Dashboard::DashboardController
   end
 
   def create
+    object = @distribution ? @distribution : @app
     if params[:offer_type] == 'rewarded_featured'
-      @offer = @app.primary_rewarded_featured_offer || @app.primary_offer.create_rewarded_featured_clone
+      @offer = object.primary_rewarded_featured_offer || object.primary_offer.create_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded_featured'
-      @offer = @app.primary_non_rewarded_featured_offer || @app.primary_offer.create_non_rewarded_featured_clone
+      @offer = object.primary_non_rewarded_featured_offer || object.primary_offer.create_non_rewarded_featured_clone
     elsif params[:offer_type] == 'non_rewarded'
-      @offer = @app.primary_non_rewarded_offer || @app.primary_offer.create_non_rewarded_clone
+      @offer = object.primary_non_rewarded_offer || object.primary_offer.create_non_rewarded_clone
     end
     redirect_to :action => :edit, :id => @offer.id
   end
@@ -63,12 +65,9 @@ class Dashboard::OffersController < Dashboard::DashboardController
     params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
-    safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only, :min_os_version, :screen_layout_sizes, :countries]
+    safe_attributes = BASE_SAFE_ATTRIBUTES
     if permitted_to? :edit, :dashboard_statz
-      safe_attributes += [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
-          :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities ]
+      safe_attributes = ELEVATED_SAFE_ATTRIBUTES
     end
 
     if @offer.safe_update_attributes(offer_params, safe_attributes)
@@ -109,8 +108,16 @@ class Dashboard::OffersController < Dashboard::DashboardController
 
     if params[:id]
       @offer = @app.offers.find(params[:id])
+      @app_metadata = @offer.app_metadata
+      @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(@app_metadata.id) if @app_metadata
+    elsif params[:app_metadata_id]
+      @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(params[:app_metadata_id])
+      @app_metadata = @distribution.app_metadata
+      @offer = @distribution.primary_offer
     else
       @offer = @app.primary_offer
+      @app_metadata = @app.primary_app_metadata
+      @distribution = @app.app_metadata_mappings.find_by_is_primary(true)
     end
     log_activity(@offer)
   end

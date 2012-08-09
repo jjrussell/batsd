@@ -24,6 +24,7 @@ class VideoButton < ActiveRecord::Base
   validates_numericality_of :ordinal, :only_integer => true
 
   after_save :update_offer
+  after_save :update_tracking_offer
 
   scope :ordered, :order => "enabled DESC, ordinal"
   scope :enabled, :conditions => { :enabled => true }
@@ -46,12 +47,12 @@ class VideoButton < ActiveRecord::Base
   end
 
   def rewarded_install?
-    rewarded? && tracking_item.is_a?(App)
+    tracking_offer.rewarded? && tracking_item.is_a?(App)
   end
 
   def tracking_item_options(item)
-    offer = item.primary_offer
-    return nil unless offer.present? && self.rewarded? && offer.rewarded?
+    offer = item.is_a?(Offer) ? item : item.primary_offer
+    return {} unless offer.present? && offer.rewarded?
 
     {
       :bid          => offer.bid,
@@ -69,5 +70,11 @@ class VideoButton < ActiveRecord::Base
   def update_offer
     video_offer.update_buttons
     video_offer.cache
+  end
+
+  def update_tracking_offer
+    if options = tracking_item_options(tracking_item)
+      tracking_offer.update_attributes(options)
+    end
   end
 end

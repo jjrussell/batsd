@@ -15,14 +15,6 @@ include GetOffersHelper
                                           '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
                                           'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
                                           'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
-  OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
-                                          'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
-                                          '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
-                                          '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
-                                          'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
-                                          'b138a117-4b68-4e41-890a-2ea84a83ed38', # Tiny Farm(iOS)
-                                          '0f127143-e23b-46df-9e70-b6e07222d122'  # Songify (Android)
-                                        ])
 
   # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
   VIEW_A1 = {
@@ -81,16 +73,14 @@ include GetOffersHelper
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    if params[:redesign].present?
-      set_redesign_parameters
-      if params[:json] == '1'
-        if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
-          @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
-        end
-        render :json => @final.to_json, :callback => params[:callback] and return
-      else
-        render :template => 'get_offers/webpage_redesign' and return
+    set_redesign_parameters
+    if params[:json] == '1'
+      if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
+        @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
+      render :json => @final.to_json, :callback => params[:callback] and return
+    else
+      render :template => 'get_offers/webpage_redesign' and return
     end
   end
 
@@ -219,7 +209,8 @@ include GetOffersHelper
       :all_videos           => params[:all_videos],
       :algorithm            => @algorithm,
       :algorithm_options    => @algorithm_options,
-      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
+      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
+      :store_name           => params[:store_name]
     )
   end
 
@@ -237,35 +228,45 @@ include GetOffersHelper
         web_request.offerwall_rank_score = offer.rank_score
         web_request.save
 
-        offer.queue_impression_tracking_requests # for third party tracking vendors
+        # for third party tracking vendors
+        offer.queue_impression_tracking_requests(
+          :ip_address       => ip_address,
+          :udid             => params[:udid],
+          :publisher_app_id => params[:app_id])
       end
     end
   end
 
   def set_offerwall_experiment
     experiment = case params[:source]
-    when 'offerwall'
-      :ow_redesign if params[:action] == 'webpage'
-    else
-      nil
+      when 'offerwall'
+        :ranking
+      when 'tj_games'
+        :show_rate_237
+      else
+        nil
     end
 
     choose_experiment(experiment)
   end
 
   def set_algorithm
+    case params[:exp]
+      when 'a_optimization'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'b_optimization'
+        @algorithm = '237'
+        @algorithm_options = {:skip_country => true, :skip_currency => true}
+      when 'a_offerwall'
+        @algorithm = nil
+      when 'b_offerwall'
+        @algorithm = '101'
+        @algorithm_options = {:skip_country => true}
+    end
+
     if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
       @algorithm = '101'
-    end
-
-    if params[:source] == 'tj_games'
-      @algorithm = '101'
-      @algorithm_options = { :skip_country => true }
-    end
-
-    case params[:exp]
-    when 'ow_redesign'
-      params[:redesign] = true
     end
   end
 
@@ -287,10 +288,6 @@ include GetOffersHelper
     params[:library_version] == 'server'
   end
 
-  def queue_impression_tracking
-    @offer_list.each { |offer| offer.queue_impression_tracking_requests(request) }
-  end
-
   def generate_web_request
     if params[:source] == 'tj_games'
       wr_path = 'tjm_offers'
@@ -309,7 +306,7 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A1
+    view_id = params[:viewID] || :VIEW_A2
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []

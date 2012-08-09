@@ -333,13 +333,24 @@ div.help-dialog .ui-dialog-title {
   padding: 2px 0px;
 }
 
+#active_campaigns_box tr:nth-child(odd) {
+  background: #f0f0f0;
+}
+
 #active_campaigns_box tr:hover {
   background-color: #ddd;
 }
 
+#active_campaigns_box tr:nth-child(odd):hover {
+  background-color: #ccc;
+}
+
+
 #active_campaigns_box td {
   padding: 3px;
   max-width: 450px;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 #active_campaigns_box td.offer-type {
   font-size: 10px;

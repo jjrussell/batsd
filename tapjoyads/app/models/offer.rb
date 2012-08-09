@@ -1,4 +1,5 @@
 class Offer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   include Offer::Ranking
   include Offer::Rejecting
@@ -6,8 +7,10 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
+  include Offer::ShowRateAlgorithms
   acts_as_cacheable
   acts_as_tracking
+  acts_as_trackable
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -68,7 +71,8 @@ class Offer < ActiveRecord::Base
                                     url_overridden
                                     user_enabled
                                     tracking_for_id
-                                    tracking_for_type )
+                                    tracking_for_type
+                                    source_offer_id )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
@@ -103,9 +107,13 @@ class Offer < ActiveRecord::Base
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
+  belongs_to :app_metadata
+  belongs_to :source_offer, :class_name => 'Offer'
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -177,6 +185,7 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
   before_validation :set_reseller_from_partner, :on => :create
@@ -195,6 +204,7 @@ class Offer < ActiveRecord::Base
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
+  set_callback :cache_associations, :before, :app_metadata
 
   ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
   scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
@@ -229,35 +239,31 @@ class Offer < ActiveRecord::Base
     item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
     { :conditions => ["item_type IN (?)", item_types] }
   }
+  scope :trackable, :conditions => { :item_type => ['VideoOffer', 'ActionOffer','App','VideoOffer','GenericOffer']}
   scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
-  #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
-  scope :papaya_app_offers,
-    :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
-      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+  scope :papaya_app_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
-  scope :papaya_action_offers,
-    :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
-      inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
-      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+  scope :papaya_action_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'ActionOffer' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :use_server_whitelist?, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
   delegate :trigger_action, :to => :generic_offer, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action
+  delegate :store_name, :to => :app_metadata, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :app_metadata_store_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
-    :approved_sources, :carriers, :cities
+    :approved_sources, :carriers, :cities, :exclusion_prerequisite_offer_ids
 
   def clone
     return super if new_record?
@@ -383,7 +389,7 @@ class Offer < ActiveRecord::Base
   end
 
   def is_enabled?
-    tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+    is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
 
   def can_be_promoted?
@@ -408,6 +414,10 @@ class Offer < ActiveRecord::Base
 
   def video_offer?
     item_type == 'VideoOffer'
+  end
+
+  def show_in_active_campaigns?
+    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
   end
 
   def video_icon_url(options = {})
@@ -683,7 +693,7 @@ class Offer < ActiveRecord::Base
   end
 
   def icon_id
-    icon_id_override || item_id
+    icon_id_override || app_metadata_id || item_id
   end
 
   def self.hashed_icon_id(guid)
@@ -799,6 +809,10 @@ class Offer < ActiveRecord::Base
     @video_button_tracking_offers = item.video_buttons.enabled.ordered.collect(&:tracking_offer).compact
   end
 
+  def is_deeplink?
+    item_type == 'DeeplinkOffer'
+  end
+
   # We want a consistent "app id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
   # the values unique between partners so that no 'collusion' can
@@ -807,15 +821,76 @@ class Offer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
   end
 
+  def initialize_from_app(app)
+    self.name         = app.name
+    self.price        = 0
+    self.bid          = min_bid
+    self.url          = app.store_url
+    self.device_types = app.get_offer_device_types.to_json
+  end
+
+  def initialize_from_app_metadata(app_metadata, default_name = 'untitled')
+    self.app_metadata     = app_metadata
+    self.name             = app_metadata.name ? app_metadata.name : default_name # validated as non-nil, will be updated when app metadata name is fetched from store
+    self.price            = app_metadata.price
+    self.bid              = min_bid
+    self.url              = app_metadata.store_url
+    self.device_types     = app_metadata.get_offer_device_types.to_json
+    self.third_party_data = app_metadata.store_id
+    self.age_rating       = app_metadata.age_rating
+    self.wifi_only        = app_metadata.wifi_required?
+  end
+
+  def update_from_app_metadata(app_metadata, default_name = 'untitled')
+    if item_type == 'App'
+      if self.app_metadata == app_metadata
+        self.name = app_metadata.name if app_metadata.name_changed? && ( app_metadata.name_was == self.name || app_metadata.name_was.nil? )
+      else
+        self.app_metadata = app_metadata
+        self.name = app_metadata.name
+        self.third_party_data = app_metadata.store_id
+        self.device_types = app_metadata.get_offer_device_types.to_json
+        self.url = app_metadata.store_url unless url_overridden?
+      end
+      self.name = default_name if self.name.nil?
+      self.price = app_metadata.price
+      self.bid = min_bid if bid < min_bid
+      self.bid = max_bid if bid > max_bid
+      self.age_rating = app_metadata.age_rating
+      self.wifi_only = app_metadata.wifi_required?
+    elsif item_type == 'ActionOffer'
+      self.url           = app_metadata.store_url unless url_overridden?
+      self.price         = action_offer.offer_price(app_metadata)
+      if price_changed? && bid < min_bid
+        self.bid        = min_bid
+      end
+      self.app_metadata = app_metadata
+    end
+    self.save! if self.changed?
+  end
+
   def get_disabled_reasons
     reasons = []
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
-    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment
+    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink?
     reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value.to_i > 0
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
     reasons
+  end
+
+  def build_tracking_offer_for(tracked_for, options = {})
+    options.merge!({ :app_metadata => app_metadata, :source_offer_id => id })
+    item.build_tracking_offer_for(tracked_for, options)
+  end
+
+  def find_tracking_offer_for(tracked_for)
+    tracking_offer = item.find_tracking_offer_for(tracked_for)
+    options = { :app_metadata => app_metadata, :source_offer_id => id }
+    options.merge!(item.tracking_offer_options(tracked_for)).merge!(tracked_for.tracking_item_options(self) || {})
+    tracking_offer.attributes=(options) if tracking_offer
+    tracking_offer
   end
 
   private
@@ -844,7 +919,9 @@ class Offer < ActiveRecord::Base
 
   def cleanup_url
     if (url_overridden_changed? || url_changed?) && !url_overridden?
-      if %w(App ActionOffer RatingOffer).include?(item_type)
+      if %w(App ActionOffer).include?(item_type) && app_metadata
+        self.url = app_metadata.store_url
+      elsif %w(App ActionOffer RatingOffer).include?(item_type)
         self.url = self.item.store_url
       elsif item_type == 'GenericOffer'
         self.url = self.item.url
@@ -883,7 +960,7 @@ class Offer < ActiveRecord::Base
   end
 
   def update_enabled_deeplink_offer_id
-    if item_type == 'DeeplinkOffer' && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
+    if is_deeplink? && (tapjoy_enabled_changed? || user_enabled_changed? || reward_value_changed? || payment_changed?)
       item.currency.enabled_deeplink_offer_id = accepting_clicks? ? id : nil
       item.currency.save! if item.currency.changed?
     end

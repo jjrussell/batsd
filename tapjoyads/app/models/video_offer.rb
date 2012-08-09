@@ -12,6 +12,7 @@
 #
 
 class VideoOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_cacheable
   acts_as_trackable :url => lambda { |ctx| video_url.present? ? video_url : nil }
@@ -21,18 +22,23 @@ class VideoOffer < ActiveRecord::Base
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
   belongs_to :partner
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
   validate :video_exists, :unless => :new_record?
+  validates_with OfferPrerequisitesValidator
 
   before_save :update_video_url
   after_create :create_primary_offer
   after_update :update_offers
 
   scope :visible, :conditions => { :hidden => false }
+
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def update_buttons
     offers.each do |offer|
@@ -49,9 +55,25 @@ class VideoOffer < ActiveRecord::Base
     end.sort_by(&:ordinal)
   end
 
-  def available_trackable_items(selected_id=nil)
-    ids_to_exclude = self.video_buttons.map { |r| r.item_id }.compact
-    partner.trackable_items.reject { |r| selected_id != r.id && ids_to_exclude.include?(r.id) }
+  def available_trackable_offers(selected_video_button)
+    ids_to_exclude = self.video_buttons.map { |r| [ r.item_id, r.tracking_offer.try(:app_metadata_id)] }.compact
+    ids_to_exclude -= [[selected_video_button.item_id, selected_video_button.tracking_offer.try(:app_metadata_id)]]
+    partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at).reject do |r|
+      ids_to_exclude.include?([r.item_id, r.app_metadata_id]) ||
+      r.item.hidden? ||
+      ( r.app_offer? && r.app_metadata_id.blank? ) ||
+      r.item_id == id
+    end
+  end
+
+  def has_video_button_for_store?(store_name)
+    video_buttons.any? do |button|
+      button.tracking_offer.app_metadata.present? && button.tracking_offer.app_metadata.store_name == store_name
+    end
+  end
+
+  def distribution_reject?(store_name)
+    app_targeting? && !has_video_button_for_store?(store_name)
   end
 
   def get_icon_url(options = {})
@@ -74,6 +96,8 @@ class VideoOffer < ActiveRecord::Base
     offer.url          = video_url if video_url.present?
     offer.bid          = offer.min_bid
     offer.name_suffix  = 'Video'
+    offer.prerequisite_offer_id = prerequisite_offer_id
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.save!
   end
 
@@ -81,6 +105,8 @@ class VideoOffer < ActiveRecord::Base
     offers.each do |offer|
       offer.partner_id = partner_id if partner_id_changed?
       offer.name = name if name_changed?
+      offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?

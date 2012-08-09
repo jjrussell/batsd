@@ -14,7 +14,7 @@ xml.TapjoyVideos do
           builder = Builder::XmlMarkup.new
           button_xml << builder.Button do |button|
             button.tag!("Name", o.name)
-            button.tag!("URL", get_click_url(o))
+            button.tag!("URL", get_click_url(o, :source => 'secondary'))
           end
         end
         xml << button_xml

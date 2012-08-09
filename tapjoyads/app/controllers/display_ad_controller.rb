@@ -55,11 +55,13 @@ class DisplayAdController < ApplicationController
 
     now = Time.zone.now
 
-    if params[:size].blank? || params[:size] == '320x50'
-      # Don't show high-res ads to AdMarvel or TextFree, unless they explicitly send a size param.
-      unless params[:action] == 'webview' || request.format == :json || params[:app_id] == '6b69461a-949a-49ba-b612-94c8e7589642'
+    # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
+    # (except certain scenarios)
+    if ((params[:size].blank? || (params[:size] == '320x50' &&
+      params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
+      params[:action] != 'webview' && request.format != :json &&
+      params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
         params[:size] = '640x100'
-      end
     end
 
     device = Device.new(:key => params[:udid])
@@ -90,7 +92,8 @@ class DisplayAdController < ApplicationController
         :source              => params[:source],
         :library_version     => params[:library_version],
         :screen_layout_size  => params[:screen_layout_size],
-        :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}"
+        :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
+        :store_name          => params[:store_name]
       ).weighted_rand
     end
 
@@ -242,6 +245,12 @@ class DisplayAdController < ApplicationController
   end
 
   def queue_impression_tracking
-    @offer.queue_impression_tracking_requests if @offer.present? # for third party tracking vendors
+    # for third party tracking vendors
+    if @offer.present?
+      @offer.queue_impression_tracking_requests(
+        :ip_address       => ip_address,
+        :udid             => params[:udid],
+        :publisher_app_id => params[:app_id])
+    end
   end
 end

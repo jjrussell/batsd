@@ -18,6 +18,7 @@
 #
 
 class GenericOffer < ActiveRecord::Base
+  include ActiveModel::Validations
   include UuidPrimaryKey
   acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
@@ -29,14 +30,19 @@ class GenericOffer < ActiveRecord::Base
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
   belongs_to :partner
+  belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :partner, :name, :url, :category
+  validates_presence_of :prerequisite_offer, :if => Proc.new { |generic_offer| generic_offer.prerequisite_offer_id? }
   validates_inclusion_of :category, :in => CATEGORIES, :allow_blank => true
+  validates_with OfferPrerequisitesValidator
 
   after_create :create_primary_offer
   after_update :update_offers
 
   scope :visible, :conditions => { :hidden => false }
+
+  json_set_field :exclusion_prerequisite_offer_ids
 
   def get_icon_url(options = {})
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
@@ -58,6 +64,8 @@ class GenericOffer < ActiveRecord::Base
     offer.url = url
     offer.instructions = instructions
     offer.third_party_data = third_party_data
+    offer.prerequisite_offer_id = prerequisite_offer_id
+    offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.save!
   end
 
@@ -69,6 +77,8 @@ class GenericOffer < ActiveRecord::Base
       offer.url = url if url_changed? && !offer.url_overridden?
       offer.instructions = instructions if instructions_changed? && !offer.instructions_overridden?
       offer.third_party_data = third_party_data if third_party_data_changed?
+      offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
+      offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
       offer.hidden = hidden if hidden_changed?
       offer.save! if offer.changed?
     end

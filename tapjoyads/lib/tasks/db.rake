@@ -1,4 +1,18 @@
 namespace :db do
+
+  namespace :schema do
+    desc "Create a db/schema.rb file from a specific database"
+    task :dump_database => [:environment, :load_config] do
+      require 'active_record/schema_dumper'
+      filename = ENV['SCHEMA'] || "#{Rails.root}/db/schema.rb"
+      database = ENV['DATABASE'] || Rails.env
+      File.open(filename, "w:utf-8") do |file|
+        ActiveRecord::Base.establish_connection(database)
+        ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
+      end
+    end
+  end
+
   desc "Copies the production database to the development database"
   task :sync do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
@@ -48,5 +62,33 @@ namespace :db do
     puts("finished in #{time} seconds.")
     system("rm -f #{dump_file}")
     system("rm -f #{dump_file2}")
+  end
+
+  namespace :schema do
+    desc "Sync the mysql schema with the sqlite database used for development webserver boxes"
+    task :sync do
+      schema_file  = "db/schema-dev.rb"
+
+      print "Dumping mysql schema to #{schema_file}..."
+      time = Benchmark.realtime do
+        fork {
+          ENV['SCHEMA'] = schema_file
+          exec('bundle exec rake db:schema:dump')
+        }
+        Process.wait
+      end
+      puts "finished in #{time} seconds."
+
+      print "Loading schema file into sqlite..."
+      time = Benchmark.realtime do
+        fork {
+          ENV['SCHEMA'] = schema_file
+          ENV['MACHINE_TYPE'] = 'webserver'
+          exec('bundle exec rake db:schema:load')
+        }
+        Process.wait
+      end
+      puts "finished in #{time} seconds."
+    end
   end
 end

@@ -474,7 +474,7 @@ en:
     offerwall:
       actions:
         download: Download and run this app.
-        steps: Complete a series of steps.
+        steps: Complete a quick action.
         video: Watch this video.
       buy_currency: "Buy %{amount} %{currency}"
       earn_currency: "Earn %{amount} %{currency}"
@@ -598,6 +598,62 @@ en:
     unavailable_offer:
       message: "We're sorry but %{offer} is no longer available. You can return to the previous page and refresh to view the latest offer list."
       optional_message: "Or, click here to download %{offer} anyway."
+    corp:
+      about_tapjoy: About Tapjoy
+      advertisers: Advertisers
+      app_developers: App Developers
+      app_installs: App Installs
+      apps_are_media: Apps are Media
+
+      blog: Blog
+      boost_revenue: Boost Your Revenue
+      careers: Careers
+      company_news: Company News
+      connect_us_linkedin: Connect with us on LinkedIn
+      contact: Contact
+      contact_us: Contact Us
+      cpv_video: CPV Video
+      developers: Developers
+      developer_services: Developer Services
+      direct_response: Direct Response
+      discover_new_apps: Discover new apps and earn rewards
+      display_units: Display Units
+      distribute_and_monetize: Distribute and monetize your App
+      drive_installs: Drive More Installs
+      executive_team: Executive Team
+      follow_us_twitter: Follow us on Twitter
+      how_works: How it works
+      like_us_facebook: Like us on Facebook
+      login: Login
+      main_menu: Main Menu
+      marketplace: Marketplace
+      modules:
+        module_1: How it works
+        module_1_detail: "Tapjoy's huge free-to-use app network allows users to discover great new apps and rewards them for viewing ads they will want to see."
+        module_2: Our Partners
+        module_2_detail: "Tapjoy brings leading app developers and the world’s biggest brands together to provide a premium experience for our users."
+        module_3: In the news
+        module_3_detail: "The Tapjoy Asia Fund offers development, funding, marketing, and distribution services to select developers throughout Asia."
+        module_4: Mobile Future
+        module_4_detail: "With more than 20,000 apps and 500MM+ mobile users Tapjoy is transforming the free-to-use app market forever."
+      privacy: Privacy
+      read_more: Read more
+      register: Register
+      search: Search
+      sidebar:
+        latest_title: Latest News
+        latest_news: "Tapjoy has been named by Fast Company as #27 of the world’s 50 most innovative companies in 2012 — #2 in mobile and #1 in gaming."
+        latest_read_article: "Read Article >"
+        stats_title: In Stats
+        stats_number: 90
+        stats_label: MILLION
+        stats_type: Monthly Active Users
+      social_actions: Social Actions
+      tapjoy_fund: Tapjoy Fund
+      targeted_solutions: Targeted solutions to our 90MM+ users
+      terms_of_service: Terms of Service
+      terms_of_use: Terms of Use
+      watch_us_youtube: Watch us on YouTube
   time:
     am: am
     formats:
@@ -611,6 +667,11 @@ en:
     pm: pm
   user_event:
     error:
+      invalid_app_id: "App ID '%{app_id}' could not be found. Check 'app_id' and try again."
+      missing_fields: "Expected attribute(s) %{missing_fields_string} not found."
+      undefined_fields: "Attribute(s) %{undefined_fields_string} are undefined for this event type."
+      invalid_field: "'%{field}' is not of type '%{type}'."
+      invalid_event_type: "Invalid event type ID."
       no_device: "Device missing in request."
       verification_failed: "Parameter verification failed."
       no_verifier: "Verifier missing in request."

@@ -137,6 +137,8 @@ class Dashboard::StatzController < Dashboard::DashboardController
     if @offer.nil?
       flash[:error] = "Could not find an offer with ID: #{params[:id]}"
       redirect_to statz_index_path
+    elsif @offer.app_offer?
+      @app_metadata = @offer.app_metadata
     end
   end
 

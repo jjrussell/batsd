@@ -1,17 +1,9 @@
 class Experiments
 
-  OFFERWALL_REDESIGN_EXPERIMENT_IDS =  {}
-  (0...10).each do |key|
-    OFFERWALL_REDESIGN_EXPERIMENT_IDS[key] = 'ow_redesign'
-  end
-  OFFERWALL_REDESIGN_EXPERIMENT_IDS.default = 'ow_control'
-  class << OFFERWALL_REDESIGN_EXPERIMENT_IDS
-    def length
-      100
-    end
-  end
+  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(a_optimization b_optimization)
+  RANKING_EXPERIMENT_IDS = %w(a_offerwall b_offerwall)
 
-  EXPERIMENTS = { :ow_redesign => OFFERWALL_REDESIGN_EXPERIMENT_IDS }
+  EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
 
   def self.choose(udid, options = {})
     if udid.present?

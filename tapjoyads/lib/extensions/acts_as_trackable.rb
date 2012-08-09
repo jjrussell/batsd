@@ -12,7 +12,7 @@ module ActsAsTrackable
   end
 
   module InstanceMethods
-    def build_tracking_offer_for(tracked_for, options = {})
+    def tracking_offer_options(tracked_for, options = {})
       offer_options       = {
         :item             => self,
         :tracking_for     => tracked_for,
@@ -28,7 +28,11 @@ module ActsAsTrackable
         :tapjoy_enabled   => true,
       }
       trackable_options = acts_as_trackable_options.inject({}) { |result, (key,val)| result[key] = val.is_a?(Symbol) ? send(val) : instance_eval(&val); result }
-      Offer.new(offer_options.merge(trackable_options).merge(options))
+      offer_options.merge(trackable_options).merge(options)
+    end
+
+    def build_tracking_offer_for(tracked_for, options = {})
+      Offer.new(tracking_offer_options(tracked_for, options))
     end
 
     def find_tracking_offer_for(tracked_for)
@@ -107,7 +111,8 @@ module HasTrackingOffers
 
     def tracking_source_offer=(tracking_source_offer)
       if tracking_source_offer.present?
-        self.tracking_item = tracking_source_offer.item
+        options = tracking_item_options(tracking_source_offer) || {}
+        self.tracking_offer = tracking_source_offer.find_or_build_tracking_offer_for(self, options)
       else
         self.tracking_item = nil
       end

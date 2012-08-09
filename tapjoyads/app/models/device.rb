@@ -1,7 +1,7 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
 
-  attr_reader :parsed_apps
+  attr_reader :parsed_apps, :is_temporary
 
   self.sdb_attr :apps, :type => :json, :default_value => {}
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
@@ -25,9 +25,23 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
+  self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
+  RECENT_CLICKS_RANGE = 30.days
+
+  # We want a consistent "device id" to report to partners/3rd parties,
+  # but we don't want to reveal internal IDs. We also want to make
+  # the values unique between partners so that no 'collusion' can
+  # take place.
+  def self.advertiser_device_id(udid, advertiser_partner_id)
+    Digest::MD5.hexdigest("#{udid}.#{advertiser_partner_id}" + UDID_SALT)
+  end
+
+  def advertiser_device_id(advertiser_partner_id)
+    Device.advertiser_device_id(key, advertiser_partner_id)
+  end
 
   def mac_address=(new_value)
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
@@ -40,7 +54,13 @@ class Device < SimpledbShardedResource
     put('open_udid', new_value)
   end
 
+  def android_id=(new_value)
+    @create_device_identifiers ||= (self.android_id != new_value)
+    put('android_id', new_value)
+  end
+
   def initialize(options = {})
+    @is_temporary = options.delete(:is_temporary) { false }
     super({ :load_from_memcache => true }.merge(options))
   end
 
@@ -59,6 +79,7 @@ class Device < SimpledbShardedResource
     fix_app_json
     fix_publisher_user_ids_json
     fix_display_multipliers_json
+    load_data_from_temporary_device if @is_temporary
   end
 
   def handle_connect!(app_id, params)
@@ -118,7 +139,7 @@ class Device < SimpledbShardedResource
       self.country = params[:country]
     end
 
-    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user'))
+    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
       save
     end
 
@@ -220,9 +241,19 @@ class Device < SimpledbShardedResource
   end
 
   def save(options = {})
+    create_identifiers = options.delete(:create_identifiers) { true }
+    if @is_temporary
+      temp_device = TemporaryDevice.new(:key => self.key)
+      temp_device.apps = temp_device.apps.merge(self.parsed_apps)
+      temp_device.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
+      temp_device.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
+      temp_device.save
+      return
+    end
+
     remove_old_skips
     return_value = super({ :write_to_memcache => true }.merge(options))
-    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
     @create_device_identifiers = false
     return_value
   end
@@ -253,6 +284,7 @@ class Device < SimpledbShardedResource
       device_identifier.udid = key
       device_identifier.save!
     end
+    merge_temporary_devices!(all_identifiers)
   end
 
   def copy_mac_address_device!
@@ -324,7 +356,64 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
+  def recent_clicks(start_time_at = (Time.zone.now-RECENT_CLICKS_RANGE).to_f, end_time_at = Time.zone.now.to_f)
+    clicks = []
+    self.recent_click_hashes.each do |recent_click_hash|
+      click = Click.find(recent_click_hash['id'])
+      next unless click
+      clicked_at = click.clicked_at.to_f
+      cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
+      clicks << click unless cutoff
+    end
+    clicks
+  end
+
+  def add_click(click)
+    click_id = click.id
+    temp_click_hashes = self.recent_click_hashes
+    end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
+
+    shift_index = 0
+    temp_click_hashes.each_with_index do |temp_click_hash, i|
+      if temp_click_hash['clicked_at'] < end_period
+        shift_index = i+1
+      else
+        break
+      end
+    end
+    temp_click_hashes.shift(shift_index)
+
+    temp_click_hashes << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    self.recent_click_hashes = temp_click_hashes
+    @retry_save_on_fail = true
+    save
+  end
+
   private
+
+  def merge_temporary_devices!(all_identifiers)
+    orig_apps = self.parsed_apps.clone
+    all_identifiers.each do |identifier|
+      temp_device = TemporaryDevice.find(identifier)
+      if temp_device
+        @parsed_apps.merge!(temp_device.apps)
+        self.publisher_user_ids = temp_device.publisher_user_ids.merge(publisher_user_ids)
+        self.display_multipliers = temp_device.display_multipliers.merge(display_multipliers)
+        temp_device.delete_all
+      end
+    end
+    self.apps = @parsed_apps
+
+    save!(:create_identifiers => false) unless orig_apps == self.parsed_apps
+  end
+
+  def load_data_from_temporary_device
+    temp_device = TemporaryDevice.new(:key => self.key)
+    @parsed_apps = temp_device.apps.merge(self.parsed_apps)
+    self.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
+    self.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
+    self.apps = @parsed_apps
+  end
 
   def fix_parser_error(attribute, search_from = :left)
     str = get(attribute)

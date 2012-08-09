@@ -48,7 +48,10 @@ describe FullscreenAdController do
       end
 
       it 'queues up tracking url calls' do
-        @offer.should_receive(:queue_impression_tracking_requests).once
+        @offer.should_receive(:queue_impression_tracking_requests).with(
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:index, @params)
       end

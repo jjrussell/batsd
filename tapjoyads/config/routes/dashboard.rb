@@ -75,6 +75,11 @@ Tapjoyad::Application.routes.draw do
             post :toggle
           end
         end
+        resources :app_metadatas, :only => [:show, :update, :new, :create] do
+          member do
+            get :remove
+          end
+        end
         resources :reengagement_offers, :except => [:show] do
           collection do
             post :update_status
@@ -199,6 +204,7 @@ Tapjoyad::Application.routes.draw do
           get :publishers_without_payout_info
           get :monthly_data
           get :partner_monthly_balance
+          post :recreate_device_identifiers
           post :update_device
           get :send_currency_failures
           get :new_transfer
@@ -330,7 +336,7 @@ Tapjoyad::Application.routes.draw do
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
-        resources :network_costs, :only => [:index, :new, :create]
+        resources :network_costs, :only => [:index]
         resources :partner_program_statz, :only => [:index] do
           collection do
             get :export

@@ -7,6 +7,7 @@ describe DisplayAdController do
     before :each do
       RailsCache.stub(:get).and_return(nil)
       @offer = FactoryGirl.create(:app).primary_offer
+      @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
 
@@ -125,7 +126,10 @@ describe DisplayAdController do
       end
 
       it 'should queue up tracking url calls' do
-        @offer.should_receive(:queue_impression_tracking_requests).once
+        @offer.should_receive(:queue_impression_tracking_requests).with(
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:index, @params)
       end
@@ -136,7 +140,7 @@ describe DisplayAdController do
         end
 
         it 'should not queue up tracking url calls' do
-          Offer.any_instance.should_receive(:queue_impression_tracking_requests).never
+          Offer.any_instance.should_not_receive(:queue_impression_tracking_requests)
 
           get(:index, @params)
         end
@@ -160,7 +164,7 @@ describe DisplayAdController do
 
           response.content_type.should == 'application/json'
           Base64.decode64(assigns['image']).should == custom_banner
-          expect { JSON.parse(response.body) }.should_not raise_error
+          expect { JSON.parse(response.body) }.not_to raise_error
         end
 
         it 'returns proper image data in xml' do
@@ -198,7 +202,10 @@ describe DisplayAdController do
     describe '#webview' do
 
       it 'should queue up tracking url calls' do
-        @offer.should_receive(:queue_impression_tracking_requests).once
+        @offer.should_receive(:queue_impression_tracking_requests).with(
+          :ip_address       => @controller.send(:ip_address),
+          :udid             => 'stuff',
+          :publisher_app_id => @currency.app.id).once
 
         get(:webview, @params)
       end
