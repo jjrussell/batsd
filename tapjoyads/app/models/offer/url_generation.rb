@@ -200,10 +200,10 @@ module Offer::UrlGeneration
                :advertiser_app_id => id,
                :size => size,
                :display_multiplier => (options[:display_multiplier] || 1).to_f,
-               :currency_id => options[:currency_id],
                :offer_type => item_type }
 
-    params[:currency_id] = options[:currency_id] if options.include?(:currency_id)
+    params[:currency_id] = options[:currency].id if options.include?(:currency)
+    params[:key] = display_ad_image_hash(options[:currency])
     params[:ts] = Time.now.to_i if options[:bust_cache]
 
     "#{API_URL}/display_ad/image?#{params.to_query}"
