@@ -19,39 +19,47 @@ class DisplayAdController < ApplicationController
 
   def image
     params[:currency_id] = params[:publisher_app_id] if params[:currency_id].blank?
-    return unless verify_params([ :advertiser_app_id, :size, :publisher_app_id, :currency_id ])
+    return unless verify_params([:advertiser_app_id, :size, :publisher_app_id, :currency_id])
+    offer_id = params[:advertiser_app_id]
     width, height = parse_size(params[:size])
     size = "#{width}x#{height}"
 
-    key = "display_ad.decoded.#{params[:currency_id]}.#{params[:advertiser_app_id]}.#{size}.#{params[:display_multiplier] || 1}"
-
+    key_options = params.slice(:currency_id, :display_multiplier).merge({:offer_id => offer_id, :width => width, :height => height})
+    keys = [image_key_from_hash(key_options)]
+    keys.unshift(image_key_from_hash(key_options.merge(:hash => params[:key]))) if params[:key].present?
+    
     # always be up to date for previews
-    Mc.distributed_delete(key) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
+    Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
-    image_data = Mc.distributed_get_and_put(key, false, 5.minutes) do
+    # if not found in cache, pass data required to generate
+    image_data = image_from_cache(keys) do
       publisher = App.find_in_cache(params[:publisher_app_id])
-      currency = Currency.find_in_cache(params[:currency_id])
-      currency = nil if currency.present? && currency.app_id != params[:publisher_app_id]
+      currency  = Currency.find_in_cache(params[:currency_id])
+      currency  = nil if currency.present? && currency.app_id != params[:publisher_app_id]
       if params[:offer_type] == "TestOffer"
         offer = publisher.test_offer
       else
-        offer = Offer.find_in_cache(params[:advertiser_app_id])
+        offer = Offer.find_in_cache(offer_id)
       end
-      return unless verify_records([ publisher, currency, offer ])
 
-      ad_image_base64 = get_ad_image(publisher, offer, width, height, currency, params[:display_multiplier])
-
-      Base64.decode64(ad_image_base64)
+      return unless verify_records([publisher, currency, offer])
+      generate_image({
+        :publisher          => publisher,
+        :currency           => currency,
+        :offer              => offer,
+        :width              => width,
+        :height             => height,
+        :display_multiplier => params[:display_multiplier] })
     end
 
-    send_data image_data, :type => "image/png", :disposition => 'inline'
+    send_data Base64.decode64(image_data), :type => "image/png", :disposition => 'inline'
   end
 
   private
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([ :app_id, :udid, :currency_id ])
+    return unless verify_params([:app_id, :udid, :currency_id])
 
     now = Time.zone.now
 
@@ -68,7 +76,8 @@ class DisplayAdController < ApplicationController
     @publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
     currency = nil if currency.present? && currency.app_id != params[:app_id]
-    return unless verify_records([ @publisher_app, currency ], :render_missing_text => false)
+
+    return unless verify_records([@publisher_app, currency], :render_missing_text => false)
 
     params[:publisher_app_id] = @publisher_app.id
     params[:displayer_app_id] = @publisher_app.id
@@ -115,7 +124,7 @@ class DisplayAdController < ApplicationController
         @image_url = offer.display_ad_image_url(:publisher_app_id => @publisher_app.id,
                                                 :width => width,
                                                 :height => height,
-                                                :currency_id => currency.id,
+                                                :currency => currency,
                                                 :display_multiplier => params[:display_multiplier])
       else
         @image = get_ad_image(@publisher_app, offer, width, height, currency, params[:display_multiplier])
@@ -126,7 +135,7 @@ class DisplayAdController < ApplicationController
         @amount = currency.get_visual_reward_amount(offer, params[:display_multiplier])
         if offer.item_type == 'App'
           advertiser_app = App.find_in_cache(@offer.item_id)
-          return unless verify_records([ advertiser_app ])
+          return unless verify_records([advertiser_app])
           @categories = advertiser_app.categories
         else
           @categories = []
@@ -141,75 +150,105 @@ class DisplayAdController < ApplicationController
   end
 
   def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
-    display_multiplier = (display_multiplier || 1).to_f
-    size = "#{width}x#{height}"
+    options = { :currency           => currency.id,
+                :offer              => offer.id,
+                :width              => width,
+                :height             => height,
+                :display_multiplier => display_multiplier,
+                :hash               => offer.display_ad_image_hash(currency)}
+    key = image_key_from_hash(options)
+    Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+    # if not found in cache, pass data required to generate
+    image_from_cache(key) do
+      generate_image({
+        :publisher          => publisher,
+        :currency           => currency,
+        :offer              => offer,
+        :width              => width,
+        :height             => height,
+        :display_multiplier => display_multiplier })
+    end
+  end
+
+  ##
+  # generate image data from objects
+  def generate_image(data)
+    offer              = data[:offer]
+    size               = "#{data[:width]}x#{data[:height]}"
+    currency           = data[:currency]
+    display_multiplier = (data[:display_multiplier] || 1).to_f
 
     if offer.display_custom_banner_for_size?(size)
       key = offer.banner_creative_mc_key(size)
-      Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
+      Mc.distributed_delete(key) if data[:publisher].id == App::PREVIEW_PUBLISHER_APP_ID
       return Mc.distributed_get_and_put(key) do
         Base64.encode64(offer.banner_creative_s3_object(size).read).gsub("\n", '')
       end
     end
 
-    key = "display_ad.#{currency.id}.#{offer.id}.#{size}.#{display_multiplier}"
-    Mc.distributed_delete(key) if publisher.id == App::PREVIEW_PUBLISHER_APP_ID
-    Mc.distributed_get_and_put(key, false, 1.hour) do
-      if width == 640 && height == 100
-        border = 4
-        icon_padding = 7
-        font_size = 26
-        text_area_size = '380x92'
-      elsif width == 768 && height == 90
-        border = 4
-        icon_padding = 7
-        font_size = 26
-        text_area_size = '518x82'
-      else
-        border = 2
-        icon_padding = 3
-        font_size = 13
-        text_area_size = '190x46'
-      end
-      icon_height = height - border * 2 - icon_padding * 2
+    if data[:width] == 640 && data[:height] == 100
+      border = 4
+      icon_padding = 7
+      font_size = 26
+      text_area_size = '380x92'
+    elsif data[:width] == 768 && data[:height] == 90
+      border = 4
+      icon_padding = 7
+      font_size = 26
+      text_area_size = '518x82'
+    else
+      border = 2
+      icon_padding = 3
+      font_size = 13
+      text_area_size = '190x46'
+    end
 
-      bucket = S3.bucket(BucketNames::TAPJOY)
-      background_blob = bucket.objects["display/self_ad_bg_#{width}x#{height}.png"].read
-      background = Magick::Image.from_blob(background_blob)[0]
+    icon_height = data[:height] - border * 2 - icon_padding * 2
 
-      img = Magick::Image.new(width, height)
-      img.format = 'png'
-      img.composite!(background, 0, 0, Magick::AtopCompositeOp)
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    background_blob = bucket.objects["display/self_ad_bg_#{data[:width]}x#{data[:height]}.png"].read
+    background = Magick::Image.from_blob(background_blob)[0]
 
-      font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
+    img = Magick::Image.new(data[:width], data[:height])
+    img.format = 'png'
+    img.composite!(background, 0, 0, Magick::AtopCompositeOp)
 
-      if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
-        text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}"
-        text << ' download' if text.length <= 20
-        text << "\n#{offer.name}"
-      else
-        text = offer.name
-      end
+    font = (Rails.env.production? || Rails.env.staging?) ? 'Arial-Unicode' : ''
 
-      image_label = get_image_label(text, text_area_size, font_size, font, false)
-      img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
-      image_label = get_image_label(text, text_area_size, font_size, font, true)
-      img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
+    if (offer.rewarded? && currency.rewarded?) && offer.item_type != 'TestOffer'
+      text = "Earn #{currency.get_visual_reward_amount(offer, display_multiplier)} #{currency.name}"
+      text << ' download' if text.length <= 20
+      text << "\n#{offer.name}"
+    else
+      text = offer.name
+    end
 
-      offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
-      if offer_icon_blob.present?
-        offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
-        corner_mask_blob = bucket.objects["display/round_mask.png"].read
-        corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
-        offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+    image_label = get_image_label(text, text_area_size, font_size, font, false)
+    img.composite!(image_label[0], icon_height + icon_padding * 4 + 1, border + 2, Magick::AtopCompositeOp)
+    image_label = get_image_label(text, text_area_size, font_size, font, true)
+    img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
-        icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
-        icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
+    offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
+    if offer_icon_blob.present?
+      offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
+      corner_mask_blob = bucket.objects["display/round_mask.png"].read
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(icon_height, icon_height)
+      offer_icon.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
 
-        img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
-        img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
-      end
-      Base64.encode64(img.to_blob).gsub("\n", '')
+      icon_shadow_blob = bucket.objects["display/icon_shadow.png"].read
+      icon_shadow = Magick::Image.from_blob(icon_shadow_blob)[0].resize(icon_height + icon_padding, icon_height)
+
+      img.composite!(icon_shadow, border + 2, border + icon_padding * 2, Magick::AtopCompositeOp)
+      img.composite!(offer_icon, border + icon_padding, border + icon_padding, Magick::AtopCompositeOp)
+    end
+    Base64.encode64(img.to_blob).gsub("\n", '')
+  end
+
+  ##
+  # Gets image from cache given a list of keys to try, generates image on failure from yielded data
+  def image_from_cache(keys)
+    Mc.distributed_get_and_put(keys, false, 1.day) do
+      yield
     end
   end
 
@@ -252,5 +291,16 @@ class DisplayAdController < ApplicationController
         :udid             => params[:udid],
         :publisher_app_id => params[:app_id])
     end
+  end
+
+  ##
+  # Returns the image cache key for the image optionaly including image hash,
+  # only requires ids not objects
+  def image_key_from_hash(options)
+    display_multiplier = (options[:display_multiplier] || 1).to_f
+    size = "#{options[:width]}x#{options[:height]}"
+    key = "display_ad.#{options[:currency_id]}.#{options[:offer_id]}.#{size}.#{display_multiplier}"
+    key << ".#{options[:hash]}" if options[:hash]
+    key
   end
 end
