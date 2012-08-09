@@ -27,7 +27,7 @@ class DisplayAdController < ApplicationController
     key_options = params.slice(:currency_id, :display_multiplier).merge({:offer_id => offer_id, :width => width, :height => height})
     keys = [image_key_from_hash(key_options)]
     keys.unshift(image_key_from_hash(key_options.merge(:hash => params[:key]))) if params[:key].present?
-    
+
     # always be up to date for previews
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
@@ -228,7 +228,7 @@ class DisplayAdController < ApplicationController
     image_label = get_image_label(text, text_area_size, font_size, font, true)
     img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
-    offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
+    offer_icon_blob = offer.icon_s3_object.read rescue ''
     if offer_icon_blob.present?
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       corner_mask_blob = bucket.objects["display/round_mask.png"].read
