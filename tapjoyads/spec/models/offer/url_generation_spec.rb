@@ -59,7 +59,7 @@ describe Offer::UrlGeneration do
     context 'for ActionOffers' do
       it 'should not replace any macros' do
         @dummy_class.stub(:item_type).and_return('ActionOffer')
-        @dummy_class.complete_action_url(@options).should == @dummy_class.url
+        @dummy_class.complete_action_url(@options).should == @dummy_class.url.gsub('TAPJOY_GENERIC_SOURCE', @source)
       end
     end
 
