@@ -436,6 +436,10 @@ class Offer < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
+  def self.icon_cache_key(guid)
+    "icon.s3.#{guid}"
+  end
+
   def self.get_icon_url(options = {})
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
@@ -466,7 +470,7 @@ class Offer < ActiveRecord::Base
       obj.delete if obj.exists?
     end
 
-    Mc.delete("icon.s3.#{guid}")
+    Mc.delete(icon_cache_key(guid))
     CloudFront.invalidate(guid, paths)
   end
 
@@ -516,7 +520,7 @@ class Offer < ActiveRecord::Base
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
     end
 
-    Mc.delete("icon.s3.#{guid}")
+    Mc.delete(icon_cache_key(guid))
     CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
   end
 
