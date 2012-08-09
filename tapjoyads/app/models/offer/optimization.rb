@@ -9,6 +9,8 @@ module Offer::Optimization
     :very_high => 10 #not a typo, requested by Joey to work with his Audition Factor algorithm
   }
 
+  DEFAULT_AUDITION_FACTOR = AUDITION_FACTORS[:medium]
+
   def for_caching
     run_callbacks(:cache)
     clear_association_cache
