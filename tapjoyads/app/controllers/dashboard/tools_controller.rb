@@ -197,6 +197,11 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def device_info
+    # these fields are copy-and-pasted into a lot, so let's trim whitespaces
+    [:udid, :click_key, :email_address, :mac_address].each do |param|
+      params[param].strip!
+    end
+
     if params[:udid].blank? && params[:click_key].present?
       click = Click.find(params[:click_key])
       params[:udid] = click.udid if click.present?

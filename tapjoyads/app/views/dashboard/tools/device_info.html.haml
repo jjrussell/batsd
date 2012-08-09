@@ -49,6 +49,12 @@
             - else
               %i unknown
         %tr
+          %th Platform
+          %td= @device.platform
+        %tr
+          %th Product
+          %td= @device.product
+        %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
         %tr
