@@ -21,7 +21,7 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       it 'will succeed' do
-        @user = FactoryGirl.create(:account_manager_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
         get(:index)
         response.should be_success
@@ -52,7 +52,7 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       before :each do
-        @user = FactoryGirl.create(:account_manager_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
       end
 
@@ -98,7 +98,7 @@ describe Dashboard::Tools::BrandsController do
 
     context 'when account manager role' do
       before :each do
-        @user = FactoryGirl.create(:account_manager_user)
+        @user = FactoryGirl.create(:account_mgr_user)
         login_as(@user)
         @brand = FactoryGirl.create(:brand)
         @offer = FactoryGirl.create(:app).primary_offer

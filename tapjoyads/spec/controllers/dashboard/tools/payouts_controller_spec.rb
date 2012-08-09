@@ -5,7 +5,7 @@ describe Dashboard::Tools::PayoutsController do
 
   before :each do
     activate_authlogic
-    @user = FactoryGirl.create(:admin_user)
+    @user = FactoryGirl.create(:admin)
     @partner = FactoryGirl.create(:partner, :users => [@user])
     login_as(@user)
   end

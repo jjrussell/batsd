@@ -22,7 +22,7 @@
 
   #context 'with an account manager user' do
     #before :each do
-      #user = FactoryGirl.create :account_manager_user
+      #user = FactoryGirl.create :account_mgr_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
@@ -58,7 +58,7 @@
 
   #context 'with a role manager user' do
     #before :each do
-      #user = FactoryGirl.create :role_manager_user
+      #user = FactoryGirl.create :role_mgr_user
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #view.stub(:has_permissions_for_one_of?).and_return(true)
@@ -77,7 +77,7 @@
 
   #context 'with an admin user' do
     #before :each do
-      #user = FactoryGirl.create :admin_user
+      #user = FactoryGirl.create :admin
       #controller.stub(:current_user).and_return(user)
       #view.stub(:current_user).and_return(user)
       #render

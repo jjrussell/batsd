@@ -31,7 +31,7 @@ describe Dashboard::Tools::GenericOffersController do
 
   context "with an admin user" do
     before :each do
-      @user = FactoryGirl.create(:admin_user)
+      @user = FactoryGirl.create(:admin)
       @partner = FactoryGirl.create(:partner, :users => [@user])
       @generic_offer = FactoryGirl.create(:generic_offer, :partner => @partner)
       login_as(@user)

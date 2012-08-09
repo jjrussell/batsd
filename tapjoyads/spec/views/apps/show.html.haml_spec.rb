@@ -4,7 +4,7 @@ describe 'dashboard/apps/show.html.haml' do
   context 'with an admin user' do
     before :each do
       @app = assigns[:app] = FactoryGirl.create(:app)
-      user = FactoryGirl.create :admin_user
+      user = FactoryGirl.create :admin
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
       render
@@ -31,7 +31,7 @@ describe 'dashboard/apps/show.html.haml' do
 
   context 'with an admin user' do
     before :each do
-      user = FactoryGirl.create :admin_user
+      user = FactoryGirl.create :admin
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
     end

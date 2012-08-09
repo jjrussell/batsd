@@ -10,7 +10,7 @@ describe EnableOfferRequest do
   before :each do
     @enable_offer_request = FactoryGirl.create(:enable_offer_request)
     @user = FactoryGirl.create(:user)
-    @account_mgr = FactoryGirl.create(:account_manager_user)
+    @account_mgr = FactoryGirl.create(:account_mgr_user)
   end
 
   it "allows account managers to be assignees" do
