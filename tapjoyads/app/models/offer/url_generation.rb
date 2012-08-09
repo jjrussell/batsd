@@ -38,6 +38,8 @@ module Offer::UrlGeneration
 
     if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
       "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Login'
+      "#{API_URL_EXT}/offer_triggered_actions/fb_login?data=#{ObjectEncryptor.encrypt(data)}"
     else
       "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
     end
@@ -53,7 +55,7 @@ module Offer::UrlGeneration
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
     options.delete(:language_code)
-    options.delete(:display_multiplier)
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     # these item types don't replace any macros
