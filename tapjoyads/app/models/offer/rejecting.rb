@@ -277,8 +277,8 @@ module Offer::Rejecting
 
   def prerequisites_not_complete?(device)
     return false if prerequisite_offer_id.blank? && get_exclusion_prerequisite_offer_ids.blank?
-    return true if prerequisite_offer_id.present? && !offer_complete?(prerequisite_offer, device)
-    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_by_id(id), device) }
+    return true if prerequisite_offer_id.present? && !offer_complete?(Offer.find_in_cache(prerequisite_offer_id), device)
+    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_in_cache(id), device) }
     false
   end
 
