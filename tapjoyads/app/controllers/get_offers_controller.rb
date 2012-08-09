@@ -116,7 +116,7 @@ include GetOffersHelper
     end
 
     if params[:format] == 'html'
-      @offer = @offer_list.find { |o| not o.nil? } if @offer_list.any?
+      @offer = @offer_list.first
       params[:offer_id] = @offer.id
       params[:impression_id] = UUIDTools::UUID.random_create.to_s
       @encrypted_params = ObjectEncryptor.encrypt(params)
