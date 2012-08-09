@@ -182,25 +182,13 @@ EOJS
   end
 
   def instruction_list(text)
-    text = '' if text.nil?
-
-    li_start_tag = tag('li', {}, true)
-    count_start_tag = tag('div', { :class => 'count' }, true)
-    step_start_tag = tag('div', { :class => 'step' }, true)
-    result = ''
-
-    text = sanitize(text)
-    text.gsub!(/\r\n?/, "\n")
-    lines = text.split(/\n\n+/)
-    lines.each_with_index do |line, index|
-      result.insert -1, li_start_tag
-      result.insert -1, count_start_tag
-      result.insert -1, (index + 1).to_s
-      result.insert -1, "</div>#{step_start_tag}"
-      result.insert -1, line
-      result.insert -1, '</div></li>'
-    end
-    result
+    instructions = sanitize(text.to_s).gsub(/\r/, '').split(/\n+/)
+    instructions.each_with_index.map do |instruction, index|
+      li = content_tag(:li) do
+        concat content_tag(:div, index + 1, :class => 'count')
+        concat content_tag(:div, instruction, :class => 'step')
+      end
+    end.join('')
   end
 
   def link_to_generated_actions_header(app, name = nil)
