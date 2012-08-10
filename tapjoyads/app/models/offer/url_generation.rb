@@ -86,39 +86,39 @@ module Offer::UrlGeneration
 
     # now for item_type-specific macros
     case item_type
-    when 'App'
-      final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
-      final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
-      if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
-        final_url.sub!('market://search?q=', subbed_string)
-      end
-    when 'EmailOffer'
-      final_url << "&publisher_app_id=#{publisher_app_id}"
-    when 'GenericOffer'
-      advertiser_app_id = click_key.to_s.split('.')[1]
-      final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-      final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
-      final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
-      data = {
-        :offer_id           => id,
-        :currency_id        => currency.id,
-        :display_multiplier => display_multiplier
-      }
-      final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
-      if has_variable_payment?
-        extra_params = {
-          :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
-          :cvr      => currency.spend_share * currency.conversion_rate / 100,
-          :currency => CGI::escape(currency.name),
+      when 'App'
+        final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+        final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
+        if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
+          subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
+          final_url.sub!('market://search?q=', subbed_string)
+        end
+      when 'EmailOffer'
+        final_url << "&publisher_app_id=#{publisher_app_id}"
+      when 'GenericOffer'
+        advertiser_app_id = click_key.to_s.split('.')[1]
+        final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+        final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+        final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
+        final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
+        data = {
+          :offer_id           => id,
+          :currency_id        => currency.id,
+          :display_multiplier => display_multiplier
         }
-        mark = '?'
-        mark = '&' if final_url =~ /\?/
-        final_url += "#{mark}#{extra_params.to_query}"
-      end
-    when 'SurveyOffer'
-      final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+        final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
+        if has_variable_payment?
+          extra_params = {
+            :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
+            :cvr      => currency.spend_share * currency.conversion_rate / 100,
+            :currency => CGI::escape(currency.name),
+          }
+          mark = '?'
+          mark = '&' if final_url =~ /\?/
+          final_url += "#{mark}#{extra_params.to_query}"
+        end
+      when 'SurveyOffer'
+        final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
     end
 
     # this is separated from case statement for code readability / separation of concerns
