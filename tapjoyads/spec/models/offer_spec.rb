@@ -59,20 +59,44 @@ describe Offer do
       end
 
       context "for a primary offer" do
-        it "uses id for guid" do
-          Offer.should_receive(:hashed_icon_id).with(@offer.id).once.and_return(@icon_id)
-          @offer.save_icon!(@image_data)
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@offer.app_metadata_id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
 
-          @offer.icon_id_override.should be_nil
+            @offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses id for guid" do
+            @offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@offer.id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
+
+            @offer.icon_id_override.should be_nil
+          end
         end
       end
 
       context "for a secondary offer" do
-        it "uses item_id for guid" do
-          Offer.should_receive(:hashed_icon_id).with(@secondary_offer.item_id).once.and_return(@icon_id)
-          @secondary_offer.save_icon!(@image_data)
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.app_metadata_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
 
-          @secondary_offer.icon_id_override.should be_nil
+            @secondary_offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses item_id for guid" do
+            @secondary_offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.item_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
+
+            @secondary_offer.icon_id_override.should be_nil
+          end
         end
       end
 
@@ -156,12 +180,12 @@ describe Offer do
         @action_offer = parent.primary_offer
       end
 
-      context "with icon_id_override_set to app_id" do
+      context "with icon_id_override_set to app_metadata_id" do
         it "does nothing" do
           @s3object.should_receive(:delete).never
           @offer.remove_icon!
 
-          @action_offer.icon_id_override.should == @action_offer.app_id
+          @action_offer.icon_id_override.should == @action_offer.app_metadata_id
         end
       end
 
