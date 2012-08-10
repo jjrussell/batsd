@@ -59,6 +59,28 @@ describe App do
     end
   end
 
+  describe '#launch_url' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    context 'with no custom_url_scheme' do
+      it 'returns the store url' do
+        @app.launch_url.should == @app.default_url_scheme
+        @app.custom_url_scheme = ''
+        @app.launch_url.should == @app.default_url_scheme
+      end
+    end
+
+    context 'with a custom_url_scheme' do
+      it 'returns the custom url' do
+        url = 'app_url://some/data'
+        @app.custom_url_scheme = url
+        @app.launch_url.should == url
+      end
+    end
+  end
+
   describe '#test_offer' do
     before :each do
       @app = FactoryGirl.create(:app)
