@@ -6,35 +6,38 @@
 
 .clear
 
-%table#admin_devices_table.tablesorter
-  %thead
-    %tr
-      %th Parameter Name
-      %th Value
-  %tbody
-    - @last_run.attribute_names.each do |key|
-      - next unless @last_run.respond_to?(key) && val = @last_run.send(key)
-      - next if ['id', 'key'].include?(key)
+- if @last_run
+  %table#admin_devices_table.tablesorter
+    %thead
       %tr
-        %td= key
-        %td= val
+        %th Parameter Name
+        %th Value
+    %tbody
+      - @last_run.attribute_names.each do |key|
+        - next unless @last_run.respond_to?(key) && val = @last_run.send(key)
+        - next if ['id', 'key'].include?(key)
+        %tr
+          %td= key
+          %td= val
 
-- content_for :page_styles do
-  :plain
-    .icon {
-      float: left;
-      padding: 20px 0;
-    }
+  - content_for :page_styles do
+    :plain
+      .icon {
+        float: left;
+        padding: 20px 0;
+      }
 
-    table {
-      border-collapse: separate;
-    }
+      table {
+        border-collapse: separate;
+      }
 
-    form {
-      padding-bottom: 20px;
-    }
+      form {
+        padding-bottom: 20px;
+      }
 
-    .tjform input[type=submit] {
-      margin: 0;
-      float: none;
-    }
+      .tjform input[type=submit] {
+        margin: 0;
+        float: none;
+      }
+- else
+  This device has never run on this offer.
