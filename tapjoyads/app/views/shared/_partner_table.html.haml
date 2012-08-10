@@ -14,6 +14,7 @@
       %th{ :class => params[:q].blank? ? 'up_arrow' : '' } Created
       %th Premier
       %th Offers
+      %th Country
   %tbody
     - partners.each do |partner|
       %tr{ :class => cycle('even', 'odd') }
@@ -54,7 +55,7 @@
               = link_to_offer(o)
               - if o.tapjoy_enabled? || o.user_enabled?
                 = '(' + (o.tapjoy_enabled? ? 'T' : '') + (o.user_enabled? ? 'U' : '') + ')'
-
+        %td= partner.country
 - content_for :page_styles do
   :plain
     table.tablesorter {
