@@ -206,7 +206,7 @@
 
     build: function(){
 
-      var tpl = $.tpl.banner[$.data.currencyName.length < 100 ? 0 : 1];
+      var tpl = $.tpl.banner[($.data.currencyName.length < 100  && $.data.rewarded) ? 0 : 1];
 
       $.banner.innerHTML = $.format(
         tpl, {

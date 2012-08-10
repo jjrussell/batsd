@@ -11,6 +11,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :opted_out, :type => :bool, :default_value => false
   self.sdb_attr :opt_out_offer_types, :replace => false, :force_array => true
   self.sdb_attr :banned, :type => :bool, :default_value => false
+  self.sdb_attr :suspension_expires_at, :type => :time
   self.sdb_attr :last_run_time_tester, :type => :bool, :default_value => false
   self.sdb_attr :publisher_user_ids, :type => :json, :default_value => {}, :cgi_escape => true
   self.sdb_attr :display_multipliers, :type => :json, :default_value => {}, :cgi_escape => true
@@ -387,6 +388,31 @@ class Device < SimpledbShardedResource
     self.recent_click_hashes = temp_click_hashes
     @retry_save_on_fail = true
     save
+  end
+
+  def suspend!(num_hours)
+    self.suspension_expires_at = Time.now + num_hours.hours
+    save
+  end
+
+  def unsuspend!
+    self.delete 'suspension_expires_at'
+    save
+  end
+
+  def suspended?
+    if suspension_expires_at?
+      if suspension_expires_at > Time.now
+        true
+      else
+        self.delete 'suspension_expires_at'
+        save and return false
+      end
+    end
+  end
+
+  def can_view_offers?
+    !(opted_out? || banned? || suspended?)
   end
 
   private

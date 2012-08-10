@@ -1,0 +1,68 @@
+= render 'instructions_fb_login'
+
+- @load_facebook = true
+- @load_facebook_sdk = true
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      var redirectUrl = "#{@redirect_url}";
+      var completeActionUrl = "#{@complete_action_url}";
+
+      var fbOpts = $.parseJSON($("#fb-root").attr("data-fb-options"));
+      if (fbOpts) {
+        var authorized = false;
+
+        function makeLoginLink(response){
+          if (response.authResponse){
+            authorized = true;
+          }
+        }
+
+        initiateFacebook(fbOpts, function () {
+          FB.getLoginStatus(makeLoginLink);
+
+          $('.reward-button').click(function (event) {
+            event.preventDefault();
+
+            if (authorized) {
+              afterFbLogin();
+            } else {
+              FB.login(function (response) {
+                if (response.authResponse) {
+                  afterFbLogin();
+                } else {
+                  $('.error').text('Please login Facebook and grant us permissions.').show();
+                }
+              }, {scope: 'publish_stream,email,user_birthday'});
+            }
+
+            function afterFbLogin () {
+              FB.api('/me', function (response) {
+                checkPermission(function () {
+                  $.ajax({
+                    url: redirectUrl,
+                    dataType: "jsonp",
+                    success: function (d) {
+                      if (d.success) {
+                        if (d.message) {
+                          $('.error').text(d.message).show();
+                        } else {
+                          window.location = completeActionUrl;
+                        }
+                      } else {
+                        $('.error').text(d.message).show();
+                      }
+                    },
+                    error: function () {
+                      $('.error').text('There is an issue, please try again later.').show();
+                    }
+                  });
+                });
+              });
+            }
+          });
+        });
+      }
+      $('.ui-joy-mask').css('height', ($('.ui-joy-panel').outerHeight() + 50)+ 'px');
+    });
