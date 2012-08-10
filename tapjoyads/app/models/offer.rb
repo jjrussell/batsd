@@ -303,7 +303,7 @@ class Offer < ActiveRecord::Base
   end
 
   def app_id
-    return unless app_offer?(false)
+    return nil unless app_offer?(false)
     return item_id if item_type == 'App'
     item.app_id
   end
@@ -528,7 +528,7 @@ class Offer < ActiveRecord::Base
     guid = icon_id
 
     # only allow removing of offer-specific, manually-uploaded icons
-    return if guid == item_id || guid == app_id
+    return if [item_id, app_metadata_id, app_id].include?(guid)
 
     Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
 
@@ -539,7 +539,7 @@ class Offer < ActiveRecord::Base
   def save_icon!(icon_src_blob, override = false)
     # Here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
-    # which, by default, uses item_id as the guid to be passed into Offer.hashed_icon_id()
+    # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
     # The icon_id_override field will be used, however, if it is not nil.
     #
     # This method ('save_icon!') will therefore use icon_id by default when uploading the icon,
@@ -550,7 +550,7 @@ class Offer < ActiveRecord::Base
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
     guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
     Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
-    self.update_attributes!(:icon_id_override => guid) if (guid != item_id)
+    self.update_attributes!(:icon_id_override => guid) unless [app_metadata_id, item_id].include?(guid)
   end
 
   def save(*)
