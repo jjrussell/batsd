@@ -21,7 +21,7 @@
         %td= select_tag(:resolution, options_for_select(['', 'converted', 'blocked', 'force_converted'], params[:resolution]))
       %tr
         %th Action:
-        %td= select_tag(:processed_action, options_for_select(['', 'BLOCK', 'BAN', 'SUSPEND24', 'SUSPEND72'], params[:processed_action]))
+        %td= select_tag(:processed_action, options_for_select([''] + (RiskActionSet::POSSIBLE_ACTIONS.flatten), params[:processed_action]))
       %tr
         %th Range:
         %td
