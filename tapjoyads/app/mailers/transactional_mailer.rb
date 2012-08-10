@@ -10,7 +10,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:id] = gamer.confirmation_token
     EmailConfirmData.create!(device_info)
-    @confirmation_url = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
+    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     build_data_for_tjm_welcome_email
 
