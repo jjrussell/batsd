@@ -10,12 +10,12 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:id] = gamer.confirmation_token
     EmailConfirmData.create!(device_info)
-    @confirmation_link = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
+    @confirmation_url = "#{WEBSITE_URL}/confirm?token=#{gamer.confirmation_token}"
 
     build_data_for_tjm_welcome_email
 
     ##
-    ## TODO: Move mail triggering logic to ExactTargetMailer class
+    ## TODO: Move mail triggering logic and response code checking to ExactTargetMailer class
     ##
 
     ##
@@ -25,7 +25,17 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     # Make ExactTarget do the rest of the work
     et = ExactTargetApi.new
     response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, @data, @options)
-    raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
+    unless response[:status_code] == 'OK'
+      # They gave us a bogus email address
+      if response[:error_code].to_i == 180008
+        ##
+        ## TODO: Record somewhere in the gamer's record that their email address is bogus
+        ##
+      else
+        # Something unexpected happened
+        raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
+      end
+    end
     response
   end
 
@@ -37,7 +47,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     build_data_for_tjm_welcome_email
 
     ##
-    ## TODO: Move mail triggering logic to ExactTargetMailer class
+    ## TODO: Move mail triggering logic and response to ExactTargetMailer class
     ##
 
     ##
@@ -47,7 +57,17 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     # Make ExactTarget do the rest of the work
     et = ExactTargetApi.new
     response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, @data, @options)
-    raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
+    unless response[:status_code] == 'OK'
+      # They gave us a bogus email address
+      if response[:error_code].to_i == 180008
+        ##
+        ## TODO: Record somewhere in the gamer's record that their email address is bogus
+        ##
+      else
+        # Something unexpected happened
+        raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
+      end
+    end
     response
   end
 
