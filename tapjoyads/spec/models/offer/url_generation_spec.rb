@@ -51,12 +51,14 @@ describe Offer::UrlGeneration do
 
     before :each do
       params = {
-        :udid => 'TAPJOY_UDID',
-        :source => 'TAPJOY_GENERIC_SOURCE',
-        :uid => 'TAPJOY_EXTERNAL_UID',
+        :udid      => 'TAPJOY_UDID',
+        :source    => 'TAPJOY_GENERIC_SOURCE',
+        :uid       => 'TAPJOY_EXTERNAL_UID',
         :click_key => 'TAPJOY_HASHED_KEY',
-        :invite => 'TAPJOY_GENERIC_INVITE',
-        :survey => 'TAPJOY_SURVEY'
+        :invite    => 'TAPJOY_GENERIC_INVITE',
+        :survey    => 'TAPJOY_SURVEY',
+        :eid       => 'TJM_EID',
+        :data      => 'DATA'
       }
       @dummy_class.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
@@ -74,6 +76,7 @@ describe Offer::UrlGeneration do
       @uid = Device.advertiser_device_id(@udid, partner_id)
 
       @itunes_affil = 'itunes_affil'
+      @display_multiplier = 'display_multiplier'
 
       @options = {
         :click_key             => @click_key,
@@ -81,7 +84,8 @@ describe Offer::UrlGeneration do
         :publisher_app_id      => @publisher_app_id,
         :currency              => @currency,
         :itunes_link_affiliate => @itunes_affil,
-        :publisher_user_id     => @publisher_user_id }
+        :publisher_user_id     => @publisher_user_id,
+        :display_multiplier    => @display_multiplier }
 
       # 'global' macros (with some exceptions, as specified in this file)
       @complete_action_url = @dummy_class.url.gsub('TAPJOY_UDID', @udid)
@@ -122,9 +126,18 @@ describe Offer::UrlGeneration do
     context 'for GenericOffers' do
       it 'should replace GenericOffer-specific macros' do
         @dummy_class.stub(:item_type).and_return('GenericOffer')
+        @dummy_class.stub(:id).and_return('id')
         @dummy_class.stub(:has_variable_payment?).and_return(false)
         @complete_action_url.gsub!('TAPJOY_GENERIC_INVITE', 'key')
         @complete_action_url.gsub!('TAPJOY_GENERIC', @click_key)
+        @complete_action_url = "#{WEBSITE_URL}#{@complete_action_url}"
+        @complete_action_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(@publisher_app_id))
+        data = {
+          :offer_id           => @dummy_class.id,
+          :currency_id        => @currency.id,
+          :display_multiplier => @display_multiplier
+        }
+        @complete_action_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
         @dummy_class.complete_action_url(@options).should == @complete_action_url
       end
     end
