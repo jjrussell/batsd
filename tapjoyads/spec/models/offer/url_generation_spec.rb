@@ -1,12 +1,9 @@
 require 'spec_helper'
 
-class DummyClass
-end
-
 describe Offer::UrlGeneration do
 
   before :each do
-    @dummy_class = DummyClass.new
+    @dummy_class = Object.new
     @dummy_class.extend(Offer::UrlGeneration)
 
     @app      = Factory :app

@@ -1,11 +1,8 @@
 require 'spec_helper'
 
-class DummyClass
-end
-
 describe Offer::Rejecting do
   before :each do
-    @dummy_class = DummyClass.new
+    @dummy_class = Object.new
     @dummy_class.extend(Offer::Rejecting)
   end
   describe '#has_insufficient_funds?' do
