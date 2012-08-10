@@ -1,5 +1,6 @@
 require 'extensions'
 require 'notifier'
+require 'exact_target'
 
 GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
 # I kinda fucked this up, but it's already deployed with the - in it
