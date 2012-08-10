@@ -14,19 +14,32 @@ describe Reseller do
     it { should validate_numericality_of :reseller_rev_share }
   end
 
-  %w(pending_earnings next_payout_amount).each do |attribute|
-    describe "\##{attribute}" do
-      it "reads the '#{attribute}' attribute" do
-        subject.should_receive(:read_attribute).with(attribute)
-        subject.send(attribute.to_sym)
-      end
+  describe '.to_payout' do
+    before :all do
+      @reseller = FactoryGirl.create :reseller
+      @pending  = 0
+      @payout   = 0
 
-      it 'coerces the attribute to a float' do
-        response = '1.0'
-        response.should_receive(:to_f)
-        subject.stub(:read_attribute => response)
-        subject.send(attribute.to_sym)
+      10.times do
+        partner = FactoryGirl.create :partner,
+          :reseller_id        => @reseller.id,
+          :pending_earnings   => 1_000 + rand(1_000),
+          :next_payout_amount => 1_000 + rand(1_000)
+
+        @pending += partner.pending_earnings
+        @payout  += partner.next_payout_amount
       end
+    end
+
+    let(:resellers) { Reseller.to_payout }
+    let(:reseller) { resellers.first }
+
+    it 'aggregates related partners pending_earnings' do
+      reseller.pending_earnings.should == @pending
+    end
+
+    it 'aggregates related partners next_payout_amount' do
+      reseller.next_payout_amount.should == @payout
     end
   end
 end
