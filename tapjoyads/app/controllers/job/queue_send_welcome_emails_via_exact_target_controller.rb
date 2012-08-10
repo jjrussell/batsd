@@ -1,4 +1,4 @@
-class Job::QueueSendWelcomeEmailsControllerViaExactTargetController < Job::SqsReaderController
+class Job::QueueSendWelcomeEmailsViaExactTargetController < Job::SqsReaderController
 
   def initialize
     super QueueNames::SEND_WELCOME_EMAILS
