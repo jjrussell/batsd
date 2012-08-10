@@ -35,6 +35,7 @@ Tapjoyad::Application.routes.draw do
       resources :apps, :except => [:destroy] do
         collection do
           get :search
+          post :set_custom_url_scheme
         end
         member do
           get :publisher_integrate
