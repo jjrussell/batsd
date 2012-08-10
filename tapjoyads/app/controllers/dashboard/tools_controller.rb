@@ -520,13 +520,10 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       end
 
       app_ids = []
-      NUM_CONVERSION_ATTEMPT_DOMAINS.times do |i|
-        ConversionAttempt.select(:domain_name => "conversion_attempts_#{i}", :where => conditions.join(' and ')) do |attempt|
-          @attempts << attempt
-          app_ids.push(attempt.advertiser_app_id, attempt.publisher_app_id)
-          count += 1
-          break if count >= max
-        end
+      ConversionAttempt.select_all(:conditions => conditions.join(' and ')) do |attempt|
+        @attempts << attempt
+        app_ids.push(attempt.advertiser_app_id, attempt.publisher_app_id)
+        count += 1
         break if count >= max
       end
 
