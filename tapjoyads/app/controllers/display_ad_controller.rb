@@ -27,7 +27,7 @@ class DisplayAdController < ApplicationController
     key_options = params.slice(:currency_id, :display_multiplier).merge({:offer_id => offer_id, :width => width, :height => height})
     keys = [image_key_from_hash(key_options)]
     keys.unshift(image_key_from_hash(key_options.merge(:hash => params[:key]))) if params[:key].present?
-    
+
     # always be up to date for previews
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
 
