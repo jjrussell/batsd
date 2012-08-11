@@ -49,6 +49,12 @@
             - else
               %i unknown
         %tr
+          %th Platform
+          %td= @device.platform
+        %tr
+          %th Product
+          %td= @device.product
+        %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
         %tr
@@ -87,6 +93,18 @@
             Banned?
           %td
             = check_box_tag 'banned', '1', @device.banned?
+        - if @device.suspended?
+          %tr
+            %th
+              Suspension Ends
+            %td
+              = @device.suspension_expires_at.to_s(:pub_ampm_sec)
+          - if permitted_to?(:force_conversion, :dashboard_tools)
+            %tr
+              %th
+                Unsuspend?
+              %td
+                = check_box_tag 'unsuspend', '1'
         %tr
           %th
             Total Support Requests Filed

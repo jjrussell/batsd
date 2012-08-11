@@ -204,6 +204,7 @@
         = f.label(:approved_sources)
         #help_approved_sources.help ?
       %td
+        = f.hidden_field(:hidden_approved_sources, :value => '', :name => 'offer[approved_sources][]')
         = f.chosen_select(:approved_sources, options_for_select(Offer::ALL_SOURCES, @offer.get_approved_sources.to_a), {}, :multiple => true)
         = error_message_on @offer, :approved_sources
     %tr

@@ -36,9 +36,11 @@ class Job::QueuePartnerNotificationsController < Job::SqsReaderController
         begin
           TapjoyMailer.deliver_campaign_status(recipients, partner, low_balance, account_balance, account_manager_email, offers_not_meeting_budget, offers_needing_higher_bids, premier, premier_discount)
         rescue AWS::SimpleEmailService::Errors::MessageRejected => e
-          raise unless e.to_s =~ /Address blacklisted/
-          # TODO: reset the can_email flag to false on this user
-          raise e.inspect
+          if e.to_s =~ /Address blacklisted/
+            raise e.inspect + recipients.inspect
+          else
+            raise e
+          end
         end
       end
     end

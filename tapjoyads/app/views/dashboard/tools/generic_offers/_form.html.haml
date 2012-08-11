@@ -23,7 +23,7 @@
       %th
         = f.label :name, 'Exclusion Prerequisites'
       %td
-        = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'video_offer[exclusion_prerequisite_offer_ids][]')
+        = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'generic_offer[exclusion_prerequisite_offer_ids][]')
         = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @generic_offer, :exclusion_prerequisite_offer_ids
     %tr

@@ -15,15 +15,16 @@ include GetOffersHelper
                                           '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
                                           'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
                                           'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
-  OFFERWALL_EXPERIMENT_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c', # Tiny Farm
-                                          'e34ef85a-cd6d-4516-b5a5-674309776601', # Magic Piano
-                                          '8d87c837-0d24-4c46-9d79-46696e042dc5', # AppDog Web App -- iOS
-                                          '2efe982d-c1cf-4eb0-8163-1836cd6d927c', # Draw Something Free -- Android
-                                          'd531f20d-767e-4dd1-83c6-cb868bcb8d41', # Magic Piano (Android)
-                                          'b138a117-4b68-4e41-890a-2ea84a83ed38', # Tiny Farm(iOS)
-                                          '0f127143-e23b-46df-9e70-b6e07222d122',  # Songify (Android)
-                                          'b7256806-0b7c-4711-9d0b-f58676f8d5eb',  # Skout
-                                        ])
+  EXPERIMENT_EXCLUDED_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c',
+                                         '9783ef2a-a8e1-4b94-9076-c49855f30d3c',
+                                         '63db46fe-a127-4fe6-8d77-db5170ab49c4',
+                                         '5cf33072-1f29-47b0-bf44-4065b89e4429',
+                                         'b138a117-4b68-4e41-890a-2ea84a83ed38',
+                                         'edfebcb5-0415-47ce-940d-99dbf615eb45',
+                                         'a3b38c16-0ca7-494c-94a1-d70ef74fd0db',
+                                         '8dc63889-d563-4118-8a84-7795e403d34a',
+                                         '1e8c593e-2225-4360-b737-1e9747883f5d',
+                                         '2c2e1959-8af5-465f-b483-8a9511985bb9'])
 
   # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
   VIEW_A1 = {
@@ -88,8 +89,6 @@ include GetOffersHelper
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
       render :json => @final.to_json, :callback => params[:callback] and return
-    elsif params[:device_type] == 'WinCE'
-      render :template => 'get_offers/webpage' and return
     else
       render :template => 'get_offers/webpage_redesign' and return
     end
@@ -251,7 +250,7 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
       when 'offerwall'
-        OFFERWALL_EXPERIMENT_APP_IDS.include?(params[:app_id]) ? :ranking : nil
+        EXPERIMENT_EXCLUDED_APP_IDS.include?(params[:app_id]) ? nil : :ranking
       when 'tj_games'
         :show_rate_237
       else
@@ -274,9 +273,6 @@ include GetOffersHelper
       when 'b_offerwall'
         @algorithm = '101'
         @algorithm_options = {:skip_country => true}
-      when 'c_offerwall'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
 
     if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
@@ -320,7 +316,7 @@ include GetOffersHelper
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A1
+    view_id = params[:viewID] || :VIEW_A2
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []

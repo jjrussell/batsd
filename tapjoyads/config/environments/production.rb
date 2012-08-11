@@ -78,7 +78,7 @@ SPROCKETS_CONFIG = {
 
 RUN_MODE_PREFIX = ''
 API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
-API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoyads.com'
+API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoy.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
@@ -136,3 +136,14 @@ Sass::Plugin.options[:style] = :compressed
 TAPJOY_GAMES_INVITATION_OFFER_ID = '114d3e0c-c8f3-4f42-b016-2b2f81723cd8'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'
+
+Savon.configure do |config|
+  ##
+  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
+  ##
+  config.log = true
+  config.log_level = :error
+  config.logger = Rails.logger
+  config.pretty_print_xml = true
+  config.raise_errors = true
+end

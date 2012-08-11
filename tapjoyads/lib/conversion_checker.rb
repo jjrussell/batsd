@@ -49,6 +49,11 @@ class ConversionChecker
       @risk_message = "Banned (UDID=#{banned_devices.map(&:key).join ', '})" and return block_conversion
     end
 
+    suspended_devices = (other_devices + [ @device ]).select(&:suspended?)
+    if suspended_devices.present?
+      @risk_message = "Suspended (UDID=#{suspended_devices.map(&:key).join ', '})" and return block_conversion
+    end
+
     # Do not reward if user has installed this app for the same publisher user id on another device
     unless @offer.multi_complete? || @offer.video_offer?
       other_devices.each do |d|
@@ -96,6 +101,10 @@ class ConversionChecker
     if @recommended_actions.actions.include?('BAN')
       @device.banned = true
       @device.save
+    elsif @recommended_actions.actions.include?('SUSPEND24')
+      @device.suspend!(24)
+    elsif @recommended_actions.actions.include?('SUSPEND72')
+      @device.suspend!(72)
     end
     @risk_score.too_risky? || blocked_by_rule?
   end

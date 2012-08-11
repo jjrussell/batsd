@@ -1,4 +1,5 @@
 class OfferTriggeredActionsController < ApplicationController
+  include Facebooker2::Rails::Controller
   prepend_before_filter :decrypt_data_param
   before_filter :setup
 
@@ -9,7 +10,6 @@ class OfferTriggeredActionsController < ApplicationController
   end
 
   def fb_login
-    include Facebooker2::Rails::Controller
     @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?udid=#{params[:udid]}"
   end
 

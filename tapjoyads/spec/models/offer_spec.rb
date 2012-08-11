@@ -463,18 +463,6 @@ describe Offer do
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
     end
-
-    describe "url generation" do
-      describe '#complete_action_url' do
-        it "should substitute tokens in the URL" do
-          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE&uid=TAPJOY_EXTERNAL_UID'
-          source = @offer.source_token('12345')
-          uid = Device.advertiser_device_id('x', @offer.partner_id)
-          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
-        end
-      end
-    end
   end
 
   describe "#create_clone" do
@@ -1389,6 +1377,63 @@ describe Offer do
         @offer.calculate_conversion_rate!
         @offer.calculate_min_conversion_rate!
         expect {@offer.recalculate_show_rate}.to_not raise_error
+      end
+    end
+  end
+
+  describe '#tapjoy_games_retargeting_reject' do
+    before :each do
+      @device = Factory(:device)
+
+      retarget_generic_offer = Factory(:generic_offer, :id => Offer::TAPJOY_GAMES_RETARGETED_OFFERS[0])
+      @retarget_offer = retarget_generic_offer.primary_offer
+    end
+
+    context 'when TAPJOY_GAMES_REGISTRATION_OFFER_ID and LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer are not completed' do
+      before :each do
+        @device.unset_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        @device.unset_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
+
+        registration_generic_offer = Factory(:generic_offer, :id => TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        @registration_offer = registration_generic_offer.primary_offer
+      end
+
+      it 'rejects offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
+        @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == true
+      end
+    end
+
+    context 'when LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer completed' do
+      before :each do
+        @device.set_last_run_time!(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
+
+        registration_generic_offer = Factory(:generic_offer, :id => TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+        @registration_offer = registration_generic_offer.primary_offer
+      end
+
+      it 'rejects TAPJOY_GAMES_REGISTRATION_OFFER_ID offer' do
+        @registration_offer.send(:tapjoy_games_retargeting_reject?, @device).should == true
+      end
+
+      it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
+        @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
+      end
+    end
+
+    context 'when TAPJOY_GAMES_REGISTRATION_OFFER_ID offer completed' do
+      before :each do
+        @device.set_last_run_time!(TAPJOY_GAMES_REGISTRATION_OFFER_ID)
+
+        link_generic_offer =  Factory(:generic_offer, :id => LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
+        @link_offer = link_generic_offer.primary_offer
+      end
+
+      it 'rejects LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID offer' do
+        @link_offer.send(:tapjoy_games_retargeting_reject?, @device).should == true
+      end
+
+      it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
+        @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
       end
     end
   end

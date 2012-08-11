@@ -5,6 +5,13 @@ GIT
     distribution (0.7.0)
 
 GIT
+  remote: git://github.com/Tapjoy/fakememcached.git
+  revision: f1af18081af8baabbf109e01ed905219a9714e43
+  ref: f1af1
+  specs:
+    fakememcached (0.1.0)
+
+GIT
   remote: git://github.com/Tapjoy/right_aws.git
   revision: be26b4ab97c49adf3e34feedb322bf10e4dce5d1
   specs:
@@ -76,6 +83,9 @@ GEM
     airbrake (3.0.5)
       activesupport
       builder
+    akami (1.2.0)
+      gyoku (>= 0.4.0)
+      nokogiri (>= 1.4.0)
     annotate (2.4.0)
     arel (2.0.10)
     awesome_print (1.0.2)
@@ -150,6 +160,8 @@ GEM
     guard-spork (1.1.0)
       guard (>= 1.1)
       spork (>= 0.8.4)
+    gyoku (0.4.6)
+      builder (>= 2.1.2)
     haml (3.1.3)
     hashie (1.1.0)
     hike (1.2.1)
@@ -158,6 +170,8 @@ GEM
     htmlentities (4.3.1)
     httparty (0.7.8)
       crack (= 0.1.8)
+    httpi (1.1.1)
+      rack
     i18n (0.5.0)
     jeweler (1.8.4)
       bundler (~> 1.0)
@@ -202,6 +216,7 @@ GEM
     mysql (2.8.1)
     newrelic_rpm (3.3.0)
     nokogiri (1.5.5)
+    nori (1.1.2)
     oauth (0.4.5)
     parallel (0.5.17)
     parallel_tests (0.8.4)
@@ -272,11 +287,20 @@ GEM
     ruby_gntp (0.3.4)
     rubyzip (0.9.9)
     sass (3.1.15)
-    selenium-webdriver (2.24.0)
+    savon (1.1.0)
+      akami (~> 1.2.0)
+      builder (>= 2.1.2)
+      gyoku (~> 0.4.5)
+      httpi (~> 1.1.0)
+      nokogiri (>= 1.4.0)
+      nori (~> 1.1.0)
+      wasabi (~> 2.5.0)
+    selenium-webdriver (2.22.2)
       childprocess (>= 0.2.5)
       libwebsocket (~> 0.1.3)
       multi_json (~> 1.0)
       rubyzip
+    selenium-webdriver (2.24.0)
     sendgrid (1.0.1)
       json
       json
@@ -337,6 +361,11 @@ GEM
     vertica (0.9.1)
       jeweler
       rake
+    wasabi (2.5.0)
+      httpi (~> 1.0)
+      nokogiri (>= 1.4.0)
+    watir-webdriver (0.6.1)
+      selenium-webdriver (>= 2.18.0)
     will_paginate (3.0.3)
     xml-simple (1.1.1)
     xpath (0.1.4)
@@ -369,6 +398,7 @@ DEPENDENCIES
   dynamic_form
   execjs (= 1.3.0)
   factory_girl_rails (= 1.2.0)
+  fakememcached!
   fakeredis
   faraday (= 0.7.4)
   faraday_middleware (= 0.7.0)
@@ -422,6 +452,7 @@ DEPENDENCIES
   ruby18_source_location
   ruby_gntp
   sass (= 3.1.15)
+  savon (= 1.1.0)
   sendgrid (= 1.0.1)
   shoulda-matchers
   simple_oauth (= 0.1.5)
