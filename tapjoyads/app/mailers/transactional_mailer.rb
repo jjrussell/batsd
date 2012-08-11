@@ -5,7 +5,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   def welcome_email(gamer, device_info = {})
     setup_for_tjm_welcome_email(gamer, device_info)
 
-    @detailed_email = @facebook_signup ? true : rand(2) == 1
+    @detailed_email = @facebook_signup ? true : false
     @linked &&= @detailed_email
     device_info[:content] = @detailed_email ? 'detailed' : 'confirm_only'
     device_info[:id] = gamer.confirmation_token
