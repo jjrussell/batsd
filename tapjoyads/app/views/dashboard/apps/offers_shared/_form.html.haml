@@ -101,7 +101,7 @@
           = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
           - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
           #daily_budget_fields{ :class => budget_fields_class }
-            = f.label(:daily_budget, 'Installs:', :class => 'installs')
+            = f.label(:daily_budget, 'Daily Installs:', :class => 'installs')
             = f.text_field(:daily_budget, :class => 'togglable installs')
             %br
             = label_tag('estimated_budget', 'Daily Budget:', :class => 'budget')
