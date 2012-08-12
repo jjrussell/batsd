@@ -41,8 +41,8 @@ files.each do |f|
   # Only examine specified file types and paths
   if f =~ filetype_regexp && f =~ paths_regexp
 
-    # Add a linebreak to the end of the file if it doesn't have one
-    if `tail -c1 #{f}` != "\n"
+    # Add a linebreak to the end of the file if it doesn't already have one
+    unless `tail -c1 #{f}` == "\n"
       `echo >> #{f}`
       `git add #{f}`
     end
@@ -55,6 +55,11 @@ files.each do |f|
       elsif `uname` =~ /Linux/
         `sed -i -e 's/[ \t]*$//g' #{f}`
       end
+      `git add #{f}`
+    end
+
+    if (f =~ /\.min\.js$/) # for .min.js files, we want to go back and remove last linebreak
+      `perl -i -pe 'chomp if eof' #{f}`
       `git add #{f}`
     end
   end
