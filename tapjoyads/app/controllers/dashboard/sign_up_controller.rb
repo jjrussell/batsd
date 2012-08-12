@@ -1,9 +1,11 @@
 class Dashboard::SignUpController < Dashboard::DashboardController
-  before_filter :set_time_zones, :only => [:new, :create]
-
   def new
     redirect_to users_path if current_user
     @user = User.new
+    @zones = {}
+    ActiveSupport::TimeZone.us_zones.each do |zone|
+      @zones[- zone.utc_offset / 60] = zone.name
+    end
   end
 
   def create
@@ -31,12 +33,5 @@ class Dashboard::SignUpController < Dashboard::DashboardController
   end
 
   def welcome
-  end
-
-  def set_time_zones
-    @zones = {}
-    ActiveSupport::TimeZone.us_zones.each do |zone|
-      @zones[- zone.utc_offset / 60] = zone.name
-    end
   end
 end
