@@ -13,37 +13,44 @@ namespace :db do
     end
   end
 
+  DATABASE_YML = YAML::load_file("config/database.yml")
+  SOURCE       = DATABASE_YML['production_slave']
+  DEST         = DATABASE_YML[Rails.env]
+  DUMP_FILE    = "tmp/#{SOURCE['database']}.sql"
+  DUMP_FILE2   = "tmp/#{SOURCE['database']}2.sql"
+
   desc "Copies the production database to the development database"
-  task :sync do
+
+  task :sync => [:fetch, :restore, :remove_tmp_files]
+
+  task :fetch do
+
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
-
-    database_yml = YAML::load_file("config/database.yml")
-    source       = database_yml['production_slave']
-    dest         = database_yml[Rails.env]
-    dump_file    = "tmp/#{source['database']}.sql"
-    dump_file2   = "tmp/#{source['database']}2.sql"
-
     print("Backing up the production database... ")
     tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos )
     time = Benchmark.realtime do
 
       options = [
-        "--user=#{source['username']}",
-        "--password=#{source['password']}",
-        "--host=#{source['host']}",
+        "--user=#{SOURCE['username']}",
+        "--password=#{SOURCE['password']}",
+        "--host=#{SOURCE['host']}",
         "--single-transaction",
       ].join(' ')
 
       ignore_options = tables_to_ignore.map do |table|
-        "--ignore-table=#{source['database']}.#{table}"
+        "--ignore-table=#{SOURCE['database']}.#{table}"
       end.join(' ')
 
       nodata_options = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
 
-      system("mysqldump #{options} #{ignore_options} #{source['database']} > #{dump_file}")
-      system("mysqldump #{options} #{source['database']} #{nodata_options} > #{dump_file2}")
+      system("mysqldump #{options} #{ignore_options} #{SOURCE['database']} > #{DUMP_FILE}")
+      system("mysqldump #{options} #{SOURCE['database']} #{nodata_options} > #{DUMP_FILE2}")
     end
     puts("finished in #{time} seconds.")
+  end
+
+  task :restore do
+    raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
 
     Rake.application.invoke_task('db:drop')
     Rake.application.invoke_task('db:create')
@@ -51,17 +58,22 @@ namespace :db do
     print("Restoring backup to the #{Rails.env} database... ")
     time = Benchmark.realtime do
       options = [
-        "--user=#{dest['username']}",
-        "--password=#{dest['password']}",
-        "--host=#{dest['host']}",
+        "--user=#{DEST['username']}",
+        "--password=#{DEST['password']}",
+        "--host=#{DEST['host']}",
       ].join(' ')
-      [ dump_file, dump_file2 ].each do |file|
-        system("mysql #{options} #{dest['database']} < #{file}")
+      [ DUMP_FILE, DUMP_FILE2 ].each do |file|
+        system("mysql #{options} #{DEST['database']} < #{file}")
       end
     end
     puts("finished in #{time} seconds.")
-    system("rm -f #{dump_file}")
-    system("rm -f #{dump_file2}")
+  end
+
+  task :remove_tmp_files do
+    raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
+    system("rm -f #{DUMP_FILE}")
+    system("rm -f #{DUMP_FILE2}")
+    puts("removing #{DUMP_FILE} #{DUMP_FILE2}")
   end
 
   namespace :schema do

@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def options_for_prerequisites(offer)
-    offer.partner.offers.sort_by(&:name).reject { |o| o.id == offer.id }.collect { |o| [ "#{o.name} -#{o.name_suffix}-#{o.item_type}", o.id ] }
+    offer.partner.offers.sort_by(&:name).reject { |o| o.id == offer.id }.collect { |o| [ "#{o.name} -#{o.get_platform}-#{o.name_suffix}-#{o.item_type}", o.id ] }
   end
 
   def options_for_prerequisites_with_app_offer_first(app, offer)

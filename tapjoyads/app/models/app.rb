@@ -149,6 +149,14 @@ class App < ActiveRecord::Base
     VirtualGood.count(:where => "app_id = '#{self.id}'") > 0
   end
 
+  def default_url_scheme
+    "tjc#{store_id.to_s}"
+  end
+
+  def launch_url
+    custom_url_scheme.present? ? custom_url_scheme : default_url_scheme
+  end
+
   def primary_country
     countries = primary_offer.present? && self.primary_offer.countries
     if countries.present? && !JSON.parse(countries).include?("US")
