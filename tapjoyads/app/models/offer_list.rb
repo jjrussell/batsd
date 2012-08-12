@@ -48,12 +48,7 @@ class OfferList
         end
 
       @app_store_name ||= App::PLATFORM_DETAILS[@publisher_app.platform][:default_store_name]
-      @publisher_app.app_metadata_mappings.each do |mapping|
-        if mapping.app_metadata.store_name == @app_store_name
-          #only check for store exclusivity if a distribution on the store is actually found
-          @store_whitelist << @app_store_name if mapping.app_metadata.store.exclusive?
-        end
-      end
+      @store_whitelist << @app_store_name if AppStore.find(@app_store_name).exclusive?
     end
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -86,7 +81,7 @@ class OfferList
     #   end
     # end
 
-    @store_whitelist.merge(@currency.get_store_whitelist) if @currency && @currency.get_store_whitelist.present?
+    @store_whitelist.merge!(@currency.get_store_whitelist) if @currency && @currency.get_store_whitelist.present?
   end
 
   def weighted_rand
