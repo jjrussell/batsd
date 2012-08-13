@@ -45,6 +45,7 @@ Tapjoyad::Application.routes.draw do
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
   match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
+  match 'offer_triggered_actions/load_app' => 'offer_triggered_actions#load_app'
 
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'

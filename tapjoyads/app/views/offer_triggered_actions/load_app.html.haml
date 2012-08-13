@@ -29,18 +29,28 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+      var ctURL = #{@click_tracking_urls.first.to_json.html_safe},
+          src = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      if (ctURL) {
+        $("body").append(src);
+      }
       $('.click-action').click(function(e) {
-        var phUrl = #{@protocol_handler_url.to_json.html_safe};
-        var fallbackUrl = #{@complete_action_url.to_json.html_safe};
+        var cURL = #{@conversion_tracking_urls.first.to_json.html_safe},
+            src = '<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+        if (cURL) {
+          $("body").append(src);
+        }
+        var phUrl = #{@protocol_handler_url.to_json.html_safe},
+            fallbackUrl = #{@complete_action_url.to_json.html_safe};
         var appversion = navigator.appVersion,
             idevice = (/iphone|ipad|ipod/gi).test(appversion),
             android = (/android/gi).test(appversion);
 
         if (idevice || android) {
           $('#loader').attr('src', phUrl);
-          window.setTimeout(function(){ 
+          window.setTimeout(function(){
             window.location.replace(fallbackUrl);
-          }, 50);
+          }, 500);
         }
         else {
           window.location.href = fallbackUrl;
