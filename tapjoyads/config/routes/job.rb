@@ -73,6 +73,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_send_currency/run_job' => 'queue_send_currency#run_job'
     match 'queue_send_failed_emails(/index)' => 'queue_send_failed_emails#index'
     match 'queue_send_welcome_emails(/index)' => 'queue_send_welcome_emails#index'
+    match 'queue_send_welcome_emails_via_exact_target(/index)' => 'queue_send_welcome_emails_via_exact_target#index'
     match 'queue_suspicious_gamer_emails(/index)' => 'queue_suspicious_gamer_emails#index'
     match 'queue_third_party_tracking(/index)' => 'queue_third_party_tracking#index'
     match 'queue_udid_reports(/index)' => 'queue_udid_reports#index'

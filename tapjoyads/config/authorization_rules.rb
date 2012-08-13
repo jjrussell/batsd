@@ -73,7 +73,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion ]
+    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion, :search_conversion_attempts ]
   end
 
   role :money do
