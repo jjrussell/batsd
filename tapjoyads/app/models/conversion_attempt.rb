@@ -33,7 +33,7 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :system_entities_offset,     :type => :float
   self.sdb_attr :individual_entities_offset, :type => :float
   self.sdb_attr :rules_offset,               :type => :float
-  self.sdb_attr :processed_actions,          :type => :json,  :default_value => {}
+  self.sdb_attr :processed_actions,          :type => :json,  :default_value => []
   self.sdb_attr :final_risk_score,           :type => :float
   self.sdb_attr :force_converted_by
 

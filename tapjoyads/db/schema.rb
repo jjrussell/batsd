@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724140237) do
+ActiveRecord::Schema.define(:version => 20120731133709) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -140,6 +140,7 @@ ActiveRecord::Schema.define(:version => 20120724140237) do
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
     t.boolean  "uses_non_html_responses",                     :default => false, :null => false
+    t.string   "custom_url_scheme"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

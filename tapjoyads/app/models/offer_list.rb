@@ -48,12 +48,7 @@ class OfferList
         end
 
       @app_store_name ||= App::PLATFORM_DETAILS[@publisher_app.platform][:default_store_name]
-      @publisher_app.app_metadata_mappings.each do |mapping|
-        if mapping.app_metadata.store_name == @app_store_name
-          #only check for store exclusivity if a distribution on the store is actually found
-          @store_whitelist << @app_store_name if mapping.app_metadata.store.exclusive?
-        end
-      end
+      @store_whitelist << @app_store_name if AppStore.find(@app_store_name).exclusive?
     end
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -139,11 +134,26 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    offers.each do |offer|
+    all_offers = offers.clone
+
+    all_offers.each do |offer|
       class << offer; attr_accessor :rejections; end
       offer.rejections = rejections_for(offer)
     end
-    offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
+
+    all_offers = all_offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
+
+    # todo: we're duplicating code here, fix it
+    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks?
+        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
+        class << deeplink_offer; attr_accessor :rejections; end
+        deeplink_offer.rejections = rejections_for(deeplink_offer)
+      end
+    end
+
+    all_offers
   end
 
   def sorted_optimized_offers_with_rejections
