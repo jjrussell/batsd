@@ -78,6 +78,11 @@
       var zones = #{@zones.to_json};
       var offset = new Date(Date.parse('2011-01-01')).getTimezoneOffset();
       $('#user_time_zone').val(zones[offset])
+      $('form').submit(function(){
+        $('#user_submit').attr('disabled', true);
+        $('#user_submit').val('Creating Account');
+        return true;
+      });
 
 - content_for :page_styles do
   :plain
