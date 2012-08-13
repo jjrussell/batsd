@@ -12,7 +12,9 @@
     %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
 
     = css_tag('api/style')
-    = css_tag('api/android')
+
+    - if HeaderParser.device_type(request.headers['user-agent']) == 'android'
+      = css_tag('api/android')
 
     = yield :page_head
 

@@ -1,4 +1,3 @@
-.android {
 /*-------------------------------------
   Android Landscape
  -------------------------------------*/
@@ -23,113 +22,71 @@
           font-size: 90%;
         }
       }
-    }
 
-    .button,
-    .blurb {
-      font-size: 90%;
-    }
 
-    .blurb {
-      margin: 2px;
-    }
-
-    .offers-wrapper {
-      overflow: hidden;
-      max-height: 133px;
-      overflow-y: scroll;
-    }
-
-    ul#offers li {
-      background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(247,247,247,1) 50%, rgba(242,242,242,1) 85%, rgba(240,240,240,1) 100%);
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(251,251,251,1)), color-stop(50%,rgba(247,247,247,1)), color-stop(85%,rgba(242,242,242,1)), color-stop(100%,rgba(240,240,240,1)));
-      background: -webkit-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-      background: -o-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-      background: -ms-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-      background: linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-      border-bottom: 1px solid #aaa;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
-      height: 65px;
-      position: relative;
-      width: 100%;
-
-      .offer {
-        margin-left: 8px;
-        overflow: hidden;
-        vertical-align: middle;
-
-        .about {
-          margin-left: 5px;
-          .action {
-            line-height: 130%;
-          }
-        }
-        .desc {
-          color: rgba(0,0,0, .5);
-          display: none;
-          font-size: 70%;
-          margin-top: 2px;
-        }
-
-        .icon {
-          margin-top: 2px;
-          top: 2px;
-          height: 38px;
-          width: 54px;
-
-          img.frame {
-            background-size: 50% 50%;
-            box-shadow: 0 0 2px rgba(0,0,0, .5);
-            height: 20px;
-            width: 40px;
-          }
-        }
-
-        .reward {
-          span.earn {
-            font-size: 70%;
-            }
-          span.points {
-            font-size: 70%;
-          }
-          span.big {
-            font-size: 120%;
-            line-height: 115%;
-          }
-        }
-      }
-    }
-  }
-
-  @media (max-width:425px){
-    .button-wrapper {
-      .button {
+      .button,
+      .blurb {
         font-size: 90%;
       }
-    }
 
-    .blurb {
-      color: #555;
-      font-size: 100%;
-      line-height: 120%;
-    }
+      .blurb {
+        margin: 2px;
+      }
 
-    ul#offers {
-      li {
+      .offers-wrapper {
+        overflow: hidden;
+        max-height: 133px;
+        overflow-y: scroll;
+      }
+
+      ul#offers li {
+        background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(247,247,247,1) 50%, rgba(242,242,242,1) 85%, rgba(240,240,240,1) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(251,251,251,1)), color-stop(50%,rgba(247,247,247,1)), color-stop(85%,rgba(242,242,242,1)), color-stop(100%,rgba(240,240,240,1)));
+        background: -webkit-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
+        background: -o-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
+        background: -ms-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
+        background: linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
+        border-bottom: 1px solid #aaa;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
+        height: 65px;
+        position: relative;
+        width: 100%;
+
         .offer {
-          .icon {
-            width: 45px;
-          }
+          margin-left: 8px;
+          overflow: hidden;
+          vertical-align: middle;
 
           .about {
-            font-size: 80%;
-            margin-left: 10px;
-            width: 59%;
-
+            margin-left: 5px;
             .action {
-              line-height: 150%;
+              line-height: 130%;
             }
           }
+          .desc {
+            color: rgba(0,0,0, .5);
+            display: none;
+            font-size: 70%;
+            margin-top: 2px;
+          }
+
+          .icon {
+            margin-top: 2px;
+            top: 2px;
+            height: 38px;
+            width: 54px;
+
+            img.frame {
+              background-size: 50% 50%;
+              box-shadow: 0 0 2px rgba(0,0,0, .5);
+              height: 20px;
+              width: 40px;
+            }
+          }
+        }
+        span.big {
+          font-size: 140%;
+          line-height: 110%;
         }
       }
     }
@@ -231,4 +188,3 @@
       }
     }
   }
-}
