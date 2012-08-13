@@ -425,7 +425,7 @@ describe Partner do
     subject { FactoryGirl.create :partner }
 
     before :each do
-      @payout = FactoryGirl.build(:payout, :partner => subject, :amount => (49_001.00 * 100).round)
+      @payout = FactoryGirl.build(:payout, :partner => subject, :amount => (100.00 * 100).round)
       @amount = @payout.amount / 100
     end
 
@@ -440,8 +440,8 @@ describe Partner do
         subject.payouts.stub(:build => @payout)
       end
 
-      it 'updates the payout threshold' do
-        subject.should_receive(:payout_threshold=).with(@payout.amount * 1.2)
+      it 'sets the payout threshold to the base' do
+        subject.should_receive(:payout_threshold=).with(Partner::BASE_PAYOUT_THRESHOLD)
         subject.make_payout(@amount)
       end
     end
@@ -454,6 +454,19 @@ describe Partner do
 
       it 'does not update the payout threshold' do
         subject.should_not_receive(:payout_threshold=)
+        subject.make_payout(@amount)
+      end
+    end
+
+    context 'when the payout threshold breaks the base threshold' do
+      before :each do
+        @payout.stub(:save => true, :amount => (50_000.00 * 100).round)
+        subject.payouts.stub(:build => @payout)
+        @amount = @payout.amount / 100
+      end
+
+      it 'overrides the base payout threshold' do
+        subject.should_receive(:payout_threshold=).with(@payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE)
         subject.make_payout(@amount)
       end
     end
