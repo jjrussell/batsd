@@ -18,7 +18,7 @@ module DelimitedField
         end
 
         define_method "#{f}" do
-          Set.new(super.split(';'))
+          Set.new(read_attribute(f).split(';'))
         end
       end
     end
