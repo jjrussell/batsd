@@ -20,6 +20,7 @@ class ServerWhitelist
     '63.215.202.74',                         # Commission Junction added 2012.05.22
     '209.234.184.1',                         # Commission Junction added 2012.05.22
     '216.34.207.225',                        # Commission Junction added 2012.05.22
+    '64.70.54.15',                           # Commission Junction added 2012.08.13
     '174.129.30.101',                        # HasOffers US East added 2012.05.22
     '50.16.235.30',                          # HasOffers US East added 2012.05.22
     '75.101.156.191',                        # HasOffers US East added 2012.05.22
