@@ -3,7 +3,8 @@
     %li= link_to 'Details', app_path(app)
     %li= link_to 'Distributions', new_app_app_metadata_path(@app)
     - @app.app_metadatas.each do |meta|
-      %li.inception= link_to meta.store.name, app_app_metadata_path({:app_id => @app.id, :id => meta.id})
+      %li.inception= link_to meta.store.name, app_app_metadata_path({:app_id => @app.id, :id => meta.id}), :class => (meta == @app_metadata ? 'selected' : '')
+    %li.separator
     %li= link_to 'Rewarded Installs', edit_app_offer_path(:id => @distribution.primary_offer.id, :app_id => app.id), :class => (controller.controller_name == 'offers' && @offer.rewarded? && !@offer.featured? && !%w(rewarded_featured non_rewarded_featured non_rewarded).include?(params[:offer_type]) ? 'selected' : '')
     - if @distribution.primary_offer.present? && @distribution.primary_offer.tapjoy_enabled?
       %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @distribution.primary_offer), :class => (controller.controller_name == 'offer_events' && @offer == @distribution.primary_offer ? 'selected' : '')
