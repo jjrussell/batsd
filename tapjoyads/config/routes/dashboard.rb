@@ -35,6 +35,7 @@ Tapjoyad::Application.routes.draw do
       resources :apps, :except => [:destroy] do
         collection do
           get :search
+          post :set_custom_url_scheme
         end
         member do
           get :publisher_integrate
@@ -73,6 +74,11 @@ Tapjoyad::Application.routes.draw do
           member do
             get :preview
             post :toggle
+          end
+        end
+        resources :app_metadatas, :only => [:show, :update, :new, :create] do
+          member do
+            get :remove
           end
         end
         resources :reengagement_offers, :except => [:show] do
@@ -218,6 +224,7 @@ Tapjoyad::Application.routes.draw do
           get :ses_status
           get :view_pub_user_account
           post :detach_pub_user_account
+          get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
         end

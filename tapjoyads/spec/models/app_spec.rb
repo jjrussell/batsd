@@ -13,10 +13,8 @@ describe App do
   it { should have_one :rating_offer }
   it { should have_one :primary_currency }
   it { should have_one :primary_offer }
-  it { should have_one :primary_rewarded_featured_offer }
-  it { should have_one :primary_non_rewarded_featured_offer }
-  it { should have_one :primary_non_rewarded_offer }
   it { should have_one :primary_app_metadata }
+  it { should have_one :primary_app_metadata_mapping }
   it { should belong_to :partner }
 
   # Check validations
@@ -61,6 +59,28 @@ describe App do
     end
   end
 
+  describe '#launch_url' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    context 'with no custom_url_scheme' do
+      it 'returns the store url' do
+        @app.launch_url.should == @app.default_url_scheme
+        @app.custom_url_scheme = ''
+        @app.launch_url.should == @app.default_url_scheme
+      end
+    end
+
+    context 'with a custom_url_scheme' do
+      it 'returns the custom url' do
+        url = 'app_url://some/data'
+        @app.custom_url_scheme = url
+        @app.launch_url.should == url
+      end
+    end
+  end
+
   describe '#test_offer' do
     before :each do
       @app = FactoryGirl.create(:app)
@@ -93,6 +113,252 @@ describe App do
     end
   end
 
+  context 'that is not live' do
+    describe '#add_app_metadata' do
+      before :each do
+        @app = FactoryGirl.create(:non_live_app, :platform => 'android')
+      end
+
+      it "returns primary metadata" do
+        @app.app_metadatas.count.should == 0
+        metadata = @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        @app.app_metadatas.count.should == 1
+        @app.primary_app_metadata.should == metadata
+      end
+
+      it 'updates primary offer from added primary metadata' do
+        @app.primary_offer.app_metadata.should be_nil
+        metadata = FactoryGirl.create(:app_metadata, :store_name => 'android.GooglePlay', :store_id => 'xyz123', :name => 'SomeCoolApp', :price => 499)
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        @app.primary_app_metadata.should_not be_nil
+        @app.primary_offer.app_metadata.should == @app.primary_app_metadata
+        @app.primary_offer.name.should == metadata.name
+        @app.primary_offer.price.should == metadata.price
+      end
+
+      context 'when adding non-primary metadata' do
+        it "fails" do
+          metadata = @app.add_app_metadata('android.GooglePlay', 'xyz123', false)
+          @app.reload
+          @app.app_metadatas.count.should == 0
+          metadata.should be_nil
+        end
+      end
+
+      context 'using invalid params' do
+        it "fails" do
+          metadata = @app.add_app_metadata('Invalid Store', 'invalid_app', false)
+          @app.reload
+          @app.app_metadatas.count.should == 0
+          metadata.should be_nil
+        end
+      end
+    end
+  end
+
+  describe '#add_app_metadata' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+      @app.primary_app_metadata.update_attributes(:store_name => 'android.GooglePlay')
+      @app.reload
+    end
+
+    context 'using existing store name' do
+      it "fails" do
+        metadata = @app.add_app_metadata('android.GooglePlay', 'xyz123', false)
+        @app.reload
+        @app.app_metadatas.count.should == 1
+        metadata.should be_nil
+      end
+    end
+
+    context 'for another primary metadata' do
+      it "fails" do
+        metadata = @app.add_app_metadata('android.GFan', 'xyz123', true)
+        @app.reload
+        @app.app_metadatas.count.should == 1
+        metadata.should be_nil
+      end
+    end
+
+    it "returns added metadata" do
+      metadata = @app.add_app_metadata('android.GFan', 'xyz123', false)
+      @app.reload
+      @app.app_metadatas.count.should == 2
+      @app.app_metadatas.find(metadata.id).should be_present
+    end
+
+    it 'creates a rewarded offer' do
+      metadata = AppMetadata.find_by_store_name_and_store_id('android.GFan', 'xyz123')
+      metadata.should be_nil
+      metadata = @app.add_app_metadata('android.GFan', 'xyz123', false)
+      @app.reload
+      metadata.offers.count.should == 1
+      offer = metadata.offers.first
+      offer.third_party_data.should == metadata.store_id
+      offer.app.should == @app
+    end
+
+    context 'when adding metadata for existing store_name/store_id combo' do
+      before :each do
+        @existing_metadata = FactoryGirl.create(:app_metadata, :store_name => 'android.GFan', :store_id => 'some_app')
+      end
+
+      it 'adds mapping with existing matching metadata' do
+        metadata = @app.add_app_metadata('android.GFan', 'some_app', false)
+        metadata.should == @existing_metadata
+      end
+    end
+  end
+
+  describe '#update_app_metadata' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+      @app.primary_app_metadata.update_attributes(:store_name => 'android.GooglePlay')
+      @app.reload
+    end
+
+    context 'when updating non-existent metadata' do
+      it "fails" do
+        lambda {metadata = @app.update_app_metadata('android.GFan', 'xyz123')}.should raise_error
+      end
+    end
+
+    context 'when updating with new store id' do
+      before :each do
+        @old_metadata = @app.primary_app_metadata
+        @old_offer    = @app.primary_offer
+        @metadata     = @app.update_app_metadata('android.GooglePlay', 'xyz123')
+        @app.reload
+      end
+
+      it "removes previous app_metadata and attaches new one" do
+        @app.app_metadatas.count.should == 1
+        @app.primary_app_metadata.should_not == @old_metadata
+        @app.primary_app_metadata.should == @metadata
+        @app.primary_app_metadata.store_id.should == 'xyz123'
+      end
+
+      it "updates existing offer from new metadata" do
+        @app.offers.count.should == 1
+        @app.primary_offer.should == @old_offer
+        @app.primary_offer.app_metadata.should == @metadata
+        @app.primary_offer.third_party_data.should == 'xyz123'
+      end
+
+      context 'then updating the new metadata' do
+        it "updates the offer" do
+          AppStore.should_receive(:fetch_app_by_id).and_return({ :title => 'SomeMeaninglessApp', :price => 200, :categories => [] })
+          @metadata.update_from_store
+          @app.primary_offer.reload
+          @app.primary_offer.name.should == 'SomeMeaninglessApp'
+        end
+      end
+
+      context 'then updating the old metadata' do
+        it "doesn't update the offer" do
+          AppStore.should_receive(:fetch_app_by_id).and_return({ :title => 'SomeMeaninglessApp', :price => 200, :categories => [] })
+          @old_metadata.update_from_store
+          @app.primary_offer.reload
+          @app.primary_offer.name.should_not == 'SomeMeaninglessApp'
+        end
+      end
+    end
+
+    context 'when updating with same store id' do
+      before :each do
+        @from_add     = @app.add_app_metadata('android.GFan', 'xyz123', false)
+        @old_offer    = @app.offers.find_by_app_metadata_id(@from_add.id)
+        @from_update  = @app.update_app_metadata('android.GFan', 'xyz123')
+        @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(@from_update.id)
+        @app.reload
+      end
+
+      it "returns same app_metadata" do
+        @app.app_metadatas.count.should == 2
+        @from_update.should == @from_add
+      end
+
+      it "doesn't change existing offer" do
+        @app.offers.find_by_app_metadata_id(@from_update.id).should == @old_offer
+        @distribution.primary_offer.should == @old_offer
+        @old_offer.third_party_data.should == 'xyz123'
+      end
+
+      context 'then updating the app metadata' do
+        it "updates offer as well" do
+          @distribution.primary_offer.third_party_data.should == 'xyz123'
+          @from_update.update_attributes(:name => 'MyApp', :price => 250)
+          @distribution.primary_offer.name.should == 'MyApp'
+          @distribution.primary_offer.price.should == 250
+        end
+      end
+    end
+  end
+
+  describe '#remove_app_metadata' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+      @app.primary_app_metadata.update_attributes(:store_name => 'android.GooglePlay')
+      @metadata = @app.add_app_metadata('android.GFan', 'xyz123', false)
+      @app.reload
+    end
+
+    context 'when removing non-existent metadata' do
+      it "fails and returns false" do
+        metadata = AppMetadata.new(:store_name => 'iphone.AppStore', :store_id => 'xyz123')
+        status = @app.remove_app_metadata(metadata)
+        @app.reload
+        @app.app_metadatas.count.should == 2
+        status.should be_false
+      end
+    end
+
+    context 'when removing primary metadata' do
+      it "fails and returns false" do
+        status = @app.remove_app_metadata(@app.primary_app_metadata)
+        @app.reload
+        @app.app_metadatas.count.should == 2
+        status.should be_false
+      end
+    end
+
+    context 'when removing non-primary metadata' do
+      before :each do
+        @status = @app.remove_app_metadata(@metadata)
+        @app.reload
+      end
+
+      it "removes metadata mapping from app" do
+        @app.app_metadatas.count.should == 1
+        @app.app_metadatas.include?(@metadata).should be_false
+        @status.should be_true
+      end
+
+      it "does not delete app_metadata" do
+        AppMetadata.find(@metadata.id).should_not be_nil
+      end
+    end
+
+    context 'when removing non-primary metadata with secondary offers' do
+      before :each do
+        @distribution = @app.app_metadata_mappings.find_by_app_metadata_id(@metadata.id)
+        @featured_offer = @distribution.primary_offer.create_rewarded_featured_clone
+        @non_rewarded_offer = @distribution.primary_offer.create_non_rewarded_clone
+        @offer_ids = @distribution.offers.map { |offer| offer.id }
+        @status = @app.remove_app_metadata(@metadata)
+        @app.reload
+      end
+
+      it "removes all associated offers" do
+        @app.offers.count.should == 1
+        @app.offers.map {|o| o.id }.include?(@offer_ids).should be_false
+      end
+    end
+  end
+
   context 'with Offers' do
     before :each do
       @app = FactoryGirl.create(:app)
@@ -119,7 +385,7 @@ describe App do
       @offer.device_types.should == Offer::APPLE_DEVICES.to_json
       @offer.update_attributes({:device_types => Offer::ANDROID_DEVICES})
       @offer.device_types.should == Offer::ANDROID_DEVICES.to_json
-      @app.update_app_metadata('7654321')
+      @app.update_app_metadata('iphone.AppStore', '7654321')
       @app.save!
       @offer.reload
       @offer.device_types.should == Offer::APPLE_DEVICES.to_json

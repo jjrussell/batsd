@@ -10,6 +10,7 @@ class Offer < ActiveRecord::Base
   include Offer::ShowRateAlgorithms
   acts_as_cacheable
   acts_as_tracking
+  acts_as_trackable
   memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
@@ -70,7 +71,8 @@ class Offer < ActiveRecord::Base
                                     url_overridden
                                     user_enabled
                                     tracking_for_id
-                                    tracking_for_type )
+                                    tracking_for_type
+                                    source_offer_id )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
@@ -105,6 +107,8 @@ class Offer < ActiveRecord::Base
   belongs_to :app, :foreign_key => "item_id"
   belongs_to :action_offer, :foreign_key => "item_id"
   belongs_to :generic_offer, :foreign_key => "item_id"
+  belongs_to :app_metadata
+  belongs_to :source_offer, :class_name => 'Offer'
   belongs_to :prerequisite_offer, :class_name => 'Offer'
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
@@ -200,6 +204,7 @@ class Offer < ActiveRecord::Base
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
+  set_callback :cache_associations, :before, :app_metadata
 
   ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
   scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
@@ -229,29 +234,25 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
   scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :trackable, :conditions => { :item_type => ['VideoOffer', 'ActionOffer','App','VideoOffer','GenericOffer']}
   scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
 
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
-  #TODO: simplify these named scopes when support for multiple appstores is complete and offer includes app_metadata_id
-  scope :papaya_app_offers,
-    :joins => "inner join #{AppMetadataMapping.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{AppMetadataMapping.quoted_table_name}.app_id
-      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+  scope :papaya_app_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
-  scope :papaya_action_offers,
-    :joins => "inner join #{ActionOffer.quoted_table_name} on #{Offer.quoted_table_name}.item_id = #{ActionOffer.quoted_table_name}.id
-      inner join #{AppMetadataMapping.quoted_table_name} on #{ActionOffer.quoted_table_name}.app_id = #{AppMetadataMapping.quoted_table_name}.app_id
-      inner join #{AppMetadata.quoted_table_name} on #{AppMetadataMapping.quoted_table_name}.app_metadata_id = #{AppMetadata.quoted_table_name}.id",
+  scope :papaya_action_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'ActionOffer' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
     :select => PAPAYA_OFFER_COLUMNS
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :use_server_whitelist?, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
   delegate :trigger_action, :to => :generic_offer, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action
+  delegate :store_name, :to => :app_metadata, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :app_metadata_store_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -415,8 +416,8 @@ class Offer < ActiveRecord::Base
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
 
-  def save_icon!(icon_src_blob)
-    icon_id = Offer.hashed_icon_id(id)
+  def save_icon!(icon_src_blob, id_for_icon = self.id)
+    icon_id = Offer.hashed_icon_id(id_for_icon)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
@@ -464,24 +465,6 @@ class Offer < ActiveRecord::Base
     Mc.delete("icon.s3.#{id}")
     paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
     CloudFront.invalidate(id, paths) if existing_icon_blob.present?
-
-    if item_type == 'App' && app.present? && app.primary_app_metadata.present?
-      app_metadata_id = app.primary_app_metadata.id
-      meta_icon_id = Offer.hashed_icon_id(app_metadata_id)
-      meta_src_icon_obj = bucket.objects["icons/src/#{meta_icon_id}.jpg"]
-      existing_meta_icon_blob = meta_src_icon_obj.exists? ? meta_src_icon_obj.read : ''
-
-      bucket.objects["icons/256/#{icon_id}.jpg"].copy_to(bucket.objects["icons/256/#{meta_icon_id}.jpg"], {:acl => :public_read })
-      bucket.objects["icons/114/#{icon_id}.jpg"].copy_to(bucket.objects["icons/114/#{meta_icon_id}.jpg"], {:acl => :public_read })
-      bucket.objects["icons/57/#{icon_id}.jpg"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.jpg"], {:acl => :public_read })
-      bucket.objects["icons/57/#{icon_id}.png"].copy_to(bucket.objects["icons/57/#{meta_icon_id}.png"], {:acl => :public_read })
-      bucket.objects["icons/src/#{icon_id}.jpg"].copy_to(bucket.objects["icons/src/#{meta_icon_id}.jpg"], {:acl => :public_read })
-
-      Mc.delete("icon.s3.#{app_metadata_id}")
-      paths = ["icons/256/#{meta_icon_id}.jpg", "icons/114/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.jpg", "icons/57/#{meta_icon_id}.png"]
-      CloudFront.invalidate(id, paths) if existing_meta_icon_blob.present?
-    end
-
   end
 
   def save(perform_validation = true)
@@ -628,7 +611,7 @@ class Offer < ActiveRecord::Base
   end
 
   def icon_id
-    icon_id_override || item_id
+    icon_id_override || app_metadata_id || item_id
   end
 
   def self.hashed_icon_id(guid)
@@ -756,6 +739,54 @@ class Offer < ActiveRecord::Base
     ObjectEncryptor.encrypt("#{publisher_app_id}.#{partner_id}")
   end
 
+  def initialize_from_app(app)
+    self.name         = app.name
+    self.price        = 0
+    self.bid          = min_bid
+    self.url          = app.store_url
+    self.device_types = app.get_offer_device_types.to_json
+  end
+
+  def initialize_from_app_metadata(app_metadata, default_name = 'untitled')
+    self.app_metadata     = app_metadata
+    self.name             = app_metadata.name ? app_metadata.name : default_name # validated as non-nil, will be updated when app metadata name is fetched from store
+    self.price            = app_metadata.price
+    self.bid              = min_bid
+    self.url              = app_metadata.store_url
+    self.device_types     = app_metadata.get_offer_device_types.to_json
+    self.third_party_data = app_metadata.store_id
+    self.age_rating       = app_metadata.age_rating
+    self.wifi_only        = app_metadata.wifi_required?
+  end
+
+  def update_from_app_metadata(app_metadata, default_name = 'untitled')
+    if item_type == 'App'
+      if self.app_metadata == app_metadata
+        self.name = app_metadata.name if app_metadata.name_changed? && ( app_metadata.name_was == self.name || app_metadata.name_was.nil? )
+      else
+        self.app_metadata = app_metadata
+        self.name = app_metadata.name
+        self.third_party_data = app_metadata.store_id
+        self.device_types = app_metadata.get_offer_device_types.to_json
+        self.url = app_metadata.store_url unless url_overridden?
+      end
+      self.name = default_name if self.name.nil?
+      self.price = app_metadata.price
+      self.bid = min_bid if bid < min_bid
+      self.bid = max_bid if bid > max_bid
+      self.age_rating = app_metadata.age_rating
+      self.wifi_only = app_metadata.wifi_required?
+    elsif item_type == 'ActionOffer'
+      self.url           = app_metadata.store_url unless url_overridden?
+      self.price         = action_offer.offer_price(app_metadata)
+      if price_changed? && bid < min_bid
+        self.bid        = min_bid
+      end
+      self.app_metadata = app_metadata
+    end
+    self.save! if self.changed?
+  end
+
   def get_disabled_reasons
     reasons = []
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
@@ -765,6 +796,24 @@ class Offer < ActiveRecord::Base
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
     reasons
+  end
+
+  def build_tracking_offer_for(tracked_for, options = {})
+    options.merge!({ :app_metadata => app_metadata, :source_offer_id => id })
+    item.build_tracking_offer_for(tracked_for, options)
+  end
+
+  def find_tracking_offer_for(tracked_for)
+    tracking_offer = item.find_tracking_offer_for(tracked_for)
+    options = { :app_metadata => app_metadata, :source_offer_id => id }
+    options.merge!(item.tracking_offer_options(tracked_for)).merge!(tracked_for.tracking_item_options(self) || {})
+    tracking_offer.attributes=(options) if tracking_offer
+    tracking_offer
+  end
+
+  def display_ad_image_hash(currency)
+    currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
+    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
   end
 
   private
@@ -793,7 +842,9 @@ class Offer < ActiveRecord::Base
 
   def cleanup_url
     if (url_overridden_changed? || url_changed?) && !url_overridden?
-      if %w(App ActionOffer RatingOffer).include?(item_type)
+      if %w(App ActionOffer).include?(item_type) && app_metadata
+        self.url = app_metadata.store_url
+      elsif %w(App ActionOffer RatingOffer).include?(item_type)
         self.url = self.item.store_url
       elsif item_type == 'GenericOffer'
         self.url = self.item.url
@@ -891,5 +942,4 @@ class Offer < ActiveRecord::Base
       end
     end
   end
-
 end

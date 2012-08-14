@@ -1,9 +1,9 @@
 class UdidReports
 
-  def self.queue_daily_jobs
-    start_time = Time.zone.now.beginning_of_day - 1.day
+  def self.queue_daily_jobs(date_str=nil)
+    date_str ||= (Time.zone.now.beginning_of_day - 1.day).strftime('%Y-%m-%d')
+    start_time = Time.zone.parse(date_str)
     end_time   = start_time + 1.day
-    date_str   = start_time.strftime('%Y-%m-%d')
 
     Offer.find_each do |offer|
       # don't generate UDID reports for the Groupon offers that are whitelisted to TTR4

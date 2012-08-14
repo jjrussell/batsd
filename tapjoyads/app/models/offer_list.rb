@@ -23,6 +23,7 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
+    @app_store_name             = AppStore::SDK_STORE_NAMES[options.delete(:store_name)]
     @algorithm                  = options.delete(:algorithm)
     @algorithm_options          = options.delete(:algorithm_options)
 
@@ -34,6 +35,8 @@ class OfferList
     @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
     @normalized_device_type     = Device.normalize_device_type(@device_type)
 
+    @store_whitelist = Set.new
+
     if @publisher_app
       @platform_name            = @publisher_app.platform_name
       @normalized_device_type ||=
@@ -43,6 +46,9 @@ class OfferList
         else
           'itouch'
         end
+
+      @app_store_name ||= App::PLATFORM_DETAILS[@publisher_app.platform][:default_store_name]
+      @store_whitelist << @app_store_name if AppStore.find(@app_store_name).exclusive?
     end
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -74,6 +80,8 @@ class OfferList
     #     promoted_offers = promoted_offers.shuffle.slice(0, PROMOTED_INVENTORY_SIZE)
     #   end
     # end
+
+    @store_whitelist.merge(@currency.get_store_whitelist) if @currency && @currency.get_store_whitelist.present?
   end
 
   def weighted_rand
@@ -92,7 +100,7 @@ class OfferList
   end
 
   def get_offers(start, max_offers)
-    return [ [], 0 ] if @device && (@device.opted_out? || @device.banned?)
+    return [ [], 0 ] if @device && !@device.can_view_offers?
 
     returned_offers = []
     found_offer_item_ids = Set.new
@@ -126,11 +134,26 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    offers.each do |offer|
+    all_offers = offers.clone
+
+    all_offers.each do |offer|
       class << offer; attr_accessor :rejections; end
       offer.rejections = rejections_for(offer)
     end
-    offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
+
+    all_offers = all_offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
+
+    # todo: we're duplicating code here, fix it
+    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks?
+        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
+        class << deeplink_offer; attr_accessor :rejections; end
+        deeplink_offer.rejections = rejections_for(deeplink_offer)
+      end
+    end
+
+    all_offers
   end
 
   def sorted_optimized_offers_with_rejections
@@ -159,20 +182,20 @@ class OfferList
     currency_id = @currency.present? ? @currency.id : nil
     currency_id = nil if @algorithm_options[:skip_currency]
 
-    RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@device_type}") do
+    RailsCache.get_and_put("optimized_offers.#{@algorithm}.#{@source}.#{@platform_name}.#{country}.#{currency_id}.#{@normalized_device_type}") do
       OptimizedOfferList.get_offer_list(
         :algorithm => @algorithm,
         :source => @source,
         :platform => @platform_name,
         :country => country,
         :currency_id => currency_id,
-        :device_type => @device_type
+        :device_type => @normalized_device_type
       )
     end.value
   end
 
   def get_default_offers
-    return [] if (@device && (@device.opted_out? || @device.banned?)) || (@currency && !@currency.tapjoy_enabled?)
+    return [] if (@device && !@device.can_view_offers?) || (@currency && !@currency.tapjoy_enabled?)
 
     default_offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
       OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
@@ -210,9 +233,9 @@ class OfferList
   end
 
   def postcache_reject?(offer)
-    offer.postcache_reject?(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+    offer.postcache_reject?(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist,  @app_store_name)
   end
 
   def can_be_promoted?(offer)
@@ -220,8 +243,8 @@ class OfferList
   end
 
   def rejections_for(offer)
-    offer.postcache_rejections(@publisher_app, @device, @currency, @device_type, @geoip_data, @app_version,
+    offer.postcache_rejections(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code)
+      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
   end
 end

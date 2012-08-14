@@ -21,10 +21,6 @@ describe Job::QueueSendCurrencyController do
     @reward.save
   end
 
-  after :each do
-    Timecop.return
-  end
-
   describe 'with ExpectedAttributeError' do
     it 'should raise if reward has not already been updated' do
       Reward.
@@ -56,42 +52,53 @@ describe Job::QueueSendCurrencyController do
       class TestingError < RuntimeError; end
       Downloader.should_receive(:get_strict).at_least(:once).and_raise(TestingError)
 
-      @mc_time = Time.zone.now.to_i / 1.hour
+      @now = Time.zone.now
+      @mc_time = @now.to_i / 1.hour
       @fail_count_key = "send_currency_failure.#{@currency.id}.#{@mc_time}"
       Mc.delete("send_currency_failures.#{@mc_time}")
     end
 
     it 'should record an error for Downloader' do
-      expect {
-        get(:run_job, :message => @reward.id)
-      }.to raise_error(TestingError)
+      Timecop.freeze(@now) do
+        expect {
+          get(:run_job, :message => @reward.id)
+        }.to raise_error(TestingError)
+      end
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
       failures[@currency.id].should == Set.new(@reward.key)
     end
 
     it 'should throw SkippedSendCurrency if callback is bad' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      Timecop.freeze(@now) do
+        get(:run_job, :message => @reward.id) rescue TestingError
+      end
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 0
 
       message = "not attempting to ping the callback for #{@currency.id}"
-      expect {
-        get(:run_job, :message => @reward.id)
-      }.to raise_error(SkippedSendCurrency, message)
+      Timecop.freeze(@now) do
+        expect {
+          get(:run_job, :message => @reward.id)
+        }.to raise_error(SkippedSendCurrency, message)
+      end
 
       Mc.get_count("send_currency_skip.#{@currency.id}.#{@mc_time}").should == 1
     end
 
     it 'should record errors for multiple currencies' do
-      get(:run_job, :message => @reward.id) rescue TestingError
+      Timecop.freeze(@now) do
+        get(:run_job, :message => @reward.id) rescue TestingError
+      end
 
       currency = FactoryGirl.create(:currency, :callback_url => 'https://www.whatnot.com')
       reward = FactoryGirl.create(:reward, :currency_id => currency.id)
 
-      expect {
-        get(:run_job, :message => reward.id)
-      }.to raise_error(TestingError)
+      Timecop.freeze(@now) do
+        expect {
+          get(:run_job, :message => reward.id)
+        }.to raise_error(TestingError)
+      end
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
 
@@ -102,12 +109,16 @@ describe Job::QueueSendCurrencyController do
     it 'should not record more than 5000 errors' do
       Mc.increment_count(@fail_count_key, false, 1.week, 4998)
 
-      get(:run_job, :message => @reward.id) rescue TestingError
+      Timecop.freeze(@now) do
+        get(:run_job, :message => @reward.id) rescue TestingError
+      end
 
       reward = FactoryGirl.create(:reward, :currency_id => @currency.id)
       @controller.instance_variable_set('@bad_callbacks', Set.new)
 
-      get(:run_job, :message => reward.id) rescue TestingError
+      Timecop.freeze(@now) do
+        get(:run_job, :message => reward.id) rescue TestingError
+      end
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
       failures[@currency.id].should == Set.new(@reward.key)

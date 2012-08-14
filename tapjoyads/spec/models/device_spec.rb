@@ -250,6 +250,80 @@ describe Device do
     end
   end
 
+  describe '#add_click' do
+    before :each do
+      @device = Device.new
+      @device.save!
+      @key = @device.id
+    end
+
+    it "adds a click to the device", :recent_clicks do
+      @device.recent_click_hashes.length.should == 0
+      click = FactoryGirl.create(:click, :clicked_at => Time.now)
+      @device.add_click(click)
+      recent_click_hashes = @device.recent_click_hashes
+      recent_click_hashes.length.should == 1
+      recent_click_hashes[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+    end
+
+    it "pushes off the first click off the device", :recent_clicks do
+      clicks = []
+      @device.recent_click_hashes.length.should == 0
+      num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
+
+      # add the first click with click time older than specified range
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days+1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
+
+      # should push off the older click
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days-1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
+
+      # should retain the last click
+      click = FactoryGirl.create(:click, :clicked_at => Time.now)
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 2
+    end
+
+    it "gets recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks((Time.now-1.month).to_i, Time.now.to_i)
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
+    end
+
+    it "gets default recent clicks of a device", :recent_clicks do
+      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click0.clicked_at = Time.now-1.day
+      click0.save
+      @device.add_click(click0)
+
+      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
+      click1.clicked_at = Time.now-1.minute
+      click1.save
+      @device.add_click(click1)
+
+      @device.recent_click_hashes.size.should == 2
+      clicks = @device.recent_clicks
+      clicks.size.should == 2
+      clicks[0].id.should == click0.id
+      clicks[1].id.should == click1.id
+    end
+  end
+
   context 'A Device' do
     before :each do
      @device = Device.new
@@ -523,6 +597,39 @@ describe Device do
         @device.send :after_initialize
         @device.get('publisher_user_ids').should == @correct_user_ids.to_json
       end
+    end
+  end
+
+  describe '#suspend!' do
+    before :each do
+      @now = Time.now
+      Timecop.freeze(@now)
+      @device = FactoryGirl.create(:device)
+    end
+
+    it 'marks device suspended' do
+      @device.suspend!(24)
+      @device.suspended?.should be_true
+    end
+
+    it 'expires suspension after specified time' do
+      @device.suspend!(24)
+      Timecop.freeze(@now+25.hours)
+      @device.suspended?.should be_false
+    end
+
+    after :each do
+      Timecop.return
+    end
+  end
+
+  describe '#unsuspend!' do
+    it "unsuspends device" do
+      @device = FactoryGirl.create(:device)
+      @device.suspend!(24)
+      @device.suspended?.should be_true
+      @device.unsuspend!
+      @device.suspended?.should be_false
     end
   end
 end

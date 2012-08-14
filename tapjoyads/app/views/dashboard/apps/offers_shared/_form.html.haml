@@ -97,11 +97,11 @@
           = label_tag :daily_budget_off, 'Unlimited'
           = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
           &nbsp;
-          = label_tag :daily_budget_on, 'Limit'
+          = label_tag :daily_budget_on, 'Daily Limit'
           = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
           - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
           #daily_budget_fields{ :class => budget_fields_class }
-            = f.label(:daily_budget, 'Installs:', :class => 'installs')
+            = f.label(:daily_budget, 'Daily Installs:', :class => 'installs')
             = f.text_field(:daily_budget, :class => 'togglable installs')
             %br
             = label_tag('estimated_budget', 'Daily Budget:', :class => 'budget')
@@ -414,11 +414,11 @@
       width: 140px;
     }
     label.installs, label.estimated_budget {
-      width: 60px;
+      width: 96px;
       display: inline-block;
     }
     input[type=text].installs {
-      width: 336px;
+      width: 300px;
     }
     input[type=text].estimated_budget {
       width: 300px;

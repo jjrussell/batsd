@@ -17,7 +17,8 @@
     = link_to('Developer Forum', DEV_FORUM_URL)
 
 = form_for(@app, :html => { :class => 'tjform' }) do |f|
-  = f.hidden_field :store_id, {:value=>@app.store_id}
+  = hidden_field_tag :store_name, @app.store_name
+  = hidden_field_tag :store_id, @app.store_id, :id => 'app_store_id'
   %table
     %tbody
       %tr
@@ -32,6 +33,14 @@
         %td
           = @app.platform_name
           = f.hidden_field :platform
+      - if permitted_to?(:show, :dashboard_app_metadatas) && @app.platform == 'android'
+        %tr.app_data.hidden
+          %th Market
+          %td
+            - if @app.store_id.present?
+              = AppStore.find(@app.store_name).name
+            - else
+              = select_tag :android_store_name, options_for_select(@store_options, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
       - if permitted_to?(:edit, :dashboard_statz) && @app.platform == 'iphone'
         = render 'select_country'
         %tr.admin
@@ -51,7 +60,7 @@
           = f.text_field :name
           = error_message_on @app, :name
           #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-        %td= button_to "Search #{@app.store_name}", '#', :class => 'search hidden', :id => 'search_button'
+        %td= button_to "Search #{@app.store_name ? AppStore.find(@app.store_name).name : ''}", '#', :class => 'search hidden', :id => 'search_button'
       %tr
         %th
           App ID
@@ -73,10 +82,20 @@
       %tr.app_data.hidden
         %th Store ID
         %td
-          - if @app.store_id.present?
+          - if @app.store_id?
             = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
             %a#app_store_link{ :target => '_blank' }
+      - if @app.store_id.present?
+        %tr.app_data.hidden
+          %th
+            Custom URL Scheme
+            #help_custom_url_scheme.help ?
+          %td
+            %span{ :id => 'custom_url_scheme' }
+              = @app.launch_url
+            = image_tag("spinner.gif", :id => "spinner", :class => "hidden")
+            = link_to_function 'Edit', :onclick => 'edit_custom_url_scheme();'
       %tr.app_data.hidden
         %th Icon
         %td#app_icon= image_tag(@app.get_icon_url, :size => '57x57', :alt => 'icon')
@@ -94,7 +113,7 @@
         = render('dashboard/apps/admin_fields', :f => f)
 
       %tr
-        %td{ :colspan => 2 }= f.submit @app.store_id.present? ? "Update from #{@app.store_name}" : 'Save', :id => 'submit_button'
+        %td{ :colspan => 2 }= f.submit @app.store_name ? "Update from #{AppStore.find(@app.store_name).name}" : 'Save', :id => 'submit_button'
 
 .hidden
   #help_application_state_content{:name => 'Application State'}
@@ -112,6 +131,8 @@
     A shared secret used to verify requests from your app. Use this when integrating.
   #help_integrated_content{:name => 'Integrated'}
     Integration status - shows if the app has connected with our servers within the last 24-hours.
+  #help_custom_url_scheme_content{:name => 'Custom URL Scheme'}
+    Implement the custom URL scheme so users can launch your app from other Tapjoy enabled mobile/web apps and sites. For iOS apps, register this URL in your Info.plist file. For Android apps, register this URL in your manifest file.  Visit our Knowledge Center for more info.
 .clear
 - if @app.hidden?
   - if permitted_to?(:unarchive, :dashboard_apps)
@@ -144,17 +165,33 @@
 
 - content_for :page_javascript do
   :plain
-    $(function($){
-      var toggleSubmitButton = function() {
-        if ($('input#app_store_id').val() && $('select#app_state').val() == 'live') {
-          $('#submit_button').val('Update from #{@app.store_name}');
-        } else {
-          $('#submit_button').val('Save');
-        }
-      };
-      $('select#app_state').change(toggleSubmitButton);
-      $('input#app_store_id').change(toggleSubmitButton);
-    })
+    var edit_custom_url_scheme = function() {
+      var url = prompt('Please enter a Custom URL Scheme', $.trim($('#custom_url_scheme').text()));
+      if (url != null) {
+        $('#custom_url_scheme').hide();
+        $('#spinner').show();
+        url = $.trim(url);
+        $.ajax({
+          type: "POST",
+          url: '#{set_custom_url_scheme_apps_url}',
+          data: { "app_id" : '#{@app.id}', "custom_url_scheme" : url },
+          success: function(result) {
+            if(url) {
+              $("#custom_url_scheme").text(url);
+            } else {
+              $("#custom_url_scheme").text('#{@app.default_url_scheme}');
+            }
+            $('#custom_url_scheme').show();
+            $('#spinner').hide();
+          },
+          error: function(error) {
+            alert('Unable to update the Custom URL Scheme, please try again later.');
+            $('#custom_url_scheme').show();
+            $('#spinner').hide();
+          }
+        });
+      }
+    };
 
   - if @app.hidden?
     :plain

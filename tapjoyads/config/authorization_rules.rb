@@ -1,7 +1,7 @@
 authorization do
 
   role :partner do
-    has_permission_on :dashboard_apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :integrate_check, :search, :sdk_download, :archive ]
+    has_permission_on :dashboard_apps, :to => [ :index, :show, :new, :create, :edit, :update, :confirm, :integrate, :publisher_integrate, :set_custom_url_scheme, :integrate_check, :search, :sdk_download, :archive ]
     has_permission_on :dashboard_offers, :to => [ :new, :create, :edit, :update, :toggle, :percentile, :preview ]
     has_permission_on :dashboard_offer_creatives, :to => [ :show, :create, :new, :destroy ]
     has_permission_on :dashboard_currencies, :to => [ :show, :update, :new, :create, :reset_test_device ]
@@ -22,6 +22,10 @@ authorization do
 
   role :agency do
     has_permission_on :dashboard_partners, :to => [ :index, :show, :make_current, :new, :create, :agency_api ]
+  end
+
+  role :android_distribution_config do
+    has_permission_on :dashboard_app_metadatas, :to => [ :new, :create, :show, :update, :remove ]
   end
 
   role :tools do
@@ -69,7 +73,7 @@ authorization do
 
   role :customer_service_manager do
     includes :customer_service
-    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion ]
+    has_permission_on :dashboard_tools, :to => [ :award_currencies, :update_award_currencies, :view_pub_user_account, :detach_pub_user_account, :force_conversion, :search_conversion_attempts ]
   end
 
   role :money do

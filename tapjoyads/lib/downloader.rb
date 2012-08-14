@@ -36,7 +36,8 @@ class Downloader
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     start_time = Time.zone.now
-    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader' })
+    headers.merge!({ 'User-Agent' => 'Tapjoy Downloader/0.1/downloader/0.1/1' }) #needed for GFan api
+
     Rails.logger.info "Downloading (POST) #{url}"
 
     sess = Patron::Session.new

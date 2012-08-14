@@ -260,9 +260,20 @@ describe Offer do
     @offer.send(:source_reject?, 'offerwall').should be_false
   end
 
+  it "rejects based on store whitelist" do
+    @offer.send(:app_store_reject?, Set.new.add('iphone.AppStore')).should be_false
+    @offer.send(:app_store_reject?, Set.new.add('iphone.SomeOtherStore')).should be_true
+  end
+
   it 'rejects rewarded offers that are close to zero' do
     currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
     @offer.send(:miniscule_reward_reject?, currency).should be_true
+  end
+
+  it "doesn't reject 0.01 offers when the conversion rate is high enough" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 150})
+    @offer.update_attributes(:bid => 1)
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
   it "doesn't reject rewarded offers that are close to 1" do
@@ -291,6 +302,7 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
+                                  'app_metadata_id'
                                 ].sort
   end
 
@@ -450,18 +462,6 @@ describe Offer do
 
     it "has a min_bid of 0" do
       @offer.min_bid.should == 0
-    end
-
-    describe "url generation" do
-      describe '#complete_action_url' do
-        it "should substitute tokens in the URL" do
-          @offer.url = 'https://example.com/complete/TAPJOY_GENERIC?source=TAPJOY_GENERIC_SOURCE&uid=TAPJOY_EXTERNAL_UID'
-          source = @offer.source_token('12345')
-          uid = Device.advertiser_device_id('x', @offer.partner_id)
-          options = {:click_key => 'abcdefg', :udid => 'x', :publisher_app_id => '12345', :currency => 'zxy'}
-          @offer.complete_action_url(options).should == "https://example.com/complete/abcdefg?source=#{source}&uid=#{uid}"
-        end
-      end
     end
   end
 
@@ -1206,6 +1206,34 @@ describe Offer do
 
         it { should be_all_blacklisted }
       end
+    end
+  end
+
+  describe '#build_tracking_offer_for' do
+    it 'should pass app_metadata to tracking offer' do
+      video_button = FactoryGirl.create(:video_button)
+      meta = FactoryGirl.create(:app_metadata)
+      @offer.item.should_receive(:build_tracking_offer_for)
+      @offer.build_tracking_offer_for(video_button)
+    end
+  end
+
+  describe '#find_tracking_offer_for' do
+    before :each do
+      VideoButton.any_instance.stub(:tracking_item_options).and_return({})
+    end
+
+    it 'should find tracking offer of item' do
+      video_button = FactoryGirl.create(:video_button)
+      @offer.item.should_receive(:find_tracking_offer_for)
+      @offer.find_tracking_offer_for(video_button)
+    end
+
+    it 'should update tracking offer with data from offer' do
+      video_button = FactoryGirl.create(:video_button)
+      @offer.item.stub(:find_tracking_offer_for).and_return(Offer.new)
+      @offer.find_tracking_offer_for(video_button).app_metadata_id = @offer.app_metadata_id
+      @offer.find_tracking_offer_for(video_button).source_offer_id = @offer.id
     end
   end
 

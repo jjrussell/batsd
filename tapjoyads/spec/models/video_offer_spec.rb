@@ -58,8 +58,8 @@ describe VideoOffer do
   end
 
   context "A Video Offer with multiple video_buttons" do
-    subject {FactoryGirl.create(:video_offer)}
-
+    subject {FactoryGirl.create(:video_offer, :app_targeting => app_targeting)}
+    let(:app_targeting) {false}
     let(:buttons) do
       3.times do |i|
         Factory(:video_button, :video_offer => subject, :ordinal => i)
@@ -100,7 +100,7 @@ describe VideoOffer do
         buttons.each do |button|
           type = types.shift
           button.tracking_offer.update_attribute(:device_types, type.to_json)
-          button.update_attribute(:rewarded, true) if type.size > 1
+          button.tracking_offer.update_attribute(:rewarded, true) if type.size > 1
           @buttons[type.size > 1 ? 'rewarded' : type] = button
         end
 
@@ -166,6 +166,38 @@ describe VideoOffer do
       context 'with a non-mobile device' do
         it 'does not filter any buttons out' do
           subject.video_buttons_for_device_type(nil).length.should == 3
+        end
+      end
+    end
+
+    describe '#distribution_rejeect?' do
+      context "when not app_targeting" do
+        let(:app_targeting?) { false }
+        context "without video buttons for specified store" do
+          it "should not reject" do
+            subject.distribution_reject?('astore').should be_false
+          end
+        end
+
+        context "with video buttons for specified store" do
+          it "should not reject" do
+            subject.distribution_reject?('astore').should be_false
+          end
+        end
+      end
+
+      context "when app_targeting" do
+          let(:app_targeting) {true}
+          context "without video buttons for specified store" do
+          it "should reject" do
+            subject.distribution_reject?('astore').should be_true
+          end
+        end
+
+        context "with video button for specified store" do
+          it "should not reject" do
+            subject.distribution_reject?(buttons.last.tracking_offer.app_metadata.store_name).should be_false
+          end
         end
       end
     end

@@ -1,0 +1,89 @@
+- @page_title = 'Distribution'
+
+%h3 Distributions
+
+%p.info
+  Your app should have a distribution for every App Store/Marketplace where your app is available for download.
+
+- content_for :page_styles do
+  :plain
+    .info { font-size: 13px; }
+
+%p
+  Create a new distribution for #{@app.name}
+
+%div
+  = form_for [@app, @app_metadata], :url => app_app_metadatas_path, :html => {:class => 'tjform'} do |f|
+    %table
+      %tbody
+        %tr
+          %th Platform
+          %td
+            = @app.platform_name
+            = hidden_field_tag :app_platform, @app.platform
+        %tr
+          %th Market
+          %td= select_tag :store_name, options_for_select(@store_options, App::PLATFORM_DETAILS['android'][:default_store_name]), { :id => 'app_store_name', :class => 'wide' }
+        %tr
+          %th
+            Name
+          %td
+            = text_field_tag :app_name
+            #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+          %td= button_to "Search", '#', :class => 'search', :id => 'search_button'
+        %tr
+          %th Store ID
+          %td
+            %a#app_store_link{ :target => '_blank' }
+            = hidden_field_tag 'store_id', nil, :id => 'app_store_id'
+        %tr
+          %th Icon
+          %td#app_icon &nbsp;
+        %tr
+          %th Price
+          %td#app_price
+        %tr
+          %th Description
+          %td#app_description
+        %tr
+          %td{ :colspan => 2 }= f.submit 'Add Distribution'
+
+%table.distributions
+  %thead
+    %tr
+      %th Primary?
+      %th Store
+      %th Distribution
+      %th Price
+      %th Store ID
+      %th Action
+  %tbody
+    - @app.app_metadata_mappings.each do |mapping|
+      - app_metadata = mapping.app_metadata
+      %tr{ :class => cycle('even', 'odd') }
+        %td= mapping.is_primary ? 'Primary' : ''
+        %td= app_metadata.store.name
+        %td= link_to app_metadata.name, app_app_metadata_path({:app_id => @app.id, :id => app_metadata.id})
+        %td= number_to_currency(app_metadata.price / 100.0)
+        %td= link_to(app_metadata.store_id, app_metadata.info_url(app_metadata.store_id), :target => '_blank')
+        %td
+          - unless mapping.is_primary
+            = link_to('Remove', remove_app_app_metadata_path({:app_id => @app.id, :id => app_metadata.id}))
+
+- content_for :page_head, stylesheet_link_tag('apps')
+- content_for :included_javascripts, javascript_include_tag('tapjoy/apps')
+- content_for :page_styles do
+  :plain
+    table.distributions tbody td {
+      text-align: center;
+      padding-top: 6px;
+      padding-bottom: 6px;
+    }
+
+    table.distributions tbody {
+      font-size: 13px;
+    }
+
+    table.distributions tbody tr.even {
+      background-color: #f0f0f6;
+    }

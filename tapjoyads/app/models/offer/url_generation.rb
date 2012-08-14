@@ -94,7 +94,7 @@ module Offer::UrlGeneration
         final_url += "#{mark}#{extra_params.to_query}"
       end
     when 'ActionOffer'
-      final_url = url
+      final_url = url.gsub('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     when 'SurveyOffer'
       final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
       final_url = ObjectEncryptor.encrypt_url(final_url)
@@ -198,10 +198,10 @@ module Offer::UrlGeneration
                :advertiser_app_id => id,
                :size => size,
                :display_multiplier => (options[:display_multiplier] || 1).to_f,
-               :currency_id => options[:currency_id],
                :offer_type => item_type }
 
-    params[:currency_id] = options[:currency_id] if options.include?(:currency_id)
+    params[:currency_id] = options[:currency].id if options.include?(:currency)
+    params[:key] = display_ad_image_hash(options[:currency])
     params[:ts] = Time.now.to_i if options[:bust_cache]
 
     "#{API_URL}/display_ad/image?#{params.to_query}"
