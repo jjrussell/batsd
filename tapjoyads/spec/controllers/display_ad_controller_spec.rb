@@ -239,7 +239,7 @@ describe DisplayAdController do
           custom_banner = read_asset('custom_640x100.png')
           s3_object.stub(:read).and_return(custom_banner)
 
-          get(:index, @params)
+          get(:index, @params.merge(:format => "xml"))
           response.content_type.should == 'application/xml'
           Base64.decode64(assigns['image']).should == custom_banner
         end
@@ -258,7 +258,7 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in xml' do
-          get(:index, @params)
+          get(:index, @params.merge(:format => "xml"))
           response.content_type.should == 'application/xml'
         end
       end

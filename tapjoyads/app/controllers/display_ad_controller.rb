@@ -146,11 +146,11 @@ class DisplayAdController < ApplicationController
       end
 
       web_request.offer_id = offer.id
+      params[:offer_id] = offer.id
       web_request.path = 'display_ad_shown'
     end
 
     web_request.save
-    params[:offer_id] = offer.id
     @encrypted_params = ObjectEncryptor.encrypt(params)
   end
 
