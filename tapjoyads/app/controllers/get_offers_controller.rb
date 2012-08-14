@@ -118,7 +118,6 @@ include GetOffersHelper
     if params[:format] == 'html'
       @offer = @offer_list.first
       params[:offer_id] = @offer.id
-      params[:impression_id] = UUIDTools::UUID.random_create.to_s
       @encrypted_params = ObjectEncryptor.encrypt(params)
       render :layout => "iphone"
     elsif params[:json] == '1'
@@ -170,6 +169,7 @@ include GetOffersHelper
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
 
+    params[:impression_id] = UUIDTools::UUID.random_create.to_s
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
