@@ -151,15 +151,19 @@ class Dashboard::DashboardController < ApplicationController
     end
   end
 
-  def find_app(app_id)
+  def find_app(app_id, options = {})
+    redirect_on_nil = options.delete(:redirect_on_nil) { true }
     if permitted_to? :edit, :dashboard_statz
       App.find(app_id)
     else
       app = current_partner.apps.find_by_id(app_id)
-      return app unless app.nil?
-      path = current_partner.apps.first || new_app_path
-      flash[:error] = "Couldn't find app with ID #{app_id}"
-      redirect_to path
+      if app.nil? && redirect_on_nil
+        path = current_partner.apps.first || new_app_path
+        flash[:error] = "Couldn't find app with ID #{app_id}"
+        redirect_to path
+      else
+        app
+      end
     end
   end
 end
