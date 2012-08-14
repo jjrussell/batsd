@@ -234,6 +234,12 @@ class App < ActiveRecord::Base
           offer.update_from_app_metadata(mapping.app_metadata) unless offer.app_metadata
         end
       end
+      deeplink_offers.each do |deeplink_offer|
+        deeplink_offer.offers.each do |offer|
+          offer.icon_id_override = mapping.app_metadata.id
+          offer.save! if offer.icon_id_override_changed?
+        end
+      end
     else
       create_primary_distribution_offer(mapping.app_metadata)
       create_action_offer_distributions(mapping.app_metadata)
