@@ -114,7 +114,12 @@ include GetOffersHelper
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
-    if params[:json] == '1'
+    if params[:format] == 'html'
+      @offer = @offer_list.first
+      params[:offer_id] = @offer.id
+      @encrypted_params = ObjectEncryptor.encrypt(params)
+      render :layout => "iphone"
+    elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
       render :template => 'get_offers/installs_redirect'
@@ -148,6 +153,7 @@ include GetOffersHelper
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
+    params[:format] = 'xml' unless params[:format] == 'html'
   end
 
   def setup
@@ -162,6 +168,7 @@ include GetOffersHelper
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
 
+    params[:impression_id] = UUIDTools::UUID.random_create.to_s
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])

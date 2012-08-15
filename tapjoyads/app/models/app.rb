@@ -115,8 +115,6 @@ class App < ActiveRecord::Base
     :supported_devices?, :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :languages, :info_url, :wifi_required?, :is_ipad_only?, :recently_released?, :bad_rating?, :primary_category,
     :to => :primary_app_metadata, :allow_nil => true
-  delegate :primary_rewarded_featured_offer, :primary_non_rewarded_featured_offer, :primary_non_rewarded_offer,
-    :to => :primary_app_metadata_mapping, :allow_nil => true
   delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
 
   memoize :partner_name, :partner_dashboard_partner_url
@@ -135,6 +133,18 @@ class App < ActiveRecord::Base
 
   def store_url
     primary_app_metadata ? primary_app_metadata.store_url : AppStore.find(App::PLATFORM_DETAILS[platform][:default_store_name]).store_url
+  end
+
+  def primary_rewarded_featured_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_rewarded_featured_offer : offers.where(:featured => true, :rewarded => true).order(:created_at).first
+  end
+
+  def primary_non_rewarded_featured_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_non_rewarded_featured_offer : offers.where(:featured => true, :rewarded => false).order(:created_at).first
+  end
+
+  def primary_non_rewarded_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_non_rewarded_offer : offers.where(:featured => false, :rewarded => false).order(:created_at).first
   end
 
   def platform_name
@@ -232,6 +242,12 @@ class App < ActiveRecord::Base
       action_offers.each do |action_offer|
         action_offer.offers.each do |offer|
           offer.update_from_app_metadata(mapping.app_metadata) unless offer.app_metadata
+        end
+      end
+      deeplink_offers.each do |deeplink_offer|
+        deeplink_offer.offers.each do |offer|
+          offer.icon_id_override = mapping.app_metadata.id
+          offer.save! if offer.icon_id_override_changed?
         end
       end
     else

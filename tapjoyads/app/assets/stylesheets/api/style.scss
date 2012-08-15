@@ -1,6 +1,7 @@
-/**
-  * CSS reset
-  */
+/*-------------------------------------
+  CSS Reset
+ -------------------------------------*/
+
 html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{ margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; background:transparent}
 body{ line-height:1}
 article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{ display:block}
@@ -15,6 +16,10 @@ abbr[title],dfn[title]{ border-bottom:1px dotted; cursor:help}
 table{ border-collapse:collapse; border-spacing:0}
 hr{ display:block; height:1px; border:0;  border-top:1px solid #ccc; margin:1em 0; padding:0}
 input,select{ vertical-align:middle}
+
+/*-------------------------------------
+  Video Offerwall
+ -------------------------------------*/
 
 body {
   background: rgba(79,79,79, .9);
@@ -110,18 +115,13 @@ html {
     padding: 15px;
     text-shadow: 0 1px 0 #fff;
 
-    span {
-      display: block;
-      font-size: 70%;
+    .blurb {
+      color: #555;
+      font-size: 120%;
+      line-height: 120%;
+      margin: 10px 0 10px;
     }
   }
-}
-
-.blurb {
-  color: #555;
-  font-size: 120%;
-  line-height: 120%;
-  margin: 10px 0 10px;
 }
 
 .button-wrapper {
@@ -271,17 +271,11 @@ ul#offers {
       overflow: hidden;
       vertical-align: middle;
 
-      .icon, .about {
+      .icon,
+      .about {
         display: inline-block;
         margin-top: 13px;
         vertical-align: middle;
-      }
-
-      .desc {
-        color: rgba(0,0,0, .5);
-        display: none;
-        font-size: 80%;
-        margin-top: 2px;
       }
 
       .icon {
@@ -421,184 +415,114 @@ span.small {
   margin-top: 5px;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape){
+
+/*-------------------------------------
+  iPhone/iTouch/iPod Portrait
+ -------------------------------------*/
+
+@media screen and (max-width: 320px) and (max-width: 480px) and (orientation: portrait){
   .ui-joy-panel {
     .header {
       .heading {
-        font-size: 110%;
+        font-size: 140%;
         padding: 10px 0;
       }
     }
-  }
 
-  .button,
-  .blurb {
-    font-size: 90%;
-  }
-
-  .blurb {
-    margin: 2px;
-  }
-
-  .offers-wrapper {
-    overflow: hidden;
-    max-height: 133px;
-    overflow-y: scroll;
-  }
-
-  ul#offers li {
-    background: -moz-linear-gradient(top, rgba(251,251,251,1) 0%, rgba(247,247,247,1) 50%, rgba(242,242,242,1) 85%, rgba(240,240,240,1) 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(251,251,251,1)), color-stop(50%,rgba(247,247,247,1)), color-stop(85%,rgba(242,242,242,1)), color-stop(100%,rgba(240,240,240,1)));
-    background: -webkit-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-    background: -o-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-    background: -ms-linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-    background: linear-gradient(top, rgba(251,251,251,1) 0%,rgba(247,247,247,1) 50%,rgba(242,242,242,1) 85%,rgba(240,240,240,1) 100%);
-    border-bottom: 1px solid #aaa;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
-    height: 65px;
-    position: relative;
-    width: 100%;
-
-    .offer {
-      margin-left: 8px;
-      overflow: hidden;
-      vertical-align: middle;
-
-      .about {
-        margin-left: 5px;
-        .action {
-          line-height: 130%;
-        }
-      }
-      .desc {
-        color: rgba(0,0,0, .5);
-        display: none;
-        font-size: 70%;
-        margin-top: 2px;
-      }
-
-      .icon {
-        margin-top: 2px;
-        top: 2px;
-        height: 38px;
-        width: 54px;
-
-        img.frame {
-          background-size: 50% 50%;
-          box-shadow: 0 0 2px rgba(0,0,0, .5);
-          height: 20px;
-          width: 40px;
-        }
-      }
-
-      .reward {
-        span.earn {
-          font-size: 70%;
-          }
-        span.points {
-          font-size: 70%;
-        }
-        span.big {
-          font-size: 120%;
-          line-height: 115%;
-        }
-      }
-    }
-  }
-}
-@media (max-width:425px){
-  .button-wrapper {
-    .button {
-      font-size: 90%;
-    }
-  }
-
-  .blurb {
-    color: #555;
-    font-size: 100%;
-    line-height: 120%;
-  }
-
-  ul#offers {
-    li {
-      .offer {
-        .icon {
-          width: 45px;
-        }
-
-        .about {
-          font-size: 80%;
-          margin-left: 10px;
-          width: 59%;
-
-          .action {
-            line-height: 150%;
-          }
-        }
-      }
-    }
-  }
-}
-
-@media screen and (max-width: 533px) and (orientation: landscape) and (min-device-width : 243px){
-  .blurb {
-    font-size: 75%;
-    margin: 0px;
-  }
-
-  .ui-joy-panel {
     .instructions {
       padding: 5px;
+
+      .blurb {
+        font-size: 90%;
+      }
     }
-  }
 
-  .offers-wrapper {
-    overflow: hidden;
-    max-height: 130px;
-    overflow-y: scroll;
-  }
+    ul#offers {
+      li {
+        .reward {
+          span.big {
+            font-size: 140%;
+            line-height: 120%;
+          }
+        }
 
-  ul#offers {
-    li {
-      height: 63.5px;
+        .offer {
+          margin-left: 10px;
+          overflow: hidden;
+          vertical-align: middle;
 
-      .offer {
-        .icon {
-          margin-top: 0;
-          top: 0px;
+          .icon,
+          .about {
+            margin-top: 10px;
+          }
 
-          .desc {
-            color: rgba(0,0,0, .5);
-            display: none;
-            font-size: 60%;
-            margin-top: 2px;
+          .icon {
+            width: 48px;
           }
         }
 
         .about {
-          .action {
-            line-height: 110%;
-          }
-        }
-      }
-
-      .reward {
-        span.big {
-          font-size: 140%;
-          line-height: 105%;
-          margin-top: 0;
-        }
-        span.earn, span.points {
-          font-size: 70%;
+          font-size: 90%;
+          margin-left: 10px;
+          width: 60%;
         }
       }
     }
   }
+}
 
-  .button-wrapper {
-    .button {
-      font-size: 75%;
-      padding: 5px 0;
+/*-------------------------------------
+  iPhone/iTouch/iPod Landscape
+ -------------------------------------*/
+
+@media screen and (max-width: 480px) and (min-width: 320px) and (orientation: landscape){
+
+  .ui-joy-panel {
+    .header {
+      .heading {
+        font-size: 140%;
+        padding: 10px 0;
+      }
+    }
+
+    .instructions {
+      padding: 5px;
+
+      .blurb {
+        font-size: 95%;
+      }
+    }
+
+    ul#offers {
+      li {
+        .reward {
+          span.big {
+            font-size: 140%;
+            line-height: 120%;
+          }
+        }
+
+        .offer {
+          margin-left: 10px;
+          overflow: hidden;
+          vertical-align: middle;
+
+          .icon,
+          .about {
+            margin-top: 10px;
+          }
+
+          .icon {
+            width: 48px;
+          }
+        }
+
+        .about {
+          font-size: 100%;
+          width: 80%;
+          margin-left: 10px;
+        }
+      }
     }
   }
 }
