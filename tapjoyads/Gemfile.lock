@@ -6,8 +6,8 @@ GIT
 
 GIT
   remote: git://github.com/Tapjoy/fakememcached.git
-  revision: f1af18081af8baabbf109e01ed905219a9714e43
-  ref: f1af1
+  revision: b722daa998997bb8faa25f78c641880a597aa8dc
+  ref: b722d
   specs:
     fakememcached (0.1.0)
 
