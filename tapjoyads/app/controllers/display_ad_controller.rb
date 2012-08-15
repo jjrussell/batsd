@@ -67,7 +67,7 @@ class DisplayAdController < ApplicationController
     # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
     # (except certain scenarios)
     if ((params[:size].blank? || (params[:size] == '320x50' &&
-        params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
+        params[:library_version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
         params[:action] != 'webview' && request.format != :json &&
         params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
       params[:size] = '640x100'
