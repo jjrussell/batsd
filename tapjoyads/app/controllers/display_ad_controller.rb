@@ -233,7 +233,7 @@ class DisplayAdController < ApplicationController
     image_label = get_image_label(text, text_area_size, font_size, font, true)
     img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
-    offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
+    offer_icon_blob = offer.icon_s3_object.read rescue ''
     if offer_icon_blob.present?
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       corner_mask_blob = bucket.objects["display/round_mask.png"].read

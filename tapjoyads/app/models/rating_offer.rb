@@ -27,7 +27,7 @@ class RatingOffer < ActiveRecord::Base
   after_create :create_primary_offer, :create_icon
   after_update :update_offers
 
-  delegate :get_offer_device_types, :platform, :store_url, :to => :app
+  delegate :get_offer_device_types, :platform, :store_url, :get_icon_url, :to => :app
 
   scope :visible, :conditions => { :hidden => false }
 
@@ -37,6 +37,10 @@ class RatingOffer < ActiveRecord::Base
 
   def self.get_id_with_app_version(id, app_version)
     app_version.blank? ? id : (id + '.' + app_version)
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
   end
 
   private
@@ -69,6 +73,7 @@ class RatingOffer < ActiveRecord::Base
       offer.url = app.store_url unless offer.url_overridden?
       offer.name = name if name_changed?
       offer.hidden = hidden if hidden_changed?
+      offer.icon_id_override = app_id if app_id_changed? && app_id_was == offer.icon_id_override
       offer.save! if offer.changed?
     end
   end
@@ -80,7 +85,6 @@ class RatingOffer < ActiveRecord::Base
     bucket.objects['icons/ratestar.png'].copy_to("icons/#{id}.png", :acl => :public_read)
 
     image_data = bucket.objects['icons/114/ratestar.jpg'].read
-    primary_offer.save_icon!(image_data)
+    save_icon!(image_data)
   end
-
 end

@@ -233,7 +233,12 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :app_offers, lambda { |*args|
+    only_client_facing = args.empty? ? true : args.first
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    { :conditions => ["item_type IN (?)", item_types] }
+  }
   scope :trackable, :conditions => { :item_type => ['VideoOffer', 'ActionOffer','App','VideoOffer','GenericOffer']}
   scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
@@ -272,8 +277,35 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def app_offer?
-    item_type == 'App' || item_type == 'ActionOffer'
+  def clone_and_save!
+    new_offer = clone
+    new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+
+    yield new_offer if block_given?
+
+    transaction do
+      new_offer.save!
+      new_offer.save_icon!(icon_s3_object.read, true) if icon_id_override.present?
+    end
+
+    new_offer
+  end
+
+  def icon_s3_object
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
+  end
+
+  def app_offer?(only_client_facing = true)
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    item_types.include?(item_type)
+  end
+
+  def app_id
+    return nil unless app_offer?(false)
+    return item_id if item_type == 'App'
+    item.app_id
   end
 
   def missing_app_store_id?
@@ -404,6 +436,10 @@ class Offer < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
+  def self.icon_cache_key(guid)
+    "icon.s3.#{guid}"
+  end
+
   def self.get_icon_url(options = {})
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
@@ -416,16 +452,41 @@ class Offer < ActiveRecord::Base
     "#{prefix}/icons/#{size}/#{icon_id}.jpg"
   end
 
-  def save_icon!(icon_src_blob, id_for_icon = self.id)
-    icon_id = Offer.hashed_icon_id(id_for_icon)
+  def self.remove_icon!(guid, video_offer = false)
+    icon_id = Offer.hashed_icon_id(guid)
+    bucket  = S3.bucket(BucketNames::TAPJOY)
+    src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
+
+    src_obj.delete if src_obj.exists?
+
+    paths = if video_offer
+              ["icons/200/#{icon_id}.jpg"]
+            else
+              ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+            end
+
+    paths.each do |path|
+      obj = bucket.objects[path]
+      obj.delete if obj.exists?
+    end
+
+    Mc.delete(icon_cache_key(guid))
+    CloudFront.invalidate(guid, paths)
+  end
+
+  def self.upload_icon!(icon_src_blob, guid, video_offer = false)
+    icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
+    if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+      return
+    end
 
-    return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+    if video_offer
+      paths = ["icons/200/#{icon_id}.jpg"]
 
-    if video_offer?
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
       corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
       corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
@@ -434,41 +495,66 @@ class Offer < ActiveRecord::Base
       icon_200.alpha(Magick::OpaqueAlphaChannel)
 
       icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
-      bucket.objects["icons/200/#{icon_id}.jpg"].write(:data => icon_200_blob, :acl => :public_read)
+      bucket.objects[paths.first].write(:data => icon_200_blob, :acl => :public_read)
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
+    else
+      paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
 
-      Mc.delete("icon.s3.#{id}")
-      paths = ["icons/200/#{icon_id}.jpg"]
-      CloudFront.invalidate(id, paths) if existing_icon_blob.present?
-      return
+      icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
+
+      corner_mask_blob = bucket.objects["display/round_mask.png"].read
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+      icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      icon_256 = icon_256.opaque('#ffffff00', 'white')
+      icon_256.alpha(Magick::OpaqueAlphaChannel)
+
+      icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+      icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+      icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+      icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
+
+      bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
+      bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
+      src_obj.write(:data => icon_src_blob, :acl => :public_read)
     end
 
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-
-    corner_mask_blob = bucket.objects["display/round_mask.png"].read
-    corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-    icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-    icon_256 = icon_256.opaque('#ffffff00', 'white')
-    icon_256.alpha(Magick::OpaqueAlphaChannel)
-
-    icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-    icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-    icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
-
-    bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-    bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-    src_obj.write(:data => icon_src_blob, :acl => :public_read)
-
-    Mc.delete("icon.s3.#{id}")
-    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
+    Mc.delete(icon_cache_key(guid))
+    CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
   end
 
-  def save(perform_validation = true)
-    super(:validate => perform_validation)
+  def remove_icon!
+    guid = icon_id
+
+    # only allow removing of offer-specific, manually-uploaded icons
+    return if [item_id, app_metadata_id, app_id].include?(guid)
+
+    Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
+
+    icon_id_override = item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
+    self.update_attributes!(:icon_id_override => icon_id_override)
+  end
+
+  def save_icon!(icon_src_blob, override = false)
+    # Here's how this works...
+    # When an offer's icon is requested, it will use the 'icon_id' method,
+    # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
+    # The icon_id_override field will be used, however, if it is not nil.
+    #
+    # This method ('save_icon!') will therefore use icon_id by default when uploading the icon,
+    # and icon_id_override only if override == true
+    #
+    # What this allows for is one icon file to be shared between offers with the same parent.
+    #
+    # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
+    guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
+    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
+    self.update_attributes!(:icon_id_override => guid) unless [app_metadata_id, item_id].include?(guid)
+  end
+
+  def save(*)
+    super
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
@@ -922,17 +1008,13 @@ class Offer < ActiveRecord::Base
     featured = options[:featured]
     rewarded = options[:rewarded]
 
-    offer = self.clone
-    offer.attributes = {
-      :created_at => nil,
-      :updated_at => nil,
-      :featured   => !featured.nil? ? featured : self.featured,
-      :rewarded   => !rewarded.nil? ? rewarded : self.rewarded,
-      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
-      :tapjoy_enabled => false }
-    offer.bid = offer.min_bid
-    offer.save!
-    offer
+    clone_and_save! do |new_offer|
+      new_offer.attributes = {
+        :featured    => !featured.nil? ? featured : self.featured,
+        :rewarded    => !rewarded.nil? ? rewarded : self.rewarded,
+        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}" }
+      new_offer.bid = new_offer.min_bid
+    end
   end
 
   def lock_survey_offer
