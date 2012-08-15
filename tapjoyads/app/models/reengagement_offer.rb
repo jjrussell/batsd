@@ -123,6 +123,10 @@ class ReengagementOffer < ActiveRecord::Base
     end
   end
 
+  def cache_by_app_id
+    ReengagementOffer.cache_by_app_id(self.app_id)
+  end
+
   def self.cache_by_app_id(app_id)
     app = App.find(app_id)
     if app.reengagement_campaign_enabled
