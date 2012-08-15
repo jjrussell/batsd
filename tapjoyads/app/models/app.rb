@@ -72,7 +72,7 @@ class App < ActiveRecord::Base
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_many :currencies, :order => 'ordinal ASC'
+  has_many :currencies, :order => 'ordinal ASC', :conditions => 'conversion_rate > 0'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
   has_many :rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded"
