@@ -22,7 +22,7 @@ class AppMetadataMapping < ActiveRecord::Base
   end
 
   def primary_offer
-    offers.first
+    is_primary? ? app.primary_offer : offers.first
   end
 
   def primary_rewarded_featured_offer

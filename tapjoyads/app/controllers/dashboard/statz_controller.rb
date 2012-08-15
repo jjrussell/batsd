@@ -79,8 +79,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def create
-    new_offer = @offer.clone
-    new_offer.update_attributes!(:created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :name_suffix => params[:suffix])
+    new_offer = @offer.clone_and_save! { |new_offer| new_offer.name_suffix = params[:suffix] }
     flash[:notice] = "Successfully created offer"
     redirect_to statz_path(new_offer)
   end

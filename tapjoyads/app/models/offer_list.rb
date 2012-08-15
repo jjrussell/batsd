@@ -134,26 +134,12 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    all_offers = offers.clone
-
-    all_offers.each do |offer|
+    offers.each do |offer|
       class << offer; attr_accessor :rejections; end
       offer.rejections = rejections_for(offer)
     end
 
-    all_offers = all_offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
-
-    # todo: we're duplicating code here, fix it
-    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
-      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks?
-        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
-        class << deeplink_offer; attr_accessor :rejections; end
-        deeplink_offer.rejections = rejections_for(deeplink_offer)
-      end
-    end
-
-    all_offers
+    offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
   end
 
   def sorted_optimized_offers_with_rejections

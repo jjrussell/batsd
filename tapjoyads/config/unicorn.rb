@@ -54,6 +54,10 @@ if GC.respond_to?(:copy_on_write_friendly=)
   GC.copy_on_write_friendly = true
 end
 
+if GC.respond_to?(:enable_stats)
+  GC.enable_stats
+end
+
 
 before_fork do |server, worker|
   # the following is highly recomended for Rails + "preload_app true"

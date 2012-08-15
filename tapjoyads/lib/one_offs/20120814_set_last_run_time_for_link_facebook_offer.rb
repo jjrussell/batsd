@@ -1,8 +1,7 @@
 class OneOffs
   def self.set_last_run_time_for_link_facebook_offer
-    GamerDevice.all.each do |gamer_device|
-      gamer = Gamer.find_by_id(gamer_device.gamer_id)
-      if gamer && gamer.facebook_id
+    Gamer.includes(:gamer_profile).where("gamer_profiles.facebook_id IS NOT NULL").find_each do |gamer|
+      gamer.gamer_devices.each do |gamer_device|
         device = Device.new(:key => gamer_device.device_id)
         device.set_last_run_time(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID)
         begin
