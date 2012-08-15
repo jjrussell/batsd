@@ -98,3 +98,16 @@ after_fork do |server, worker|
   defined?(VerticaCluster) and VerticaCluster.reset_connection
   $redis.client.reconnect
 end
+
+# Read environment settings from .env. This allows the environment to be changed during a unicorn
+# upgrade via USR2
+before_exec do |server|
+  env_file = File.join(app_dir, '.env')
+
+  if File.exists?(env_file)
+    File.foreach(env_file) do |line|
+      k,v = line.split('=').map{ |v| v.strip }
+      ENV[k]=v
+    end
+  end
+end
