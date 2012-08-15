@@ -115,17 +115,19 @@ class ReengagementOffer < ActiveRecord::Base
     "#{device.id}.#{id}"
   end
 
-  def self.find_all_in_cache_by_app_id(app_id)
-    Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
-  end
-
-  def cache_by_app_id
-    ReengagementOffer.cache_by_app_id(app_id)
+  def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
+    if do_lookup
+      App.find(app_id).try(:reengagement_campaign)
+    else
+      Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
+    end
   end
 
   def self.cache_by_app_id(app_id)
-    reengagement_offers = ReengagementOffer.visible.order_by_day.for_app(app_id).to_a
-    Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", reengagement_offers, false, 1.day)
+    app = App.find(app_id)
+    if app.reengagement_campaign_enabled
+      Mc.distributed_put("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}", app.reengagement_campaign.to_a, false, 1.day)
+    end
   end
 
   private
