@@ -43,8 +43,8 @@ class AppStore
       :id        => 'iphone.AppStore',
       :name      => 'App Store',
       :platform  => 'iphone',
-      :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
-      :info_url  => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8'
+      :store_url => 'http://itunes.apple.com/app//idSTORE_ID?mt=8',
+      :info_url  => 'http://itunes.apple.com/app//idSTORE_ID?mt=8',
     }),
     'android.GooglePlay' => AppStore.new({
       :id        => 'android.GooglePlay',
