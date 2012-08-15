@@ -28,7 +28,7 @@
       %tr{ :class => class_names }
         %td= admin_device.description
         %td.udid= admin_device.udid
-        %td= last_run_time
+        %td= last_run_time_link(last_run_time, @offer.item_id, admin_device.udid)
 
 - content_for :page_styles do
   :plain
