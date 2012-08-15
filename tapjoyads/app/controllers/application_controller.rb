@@ -253,14 +253,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def determine_link_affiliates
-    if App::TRADEDOUBLER_COUNTRIES.include?(geoip_data[:country])
-      @itunes_link_affiliate = 'tradedoubler'
-    else
-      @itunes_link_affiliate = 'linksynergy'
-    end
-  end
-
   def choose_experiment(experiment)
     params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end

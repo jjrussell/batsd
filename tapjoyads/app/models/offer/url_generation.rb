@@ -54,6 +54,8 @@ module Offer::UrlGeneration
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
+    country               = options.delete(:country)               { nil }
+
     options.delete(:language_code)
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -69,7 +71,7 @@ module Offer::UrlGeneration
     final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
     case item_type
     when 'App'
-      final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+      final_url = Linkshare.add_params(final_url, geoip_data[:country])
       final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
       if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
         subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='

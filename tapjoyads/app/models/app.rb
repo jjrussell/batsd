@@ -65,7 +65,32 @@ class App < ActiveRecord::Base
     },
   }
 
-  TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  #old countries, need to remove.
+  #TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
+  TRADEDOUBLER_COUNTRIES = Set.new(%w( AR BR GB UK BE BR CH DE ES FR IE IT NL SE ))
+  LINKSHARE_COUNTRIES = Set.new(%w( JP CA ))
+  DGM_COUNTRIES = Set.new(%w( NW AU ))
+
+  TRADEDOUBLER_TOKENS = { 'AR' => 'AR2145609',
+                          'BR' => 'BR2145607',
+                          'GB' => 'GB2079767',
+                          'UK' => 'UK2145605',
+                          'BE' => 'BE2081187',
+                          'BR' => 'BR2081199',
+                          'CH' => 'CH2081198',
+                          'DE' => 'DE2145621',
+                          'ES' => 'ES2081197',
+                          'FR' => 'FR2081184',
+                          'IE' => 'IE2081195',
+                          'IT' => 'IT2081189',
+                          'NL' => 'NL2081194',
+                          'SE' => 'SE2081185'}
+  LINKSHARE_TOKENS =    { 'JP' => 'Qr66oOu*yBY',
+                          'US' => 'OxXMC6MRBt4',
+                          'CA' => 'OxXMC6MRBt4'}
+  DGM_TOKENS =          { 'NW' => '37022',
+                          'AU' => '37022'}
+
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
 
