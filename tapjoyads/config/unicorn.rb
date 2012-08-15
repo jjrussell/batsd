@@ -102,7 +102,7 @@ before_exec do |server|
 
   if File.exists?(env_file)
     File.foreach(env_file) do |line|
-      k,v = line.split('=')
+      k,v = line.split('=').map{ |v| v.strip }
       ENV[k]=v
     end
   end
