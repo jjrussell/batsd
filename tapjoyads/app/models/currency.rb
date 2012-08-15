@@ -11,6 +11,8 @@ class Currency < ActiveRecord::Base
 
   NON_REWARDED_NAME = "Non-Rewarded"
 
+  NON_REWARDED_NAME = "Non-Rewarded"
+
   belongs_to :app
   belongs_to :partner
   belongs_to :currency_group
