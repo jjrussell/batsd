@@ -297,6 +297,25 @@ class ApplicationController < ActionController::Base
     Digest::SHA256.hexdigest(hash_bits.join(':'))
   end
 
+  # TODO make this more general so nobody needs to go WebRequest.new in a controller -KB
+  def generate_web_request
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offers'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_requested'
+    else
+      wr_path = 'offers'
+    end
+    web_request = WebRequest.new(:time => @now)
+    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.viewed_at = @now
+    web_request.offerwall_start_index = @start_index
+    web_request.offerwall_max_items = @max_items
+    web_request.raw_url = request.url
+
+    web_request
+  end
+
   def device_type
     @device_type ||= HeaderParser.device_type(request.user_agent)
   end
