@@ -29,6 +29,9 @@ class ApplicationController < ActionController::Base
 
   private
 
+  @@available_locales = I18n.available_locales.inject({}) {|hash, locale| hash[locale] = true; hash }
+  cattr_accessor :available_locales
+
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -85,10 +88,14 @@ class ApplicationController < ActionController::Base
   #
   # @return [String] Locale detected from the language_code param
   def get_locale
-    language_code = params[:language_code]
+    language_code = params[:language_code] ? params[:language_code].downcase.to_sym : nil
     if language_code.present?
-      language_code = language_code.split('-').first if language_code['-']
-      language_code.downcase
+      if available_locales[language_code]
+        language_code
+      else
+        language_code_str = language_code.to_s
+        language_code_str['-'] ? language_code_str.split('-').first.to_sym : nil
+      end
     end
   end
 
