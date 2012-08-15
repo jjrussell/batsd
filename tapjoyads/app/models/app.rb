@@ -88,6 +88,7 @@ class App < ActiveRecord::Base
     :source => :app_metadata,
     :conditions => "app_metadata_mappings.is_primary = true"
   has_many :reengagement_offers
+  has_one :non_rewarded, :class_name => 'Currency', :conditions => 'conversion_rate = 0 AND name = "Non-Rewarded"'
 
   belongs_to :partner
 
@@ -182,6 +183,19 @@ class App < ActiveRecord::Base
       :day_number => reengagement_campaign.length,
     }
     reengagement_offers.build(options.merge(default_options))
+  end
+
+  def build_non_rewarded
+    options = {
+      :conversion_rate  => 0,
+      :callback_url     => Currency::NO_CALLBACK_URL,
+      :id               => UUIDTools::UUID.random_create.hexdigest,
+      :name             => Currency::NON_REWARDED_NAME,
+      :app_id           => self.id,
+      :tapjoy_enabled   => false,
+      :partner          => self.partner,
+    }
+    Currency.new(options)
   end
 
   def reengagement_campaign

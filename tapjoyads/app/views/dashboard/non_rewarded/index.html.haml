@@ -1,0 +1,26 @@
+- @page_title = 'Non-Rewarded'
+
+%h3 Set Up Non-Rewarded
+
+= form_tag(toggle_app_non_rewarded_index_path, :method => :post) do
+  - unless @app.partner.accepted_publisher_tos?
+    .tos
+      %b You must agree to the Tapjoy Publisher Terms of Service before you can set up non-rewarded.
+      %table
+        %tr
+          %th
+            = check_box_tag :terms_of_service
+          %td
+            = label_tag :terms_of_service, raw("I agree to the Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}")
+
+  .toggle_non_rewarded
+    %br
+    %table
+      %tr
+        %td
+          Non-Rewarded Status:
+        %th
+          = @enabled ? 'ENABLED' : 'DISABLED'
+      %tr
+        %th
+          = submit_tag "#{@enabled ? 'Disable' : 'Enable' } Non-Rewarded"

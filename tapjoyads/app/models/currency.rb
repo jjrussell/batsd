@@ -9,6 +9,8 @@ class Currency < ActiveRecord::Base
   NO_CALLBACK_URL = 'NO_CALLBACK'
   SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL ]
 
+  NON_REWARDED_NAME = "Non-Rewarded"
+
   belongs_to :app
   belongs_to :partner
   belongs_to :currency_group
@@ -26,7 +28,7 @@ class Currency < ActiveRecord::Base
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
     if SPECIAL_CALLBACK_URLS.include?(value)
-      if record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?
+      if record.conversion_rate > 0 && (record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?)
         record.errors.add(attribute, 'cannot be managed if the app has multiple currencies')
       end
     else
