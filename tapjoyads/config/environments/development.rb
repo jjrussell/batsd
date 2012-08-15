@@ -36,9 +36,6 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
-tapjoy_credentials = YAML::load_file("#{Rails.root}/config/tapjoy_credentials.yaml")
-API_KEY = tapjoy_credentials['dev']['api_key']
-
 MEMCACHE_SERVERS             = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 

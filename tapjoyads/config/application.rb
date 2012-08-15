@@ -62,6 +62,8 @@ module Tapjoyad
     route_filenames.each do |route|
       config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
     end
+
+    config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || 'abbf046f7ca84372aff3fd5ec2d50c97'
   end
 
 end

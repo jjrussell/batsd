@@ -10,7 +10,7 @@ class ApiController < ApplicationController
 
     all_params = request.query_parameters.merge(request.request_parameters)
     sent_hmac = all_params.delete(:hmac_digest)
-    render_json_error(['Invalid HMAC digest'], 401) and return if sent_hmac != OpenSSL::HMAC.hexdigest(DIGEST_TYPE, API_KEY, all_params.sort.to_s)
+    render_json_error(['Invalid HMAC digest'], 401) and return if sent_hmac != OpenSSL::HMAC.hexdigest(DIGEST_TYPE, Rails.configuration.tapjoy_api_key, all_params.sort.to_s)
 
     sent_timestamp = params[:timestamp].to_f
     now = Time.zone.now.to_f

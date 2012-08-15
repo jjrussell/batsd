@@ -48,6 +48,8 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :notify
 
   config.i18n_js_cache = true
+
+  config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || raise('Please provide an API key')
 end
 
 begin
@@ -89,9 +91,6 @@ amazon = YAML::load_file("#{ENV['HOME']}/.tapjoy_aws_credentials.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
-
-tapjoy_credentials = YAML::load_file("#{ENV['HOME']}/.tapjoy_credentials.yaml")
-API_KEY = tapjoy_credentials['production']['api_key']
 
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50

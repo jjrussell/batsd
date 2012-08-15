@@ -10,7 +10,7 @@ describe Api::Data::DevicesController do
       @well_formed_params = {
         :timestamp => @timestamp
       }
-      @well_formed_params.merge!(:hmac_digest => OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'), API_KEY, @well_formed_params.sort.to_s))
+      @well_formed_params.merge!(:hmac_digest => OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'), Rails.configuration.tapjoy_api_key, @well_formed_params.sort.to_s))
     end
 
     it 'succeeds for a well formed request' do
@@ -38,7 +38,7 @@ describe Api::Data::DevicesController do
     end
 
     it 'invalidates the timestamp for a clock skew of more than 2 seconds' do
-      Time.zone.stub(:now).and_return(@timestamp - 1.seconds)
+      Time.zone.stub(:now).and_return(@timestamp - 3.seconds)
       get(:show, {:id => @device.id}.merge(@well_formed_params))
       JSON.parse(response.body)["success"].should be_false
     end
