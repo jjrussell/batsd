@@ -13,7 +13,7 @@ class GetAppImageController < ApplicationController
       redirect_to Offer.get_icon_url(:icon_id => icon_id, :source => :cloudfront) and return
     end
 
-    @icon = Mc.get_and_put("icon.s3.#{icon_id}", false, 1.day) do
+    @icon = Mc.get_and_put(Offer.icon_cache_key(icon_id), false, 1.day) do
       bucket = S3.bucket(BucketNames::TAPJOY)
       image_content = bucket.objects["icons/57/#{icon_id}.jpg"].read
       Base64.encode64 image_content

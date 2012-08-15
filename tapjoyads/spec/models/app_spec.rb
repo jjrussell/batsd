@@ -59,6 +59,28 @@ describe App do
     end
   end
 
+  describe '#launch_url' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    context 'with no custom_url_scheme' do
+      it 'returns the store url' do
+        @app.launch_url.should == @app.default_url_scheme
+        @app.custom_url_scheme = ''
+        @app.launch_url.should == @app.default_url_scheme
+      end
+    end
+
+    context 'with a custom_url_scheme' do
+      it 'returns the custom url' do
+        url = 'app_url://some/data'
+        @app.custom_url_scheme = url
+        @app.launch_url.should == url
+      end
+    end
+  end
+
   describe '#test_offer' do
     before :each do
       @app = FactoryGirl.create(:app)
@@ -674,6 +696,81 @@ describe App do
 
       it 'has available versions' do
         (@app.os_versions - %w( 7.0 )).should be_empty
+      end
+    end
+  end
+
+  describe '#primary_rewarded_featured_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_rewarded_featured_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary rewarded featured offer' do
+        @app.primary_rewarded_featured_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary rewarded featured offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_rewarded_featured_clone
+        @app.primary_rewarded_featured_offer.should === @offer
+        @app.primary_rewarded_featured_offer.should_not === other_offer
+      end
+    end
+  end
+
+  describe '#primary_non_rewarded_featured_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_non_rewarded_featured_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary non-rewarded featured offer' do
+        @app.primary_non_rewarded_featured_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary non-rewarded featured offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_non_rewarded_featured_clone
+        @app.primary_non_rewarded_featured_offer.should === @offer
+        @app.primary_non_rewarded_featured_offer.should_not === other_offer
+      end
+    end
+  end
+
+  describe '#primary_non_rewarded_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_non_rewarded_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary non-rewarded offer' do
+        @app.primary_non_rewarded_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary non-rewarded offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_non_rewarded_clone
+        @app.primary_non_rewarded_offer.should === @offer
+        @app.primary_non_rewarded_offer.should_not === other_offer
       end
     end
   end

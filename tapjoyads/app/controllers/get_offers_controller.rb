@@ -15,6 +15,16 @@ include GetOffersHelper
                                           '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
                                           'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
                                           'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
+  EXPERIMENT_EXCLUDED_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c',
+                                         '9783ef2a-a8e1-4b94-9076-c49855f30d3c',
+                                         '63db46fe-a127-4fe6-8d77-db5170ab49c4',
+                                         '5cf33072-1f29-47b0-bf44-4065b89e4429',
+                                         'b138a117-4b68-4e41-890a-2ea84a83ed38',
+                                         'edfebcb5-0415-47ce-940d-99dbf615eb45',
+                                         'a3b38c16-0ca7-494c-94a1-d70ef74fd0db',
+                                         '8dc63889-d563-4118-8a84-7795e403d34a',
+                                         '1e8c593e-2225-4360-b737-1e9747883f5d',
+                                         '2c2e1959-8af5-465f-b483-8a9511985bb9'])
 
   # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
   VIEW_A1 = {
@@ -104,7 +114,12 @@ include GetOffersHelper
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
 
-    if params[:json] == '1'
+    if params[:format] == 'html'
+      @offer = @offer_list.first
+      params[:offer_id] = @offer.id
+      @encrypted_params = ObjectEncryptor.encrypt(params)
+      render :layout => "iphone"
+    elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
       render :template => 'get_offers/installs_redirect'
@@ -138,6 +153,7 @@ include GetOffersHelper
     params[:type] = Offer::FEATURED_OFFER_TYPE
     params[:source] = 'featured'
     params[:rate_app_offer] = '0'
+    params[:format] = 'xml' unless params[:format] == 'html'
   end
 
   def setup
@@ -152,6 +168,7 @@ include GetOffersHelper
     @start_index = (params[:start] || 0).to_i
     @max_items = (params[:max] || 25).to_i
 
+    params[:impression_id] = UUIDTools::UUID.random_create.to_s
     params[:currency_id] = params[:app_id] if params[:currency_id].blank?
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
@@ -240,7 +257,7 @@ include GetOffersHelper
   def set_offerwall_experiment
     experiment = case params[:source]
       when 'offerwall'
-        :ranking
+        EXPERIMENT_EXCLUDED_APP_IDS.include?(params[:app_id]) ? nil : :ranking
       when 'tj_games'
         :show_rate_237
       else

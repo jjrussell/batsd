@@ -43,8 +43,8 @@ class AppStore
       :id        => 'iphone.AppStore',
       :name      => 'App Store',
       :platform  => 'iphone',
-      :store_url => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8',
-      :info_url  => 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=STORE_ID&mt=8'
+      :store_url => 'http://itunes.apple.com/app//idSTORE_ID?mt=8',
+      :info_url  => 'http://itunes.apple.com/app//idSTORE_ID?mt=8',
     }),
     'android.GooglePlay' => AppStore.new({
       :id        => 'android.GooglePlay',
@@ -322,9 +322,9 @@ class AppStore
         query_str   = URI::split(icon_link.attr('href'))[7]
         item_id     = query_str.split('&').select { |param| param =~ /id=/ }.first.split('=')[1]
         details     = item/"div"/"div.details"
-        price       = (item/:div/:div/:div/'a.buy-button').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
+        price       = (item/'.buy-offer').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
         title       = (details/"a.title").inner_html
-        publisher   = (details/'.goog-inline-block'/:a).inner_text
+        publisher   = (details/'.goog-inline-block'/:a).first.inner_text
         {
           :item_id      => item_id,
           :title        => title,

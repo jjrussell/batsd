@@ -13,6 +13,9 @@
 
     = css_tag('api/style')
 
+    - if HeaderParser.device_type(request.headers['user-agent']) == 'android'
+      = css_tag('api/android')
+
     = yield :page_head
 
   %body{:class => 'old noscroll'}

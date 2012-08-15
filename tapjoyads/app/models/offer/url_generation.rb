@@ -77,6 +77,11 @@ module Offer::UrlGeneration
     # now we'll replace macros and whatnot
     final_url = url.clone
 
+    ## TODO remove this when Apple stops whelering
+    if final_url =~ /phobos\.apple\.com\/WebObjects\/MZStore\.woa\/wa\/viewSoftware\?id=/
+      final_url.gsub!('phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=', 'itunes.apple.com/app//id')
+    end
+
     # deal with non-item_type-specific macros
     final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))

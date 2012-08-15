@@ -4,6 +4,7 @@ class DisplayAdController < ApplicationController
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
+    return unless verify_records([ @publisher_app ]) if params[:format] == 'html'
     if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
@@ -66,10 +67,10 @@ class DisplayAdController < ApplicationController
     # For SDK version <= 8.2.2, use high-res (aka 2x) version of 320x50 ad
     # (except certain scenarios)
     if ((params[:size].blank? || (params[:size] == '320x50' &&
-      params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
-      params[:action] != 'webview' && request.format != :json &&
-      params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
-        params[:size] = '640x100'
+        params[:version].to_s.version_less_than_or_equal_to?('8.2.2'))) &&
+        params[:action] != 'webview' && request.format != :json &&
+        params[:app_id] != '6b69461a-949a-49ba-b612-94c8e7589642') # TextFree
+      params[:size] = '640x100'
     end
 
     device = Device.new(:key => params[:udid])
@@ -82,7 +83,9 @@ class DisplayAdController < ApplicationController
     params[:publisher_app_id] = @publisher_app.id
     params[:displayer_app_id] = @publisher_app.id
     params[:source] = 'display_ad'
+    params[:format] = 'xml' unless params[:format] == 'html'
 
+    params[:impression_id] = UUIDTools::UUID.random_create.to_s
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
 
@@ -143,10 +146,12 @@ class DisplayAdController < ApplicationController
       end
 
       web_request.offer_id = offer.id
+      params[:offer_id] = offer.id
       web_request.path = 'display_ad_shown'
     end
 
     web_request.save
+    @encrypted_params = ObjectEncryptor.encrypt(params)
   end
 
   def get_ad_image(publisher, offer, width, height, currency, display_multiplier)
@@ -228,7 +233,7 @@ class DisplayAdController < ApplicationController
     image_label = get_image_label(text, text_area_size, font_size, font, true)
     img.composite!(image_label[0], icon_height + icon_padding * 4, border + 1, Magick::AtopCompositeOp)
 
-    offer_icon_blob = bucket.objects["icons/src/#{Offer.hashed_icon_id(offer.icon_id)}.jpg"].read rescue ''
+    offer_icon_blob = offer.icon_s3_object.read rescue ''
     if offer_icon_blob.present?
       offer_icon = Magick::Image.from_blob(offer_icon_blob)[0].resize(icon_height, icon_height)
       corner_mask_blob = bucket.objects["display/round_mask.png"].read

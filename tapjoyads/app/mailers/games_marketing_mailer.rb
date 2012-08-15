@@ -66,6 +66,7 @@ class GamesMarketingMailer < ActionMailer::Base
   end
 
   private
+
   def setup_emails(gamer, device_info = {})
     sendgrid_subscriptiontrack_text(:replace => "[unsubscribe_link]")
     @offer_data = {}
