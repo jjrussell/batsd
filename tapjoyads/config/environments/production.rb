@@ -91,7 +91,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
 
 tapjoy_credentials = YAML::load_file("#{ENV['HOME']}/.tapjoy_credentials.yaml")
-API_TOKEN = tapjoy_credentials['production']['api_token']
+API_KEY = tapjoy_credentials['production']['api_key']
 
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 50

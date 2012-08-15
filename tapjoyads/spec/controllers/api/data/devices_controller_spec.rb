@@ -1,9 +1,53 @@
 require 'spec_helper'
 
 describe Api::Data::DevicesController do
+
+  describe '#verify_auth_token' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+
+      @timestamp = Time.zone.now.to_f
+      @well_formed_params = {
+        :timestamp => @timestamp
+      }
+      @well_formed_params.merge!(:hmac_digest => OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'), API_KEY, @well_formed_params.sort.to_s))
+    end
+
+    it 'succeeds for a well formed request' do
+      Device.should_receive(:new).with(:key => @device.id).and_return(@device)
+      get(:show, {:id => @device.id}.merge(@well_formed_params))
+      JSON.parse(response.body)["success"].should be_true
+    end
+
+    it 'fails for invalid hmac digest' do
+      @well_formed_params[:hmac_digest] = 'INVALID_DIGEST'
+      get(:show, {:id => @device.id}.merge(@well_formed_params))
+      JSON.parse(response.body)["success"].should be_false
+    end
+
+    it 'fails for an altered request' do
+      @well_formed_params[:timestamp] = 10.0
+      get(:show, {:id => @device.id}.merge(@well_formed_params))
+      JSON.parse(response.body)["success"].should be_false
+    end
+
+    it 'expires after 10 seconds' do
+      Time.zone.stub(:now).and_return(@timestamp + 11.seconds)
+      get(:show, {:id => @device.id}.merge(@well_formed_params))
+      JSON.parse(response.body)["success"].should be_false
+    end
+
+    it 'invalidates the timestamp for a clock skew of more than 2 seconds' do
+      Time.zone.stub(:now).and_return(@timestamp - 1.seconds)
+      get(:show, {:id => @device.id}.merge(@well_formed_params))
+      JSON.parse(response.body)["success"].should be_false
+    end
+  end
+
   describe '#show' do
     before :each do
       @device = FactoryGirl.create(:device)
+      @controller.stub(:verify_auth_token).and_return(true)
     end
 
     it 'looks up the object' do
@@ -42,6 +86,7 @@ describe Api::Data::DevicesController do
     before :each do
       @device = FactoryGirl.create(:device)
       Device.should_receive(:new).with(:key => @device.id).and_return(@device)
+      @controller.stub(:verify_auth_token).and_return(true)
     end
 
     context 'with no app_id' do

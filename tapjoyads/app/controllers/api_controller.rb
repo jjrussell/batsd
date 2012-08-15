@@ -3,9 +3,18 @@ class ApiController < ApplicationController
   prepend_before_filter :verify_auth_token
 
   private
+  DIGEST_TYPE = OpenSSL::Digest::Digest.new('sha256')
 
   def verify_auth_token
-    render_json_error(['Invalid access token'], 401) if params[:auth_token].blank? || params[:auth_token] != API_TOKEN
+    return unless check_params([:hmac_digest, :timestamp])
+
+    all_params = request.query_parameters.merge(request.request_parameters)
+    sent_hmac = all_params.delete(:hmac_digest)
+    render_json_error(['Invalid HMAC digest'], 401) and return if sent_hmac != OpenSSL::HMAC.hexdigest(DIGEST_TYPE, API_KEY, all_params.sort.to_s)
+
+    sent_timestamp = params[:timestamp].to_f
+    now = Time.zone.now.to_f
+    render_json_error(['Invalid timestamp']) if (sent_timestamp > now + 2.0) || (sent_timestamp + 10.0 < now)
   end
 
   def get_object_type
@@ -54,8 +63,8 @@ class ApiController < ApplicationController
     render(:json => output_json.to_json, :status => status)
   end
 
-  def simpledb_object_to_json(obj, safe_attributes = [])
-    return {} if obj.nil?
+  def get_simpledb_object(obj, safe_attributes = [])
+    return nil if obj.nil? || obj.new_record?
     obj_hash = { :id => obj.key, :attributes => {} }
     safe_attributes.each do |attr|
       if obj.respond_to?(attr)
@@ -63,6 +72,6 @@ class ApiController < ApplicationController
         obj_hash[:attributes][attr] = attr_value unless attr_value.nil?
       end
     end
-    obj_hash.to_json
+    obj_hash
   end
 end
