@@ -56,14 +56,14 @@ describe Offer::UrlGeneration do
       end
     end
   end
-  
+
   describe '#instructions_url' do
     context "with protocol handler" do
       before :each do
         @generic = FactoryGirl.create(:generic_offer, :trigger_action => 'Protocol Handler')
         @offer = @generic.primary_offer
       end
-      
+
       it "should go to correct offer trigger url" do
         options = {
           :udid                  => '123',
@@ -76,7 +76,7 @@ describe Offer::UrlGeneration do
           :library_version       => 1,
           :os_version            => 5
         }
-        
+ 
         data = {
           :id                    => @offer.id,
           :udid                  => options[:udid],
