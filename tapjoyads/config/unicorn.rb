@@ -102,7 +102,7 @@ end
 # Read environment settings from .env. This allows the environment to be changed during a unicorn
 # upgrade via USR2
 before_exec do |server|
-  env_file = File.join(app_dir, '.env')
+  env_file = File.join(ENV['HOME'], '.tapjoyserver.env')
 
   if File.exists?(env_file)
     File.foreach(env_file) do |line|
