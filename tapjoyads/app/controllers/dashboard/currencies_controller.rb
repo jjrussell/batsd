@@ -8,6 +8,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
+    redirect_to app_non_rewarded_index_path(:app_id => @app.id) unless @currency.rewarded?
     @udids_to_check = @currency.get_test_device_ids.map do |id|
       device = Device.new(:key => id)
       if device.has_app?(@app.id)
@@ -36,12 +37,13 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
     end
 
     if @currency.safe_update_attributes(currency_params, safe_attributes)
-      flash[:notice] = 'Currency was successfully updated.'
-      redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
+      flash[:notice] = 'Successfully updated.'
+      redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id) if @currency.rewarded?
     else
       flash.now[:error] = 'Update unsuccessful'
-      render :action => :show
+      render :show and return if @currency.rewarded?
     end
+    redirect_to app_non_rewarded_index_path(:app_id => @app.id) unless @currency.rewarded?
   end
 
   def new
@@ -107,7 +109,11 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
     @app = find_app(params[:app_id])
 
     if params[:id]
-      @currency = @app.currencies.find(params[:id])
+      if @app.non_rewarded.try(:id) == params[:id]
+        @currency = @app.non_rewarded
+      else
+        @currency = @app.currencies.find(params[:id])
+      end
     end
   end
 
