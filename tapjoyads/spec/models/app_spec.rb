@@ -774,4 +774,152 @@ describe App do
       end
     end
   end
+
+  describe '#videos_cache_on?' do
+    before :each do
+      @app = FactoryGirl.create :app
+    end
+
+    context 'when the connection type is wifi' do
+      before :each do
+        @connection = 'wifi'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true if the caching mode is "auto"' do
+        @app.update_attributes(:videos_cache_mode => 'auto')
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      context 'and the caching mode is "manual"' do
+        before :each do
+          @app.update_attributes(:videos_cache_mode => 'manual')
+        end
+
+        it 'should be true if caching over wifi is enabled' do
+          @app.update_attributes(:videos_cache_wifi => true)
+          @app.should be_videos_cache_on(@connection)
+        end
+
+        it 'should not be true if caching over wifi is disabled' do
+          @app.update_attributes(:videos_cache_wifi => false)
+          @app.should_not be_videos_cache_on(@connection)
+        end
+      end
+    end
+
+    context 'when the connection type is mobile' do
+      before :each do
+        @connection = 'mobile'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true if the caching mode is "auto"' do
+        @app.update_attributes(:videos_cache_mode => 'auto')
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      context 'and the caching mode is "manual"' do
+        before :each do
+          @app.update_attributes(:videos_cache_mode => 'manual')
+        end
+
+        it 'should be true if caching over 3g is enabled' do
+          @app.update_attributes(:videos_cache_3g => true)
+          @app.should be_videos_cache_on(@connection)
+        end
+
+        it 'should not be true if caching over 3g is disabled' do
+          @app.update_attributes(:videos_cache_3g => false)
+          @app.should_not be_videos_cache_on(@connection)
+        end
+      end
+    end
+
+    context 'when the connection type is other' do
+      before :each do
+        @connection = 'other'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true if the caching mode is "auto"' do
+        @app.update_attributes(:videos_cache_mode => 'auto')
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      context 'and the caching mode is "manual"' do
+        before :each do
+          @app.update_attributes(:videos_cache_mode => 'manual')
+        end
+
+        it 'should not be true' do
+          @app.should_not be_videos_cache_on(@connection)
+        end
+      end
+    end
+  end
+
+  describe '#videos_stream_on?' do
+    before :each do
+      @app = FactoryGirl.create :app
+    end
+
+    context 'when the connection type is wifi' do
+      before :each do
+        @connection = 'wifi'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+
+      it 'should be true if videos are enabled' do
+        @app.should be_videos_stream_on(@connection)
+      end
+    end
+
+    context 'when the connection type is mobile' do
+      before :each do
+        @connection = 'mobile'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+
+      it 'should be true if streaming over 3g is enabled' do
+        @app.update_attributes(:videos_stream_3g => true)
+        @app.should be_videos_stream_on(@connection)
+      end
+
+      it 'should not be true if streaming over 3g is disabled' do
+        @app.update_attributes(:videos_stream_3g => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+    end
+
+    context 'when the connection type is other' do
+      before :each do
+        @connection = 'other'
+      end
+
+      it 'should not be true' do
+        @app.should_not be_videos_stream_on(@connection)
+      end
+    end
+  end
 end

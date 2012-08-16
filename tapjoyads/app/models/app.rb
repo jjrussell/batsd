@@ -391,6 +391,27 @@ class App < ActiveRecord::Base
 
   def videos_disabled?; not videos_enabled?; end
 
+  def videos_cache_on?(connection)
+    return false if videos_disabled?
+    return false if videos_cache_mode == 'auto'
+
+    case connection
+    when 'mobile' then videos_cache_3g?
+    when 'wifi'   then videos_cache_wifi?
+    else false
+    end
+  end
+
+  def videos_stream_on?(connection)
+    return false if videos_disabled?
+
+    case connection
+    when 'mobile' then videos_stream_3g?
+    when 'wifi'   then true
+    else false
+    end
+  end
+
   private
 
   def update_reengagements_with_enable_or_disable(enable)
