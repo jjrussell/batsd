@@ -20,6 +20,7 @@ class ServerWhitelist
     '63.215.202.74',                         # Commission Junction added 2012.05.22
     '209.234.184.1',                         # Commission Junction added 2012.05.22
     '216.34.207.225',                        # Commission Junction added 2012.05.22
+    '64.70.54.15',                           # Commission Junction added 2012.08.13
     '174.129.30.101',                        # HasOffers US East added 2012.05.22
     '50.16.235.30',                          # HasOffers US East added 2012.05.22
     '75.101.156.191',                        # HasOffers US East added 2012.05.22
@@ -46,6 +47,9 @@ class ServerWhitelist
     ['184.106.48.88', '184.106.48.89'],      # Lucky Pacific added 2012.07.10
     ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
     '50.16.235.141',                         # Ring Revenue added 2012.08.02
+    ['66.171.190.226', '66.171.190.231'],    # QuoteWizard added 2012.08.10
+    ['209.63.198.242' '209.63.198.245'],     # QuoteWizard added 2012.08.10
+    ['173.203.168.129', '173.203.168.138'],  # QuoteWizard added 2012.08.10
   ]
 
   def self.ip_whitelist_includes?(ip_address)
