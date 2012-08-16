@@ -501,5 +501,26 @@ describe GetOffersController do
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
     end
+
+    it "should respect the hide_videos parameter" do
+      get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+      assigns(:video_offer_ids).should be_empty
+
+      get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+      assigns(:video_offer_ids).should == ['abc', '123']
+    end
+
+    it 'respects the apps streaming setting' do
+      app = App.find(@params[:app_id])
+      App.stub(:find_in_cache => app)
+      app.update_attributes(:videos_stream_3g => true)
+
+      get(:index, @params.merge(:connection_type => 'mobile'))
+      assigns(:all_videos).should be_true
+
+      app.update_attributes(:videos_stream_3g => false)
+      get(:index, @params.merge(:connection_type => 'mobile'))
+      assigns(:all_videos).should be_false
+    end
   end
 end
