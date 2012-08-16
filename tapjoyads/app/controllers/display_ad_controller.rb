@@ -64,7 +64,7 @@ class DisplayAdController < ApplicationController
 
     now = Time.zone.now
 
-    # For SDK version <= 8.3.0, use high-res (aka 2x) version of 320x50 ad
+    # For SDK version < 8.3.0, use high-res (aka 2x) version of 320x50 ad
     # (except certain scenarios)
     if ((params[:size].blank? || (params[:size] == '320x50' &&
         params[:library_version].to_s.version_less_than?('8.3.0'))) &&
