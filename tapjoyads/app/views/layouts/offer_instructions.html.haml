@@ -4,7 +4,6 @@
   %head
     %title
       = @page_title
-    = javascript_include_tag 'jquery-1.4.2.min'
     = yield :included_stylesheets
     %style{ :type => 'text/css' }
       :plain
@@ -52,6 +51,7 @@
           box-shadow: 0 0 4px rgba(0,0,0, .5);
           font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
           margin: 15px auto;
+          padding-bottom: 6px;
           position: relative;
           width: 300px;
           z-index: 100;
@@ -124,7 +124,7 @@
           font-weight: bold;
           line-height: 115%;
           margin-top: 1px;
-          text-shadow: 0 0 5px rgba(255,255,255, .4), 0 1px 1px rgba(0,0,0, .6);
+          text-shadow: 0 -1px 0 #cc7f26, 0 1px 2px rgba(0,0,0,.6);
         }
 
         .ui-joy-panel .earn-block .free {
@@ -140,7 +140,7 @@
           padding: 1px 0 2px;
           position: absolute;
           text-align: center;
-          text-shadow: 0 1px 1px rgba(0,0,0, .5);
+          text-shadow: 0 1px 1px rgba(0,0,0,.55);
           text-transform: uppercase;
           width: 100%;
         }
@@ -150,6 +150,11 @@
           color: #6e6e6e;
           padding: 25px 15px 0;
           text-shadow: 0 1px 0 #fff;
+        }
+
+        .ui-joy-panel .instructions .content {
+          margin: 12px 0 24px;
+          text-shadow: 0 1px 0 rgba(255,255,255,.4);
         }
 
         .ui-joy-panel .instructions span {
@@ -194,26 +199,29 @@
           box-sizing: border-box;
           border: 1px solid #b37201;
           border-radius: 4px;
-          box-shadow: inset 0 1px 0 #fff736, 0 1px 0 rgba(0,0,0, .1);
+          box-shadow: inset 0 1px 0 #fff736, 0 1px 0 rgba(0,0,0,.1);
           padding: 7px;
           width: 100%;
         }
 
-        .reward-button a {
+        .reward-button a, .reward-button span {
           color: #fff;
+          cursor: pointer;
           display: block;
           font-size: 100%;
           font-weight: bold;
           text-align: center;
           text-decoration: none;
-          text-shadow: 0 -1px 0 #cc7f26;
+          text-shadow: 0 -1px 0 #cc7f26, 0 1px 2px rgba(0,0,0,.6);
         }
 
-        .grey-box .facebook {
+        .grey-box .facebook,
+        .grey-box .app-logo {
           margin: 10px 0 10px 85px;
         }
 
-        .grey-box .facebook img {
+        .grey-box .facebook img,
+        .grey-box .app-logo img {
           background-size: 40px 40px;
           border-radius: 4px;
           box-shadow: inset 0 0 4px rgba(0,0,0, .8), 0 1px 0 #fff;
@@ -222,6 +230,7 @@
         }
 
         .grey-box .facebook,
+        .grey-box .app-logo,
         .ui-joy-panel .grey-box .heading {
           display: inline-block;
           vertical-align: middle;
@@ -266,6 +275,10 @@
         .hidden, .hide {
           display: none;
         }
+
+        .click-action {
+          cursor: pointer;
+        }
         
         .fb_like div.count {
           padding-left: 6px;
@@ -286,6 +299,8 @@
       #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
 
     = yield
+
+    = javascript_include_tag 'jquery-1.4.2.min'
 
     = yield :included_javascripts
 
