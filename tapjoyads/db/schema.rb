@@ -737,12 +737,12 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
+    t.string   "app_metadata_id",                   :limit => 36
+    t.integer  "audition_factor",                                                               :default => 3,     :null => false
+    t.string   "source_offer_id",                   :limit => 36
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
-    t.integer  "audition_factor"
-    t.string   "app_metadata_id",                   :limit => 36
-    t.string   "source_offer_id",                   :limit => 36
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -1134,9 +1134,9 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "app_targeting",                                  :default => false, :null => false
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
-    t.boolean  "app_targeting",                                  :default => false, :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true

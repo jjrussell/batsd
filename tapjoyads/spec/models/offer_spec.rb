@@ -1642,4 +1642,10 @@ describe Offer do
       end
     end
   end
+
+  context "audition" do
+    it "should have default audition as Offer::Optimization::AUDITION_FACTORS[:medium]" do
+      Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
+    end
+  end
 end
