@@ -5,10 +5,14 @@ class VideosController < ApplicationController
   before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
-    @offer_list = offer_list.get_offers(0, 100).first
+    if !@hide_videos && @publisher_app.videos_cache_on?(params[:connection_type])
+      @offer_list = offer_list.get_offers(0, 100).first
 
-    if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
+      if @currency.get_test_device_ids.include?(params[:udid])
+        @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
+      end
+    else
+      @offer_list = []
     end
   end
 
@@ -42,6 +46,8 @@ class VideosController < ApplicationController
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
     return unless verify_records([ @publisher_app, @currency ])
+
+    @hide_videos = params[:hide_videos] =~ /^1|true$/
   end
 
   def offer_list
