@@ -47,6 +47,15 @@ class SyslogMessage
         @attributes[#{name.inspect}].present?
       end
     }
+
+    # Keep track of attribute keys in case anyone else is interested
+    # and no, this should not be a @@var
+    @attributes ||= self == SyslogMessage ? {} : superclass.attributes.dup
+    @attributes[name] = type
+  end
+
+  def self.attributes
+    @attributes
   end
 
   self.define_attr :time, :type => :time
