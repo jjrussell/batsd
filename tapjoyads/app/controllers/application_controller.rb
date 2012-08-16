@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  @@available_locales = I18n.available_locales.inject({}) {|hash, locale| hash[locale] = true; hash }
+  @@available_locales = I18n.available_locales.inject({}) {|hash, locale| hash[locale] = locale; hash }
   cattr_accessor :available_locales
 
   def store_response

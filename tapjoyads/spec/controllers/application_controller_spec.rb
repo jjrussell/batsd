@@ -35,9 +35,27 @@ describe ApplicationController do
 
     describe "#set_locale" do
       it "should use 'en' if params[:language_code] is an unknown locale", :set_locale do
-        @controller.params = {:langague_code => "no_such_locale"}
+        @controller.params = {:language_code => "no_such_locale"}
         @controller.send("set_locale")
         I18n.locale.should == :en
+      end
+
+      it "should use 'en' if params[:language_code] is 'en'", :set_locale do
+        @controller.params = {:language_code => "en"}
+        @controller.send("set_locale")
+        I18n.locale.should == :en
+      end
+
+      it "should use 'en' if params[:language_code] is 'en-US'", :set_locale do
+        @controller.params = {:language_code => "en-US"}
+        @controller.send("set_locale")
+        I18n.locale.should == :en
+      end
+
+      it "should use 'zh-cn' if params[:language_code] is 'zh-cn'", :set_locale do
+        @controller.params = {:language_code => "zh-cn"}
+        @controller.send("set_locale")
+        I18n.locale.should == :"zh-cn"
       end
     end
   end
