@@ -389,27 +389,6 @@ class App < ActiveRecord::Base
     @rewardable_currencies ||= currencies.reject{ |c| c.conversion_rate <= 0 }
   end
 
-  def videos_cache_on?(connection)
-    return false if videos_disabled?
-    return false if videos_cache_mode == 'auto'
-
-    case connection
-    when 'mobile' then videos_cache_3g?
-    when 'wifi'   then videos_cache_wifi?
-    else false
-    end
-  end
-
-  def videos_stream_on?(connection)
-    return false if videos_disabled?
-
-    case connection
-    when 'mobile' then videos_stream_3g?
-    when 'wifi'   then true
-    else false
-    end
-  end
-
   def videos_disabled?; not videos_enabled?; end
 
   private
