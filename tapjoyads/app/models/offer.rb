@@ -19,7 +19,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
-  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer DeeplinkOffer))
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -255,9 +255,9 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :use_server_whitelist?, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  delegate :trigger_action, :to => :generic_offer, :prefix => true, :allow_nil => true
+  delegate :trigger_action, :protocol_handler, :to => :generic_offer, :prefix => true, :allow_nil => true
   delegate :store_name, :to => :app_metadata, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :app_metadata_store_name
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :generic_offer_protocol_handler, :app_metadata_store_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand
