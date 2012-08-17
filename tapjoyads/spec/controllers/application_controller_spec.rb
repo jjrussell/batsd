@@ -27,6 +27,11 @@ describe ApplicationController do
         @controller.send("get_locale").should == :en
       end
 
+      it "should get 'zh' for 'zh' locale", :get_locale, :zh_cn do
+        @controller.params = {:language_code => "zh" }
+        @controller.send("get_locale").should == :"zh"
+      end
+
       it "should get 'zh-cn' for 'zh-cn' locale", :get_locale, :zh_cn do
         @controller.params = {:language_code => "zh-cn" }
         @controller.send("get_locale").should == :"zh-cn"

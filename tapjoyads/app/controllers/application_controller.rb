@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  @@available_locales = I18n.available_locales.inject({}) {|hash, locale| hash[locale] = locale; hash }
+  @@available_locales = I18n.available_locales.inject(Set.new) {|set, locale| set.add(locale) }
   cattr_accessor :available_locales
 
   def store_response
@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
   def get_locale
     language_code = params[:language_code] ? params[:language_code].downcase.to_sym : nil
     if language_code.present?
-      if available_locales[language_code]
+      if available_locales.include?(language_code)
         language_code
       else
         language_code_str = language_code.to_s
