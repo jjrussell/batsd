@@ -30,7 +30,6 @@ class ApplicationController < ActionController::Base
   private
 
   @@available_locales = I18n.available_locales.to_set
-  cattr_accessor :available_locales
 
   def store_response
     if response.content_type == 'application/json'
@@ -90,7 +89,7 @@ class ApplicationController < ActionController::Base
   def get_locale
     language_code = params[:language_code] ? params[:language_code].downcase.to_sym : nil
     if language_code.present?
-      if available_locales.include?(language_code)
+      if @@available_locales.include?(language_code)
         language_code
       else
         language_code_str = language_code.to_s
