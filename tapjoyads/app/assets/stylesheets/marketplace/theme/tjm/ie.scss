@@ -1,0 +1,18 @@
+$root_image_path: "/images/marketplace/themes/tjm";
+$image_path: "/images/marketplace/themes/tjm/logged_out";
+
+.logo {
+  img {
+    background: none !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{$image_path}/tapjoy_small.png',sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{$image_path}/tapjoy_small.png',sizingMethod='scale')";
+  }
+}
+
+#content {
+ .mobile-joy img {
+    background: none !important;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{$image_path}/mobile_joy_medium.png',sizingMethod='scale');
+    -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='#{$image_path}/mobile_joy_medium.png',sizingMethod='scale')";
+  }
+}
