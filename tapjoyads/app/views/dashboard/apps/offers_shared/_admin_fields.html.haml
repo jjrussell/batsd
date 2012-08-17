@@ -76,7 +76,7 @@
     #help_audition_factor.help ?
   %td
     - default_selection = @offer.audition_factor || Offer::Optimization::DEFAULT_AUDITION_FACTOR
-    - selections = options_for_select(Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }, default_selection)
+    - selections = options_for_select(Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }.map{|label, value| ["#{label} (#{value})", value]} , default_selection)
     = f.select(:audition_factor, selections)
     = error_message_on @offer, :audition_factor
 %tr.admin
