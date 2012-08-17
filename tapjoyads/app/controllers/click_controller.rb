@@ -17,6 +17,10 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def determine_link_affiliates
+    @itunes_link_affiliate = Linkshare.affiliate_token(geoip_data[:country])
+  end
+
   def reengagement
     create_click('reengagement')
     handle_pay_per_click

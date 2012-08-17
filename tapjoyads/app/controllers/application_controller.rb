@@ -203,7 +203,6 @@ class ApplicationController < ActionController::Base
     else
       @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
     end
-
     @cached_geoip_data
   end
 
@@ -251,10 +250,6 @@ class ApplicationController < ActionController::Base
       end
       @activity_logs = []
     end
-  end
-
-  def determine_link_affiliates
-    @itunes_link_affiliate = Linkshare.affiliate_type(geoip_data[:country])
   end
 
   def choose_experiment(experiment)
