@@ -1,0 +1,281 @@
+//-------------------------------------------
+// Line item structure
+//-------------------------------------------
+.line-item {
+  .hd {
+  }
+  .bd {
+  }
+  .ft {
+  }
+}
+.image-caption {
+  .bd {
+    width: auto;
+  }
+}
+
+.row-title {
+  display: none;
+}
+
+/**
+ * General
+ */
+.ui-list-action-label {
+  margin-top: 0;
+  padding-bottom: 2px;
+}
+
+.footer {
+  .links {
+    ul {
+      li {
+        font: bold .7em "Helvetica", Arial;
+      }
+    }
+  }
+
+  small {
+    font: normal .5em "Helvetica", Arial;
+  }
+}
+
+/**
+ * Earnings screen
+ */
+.app-info {
+
+  .big-title {
+    font-size: 1.2em;
+  }
+
+  .earn-install-run {
+    font-size: 0.95em;
+  }
+
+}
+
+.earn-btn {
+  top: 25px;
+
+  .collect {
+    font-size: 1.1em;
+    line-height: 1.2em;
+  }
+
+  .greenblock {
+    font-size: 1em;
+    line-height: 1.8em;
+  }
+}
+
+/**
+ * Marketplace
+ */
+.row {
+  padding: 0;
+  box-shadow: none;
+}
+
+#recommendationsRow,
+#favortiesRow {
+  display: none;
+}
+
+#recommendations .app,
+div.app {
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
+  margin: 0;
+  padding: 0;
+  width: auto !important;
+  float: none;
+  padding: 6px 0;
+  position: static;
+  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+  .app-icon {
+    margin: 0;
+    margin-left: 6px;
+    float: left;
+    width: 70px !important;
+    height: 70px !important;
+    background-size: 70px 70px !important;
+
+    img {
+      left: 1px;
+      width: 68px !important;
+      height: 68px !important;
+    }
+
+  }
+
+  .details {
+    margin-top: 12px;
+    margin-left: 4px;
+    text-align: left;
+    float: left;
+    display: inline-block;
+
+    span.title {
+      padding-left: 2px;
+      margin-bottom: 5px;
+      float: left;
+      white-space: normal;
+      text-overflow: clip;
+      overflow: auto;
+    }
+  }
+
+  small.publisher,
+  .btn {
+    display: none;
+  }
+
+  .ui-list-action {
+    display: block;
+    margin-top: 24px;
+    margin-right: 6px;
+
+    .ui-list-action-label {
+      font-size: 1.15em;
+      margin-top: 1px;
+      color: #454545;
+      text-shadow: 0 1px 0 #fff;
+    }
+  }
+  .ui-list-action.orange-action {
+    .ui-list-action-label {
+      color: #fff;
+    }
+  }
+  .myapps-earn {
+    display: inline-block;
+    padding: 4px 8px;
+    float: right;
+
+    .earn-text {
+      padding-top: 3px;
+      max-width: 80px;
+      text-shadow: 1px 1px 3px rgba(0,0,0, .5);
+    }
+  }
+}
+
+
+.row .app:last-child {
+  border-bottom: 0 !important;
+}
+
+.row .app:first-child {
+  border-top: 0 !important;
+}
+
+.ui-joy-carousel {
+  height: auto !important;
+  overflow: visible;
+}
+
+#recommendations .forward,
+#recommendations .back {
+  display: none !important;
+}
+
+.row {
+  box-shadow: inset 0 1px 10px rgba(255,255,255, 1) !important;
+}
+
+#tjmTopbar .section {
+  display: block;
+}
+
+#more-games, #review-form {
+  .app {
+    margin: 0;
+
+    .details {
+      margin-top: 15px;
+      text-align: left;
+      float: none;
+      display: inline-block;
+
+      span.title {
+        padding-left: 2px;
+        margin-bottom: 5px;
+      }
+
+      small.description {
+        word-wrap: break-word;
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+#recommendations .app,
+.app {
+
+  .app-icon {
+    width: 100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+}
+
+#earn {
+  .squircle.earn-mainapp-icon {
+    width:  100px !important;
+    height: 100px !important;
+    background-size: 100px 100px !important;
+
+    img {
+      left: 1px;
+      width: 98px !important;
+      height: 98px !important;
+    }
+  }
+
+  .squircle.earn-app-icon {
+    width:  70px !important;
+    height: 70px !important;
+    background-size: 70px 70px !important;
+
+    img {
+      left: 1px;
+      width: 68px !important;
+      height: 68px !important;
+    }
+  }
+  .action-item {
+    font-size: .9em;
+  }
+  .action-item.free {
+    font-size: .85em;
+  }
+  .wifi {
+    height: 28px;
+    width: 50px;
+    background-size: 100%;
+  }
+}
+
+#footer {
+  .links {
+    ul {
+      li {
+        a {
+          font-size: .5em;
+        }
+      }
+    }
+  }
+}
