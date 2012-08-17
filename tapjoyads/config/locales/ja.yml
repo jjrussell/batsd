@@ -468,7 +468,7 @@ ja:
       buy_currency_html: "%{amount} %{currency}を買う"
       earn_currency: "%{amount} %{currency}を獲得"
       earn: "獲得"
-      earn_more: "選んで楽しめるサービスがいろいろ！簡単にポイントを獲得！"
+      earn_more: "選んで楽しめるサービスがいろいろ！ 簡単にポイントを獲得！"
       deep_link_part_1: "ここをタップ"
       deep_link_part_2: "して、無料オファーをさらにゲット！"
       earn_currency_html: "%{amount} %{currency} を獲得"
@@ -491,7 +491,7 @@ ja:
       title: "%{currency}を獲得"
       wifi_required: "WiFi接続が必要"
       wifi_warning: "このアプリをダウンロードするにはWiFi接続が必要です。"
-      visit: "マイメニュー"
+      visit: "Tapjoy.comへ"
     shared:
       about_link: "Tapjoyについて"
       ads_by: "Powered by"
