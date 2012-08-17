@@ -318,7 +318,7 @@ describe Dashboard::OffersController do
         @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
           :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
           :exclusion_prerequisite_offer_ids, :tapjoy_enabled, :allow_negative_balance,
-          :pay_per_click, :name, :name_suffix, :show_rate, :min_conversion_rate,
+          :pay_per_click, :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
           :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
           :dma_codes, :regions, :carriers, :cities ]
         @controller.stub(:find_app).with(@app.id).and_return(@app)

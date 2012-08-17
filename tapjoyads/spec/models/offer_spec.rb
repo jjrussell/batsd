@@ -472,7 +472,7 @@ describe Offer do
     fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
                                   'name', 'url', 'price', 'bid', 'payment',
                                   'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
+                                  'device_types', 'countries', 'audition_factor',
                                   'age_rating', 'multi_complete', 'featured',
                                   'publisher_app_whitelist', 'direct_pay', 'reward_value',
                                   'third_party_data', 'payment_range_low',
@@ -1640,6 +1640,12 @@ describe Offer do
       it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
         @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
       end
+    end
+  end
+
+  context "audition" do
+    it "should have default audition as Offer::Optimization::AUDITION_FACTORS[:medium]" do
+      Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
     end
   end
 end

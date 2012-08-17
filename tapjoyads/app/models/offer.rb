@@ -49,6 +49,7 @@ class Offer < ActiveRecord::Base
   OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
                                     active
                                     allow_negative_balance
+                                    audition_factor
                                     created_at
                                     daily_budget
                                     hidden
