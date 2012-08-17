@@ -90,7 +90,7 @@ describe Offer::UrlGeneration do
           :os_version            => options[:os_version]
         }
 
-        expected = "#{API_URL}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
+        expected = "#{API_URL_EXT}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
         @offer.instructions_url(options).should == expected
       end
     end
