@@ -616,6 +616,34 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "news_coverages", ["id"], :name => "index_news_coverages_on_id", :unique => true
   add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
+  create_table "notification_settings", :id => false, :force => true do |t|
+    t.string   "id",             :limit => 36, :null => false
+    t.string   "gamer_id",       :limit => 36, :null => false
+    t.integer  "inapp_switches", :limit => 8
+    t.integer  "email_switches", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_settings", ["gamer_id"], :name => "index_notification_settings_on_gamer_id", :unique => true
+  add_index "notification_settings", ["id"], :name => "index_notification_settings_on_id", :unique => true
+
+  create_table "notifications", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36,                :null => false
+    t.string   "gamer_id",    :limit => 36,                :null => false
+    t.integer  "channel",                                  :null => false
+    t.integer  "action",                                   :null => false
+    t.string   "values"
+    t.string   "params"
+    t.integer  "inapp_state",               :default => 0
+    t.integer  "email_state",               :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notifications", ["gamer_id"], :name => "index_notifications_on_gamer_id"
+  add_index "notifications", ["id"], :name => "index_notifications_on_id", :unique => true
+
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "partner_id", :limit => 36, :null => false
@@ -737,11 +765,11 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
     t.text     "account_manager_notes"
+    t.string   "app_metadata_id",                   :limit => 36
+    t.string   "source_offer_id",                   :limit => 36
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
-    t.string   "app_metadata_id",                   :limit => 36
-    t.string   "source_offer_id",                   :limit => 36
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -1133,9 +1161,9 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "app_targeting",                                  :default => false, :null => false
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
-    t.boolean  "app_targeting",                                  :default => false, :null => false
   end
 
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true

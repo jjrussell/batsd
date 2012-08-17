@@ -22,6 +22,11 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
+  def get_age_gating_url(offer, options = {})
+    data = params.merge({ :id => offer.id, :options => options, :currency_id => @currency.id })
+    "#{API_URL}/offer_age_gating?data=#{ObjectEncryptor.encrypt(data)}"
+  end
+
   def get_click_url(offer, options = {})
     click_url = offer.click_url(
       :publisher_app      => @publisher_app,

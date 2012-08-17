@@ -1,0 +1,102 @@
+- age_gating = 21
+- @page_title = t('text.age_gating.title', :age_gating => age_gating)
+
+#body
+  = t('text.age_gating.instructions')
+  %br
+  %span{ :id => "error_message" }
+  %br
+  %br
+  %input{ :type => "text", :id => "mm", :maxlength => 2, :size => 4, :placeholder => "MM", :onkeypress => "return isNumberKey(event)", :value => 5 }
+  = "/"
+  %input{ :type => "text", :id => "dd", :maxlength => 2, :size => 4, :placeholder => "DD", :onkeypress => "return isNumberKey(event)", :value => 29 }
+  = "/"
+  %input{ :type => "text", :id => "yyyy", :maxlength => 4, :size => 6, :placeholder => "YYYY", :onkeypress => "return isNumberKey(event)", :value => 2000 }
+  %br
+  %br
+  %br
+  %a{ :href => @click_url, :onclick => "return checkAge(#{age_gating})" }
+    = t('text.age_gating.continue_link')
+
+
+.clear
+
+- content_for :page_javascript do
+  :plain
+    function isNumberKey(evt) {
+      var charCode = (evt.which) ? evt.which : event.keyCode
+      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+      }
+      return true;
+    }
+
+    function checkAge(min_age) {
+      var mm = parseInt(document.getElementById("mm").value);
+      var dd = parseInt(document.getElementById("dd").value);
+      var yyyy = parseInt(document.getElementById("yyyy").value);
+
+      if (!mm || !dd || !yyyy) {
+        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.empty_input')}";
+        return false;
+      }
+
+      var gating_date = new Date((yyyy + min_age), mm, dd);
+      var today = new Date;
+
+      if ((today.getTime() - gating_date.getTime()) <= 0) {
+        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.too_yong')}";
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+- content_for :page_styles do
+  :plain
+    * {
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      font-weight: inherit;
+      font-style: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      vertical-align: baseline;
+      text-decoration: none;
+    }
+
+    body {
+      margin-bottom: 10px;
+    }
+
+    a {
+      color: white;
+    }
+
+    input {
+      text-align: center;
+    }
+
+    #body {
+      text-align: center;
+      margin: 10px 3%;
+      background: black;
+      border: 1px solid #d5d5d5;
+      color: white;
+      font-size: 24px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      padding: 100px;
+    }
+
+    #error_message {
+      color: red;
+    }
+
+    .clear {
+      clear: both;
+    }
+
+
+

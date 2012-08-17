@@ -816,6 +816,10 @@ class Offer < ActiveRecord::Base
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
   end
 
+  def age_gate?
+    age_rating && video_offer?
+  end
+
   private
 
   def calculated_min_bid

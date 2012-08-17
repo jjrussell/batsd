@@ -204,6 +204,13 @@ en:
     select:
       prompt: "Please select"
   text:
+    age_gating:
+      continue_link: "Continue"
+      error_message:
+        empty_input: "Please enter your date of birth."
+        too_yong: "Sorry, you are too young to access this content!"
+      instructions: "Enter your date of birth (MM/DD/YYYY):"
+      title: "Age Gate %{age_gating}+"
     featured:
       download: Download
       download_and_run: "Just download and run"
