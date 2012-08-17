@@ -1,6 +1,4 @@
 class Linkshare
-  #old countries, need to remove.
-  #TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   TRADEDOUBLER_COUNTRIES = Set.new(%w( AR BR GB UK BE BR CH DE ES FR IE IT NL SE ))
   LINKSHARE_COUNTRIES = Set.new(%w( JP CA ))
   DGM_COUNTRIES = Set.new(%w( NW AU ))
@@ -25,20 +23,19 @@ class Linkshare
   DGM_TOKENS =          { 'NW' => '37022',
                           'AU' => '37022'}
 
-
   def self.add_params(url, country = nil)
     if url =~ /^http:\/\/itunes\.apple\.com/
-      if TRADEDOUBLER_COUNTRIES.include?(@country)
-        @url_params = 'partnerId=2003&tduid=#{App::TRADEDOUBLER_TOKENS[@country.upcase]}'
-      else if LINKSHARE_COUNTRIES.include?(@country)
-        @url_params = 'partnerId=30&siteID=#{LINKSHARE_TOKENS[@country.upcase]}'
-      else if DGM_COUNTRIES.include?(@country)
-        @url_params = 'partnerId=1002&affToken=#{DGM_TOKENS[@country.upcase]}'
+      if TRADEDOUBLER_COUNTRIES.include?(country)
+        url_params = "partnerId=2003&tduid=#{App::TRADEDOUBLER_TOKENS[country.upcase]}"
+      elsif LINKSHARE_COUNTRIES.include?(country)
+        url_params = "partnerId=30&siteID=#{LINKSHARE_TOKENS[country.upcase]}"
+      elsif DGM_COUNTRIES.include?(country)
+        url_params = "partnerId=1002&affToken=#{DGM_TOKENS[country.upcase]}"
       end
+
       #if country is not in any of the above lists, do we default to a country?
-      url += url =~ /^http:\/\/itunes\.apple\.com\/.*\?/ ? '&' + @url_params : '?' + @url_params unless @url_params.nil?
+      url += url =~ /^http:\/\/itunes\.apple\.com\/.*\?/ ? '&' + url_params : '?' + url_params unless url_params.nil?
     end
     url
   end
-
 end
