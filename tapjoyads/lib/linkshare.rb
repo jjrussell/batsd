@@ -25,13 +25,13 @@ class Linkshare
     'AU' => '37022',
   }
 
-  def self.add_params(url, country = 'US')
+  def self.add_params(url, itunes_link_affiliate = 'linkshare')
     country = country.to_s.upcase
     token   = REGION_TOKENS[country] || REGION_TOKENS['US']
 
     if url =~ /^http:\/\/itunes\.apple\.com/
       url_params =
-        case affiliate_type(country)
+        case itunes_link_affiliate
         when 'tradedoubler'
           "partnerId=2003&tduid="
         when 'dgm'
