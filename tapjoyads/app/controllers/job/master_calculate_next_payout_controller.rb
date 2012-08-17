@@ -1,5 +1,5 @@
 class Job::MasterCalculateNextPayoutController < Job::JobController
-  MAX_FAILURE_PERCENTAGE = 0.10
+  MAX_FAILURE_RATIO = 0.10
 
   after_filter :save_activity_logs, :only => [:index]
 
@@ -17,7 +17,7 @@ class Job::MasterCalculateNextPayoutController < Job::JobController
       rescue => exception
         failure_count += 1
         Airbrake.notify(exception, airbrake_request_data)
-        if failure_count.to_f / partners.count.to_f  > MAX_FAILURE_PERCENTAGE
+        if failure_count.to_f / partners.count.to_f  > MAX_FAILURE_RATIO
           raise "Maximum tolerable failure count exceeded. Last failure: " + exception
         end
       end
