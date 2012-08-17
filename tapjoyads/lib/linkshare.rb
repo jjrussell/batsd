@@ -1,6 +1,6 @@
 class Linkshare
   TRADEDOUBLER_COUNTRIES = Set.new(%w( AR BR GB UK BE BR CH DE ES FR IE IT NL SE ))
-  LINKSHARE_COUNTRIES = Set.new(%w( JP CA ))
+  LINKSHARE_COUNTRIES = Set.new(%w( US CA JP ))
   DGM_COUNTRIES = Set.new(%w( NW AU ))
 
   REGION_TOKENS = {
@@ -27,22 +27,36 @@ class Linkshare
 
   def self.add_params(url, country = 'US')
     country = country.to_s.upcase
-    token   = REGION_TOKENS[country.upcase] || REGION_TOKENS['US']
+    token   = REGION_TOKENS[country] || REGION_TOKENS['US']
 
     if url =~ /^http:\/\/itunes\.apple\.com/
-      if TRADEDOUBLER_COUNTRIES.include?(country)
-        url_params = "partnerId=2003&tduid=#{token}"
-      elsif LINKSHARE_COUNTRIES.include?(country)
-        url_params = "partnerId=30&siteID=#{token}"
-      elsif DGM_COUNTRIES.include?(country)
-        url_params = "partnerId=1002&affToken=#{token}"
-      end
+      url_params =
+        case affiliate_type(country)
+        when 'tradedoubler'
+          "partnerId=2003&tduid="
+        when 'dgm'
+          "partnerId=1002&affToken="
+        else # when 'linkshare'
+          "partnerId=30&siteID="
+        end
 
       separator = url =~ /\?/ ? '&' : '?'
 
-      "#{url}#{separator}#{url_params}"
+      "#{url}#{separator}#{url_params}#{token}"
     else
       url
+    end
+  end
+
+  def self.affiliate_type(country)
+    if TRADEDOUBLER_COUNTRIES.include?(country)
+      'tradedoubler'
+    elsif LINKSHARE_COUNTRIES.include?(country)
+      'linkshare'
+    elsif DGM_COUNTRIES.include?(country)
+      'dgm'
+    else
+      'linksynergy'
     end
   end
 end

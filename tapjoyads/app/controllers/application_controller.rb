@@ -253,6 +253,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def determine_link_affiliates
+    @itunes_link_affiliate = Linkshare.affiliate_type(geoip_data[:country])
+  end
+
   def choose_experiment(experiment)
     params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end

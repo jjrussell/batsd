@@ -5,6 +5,7 @@ class ClickController < ApplicationController
   before_filter :reengagement_setup, :only => [ :reengagement ]
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
+  before_filter :determine_link_affiliates, :only => :app
 
   after_filter :save_web_request, :except => [ :test_offer, :test_video_offer ]
 
