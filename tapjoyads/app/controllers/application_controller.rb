@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 
   private
 
-  @@available_locales = I18n.available_locales.inject(Set.new) {|set, locale| set.add(locale) }
+  @@available_locales = I18n.available_locales.to_set
   cattr_accessor :available_locales
 
   def store_response
