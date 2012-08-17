@@ -54,8 +54,6 @@ module Offer::UrlGeneration
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
-    country               = options.delete(:country)               { nil }
-
     options.delete(:language_code)
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
