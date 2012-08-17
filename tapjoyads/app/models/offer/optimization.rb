@@ -6,7 +6,7 @@ module Offer::Optimization
     :medium => 3,
     :medium_high => 4,
     :high => 5,
-    :very_high => 10 #not a typo, requested by Joey to work with his Audition Factor algorithm
+    :very_high => 10
   }
 
   DEFAULT_AUDITION_FACTOR = AUDITION_FACTORS[:medium]
