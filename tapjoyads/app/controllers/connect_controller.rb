@@ -1,5 +1,7 @@
 class ConnectController < ApplicationController
+  include AdminDeviceLastRun::ControllerExtensions
 
+  tracks_admin_devices # :only => [:index]
   before_filter :reject_banned_udids
 
   def index
@@ -23,15 +25,17 @@ class ConnectController < ApplicationController
       end
     end
 
-    web_request = WebRequest.new
-    web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
+    # ivar for the benefit of tracks_admin_devices
+    @web_request = WebRequest.new
+    @web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
+    @web_request.raw_url = request.url
 
     path_list = device.handle_connect!(params[:app_id], params)
     path_list.each do |path|
-      web_request.path = path
+      @web_request.path = path
     end
 
-    web_request.save
+    @web_request.save
 
     if sdkless_supported?
       @sdkless_clicks = device.sdkless_clicks

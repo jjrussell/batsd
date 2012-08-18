@@ -22,7 +22,7 @@
             .step
               = steps.first
             .padit
-              #click-action-1
+              #click-action-1.click-action
                 #b-facebook
                   %fb:like{ :href => @complete_action_url, :send => "false", :layout => "button_count", :width => "90", :show_faces => "false" }
         - if steps.second.present?
@@ -31,6 +31,7 @@
           %li#step-2.animate
             #count-1.animate.count 2
             .step
-              = link_to steps.second, @complete_action_url
+              #click-action-2.click-action
+                = steps.second
     .padit
       .error.hide

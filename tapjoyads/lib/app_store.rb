@@ -52,7 +52,7 @@ class AppStore
       :platform  => 'android',
       :store_url => 'market://search?q=STORE_ID',
       :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID',
-      :exclusive => true
+      :exclusive => false
     }),
     'android.GFan' => AppStore.new({
       :id        => 'android.GFan',
@@ -322,9 +322,9 @@ class AppStore
         query_str   = URI::split(icon_link.attr('href'))[7]
         item_id     = query_str.split('&').select { |param| param =~ /id=/ }.first.split('=')[1]
         details     = item/"div"/"div.details"
-        price       = (item/:div/:div/:div/'a.buy-button').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
+        price       = (item/'.buy-offer').attr('data-docPrice').gsub(/[^\d\.\-]/,'').to_f
         title       = (details/"a.title").inner_html
-        publisher   = (details/'.goog-inline-block'/:a).inner_text
+        publisher   = (details/'.goog-inline-block'/:a).first.inner_text
         {
           :item_id      => item_id,
           :title        => title,

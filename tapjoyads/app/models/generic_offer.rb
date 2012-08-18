@@ -15,6 +15,7 @@
 #  instructions     :text
 #  category         :string(255)
 #  trigger_action   :string(255)
+#  protocol_handler :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base
@@ -24,7 +25,7 @@ class GenericOffer < ActiveRecord::Base
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
-  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like', 'Protocol Handler' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -43,6 +44,14 @@ class GenericOffer < ActiveRecord::Base
   scope :visible, :conditions => { :hidden => false }
 
   json_set_field :exclusion_prerequisite_offer_ids
+
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
+  end
 
   private
 

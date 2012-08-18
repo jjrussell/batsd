@@ -38,6 +38,8 @@ module Offer::UrlGeneration
 
     if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
       "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Protocol Handler'
+      "#{API_URL_EXT}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
     elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Login'
       "#{API_URL_EXT}/offer_triggered_actions/fb_login?data=#{ObjectEncryptor.encrypt(data)}"
     else
@@ -59,6 +61,12 @@ module Offer::UrlGeneration
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+
+    ## TODO remove this when Apple stops whelering
+    if final_url =~ /phobos\.apple\.com\/WebObjects\/MZStore\.woa\/wa\/viewSoftware\?id=/
+      final_url.gsub!('phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=', 'itunes.apple.com/app//id')
+    end
+
     final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
     case item_type

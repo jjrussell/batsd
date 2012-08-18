@@ -56,4 +56,44 @@ describe Offer::UrlGeneration do
       end
     end
   end
+
+  describe '#instructions_url' do
+    context "with protocol handler" do
+      before :each do
+        @generic = FactoryGirl.create(:generic_offer, :trigger_action => 'Protocol Handler')
+        @offer = @generic.primary_offer
+      end
+
+      it "should go to correct offer trigger url" do
+        options = {
+          :udid                  => '123',
+          :publisher_app_id      => '456',
+          :currency              => @currency,
+          :click_key             => 'abcedefg',
+          :language_code         => 'en',
+          :itunes_link_affiliate => 'hijklmno',
+          :display_multiplier    => 1,
+          :library_version       => 1,
+          :os_version            => 5
+        }
+ 
+        data = {
+          :id                    => @offer.id,
+          :udid                  => options[:udid],
+          :publisher_app_id      => options[:publisher_app_id],
+          :click_key             => options[:click_key],
+          :itunes_link_affiliate => options[:itunes_link_affiliate],
+          :currency_id           => @currency.id,
+          :language_code         => options[:language_code],
+          :display_multiplier    => options[:display_multiplier],
+          :library_version       => options[:library_version],
+          :os_version            => options[:os_version]
+        }
+
+        expected = "#{API_URL_EXT}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
+        @offer.instructions_url(options).should == expected
+      end
+    end
+  end
+
 end

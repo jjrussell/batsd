@@ -1,11 +1,14 @@
 #!/usr/bin/env ruby
 
-min_mem = 500
+min_mem = 1500
 workers_to_kill = 4
 base_dir = File.expand_path("../../", __FILE__)
 pid = `#{base_dir}/server/unicorn_master_pid.rb`
 hostname = `hostname`.strip
 server_type = `#{base_dir}/server/server_type.rb`
+
+# Kill off workers without a master
+system('/usr/local/bin/kill_singular_workers')
 
 if pid == ''
   env = case server_type
@@ -23,7 +26,7 @@ else
     free_mem  = `free -m`.split("\n")[2].split[3].to_i
   end
   count = 0
-  while free_mem < min_mem && count < workers_to_kill
+  while free_mem < min_mem && count <= workers_to_kill
     puts "dropping worker count (##{count}) for memory issue (#{hostname})"
     `kill -TTOU #{pid}`
     sleep 2
