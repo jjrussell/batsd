@@ -72,6 +72,15 @@
     = error_message_on @offer, :name_suffix
 %tr.admin
   %th
+    = f.label(:audition_factor, "Audition Factor")
+    #help_audition_factor.help ?
+  %td
+    - default_selection = @offer.audition_factor || Offer::Optimization::DEFAULT_AUDITION_FACTOR
+    - selections = options_for_select(Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }.map{|label, value| ["#{label} (#{value})", value]} , default_selection)
+    = f.select(:audition_factor, selections)
+    = error_message_on @offer, :audition_factor
+%tr.admin
+  %th
     = f.label(:show_rate)
     #help_show_rate.help ?
   %td
@@ -136,6 +145,7 @@
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
+  #help_audition_factor_content{ :name => 'Audition Factor' } Defines how prominently to display the offer when testing for performance
   #help_show_rate_content{ :name => 'Show Rate' } The probability that this offer will be shown on an offerwall impression. This is set automatically by the system and is used for budgeting. Allowed values are 0.0 - 1.0.
   #help_min_conversion_rate_content{ :name => 'Min CVR' } This is used to prevent low conversion rate warnings. A warning will only be issued if the conversion rate falls below this threshold. Allowed values are blank or 0.0 - 1.0
   #help_dma_codes_content{ :name => 'DMA Codes' } Targets this offer to these designated market areas (DMAs). Must be an array of DMA codes or blank for no targeting. i.e. [807,515]
