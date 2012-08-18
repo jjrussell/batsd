@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
   #
   # @return [String] Locale detected from the language_code param
   def get_locale
-    language_code = params[:language_code] ? params[:language_code].downcase.to_sym : nil
+    language_code = params[:language_code].present? ? params[:language_code].downcase.to_sym : nil
     if language_code.present?
       if @@available_locales.include?(language_code)
         language_code
