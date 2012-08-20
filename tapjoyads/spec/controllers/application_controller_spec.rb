@@ -45,6 +45,12 @@ describe ApplicationController do
         I18n.locale.should == :en
       end
 
+      it "should use 'en' if params[:language_code] is an empty string", :set_locale do
+        @controller.params = {:language_code => ''}
+        @controller.send("set_locale")
+        I18n.locale.should == :en
+      end
+
       it "should use 'en' if params[:language_code] is an unknown locale", :set_locale do
         @controller.params = {:language_code => "no_such_locale"}
         @controller.send("set_locale")
