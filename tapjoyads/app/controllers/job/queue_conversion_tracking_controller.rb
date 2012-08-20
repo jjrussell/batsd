@@ -80,6 +80,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     reward = Reward.new(:key => click.reward_key)
+    return if reward.send_currency_status?
     reward.put('created', installed_at_epoch)
     reward.type                   = click.type
     reward.publisher_app_id       = click.publisher_app_id
@@ -109,11 +110,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     reward.device_type            = click.device_type
     reward.offerwall_rank         = click.offerwall_rank
 
-    begin
-      reward.save!(:expected_attr => { 'type' => nil })
-    rescue Simpledb::ExpectedAttributeError => e
-      return
-    end
+    reward.save!
 
     begin
       checker.process_conversion(reward)
