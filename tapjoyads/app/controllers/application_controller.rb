@@ -29,6 +29,8 @@ class ApplicationController < ActionController::Base
 
   private
 
+  @@available_locales = I18n.available_locales.to_set
+
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -85,10 +87,14 @@ class ApplicationController < ActionController::Base
   #
   # @return [String] Locale detected from the language_code param
   def get_locale
-    language_code = params[:language_code]
+    language_code = params[:language_code].present? ? params[:language_code].downcase.to_sym : nil
     if language_code.present?
-      language_code = language_code.split('-').first if language_code['-']
-      language_code.downcase
+      if @@available_locales.include?(language_code)
+        language_code
+      else
+        language_code_str = language_code.to_s
+        language_code_str['-'] ? language_code_str.split('-').first.to_sym : nil
+      end
     end
   end
 
@@ -203,7 +209,6 @@ class ApplicationController < ActionController::Base
     else
       @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
     end
-
     @cached_geoip_data
   end
 
@@ -250,14 +255,6 @@ class ApplicationController < ActionController::Base
         activity_log.save
       end
       @activity_logs = []
-    end
-  end
-
-  def determine_link_affiliates
-    if App::TRADEDOUBLER_COUNTRIES.include?(geoip_data[:country])
-      @itunes_link_affiliate = 'tradedoubler'
-    else
-      @itunes_link_affiliate = 'linksynergy'
     end
   end
 

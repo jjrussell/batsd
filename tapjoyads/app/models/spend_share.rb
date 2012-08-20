@@ -13,10 +13,7 @@
 class SpendShare < ActiveRecord::Base
   include UuidPrimaryKey
 
-  FIXED_RATIO = 0.91
-  ALGORITHM_TRANSITION_DATE = Time.parse('2012-07-27 00:00:00 UTC').to_date
-
-  OLD_MIN_RATIO = 0.8
+  FIXED_RATIO = 0.85
 
   validates_numericality_of :ratio, :uncapped_ratio, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_uniqueness_of :effective_on
@@ -52,25 +49,7 @@ class SpendShare < ActiveRecord::Base
   end
 
   def self.create_for_date!(date)
-    if date < ALGORITHM_TRANSITION_DATE  # old algorithm was based on actual costs
-      sum_network_costs    = NetworkCost.for_date(date).sum(:amount)
-      orders               = Order.created_between(date - 30.days, date)
-      sum_all_orders       = orders.collect(&:amount).sum + sum_network_costs
-      sum_website_orders   = orders.select{ |o| o.payment_method == 0 }.collect(&:amount).sum
-      sum_marketing_orders = orders.select{ |o| o.payment_method == 2 || o.payment_method == 5 }.collect(&:amount).sum + sum_network_costs
-
-      if sum_all_orders == 0
-        uncapped_ratio = 1
-      else
-        uncapped_ratio = (sum_all_orders - sum_marketing_orders - (0.025 * sum_website_orders)) / sum_all_orders
-      end
-
-      ratio = [uncapped_ratio, OLD_MIN_RATIO].max
-    else # now a fixed percentage
-      ratio = FIXED_RATIO
-      uncapped_ratio = FIXED_RATIO
-    end
-    create!(:effective_on => date, :ratio => ratio, :uncapped_ratio => uncapped_ratio)
+    create!(:effective_on => date, :ratio => FIXED_RATIO, :uncapped_ratio => FIXED_RATIO)
   end
 
 end
