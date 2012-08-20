@@ -119,6 +119,14 @@ class SurveyOffer < ActiveRecord::Base
     offer
   end
 
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
+  end
+
   private
 
   def create_primary_offer
@@ -156,7 +164,7 @@ class SurveyOffer < ActiveRecord::Base
     reload
     bucket = S3.bucket(BucketNames::TAPJOY)
     image_data = bucket.objects['icons/survey-blue.png'].read
-    primary_offer.save_icon!(image_data)
+    save_icon!(image_data)
   end
 
   def update_offer

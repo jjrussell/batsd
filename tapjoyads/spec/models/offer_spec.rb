@@ -37,6 +37,189 @@ describe Offer do
     @offer.payment.should == 500
   end
 
+  describe "#save_icon!" do
+    before :each do
+      @image_data = "fake image data"
+      @icon_id = "icon_id"
+
+      img = Magick::Image.from_blob(read_asset('round_mask.png', 'display'))
+      Magick::Image.stub(:from_blob).and_return(img)
+
+      bucket = FakeBucket.new
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
+
+      @secondary_offer = @offer.clone
+      @secondary_offer.save!
+    end
+
+    context "given only image data" do
+      before :each do
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
+      end
+
+      context "for a primary offer" do
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@offer.app_metadata_id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
+
+            @offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses id for guid" do
+            @offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@offer.id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
+
+            @offer.icon_id_override.should be_nil
+          end
+        end
+      end
+
+      context "for a secondary offer" do
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.app_metadata_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
+
+            @secondary_offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses item_id for guid" do
+            @secondary_offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.item_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
+
+            @secondary_offer.icon_id_override.should be_nil
+          end
+        end
+      end
+
+      context "for an offer with icon_id_override already set" do
+        it "uses icon_id_override for guid" do
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+          @offer.save_icon!(@image_data)
+
+          @offer.icon_id_override.should == guid
+        end
+      end
+    end
+
+    context "with override = true" do
+      it "uses new guid for icon_id_override" do
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
+
+        guid = "guid"
+        UUIDTools::UUID.should_receive(:random_create).once.and_return(guid)
+        Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        @offer.save_icon!(@image_data, true)
+
+        @offer.icon_id_override.should == guid
+        @offer.changed?.should be_false # offer was saved
+      end
+    end
+  end
+
+  describe '.remove_icon!' do
+    before :each do
+      @icon_id = 'icon_id'
+
+      bucket = FakeBucket.new
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
+    end
+
+    context "for a direct-parent offer" do
+      context "without icon_id_override set" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
+        end
+      end
+
+      context "with icon_id_override set" do
+        before :each do
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        end
+
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+
+        context "without pre-existing image" do
+          it "still unsets icon_id_override" do
+            @s3object.should_receive(:delete).never
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+      end
+    end
+
+    context "for an indirect-parent App offer" do
+      before :each do
+        parent = Factory :action_offer
+        @action_offer = parent.primary_offer
+      end
+
+      context "with icon_id_override_set to app_metadata_id" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
+
+          @action_offer.icon_id_override.should == @action_offer.app_metadata_id
+        end
+      end
+
+      context "with icon_id_override != app_id" do
+        before :each do
+          guid = "guid"
+          @action_offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        end
+
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @action_offer.remove_icon!
+
+            @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
+          end
+        end
+
+        context "without pre-existing image" do
+          it "still resets icon_id_override to app_id" do
+            @s3object.should_receive(:delete).never
+            @action_offer.remove_icon!
+
+            @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
+          end
+        end
+      end
+    end
+  end
+
   describe "applies discounts correctly" do
     context "to_json an app offer item" do
       before :each do
@@ -223,15 +406,6 @@ describe Offer do
     @offer.update_attributes({ :carriers => '[]' })
     @offer.reload
     @offer.send(:carriers_reject?, mobile_carrier_code).should == false
-  end
-
-  it "returns proper linkshare account url" do
-    url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
-    linkshare_url = Linkshare.add_params(url)
-    linkshare_url.should == "#{url}&partnerId=30&siteID=OxXMC6MRBt4"
-
-    linkshare_url = Linkshare.add_params(url, 'tradedoubler')
-    linkshare_url.should == "#{url}&partnerId=2003&tduid=UK1800811"
   end
 
   it "rejects based on source" do
@@ -815,7 +989,6 @@ describe Offer do
       end
     end
 
-
     context "when SDK-less is enabled" do
       before :each do
         @offer.device_types = %w( android ).to_json
@@ -892,6 +1065,31 @@ describe Offer do
     end
   end
 
+  describe '#clone_and_save!' do
+    it 'uses fresh created_at, updated_at, and tapjoy_enabled values' do
+      new_offer = @offer.clone_and_save!
+      new_offer.created_at.should_not == @offer.created_at
+      new_offer.updated_at.should_not == @offer.updated_at
+      new_offer.tapjoy_enabled.should be_false
+    end
+
+    it 'copies overridden icon' do
+      @offer = @offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+
+      @offer.icon_id_override = UUIDTools::UUID.random_create.to_s
+
+      new_offer = @offer.clone
+      new_offer.should_receive(:save_icon!).with("image_data", true).and_return(nil)
+      @offer.stub(:clone).and_return(new_offer)
+
+      s3object = FakeObject.new("")
+      s3object.write("image_data")
+      @offer.stub(:icon_s3_object).and_return(s3object)
+
+      @offer.clone_and_save!
+    end
+  end
+
   context "An App Offer for a free app" do
     before :each do
       Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
@@ -921,12 +1119,10 @@ describe Offer do
       end
 
       it "copies s3 assets over when cloned" do
-        class S3Object
-          def read; return "image_data"; end
-        end
-
-        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(S3Object.new)
-        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(S3Object.new)
+        s3object = FakeObject.new("")
+        s3object.write("image_data")
+        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(s3object)
+        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(s3object)
 
         @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
         @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
@@ -1111,19 +1307,19 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests
         end
@@ -1147,7 +1343,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1157,7 +1353,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1167,7 +1363,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1435,6 +1631,12 @@ describe Offer do
       it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
         @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
       end
+    end
+  end
+
+  context "audition" do
+    it "should have default audition as Offer::Optimization::AUDITION_FACTORS[:medium]" do
+      Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
     end
   end
 end

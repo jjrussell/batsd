@@ -148,4 +148,12 @@ module StatzHelper
 
     tr_classes.compact.join(' ')
   end
+
+  def last_run_time_link(text, item_id, udid)
+    if text != 'Never'
+      link_to(text, device_last_run_statz_path(item_id, udid))
+    else
+      text
+    end
+  end
 end

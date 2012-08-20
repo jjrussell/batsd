@@ -24,6 +24,7 @@ Tapjoyad::Application.routes.draw do
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
+  match 'impression'         => 'impression#index'
   resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
       match :index
@@ -45,6 +46,7 @@ Tapjoyad::Application.routes.draw do
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
   match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
+  match 'offer_triggered_actions/load_app' => 'offer_triggered_actions#load_app'
 
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'
