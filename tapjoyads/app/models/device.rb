@@ -31,6 +31,7 @@ class Device < SimpledbShardedResource
   SKIP_TIMEOUT = 4.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
+  MAX_OVERWRITES_TRACKED = 100000
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -275,12 +276,9 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
-      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
-        timestamp = Time.zone.now
-        redis_key = "device_identifier.#{timestamp.to_f.to_s}"
-        $redis.setex(redis_key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
-        $redis.sadd("device_identifier", redis_key)
-        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", redis_key)
+      if !device_identifier.new_record? && device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        data = {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid, :timestamp => Time.zone.now}.to_json
+        $redis.rpop('all_device_identifiers_overwrites') if $redis.lpush('all_device_identifiers_overwrites', data) > MAX_OVERWRITES_TRACKED
       end
       device_identifier.udid = key
       device_identifier.save!
