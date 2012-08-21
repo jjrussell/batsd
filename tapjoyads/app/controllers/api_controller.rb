@@ -3,18 +3,17 @@ class ApiController < ApplicationController
   prepend_before_filter :verify_auth_token
 
   private
-  DIGEST_TYPE = OpenSSL::Digest::Digest.new('sha256')
 
   def verify_auth_token
-    return unless check_params([:hmac_digest, :timestamp])
+    return unless check_params([:signature, :signature_method])
 
     all_params = request.query_parameters.merge(request.request_parameters)
-    sent_hmac = all_params.delete(:hmac_digest)
-    render_json_error(['Invalid HMAC digest'], 401) and return if sent_hmac != OpenSSL::HMAC.hexdigest(DIGEST_TYPE, Rails.configuration.tapjoy_api_key, all_params.sort.to_s)
+    sent_hmac = all_params.delete(:signature)
+    sign_method = all_params.delete(:signature_method) { 'hmac_sha256' }
 
-    sent_timestamp = params[:timestamp].to_f
-    now = Time.zone.now.to_f
-    render_json_error(['Invalid timestamp']) if (sent_timestamp > now + 2.0) || (sent_timestamp + 10.0 < now)
+    unless Signage::ExpiringSignature.new(sign_method, Rails.configuration.tapjoy_api_key).matches?(all_params, sent_hmac)
+      render_json_error(['Invalid HMAC digest'], 401) and return
+    end
   end
 
   def get_object_type
@@ -46,7 +45,7 @@ class ApiController < ApplicationController
 
   def check_params(required_params)
     if required_params.any?{ |param| params[param].blank? }
-      render_json_error(["Missing required params"])
+      render_json_error(["Missing required params"], 422)
       return false
     end
     true
@@ -58,6 +57,7 @@ class ApiController < ApplicationController
 
   def render_formatted_response(success, data = nil, errors = [], status = 200)
     output_json = {:success => success}
+    status = (status == 200 ? 500 : status) unless success
     output_json[:data] = data unless data.nil?
     output_json[:errors] = errors if errors.any?
     render(:json => output_json.to_json, :status => status)

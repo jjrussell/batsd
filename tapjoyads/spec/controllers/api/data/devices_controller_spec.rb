@@ -7,10 +7,8 @@ describe Api::Data::DevicesController do
       @device = FactoryGirl.create(:device)
 
       @timestamp = Time.zone.now.to_f
-      @well_formed_params = {
-        :timestamp => @timestamp
-      }
-      @well_formed_params.merge!(:hmac_digest => OpenSSL::HMAC.hexdigest(OpenSSL::Digest::Digest.new('sha256'), Rails.configuration.tapjoy_api_key, @well_formed_params.sort.to_s))
+      @well_formed_params = { :data => 'TEST_DATA' }
+      Signage::ExpiringSignature.new('hmac_sha256', Rails.configuration.tapjoy_api_key).sign_hash!(@well_formed_params)
     end
 
     it 'succeeds for a well formed request' do
@@ -20,25 +18,19 @@ describe Api::Data::DevicesController do
     end
 
     it 'fails for invalid hmac digest' do
-      @well_formed_params[:hmac_digest] = 'INVALID_DIGEST'
+      @well_formed_params[:signature] = 'INVALID_DIGEST'
       get(:show, {:id => @device.id}.merge(@well_formed_params))
       JSON.parse(response.body)["success"].should be_false
     end
 
     it 'fails for an altered request' do
-      @well_formed_params[:timestamp] = 10.0
+      @well_formed_params[:data] = 'NEW_DATA'
       get(:show, {:id => @device.id}.merge(@well_formed_params))
       JSON.parse(response.body)["success"].should be_false
     end
 
     it 'expires after 10 seconds' do
-      Time.zone.stub(:now).and_return(@timestamp + 11.seconds)
-      get(:show, {:id => @device.id}.merge(@well_formed_params))
-      JSON.parse(response.body)["success"].should be_false
-    end
-
-    it 'invalidates the timestamp for a clock skew of more than 2 seconds' do
-      Time.zone.stub(:now).and_return(@timestamp - 3.seconds)
+      Time.zone.stub(:now).and_return(@timestamp + 301.seconds)
       get(:show, {:id => @device.id}.merge(@well_formed_params))
       JSON.parse(response.body)["success"].should be_false
     end
