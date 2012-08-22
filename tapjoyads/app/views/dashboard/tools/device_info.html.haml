@@ -223,18 +223,14 @@
               %li= link_to('show more', '#', :class => 'show-click-detail')
               - click_info_ul(click, reward)
       %tr
-        - if permitted_to? :view_pub_user_account, :dashboard_tools
-          %td{:colspan => 7}
-        - else
-          %td{:colspan => 6}
+        %td{:colspan => num_columns}
         #dates_range
-          - next_start_date = (@start_date - Device::RECENT_CLICKS_RANGE).strftime("%Y-%m-%d")
-          - next_end_date = @start_date.strftime("%Y-%m-%d")
-          = label_tag(:start_date)
+          - next_start_date = (@start_date - Device::RECENT_CLICKS_RANGE).strftime("%m/%d/%Y")
+          - next_end_date = @start_date.strftime("%m/%d/%Y")
           = text_field_tag(:start_date, next_start_date, {:id => 'start_date', :size => 10})
-          = label_tag(:end_date)
+          \-
           = text_field_tag(:end_date, next_end_date, {:id => 'end_date', :size => 10})
-          = button_to "Show Clicks", '#', :class => 'search-clicks'
+          = submit_tag "Search Clicks", {:class => 'search-clicks', :onclick => '#'}
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
@@ -283,3 +279,5 @@
 
 - content_for :page_styles do
   :plain
+    #start_date {font-size: 16px; }
+    #end_date   {font-size: 16px; }
