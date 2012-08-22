@@ -205,6 +205,7 @@ en:
       prompt: "Please select"
   text:
     age_gating:
+      close_link: "Close"
       continue_link: "Continue"
       error_message:
         empty_input: "Please enter your date of birth."

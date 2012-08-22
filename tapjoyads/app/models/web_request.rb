@@ -130,6 +130,7 @@ class WebRequest < SyslogMessage
   self.define_attr :rule_message
   self.define_attr :store_name
   self.define_attr :connection_type
+  self.define_attr :date_of_birth
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -188,6 +189,7 @@ class WebRequest < SyslogMessage
     self.plugin               = params[:plugin]
     self.store_name           = params[:store_name]
     self.connection_type      = params[:connection_type]
+    self.date_of_birth        = params[:date_of_birth]
   end
 
   def save
