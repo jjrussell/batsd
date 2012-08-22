@@ -175,7 +175,7 @@
       %tr
         %th{:colspan => num_columns, :style => "text-align: center;"}
           - text = "Clicks from #{@start_date.to_s(:pub)} - #{@end_date.to_s(:pub)}"
-          %b= text
+          %h2.date-range-header= text
       %tr
         %td Clicked
         %td Installed
@@ -282,3 +282,4 @@
   :plain
     #start_date {font-size: 16px; }
     #end_date   {font-size: 16px; }
+    .date-range-header {font-size: 18px; weight: bold; }
