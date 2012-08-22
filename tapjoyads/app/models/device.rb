@@ -358,15 +358,14 @@ class Device < SimpledbShardedResource
   end
 
   def recent_clicks(start_time_at = (Time.zone.now-RECENT_CLICKS_RANGE).to_f, end_time_at = Time.zone.now.to_f)
-    last_click, clicks = nil, []
+    clicks = []
     self.recent_click_hashes.each do |recent_click_hash|
       click = Click.find(recent_click_hash['id'])
-      next if click.nil? || (last_click && last_click.id == click.id)
+      next unless click
       clicked_at = click.clicked_at.to_f
       cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
       unless cutoff
         clicks << click
-        last_click = click
       end
     end
     clicks
