@@ -163,7 +163,7 @@ class GetOffersController < ApplicationController
     @papaya_offers = {}
 
     # Allow developers to override app settings to hide videos
-    if params[:hide_videos] == 'true'
+    if params[:hide_videos] =~ '^1|true$'
       @all_videos = false
       @video_offer_ids = []
     else
