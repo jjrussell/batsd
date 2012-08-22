@@ -272,7 +272,7 @@
         $('.search-clicks').click(function(){
           var start_date = $('#start_date').val();
           var end_date = $('#end_date').val();
-          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date
+          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date + '#{params[:use_recent_clicks] ? '&use_recent_clicks=1' : ''}'
           return false;
         });
       });
