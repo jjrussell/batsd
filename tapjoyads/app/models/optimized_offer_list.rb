@@ -40,11 +40,19 @@ class OptimizedOfferList
       offers
     end
 
+    def delete_cached_offer_list(cache_key)
+      group = 0
+      until (offer_group = Mc.distributed_get("#{cache_key}.#{group}")).nil?
+        Mc.distributed_delete("#{cache_key}.#{group}")
+        group += 1
+      end
+    end
+
     def cache_offer_list(key)
       # TODO: New relic alerts?
       cache_key = cache_key_for_options(options_for_s3_key(key))
       offers_json = s3_json_offer_data(key)
-      Mc.distributed_delete("#{cache_key}.0") and return if offers_json['enabled'] == 'false'
+      delete_cached_offer_list(cache_key) and return if offers_json['enabled'] == 'false'
 
       offers = offers_json['offers'].collect do |offer_hash|
         begin
