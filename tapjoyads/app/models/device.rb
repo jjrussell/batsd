@@ -364,9 +364,7 @@ class Device < SimpledbShardedResource
       next unless click
       clicked_at = click.clicked_at.to_f
       cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
-      unless cutoff
-        clicks << click
-      end
+      clicks << click unless cutoff
     end
     clicks
   end
