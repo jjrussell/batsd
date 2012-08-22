@@ -14,15 +14,10 @@ class Dashboard::VideosController < Dashboard::DashboardController
 
   def update_options
     @app.videos_enabled    = params[:app][:videos_enabled]
+    @app.videos_cache_auto = params[:app][:videos_cache_auto]
     @app.videos_cache_wifi = params[:app][:videos_cache_wifi]
     @app.videos_cache_3g   = params[:app][:videos_cache_3g]
     @app.videos_stream_3g  = params[:app][:videos_stream_3g]
-
-    if params[:app][:video_cache_mode] == '1'
-      @app.videos_cache_mode = 'auto'
-    else
-      @app.videos_cache_mode = 'manual'
-    end
 
     if @app.save
       render :json => {:success => true}, :status => :ok

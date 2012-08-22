@@ -124,28 +124,28 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
   add_index "approvals", ["state", "event"], :name => "index_approvals_on_state_and_event"
 
   create_table "apps", :id => false, :force => true do |t|
-    t.string   "id",                            :limit => 36,                     :null => false
-    t.string   "partner_id",                    :limit => 36,                     :null => false
-    t.string   "name",                                                            :null => false
+    t.string   "id",                            :limit => 36,                    :null => false
+    t.string   "partner_id",                    :limit => 36,                    :null => false
+    t.string   "name",                                                           :null => false
     t.string   "platform"
     t.integer  "color"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "rotation_direction",                          :default => 0,      :null => false
-    t.integer  "rotation_time",                               :default => 0,      :null => false
-    t.boolean  "hidden",                                      :default => false,  :null => false
+    t.integer  "rotation_direction",                          :default => 0,     :null => false
+    t.integer  "rotation_time",                               :default => 0,     :null => false
+    t.boolean  "hidden",                                      :default => false, :null => false
     t.string   "enabled_rating_offer_id",       :limit => 36
-    t.string   "secret_key",                                                      :null => false
+    t.string   "secret_key",                                                     :null => false
     t.integer  "active_gamer_count",                          :default => 0
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
-    t.boolean  "uses_non_html_responses",                     :default => false,  :null => false
+    t.boolean  "uses_non_html_responses",                     :default => false, :null => false
     t.string   "custom_url_scheme"
-    t.boolean  "videos_enabled",                              :default => true,   :null => false
-    t.string   "videos_cache_mode",                           :default => "auto", :null => false
-    t.boolean  "videos_cache_wifi",                           :default => false,  :null => false
-    t.boolean  "videos_cache_3g",                             :default => false,  :null => false
-    t.boolean  "videos_stream_3g",                            :default => false,  :null => false
+    t.boolean  "videos_enabled",                              :default => true,  :null => false
+    t.boolean  "videos_cache_auto",                           :default => false, :null => false
+    t.boolean  "videos_cache_wifi",                           :default => false, :null => false
+    t.boolean  "videos_cache_3g",                             :default => false, :null => false
+    t.boolean  "videos_stream_3g",                            :default => false, :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

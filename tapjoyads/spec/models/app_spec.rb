@@ -790,25 +790,14 @@ describe App do
         @app.should_not be_videos_cache_on(@connection)
       end
 
-      it 'should not be true if the caching mode is "auto"' do
-        @app.update_attributes(:videos_cache_mode => 'auto')
-        @app.should_not be_videos_cache_on(@connection)
+      it 'should be true if caching over wifi is enabled' do
+        @app.update_attributes(:videos_cache_wifi => true)
+        @app.should be_videos_cache_on(@connection)
       end
 
-      context 'and the caching mode is "manual"' do
-        before :each do
-          @app.update_attributes(:videos_cache_mode => 'manual')
-        end
-
-        it 'should be true if caching over wifi is enabled' do
-          @app.update_attributes(:videos_cache_wifi => true)
-          @app.should be_videos_cache_on(@connection)
-        end
-
-        it 'should not be true if caching over wifi is disabled' do
-          @app.update_attributes(:videos_cache_wifi => false)
-          @app.should_not be_videos_cache_on(@connection)
-        end
+      it 'should not be true if caching over wifi is disabled' do
+        @app.update_attributes(:videos_cache_wifi => false)
+        @app.should_not be_videos_cache_on(@connection)
       end
     end
 
@@ -822,25 +811,14 @@ describe App do
         @app.should_not be_videos_cache_on(@connection)
       end
 
-      it 'should not be true if the caching mode is "auto"' do
-        @app.update_attributes(:videos_cache_mode => 'auto')
-        @app.should_not be_videos_cache_on(@connection)
+      it 'should be true if caching over 3g is enabled' do
+        @app.update_attributes(:videos_cache_3g => true)
+        @app.should be_videos_cache_on(@connection)
       end
 
-      context 'and the caching mode is "manual"' do
-        before :each do
-          @app.update_attributes(:videos_cache_mode => 'manual')
-        end
-
-        it 'should be true if caching over 3g is enabled' do
-          @app.update_attributes(:videos_cache_3g => true)
-          @app.should be_videos_cache_on(@connection)
-        end
-
-        it 'should not be true if caching over 3g is disabled' do
-          @app.update_attributes(:videos_cache_3g => false)
-          @app.should_not be_videos_cache_on(@connection)
-        end
+      it 'should not be true if caching over 3g is disabled' do
+        @app.update_attributes(:videos_cache_3g => false)
+        @app.should_not be_videos_cache_on(@connection)
       end
     end
 
@@ -854,19 +832,8 @@ describe App do
         @app.should_not be_videos_cache_on(@connection)
       end
 
-      it 'should not be true if the caching mode is "auto"' do
-        @app.update_attributes(:videos_cache_mode => 'auto')
+      it 'should not be true' do
         @app.should_not be_videos_cache_on(@connection)
-      end
-
-      context 'and the caching mode is "manual"' do
-        before :each do
-          @app.update_attributes(:videos_cache_mode => 'manual')
-        end
-
-        it 'should not be true' do
-          @app.should_not be_videos_cache_on(@connection)
-        end
       end
     end
   end
