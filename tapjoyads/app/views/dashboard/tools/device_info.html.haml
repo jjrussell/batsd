@@ -260,10 +260,11 @@
     });
 
   - if @device
+    - use_recent_clicks_param = "#{params[:use_recent_clicks] ? '&use_recent_clicks=1' : ''}"
     :plain
       $(function($){
         $('.show-recent-clicks').click(function(){
-          location.href = '#{device_info_tools_path(:udid => @device.key)}';
+          location.href = '#{device_info_tools_path(:udid => @device.key)}' + '#{use_recent_clicks_param}'
           return false;
         });
       });
@@ -272,7 +273,7 @@
         $('.search-clicks').click(function(){
           var start_date = $('#start_date').val();
           var end_date = $('#end_date').val();
-          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date + '#{params[:use_recent_clicks] ? '&use_recent_clicks=1' : ''}'
+          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date + '#{use_recent_clicks_param}'
           return false;
         });
       });
