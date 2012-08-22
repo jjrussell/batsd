@@ -1,8 +1,6 @@
 class Experiments
 
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(a_optimization b_optimization)
-
-  EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS }
+  EXPERIMENTS = {}
 
   def self.choose(udid, options = {})
     if udid.present?
