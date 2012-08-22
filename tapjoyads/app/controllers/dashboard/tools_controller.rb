@@ -239,7 +239,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
           "clicked_at > '#{@start_date.to_i}'",
           "clicked_at < '#{@end_date.to_i}'",
         ].join(' and ')
-        puts "****   conditions = ", conditions
         @clicks = []
         NUM_CLICK_DOMAINS.times do |i|
           Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
