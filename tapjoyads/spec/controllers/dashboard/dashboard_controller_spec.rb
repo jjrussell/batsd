@@ -25,8 +25,7 @@ describe Dashboard::DashboardController do
       end
 
       it 'cannot find other apps' do
-        @controller.stub(:redirect_to)
-        @controller.send(:find_app, @admin_app.id).should be_nil
+        @controller.send(:find_app, @admin_app.id, :redirect_on_nil => false).should be_nil
       end
     end
 
