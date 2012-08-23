@@ -34,8 +34,9 @@ end
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
 ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
-AWS_ACCOUNT_ID = '331510376354'
-
+#AWS_ACCOUNT_ID = '331510376354'
+# beware: using production
+AWS_ACCOUNT_ID = '266171351246'
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
@@ -50,7 +51,10 @@ SPROCKETS_CONFIG = {
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 
-RUN_MODE_PREFIX = 'dev_'
+# beware: using production
+#RUN_MODE_PREFIX = 'dev_'
+RUN_MODE_PREFIX = ''
+
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
@@ -58,17 +62,29 @@ WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
 XMAN = local_config['xman'] || false
 
-NUM_POINT_PURCHASES_DOMAINS = 2
-NUM_CLICK_DOMAINS = 2
-NUM_REWARD_DOMAINS = 2
-NUM_DEVICES_DOMAINS = 2
-NUM_DEVICE_IDENTIFIER_DOMAINS = 2
-NUM_TEMPORARY_DEVICE_DOMAINS = 2
-NUM_GAME_STATE_DOMAINS = 2
-NUM_GAME_STATE_MAPPING_DOMAINS = 2
-NUM_PUBLISHER_USER_DOMAINS = 2
-NUM_CONVERSION_ATTEMPT_DOMAINS = 2
-NUM_RISK_PROFILE_DOMAINS = 2
+#NUM_POINT_PURCHASES_DOMAINS = 2
+#NUM_CLICK_DOMAINS = 2
+#NUM_REWARD_DOMAINS = 2
+#NUM_DEVICES_DOMAINS = 2
+#NUM_DEVICE_IDENTIFIER_DOMAINS = 2
+#NUM_TEMPORARY_DEVICE_DOMAINS = 2
+#NUM_GAME_STATE_DOMAINS = 2
+#NUM_GAME_STATE_MAPPING_DOMAINS = 2
+#NUM_PUBLISHER_USER_DOMAINS = 2
+#NUM_CONVERSION_ATTEMPT_DOMAINS = 2
+#NUM_RISK_PROFILE_DOMAINS = 2
+# beware: using production domains
+NUM_POINT_PURCHASES_DOMAINS = 10
+NUM_CLICK_DOMAINS = 50
+NUM_REWARD_DOMAINS = 50
+NUM_DEVICES_DOMAINS = 300
+NUM_DEVICE_IDENTIFIER_DOMAINS = 100
+NUM_TEMPORARY_DEVICE_DOMAINS = 10
+NUM_GAME_STATE_DOMAINS = 300
+NUM_GAME_STATE_MAPPING_DOMAINS = 10
+NUM_PUBLISHER_USER_DOMAINS = 50
+NUM_CONVERSION_ATTEMPT_DOMAINS = 50
+NUM_RISK_PROFILE_DOMAINS = 100
 
 mail_chimp = YAML::load_file("#{Rails.root}/config/mail_chimp.yaml")['development']
 MAIL_CHIMP_API_KEY = mail_chimp['api_key']
@@ -106,14 +122,3 @@ FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 ENV['position_in_class']   = "before"
 ENV['exclude_tests']       = "true"
 ENV['exclude_fixtures']    = "true"
-
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :warn
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end

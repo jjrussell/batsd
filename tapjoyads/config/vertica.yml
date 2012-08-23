@@ -1,6 +1,8 @@
 development:
   hosts:
-    - ec2-50-17-5-126.compute-1.amazonaws.com
+    #- ec2-50-17-5-126.compute-1.amazonaws.com
+    # beware: using production data
+    - ec2-107-22-99-222.compute-1.amazonaws.com
   port: 5433
   database: tapjoy
   user: prod
