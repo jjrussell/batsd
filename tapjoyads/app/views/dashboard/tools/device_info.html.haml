@@ -167,7 +167,8 @@
   - if params[:use_recent_clicks].present?
     - text = "Show Recent Clicks: #{(now - Device::RECENT_CLICKS_RANGE).to_s(:pub)} - #{now.to_s(:pub)}"
     = submit_tag text, {:class => 'show-recent-clicks', :onclick => '#'}
-    (faster - using cached clicks, max 30 days)
+    - if params[:use_recent_clicks]
+      (Faster - using cached clicks, max 30 days)
     <br>or <br>
   %table.with-border
     %thead
@@ -232,7 +233,8 @@
           \-
           = text_field_tag(:end_date, next_end_date, {:id => 'end_date', :size => 10})
           = submit_tag "Update", {:class => 'search-clicks', :onclick => '#'}
-          (Slower but larger range, more accurate)
+          - if params[:use_recent_clicks]
+            (Slower but larger range, more accurate)
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
