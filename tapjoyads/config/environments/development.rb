@@ -29,8 +29,6 @@ Tapjoyad::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.i18n_js_cache = false
-  config.assets.compile = true
-  config.assets.debug = true
 end
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
