@@ -163,27 +163,16 @@
     %span.blocked Blocked (#{@blocked_count})
     +
     %span.forced Forced (#{@force_converted_count})
-  - now = Time.zone.now
-  - if params[:use_recent_clicks].present?
-    - text = "Show Recent Clicks: #{(now - Device::RECENT_CLICKS_RANGE).to_s(:pub)} - #{now.to_s(:pub)}"
-    = submit_tag text, {:class => 'show-recent-clicks', :onclick => '#'}
-    - if params[:use_recent_clicks]
-      (Faster - using cached clicks, max 30 days)
-    <br>or <br>
+  Showing
+  %b #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date).to_s(:pub)}
   %table.with-border
     %thead
-      - has_user_column = permitted_to?(:view_pub_user_account, :dashboard_tools)
-      - num_columns = has_user_column ? 7 : 6
-      %tr
-        %th{:colspan => num_columns, :style => "text-align: center;"}
-          - text = "Clicks from #{@start_date.to_s(:pub)} - #{@end_date.to_s(:pub)}"
-          %h2.date-range-header= text
       %tr
         %td Clicked
         %td Installed
         %td Adv.
         %td Pub.
-        - if has_user_column
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
           %td User
         %td Resolve
         %td Details
@@ -197,7 +186,7 @@
             = link_install_to_attempt(click)
           %td= link_app_to_statz(@click_apps[click.advertiser_app_id])
           %td= link_app_to_statz(@click_apps[click.publisher_app_id])
-          - if has_user_column
+          - if permitted_to? :view_pub_user_account, :dashboard_tools
             %td= link_to(click.publisher_user_id, view_pub_user_account_tools_path(:publisher_app_id => click.publisher_app_id, :publisher_user_id => click.publisher_user_id))
           %td
             - if click.force_convert && click.installed_at?
@@ -225,16 +214,13 @@
               %li= link_to('show more', '#', :class => 'show-click-detail')
               - click_info_ul(click, reward)
       %tr
-        %td{:colspan => num_columns}
-        #dates_range
-          - next_start_date = @start_date.strftime("%m/%d/%Y")
-          - next_end_date = @end_date.strftime("%m/%d/%Y")
-          = text_field_tag(:start_date, next_start_date, {:id => 'start_date', :size => 10})
-          \-
-          = text_field_tag(:end_date, next_end_date, {:id => 'end_date', :size => 10})
-          = submit_tag "Update", {:class => 'search-clicks', :onclick => '#'}
-          - if params[:use_recent_clicks]
-            (Slower but larger range, more accurate)
+        - if permitted_to? :view_pub_user_account, :dashboard_tools
+          %td{:colspan => 7}
+        - else
+          %td{:colspan => 6}
+        - text = "Show #{Time.zone.at(@cut_off_date - 2.month).to_s(:pub)} - #{Time.zone.at(@cut_off_date - 1.month).to_s(:pub)}"
+        = button_to text, '#', :class => 'next-clicks'
+        * Please note that there may not be more clicks.
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
@@ -257,33 +243,11 @@
         return false;
       });
     });
-
-    $(function() {
-      $('#start_date').datepicker();
-      $('#end_date').datepicker();
-    });
-
-  - if @device
-    - use_recent_clicks_param = "#{params[:use_recent_clicks] ? '&use_recent_clicks=1' : ''}"
+  - if @device && @cut_off_date
     :plain
       $(function($){
-        $('.show-recent-clicks').click(function(){
-          location.href = '#{device_info_tools_path(:udid => @device.key)}' + '#{use_recent_clicks_param}'
+        $('.next-clicks').click(function(){
+          location.href = '#{device_info_tools_path(:udid => @device.key, :cut_off_date => @cut_off_date - 1.month)}';
           return false;
         });
       });
-
-      $(function($){
-        $('.search-clicks').click(function(){
-          var start_date = $('#start_date').val();
-          var end_date = $('#end_date').val();
-          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date + '#{use_recent_clicks_param}'
-          return false;
-        });
-      });
-
-- content_for :page_styles do
-  :plain
-    #start_date {font-size: 16px; }
-    #end_date   {font-size: 16px; }
-    .date-range-header {font-size: 18px; weight: bold; }

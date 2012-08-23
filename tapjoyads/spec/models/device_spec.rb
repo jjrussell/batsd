@@ -266,51 +266,25 @@ describe Device do
       recent_click_hashes[0].should == {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
     end
 
-    it "adds multiple clicks to the device", :multiple_clicks, :recent_clicks do
+    it "pushes off the first click off the device", :recent_clicks do
+      clicks = []
       @device.recent_click_hashes.length.should == 0
-      click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
-      click0.clicked_at = Time.now-1.day
-      click0.save
-      @device.add_click(click0)
+      num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
 
-      click1 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
-      click1.clicked_at = Time.now-1.hour
-      click1.save
-      @device.add_click(click1)
+      # add the first click with click time older than specified range
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days+1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
 
-      click2 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
-      click2.clicked_at = Time.now
-      click2.save
-      @device.add_click(click2)
+      # should push off the older click
+      click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days-1).days))
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 1
 
-      recent_clicks = @device.recent_clicks
-      recent_clicks.length.should == 3
-      recent_clicks[0].id.should == click0.id
-      recent_clicks[1].id.should == click1.id
-      recent_clicks[2].id.should == click2.id
-    end
-
-    context "push off clicks from recent clicks" do
-      it "pushes off the first click off the device", :recent_clicks do
-        clicks = []
-        @device.recent_click_hashes.length.should == 0
-        num_days = Device::RECENT_CLICKS_RANGE.to_i / (24*3600)
-
-        # add the first click with click time older than specified range
-        click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days+1).days))
-        @device.add_click(click)
-        @device.recent_click_hashes.length.should == 1
-
-        # should push off the older click
-        click = FactoryGirl.create(:click, :clicked_at => (Time.now - (num_days-1).days))
-        @device.add_click(click)
-        @device.recent_click_hashes.length.should == 1
-
-        # should retain the last click
-        click = FactoryGirl.create(:click, :clicked_at => Time.now)
-        @device.add_click(click)
-        @device.recent_click_hashes.length.should == 2
-      end
+      # should retain the last click
+      click = FactoryGirl.create(:click, :clicked_at => Time.now)
+      @device.add_click(click)
+      @device.recent_click_hashes.length.should == 2
     end
 
     it "gets recent clicks of a device", :recent_clicks do
@@ -348,31 +322,6 @@ describe Device do
       clicks[0].id.should == click0.id
       clicks[1].id.should == click1.id
     end
-
-    context "Test duplicate clicks for recent_clicks" do
-      before :each do
-        @click0 = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
-        @click0.clicked_at = Time.now-1.day
-        @click0.save
-        @device.add_click(@click0)
-      end
-
-      it "should not add duplicated clicks", :duplicate_clicks, :recent_clicks do
-        @device.add_click(@click0)
-        @device.recent_click_hashes.size.should == 1
-      end
-
-      it "should not show duplicated clicks", :duplicate_clicks, :recent_clicks do
-        # force duplicated click into recent click hashes
-        temp_click_hashes = @device.recent_click_hashes
-        temp_click_hashes << {'id' => @click0.id, 'clicked_at' => @click0.clicked_at.to_f}
-        @device.recent_click_hashes = temp_click_hashes
-        @device.recent_click_hashes.size.should == 2
-
-        @device.recent_clicks.size.should == 1
-      end
-    end
-
   end
 
   context 'A Device' do
