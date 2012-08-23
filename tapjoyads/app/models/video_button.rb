@@ -43,7 +43,8 @@ class VideoButton < ActiveRecord::Base
   end
 
   def reject_device_type?(device, block_rewarded=false)
-    !tracking_offer.get_device_types.include?(device) ||
+    tracking_offer.nil? ||
+      !tracking_offer.get_device_types.include?(device) ||
       (block_rewarded && rewarded_install?)
   end
 
