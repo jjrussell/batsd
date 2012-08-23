@@ -511,6 +511,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "trigger_action"
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
+    t.string   "protocol_handler"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true

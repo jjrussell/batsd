@@ -1,5 +1,6 @@
 class GetOffersController < ApplicationController
-include GetOffersHelper
+  include GetOffersHelper
+  include AdminDeviceLastRun::ControllerExtensions
 
   layout 'offerwall', :only => :webpage
 
@@ -7,6 +8,8 @@ include GetOffersHelper
   before_filter :set_featured_params, :only => :featured
   before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm
   # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
+
+  tracks_admin_devices(:only => [:webpage, :index])
 
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
