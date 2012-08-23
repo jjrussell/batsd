@@ -28,7 +28,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
-  SKIP_TIMEOUT = 4.hours
+  SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
   MAX_OVERWRITES_TRACKED = 100000
