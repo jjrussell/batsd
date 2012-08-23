@@ -43,6 +43,18 @@ class WebRequest < SyslogMessage
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click' ], :attr_name => 'offer_id', :use_like => false },
   }
 
+  # alternatives keys to look in params for when calling put_values()
+  PARAM_TO_ATTR_MAPPING = {
+    :os_version     => :device_os_version,
+    :language_code  => :language,
+  }
+
+  # alternatives keys to look in geoip_data for when put_values()
+  GEOIP_TO_ATTR_MAPPING = {
+    :primary_country  => :country,
+    :country          => :geoip_country,
+  }
+
   self.define_attr :udid
   self.define_attr :mac_address
   self.define_attr :sha2_udid
@@ -148,56 +160,10 @@ class WebRequest < SyslogMessage
     self.path                 = path
     self.ip_address           = ip_address
     self.user_agent           = user_agent
-    self.campaign_id          = params[:campaign_id]
-    self.app_id               = params[:app_id]
-    self.udid                 = params[:udid]
-    self.mac_address          = params[:mac_address]
-    self.sha2_udid            = params[:sha2_udid]
-    self.sha1_udid            = params[:sha1_udid]
-    self.sha1_mac_address     = params[:sha1_mac_address]
-    self.android_id           = params[:android_id]
-    self.open_udid            = params[:open_udid]
-    self.open_udid_count      = params[:open_udid_count]
-    self.udid_via_lookup      = params[:udid_via_lookup]
-    self.udid_is_temporary    = params[:udid_is_temporary]
-    self.currency_id          = params[:currency_id]
-    self.app_version          = params[:app_version]
-    self.device_os_version    = params[:device_os_version] || params[:os_version]
-    self.device_type          = params[:device_type]
-    self.device_name          = params[:device_name]
-    self.library_version      = params[:library_version]
-    self.offer_id             = params[:offer_id]
-    self.publisher_app_id     = params[:publisher_app_id]
-    self.advertiser_app_id    = params[:advertiser_app_id]
-    self.displayer_app_id     = params[:displayer_app_id]
-    self.device_ip            = params[:device_ip]
-    self.type                 = params[:type] if params[:type].present?
-    self.publisher_user_id    = params[:publisher_user_id]
-    self.virtual_good_id      = params[:virtual_good_id]
-    self.source               = params[:source]
-    self.exp                  = params[:exp]
-    self.language             = params[:language_code]
-    self.transaction_id       = params[:transaction_id]
-    self.tap_points           = params[:tap_points]
-    self.screen_density       = params[:screen_density]
-    self.screen_layout_size   = params[:screen_layout_size]
-    self.carrier_name         = params[:carrier_name]
-    self.allows_voip          = params[:allows_voip]
-    self.carrier_country_code = params[:carrier_country_code]
-    self.mobile_country_code  = params[:mobile_country_code]
-    self.mobile_network_code  = params[:mobile_network_code]
-    self.country_code         = params[:country_code]
-    self.country              = geoip_data[:primary_country]
-    self.geoip_country        = geoip_data[:country]
-    self.sdk_type             = params[:sdk_type]
-    self.plugin               = params[:plugin]
-    self.store_name           = params[:store_name]
-    self.connection_type      = params[:connection_type]
-    self.format               = params[:format]
-    self.impression_id        = params[:impression_id]
-    self.raw_url              = params[:raw_url]
-    self.controller           = params[:controller]
-    self.controller_action    = params[:action]
+
+    save_attributes_from_hash(params, PARAM_TO_ATTR_MAPPING)
+    save_attributes_from_hash(geoip_data, GEOIP_TO_ATTR_MAPPING)
+    Rails.logger.info("$$$$$$$$$$$$ #{self.attributes.inspect}")
   end
 
   def save
@@ -210,6 +176,17 @@ class WebRequest < SyslogMessage
   end
 
   private
+
+  def save_attributes_from_hash(attribs = {}, mapping = {})
+    attribs.each do |key, value|
+      if mapping[key].present?
+        key_as_string = mapping[key].inspect()
+      else
+        key_as_string = key.inspect()
+      end
+      send("self.#{key_as_string}=", value) if self.attributes.has_key?(key_as_string)
+    end
+  end
 
   def update_realtime_stats
     path.each do |p|
