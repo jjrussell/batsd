@@ -369,12 +369,7 @@ class Device < SimpledbShardedResource
 
   def add_click(click)
     click_id = click.id
-    temp_click_hashes = recent_click_hashes
-    num_clicks = temp_click_hashes.count
-
-    # skip clicks which could be caused by double clicking
-    return nil if temp_click_hashes.present? && (click_id == temp_click_hashes[num_clicks-1]['id'])
-
+    temp_click_hashes = self.recent_click_hashes
     end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
 
     shift_index = 0
