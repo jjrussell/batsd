@@ -22,6 +22,7 @@ class VideoButton < ActiveRecord::Base
   validates_presence_of :name
   validates_length_of :name, :maximum => 20, :message => "Please limit the name to 20 characters"
   validates_numericality_of :ordinal, :only_integer => true
+  validate :require_tracking_item
 
   after_save :update_offer
   after_save :update_tracking_offer
@@ -75,6 +76,15 @@ class VideoButton < ActiveRecord::Base
   def update_tracking_offer
     if options = tracking_item_options(tracking_item)
       tracking_offer.update_attributes(options)
+    end
+  end
+
+  def require_tracking_item
+    unless tracking_offer.present?
+      errors.add(:tracking_offer, 'must be selected')
+      false
+    else
+      true
     end
   end
 end
