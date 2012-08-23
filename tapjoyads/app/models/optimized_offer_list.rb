@@ -15,11 +15,9 @@ class OptimizedOfferList
     end
 
     def cache_all
-      puts "------- cache all"
       s3_optimization_keys.each do |key|
         begin
           Sqs.send_message(QueueNames::CACHE_OPTIMIZED_OFFER_LIST, key)
-          puts "Sqs send msg #{QueueNames::CACHE_OPTIMIZED_OFFER_LIST} - #{key}"
         rescue
           puts "failed to insert CACHE_OPTIMIZED_OFFER_LIST job for #{key} into queue"
         end
