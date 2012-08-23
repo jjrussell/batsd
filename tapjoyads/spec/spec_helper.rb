@@ -21,6 +21,21 @@ unless defined?(DeferredGarbageCollection)
   end
 end
 
+def fix_count_for_sharded_sdb_models
+  class << SimpledbShardedResource
+    def count_with_spec_fix(opts = {})
+      if opts[:domain_name].present?
+        count_without_spec_fix(opts)
+      else
+        all_domain_names.inject(0) do |sum, domain_name|
+          sum += count_without_spec_fix(opts.merge(:domain_name => domain_name))
+        end
+      end
+    end
+    alias_method_chain :count, :spec_fix
+  end
+end
+
 Spork.prefork do
   require 'pry'
   ENV["RAILS_ENV"] ||= 'test'
@@ -58,6 +73,8 @@ Spork.prefork do
       DeferredGarbageCollection.stop
     end
   end
+
+  fix_count_for_sharded_sdb_models
 end
 
 Spork.each_run do
