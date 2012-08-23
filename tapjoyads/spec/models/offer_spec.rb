@@ -408,15 +408,6 @@ describe Offer do
     @offer.send(:carriers_reject?, mobile_carrier_code).should == false
   end
 
-  it "returns proper linkshare account url" do
-    url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
-    linkshare_url = Linkshare.add_params(url)
-    linkshare_url.should == "#{url}&partnerId=30&siteID=OxXMC6MRBt4"
-
-    linkshare_url = Linkshare.add_params(url, 'tradedoubler')
-    linkshare_url.should == "#{url}&partnerId=2003&tduid=UK1800811"
-  end
-
   it "rejects based on source" do
     @offer.approved_sources = ['tj_games']
     @offer.send(:source_reject?, 'offerwall').should be_true
@@ -1640,6 +1631,12 @@ describe Offer do
       it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
         @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
       end
+    end
+  end
+
+  context "audition" do
+    it "should have default audition as Offer::Optimization::AUDITION_FACTORS[:medium]" do
+      Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
     end
   end
 end

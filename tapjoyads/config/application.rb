@@ -52,8 +52,6 @@ module Tapjoyad
     route_filenames = case MACHINE_TYPE
                       when 'dashboard'
                         %w( dashboard api global )
-                      when 'website'
-                        %w( website api global )
                       when 'webserver'
                         %w( web legacy global )
                       when 'jobserver'

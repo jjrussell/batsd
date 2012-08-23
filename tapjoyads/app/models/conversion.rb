@@ -117,6 +117,8 @@ class Conversion < ActiveRecord::Base
       [ { :stat => 'jailbroken_installs', :attr => :advertiser_offer_id },
         { :stat => 'published_installs',  :attr => :publisher_app_id },
         { :stat => 'installs_revenue',    :attr => :publisher_app_id, :increment => :publisher_amount } ]
+    when 8
+      [ { :stat => 'paid_installs',  :attr => :advertiser_offer_id } ]
     when 1000, 1001, 1002, 1003, 1004, 1005, 1006
       [ { :stat => 'display_conversions', :attr => :publisher_app_id },
         { :stat => 'display_revenue',     :attr => :publisher_app_id, :increment => :publisher_amount } ]

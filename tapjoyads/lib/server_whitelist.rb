@@ -48,8 +48,11 @@ class ServerWhitelist
     ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
     '50.16.235.141',                         # Ring Revenue added 2012.08.02
     ['66.171.190.226', '66.171.190.231'],    # QuoteWizard added 2012.08.10
-    ['209.63.198.242' '209.63.198.245'],     # QuoteWizard added 2012.08.10
+    ['209.63.198.242', '209.63.198.245'],    # QuoteWizard added 2012.08.10
     ['173.203.168.129', '173.203.168.138'],  # QuoteWizard added 2012.08.10
+    '216.246.74.21',                         # DiscountMags added 2012.08.20
+    '204.93.181.78',                         # DiscountMags added 2012.08.20
+    '64.91.230.220',                         # ExclusiveCPA LLC added 2012.08.20
   ]
 
   def self.ip_whitelist_includes?(ip_address)
