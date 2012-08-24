@@ -1,20 +1,14 @@
-class ApiController < ApplicationController
+require 'signage/controller'
 
-  prepend_before_filter :verify_auth_token
+class ApiController < ApplicationController
+  include Signage::Controller
+  verify_signature(:secret => Rails.configuration.tapjoy_api_key)
+
+  rescue_from Signage::Error::InvalidSignature do |exception|
+    head :forbidden
+  end
 
   private
-
-  def verify_auth_token
-    return unless check_params([:signature, :signature_method])
-
-    all_params = request.query_parameters.merge(request.request_parameters)
-    sent_hmac = all_params.delete(:signature)
-    sign_method = all_params.delete(:signature_method) { 'hmac_sha256' }
-
-    unless Signage::ExpiringSignature.new(sign_method, Rails.configuration.tapjoy_api_key).matches?(all_params, sent_hmac)
-      render_json_error(['Invalid HMAC digest'], 401) and return
-    end
-  end
 
   def get_object_type
     [nil, nil]
