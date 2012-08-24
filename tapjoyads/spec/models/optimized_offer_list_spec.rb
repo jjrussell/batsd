@@ -67,4 +67,22 @@ describe OptimizedOfferList do
     end
   end
 
+  describe ".cache_all" do
+    before :each do
+      @cache_keys = ["key_a", "key_b"]
+      OptimizedOfferList.stub(:s3_optimization_keys).and_return(@cache_keys)
+      OptimizedOfferList.stub(:cache_offer_list).and_return(true)
+    end
+
+    it "should enque a cache optimized offed list message for key_a" do
+      Sqs.should_receive(:send_message).with(QueueNames::CACHE_OPTIMIZED_OFFER_LIST, @cache_keys[0]).once
+      OptimizedOfferList.cache_all
+    end
+
+    it "should enque a cache optimized offed list message for key_b" do
+      Sqs.should_receive(:send_message).with(QueueNames::CACHE_OPTIMIZED_OFFER_LIST, @cache_keys[1]).once
+      OptimizedOfferList.cache_all
+    end
+  end
+
 end
