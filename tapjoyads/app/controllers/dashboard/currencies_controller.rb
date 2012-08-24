@@ -108,8 +108,8 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
   def setup
     @app = App.find(params[:app_id])
     if params[:id]
-      if @app.non_rewarded.present?
-        @currency = @app.non_rewarded if @app.non_rewarded.id == params[:id]
+      if @app.non_rewarded.try(:id) == params[:id]
+        @currency = @app.non_rewarded
       else
         @currency = @app.currencies.find(params[:id])
       end

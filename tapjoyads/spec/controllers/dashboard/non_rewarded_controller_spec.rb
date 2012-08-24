@@ -12,7 +12,7 @@ describe Dashboard::NonRewardedController do
         @app = FactoryGirl.create(:app)
         @partner = @app.partner
         App.any_instance.stub(:partner).and_return(@partner)
-        App.any_instance.stub(:non_rewarded).and_return([])
+        App.any_instance.stub(:non_rewarded).and_return(nil)
         @currency = FactoryGirl.create(:currency,
                                        :conversion_rate => 0,
                                        :callback_url => Currency::NO_CALLBACK_URL,

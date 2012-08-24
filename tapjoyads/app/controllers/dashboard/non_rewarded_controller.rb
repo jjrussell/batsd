@@ -10,7 +10,7 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :toggle ]
 
   def index
-    unless @currency.present?
+    unless @currency
       @currency = @app.build_non_rewarded
       @currency.save!
       @enabled = @currency.tapjoy_enabled
@@ -47,7 +47,7 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
     @app      = App.find(params[:app_id])
     @partner  = @app.partner
     @currency = @app.non_rewarded
-    @enabled  = @currency.present? ? @currency.try(:tapjoy_enabled) : false
+    @enabled  = @currency.try(:tapjoy_enabled)
     verify_records([ @app, @partner ])
   end
 
