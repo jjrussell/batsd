@@ -163,7 +163,6 @@ class WebRequest < SyslogMessage
 
     save_attributes_from_hash(params, PARAM_TO_ATTR_MAPPING)
     save_attributes_from_hash(geoip_data, GEOIP_TO_ATTR_MAPPING)
-    Rails.logger.info("$$$$$$$$$$$$ #{self.attributes.inspect}")
   end
 
   def save
