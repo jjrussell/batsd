@@ -10,7 +10,7 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :toggle ]
 
   def index
-    unless @currency
+    unless @currency.present?
       @currency = @app.build_non_rewarded
       @currency.save!
       @enabled = @currency.tapjoy_enabled
@@ -33,20 +33,22 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
   def check_tos
     unless @partner.accepted_publisher_tos?
       if params[:terms_of_service] == '1'
-        log_activity(partner)
+        log_activity(@partner)
         @partner.update_attribute :accepted_publisher_tos, true
       else
         flash[:error] = 'You must accept the terms of service to set up non-rewarded.'
         render :index
       end
     end
-  end    
+  end
 
   def setup
-    @app      = find_app(params[:app_id])
+    verify_params([ :app_id ])
+    @app      = App.find(params[:app_id])
     @partner  = @app.partner
     @currency = @app.non_rewarded
-    @enabled  = @currency.try(:tapjoy_enabled)
+    @enabled  = @currency.present? ? @currency.try(:tapjoy_enabled) : false
+    verify_records([ @app, @partner ])
   end
 
 end

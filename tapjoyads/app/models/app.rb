@@ -189,7 +189,6 @@ class App < ActiveRecord::Base
     options = {
       :conversion_rate  => 0,
       :callback_url     => Currency::NO_CALLBACK_URL,
-      :id               => UUIDTools::UUID.random_create.hexdigest,
       :name             => Currency::NON_REWARDED_NAME,
       :app_id           => self.id,
       :tapjoy_enabled   => false,
