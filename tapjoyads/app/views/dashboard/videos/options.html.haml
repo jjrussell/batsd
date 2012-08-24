@@ -53,7 +53,7 @@
       var cacheOptions = $('.caches input:checkbox');
       cacheOptions.change(function() {
         var count = cacheOptions.filter(':checked').length
-        if (count == 2) {
+        if (count > 0) {
           $('.caches_hidden').removeClass('hidden');
         } else {
           $('.caches_hidden').addClass('hidden');
