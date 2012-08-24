@@ -485,7 +485,7 @@ en:
       free: Free
       instructions: "Engage in any of the following actions to receive %{currency}."
       instructions_non_rewarded: "Discover what's hot on Tapjoy!"
-      load_error: "Please try again."
+      load_error: "Sorry that you are unable to view offers at this time, please click on the missing currency link below to reach Tapjoy Customer Support."
       load_more: "Load More Offers"
       loading: Loading...
       missing_currency: "Missing %{currency}?"
