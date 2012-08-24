@@ -81,11 +81,9 @@ module ActsAsTracking
     end
 
     def wont_stop_tracking?
-      unless tracking_for_id_was.nil?
-        unless tracking_for.present?
-          errors.add(:tracking_for_id, 'cannot convert from tracking offer to non-tracking')
-          return false
-        end
+      if tracking_for_id_was.present? && tracking_for.blank?
+        errors.add(:tracking_for_id, 'cannot convert from tracking offer to non-tracking')
+        return false
       end
 
       return true
