@@ -14,7 +14,7 @@
         #help_item.help ?
       %td
         = f.select :tracking_source_offer_id, formatted_offers_for_tracking(@video_offer.available_trackable_offers(@video_button)), {:selected => "#{@video_button.tracking_offer.source_offer_id if @video_button.tracking_offer.present?}"}
-        = error_message_on @video_button, :item_id
+        = error_message_on @video_button, :tracking_offer
     %tr
       %th
         = f.label :ordinal
