@@ -7,12 +7,12 @@ describe OptimizedOfferList do
     @s3_offerwall_key = '101.0.Android.US..android'
     @cache_key = "s3.optimized_offer_list.101.tj_games.Android.US..android"
     @options = {
-      :source=>"tj_games",
-      :currency_id=>"",
-      :country=>"US",
-      :platform=>"Android",
-      :algorithm=>"101",
-      :device_type=>"android"
+      :source => "tj_games",
+      :currency_id => "",
+      :country => "US",
+      :platform => "Android",
+      :algorithm => "101",
+      :device_type => "android"
     }
   end
 
@@ -32,6 +32,34 @@ describe OptimizedOfferList do
   # end
 
   # Testing the private methods that are important in this class
+  
+  describe ".delete_cached_offer_list" do
+    context "when given an existing cache key" do
+      before :each do
+        Mc.stub(:distributed_get).and_return(nil)
+        Mc.stub(:distributed_get).with("#{@cache_key}.0").and_return("some offers")
+        Mc.stub(:distributed_delete).and_return(nil)
+      end
+
+      it "deletes the cache key" do
+        Mc.should_receive(:distributed_delete).with("#{@cache_key}.0")
+        OptimizedOfferList.delete_cached_offer_list(@cache_key)
+      end
+    end
+
+    context "when given a non-existant cache key" do
+      before :each do
+        Mc.stub(:distributed_get).and_return(nil)
+        Mc.stub(:distributed_delete).and_return(nil)
+      end
+
+      it "doesn't delete the cache key" do
+        Mc.should_not_receive(:distributed_delete)
+        OptimizedOfferList.delete_cached_offer_list(@cache_key)
+      end
+      
+    end
+  end
 
   describe ".options_for_s3_key" do
     context "when given an s3 key it returns a hash of options" do
