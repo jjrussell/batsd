@@ -1,10 +1,4 @@
 GIT
-  remote: git://github.com/Tapjoy/distribution.git
-  revision: b26645f81810fe46a533ebf4128727763c3239c8
-  specs:
-    distribution (0.7.0)
-
-GIT
   remote: git://github.com/Tapjoy/fakememcached.git
   revision: b722daa998997bb8faa25f78c641880a597aa8dc
   ref: b722d
@@ -391,7 +385,6 @@ DEPENDENCIES
   database_cleaner
   declarative_authorization
   differ
-  distribution (= 0.7.0)!
   dynamic_form
   execjs (= 1.3.0)
   factory_girl_rails (= 1.2.0)
