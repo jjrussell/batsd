@@ -5,6 +5,12 @@ class VideosController < ApplicationController
   before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
+    @options = {
+      :cache_auto   => @publisher_app.videos_cache_auto?,
+      :cache_wifi   => @publisher_app.videos_cache_wifi?,
+      :cache_mobile => @publisher_app.videos_cache_3g?
+    }
+
     if !@hide_videos && @publisher_app.videos_cache_on?(params[:connection_type])
       @offer_list = offer_list.get_offers(0, 100).first
 
