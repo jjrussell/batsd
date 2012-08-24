@@ -61,6 +61,7 @@ module ActsAsTracking
       include ActsAsTracking::InstanceMethods
       belongs_to :tracking_for, :polymorphic => true
       validates_presence_of :tracking_for, :if => Proc.new { |offer| offer.tracking_for_id? || offer.tracking_for_type? }
+      validate :wont_stop_tracking?
       after_save :disable_other_tracking_offers
       scope :tracked_for, lambda { |tracking_for| { :conditions => [ "tracking_for_type = ? and tracking_for_id = ?", tracking_for.class.name, tracking_for.id ] } }
     end
@@ -77,6 +78,17 @@ module ActsAsTracking
           offer.update_attribute(:tapjoy_enabled, false)
         end
       end
+    end
+
+    def wont_stop_tracking?
+      unless tracking_for_id_was.nil?
+        unless tracking_for.present?
+          errors.add(:tracking_for_id, 'cannot convert from tracking offer to non-tracking')
+          return false
+        end
+      end
+
+      return true
     end
   end
 end
