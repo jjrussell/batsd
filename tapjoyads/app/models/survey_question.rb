@@ -15,7 +15,7 @@ class SurveyQuestion < ActiveRecord::Base
   include UuidPrimaryKey
 
   attr_reader :responses
-  default_scope :order => :position
+  default_scope :order => 'position ASC'
 
   QUESTION_FORMATS = %w( select radio text )
 
@@ -39,7 +39,8 @@ class SurveyQuestion < ActiveRecord::Base
 private
   def assign_position
     if self.survey_offer
-      self.position = (self.survey_offer.questions.last.try(:position) || 0) + 1
+      self.survey_offer.reload
+      self.position ||= (self.survey_offer.questions.size || 0) + 1
     end
   end
 end

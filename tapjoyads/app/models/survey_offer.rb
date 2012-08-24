@@ -93,12 +93,15 @@ class SurveyOffer < ActiveRecord::Base
   def questions_attributes=(qs)
     questions.destroy_all
     return unless qs.present?
-    qs.each_pair do |i, params|
+    position = 1
+    qs.keys.sort.each do |i|
+      params = qs[i]
       if params['text'].blank?
         qs.delete(i.to_i)
-        next
+      else
+        questions.create!(params.merge(:position => position))
+        position += 1
       end
-      questions.create!(params)
     end
   end
 
