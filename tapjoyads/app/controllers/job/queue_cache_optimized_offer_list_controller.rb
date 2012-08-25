@@ -7,6 +7,10 @@ class Job::QueueCacheOptimizedOfferListController < Job::SqsReaderController
 
   def on_message(message)
     s3_optimization_key = message.body
-    OptimizedOfferList.cache_offer_list(s3_optimization_key)
+    begin
+      OptimizedOfferList.cache_offer_list(s3_optimization_key)
+    rescue
+      Notifier.alert_new_relic(OptimizedOfferCachingFailed, message)
+    end
   end
 end
