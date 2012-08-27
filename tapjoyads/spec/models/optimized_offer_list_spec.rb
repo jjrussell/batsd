@@ -32,7 +32,7 @@ describe OptimizedOfferList do
   # end
 
   # Testing the private methods that are important in this class
-  
+
   describe ".delete_cached_offer_list" do
     context "when given an existing cache key" do
       before :each do
@@ -57,7 +57,7 @@ describe OptimizedOfferList do
         Mc.should_not_receive(:distributed_delete)
         OptimizedOfferList.delete_cached_offer_list(@cache_key)
       end
-      
+
     end
   end
 
@@ -110,6 +110,26 @@ describe OptimizedOfferList do
     it "should enque a cache optimized offed list message for key_b" do
       Sqs.should_receive(:send_message).with(QueueNames::CACHE_OPTIMIZED_OFFER_LIST, @cache_keys[1]).once
       OptimizedOfferList.cache_all
+    end
+  end
+
+  describe ".cache_offer_list" do
+    before :each do
+      @key = "test_key"
+      OptimizedOfferList.stub(:cache_key_for_options).and_return(@key)
+    end
+
+    it "should delete_cached_offer_list and return", :cache_offer_list do
+      OptimizedOfferList.stub(:s3_json_offer_data).with(@key).and_return({'enabled' => 'false', 'offers' => ['offer_id' => 'test_id']})
+      OptimizedOfferList.should_receive(:delete_cached_offer_list).with(@key)
+      Offer.should_not_receive(:find)
+      OptimizedOfferList.cache_offer_list(@key)
+    end
+
+    it "should try to find an offer", :cache_offer_list do
+      OptimizedOfferList.stub(:s3_json_offer_data).with(@key).and_return({'enabled' => 'true', 'offers' => ['offer_id' => 'test_id']})
+      Offer.should_receive(:find)
+      OptimizedOfferList.cache_offer_list(@key)
     end
   end
 
