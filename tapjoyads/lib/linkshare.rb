@@ -23,7 +23,7 @@ class Linkshare
     'JP' => 'partnerId=30&siteID=Qr66oOu*yBY',
     'US' => 'partnerId=30&siteID=OxXMC6MRBt4',
     'CA' => 'partnerId=30&siteID=OxXMC6MRBt4',
-    'NW' => 'partnerId=1002&affToken=37022',
+    'NZ' => 'partnerId=1002&affToken=37022',
     'AU' => 'partnerId=1002&affToken=37022',
   }
 
