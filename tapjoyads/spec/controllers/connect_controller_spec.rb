@@ -82,6 +82,22 @@ describe ConnectController do
                     :sha2_udid   => 'sha2_test_device' }
       end
 
+      context 'when the identifier is corrupt' do
+        before :each do
+          identifier = FactoryGirl.create(:device_identifier, :udid => 'device_identifier.232132121321')
+          DeviceIdentifier.stub(:new).and_return(identifier)
+          @device = FactoryGirl.create(:device)
+        end
+
+        it 'doesnt return the corrupt udid' do
+          Device.should_receive(:new).with(
+            :key => 'sha2_test_device',
+            :is_temporary => true
+          ).at_least(:once).and_return(@device)
+          get(:index, @params)
+        end
+      end
+
       context 'when the lookup succeeds' do
         before :each do
           @device = FactoryGirl.create(:device)
