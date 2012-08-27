@@ -17,7 +17,7 @@ elsif server_type == "dev"
   worker_processes 2
   timeout 90
 elsif server_type == 'webserver'
-  worker_processes 8
+  worker_processes 12
   timeout 90
 else
   worker_processes 10

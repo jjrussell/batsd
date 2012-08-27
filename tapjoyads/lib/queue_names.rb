@@ -29,4 +29,5 @@ class QueueNames
   UPDATE_PAPAYA_DEVICES      = "#{BASE_NAME}UpdatePapayaDevices"
   UPDATE_PAPAYA_USER_COUNT   = "#{BASE_NAME}UpdatePapayaUserCount"
   RECORD_UPDATES             = "#{BASE_NAME}RecordUpdates"
+  CACHE_OPTIMIZED_OFFER_LIST = "#{BASE_NAME}CacheOptimizedOfferList"
 end

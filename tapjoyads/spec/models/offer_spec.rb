@@ -1639,4 +1639,22 @@ describe Offer do
       Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
     end
   end
+
+  context 'given a tracking offer' do
+    let(:video_button) { FactoryGirl.create :video_button }
+    let(:generic_offer) { FactoryGirl.create :generic_offer }
+
+    subject do
+      video_button.tracking_source_offer_id = generic_offer.primary_offer.id
+      video_button.save!
+      video_button.tracking_offer
+    end
+
+    it 'prevents the tracking offer from becoming a non-tracking offer' do
+      subject.tracking_for = nil
+      subject.save.should be_false
+      subject.errors[:tracking_for_id].should be
+    end
+  end
 end
+
