@@ -32,7 +32,7 @@ describe OptimizedOfferList do
   # end
 
   # Testing the private methods that are important in this class
-  
+
   describe ".delete_cached_offer_list" do
     context "when given an existing cache key" do
       before :each do
@@ -57,7 +57,7 @@ describe OptimizedOfferList do
         Mc.should_not_receive(:distributed_delete)
         OptimizedOfferList.delete_cached_offer_list(@cache_key)
       end
-      
+
     end
   end
 
