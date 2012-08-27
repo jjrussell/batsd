@@ -38,7 +38,7 @@ class OneOffs
       end
 
       # Force resolve if the click existed previously
-      click.resolve!
+      click.resolve! unless click.new_record?
 
       bar.increment!
     end
