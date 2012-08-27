@@ -1,4 +1,5 @@
 class Utils
+  require 'open-uri'
 
   def self.check_syntax
     # TODO: Find a rails 3 compatible way to do this
@@ -29,8 +30,13 @@ class Utils
     invalid_udids = 0
     parse_errors = 0
     now = "%.5f" % Time.zone.now.to_f
-    file = File.open(filename, 'r')
-    outfile = File.open("#{filename}.parse_errors", 'w')
+    puts "opening #{filename}"
+    file = nil
+    time = Benchmark.realtime do
+      file = open(filename, 'r')
+      outfile = File.open("import_udids_#{Time.now.strftime('%Y%m%dT%H%M%S%z')}.parse_errors", 'w')
+    end
+    puts "Finished opening file in #{time.ceil} seconds"
     time = Benchmark.realtime do
       file.each_line do |line|
         counter += 1
