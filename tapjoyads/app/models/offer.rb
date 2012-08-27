@@ -632,7 +632,11 @@ class Offer < ActiveRecord::Base
   end
 
   def store_id_for_feed
-    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+    item_type == 'App'
+      third_party_data || Offer.hashed_icon_id(id)
+    else
+      Offer.hashed_icon_id(id)
+    end
   end
 
   def uploaded_icon?
