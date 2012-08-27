@@ -278,7 +278,7 @@ describe SimpledbResource do
       self.sdb_attr :foo
     end
 
-    it 'ignores redefinition' do
+    it 'does not add redefinition to attribute_names again' do
       Testing.attribute_names.length.should == Testing.attribute_names.uniq.length
     end
   end

@@ -65,7 +65,6 @@ class SimpledbResource
     replace       = options.delete(:replace)       { true }
     attr_name     = options.delete(:attr_name)     { name.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    return if attribute_names.include?(attr_name)
 
     get_options = {
       :type => type,
@@ -97,7 +96,7 @@ class SimpledbResource
       end
     }
 
-    self.attribute_names << attr_name.to_s
+    self.attribute_names << attr_name.to_s unless attribute_names.include?(attr_name.to_s)
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
 
