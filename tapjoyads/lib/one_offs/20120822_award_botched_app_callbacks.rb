@@ -8,7 +8,8 @@ require 'csv'
 #                     manually rather than simply re-issuing the API calls.
 
 class OneOffs
-  def self.award_botched_app_callbacks(s3_filename)
+  def self.award_botched_app_callbacks
+    s3_filename = 'hotel-tonight-pings.csv'
     file = Tempfile.new(s3_filename)
 
     puts "Downloading #{s3_filename}..."
