@@ -65,6 +65,7 @@ class SimpledbResource
     replace       = options.delete(:replace)       { true }
     attr_name     = options.delete(:attr_name)     { name.to_s }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+    return if attribute_names.include?(attr_name)
 
     get_options = {
       :type => type,
