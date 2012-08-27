@@ -61,7 +61,7 @@ Setting up VM
 We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
 install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
 
-Now setup librarian and vagrant:
+Now setup librarian and vagrant(run from /Path/To/tapjoyserver/tapjoyads/):
 
 ```
 gem install vagrant
