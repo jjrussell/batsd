@@ -45,7 +45,7 @@ class Utils
         if counter == 1
           udid.gsub!(/^\xEF\xBB\xBF/, '') # remove UTF-8 Byte Order Mark, if it exists
         end
-        if udid !~ udid_regex
+        if (udid !~ udid_regex) || udid.to_s.strip.blank?
           invalid_udids += 1
           next
         end
