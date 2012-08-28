@@ -38,7 +38,6 @@ class FakeSdb
       end
       fake_sdb_data(domain)[key] = attributes
     end
-
   end
 
   def select(query, next_token = nil, consistent = nil)
@@ -61,7 +60,7 @@ class FakeSdb
       if options[:order]
         options[:order].delete_if { |token| token.downcase == 'by' }
         column = options[:order].first.downcase
-        order = options[:order].last.downcase
+        order = options[:order].second.downcase || 'asc'
 
         array_results.sort! do |a, b|
           # a and b are one element hashes like key => record_hash
