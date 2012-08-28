@@ -50,27 +50,32 @@ class Utils
           next
         end
         begin
-          device = Device.new(:key => udid)
-        rescue JSON::ParserError
-          parse_errors += 1
-          outfile.puts(udid)
-          next
-        end
-        device.is_new ? new_udids += 1 : existing_udids += 1
-        if device.has_app? app_id
-          app_existing_udids += 1
-        else
-          app_new_udids += 1
-          apps_hash = device.parsed_apps
-          apps_hash[app_id] = now
-          device.apps = apps_hash
           begin
-            device.save!
-          rescue
-            puts "device save failed for UDID: #{udid}   retrying..."
-            sleep 0.2
-            retry
+            device = Device.new(:key => udid)
+          rescue JSON::ParserError
+            parse_errors += 1
+            outfile.puts(udid)
+            next
           end
+          device.is_new ? new_udids += 1 : existing_udids += 1
+          if device.has_app? app_id
+            app_existing_udids += 1
+          else
+            app_new_udids += 1
+            apps_hash = device.parsed_apps
+            apps_hash[app_id] = now
+            device.apps = apps_hash
+            begin
+              device.save!
+            rescue
+              puts "device save failed for UDID: #{udid}   retrying..."
+              sleep 0.2
+              retry
+            end
+          end
+        rescue => e
+          puts "Encountered unexpected error while processing udid: #{udid}"
+          raise e
         end
         puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app), #{invalid_udids} invalid, #{parse_errors} parse errors" if counter % 1000 == 0
       end
