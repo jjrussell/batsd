@@ -14,53 +14,17 @@ class GetOffersController < ApplicationController
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
-  # VIEW_A1 = {
-  #             :autoload => true, :actionLocation => 'right',
-  #             :deepLink => false, :showBanner => false,
-  #             :showActionLine => true, :showCostBalloon => false,
-  #             :showCurrentApp => false, :squircles => false,
-  #             :viewID => 'VIEW_A1',
-  #           }
-
-  # Specimen #2 - Same as #1 minus auto loading
-  VIEW_A2 = {
-              :autoload => false, :actionLocation => 'right',
-              :deepLink => false, :showBanner => false,
-              :showActionLine => true, :showCostBalloon => false,
-              :showCurrentApp => false, :squircles => false,
-              :viewID => 'VIEW_A2',
-            }
-
-  # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
-  # VIEW_B1 = {
-  #             :autoload =>  false, :actionLocation =>  'right',
-  #             :deepLink =>  false, :maxlength =>  90,
-  #             :showBanner =>  false, :showActionLine =>  false,
-  #             :showCostBalloon =>  false, :showCurrentApp =>  false,
-  #             :squircles =>  false, :viewID =>  'VIEW_B1',
-  #           }
-
-  # Specimen #4 - Same as #3 plus auto loading
-  # VIEW_B2 = {
-  #             :autoload =>  true, :actionLocation =>  'right',
-  #             :deepLink =>  false, :maxlength =>  90,
-  #             :showBanner =>  false, :showActionLine =>  false,
-  #             :showCostBalloon =>  false, :showCurrentApp =>  false,
-  #             :squircles =>  false, :viewID =>  'VIEW_B2',
-  #           }
-
-  # VIEW_MAP = {
-  #   :VIEW_A1 => VIEW_A1,
-  #   :VIEW_A2 => VIEW_A2,
-  #   :VIEW_B1 => VIEW_B1,
-  #   :VIEW_B2 => VIEW_B2
-  # }
-
   VIEW_MAP = {
-    :control => VIEW_A2,
-    :test => VIEW_A2.merge(:actionLocation => 'left')
+    :control => {
+      :autoload => false, :actionLocation => 'right',
+      :deepLink => false, :showBanner => false,
+      :showActionLine => true, :showCostBalloon => false,
+      :showCurrentApp => false, :squircles => false,
+      :viewID => 'control'
+    }
   }
+
+  VIEW_MAP[:test] = VIEW_MAP[:control].merge(:actionLocation => 'left', :viewID => 'test')
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
