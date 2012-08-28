@@ -64,6 +64,17 @@ describe FakeSdb do
       rows = subject.select('select * from foo')[:items]
       rows.size.should == 5
     end
+
+    it 'supports ordering and limiting' do
+      rows = subject.select('select * from ints order by val desc')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four three two one}
+
+      rows = subject.select('select * from ints order by val asc')[:items]
+      rows.collect(&:keys).flatten.should == %w{one two three four five}
+
+      rows = subject.select('select * from ints order by val desc limit 2')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four}
+    end
   end
 
   describe 'with a single condition' do

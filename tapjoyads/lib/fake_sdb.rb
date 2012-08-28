@@ -57,6 +57,26 @@ class FakeSdb
       # this dup is necessary so changing values on the returned
       # items doesn't change values in the 'database'
       array_results = records.map { |k, v| { k.dup => v.dup } }
+
+      if options[:order]
+        options[:order].delete_if { |token| token.downcase == 'by' }
+        column = options[:order].first.downcase
+        order = options[:order].last.downcase
+
+        array_results.sort! do |a, b|
+          # a and b are one element hashes like key => record_hash
+          a = a.values.first[column]
+          b = b.values.first[column]
+
+          order == 'asc' ? a <=> b : b <=> a
+        end
+      end
+
+      if options[:limit]
+        limit = options[:limit].first.to_i
+        array_results = array_results.first(limit)
+      end
+
       { :items => array_results }
     when 'count(*)'
       { :items => [ { 'Domain' => { 'Count' => [ records.count ] } } ] }
@@ -80,9 +100,11 @@ class FakeSdb
         options[:where] ||= []
         options_array = options[:where]
       when /^LIMIT$/i
-        options_array = []
-        options[:limit] ||= [options_array]
-      when /^ORDER BY/i
+        options[:limit] ||= []
+        options_array = options[:limit]
+      when /^ORDER/i
+        options[:order] ||= []
+        options_array = options[:order]
       else
         options_array << word
       end
@@ -210,6 +232,8 @@ class FakeSdb
       # TODO allow strings with value ':nil'
       query.gsub!(/is not null/i, '!= :nil')
       query.gsub!(/is null/i, '= :nil')
+      query.gsub!(/is not/i, '!=')
+      query.gsub!(/is/i, '=')
     end
   end
 
