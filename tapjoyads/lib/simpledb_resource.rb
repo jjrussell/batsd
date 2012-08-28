@@ -96,7 +96,7 @@ class SimpledbResource
       end
     }
 
-    self.attribute_names << attr_name.to_s
+    self.attribute_names << attr_name.to_s unless attribute_names.include?(attr_name.to_s)
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
 

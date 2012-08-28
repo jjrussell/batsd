@@ -198,6 +198,7 @@ class WebRequest < SyslogMessage
     self.raw_url              = params[:raw_url]
     self.controller           = params[:controller]
     self.controller_action    = params[:action]
+    self.offerwall_rank       = params[:offerwall_rank]
   end
 
   def save
