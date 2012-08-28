@@ -206,26 +206,6 @@ describe OfferList do
         end
       end
 
-      context 'with a rating offer' do
-        before :each do
-          @rating = FactoryGirl.create(:rating_offer)
-          @app.enabled_rating_offer_id = @rating.id
-          Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
-          @rating.primary_offer.stub(:postcache_reject?).and_return(false)
-        end
-
-        it 'should return the rating offer first, but there is a defect so it raises a NameError' do
-          list = OfferList.new({:include_rating_offer => true}.merge(@base_params))
-
-          #I think the intended logic is:
-          #  offers.should == [@rating.primary_offer] + @offers[0..1]
-          #but there's a defect; see offer_list.rb
-          lambda {
-            list.get_offers(0, 3)
-          }.should raise_error(NameError)
-        end
-      end
-
       context 'with no special offers' do
         it 'returns the normal first page' do
           list = OfferList.new(@base_params)

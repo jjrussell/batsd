@@ -203,7 +203,6 @@ class GetOffersController < ApplicationController
       :geoip_data           => geoip_data,
       :type                 => type || params[:type],
       :app_version          => params[:app_version],
-      :include_rating_offer => params[:rate_app_offer] != '0',
       :direct_pay_providers => params[:direct_pay_providers].to_s.split(','),
       :exp                  => params[:exp],
       :library_version      => params[:library_version],
