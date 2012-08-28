@@ -87,6 +87,18 @@ describe ApplicationController do
         I18n.locale.should == :"zh-cn"
       end
 
+      it "should use 'zh' if language_code='zh' and country_code=unknown", :de, :set_locale do
+        @controller.params = {:language_code => "zh", :country_code => 'unknown'}
+        @controller.send("set_locale")
+        I18n.locale.should == :zh
+      end
+
+      it "should use 'zh' if language_code='zh-unknown' and country_code=no_country", :de, :set_locale do
+        @controller.params = {:language_code => "zh-unknown", :country_code => 'no_country'}
+        @controller.send("set_locale")
+        I18n.locale.should == :zh
+      end
+
       it "should use 'de' if language_code='' and country_code=de", :de, :set_locale do
         @controller.params = {:language_code => "", :country_code => 'DE'}
         @controller.send("set_locale")
