@@ -272,4 +272,14 @@ describe SimpledbResource do
     end
 
   end
+
+  describe 'dupe attributes' do
+    class Testing
+      self.sdb_attr :foo
+    end
+
+    it 'does not add redefinition to attribute_names again' do
+      Testing.attribute_names.length.should == Testing.attribute_names.uniq.length
+    end
+  end
 end
