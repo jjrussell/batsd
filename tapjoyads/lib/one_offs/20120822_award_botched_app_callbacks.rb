@@ -45,9 +45,7 @@ class OneOffs
         click = Click.new(:key => "#{params['udid']}.#{params['app_id']}", :consistent => true)
       elsif params['mac_address'].present?
         mac_address = params['mac_address'].downcase.gsub(/:/,"")
-        puts "MAC Address: #{mac_address}"
         device_identifier = DeviceIdentifier.new(:key => mac_address)
-        puts "Device Identifier: #{device_identifier.inspect}"
         raise "Could not identify device with provided params" if device_identifier.new_record?
 
         click = Click.new(:key => "#{device_identifier.udid}.#{params['app_id']}", :consistent => true)
