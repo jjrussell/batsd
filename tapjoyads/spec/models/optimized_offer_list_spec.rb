@@ -113,4 +113,24 @@ describe OptimizedOfferList do
     end
   end
 
+  describe ".cache_offer_list" do
+    before :each do
+      @key = "test_key"
+      OptimizedOfferList.stub(:cache_key_for_options).and_return(@key)
+    end
+
+    it "should delete_cached_offer_list and return", :cache_offer_list do
+      OptimizedOfferList.stub(:s3_json_offer_data).with(@key).and_return({'enabled' => 'false', 'offers' => ['offer_id' => 'test_id']})
+      OptimizedOfferList.should_receive(:delete_cached_offer_list).with(@key)
+      Offer.should_not_receive(:find)
+      OptimizedOfferList.cache_offer_list(@key)
+    end
+
+    it "should try to find an offer", :cache_offer_list do
+      OptimizedOfferList.stub(:s3_json_offer_data).with(@key).and_return({'enabled' => 'true', 'offers' => ['offer_id' => 'test_id']})
+      Offer.should_receive(:find)
+      OptimizedOfferList.cache_offer_list(@key)
+    end
+  end
+
 end
