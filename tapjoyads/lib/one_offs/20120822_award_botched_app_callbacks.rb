@@ -22,6 +22,7 @@ class OneOffs
 
     puts "Awarding clicks..."
     bar = ProgressBar.new(row_count, :percentage, :bar, :eta)
+    award_count = 0
 
     CSV.foreach(file.path) do |created, publisher_name, site_name, site_event_name, url, http_result, publisher_id, site_id, site_event_id|
       params = CGI::parse(URI.parse(url).query)
@@ -31,16 +32,41 @@ class OneOffs
       params.delete_if { |key,value| value.blank? }
       params["app_id"] = "c8196876-6458-4fab-bed6-c9306fe35b05" if params["app_id"] != "c8196876-6458-4fab-bed6-c9306fe35b05"
 
+      ## NOTE: None of the API calls in this CSV contain UDIDs.  When a device is created with a MAC address only, the
+      ##       CreateDeviceIdentifiers job assigns it a generated UDID.  Any subsequent clicks are therefore keyed using
+      ##       the generated UDID rather than the MAC.  Thus, looking up the key using the "udid" and "mac" params doesn't
+      ##       work in this case.  Instead, we need get the device record, look up its generated UDID, then look for the
+      ##       click with that generated UDID.  We should also count the number of awards we actually give.
+
       # Find click in SimpleDB
-      click = Click.new(:key => "#{params['udid']}.#{params['app_id']}", :consistent => true)
-      if click.new_record? && params['mac_address'].present? && params['mac_address'] != params['udid']
-        click = Click.new(:key => "#{params['mac_address']}.#{params['app_id']}", :consistent => true)
+      click = nil
+
+      if params['udid'].present?
+        click = Click.new(:key => "#{params['udid']}.#{params['app_id']}", :consistent => true)
+      elsif params['mac_address'].present?
+        mac_address = params['mac_address'].downcase.gsub(/:/,"")
+        puts "MAC Address: #{mac_address}"
+        device_identifier = DeviceIdentifier.new(:key => mac_address)
+        puts "Device Identifier: #{device_identifier.inspect}"
+        raise "Could not identify device with provided params" if device_identifier.new_record?
+
+        click = Click.new(:key => "#{device_identifier.udid}.#{params['app_id']}", :consistent => true)
+        if click.new_record? && mac_address != params['udid']
+          click = Click.new(:key => "#{mac_address}.#{params['app_id']}", :consistent => true)
+        end
+      else
+        raise "No device identifier provided."
       end
 
       # Force resolve if the click existed previously
-      click.resolve! unless click.new_record?
+      unless click.new_record?
+        click.resolve!
+        award_count += 1
+      end
 
       bar.increment!
     end
+
+    puts "Awards issued: #{award_count}"
   end
 end
