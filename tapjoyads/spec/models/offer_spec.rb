@@ -282,7 +282,7 @@ describe Offer do
     @offer.should_not be_valid
   end
 
-  it "rejects depending on prerequisites for non multi_complete offers" do
+  it "rejects depending on prerequisites" do
     device = Factory(:device)
     app = FactoryGirl.create :app
     prerequisite_offer = app.primary_offer
@@ -294,30 +294,6 @@ describe Offer do
 
     exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
     exclusion_offer1.update_attributes({ :multi_complete => true })
-    exclusion_offer2 = (FactoryGirl.create :generic_offer).primary_offer
-    exclusion_offer3 = (FactoryGirl.create :video_offer).primary_offer
-    @offer.exclusion_prerequisite_offer_ids = "[\"#{exclusion_offer1.id}\", \"#{exclusion_offer2.id}\", \"#{exclusion_offer3}\"]"
-    @offer.get_exclusion_prerequisite_offer_ids
-    @offer.send(:prerequisites_not_complete?, device).should == false
-    device.set_last_run_time(exclusion_offer1.item_id)
-    @offer.send(:prerequisites_not_complete?, device).should == true
-    device.set_last_run_time(exclusion_offer2.item_id)
-    @offer.send(:prerequisites_not_complete?, device).should == true
-    device.set_last_run_time(exclusion_offer3.item_id)
-    @offer.send(:prerequisites_not_complete?, device).should == true
-  end
-
-  it "rejects depending on prerequisites for multi_complete offers" do
-    device = Factory(:device)
-    app = FactoryGirl.create :app
-    prerequisite_offer = app.primary_offer
-    @offer.send(:prerequisites_not_complete?, device).should == false
-    @offer.update_attributes({ :prerequisite_offer_id => prerequisite_offer.id })
-    @offer.send(:prerequisites_not_complete?, device).should == true
-    device.set_last_run_time(app.id)
-    @offer.send(:prerequisites_not_complete?, device).should == false
-
-    exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
     exclusion_offer2 = (FactoryGirl.create :generic_offer).primary_offer
     exclusion_offer3 = (FactoryGirl.create :video_offer).primary_offer
     @offer.exclusion_prerequisite_offer_ids = "[\"#{exclusion_offer1.id}\", \"#{exclusion_offer2.id}\", \"#{exclusion_offer3}\"]"
