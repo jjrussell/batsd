@@ -286,13 +286,13 @@ module Offer::Rejecting
 
   def prerequisites_not_complete?(device)
     return false if prerequisite_offer_id.blank? && get_exclusion_prerequisite_offer_ids.blank?
-    return true if prerequisite_offer_id.present? && !offer_complete?(Offer.find_in_cache(prerequisite_offer_id), device)
-    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_in_cache(id), device) }
+    return true if prerequisite_offer_id.present? && !offer_complete?(Offer.find_in_cache(prerequisite_offer_id), device, nil, false)
+    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_in_cache(id), device, nil, false) }
     false
   end
 
-  def offer_complete?(offer, device, app_version = nil)
-    return false if offer.nil? || offer.multi_complete? || device.nil?
+  def offer_complete?(offer, device, app_version = nil, skip_multi_complete = true)
+    return false if offer.nil? || (skip_multi_complete && offer.multi_complete?) || device.nil?
 
     app_id_for_device = offer.item_id
     if offer.item_type == 'RatingOffer'
