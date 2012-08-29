@@ -293,6 +293,7 @@ describe Offer do
     @offer.send(:prerequisites_not_complete?, device).should == false
 
     exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
+    exclusion_offer1.update_attributes({ :multi_complete => true })
     exclusion_offer2 = (FactoryGirl.create :generic_offer).primary_offer
     exclusion_offer3 = (FactoryGirl.create :video_offer).primary_offer
     @offer.exclusion_prerequisite_offer_ids = "[\"#{exclusion_offer1.id}\", \"#{exclusion_offer2.id}\", \"#{exclusion_offer3}\"]"
