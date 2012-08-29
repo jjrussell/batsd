@@ -1,5 +1,6 @@
 # Multiple STI subclasses in one file needs this line to be findable in development mode
 require_dependency 'review_moderation_vote'
+require_dependency 'library_version'
 
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
@@ -301,7 +302,11 @@ class ApplicationController < ActionController::Base
   end
 
   def sdkless_supported?
-    params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+    library_version.sdkless_integration? && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+  end
+
+  def library_version
+    @library_version ||= LibraryVersion.new(params[:library_version])
   end
 
   def generate_verifier(more_data = [])
