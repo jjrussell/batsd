@@ -91,7 +91,7 @@ private
     web_request.click_key         = @click.key
     @survey_questions.each do |question|
       web_request.survey_question_id = question.id
-      web_request.survey_answer      = answers[question.text]
+      web_request.survey_answer      = @answers[question.text]
       web_request.save
     end
   end
