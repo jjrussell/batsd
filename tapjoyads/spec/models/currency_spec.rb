@@ -588,4 +588,48 @@ describe Currency do
       end
     end
   end
+
+  describe '#get_test_device_ids' do
+    context 'after set with string' do
+      it 'returns ids a Set' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs.to_a.join(';')
+        @currency.get_test_device_ids.should == devs
+      end
+    end
+
+    context 'after set with array' do
+      it 'returns ids a Set' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs.to_a
+        @currency.get_test_device_ids.should == devs
+       end
+    end
+  end
+
+  describe '#test_devices=' do
+    context 'with array as arg' do
+      it 'encodes field' do
+        devs = ['a', 'b']
+        @currency.test_devices = devs
+        @currency.test_devices.should == Set.new(devs)
+      end
+    end
+
+    context 'with string as arg' do
+      it 'stores string as field' do
+        devs = ['a', 'b']
+        @currency.test_devices = devs.join(';')
+        @currency.test_devices.should == Set.new(devs)
+      end
+    end
+
+    context 'with Set as arg' do
+      it 'stores string as field' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs
+        @currency.test_devices.should == devs
+      end
+    end
+  end
 end

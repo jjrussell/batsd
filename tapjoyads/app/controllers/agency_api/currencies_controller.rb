@@ -17,7 +17,7 @@ class AgencyApi::CurrenciesController < AgencyApiController
         :name            => currency.name,
         :conversion_rate => currency.conversion_rate,
         :initial_balance => currency.initial_balance,
-        :test_devices    => currency.test_devices,
+        :test_devices    => currency.test_devices_before_type_cast,
         :callback_url    => currency.callback_url,
         :secret_key      => currency.secret_key,
       }
@@ -42,7 +42,7 @@ class AgencyApi::CurrenciesController < AgencyApiController
       :name            => currency.name,
       :conversion_rate => currency.conversion_rate,
       :initial_balance => currency.initial_balance,
-      :test_devices    => currency.test_devices,
+      :test_devices    => currency.test_devices_before_type_cast,
       :callback_url    => currency.callback_url,
       :secret_key      => currency.secret_key,
     }

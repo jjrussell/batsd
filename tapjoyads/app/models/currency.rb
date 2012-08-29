@@ -96,6 +96,8 @@ class Currency < ActiveRecord::Base
   delegate :get_promoted_offers, :enable_risk_management?, :to => :partner, :prefix => true
   memoize :postcache_weights, :categories, :partner_get_promoted_offers, :partner_enable_risk_management?
 
+  delimited_field :test_devices
+
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
@@ -211,7 +213,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_test_device_ids
-    Set.new(test_devices.split(';'))
+    test_devices
   end
   memoize :get_test_device_ids
 
@@ -311,7 +313,7 @@ class Currency < ActiveRecord::Base
   end
 
   def sanitize_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '').gsub(/;{2,}/, ';').downcase
+    self.test_devices = test_devices.to_a.collect { |val| val.to_s.gsub(/\s/, '') }.reject { |val| val.blank? }
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 
