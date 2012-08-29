@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
-  revision: 2b8bc1ea68699cf129f4ad8f45aee21eed4bb3ed
+  revision: e0ae7093b998730ccea00957a4a1a487bbb0bfcc
   specs:
     signage (0.0.1)
 
