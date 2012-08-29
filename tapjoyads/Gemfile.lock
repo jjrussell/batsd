@@ -26,6 +26,12 @@ GIT
     authlogic (2.1.3)
       activesupport
 
+GIT
+  remote: git@github.com:Tapjoy/signage.git
+  revision: e0ae7093b998730ccea00957a4a1a487bbb0bfcc
+  specs:
+    signage (0.0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -454,6 +460,7 @@ DEPENDENCIES
   savon (= 1.1.0)
   sendgrid (= 1.0.1)
   shoulda-matchers
+  signage!
   simple_oauth (= 0.1.5)
   simplecov
   spork
