@@ -3,7 +3,7 @@ class LibraryVersion
 
   class <<self
     def capabilities
-      @@capabilities ||= Array.new
+      @capabilities ||= Array.new
     end
 
     def capability(name, version, matcher=:>=)
