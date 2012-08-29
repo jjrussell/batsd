@@ -313,10 +313,7 @@ class Currency < ActiveRecord::Base
   end
 
   def sanitize_attributes
-    self.test_devices = test_devices.map do |val|
-      val = val.gsub(/\s/, '')
-      val unless val.empty?
-    end
+    self.test_devices = test_devices.to_a.collect { |val| val.to_s.gsub(/\s/, '') }.reject { |val| val.blank? }
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 

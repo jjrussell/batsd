@@ -9,15 +9,15 @@ module DelimitedField
     def delimited_field(*fields)
       fields.each do |f|
         define_method "#{f}=" do |new_field_value|
-          self[:"#{f}"] = if (new_field_value.is_a?(Array) || new_field_value.is_a?(Set))
-            new_field_value.reject! { |val| val.blank? }
-            new_field_value.empty? ? '' : new_field_value.to_a.join(';')
+          self[f.to_sym] = if (new_field_value.is_a?(Array) || new_field_value.is_a?(Set))
+            new_field_value = new_field_value.to_a.reject { |val| val.blank? }
+            new_field_value.join(';')
           else
             new_field_value.to_s
           end
         end
 
-        define_method "#{f}" do
+        define_method f do
           Set.new(read_attribute(f).split(';'))
         end
       end
