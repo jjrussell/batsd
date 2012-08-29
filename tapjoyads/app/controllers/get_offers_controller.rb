@@ -162,14 +162,19 @@ class GetOffersController < ApplicationController
     @show_papaya = false
     @papaya_offers = {}
 
-    # Allow developers to override app settings to hide videos
-    if params[:hide_videos] =~ '^1|true$'
-      @all_videos = false
-      @video_offer_ids = []
+    if library_version.control_video_caching?
+      # Allow developers to override app settings to hide videos
+      if params[:hide_videos] =~ '^1|true$'
+        @all_videos = false
+        @video_offer_ids = []
+      else
+        # If video streaming is on for this connection type we want to return all videos
+        @all_videos = @publisher_app.videos_stream_on?(params[:connection_type])
+        # But if it's not on, and caching is enabled, we will have gotten back a list of cached videos
+        @video_offer_ids = params[:video_offer_ids].to_s.split(',')
+      end
     else
-      # If video streaming is on for this connection type we want to return all videos
-      @all_videos = @publisher_app.videos_stream_on?(params[:connection_type])
-      # But if it's not on, and caching is enabled, we will have gotten back a list of cached videos
+      @all_videos = params[:all_videos]
       @video_offer_ids = params[:video_offer_ids].to_s.split(',')
     end
 
