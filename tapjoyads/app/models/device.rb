@@ -28,7 +28,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
-  SKIP_TIMEOUT = 4.hours
+  SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
   MAX_OVERWRITES_TRACKED = 100000
@@ -369,7 +369,12 @@ class Device < SimpledbShardedResource
 
   def add_click(click)
     click_id = click.id
-    temp_click_hashes = self.recent_click_hashes
+    temp_click_hashes = recent_click_hashes
+    num_clicks = temp_click_hashes.count
+
+    # skip clicks which could be caused by double clicking
+    return nil if temp_click_hashes.present? && (click_id == temp_click_hashes[num_clicks-1]['id'])
+
     end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
 
     shift_index = 0

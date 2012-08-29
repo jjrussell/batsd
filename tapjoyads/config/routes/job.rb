@@ -82,6 +82,8 @@ Tapjoyad::Application.routes.draw do
     match 'queue_update_papaya_user_count(/index)' => 'queue_update_papaya_user_count#index'
     match 'queue_record_updates(/index)' => 'queue_record_updates#index'
     match 'queue_record_updates/run_job' => 'queue_record_updates#run_job'
+    match 'queue_cache_optimized_offer_list(/index)' => 'queue_cache_optimized_offer_list#index'
+    match 'queue_cache_optimized_offer_list/run_job' => 'queue_cache_optimized_offer_list#run_job'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
 

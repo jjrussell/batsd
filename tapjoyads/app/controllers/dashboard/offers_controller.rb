@@ -104,7 +104,10 @@ class Dashboard::OffersController < Dashboard::DashboardController
   private
 
   def setup
-    @app = find_app(params[:app_id])
+    @app = find_app(params[:app_id], :redirect_on_nil => false)
+    if @app.nil?
+      redirect_on_app_not_found(params[:app_id]) and return
+    end
 
     if params[:id]
       @offer = @app.offers.find(params[:id])
