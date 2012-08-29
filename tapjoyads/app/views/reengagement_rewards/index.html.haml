@@ -47,7 +47,7 @@
         - else
           = @reengagement_offer.instructions
       %span.button      
-        = link_to 'OK', @button_link
+        = link_to 'OK', ReengagementRewardsController::OK_BUTTON_URL
     .footer.clearfix
       = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
 

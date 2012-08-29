@@ -15,7 +15,6 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
     verify_params([:id])
     @reengagement_offers = @app.reengagement_campaign if @app
     @currencies = @app.currencies if @reengagement_offers.present?
-    @button_link = 'javascript: history.back()'
   end
 
   def index
