@@ -62,7 +62,7 @@ describe AgencyApi::CurrenciesController do
         'name'            => currency.name,
         'conversion_rate' => currency.conversion_rate,
         'initial_balance' => currency.initial_balance,
-        'test_devices'    => currency.test_devices,
+        'test_devices'    => currency.test_devices_before_type_cast,
         'callback_url'    => currency.callback_url,
         'secret_key'      => currency.secret_key,
       }
@@ -116,7 +116,7 @@ describe AgencyApi::CurrenciesController do
       result['name'].should == @currency.name
       result['conversion_rate'].should == @currency.conversion_rate
       result['initial_balance'].should == @currency.initial_balance
-      result['test_devices'].should == @currency.test_devices
+      result['test_devices'].should == @currency.test_devices_before_type_cast
       result['callback_url'].should == @currency.callback_url
       result['secret_key'].should == @currency.secret_key
     end
@@ -188,7 +188,7 @@ describe AgencyApi::CurrenciesController do
       currency.name.should == 'currency'
       currency.conversion_rate.should == 100
       currency.initial_balance.should == 100
-      currency.test_devices.should == 'asdf;fdsa'
+      currency.test_devices.should == Set.new(['asdf','fdsa'])
       currency.callback_url.should == 'http://tapjoy.com'
       currency.secret_key.should == 'bar'
       currency.ordinal.should == 1
@@ -206,7 +206,7 @@ describe AgencyApi::CurrenciesController do
       currency.name.should == 'currency'
       currency.conversion_rate.should == 100
       currency.initial_balance.should == 100
-      currency.test_devices.should == 'asdf;fdsa'
+      currency.test_devices.should == Set.new(['asdf','fdsa'])
       currency.callback_url.should == 'http://tapjoy.com'
       currency.secret_key.should == 'bar'
       currency.ordinal.should == 101
@@ -280,7 +280,7 @@ describe AgencyApi::CurrenciesController do
       @currency.name.should == 'foo'
       @currency.conversion_rate.should == 200
       @currency.initial_balance.should == 200
-      @currency.test_devices.should == 'asdf;fdsa'
+      @currency.test_devices.should == Set.new(['asdf','fdsa'])
       @currency.callback_url.should == 'http://tapjoy.com'
       @currency.secret_key.should == 'bar'
     end
