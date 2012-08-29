@@ -456,7 +456,7 @@ module Offer::Rejecting
   end
 
   def sdkless_reject?(library_version)
-    sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
+    sdkless? && !library_version.to_library_version.sdkless_integration?
   end
 
   def app_store_reject?(store_whitelist)
