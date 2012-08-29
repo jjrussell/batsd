@@ -118,7 +118,6 @@ FactoryGirl.define do
 
   factory :reengagement_offer do
     association :currency
-    Rails.logger.info "*" * 100
     app     { currency.app }
     partner { currency.partner }
     instructions 'Do some stuff.'
