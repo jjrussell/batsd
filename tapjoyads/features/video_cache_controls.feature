@@ -38,13 +38,21 @@ Scenario: Disabling "Cache over WiFi"
   When I view the form to modify an app's caching options
   And I uncheck the "Cache over WiFi" field
   And I check the "Cache over 3G" field
-  Then I should not be able to check the "Automatic Caching" field
+  Then I should be able to check the "Automatic Caching" field
   And I should be able to check the "Stream over 3G" field
   And I should be able to save the form
 
 Scenario: Disabling "Cache over 3G"
   When I view the form to modify an app's caching options
   And I check the "Cache over WiFi" field
+  And I uncheck the "Cache over 3G" field
+  Then I should be able to check the "Automatic Caching" field
+  And I should be able to check the "Stream over 3G" field
+  And I should be able to save the form
+
+Scenario: Disabling all video caching
+  When I view the form to modify an app's caching options
+  And I uncheck the "Cache over WiFi" field
   And I uncheck the "Cache over 3G" field
   Then I should not be able to check the "Automatic Caching" field
   And I should be able to check the "Stream over 3G" field
