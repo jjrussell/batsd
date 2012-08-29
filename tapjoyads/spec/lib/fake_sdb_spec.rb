@@ -27,6 +27,11 @@ describe FakeSdb do
       'sing' => ['wrong']
     })
 
+    # For null querying
+    db.put_attributes('foo', 'five', {
+      'rhyme' => ['fail']
+    })
+
     db.put_attributes('ints', 'one', {
       'val' => [1]
     })
@@ -57,7 +62,18 @@ describe FakeSdb do
   describe 'with no conditions' do
     it 'returns all rows' do
       rows = subject.select('select * from foo')[:items]
-      rows.size.should == 4
+      rows.size.should == 5
+    end
+
+    it 'supports ordering and limiting' do
+      rows = subject.select('select * from ints order by val desc')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four three two one}
+
+      rows = subject.select('select * from ints order by val asc')[:items]
+      rows.collect(&:keys).flatten.should == %w{one two three four five}
+
+      rows = subject.select('select * from ints order by val desc limit 2')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four}
     end
   end
 
@@ -96,6 +112,22 @@ describe FakeSdb do
 
       rows.size.should == 2
       rows.collect(&:keys).flatten.sort.should == %w{five four}
+    end
+
+    it 'handles "is null" and "is not null"' do
+      rows = subject.select(
+        %{select * from foo where ping is not null}
+      )[:items]
+
+      rows.size.should == 4
+      rows.collect(&:keys).flatten.sort.should == %w{four one three two} # alphabetical whoa
+
+      rows = subject.select(
+        %{select * from foo where ping is null}
+      )[:items]
+
+      rows.size.should == 1
+      rows.collect(&:keys).flatten.should == %w{five}
     end
   end
 
@@ -144,6 +176,15 @@ describe FakeSdb do
 
       rows.size.should == 2
       rows.collect(&:keys).flatten.sort.should == %w{one two}
+    end
+
+    it 'handles null comparison' do
+      rows = subject.select(
+        %{select * from foo where ping = 'wrong' or ping is null}
+      )[:items]
+
+      rows.size.should == 2
+      rows.collect(&:keys).flatten.sort.should == %w{five two}
     end
 
     it 'can mix equality and inequality' do

@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
-      unless identifier.new_record?
+      unless identifier.new_record? || identifier.udid.to_s.start_with?('device_identifier')
         params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break

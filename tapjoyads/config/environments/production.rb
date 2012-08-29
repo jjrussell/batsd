@@ -48,6 +48,8 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :notify
 
   config.i18n_js_cache = true
+
+  config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || raise('Please provide an API key')
 end
 
 begin

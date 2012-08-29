@@ -19,17 +19,13 @@ class AdminDeviceLastRun < SimpledbResource
     opts = opts.slice(:udid, :app_id)
     raise ArgumentError if opts.empty?
 
-    rows = self.select(
-      :where => opts.collect { |k, v| %{#{k} = "#{v}"} }.join(' and ')
-    )[:items]
+    select_options = {
+      :where    => opts.collect { |k, v| %{#{k} = "#{v}"} }.join(' and ') + " and time is not null",
+      :order_by => 'time DESC',
+      :limit    => 1,
+    }
 
-    if rows.size == 0
-      nil
-    elsif rows.size == 1
-      rows.first
-    else
-      rows.sort { |a, b| a.time <=> b.time }.last
-    end
+    self.select(select_options)[:items].first
   end
 
   # set the last run for a [:udid, :app_id] tuple (to now)
