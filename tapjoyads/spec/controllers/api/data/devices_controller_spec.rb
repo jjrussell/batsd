@@ -6,8 +6,8 @@ describe Api::Data::DevicesController do
     before :each do
       @device = FactoryGirl.create(:device)
 
-      @timestamp = Time.zone.now.to_f
-      @well_formed_params = { :data => 'TEST_DATA' }
+      @timestamp = Time.zone.now
+      @well_formed_params = { :id => @device.id, :data => 'TEST_DATA' }
       Signage::ExpiringSignature.new('hmac_sha256', Rails.configuration.tapjoy_api_key).sign_hash!(@well_formed_params)
     end
 
@@ -20,26 +20,26 @@ describe Api::Data::DevicesController do
     it 'fails for invalid hmac digest' do
       @well_formed_params[:signature] = 'INVALID_DIGEST'
       get(:show, {:id => @device.id}.merge(@well_formed_params))
-      JSON.parse(response.body)["success"].should be_false
+      response.response_code.should == 403
     end
 
     it 'fails for an altered request' do
       @well_formed_params[:data] = 'NEW_DATA'
       get(:show, {:id => @device.id}.merge(@well_formed_params))
-      JSON.parse(response.body)["success"].should be_false
+      response.response_code.should == 403
     end
 
-    it 'expires after 10 seconds' do
-      Time.zone.stub(:now).and_return(@timestamp + 301.seconds)
+    it 'expires after 300 seconds' do
+      Time.stub(:now).and_return(@timestamp + 4401.seconds)
       get(:show, {:id => @device.id}.merge(@well_formed_params))
-      JSON.parse(response.body)["success"].should be_false
+      response.response_code.should == 403
     end
   end
 
   describe '#show' do
     before :each do
       @device = FactoryGirl.create(:device)
-      @controller.stub(:verify_auth_token).and_return(true)
+      @controller.stub(:verify_signature).and_return(true)
     end
 
     it 'looks up the object' do
@@ -78,7 +78,7 @@ describe Api::Data::DevicesController do
     before :each do
       @device = FactoryGirl.create(:device)
       Device.should_receive(:new).with(:key => @device.id).and_return(@device)
-      @controller.stub(:verify_auth_token).and_return(true)
+      @controller.stub(:verify_signature).and_return(true)
     end
 
     context 'with no app_id' do
