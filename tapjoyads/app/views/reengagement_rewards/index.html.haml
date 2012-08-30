@@ -3,57 +3,57 @@
 #panel.ui-joy-panel
   .header
     .heading
-      s= "Daily Bonus!"
-    .main
-      %ul.days.clearfix
-        - todays_day_number = @reengagement_offer.day_number
-        - @reengagement_offers.each do |r|
-          - day_number = r.day_number
-          - if day_number > 0
-            - currency = @currencies.detect { |c| c.id == r.currency_id }
-            - reward = pluralize(r.reward_value, currency.name.singularize)
-            - if todays_day_number > day_number
-              %li.box.past
-                .credits.past
-                  %h4
-                    = "#{reward}"
-                .day.past
-                .date.past
-                  %h4
-                    = "Day #{day_number}"
-            - elsif todays_day_number == day_number
-              %li.box.current
-                .credits.current
-                  %h4
-                    = "#{reward}"
-                .day.current
-                .date.current
-                  %h4
-                    = "Day #{day_number}"
-            - else
-              %li.box
-                .credits
-                  %h4
-                    = "#{reward}"
-                .day
-                .date
-                  %h4
-                    = "Day #{day_number}"
-      .textc
-        - if todays_day_number == 0
-          Come back each day and get rewards!
-        - else
-          = @reengagement_offer.instructions
+      = "Daily Bonus!"
+  .instructions
+    %ul.days.clearfix
+      - todays_day_number = @reengagement_offer.day_number
+      - @reengagement_offers.each do |r|
+        - day_number = r.day_number
+        - if day_number > 0
+          - currency = @currencies.detect { |c| c.id == r.currency_id }
+          - reward = pluralize(r.reward_value, currency.name.singularize)
+          - if todays_day_number > day_number
+            %li.box.past
+              .credits.past
+                %h4.day-text
+                  = "Day #{day_number}"
+                %h4
+                  = "#{reward}"
+              .day.past
+          - elsif todays_day_number == day_number
+            %li.box.current
+              .credits.current
+                %h4.day-text
+                  = "Day #{day_number}"
+                %h4
+                  = "#{reward}"
+              .day.current
+
+
+          - else
+            %li.box
+              .credits
+                %h4.day-text
+                  = "Day #{day_number}"
+                %h4
+                  = "#{reward}"
+              .day
+    .textc
+      - if todays_day_number == 0
+        Come back each day and get rewards!
+      - else
+        = @reengagement_offer.instructions
+    = link_to :back do
       %span.button
-        = link_to 'OK', ReengagementRewardsController::OK_BUTTON_URL
-    .footer.clearfix
-      = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
+        Okay
+  .footer.clearfix
+    = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
 
-      %h5{:class => "floatl"}
-        = @app.name
+    %h5.floatl
+      = @app.name
 
-      %a{:href => WEBSITE_URL}
-        = image_tag "reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr"
+    %a{:href => WEBSITE_URL}
+      = image_tag "reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr"
 
 - content_for :page_styles do
   = stylesheet_link_tag("reengagement_rewards/style")
