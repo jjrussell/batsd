@@ -63,6 +63,8 @@ class Currency < ActiveRecord::Base
 
   scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
   scope :just_app_ids, :select => :app_id, :group => :app_id
+  scope :rewarded, :conditions => 'conversion_rate > 0'
+  scope :non_rewarded, :conditions => 'conversion_rate = 0'
   scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   scope :udid_for_user_id, :conditions => "udid_for_user_id"
   scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
