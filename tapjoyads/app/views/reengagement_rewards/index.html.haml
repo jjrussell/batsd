@@ -1,11 +1,9 @@
 - @page_title = "Daily Bonus!"
 
-.container
-  .content
-    .top
-      .headbg
-        %h4
-          = "Daily Bonus!"
+#panel.ui-joy-panel
+  .header
+    .heading
+      s= "Daily Bonus!"
     .main
       %ul.days.clearfix
         - todays_day_number = @reengagement_offer.day_number
@@ -46,7 +44,7 @@
           Come back each day and get rewards!
         - else
           = @reengagement_offer.instructions
-      %span.button      
+      %span.button
         = link_to 'OK', ReengagementRewardsController::OK_BUTTON_URL
     .footer.clearfix
       = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
