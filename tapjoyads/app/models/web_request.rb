@@ -61,6 +61,7 @@ class WebRequest < SyslogMessage
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
+  self.define_attr :advertiser_id
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool

@@ -14,21 +14,33 @@
 class SurveyQuestion < ActiveRecord::Base
   include UuidPrimaryKey
 
+  attr_reader :responses
+  default_scope :order => 'position ASC'
+
   QUESTION_FORMATS = %w( select radio text )
 
   belongs_to :survey_offer
 
-  validates_presence_of :text
-  validates_presence_of :format
-  validates_presence_of :survey_offer
-
+  validates_presence_of :text, :format, :position, :survey_offer
   validates_inclusion_of :format, :in => QUESTION_FORMATS
 
-  def to_s
-    text
+  before_validation :assign_position
+
+  def to_s; text; end
+
+  def responses=(val)
+    self.possible_responses = val
   end
 
-  def possible_responses
-    super.split(';')
+  def responses
+    (self.possible_responses || '').split(';')
+  end
+
+private
+  def assign_position
+    if self.survey_offer
+      self.survey_offer.reload
+      self.position ||= (self.survey_offer.questions.size || 0) + 1
+    end
   end
 end

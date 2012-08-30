@@ -87,15 +87,35 @@ class ApplicationController < ActionController::Base
   #
   # @return [String] Locale detected from the language_code param
   def get_locale
-    language_code = params[:language_code].present? ? params[:language_code].downcase.to_sym : nil
-    if language_code.present?
-      if @@available_locales.include?(language_code)
-        language_code
-      else
-        language_code_str = language_code.to_s
-        language_code_str['-'] ? language_code_str.split('-').first.to_sym : nil
+    language_code_str, language_code = nil, nil
+    if params[:language_code].present?
+      language_code_str = params[:language_code].downcase
+      language_code = language_code_str.to_sym
+
+      if !@@available_locales.include?(language_code)
+        if language_code_str['-']
+          language_code_str = language_code_str.split('-').first
+          language_code = language_code_str.to_sym
+        else
+          language_code_str, language_code = nil, nil
+        end
+      end
+
+      if language_code_str.present? && params[:country_code].present?
+        locale_country_str = "#{language_code_str}-#{params[:country_code].downcase}"
+        locale_country_code = locale_country_str.to_sym
+        if @@available_locales.include?(locale_country_code)
+          language_code = locale_country_code
+        end
+      end
+    elsif params[:country_code].present?
+      locale_country_code = params[:country_code].downcase.to_sym
+      if @@available_locales.include?(locale_country_code)
+        language_code = locale_country_code
       end
     end
+
+    language_code
   end
 
   def lookup_udid(set_temporary_udid = false)

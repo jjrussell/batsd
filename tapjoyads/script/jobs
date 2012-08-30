@@ -2,6 +2,18 @@
 
 ENV['APP_ROOT'] ||= File.expand_path(File.join(File.dirname(__FILE__), '..'))
 APP_ROOT = ENV['APP_ROOT']
+
+env_files = [ File.join(ENV['HOME'], '.tapjoyserver.env'), File.join(APP_ROOT, '.env') ]
+
+env_files.each do |env_file|
+  if File.exists?(env_file)
+    File.foreach(env_file) do |line|
+      k,v = line.split('=').map{ |v| v.strip }
+      ENV[k]=v
+    end
+  end
+end
+
 script_file = File.join(APP_ROOT, 'lib', 'jobs.rb')
 tmp_dir = File.join(APP_ROOT, 'tmp')
 
