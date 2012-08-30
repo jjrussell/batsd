@@ -49,6 +49,7 @@ class WebRequest < SyslogMessage
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
+  self.define_attr :advertiser_id
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool
@@ -156,6 +157,7 @@ class WebRequest < SyslogMessage
     self.sha1_udid            = params[:sha1_udid]
     self.sha1_mac_address     = params[:sha1_mac_address]
     self.android_id           = params[:android_id]
+    self.advertiser_id        = params[:advertiser_id]
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
     self.udid_via_lookup      = params[:udid_via_lookup]

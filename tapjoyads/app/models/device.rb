@@ -20,6 +20,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :open_udid
   self.sdb_attr :android_id
+  self.sdb_attr :advertiser_id
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -61,6 +62,11 @@ class Device < SimpledbShardedResource
     put('android_id', new_value)
   end
 
+  def advertiser_id=(new_value)
+    @create_device_identifiers ||= (self.advertiser_id != new_value)
+    put('advertiser_id', new_value)
+  end
+
   def initialize(options = {})
     @is_temporary = options.delete(:is_temporary) { false }
     super({ :load_from_memcache => true }.merge(options))
@@ -92,6 +98,7 @@ class Device < SimpledbShardedResource
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
     self.android_id = params[:android_id] if params[:android_id].present?
+    self.advertiser_id = params[:advertiser_id] if params[:advertiser_id].present?
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -269,6 +276,7 @@ class Device < SimpledbShardedResource
     all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
+    all_identifiers.push(advertiser_id) if self.advertiser_id.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
