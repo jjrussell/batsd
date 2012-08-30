@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120731133709) do
+ActiveRecord::Schema.define(:version => 2011071101140341) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -1064,6 +1064,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "format",                           :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position",                         :null => false
   end
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true

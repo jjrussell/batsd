@@ -300,8 +300,8 @@ FactoryGirl.define do
   end
 
   factory :survey_offer do
-    bid_price 0
-    name 'short survey 1'
+    bid  { rand(100) + 1 }
+    name { FactoryGirl.generate(:name) + ' Survey' }
   end
 
   factory :creative_approval_queue do
