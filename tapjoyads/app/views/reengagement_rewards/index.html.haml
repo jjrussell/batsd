@@ -1,11 +1,9 @@
 - @page_title = "Daily Bonus!"
 
-.container
-  .content
-    .top
-      .headbg
-        %h4
-          = "Daily Bonus!"
+#panel.ui-joy-panel
+  .header
+    .heading
+      s= "Daily Bonus!"
     .main
       %ul.days.clearfix
         - todays_day_number = @reengagement_offer.day_number
