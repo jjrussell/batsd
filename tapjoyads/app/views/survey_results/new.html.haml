@@ -14,11 +14,12 @@
         = hidden_field_tag(:click_key, params[:click_key])
         = hidden_field_tag(:id, params[:id])
 
-        - @survey_questions.each_with_index do |survey_question, i|
+        - @survey_questions.each do |survey_question|
+          - i = survey_question.position
           .field.clearfix
             %span.question
               %span.number
-                = i + 1
+                = i
               %label{ :for => 'question' }= survey_question.text
             %span.response
               = render survey_question.format,

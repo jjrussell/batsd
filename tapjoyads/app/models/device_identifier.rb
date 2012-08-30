@@ -1,5 +1,5 @@
 class DeviceIdentifier < SimpledbShardedResource
-  # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid)
+  # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid | advertiser_id | android_id)
   #
   ALL_IDENTIFIERS = [
     :sha2_udid,
@@ -8,6 +8,7 @@ class DeviceIdentifier < SimpledbShardedResource
     :sha1_mac_address,
     :open_udid,
     :android_id,
+    :advertiser_id,
   ]
 
   self.num_domains = NUM_DEVICE_IDENTIFIER_DOMAINS

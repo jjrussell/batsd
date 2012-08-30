@@ -1,66 +1,55 @@
 %h1= @page_title
 
-= form_for( [ :tools, @survey_offer], :html => { :class => 'tjform' }) do |f|
+= form_for( [ :tools, @survey_offer], :html => { :multipart => true, :class => 'tjform' }) do |f|
+
   .field
-    = f.label :name
+    = f.label :name, "Name"
     #help_name.help ?
     = f.text_field :name
     = error_message_on(@survey_offer, :name)
-
+  %img{:src => @survey_offer.icon_url, :style => 'float:left;'}
   .field
-    = f.label :name, 'Prerequisite'
-    #help_prerequisite.help ?
-    - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_PARTNER_ID).offers.first)
-    - prerequisites_options = offer_options
-    - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
-    = f.select :prerequisite_offer_id, prerequisites_options
-    = error_message_on @survey_offer, :prerequisite_offer_id
+    = f.label :icon
+    #help_icon.help ?
+    = f.file_field :icon
   .field
-    = f.label :name, 'Exclusion Prerequisites'
-    #help_exclusion_prerequisites.help ?
-    = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'survey_offer[exclusion_prerequisite_offer_ids][]')
-    = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @survey_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
-    = error_message_on @survey_offer, :exclusion_prerequisite_offer_ids
-  .field
-    = f.label :bid
+    = f.label :bid, "Bid"
     #help_bid.help ?
     = f.currency_field :bid
-    = error_message_on(@survey_offer, :bid_price)
+  / .field
+  /   = f.label :name, 'Prerequisite'
+  /   #help_prerequisite.help ?
+  /   - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_PARTNER_ID).offers.first)
+  /   - prerequisites_options = offer_options
+  /   - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+  /   = f.select :prerequisite_offer_id, prerequisites_options
+  /   = error_message_on @survey_offer, :prerequisite_offer_id
+  / .field
+  /   = f.label :name, 'Exclusion Prerequisites'
+  /   #help_exclusion_prerequisites.help ?
+  /   = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'survey_offer[exclusion_prerequisite_offer_ids][]')
+  /   = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @survey_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+  /   = error_message_on @survey_offer, :exclusion_prerequisite_offer_ids
   %h2 Questions
-  - @survey_offer.survey_questions.each do |question|
-    = f.fields_for(:survey_questions, question) do |q|
-      .question
-        .field
-          = q.label :text
-          #help_text.help ?
-          = q.text_field :text
-        .field
-          = q.label :format
-          #help_format.help ?
-          - options = { 'dropdown' => 'select',
-                        'radio' => 'radio',
-                        'text' => 'text' }
-          = q.select :format,
-            options_for_select(options, question.format),
-            {}, { :class => 'format_dropdown' }
-        .field.responses
-          = q.label :possible_responses
-          #help_possible_responses.help ?
-          = q.text_field :possible_responses
-      %hr
 
-  = submit_tag "Update"
+  %div#question_list
+    %div#questions
+      - @survey_offer.questions.each do |question|
+        = render 'question', :question => question, :f => f
+    %button.add_question_button
+      Add Question
+  = f.submit
 
 .hidden
   #help_name_content{:name => 'Name'}
-    The name of the survey offer.
+    The name of the survey.
   #help_bid_content{:name => 'Bid'}
     What dollar value to place on the survey being filled out.
   #help_text_content{:name => 'Text'}
     The text of the question.
   #help_format_content{:name => 'Type'}
     What format the question should be presented in.
-  #help_possible_responses_content{:name => 'Possible Responses'}
+  #help_responses_content{:name => 'Responses'}
     What response options the user will see, separated by semi-colons.
   #help_prerequisite_content{:name => 'Prerequisite Offer'}
     This offer will only be shown to users who have already completed the prerequisite offer.
@@ -93,25 +82,91 @@
       margin-left: 200px;
     }
 
+
 - content_for :page_javascript do
-  :plain
+  :erb
 
     $(function () {
-      function toggle_text_field(dropdown) {
-        if (dropdown.val() == 'text') {
-          responses_div = dropdown.parents('.question').find('.responses');
-          responses_div.hide();
-          responses_div.find('input').val('');
-        } else {
-          dropdown.parents('.question').find('.responses').show();
-        }
+
+      $('#question_list #questions').ready( function() {
+        updateAllQuestions();
+      });
+
+      $('#question_list .add_question_button').click( function() {
+        addQuestion();
+        return false;
+      });
+
+      function addQuestion() {
+        $('#question_list #questions').append(questionContent());
+
+        updateAllQuestions();
+        return false;
       };
 
-      $('.format_dropdown').each(function () {
-        toggle_text_field($(this));
-      });
+      function questionContent() {
+        return "<%= escape_javascript(render 'question',
+          :f => ActionView::Helpers::FormBuilder.new('', SurveyQuestion.new, self, {}, proc {}))
+        %>";
+      };
 
-      $('.format_dropdown').change(function () {
-        toggle_text_field($(this));
-      });
+      function updateAllQuestions() {
+        updateQuestionMetadata();
+        setClickEventsForRemoveQuestionButtons();
+        setChangeEventsForQuestionDropdowns();
+      }
+
+      function updateQuestionMetadata() {
+        var questionCount = 1;
+        $('#question_list #questions .question').each(function() {
+
+          $(this).attr('id', 'question_' + questionCount);
+
+          updateQuestionFieldMetadata($(this), 'text',      'input',  questionCount);
+          updateQuestionFieldMetadata($(this), 'format',    'select', questionCount);
+          updateQuestionFieldMetadata($(this), 'responses', 'input',  questionCount);
+
+          questionCount++;
+        });
+      };
+
+      function updateQuestionFieldMetadata(question, name, inputType, id) {
+        var selector = '.question_' + name; //by convention
+
+        question.find(selector + ' label').attr('for', 'survey_offer_questions_attributes_' + id + '_' + name);
+
+        var input = question.find(selector + ' ' + inputType);
+        input.attr('id' , 'survey_offer_questions_attributes_' + id + '_' + name);
+        input.attr('name','survey_offer[questions_attributes]['+ id + ']['+ name + ']');
+      }
+
+      function setClickEventsForRemoveQuestionButtons() {
+        $('#question_list #questions .question .remove_question_button').each(function() {
+          $(this).unbind('click');
+          $(this).click( function() {
+            removeQuestion($(this).parent('.question'));
+            return false;
+          });
+        });
+      }
+
+      function removeQuestion(question) {
+        question.remove();
+      }
+
+      function setChangeEventsForQuestionDropdowns() {
+        $('#question_list #questions .question').each(function() {
+          var dropdown = $(this).find('.question_format select');
+          dropdown.unbind('change');
+          dropdown.change( function() {
+            toggleQuestionResponseField($(this), $(this).closest('.question').find('.question_responses'), "text");
+          });
+          toggleQuestionResponseField(dropdown, dropdown.closest('.question').find('.question_responses'), "text");
+        });
+      };
+
+      function toggleQuestionResponseField(dropdown, responseField, content) {
+        dropdown.val() == content ? responseField.hide() : responseField.show();
+      };
     });
+
