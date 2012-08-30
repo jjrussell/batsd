@@ -102,7 +102,7 @@ class ApplicationController < ActionController::Base
       end
 
       if language_code_str.present? && params[:country_code].present?
-        locale_country_str = language_code_str + '-' + params[:country_code].downcase
+        locale_country_str = "#{language_code_str}-#{params[:country_code].downcase}"
         locale_country_code = locale_country_str.to_sym
         if @@available_locales.include?(locale_country_code)
           language_code = locale_country_code
