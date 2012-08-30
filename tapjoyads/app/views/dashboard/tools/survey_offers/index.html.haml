@@ -19,7 +19,7 @@
             %b= "(Enabled)"
         %td
           %ul
-            - survey_offer.survey_questions.each do |question|
+            - survey_offer.questions.each do |question|
               %li= question.text
         %td= link_to('Offerwall view', new_survey_result_path(:id => survey_offer.id, :udid => 'just_looking', :click_key => 'just_looking'))
         %td

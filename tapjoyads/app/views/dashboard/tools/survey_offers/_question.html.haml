@@ -1,0 +1,23 @@
+- question ||= SurveyQuestion.new
+= f.fields_for(:questions, question) do |q|
+  .question
+    .field.question_text
+      = q.label :text
+      #help_text.help ?
+      = q.text_field :text
+    .field.question_format
+      = q.label :format
+      #help_format.help ?
+      - options = { 'dropdown' => 'select',
+                    'radio' => 'radio',
+                    'text' => 'text' }
+      = q.select :format,
+        options_for_select(options, question.format),
+        {}, { :class => 'format_dropdown' }
+    .field.responses.question_responses
+      = q.label :responses
+      #help_responses.help ?
+      = q.text_field :responses, :value => question.responses.join(';')
+    %button.remove_question_button
+      Remove
+    %hr
