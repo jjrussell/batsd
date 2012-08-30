@@ -1,26 +1,26 @@
-- age_gating = 21
+- age_gating = @offer.age_rating
 - @page_title = t('text.age_gating.title', :age_gating => age_gating)
 
 #body
-  %div{ :id => "instructions" }
+  #instructions
     = t('text.age_gating.instructions')
   %br
-  %span{ :id => "error_message" }
+  %span#error_message
   %br
   %br
-  %div{ :id => "inputs" }
-    %input{ :type => "text", :id => "mm", :maxlength => 2, :size => 4, :placeholder => "MM", :onkeypress => "return isNumberKey(event)", :value => 5 }
-    = "/"
-    %input{ :type => "text", :id => "dd", :maxlength => 2, :size => 4, :placeholder => "DD", :onkeypress => "return isNumberKey(event)", :value => 29 }
-    = "/"
-    %input{ :type => "text", :id => "yyyy", :maxlength => 4, :size => 6, :placeholder => "YYYY", :onkeypress => "return isNumberKey(event)", :value => 2000 }
+  #inputs
+    %select#mm
+    \/
+    %select#dd
+    \/
+    %select#yyyy
   %br
   %br
   %br
-  %div{ :id => "continue" }
+  #continue
     %a{ :href => "javascript: void(0)", :onclick => "return checkAge(#{age_gating})" }
       = t('text.age_gating.continue_link')
-  %div{ :id => "close", :style => "display:none" }
+  #close{ :style => "display:none" }
     %a{ :href => "javascript: history.back()" }
       = t('text.age_gating.close_link')
 
@@ -28,23 +28,12 @@
 
 - content_for :page_javascript do
   :plain
-    function isNumberKey(evt) {
-      var charCode = (evt.which) ? evt.which : event.keyCode
-      if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
-      }
-      return true;
-    }
+    datePopulate();
 
     function checkAge(min_age) {
       var mm = parseInt(document.getElementById("mm").value);
       var dd = parseInt(document.getElementById("dd").value);
       var yyyy = parseInt(document.getElementById("yyyy").value);
-
-      if (!mm || !dd || !yyyy) {
-        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.empty_input')}";
-        return false;
-      }
 
       var gating_date = new Date((yyyy + min_age), mm, dd);
       var today = new Date;
@@ -55,11 +44,33 @@
         document.getElementById('inputs').style.display = 'none';
         document.getElementById('continue').style.display = 'none';
         document.getElementById('close').style.display = 'block';
-        return false;
+        setTimeout("history.back();", 3000);
       } else {
-        alert("aaaaa");
         location.href = "#{@click_url}";
       }
+    }
+
+    function datePopulate(){
+      var monthtext=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
+      var today=new Date();
+      var dayfield=document.getElementById('dd');
+      var monthfield=document.getElementById('mm');
+      var yearfield=document.getElementById('yyyy');
+
+      for (var d=0; d<31; d++)
+          dayfield.options[d]=new Option(d+1, d+1);
+      dayfield.options[today.getDate()]=new Option(today.getDate(), today.getDate(), true, true); //select today's day
+
+      for (var m=0; m<12; m++)
+          monthfield.options[m]=new Option(monthtext[m], m+1);
+      monthfield.options[today.getMonth()]=new Option(monthtext[today.getMonth()], today.getMonth()+1, true, true); //select today's month
+
+      var thisyear=today.getFullYear();
+      for (var y=0; y<100; y++){
+          yearfield.options[y]=new Option(thisyear, thisyear);
+          thisyear-=1;
+      }
+      yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true); //select today's year
     }
 
 - content_for :page_styles do
@@ -84,8 +95,9 @@
       color: white;
     }
 
-    input {
-      text-align: center;
+    select {
+      -webkit-appearance: none;
+      font-size: 30px;
     }
 
     #body {
@@ -97,8 +109,8 @@
       font-size: 24px;
       -moz-border-radius: 10px;
       -webkit-border-radius: 10px;
-      padding-top: 80px;
-      padding-bottom: 80px;
+      padding-top: 60px;
+      padding-bottom: 60px;
     }
 
     #error_message {

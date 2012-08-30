@@ -616,34 +616,6 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "news_coverages", ["id"], :name => "index_news_coverages_on_id", :unique => true
   add_index "news_coverages", ["published_at"], :name => "index_news_coverages_on_published_at"
 
-  create_table "notification_settings", :id => false, :force => true do |t|
-    t.string   "id",             :limit => 36, :null => false
-    t.string   "gamer_id",       :limit => 36, :null => false
-    t.integer  "inapp_switches", :limit => 8
-    t.integer  "email_switches", :limit => 8
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "notification_settings", ["gamer_id"], :name => "index_notification_settings_on_gamer_id", :unique => true
-  add_index "notification_settings", ["id"], :name => "index_notification_settings_on_id", :unique => true
-
-  create_table "notifications", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36,                :null => false
-    t.string   "gamer_id",    :limit => 36,                :null => false
-    t.integer  "channel",                                  :null => false
-    t.integer  "action",                                   :null => false
-    t.string   "values"
-    t.string   "params"
-    t.integer  "inapp_state",               :default => 0
-    t.integer  "email_state",               :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "notifications", ["gamer_id"], :name => "index_notifications_on_gamer_id"
-  add_index "notifications", ["id"], :name => "index_notifications_on_id", :unique => true
-
   create_table "offer_discounts", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
     t.string   "partner_id", :limit => 36, :null => false

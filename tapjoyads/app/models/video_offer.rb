@@ -26,6 +26,8 @@ class VideoOffer < ActiveRecord::Base
 
   set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
+  attr_accessor :age_gating
+
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
   validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
@@ -77,14 +79,6 @@ class VideoOffer < ActiveRecord::Base
     app_targeting? && !has_video_button_for_store?(store_name)
   end
 
-  def age_gating
-    @age_gating
-  end
-
-  def age_gating=(value)
-    @age_gating = value
-  end
-
   private
 
   def create_primary_offer
@@ -131,10 +125,9 @@ class VideoOffer < ActiveRecord::Base
 
   def video_exists
     true
-#    bucket = S3.bucket(BucketNames::TAPJOY)
-#    obj    = bucket.objects["videos/src/#{id}.mp4"]
-
-#    errors.add :video_url, 'Video does not exist.' unless obj.exists?
+    #bucket = S3.bucket(BucketNames::TAPJOY)
+    #obj    = bucket.objects["videos/src/#{id}.mp4"]
+    #errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
 
   private

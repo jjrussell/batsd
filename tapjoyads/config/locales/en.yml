@@ -208,9 +208,8 @@ en:
       close_link: "Close"
       continue_link: "Continue"
       error_message:
-        empty_input: "Please enter your date of birth."
         too_yong: "Sorry, you are too young to access this content!"
-      instructions: "Enter your date of birth (MM/DD/YYYY):"
+      instructions: "Enter your date of birth:"
       title: "Age Gate %{age_gating}+"
     featured:
       download: Download

@@ -817,7 +817,7 @@ class Offer < ActiveRecord::Base
   end
 
   def age_gate?
-    age_rating && video_offer?
+    video_offer? && age_rating
   end
 
   private
