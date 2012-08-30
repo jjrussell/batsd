@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
-  revision: e0ae7093b998730ccea00957a4a1a487bbb0bfcc
+  revision: b7cb6eaca5e2148da550eba599c684ace2b68f09
   specs:
     signage (0.0.1)
 
@@ -142,7 +142,6 @@ GEM
     faraday_middleware (0.7.0)
       faraday (~> 0.7.3)
     fattr (2.2.1)
-    ffi (1.0.11)
     ffi (1.1.5)
     foreman (0.36.1)
       term-ansicolor (~> 1.0.7)
