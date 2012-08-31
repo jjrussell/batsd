@@ -57,5 +57,5 @@
         fetchURL = #{get_next_link_json_redesign.to_json},
         data = #{@final.to_json};
 
-= javascript_include_tag 'shared/i18n'
-= javascript_include_tag "offerwall/offerwall"
+= embed_js 'shared/i18n'
+= embed_js "offerwall/offerwall"
