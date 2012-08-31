@@ -41,6 +41,14 @@ class Job < ActiveRecord::Base
 
   attr_reader :next_run_time
 
+  def path
+    "/job/#{self.controller}/#{self.action}"
+  end
+
+  def url
+    "#{DASHBOARD_URL}#{path}"
+  end
+
   def set_next_run_time
     now = Time.now.utc
     if frequency == 'interval'
