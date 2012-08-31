@@ -231,6 +231,9 @@ form.tjform {
   font-size: 16px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
+  &.monospace {
+    font-family: monospace;
+  }
 }
 .tjform .fieldWithErrors textarea,
 .tjform .fieldWithErrors input[type=text],
