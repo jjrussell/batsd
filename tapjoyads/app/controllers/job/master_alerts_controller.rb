@@ -21,10 +21,10 @@ class Job::MasterAlertsController < Job::JobController
 
   def push(alert, rows)
     if alert['recipients_field']
-      direct_recipients = rows.collect {|row| row[alert['recipients_field']] }.uniq
+      direct_recipients = rows.collect {|row| row[alert['recipients_field'].to_sym] }.uniq
 
       direct_recipients.each do |recipient|
-        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert['recipients_field']] == recipient}, recipient)
+        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert['recipients_field'].to_sym] == recipient}, recipient)
       end
     else
       TapjoyMailer.deliver_alert(alert, rows, alert['recipients'])
