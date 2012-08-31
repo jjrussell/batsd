@@ -2,7 +2,7 @@ class Job::MasterAlertsController < Job::JobController
   def index
     alerts.each do |alert|
       begin
-        rows = vertica.query(alert[:query]).rows
+        rows = vertica.query(alert['query']).rows
       rescue Vertica::Error::QueryError
         next
       end
@@ -20,14 +20,14 @@ class Job::MasterAlertsController < Job::JobController
   end
 
   def push(alert)
-    if alert[:recipients_field]
-      direct_recipients = rows.collect {|row| row[alert[:recipients_field]] }.uniq
+    if alert['recipients_field']
+      direct_recipients = rows.collect {|row| row[alert['recipients_field']] }.uniq
 
       direct_recipients.each do |recipient|
-        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert[:recipients_field]] == recipient}, recipient)
+        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert['recipients_field']] == recipient}, recipient)
       end
     else
-      TapjoyMailer.deliver_alert(alert, rows, alert[:recipients])
+      TapjoyMailer.deliver_alert(alert, rows, alert['recipients'])
     end
   end
 
