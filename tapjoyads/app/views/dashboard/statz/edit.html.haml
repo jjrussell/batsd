@@ -376,7 +376,7 @@
       %td{ :colspan => 2 }= f.submit('Save Changes')
     %tr
       %td{ :colspan => 2 }
-        %iframe#icon_upload{:src => upload_icon_statz_path(:id => @offer.id)}
+        %iframe#icon_upload{:src => edit_tools_offer_icon_path(:id => @offer.id)}
     %tr
       %td{ :colspan => 2 }
         = render('dashboard/offer_creatives/iframes', :offer => @offer)

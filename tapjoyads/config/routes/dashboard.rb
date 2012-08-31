@@ -154,7 +154,6 @@ Tapjoyad::Application.routes.draw do
           get :support_request_reward_ratio
           get :show_rate_reasons
           get :download_udids
-          match :upload_icon
         end
 
       end
@@ -287,6 +286,7 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export

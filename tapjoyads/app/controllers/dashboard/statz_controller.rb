@@ -5,7 +5,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons, :upload_icon ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -73,30 +73,6 @@ class Dashboard::StatzController < Dashboard::DashboardController
       flash.now[:error] = "Errors encountered, please see messages below"
       render :action => :edit
     end
-  end
-
-  def upload_icon
-    if request.post? || request.put?
-      image_data = params[:offer][:upload_icon].try(:read)
-      begin
-        @offer.save_icon!(image_data, true)
-        @success_message = "Icon uploaded successfully."
-      rescue
-        @error_message = "Error uploading icon, please try again."
-      end
-    end
-
-    if request.delete?
-      begin
-        @offer.remove_icon!
-        @success_message = "Icon removed successfully."
-      rescue
-        @error_message = "Error removing icon, please try again."
-      end
-    end
-
-    @has_icon = @offer.icon_id_override? && @offer.uploaded_icon?
-    render :layout => 'simple'
   end
 
   def new
