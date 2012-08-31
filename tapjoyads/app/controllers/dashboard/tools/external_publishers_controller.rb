@@ -16,7 +16,8 @@ class Dashboard::Tools::ExternalPublishersController < Dashboard::DashboardContr
     log_activity(currency)
     currency.external_publisher = !currency.external_publisher
     if currency.save
-      Downloader.queue_get_with_retry(Job.find_by_controller_and_action('master_external_publishers', 'cache').url, :internal_authenticate => true)
+      job = Job.find_by_controller_and_action('master_external_publishers', 'cache')
+      Downloader.queue_get_with_retry(job.url, :internal_authenticate => true, :timeout => 3600)
 
       flash[:notice] = "Currency updated"
       redirect_to tools_external_publishers_path
