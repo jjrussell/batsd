@@ -511,6 +511,7 @@ ActiveRecord::Schema.define(:version => 20120809200645) do
     t.string   "trigger_action"
     t.string   "prerequisite_offer_id",            :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                  :null => false
+    t.string   "protocol_handler"
   end
 
   add_index "generic_offers", ["id"], :name => "index_generic_offers_on_id", :unique => true
@@ -742,6 +743,7 @@ ActiveRecord::Schema.define(:version => 20120809200645) do
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
     t.string   "app_metadata_id",                   :limit => 36
     t.string   "source_offer_id",                   :limit => 36
+    t.integer  "audition_factor",                                                               :default => 3,     :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -1063,6 +1065,7 @@ ActiveRecord::Schema.define(:version => 20120809200645) do
     t.string   "format",                           :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position",                         :null => false
   end
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true

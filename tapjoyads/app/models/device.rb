@@ -20,6 +20,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :open_udid
   self.sdb_attr :android_id
+  self.sdb_attr :advertiser_id
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -28,9 +29,10 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
 
-  SKIP_TIMEOUT = 4.hours
+  SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
+  MAX_OVERWRITES_TRACKED = 100000
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -58,6 +60,11 @@ class Device < SimpledbShardedResource
   def android_id=(new_value)
     @create_device_identifiers ||= (self.android_id != new_value)
     put('android_id', new_value)
+  end
+
+  def advertiser_id=(new_value)
+    @create_device_identifiers ||= (self.advertiser_id != new_value)
+    put('advertiser_id', new_value)
   end
 
   def initialize(options = {})
@@ -91,6 +98,7 @@ class Device < SimpledbShardedResource
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
     self.android_id = params[:android_id] if params[:android_id].present?
+    self.advertiser_id = params[:advertiser_id] if params[:advertiser_id].present?
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -268,6 +276,7 @@ class Device < SimpledbShardedResource
     all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
+    all_identifiers.push(advertiser_id) if self.advertiser_id.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
@@ -275,12 +284,9 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
-      if device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
-        timestamp = Time.zone.now
-        redis_key = "device_identifier.#{timestamp.to_f.to_s}"
-        $redis.setex(redis_key, 30.days, {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid}.to_json)
-        $redis.sadd("device_identifier", redis_key)
-        $redis.sadd("device_identifier.#{timestamp.to_i / 1.week}", redis_key)
+      if !device_identifier.new_record? && device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
+        data = {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid, :timestamp => Time.zone.now}.to_json
+        $redis.rpop('all_device_identifiers_overwrites') if $redis.lpush('all_device_identifiers_overwrites', data) > MAX_OVERWRITES_TRACKED
       end
       device_identifier.udid = key
       device_identifier.save!
@@ -371,7 +377,12 @@ class Device < SimpledbShardedResource
 
   def add_click(click)
     click_id = click.id
-    temp_click_hashes = self.recent_click_hashes
+    temp_click_hashes = recent_click_hashes
+    num_clicks = temp_click_hashes.count
+
+    # skip clicks which could be caused by double clicking
+    return nil if temp_click_hashes.present? && (click_id == temp_click_hashes[num_clicks-1]['id'])
+
     end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
 
     shift_index = 0

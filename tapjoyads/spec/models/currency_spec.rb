@@ -452,14 +452,12 @@ describe Currency do
       end
 
       it 'copies values from its partner' do
-        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
-          @currency.save!
-          @currency.spend_share.should == 0.3822
-          @currency.direct_pay_share.should == 0.8
-          @currency.disabled_partners.should == 'foo'
-          @currency.offer_whitelist.should == 'bar'
-          @currency.use_whitelist.should == true
-        end
+        @currency.save!
+        @currency.spend_share.should == (0.42 * SpendShare.current_ratio)
+        @currency.direct_pay_share.should == 0.8
+        @currency.disabled_partners.should == 'foo'
+        @currency.offer_whitelist.should == 'bar'
+        @currency.use_whitelist.should == true
       end
     end
 
@@ -587,6 +585,50 @@ describe Currency do
 
       it 'returns false becauses there is no charge to the advertiser for an offer' do
         @currency.charges?(@offer).should == false
+      end
+    end
+  end
+
+  describe '#get_test_device_ids' do
+    context 'after set with string' do
+      it 'returns ids a Set' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs.to_a.join(';')
+        @currency.get_test_device_ids.should == devs
+      end
+    end
+
+    context 'after set with array' do
+      it 'returns ids a Set' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs.to_a
+        @currency.get_test_device_ids.should == devs
+       end
+    end
+  end
+
+  describe '#test_devices=' do
+    context 'with array as arg' do
+      it 'encodes field' do
+        devs = ['a', 'b']
+        @currency.test_devices = devs
+        @currency.test_devices.should == Set.new(devs)
+      end
+    end
+
+    context 'with string as arg' do
+      it 'stores string as field' do
+        devs = ['a', 'b']
+        @currency.test_devices = devs.join(';')
+        @currency.test_devices.should == Set.new(devs)
+      end
+    end
+
+    context 'with Set as arg' do
+      it 'stores string as field' do
+        devs = Set.new(['a', 'b'])
+        @currency.test_devices = devs
+        @currency.test_devices.should == devs
       end
     end
   end

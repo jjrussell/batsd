@@ -29,6 +29,8 @@ class ApplicationController < ActionController::Base
 
   private
 
+  @@available_locales = I18n.available_locales.to_set
+
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -85,11 +87,35 @@ class ApplicationController < ActionController::Base
   #
   # @return [String] Locale detected from the language_code param
   def get_locale
-    language_code = params[:language_code]
-    if language_code.present?
-      language_code = language_code.split('-').first if language_code['-']
-      language_code.downcase
+    language_code_str, language_code = nil, nil
+    if params[:language_code].present?
+      language_code_str = params[:language_code].downcase
+      language_code = language_code_str.to_sym
+
+      if !@@available_locales.include?(language_code)
+        if language_code_str['-']
+          language_code_str = language_code_str.split('-').first
+          language_code = language_code_str.to_sym
+        else
+          language_code_str, language_code = nil, nil
+        end
+      end
+
+      if language_code_str.present? && params[:country_code].present?
+        locale_country_str = "#{language_code_str}-#{params[:country_code].downcase}"
+        locale_country_code = locale_country_str.to_sym
+        if @@available_locales.include?(locale_country_code)
+          language_code = locale_country_code
+        end
+      end
+    elsif params[:country_code].present?
+      locale_country_code = params[:country_code].downcase.to_sym
+      if @@available_locales.include?(locale_country_code)
+        language_code = locale_country_code
+      end
     end
+
+    language_code
   end
 
   def lookup_udid(set_temporary_udid = false)
@@ -103,7 +129,7 @@ class ApplicationController < ActionController::Base
 
     lookup_keys.each do |lookup_key|
       identifier = DeviceIdentifier.new(:key => lookup_key)
-      unless identifier.new_record?
+      unless identifier.new_record? || identifier.udid.to_s.start_with?('device_identifier')
         params[:udid_via_lookup] = true
         params[:udid] = identifier.udid
         break
@@ -203,7 +229,6 @@ class ApplicationController < ActionController::Base
     else
       @cached_geoip_data[:primary_country] = params[:primary_country] || @cached_geoip_data[:carrier_country_code] || @cached_geoip_data[:user_country_code] || @cached_geoip_data[:country]
     end
-
     @cached_geoip_data
   end
 
@@ -253,14 +278,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def determine_link_affiliates
-    if App::TRADEDOUBLER_COUNTRIES.include?(geoip_data[:country])
-      @itunes_link_affiliate = 'tradedoubler'
-    else
-      @itunes_link_affiliate = 'linksynergy'
-    end
-  end
-
   def choose_experiment(experiment)
     params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end
@@ -295,6 +312,25 @@ class ApplicationController < ActionController::Base
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
     Digest::SHA256.hexdigest(hash_bits.join(':'))
+  end
+
+  # TODO make this more general so nobody needs to go WebRequest.new in a controller -KB
+  def generate_web_request
+    if params[:source] == 'tj_games'
+      wr_path = 'tjm_offers'
+    elsif params[:source] == 'featured'
+      wr_path = 'featured_offer_requested'
+    else
+      wr_path = 'offers'
+    end
+    web_request = WebRequest.new(:time => @now)
+    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
+    web_request.viewed_at = @now
+    web_request.offerwall_start_index = @start_index
+    web_request.offerwall_max_items = @max_items
+    web_request.raw_url = request.url
+
+    web_request
   end
 
   def device_type

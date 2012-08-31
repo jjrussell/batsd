@@ -9,7 +9,7 @@ authorization do
     has_permission_on :dashboard_enable_offer_requests, :to => [ :create ]
     has_permission_on :dashboard_reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate, :export_aggregate ]
     has_permission_on :dashboard_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA, :preview ]
-    has_permission_on :dashboard_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy, :update_status ]
+    has_permission_on :dashboard_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy, :update_status, :show ]
     has_permission_on :dashboard_billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :export_adjustments, :forget_credit_card ]
     has_permission_on :dashboard_users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_support, :to => [ :index ]
@@ -123,7 +123,7 @@ authorization do
     includes :customer_service
     includes :file_sharer
     has_permission_on :dashboard_users, :to => [ :approve ]
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons ]
     has_permission_on :dashboard_search, :to => [ :offers, :partners, :users, :currencies ]
     has_permission_on :dashboard_tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures, :recreate_device_identifiers ]
     has_permission_on :dashboard_tools_enable_offer_requests, :to => [ :index, :update ]
@@ -143,6 +143,7 @@ authorization do
     has_permission_on :dashboard_tools_video_buttons, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :dashboard_tools_offer_icons, :to => [ :edit, :create, :update, :destroy ]
     has_permission_on :dashboard_tools_external_publishers, :to => [ :index, :update ]
     has_permission_on :dashboard_tools_users, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_partner_assignments, :to => [ :create, :destroy ]

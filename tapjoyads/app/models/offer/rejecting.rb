@@ -102,6 +102,12 @@ module Offer::Rejecting
     %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09) => %w(6d7892ac-8d94-4cc2-ae07-7effaa9fd4ea 403ba8c9-c8aa-492d-bc5a-9f667c272a09),
     # Tempur-Pedic
     %w(90df3490-e351-4a05-86d0-ddb91f28651b 76b79817-0ae0-4d01-b597-904accd142a7) => %w(90df3490-e351-4a05-86d0-ddb91f28651b 76b79817-0ae0-4d01-b597-904accd142a7),
+    # Fluff Friends Rescue iOS
+    %w(1165fbbf-c5c1-4fee-951f-52a8beb81d8d 7aeb04d3-9796-4ec1-90e9-f7b7e506969a bca84192-05f6-42c6-bb50-7ca3e0feb38c e973496a-1e69-4198-8c29-392bc01306ba f904bea5-05ee-4df7-b480-1767010f8cb9 18dcb8bf-7556-481b-88da-7b9d959c2d4b 49cabdd5-0f88-4d87-8483-e70c12edf760 97a839d2-2dd0-4ae4-b0db-ca72fb8d6473 6c4d9387-50a3-4dde-b6f8-6e3acda0e3e2) =>
+    %w(1165fbbf-c5c1-4fee-951f-52a8beb81d8d 7aeb04d3-9796-4ec1-90e9-f7b7e506969a bca84192-05f6-42c6-bb50-7ca3e0feb38c e973496a-1e69-4198-8c29-392bc01306ba f904bea5-05ee-4df7-b480-1767010f8cb9 18dcb8bf-7556-481b-88da-7b9d959c2d4b 49cabdd5-0f88-4d87-8483-e70c12edf760 97a839d2-2dd0-4ae4-b0db-ca72fb8d6473 6c4d9387-50a3-4dde-b6f8-6e3acda0e3e2),
+    # Conquer Online HD iOS
+    %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) =>
+    %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -280,13 +286,13 @@ module Offer::Rejecting
 
   def prerequisites_not_complete?(device)
     return false if prerequisite_offer_id.blank? && get_exclusion_prerequisite_offer_ids.blank?
-    return true if prerequisite_offer_id.present? && !offer_complete?(Offer.find_in_cache(prerequisite_offer_id), device)
-    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_in_cache(id), device) }
+    return true if prerequisite_offer_id.present? && !offer_complete?(Offer.find_in_cache(prerequisite_offer_id), device, nil, false)
+    return true if get_exclusion_prerequisite_offer_ids.present? && get_exclusion_prerequisite_offer_ids.any?{ |id| offer_complete?(Offer.find_in_cache(id), device, nil, false) }
     false
   end
 
-  def offer_complete?(offer, device, app_version = nil)
-    return false if offer.nil? || offer.multi_complete? || device.nil?
+  def offer_complete?(offer, device, app_version = nil, skip_multi_complete = true)
+    return false if offer.nil? || (skip_multi_complete && offer.multi_complete?) || device.nil?
 
     app_id_for_device = offer.item_id
     if offer.item_type == 'RatingOffer'

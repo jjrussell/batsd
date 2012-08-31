@@ -12,14 +12,13 @@ class Dashboard::Tools::SurveyOffersController < Dashboard::DashboardController
   end
 
   def new
-    @survey_offer = SurveyOffer.new(:bid => 0)
-    @survey_offer.build_blank_questions
+    @survey_offer = SurveyOffer.new
   end
 
   def create
     sanitize_currency_params(params[:survey_offer], [ :bid ])
-    questions_attrs = params[:survey_offer].delete(:survey_questions_attributes)
-    options = { :survey_questions_attributes => questions_attrs }
+    questions_attrs = params[:survey_offer].delete(:questions_attributes)
+    options = { :questions_attributes => questions_attrs }
     @survey_offer = SurveyOffer.new(params[:survey_offer])
 
     # accepts_attributes_for doesn't play nice with UuidPrimaryKey on creation
@@ -28,14 +27,11 @@ class Dashboard::Tools::SurveyOffersController < Dashboard::DashboardController
       redirect_to tools_survey_offers_path
     else
       flash.now[:error] = 'Problems creating survey offer'
-      @survey_offer.build_blank_questions
-      render :action => :new
+      redirect_to :action => :new
     end
   end
 
-  def edit
-    @survey_offer.build_blank_questions
-  end
+  def edit; end
 
   def update
     if @survey_offer.locked?
@@ -59,8 +55,12 @@ class Dashboard::Tools::SurveyOffersController < Dashboard::DashboardController
   end
 
   def toggle_enabled
-    @survey_offer.enabled = !@survey_offer.enabled?
-    flash[:notice] = 'Survey offer updated.'
+    @survey_offer.enabled? ? @survey_offer.disable! : @survey_offer.enable!
+    if @survey_offer.save
+      flash[:notice] = 'Survey offer updated.'
+    else
+      flash[:error] = 'Problems updating survey offer'
+    end
     redirect_to tools_survey_offers_path
   end
 

@@ -42,7 +42,8 @@ module GetOffersHelper
       :mac_address        => params[:mac_address],
       :device_type        => params[:device_type],
       :offerwall_rank     => options.delete(:offerwall_rank) { nil },
-      :view_id            => options.delete(:view_id)        { nil }
+      :view_id            => options.delete(:view_id)        { nil },
+      :store_name         => params[:store_name]
       )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'

@@ -87,6 +87,19 @@
     = f.label :country
     #help_country.help ?
     = f.select :country, options_for_select(list_of_countries, @partner.country), {:include_blank => true}
+  - if current_user.is_admin?
+    .category
+      Admin-only fields:
+    .field.admin
+      = f.label :use_server_whitelist
+      #help_use_server_whitelist.help ?
+      = f.check_box :use_server_whitelist
+      = error_message_on(@partner, :use_server_whitelist) if @partner.errors.on :use_server_whitelist
+    .field.admin
+      = f.label :enable_risk_management
+      #help_enable_risk_management.help ?
+      = f.check_box :enable_risk_management
+      = error_message_on(@partner, :enable_risk_management) if @partner.errors.on :enable_risk_management
 
   = submit_tag "Update"
 
@@ -127,6 +140,10 @@
     Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
+  #help_use_server_whitelist_content{:name => 'Use Server Whitelist'}
+    Check calls to convert generic offers against server IP whitelist?
+  #help_enable_risk_management_content{:name => 'Enable Risk Management'}
+    Run all conversions through checks in Risk Management framework?
 
 - content_for :page_styles do
   :plain
@@ -152,6 +169,15 @@
     .field {
       margin-bottom: 5px;
       margin-left: 200px;
+    }
+
+    .category {
+      margin-bottom: 5px;
+      margin-left: 100px;
+    }
+
+    .admin label {
+      color: blue;
     }
 
     .disabled_partner_names {

@@ -112,11 +112,19 @@ describe Dashboard::OffersController do
   end
 
   describe '#edit' do
+    context 'offer id is given in place of app id' do
+      it 'gracefully redirects' do
+        offer = FactoryGirl.create :action_offer, :app => @app
+        get(:edit, :app_id => offer.id, :id => offer.id)
+        response.should redirect_to(:controller => 'dashboard/apps', :action => :show, :id => @app.id)
+      end
+    end
+
     context 'when app offer is enabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => true)
         @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
         mock_find.stub(:find).with('oid').and_return(@offer)
@@ -133,7 +141,7 @@ describe Dashboard::OffersController do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => false)
         @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
         mock_find.stub(:find).with('oid').and_return(@offer)
@@ -228,7 +236,7 @@ describe Dashboard::OffersController do
       it 'returns percentile and ordinalized percentiles in a json response' do
         offer = mock('offer', :percentile => 24)
         offer.stub(:bid=)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(offer)
         @app.stub(:primary_offer).and_return(offer)
 
@@ -246,7 +254,7 @@ describe Dashboard::OffersController do
           :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
           :exclusion_prerequisite_offer_ids]
 
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @offer = mock('offer')
         @controller.stub(:log_activity).with(@offer)
         @app.stub(:primary_offer).and_return(@offer)
@@ -318,10 +326,10 @@ describe Dashboard::OffersController do
         @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
           :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
           :exclusion_prerequisite_offer_ids, :tapjoy_enabled, :allow_negative_balance,
-          :pay_per_click, :name, :name_suffix, :show_rate, :min_conversion_rate,
+          :pay_per_click, :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
           :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
           :dma_codes, :regions, :carriers, :cities ]
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @offer = mock('offer')
         @controller.stub(:log_activity).with(@offer)
         @app.stub(:primary_offer).and_return(@offer)

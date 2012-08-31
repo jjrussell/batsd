@@ -113,6 +113,10 @@ class User < ActiveRecord::Base
     user_roles.any? { |role| role.employee? }
   end
 
+  def is_admin?
+    is_one_of?([:admin])
+  end
+
   def to_s
     email
   end

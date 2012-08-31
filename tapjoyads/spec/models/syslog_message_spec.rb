@@ -59,5 +59,24 @@ describe SyslogMessage do
       instance.ary.should == []
       instance.str.should == nil
     end
+
+    it 'knows the keys of all defined attributes' do
+      SyslogMessage.attributes.should == {
+        :time => :time,
+        :path => :string,
+        :user_agent => :string,
+        :ip_address => :string,
+        :geoip_country => :string
+      }
+
+      subclass.attributes.should == {
+        :str => :string,
+        :flt => :float,
+        :int => :int,
+        :bul => :bool,
+        :url => :string,
+        :ary => :string
+      }.merge(SyslogMessage.attributes)
+    end
   end
 end

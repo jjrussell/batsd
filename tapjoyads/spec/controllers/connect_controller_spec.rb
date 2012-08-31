@@ -55,6 +55,18 @@ describe ConnectController do
           response.response_code.should == 403
         end
       end
+
+      context 'by an admin device' do
+        it 'updates the AdminDeviceLastRun for this udid and app_id' do
+          Device.any_instance.stub(:last_run_time_tester?) { true }
+          get(:index, @params.merge(:connection_type => 'awesome'))
+          response.body.should include('Success')
+
+          last_run = AdminDeviceLastRun.for(@params)
+          last_run.ip_address.should == '0.0.0.0'
+          last_run.connection_type.should == 'awesome'
+        end
+      end
     end
 
     context 'without required parameters' do
@@ -68,6 +80,22 @@ describe ConnectController do
       before :each do
         @params = { :app_id      => 'test_app',
                     :sha2_udid   => 'sha2_test_device' }
+      end
+
+      context 'when the identifier is corrupt' do
+        before :each do
+          identifier = FactoryGirl.create(:device_identifier, :udid => 'device_identifier.232132121321')
+          DeviceIdentifier.stub(:new).and_return(identifier)
+          @device = FactoryGirl.create(:device)
+        end
+
+        it 'doesnt return the corrupt udid' do
+          Device.should_receive(:new).with(
+            :key => 'sha2_test_device',
+            :is_temporary => true
+          ).at_least(:once).and_return(@device)
+          get(:index, @params)
+        end
       end
 
       context 'when the lookup succeeds' do
@@ -90,7 +118,11 @@ describe ConnectController do
         end
 
         it 'creates a temporary device' do
-          Device.should_receive(:new).with(:key => 'sha2_test_device', :is_temporary => true).and_return(@device)
+          Device.should_receive(:new).
+            with(:key => 'sha2_test_device', :is_temporary => true).
+            at_least(1).times.
+            and_return(@device)
+
           get(:index, @params)
           response.body.should include('Success')
         end

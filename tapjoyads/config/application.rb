@@ -52,8 +52,6 @@ module Tapjoyad
     route_filenames = case MACHINE_TYPE
                       when 'dashboard'
                         %w( dashboard api global )
-                      when 'website'
-                        %w( website api global )
                       when 'webserver'
                         %w( web legacy global )
                       when 'jobserver'
@@ -64,6 +62,8 @@ module Tapjoyad
     route_filenames.each do |route|
       config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
     end
+
+    config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || 'DEFAULT_NON_PROD_API_KEY'
   end
 
 end

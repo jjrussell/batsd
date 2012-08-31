@@ -1,5 +1,6 @@
 class GetOffersController < ApplicationController
-include GetOffersHelper
+  include GetOffersHelper
+  include AdminDeviceLastRun::ControllerExtensions
 
   layout 'offerwall', :only => :webpage
 
@@ -8,66 +9,22 @@ include GetOffersHelper
   before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm
   # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
+  tracks_admin_devices(:only => [:webpage, :index])
+
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  OPTIMIZATION_ENABLED_APP_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0',  # Gun & Blood
-                                          '91631942-cfb8-477a-aed8-48d6ece4a23f',  # Death Racking
-                                          'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',  # Crime City
-                                          'b9cdd8aa-632d-4633-866a-0b10d55828c0']) # Hello Kitty Beautiful Salon
-  EXPERIMENT_EXCLUDED_APP_IDS = Set.new(['9d6af572-7985-4d11-ae48-989dfc08ec4c',
-                                         '9783ef2a-a8e1-4b94-9076-c49855f30d3c',
-                                         '63db46fe-a127-4fe6-8d77-db5170ab49c4',
-                                         '5cf33072-1f29-47b0-bf44-4065b89e4429',
-                                         'b138a117-4b68-4e41-890a-2ea84a83ed38',
-                                         'edfebcb5-0415-47ce-940d-99dbf615eb45',
-                                         'a3b38c16-0ca7-494c-94a1-d70ef74fd0db',
-                                         '8dc63889-d563-4118-8a84-7795e403d34a',
-                                         '1e8c593e-2225-4360-b737-1e9747883f5d',
-                                         '2c2e1959-8af5-465f-b483-8a9511985bb9'])
-
-  # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
-  VIEW_A1 = {
-              :autoload => true, :actionLocation => 'right',
-              :deepLink => false, :showBanner => false,
-              :showActionLine => true, :showCostBalloon => false,
-              :showCurrentApp => false, :squircles => false,
-              :viewID => 'VIEW_A1',
-            }
-
-  # Specimen #2 - Same as #1 minus auto loading
-  VIEW_A2 = {
-              :autoload => false, :actionLocation => 'right',
-              :deepLink => false, :showBanner => false,
-              :showActionLine => true, :showCostBalloon => false,
-              :showCurrentApp => false, :squircles => false,
-              :viewID => 'VIEW_A2',
-            }
-
-  # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
-  VIEW_B1 = {
-              :autoload =>  false, :actionLocation =>  'right',
-              :deepLink =>  false, :maxlength =>  90,
-              :showBanner =>  false, :showActionLine =>  false,
-              :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  'VIEW_B1',
-            }
-
-  # Specimen #4 - Same as #3 plus auto loading
-  VIEW_B2 = {
-              :autoload =>  true, :actionLocation =>  'right',
-              :deepLink =>  false, :maxlength =>  90,
-              :showBanner =>  false, :showActionLine =>  false,
-              :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  'VIEW_B2',
-            }
-
   VIEW_MAP = {
-    :VIEW_A1 => VIEW_A1,
-    :VIEW_A2 => VIEW_A2,
-    :VIEW_B1 => VIEW_B1,
-    :VIEW_B2 => VIEW_B2
+    :control => {
+      :autoload => false, :actionLocation => 'right',
+      :deepLink => false, :showBanner => false,
+      :showActionLine => true, :showCostBalloon => false,
+      :showCurrentApp => false, :squircles => false,
+      :viewID => 'control'
+    }
   }
+
+  VIEW_MAP[:test] = VIEW_MAP[:control].merge(:actionLocation => 'left', :viewID => 'test')
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -255,35 +212,21 @@ include GetOffersHelper
   end
 
   def set_offerwall_experiment
-    experiment = case params[:source]
-      when 'offerwall'
-        EXPERIMENT_EXCLUDED_APP_IDS.include?(params[:app_id]) ? nil : :ranking
-      when 'tj_games'
-        :show_rate_237
-      else
-        nil
+    experiment = if params[:source] == 'offerwall' && params[:action] == 'webpage'
+      :offerwall_redesign
     end
 
+    # This method is oddly named; we are choosing a group (control/test)
     choose_experiment(experiment)
   end
 
   def set_algorithm
-    case params[:exp]
-      when 'a_optimization'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
-      when 'b_optimization'
-        @algorithm = '237'
-        @algorithm_options = {:skip_country => true, :skip_currency => true}
-      when 'a_offerwall'
-        @algorithm = nil
-      when 'b_offerwall'
-        @algorithm = '101'
-        @algorithm_options = {:skip_country => true}
-    end
-
-    if params[:source] == 'offerwall' && OPTIMIZATION_ENABLED_APP_IDS.include?(params[:app_id])
+    if params[:source] == 'offerwall'
       @algorithm = '101'
+      @algorithm_options = {:skip_country => true}
+    elsif params[:source] == 'tj_games'
+      @algorithm = '237'
+      @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
   end
 
@@ -305,25 +248,9 @@ include GetOffersHelper
     params[:library_version] == 'server'
   end
 
-  def generate_web_request
-    if params[:source] == 'tj_games'
-      wr_path = 'tjm_offers'
-    elsif params[:source] == 'featured'
-      wr_path = 'featured_offer_requested'
-    else
-      wr_path = 'offers'
-    end
-    web_request = WebRequest.new(:time => @now)
-    web_request.put_values(wr_path, params, ip_address, geoip_data, request.headers['User-Agent'])
-    web_request.viewed_at = @now
-    web_request.offerwall_start_index = @start_index
-    web_request.offerwall_max_items = @max_items
-
-    web_request
-  end
-
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A2
+    # manual override > result of choose_experiment > :control
+    view_id = params[:viewID] || params[:exp] || :control
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []

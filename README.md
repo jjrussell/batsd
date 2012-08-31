@@ -49,13 +49,19 @@ git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
 
 It is important that it's named "tapjoy" for deploy script to work
 
+Now setup the pre-commit hook (within the tapjoyserver repo):
+
+```
+ln -s .pre-commit .git/hooks/
+```
+
 Setting up VM
 -------------
 
 We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
 install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
 
-Now setup librarian and vagrant:
+Now setup librarian and vagrant(run from /Path/To/tapjoyserver/tapjoyads/):
 
 ```
 gem install vagrant
@@ -80,6 +86,22 @@ rake db:create
 rake db:sync
 ```
 
+Some little tweaks to make bundler run seamlessly, you may want to create ssh keys on your vagrant instance.
+(these assume ssh keys haven't been generated in Vagrant)
+```
+ssh-keygen -t rsa -C "user_email@tapjoy.com"
+sudo su
+cd ~/.ssh
+ln -s /home/vagrant/.ssh/id_rsa.pub id_rsa.pub
+ln -s /home/vagrant/.ssh/id_rsa id_rsa
+exit
+```
+After you've generated these keys and shared them with your root user, you can add this key to github for seamless fetching.
+
+If you get annoyed to have to change into the /vagrant directory every time, just add it to the end of your .bashrc file:
+```
+cd /vagrant/
+```
 Running the tests
 -----------------
 

@@ -37,7 +37,7 @@ class Dashboard::Tools::FeaturedContentsController < Dashboard::DashboardControl
     end
 
     if @featured_content.save
-      @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main")  if params[:main_icon].present?
+      @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main") if params[:main_icon].present?
       @featured_content.save_icon!(params[:secondary_icon].read, "#{@featured_content.id}_secondary") if params[:secondary_icon].present?
       flash[:notice] = 'Featured content was successfully created.'
       redirect_to tools_featured_contents_path
@@ -70,7 +70,7 @@ class Dashboard::Tools::FeaturedContentsController < Dashboard::DashboardControl
     end
 
     if @featured_content.update_attributes(params[:featured_content])
-      @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main")  if params[:main_icon].present?
+      @featured_content.save_icon!(params[:main_icon].read, "#{@featured_content.id}_main") if params[:main_icon].present?
       @featured_content.save_icon!(params[:secondary_icon].read, "#{@featured_content.id}_secondary") if params[:secondary_icon].present?
       flash[:notice] = 'Featured content was successfully updated.'
       redirect_to tools_featured_contents_path

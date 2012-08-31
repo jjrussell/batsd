@@ -1,9 +1,9 @@
 class Experiments
 
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(a_optimization b_optimization)
-  RANKING_EXPERIMENT_IDS = %w(a_offerwall b_offerwall)
-
-  EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
+  # Hash of arrays like :experiment_name => [control, test1, test2, ...]
+  EXPERIMENTS = {
+    :offerwall_redesign => %w{control test}
+  }
 
   def self.choose(udid, options = {})
     if udid.present?
