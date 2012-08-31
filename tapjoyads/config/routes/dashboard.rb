@@ -286,6 +286,7 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export

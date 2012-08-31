@@ -2,12 +2,12 @@ class Job::MasterAlertsController < Job::JobController
   def index
     alerts.each do |alert|
       begin
-        rows = vertica.query(alert[:query]).rows
+        rows = vertica.query(alert['query']).rows
       rescue Vertica::Error::QueryError
         next
       end
 
-      send(alert) if rows.length > 0
+      push(alert) if rows.length > 0
     end
 
     render :text => 'ok'
@@ -19,15 +19,15 @@ class Job::MasterAlertsController < Job::JobController
     alerts_keys.map { |key| s3_alert(key) }.flatten
   end
 
-  def send(alert)
-    if alert[:recipients_field]
-      direct_recipients = rows.collect {|row| row[alert[:recipients_field]] }.uniq
+  def push(alert)
+    if alert['recipients_field']
+      direct_recipients = rows.collect {|row| row[alert['recipients_field']] }.uniq
 
       direct_recipients.each do |recipient|
-        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert[:recipients_field]] == recipient}, recipient)
+        TapjoyMailer.deliver_alert(alert, rows.select {|row| row[alert['recipients_field']] == recipient}, recipient)
       end
     else
-      TapjoyMailer.deliver_alert(alert, rows, alert[:recipients])
+      TapjoyMailer.deliver_alert(alert, rows, alert['recipients'])
     end
   end
 

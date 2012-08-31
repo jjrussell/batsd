@@ -449,11 +449,14 @@ class Offer < ActiveRecord::Base
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
+    bust_cache = options.delete(:bust_cache) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
-    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url << "?ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
   def self.remove_icon!(guid, video_offer = false)
