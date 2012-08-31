@@ -22,8 +22,8 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_age_gating_url(offer, options = {})
-    data = params.merge({ :id => offer.id, :options => options, :currency_id => @currency.id })
+  def get_age_gating_url(options = {})
+    data = params.merge({ :options => options })
     "#{API_URL}/offer_age_gating?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
@@ -47,7 +47,8 @@ module GetOffersHelper
       :mac_address        => params[:mac_address],
       :device_type        => params[:device_type],
       :offerwall_rank     => options.delete(:offerwall_rank) { nil },
-      :view_id            => options.delete(:view_id)        { nil }
+      :view_id            => options.delete(:view_id)        { nil },
+      :date_of_birth      => options.delete(:date_of_birth)  { nil }
       )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'

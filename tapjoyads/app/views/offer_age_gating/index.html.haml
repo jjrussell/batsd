@@ -46,7 +46,7 @@
         document.getElementById('close').style.display = 'block';
         setTimeout("history.back();", 3000);
       } else {
-        location.href = "#{@click_url}";
+        location.href = "#{@redirect_url}&date_of_birth="+yyyy+"/"+mm+"/"+dd;
       }
     }
 

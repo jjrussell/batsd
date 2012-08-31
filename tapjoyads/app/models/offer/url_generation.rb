@@ -136,6 +136,7 @@ module Offer::UrlGeneration
     device_type        = options.delete(:device_type)        { nil }
     offerwall_rank     = options.delete(:offerwall_rank)     { nil }
     view_id            = options.delete(:view_id)            { nil }
+    date_of_birth      = options.delete(:date_of_birth)      { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -177,7 +178,8 @@ module Offer::UrlGeneration
       :os_version         => os_version,
       :device_type        => device_type,
       :offerwall_rank     => offerwall_rank,
-      :view_id            => view_id
+      :view_id            => view_id,
+      :date_of_birth      => date_of_birth
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

@@ -124,10 +124,10 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def video_exists
-    true
-    #bucket = S3.bucket(BucketNames::TAPJOY)
-    #obj    = bucket.objects["videos/src/#{id}.mp4"]
-    #errors.add :video_url, 'Video does not exist.' unless obj.exists?
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    obj    = bucket.objects["videos/src/#{id}.mp4"]
+
+    errors.add :video_url, 'Video does not exist.' unless obj.exists?
   end
 
   private

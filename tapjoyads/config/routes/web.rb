@@ -42,7 +42,11 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
-  resources :offer_age_gating, :only => [:index]
+  resources :offer_age_gating, :only => [:index] do
+    collection do
+      get :redirect
+    end
+  end
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
   match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
