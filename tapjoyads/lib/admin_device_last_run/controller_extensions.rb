@@ -1,6 +1,6 @@
 class AdminDeviceLastRun
   # some magic for controllers that want to track web request data
-  # for `AdminDevice`s.  
+  # for `AdminDevice`s.
   module ControllerExtensions
     extend ActiveSupport::Concern
 
