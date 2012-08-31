@@ -14,48 +14,17 @@ class GetOffersController < ApplicationController
   after_filter :save_web_request
   after_filter :save_impressions, :only => [:index, :webpage]
 
-  # Specimen #1 - Right action, description with action text, no squicle, no header, no deeplink
-  VIEW_A1 = {
-              :autoload => true, :actionLocation => 'right',
-              :deepLink => false, :showBanner => false,
-              :showActionLine => true, :showCostBalloon => false,
-              :showCurrentApp => false, :squircles => false,
-              :viewID => 'VIEW_A1',
-            }
-
-  # Specimen #2 - Same as #1 minus auto loading
-  VIEW_A2 = {
-              :autoload => false, :actionLocation => 'right',
-              :deepLink => false, :showBanner => false,
-              :showActionLine => true, :showCostBalloon => false,
-              :showCurrentApp => false, :squircles => false,
-              :viewID => 'VIEW_A2',
-            }
-
-  # Specimen #3 - Right action, description, no action text, no squicle, no header, no deeplink
-  VIEW_B1 = {
-              :autoload =>  false, :actionLocation =>  'right',
-              :deepLink =>  false, :maxlength =>  90,
-              :showBanner =>  false, :showActionLine =>  false,
-              :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  'VIEW_B1',
-            }
-
-  # Specimen #4 - Same as #3 plus auto loading
-  VIEW_B2 = {
-              :autoload =>  true, :actionLocation =>  'right',
-              :deepLink =>  false, :maxlength =>  90,
-              :showBanner =>  false, :showActionLine =>  false,
-              :showCostBalloon =>  false, :showCurrentApp =>  false,
-              :squircles =>  false, :viewID =>  'VIEW_B2',
-            }
-
   VIEW_MAP = {
-    :VIEW_A1 => VIEW_A1,
-    :VIEW_A2 => VIEW_A2,
-    :VIEW_B1 => VIEW_B1,
-    :VIEW_B2 => VIEW_B2
+    :control => {
+      :autoload => false, :actionLocation => 'right',
+      :deepLink => false, :showBanner => false,
+      :showActionLine => true, :showCostBalloon => false,
+      :showCurrentApp => false, :squircles => false,
+      :viewID => 'control'
+    }
   }
+
+  VIEW_MAP[:test] = VIEW_MAP[:control].merge(:actionLocation => 'left', :viewID => 'test')
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -243,8 +212,11 @@ class GetOffersController < ApplicationController
   end
 
   def set_offerwall_experiment
-    experiment = nil
+    experiment = if params[:source] == 'offerwall' && params[:action] == 'webpage'
+      :offerwall_redesign
+    end
 
+    # This method is oddly named; we are choosing a group (control/test)
     choose_experiment(experiment)
   end
 
@@ -277,7 +249,8 @@ class GetOffersController < ApplicationController
   end
 
   def set_redesign_parameters
-    view_id = params[:viewID] || :VIEW_A2
+    # manual override > result of choose_experiment > :control
+    view_id = params[:viewID] || params[:exp] || :control
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
 
     offer_array = []

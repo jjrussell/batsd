@@ -1,6 +1,9 @@
 class Experiments
 
-  EXPERIMENTS = {}
+  # Hash of arrays like :experiment_name => [control, test1, test2, ...]
+  EXPERIMENTS = {
+    :offerwall_redesign => %w{control test}
+  }
 
   def self.choose(udid, options = {})
     if udid.present?
