@@ -11,7 +11,7 @@ describe SetPublisherUserIdController do
     end
 
     it 'sets the publisher_user_id' do
-      Device.should_receive(:new).with(:key => 'test_udid', :is_temporary => false).and_return(@device)
+      Device.should_receive(:new).twice.with(:key => 'test_udid', :is_temporary => false).and_return(@device)
       @device.should_receive(:set_publisher_user_id)
       @device.should_receive(:set_display_multiplier)
       get(:index, @params)
@@ -27,7 +27,7 @@ describe SetPublisherUserIdController do
       end
 
       it 'creates a temporary device' do
-        Device.should_receive(:new).with(:key => 'sha1_mac', :is_temporary => true).and_return(@device)
+        Device.should_receive(:new).twice.with(:key => 'sha1_mac', :is_temporary => true).and_return(@device)
         get(:index, @params)
         response.should be_success
       end
