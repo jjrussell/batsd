@@ -21,12 +21,17 @@ class Utils
     true
   end
 
-  def self.import_udids(filename, app_id, udid_regex = //)
+  def self.import_udids(filename, options)
+    add_app_ids = options.delete(:add_app_ids) {[]}
+    rm_app_ids  = options.delete(:rm_app_ids) {[]}
+    udid_regex  = options.delete(:udid_regex) {//}
+
     counter = 0
     new_udids = 0
     existing_udids = 0
-    app_new_udids = 0
-    app_existing_udids = 0
+    app_new_udids = Hash.new {0}
+    app_existing_udids = Hash.new {0}
+    app_deleted_udids = Hash.new {0}
     invalid_udids = 0
     parse_errors = 0
     now = "%.5f" % Time.zone.now.to_f
@@ -57,13 +62,24 @@ class Utils
             outfile.puts(udid)
             next
           end
+
           device.is_new ? new_udids += 1 : existing_udids += 1
-          if device.has_app? app_id
-            app_existing_udids += 1
-          else
-            app_new_udids += 1
-            apps_hash = device.parsed_apps
-            apps_hash[app_id] = now
+          apps_hash = device.parsed_apps.dup
+
+          add_app_ids.each do |app_id|
+            if device.has_app? app_id
+              app_existing_udids[app_id] += 1
+            else
+              app_new_udids[app_id] += 1
+              apps_hash[app_id] = now
+            end
+          end
+
+          rm_app_ids.each do |app_id|
+            app_deleted_udids[app_id] += 1 if apps_hash.delete(app_id).present?
+          end
+
+          if apps_hash != device.parsed_apps
             device.apps = apps_hash
             begin
               device.save!
@@ -77,14 +93,19 @@ class Utils
           puts "Encountered unexpected error while processing udid: #{udid}"
           raise e
         end
-        puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{app_new_udids} new (per app), #{app_existing_udids} existing (per app), #{invalid_udids} invalid, #{parse_errors} parse errors" if counter % 1000 == 0
+        if counter % 1000 == 0
+          puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{invalid_udids} invalid, #{parse_errors} parse errors"
+          app_new_udids.each {|app_id,count| puts "\tnew UDIDs (per app): #{count} #{app_id}"}
+          app_existing_udids.each {|app_id, count| puts "\texisting UDIDs (per app): #{count} #{app_id}"}
+          app_deleted_udids.each {|app_id, count| puts "\tdeleted: #{count} #{app_id}"} 
+        end
       end
     end
     puts "finished importing #{counter} UDIDs in #{time.ceil} seconds"
     puts "new UDIDs (global): #{new_udids}"
     puts "existing UDIDs (global): #{existing_udids}"
-    puts "new UDIDs (per app): #{app_new_udids}"
-    puts "existing UDIDs (per app): #{app_existing_udids}"
+    app_new_udids.each {|app_id,count| puts "new UDIDs (per app): #{count} #{app_id}"}
+    app_existing_udids.each {|app_id, count| puts "existing UDIDs (per app): #{count} #{app_id}"}
     puts "invalid UDIDs: #{invalid_udids}"
     puts "parse errors: #{parse_errors}"
   ensure
