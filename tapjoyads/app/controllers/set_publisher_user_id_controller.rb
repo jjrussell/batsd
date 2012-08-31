@@ -1,6 +1,8 @@
 class SetPublisherUserIdController < ApplicationController
+  include AdminDeviceLastRun::ControllerExtensions
 
   before_filter :reject_banned_udids
+  tracks_admin_devices
 
   def index
     lookup_udid(true)
