@@ -153,21 +153,9 @@ describe Job::QueueConversionTrackingController do
     end
 
     context 'a reward already exists in the system' do
-      context 'when the reward has already been processed' do
-        it 'ignores the reward and stops' do
-          Reward.any_instance.should_receive(:send_currency_status?).and_return(true)
-          Reward.any_instance.should_not_receive(:save!)
-
-          do_get
-        end
-      end
-      context 'when the reward has not been processed' do
-        it 'processes the reward' do
-          Reward.any_instance.should_receive(:send_currency_status?).and_return(false)
-          Reward.any_instance.should_receive(:save!)
-
-          do_get
-        end
+      it 'does not try to update reward' do
+        Reward.any_instance.should_not_receive(:save!)
+        do_get
       end
     end
 
