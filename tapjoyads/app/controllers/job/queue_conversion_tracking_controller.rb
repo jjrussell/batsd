@@ -47,6 +47,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     attempt.spend_share            = click.spend_share || currency.get_spend_share(offer)
     attempt.mac_address            = click.mac_address
+    attempt.store_name             = click.store_name
     attempt.created                = installed_at_epoch
     attempt.save
 
@@ -109,6 +110,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.mac_address            = click.mac_address
       reward.device_type            = click.device_type
       reward.offerwall_rank         = click.offerwall_rank
+      reward.store_name             = click.store_name
 
       reward.save!
     end
@@ -172,6 +174,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.click_key         = reward.click_key
     web_request.device_type       = reward.device_type
     web_request.offerwall_rank    = reward.offerwall_rank
+    web_request.store_name        = reward.store_name
     web_request.save
   end
 
@@ -194,6 +197,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.udid                   = attempt.udid
     web_request.country                = attempt.country
     web_request.viewed_at              = attempt.viewed_at
+    web_request.store_name             = attempt.store_name
     web_request.click_key              = attempt.click_key
     web_request.conversion_attempt_key = attempt.key
     web_request.resolution             = attempt.resolution

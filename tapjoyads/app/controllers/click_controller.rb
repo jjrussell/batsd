@@ -308,6 +308,7 @@ class ClickController < ApplicationController
     click.offerwall_rank         = params[:offerwall_rank]
     click.device_type            = params[:device_type]
     click.geoip_country          = geoip_data[:country]
+    click.store_name             = params[:store_name]
 
     click.save
 
