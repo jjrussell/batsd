@@ -81,7 +81,7 @@ Tapjoyad::Application.routes.draw do
             get :remove
           end
         end
-        resources :reengagement_offers, :except => [:show] do
+        resources :reengagement_offers do
           collection do
             post :update_status
           end
@@ -94,7 +94,6 @@ Tapjoyad::Application.routes.draw do
           post :percentile
         end
       end
-      resources :reengagement_rewards, :only => [:show]
       resources :offer_creatives, :only => [:show] do
         member do
           get    '/:image_size', :action => :new, :as => :form
@@ -287,6 +286,7 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export

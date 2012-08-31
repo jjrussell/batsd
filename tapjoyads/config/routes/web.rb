@@ -95,4 +95,14 @@ Tapjoyad::Application.routes.draw do
       end
     end
   end
+
+  namespace :api do
+    namespace :data do
+      resources :devices, :only => [:show] do
+        collection do
+          post :set_last_run_time
+        end
+      end
+    end
+  end
 end
