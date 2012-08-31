@@ -11,10 +11,10 @@
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
     %link{ :rel => 'publisher', :href => 'https://plus.google.com/b/116280135840952950839/' }
 
-    = css_tag('api/style')
+    = stylesheet_link_tag('api/style')
 
     - if HeaderParser.device_type(request.headers['user-agent']) == 'android'
-      = css_tag('api/android')
+      = stylesheet_link_tag('api/android')
 
     = yield :page_head
 

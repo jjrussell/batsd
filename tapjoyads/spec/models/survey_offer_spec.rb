@@ -1,170 +1,215 @@
 require 'spec_helper'
 
 describe SurveyOffer do
+  let(:partner) { FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID) }
+  subject { partner; FactoryGirl.create(:survey_offer, :partner => partner) }
+  let(:primary_offer) { subject.primary_offer }
 
-  it { should have_many :survey_questions }
+  it { should have_many :questions }
   it { should have_one :offer }
   it { should have_one :primary_offer }
   it { should belong_to :partner }
 
   it { should validate_presence_of :name }
 
-  before :each do
-    @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
-    @survey_offer = FactoryGirl.create(:survey_offer)
-  end
+  it { should accept_nested_attributes_for :questions }
 
-  it 'accepts nested attributes for survey_questions' do
-    @survey_offer.should respond_to(:survey_questions_attributes=)
-  end
-
-  it 'validates presence of bid_price on create' do
-    survey_offer = SurveyOffer.new(:name => 'bob')
-    survey_offer.save.should be_false
-    survey_offer.errors[:bid_price].join.should == "can't be blank"
-  end
-
-  describe 'callbacks' do
-    it 'assigns the Tapjoy partner id' do
-      @survey_offer.partner_id.should == TAPJOY_PARTNER_ID
+  context '(on create)' do
+    it 'validates the presence of #bid' do
+      FactoryGirl.build(:survey_offer, :bid => nil).should_not be_valid
     end
 
-    it 'creates a primary_offer after create' do
-      @survey_offer.primary_offer.should_not be_nil
-      primary_offer = @survey_offer.primary_offer
-
-      primary_offer.id.should               == @survey_offer.id
-      primary_offer.item.should             == @survey_offer
-      primary_offer.partner.id.should       == TAPJOY_PARTNER_ID
-      primary_offer.name.should             == @survey_offer.name
-      json = @survey_offer.to_json(:include => :survey_questions)
-      primary_offer.reward_value.should     == 15
-      primary_offer.price.should            == 0
-      url_params = [
-        "id=#{@survey_offer.id}",
-        "udid=TAPJOY_UDID",
-        "click_key=TAPJOY_SURVEY",
-      ]
-      url = "#{API_URL}/survey_results/new?#{url_params.join('&')}"
-      primary_offer.url.should              == url
-      primary_offer.bid.should              == 0
-      primary_offer.device_types.should     == Offer::ALL_DEVICES.to_json
-      primary_offer.tapjoy_enabled.should   == true
-      primary_offer.user_enabled.should     == false
+    it 'assigns a Partner' do
+      subject.partner.should be_present
     end
 
-    it 'creates the offer icon' do
-      #fake_object = FakeObject.new('icons/checkbox.jpg')
-      #Offer.any_instance.should_receive(:save_icon!).with(fake_object.read)
-      #survey_offer = SurveyOffer.new(:name => 'bob', :bid_price => 0)
-      #survey_offer.save
+    it { should_not be_enabled }
+    it { should be_visible }
+  end
+
+  context '(after create)' do
+    it 'creates a primary Offer' do
+      subject.primary_offer.should be_present
     end
+  end
 
-    it 'updates the primary_offer after update' do
-      partner = FactoryGirl.create(:partner)
+  context '(on update)' do
+    let(:another_partner) { FactoryGirl.create(:partner, :id => UUIDTools::UUID.random_create.to_s) }
+    let(:bid) { rand(10) + 1 }
 
-      @survey_offer.update_attributes({
-        :partner    => partner,
-        :name       => 'bill',
-        :hidden     => true,
-        :bid        => 5,
+    before(:each) do
+      subject.update_attributes({
+        :partner => another_partner,
+        :name => FactoryGirl.generate(:name),
+        :hidden => true,
+        :bid => bid
       })
+      subject.reload
+    end
 
-      @survey_offer.survey_questions << FactoryGirl.create(:survey_question)
-      @survey_offer.reload
+    it 'propagates changes to #partner to the primary Offer' do
+      primary_offer.partner.should == another_partner
+    end
 
-      primary_offer = @survey_offer.primary_offer
-      primary_offer.partner.should == partner
-      primary_offer.name.should == 'bill'
-      primary_offer.hidden.should be_true
-      primary_offer.bid.should == 5
-      json = @survey_offer.to_json(:include => :survey_questions)
+    it 'propagates changes to #name to the primary Offer' do
+      primary_offer.name.should == subject.name
+    end
 
-      @survey_offer = SurveyOffer.find(@survey_offer.id)
-      @survey_offer.update_attributes({ :name => 'tom' })
+    it 'synchronizes changes to #hidden with the primary Offer' do
       primary_offer.reload
-      primary_offer.bid.should == 5
+      primary_offer.should be_hidden
+    end
+
+    it 'propagates changes to #bid to the priamry Offer' do
+      primary_offer.bid.should == subject.bid
     end
   end
 
-  it "has a 'visible' scope" do
-    SurveyOffer.visible.should == [@survey_offer]
-    @survey_offer.hide!
-    SurveyOffer.visible.should == []
+  describe '#questions' do
+    let(:question_count) { 3 }
+    before(:each) do
+      question_count.times.map do
+        FactoryGirl.create(:survey_question, :survey_offer => subject)
+      end
+      subject.reload
+    end
+    it 'are ordered by position' do
+      positions = subject.questions.map(&:position)
+      (0...question_count).each do |i|
+        positions[i].should == i+1
+      end
+    end
   end
 
-  it 'handles bid price' do
-    survey_offer = SurveyOffer.new(:name => 'bob')
-    survey_offer.bid.should == nil
-    survey_offer.bid = 0
-    survey_offer.bid.should == 0
-    survey_offer.save
+  describe '#questions_attributes=' do
+    let(:question) { FactoryGirl.create(:survey_question, :survey_offer => subject) }
+    let(:valid_question_attributes) do
+      {
+        'text' => "#{FactoryGirl.generate(:name)}?",
+        :id => question.id,
+        :format => 'text'
+      }
+    end
 
-    survey_offer.primary_offer.bid.should == 0
-    survey_offer.bid = 5
-    survey_offer.bid.should == 5
-    survey_offer.primary_offer.bid.should == 0
-    survey_offer.save
-    survey_offer.reload
-    survey_offer.primary_offer.bid.should == 5
+    it 'creates valid questions' do
+      subject.questions_attributes = { 1 => valid_question_attributes }
+      subject.questions.should be_present
+    end
 
-    survey_offer = SurveyOffer.find(survey_offer.id)
-    survey_offer.bid.should == 5
+    it 'removes questions with blank text' do
+      subject.questions_attributes = { 1 => { 'text' => '', :id => question.id } }
+      subject.save
+      subject.reload
+      subject.questions.should be_blank
+    end
+
+    it 'requires manually ordering questions' do
+      expect{ subject.questions << valid_question_attributes }.to raise_error
+    end
+  end
+
+  describe '#primary_offer' do
+
+    describe '(by default)' do
+      it 'is available for all device types' do
+        primary_offer.device_types == Offer::ALL_DEVICES
+      end
+
+      it 'is tapjoy_enabled' do
+        primary_offer.should be_tapjoy_enabled
+      end
+
+      it 'is user_enabled' do
+        primary_offer.should_not be_user_enabled
+      end
+
+      it 'is not enabled' do
+        primary_offer.should_not be_enabled
+      end
+
+      it 'creates an icon' do
+        primary_offer.icon_id.should be_present
+      end
+
+    end
+
+    it 'assigns #id from the SurveyOffer' do
+      primary_offer.id.should == subject.id
+    end
+
+    it 'assigns #item from the SurveyOffer' do
+      primary_offer.item.should == subject
+    end
+
+    it 'assigns #partner from the SurveyOffer' do
+      primary_offer.partner.should == subject.partner
+    end
+
+    it 'assigns #name from the SurveyOffer' do
+      primary_offer.name.should == subject.name
+    end
+
+    it 'assigns #user_enabled from the SurveyOffer' do
+      fail if primary_offer.user_enabled?
+      subject.enable!
+      primary_offer.should be_user_enabled
+    end
+
+    it 'assigns #reward_value to 15 by default' do
+      primary_offer.reward_value.should == 15
+    end
+
+    it 'assigns #price to 0 by default' do
+      primary_offer.price.should == 0
+    end
+
+    describe '#url' do
+      let(:params) { CGI::parse(primary_offer.url.split('?').last) }
+
+      it 'has the SurveyOffer\'s ID as a param' do
+        params['id'].first.should == subject.id
+      end
+
+      it 'has a udid param of TAPJOY_UDID' do
+        params['udid'].first.should == 'TAPJOY_UDID'
+      end
+
+      it 'has a click_key param of TAPJOY_SURVEY' do
+        params['click_key'].first.should == 'TAPJOY_SURVEY'
+      end
+    end
+  end
+
+  describe '#enabled?' do
+    it 'is read from the primary Offer' do
+      primary_offer = mock('Primary offer')
+      primary_offer.should_receive(:enabled?).and_return(true)
+      subject.stub(:primary_offer).and_return(primary_offer)
+      subject.enabled?
+    end
+  end
+
+  describe '.visible' do
+    it 'is a scope' do
+      described_class.should respond_to :visible
+    end
   end
 
   describe '#to_s' do
-    it 'returns its name' do
-      survey_offer = SurveyOffer.new(:name => 'billy')
-      survey_offer.to_s.should == 'billy'
+    it 'is aliased to #name' do
+      subject.to_s.should == subject.name
     end
   end
 
-  it 'enables the primary_offer' do
-    primary_offer = @survey_offer.primary_offer
+  describe '#icon=' do
+    let(:data) { mock('Icon Data')}
+    let(:icon) { mock('Icon', :read => data) }
 
-    @survey_offer.enabled?.should == false
-    primary_offer.is_enabled?.should == false
-
-    @survey_offer.enabled = true
-    primary_offer.reload
-    primary_offer.is_enabled?.should == true
-  end
-
-  it 'builds blank questions' do
-    @survey_offer.survey_questions.size.should == 0
-    @survey_offer.build_blank_questions
-    @survey_offer.survey_questions.size.should == 4
-    @survey_offer.build_blank_questions 8
-    @survey_offer.survey_questions.size.should == 8
-  end
-
-  it 'removes blank questions' do
-    question_1 = FactoryGirl.create(:survey_question, :survey_offer => @survey_offer)
-    question_2 = FactoryGirl.create(:survey_question, :survey_offer => @survey_offer)
-
-    @survey_offer.survey_questions.sort { |a,b| a.id <=> b.id }.should == [question_1, question_2].sort { |a,b| a.id <=> b.id }
-
-    question_1_attrs = { 'text' => '', :id => question_1.id }
-    question_2_attrs = { 'text' => 'yay', :id => question_2.id }
-    questions_attrs = { 1 => question_1_attrs, 2 => question_2_attrs }
-
-    @survey_offer.survey_questions_attributes=(questions_attrs)
-    @survey_offer.save
-
-    @survey_offer.reload
-    @survey_offer.survey_questions.should == [question_2]
-
-    @survey_offer.survey_questions_attributes=(nil)
-    @survey_offer.survey_questions.should == [question_2]
-
-    question_2.reload
-    question_2.text.should == 'yay'
-  end
-
-  it 'delegates enabled? to primary_offer' do
-    @survey_offer.enabled?.should == false
-    @survey_offer.primary_offer.user_enabled = true
-    @survey_offer.enabled?.should == true
+    it 'attaches a file to the primary offer on save' do
+      primary_offer.should_receive(:save_icon!).with(data)
+      subject.icon = icon
+      subject.save
+    end
   end
 
 end

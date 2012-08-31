@@ -1064,6 +1064,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "format",                           :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "position",                         :null => false
   end
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true

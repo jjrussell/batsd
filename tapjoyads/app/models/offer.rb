@@ -376,10 +376,12 @@ class Offer < ActiveRecord::Base
   def is_paid?
     price > 0
   end
+  alias_method :paid?, :is_paid?
 
   def is_free?
     !is_paid?
   end
+  alias_method :free?, :is_free?
 
   def user_bid_warning
     is_paid? ? price / 100.0 : 1
@@ -392,6 +394,7 @@ class Offer < ActiveRecord::Base
   def is_enabled?
     is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
+  alias_method :enabled?, :is_enabled?
 
   def can_be_promoted?
     primary? && rewarded? && is_enabled?
