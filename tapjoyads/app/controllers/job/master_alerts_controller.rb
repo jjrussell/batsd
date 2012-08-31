@@ -7,7 +7,7 @@ class Job::MasterAlertsController < Job::JobController
         next
       end
 
-      send(alert) if rows.length > 0
+      push(alert) if rows.length > 0
     end
 
     render :text => 'ok'
@@ -19,7 +19,7 @@ class Job::MasterAlertsController < Job::JobController
     alerts_keys.map { |key| s3_alert(key) }.flatten
   end
 
-  def send(alert)
+  def push(alert)
     if alert[:recipients_field]
       direct_recipients = rows.collect {|row| row[alert[:recipients_field]] }.uniq
 
