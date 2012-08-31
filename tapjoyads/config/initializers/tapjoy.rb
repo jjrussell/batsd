@@ -78,7 +78,14 @@ TJM_SESSION_TIMEOUT = 1.hour.to_i
 HOSTNAME = `hostname`.strip
 
 Dir.chdir Rails.root do
-  GIT_REV = `git rev-parse --verify HEAD`.strip
+  GIT_REV = begin
+      show = `git show --decorate head | head -n 1`.strip
+      tag = show.match(/tag: (\d+)/)
+      commit = show.match(/commit (\w+)/)
+      tag ? tag[1] : (commit ? commit[1][0,7] : '')
+    rescue
+      ''
+    end
   GIT_BRANCH = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`.split.last.strip rescue ''
 end
 
