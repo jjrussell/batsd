@@ -98,6 +98,11 @@ exit
 ```
 After you've generated these keys and shared them with your root user, you can add this key to github for seamless fetching.
 
+If you get annoyed to have to change into the /vagrant directory every time, just add it to your .bashrc file, eg
+```
+...
+cd /vagrant/
+```
 Running the tests
 -----------------
 
