@@ -79,7 +79,7 @@ HOSTNAME = `hostname`.strip
 
 Dir.chdir Rails.root do
   GIT_REV = begin
-      show = `git show --decorate head | head -n 1`.strip
+      show = `git show --decorate HEAD | head -n 1`.strip
       tag = show.match(/tag: (\d+)/)
       commit = show.match(/commit (\w+)/)
       tag ? tag[1] : (commit ? commit[1][0,7] : '')
