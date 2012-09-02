@@ -333,6 +333,15 @@ class ApplicationController < ActionController::Base
     web_request
   end
 
+  def update_web_request_store_name(app, web_request)
+    return if app.nil?
+    return if web_request.store_name
+
+    if app.platform == 'android'
+      web_request.store_name = App::PLATFORM_DETAILS[app.platform][:default_sdk_store_name]
+    end
+  end
+
   def device_type
     @device_type ||= HeaderParser.device_type(request.user_agent)
   end
