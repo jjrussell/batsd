@@ -170,13 +170,6 @@
         = error_message_on @offer, :show_rate
     %tr
       %th
-        = f.label(:bid)
-        #help_bid.help ?
-      %td
-        = f.currency_field(:bid)
-        = error_message_on @offer, :bid
-    %tr
-      %th
         = f.label(:min_conversion_rate, 'Min CVR')
         #help_min_conversion_rate.help ?
       %td
@@ -230,7 +223,7 @@
       %td
         = f.text_field(:publisher_app_whitelist)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer', 'VideoOffer' ].include?(@offer.item_type)
+    - if @offer.has_adjustable_bid?
       %tr
         %th
           = f.label(:bid)

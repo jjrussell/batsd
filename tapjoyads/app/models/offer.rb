@@ -420,6 +420,10 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def has_adjustable_bid?
+    item_type != 'OfferpalOffer' && item_type != 'RatingOffer'
+  end
+
   def show_in_active_campaigns?
     item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
   end
