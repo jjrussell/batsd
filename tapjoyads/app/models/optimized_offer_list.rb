@@ -59,9 +59,9 @@ class OptimizedOfferList
 
       offers = offers_json['offers'].collect do |offer_hash|
         begin
-          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
-            offer.optimization_override!(offer_hash, false)
-          end.for_caching
+          offer = Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS)
+          next unless offer.enabled?
+          offer.optimization_override(offer_hash, false).for_caching
         rescue
           puts "Error with #{offer_hash.inspect}" and next
         end
