@@ -7,7 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
-  include Offer::ShowRateAlgorithms
+  include Offer::Budgeting
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
