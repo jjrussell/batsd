@@ -47,7 +47,7 @@ class Dashboard::InternalDevicesController < Dashboard::DashboardController
     @device.verifier = params[:verifier]
     @device.save
     if @device.approved?
-      flash[:notice] = "Device approved!  Please enter a description for this device"
+      flash.now[:notice] = "Device approved! Please enter a description for this device."
       render :action => :edit
     else
       redirect_to new_internal_device_path
@@ -63,7 +63,7 @@ class Dashboard::InternalDevicesController < Dashboard::DashboardController
     redirect_to edit_password_reset_url(params[:token])
   end
 
-private
+  private
 
   def send_email
     password_reset_url = edit_password_reset_url(current_user.perishable_token)
