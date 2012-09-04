@@ -16,7 +16,6 @@ class OfferList
     @screen_layout_size         = options.delete(:screen_layout_size)
     @source                     = options.delete(:source)
     @exp                        = options.delete(:exp)
-    @include_rating_offer       = options.delete(:include_rating_offer) { false }
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
@@ -194,13 +193,6 @@ class OfferList
 
   def augmented_offer_list
     all_offers = []
-
-    if @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
-      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id) #BUG: should be @publisher_app.enabled_rating_offer_id
-      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
-        all_offers << rate_app_offer
-      end
-    end
 
     all_offers += default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
 
