@@ -27,7 +27,7 @@ namespace :db do
 
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
     print("Backing up the production database... ")
-    tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos )
+    tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos favorite_apps invitations )
     time = Benchmark.realtime do
 
       options = [
