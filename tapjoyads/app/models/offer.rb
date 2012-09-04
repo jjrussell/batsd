@@ -281,6 +281,7 @@ class Offer < ActiveRecord::Base
   def clone_and_save!
     new_offer = clone
     new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+    new_offer.bid = [new_offer.bid, new_offer.min_bid].max
 
     yield new_offer if block_given?
 
