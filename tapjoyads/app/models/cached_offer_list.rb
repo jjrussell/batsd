@@ -1,6 +1,6 @@
 class CachedOfferList < SimpledbResource
   TYPES = %w(native optimized native-fallback)
-  self.domain_name = 'cached_offer_list'
+  self.domain_name = 'cached_offer_lists'
 
   self.sdb_attr :generated_at, :type => :time
   self.sdb_attr :cached_at, :type => :time
