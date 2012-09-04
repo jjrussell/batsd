@@ -27,7 +27,9 @@ namespace :setup do
   end
 
   task :rvm do 
-    unless File.exists?(".rvmrc")
+    if !system("which rvm > /dev/null")
+      say "RVM is not installed. Skipping ruby setup"
+    elsif !File.exists?(".rvmrc")
       ruby = "1.8.7-p357"
       run "Installing #{ruby} if needed", "rvm list rubies | grep #{ruby} || rvm install #{ruby}"
       File.open(".rvmrc", "w+") { |f| f.puts "rvm use #{ruby}" }
