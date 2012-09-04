@@ -125,7 +125,7 @@ class OfferList
 
     default_offers.each_with_index do |offer, i|
       if found_offers >= offers_to_find
-        offers_left = default_offers.length - i
+        offers_left += default_offers.length - i
         break
       end
 
