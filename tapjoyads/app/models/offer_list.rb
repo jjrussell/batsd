@@ -105,11 +105,15 @@ class OfferList
     found_offer_item_ids = Set.new
     offers_to_find = start + max_offers
     found_offers = 0
+    offers_left = 0
 
     unless @algorithm.blank?
       # TODO: dry this up.
       optimized_offers.each_with_index do |offer, i|
-        return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
+        if found_offers >= offers_to_find
+          offers_left = optimized_offers.length - i
+          break
+        end
 
         unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
           returned_offers << offer if found_offers >= start
@@ -119,8 +123,11 @@ class OfferList
       end
     end
 
-    augmented_offer_list.each_with_index do |offer, i|
-      return [ returned_offers, augmented_offer_list.length - i ] if found_offers >= offers_to_find
+    default_offers.each_with_index do |offer, i|
+      if found_offers >= offers_to_find
+        offers_left += default_offers.length - i
+        break
+      end
 
       unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
@@ -129,7 +136,15 @@ class OfferList
       end
     end
 
-    [ returned_offers, 0 ]
+    if DEEPLINK_POSITION >= start && @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer) && !found_offer_item_ids.include?(deeplink_offer.item_id)
+        position = [ DEEPLINK_POSITION, returned_offers.length ].min
+        returned_offers.insert(position, deeplink_offer)
+      end
+    end
+
+    [ returned_offers, offers_left ]
   end
 
   def sorted_offers_with_rejections(currency_group_id)
@@ -186,24 +201,12 @@ class OfferList
       OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
     end.value
 
-    default_offers.each { |o| o.postcache_rank_score(@currency, @source, false) } if @currency
-
-    default_offers
-  end
-
-  def augmented_offer_list
-    all_offers = []
-
-    all_offers += default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
-
-    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
-      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
-        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
-      end
+    if @currency
+      default_offers.each { |o| o.postcache_rank_score(@currency, @source, false) }
+      default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
+    else
+      default_offers
     end
-
-    all_offers.compact
   end
 
   def optimization_reject?(offer)
