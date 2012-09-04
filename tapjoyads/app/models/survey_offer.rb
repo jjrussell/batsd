@@ -126,6 +126,7 @@ private
     primary_offer.device_types      = Offer::ALL_DEVICES.to_json
     primary_offer.tapjoy_enabled    = true
     primary_offer.pay_per_click     = true
+    primary_offer.approved_sources  = %w(offerwall)
     primary_offer.multi_complete    = false
     primary_offer.save!
 
