@@ -122,7 +122,7 @@ class TapjoyMailer < ActionMailer::Base
     reply_to email_address
     recipients 'mobilehelp@tapjoy.com'
     content_type 'text/html'
-    subject "Missing Currency - #{offer.name}"
+    subject "Missing Currency"
     body( :description        => description,
           :app                => app,
           :partner_name       => app.partner_name,
