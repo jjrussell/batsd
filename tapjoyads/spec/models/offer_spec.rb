@@ -1074,6 +1074,16 @@ describe Offer do
       new_offer.tapjoy_enabled.should be_false
     end
 
+    it 'uses the min_bid amount if necessary' do
+      @offer.bid = @offer.min_bid + 1
+      new_offer = @offer.clone_and_save!
+      new_offer.bid.should == @offer.bid
+
+      @offer.bid = @offer.min_bid - 1
+      new_offer = @offer.clone_and_save!
+      new_offer.bid.should == @offer.min_bid
+    end
+
     it 'copies overridden icon' do
       @offer = @offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
 
