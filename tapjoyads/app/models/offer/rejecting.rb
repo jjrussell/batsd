@@ -390,7 +390,7 @@ module Offer::Rejecting
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)
-    publisher_app && cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
+    publisher_app && cookie_tracking? && source != 'tj_games' && source != 'tj_display' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
   def video_offers_reject?(video_offer_ids, type, all_videos)
@@ -417,7 +417,7 @@ module Offer::Rejecting
   end
 
   def rewarded_offerwall_non_rewarded_reject?(currency, source)
-    currency && currency.rewarded? && !rewarded? && (source == 'offerwall' || source == 'tj_games')
+    currency && currency.rewarded? && !rewarded? && (source == 'offerwall' || source == 'tj_games' || source == 'tj_display')
   end
 
   def recommendable_types_reject?

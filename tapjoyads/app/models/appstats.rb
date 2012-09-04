@@ -85,11 +85,10 @@ class Appstats
       end
     end
 
-    # tjm_display_rewards_opened
     if @stats['tjm_display_offers_opened']
-      @stats['tjm_rewards_opened'] = []
+      @stats['tjm_rewards_opened'] = @stats['tjm_rewards_opened'] || []
       @stats['tjm_display_offers_opened'].length.times do |i|
-        @stats['tjm_rewards_opened'][i] = @stats['tjm_display_offers_opened'][i]
+        @stats['tjm_rewards_opened'] << @stats['tjm_display_offers_opened'][i]
       end
     end
 
