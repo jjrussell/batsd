@@ -157,7 +157,7 @@ class Currency < ActiveRecord::Base
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = (offer.payment * get_spend_share(offer)).to_i
+      reward_value = floored_reward_value(offer)
     end
     reward_value * conversion_rate / 100.0
   end
@@ -168,7 +168,7 @@ class Currency < ActiveRecord::Base
     elsif offer.payment == 2
       1
     else
-      (offer.payment * get_spend_share(offer)).to_i
+      floored_reward_value(offer)
     end
   end
 
@@ -355,5 +355,9 @@ class Currency < ActiveRecord::Base
 
   def find_all_in_string(model, str_list)
     model.find_all_by_id(str_list.split(';'))
+  end
+
+  def floored_reward_value(offer)
+    (offer.payment * get_spend_share(offer)).to_i
   end
 end
