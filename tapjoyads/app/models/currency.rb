@@ -159,7 +159,7 @@ class Currency < ActiveRecord::Base
     else
       reward_value = offer.payment * get_spend_share(offer)
     end
-    reward_value  * conversion_rate / 100.0
+    reward_value * conversion_rate / 100.0
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
