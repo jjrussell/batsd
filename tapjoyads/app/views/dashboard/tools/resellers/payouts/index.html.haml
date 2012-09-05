@@ -48,7 +48,7 @@
         %td= number_to_currency(reseller.leftover_payout_amount / 100.0)
         %td= number_to_currency(reseller.next_payout_amount / 100.0)
         %td
-          - if true || permitted_to?(:create, :dashboard_tools_resellers_payouts)
+          - if permitted_to?(:create, :dashboard_tools_resellers_payouts)
             = form_tag tools_resellers_payouts_path, :method => :post, :class => 'json' do
               = hidden_field_tag :reseller_id, reseller.id
               = submit_tag 'Create Payouts'
