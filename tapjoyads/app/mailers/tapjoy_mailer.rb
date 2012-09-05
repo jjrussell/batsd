@@ -12,9 +12,9 @@ class TapjoyMailer < ActionMailer::Base
   def alert(alert, rows, recipients)
     from 'Tapjoy <noc@tapjoy.com>'
     recipients recipients
-    cc alert[:recipients] unless recipients.sort == alert[:recipients].sort
-    subject "[ALERT] #{alert[:message]}"
-    body :rows => rows, :fields => alert[:fields]
+    cc alert['recipients'] unless recipients.sort == alert['recipients'].sort
+    subject "[ALERT] #{alert['message']}"
+    body :rows => rows, :fields => alert['fields']
   end
 
   def sms_sent(phone, message)
@@ -122,7 +122,7 @@ class TapjoyMailer < ActionMailer::Base
     reply_to email_address
     recipients 'mobilehelp@tapjoy.com'
     content_type 'text/html'
-    subject "Missing Currency - #{offer.name}"
+    subject "Missing Currency"
     body( :description        => description,
           :app                => app,
           :partner_name       => app.partner_name,

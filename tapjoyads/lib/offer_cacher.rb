@@ -1,9 +1,12 @@
-ActionOffer
-
 class OfferCacher
 
   GROUP_SIZE            = 200
-  OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE, Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE, Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE ]
+  OFFER_TYPES           = [ Offer::DEFAULT_OFFER_TYPE, Offer::FEATURED_OFFER_TYPE,
+                            Offer::DISPLAY_OFFER_TYPE, Offer::NON_REWARDED_DISPLAY_OFFER_TYPE,
+                            Offer::NON_REWARDED_FEATURED_OFFER_TYPE, Offer::VIDEO_OFFER_TYPE,
+                            Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE,
+                            Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
+                          ]
   DEVICE_TYPES          = Offer::ALL_DEVICES | [ "" ]
   PLATFORMS             = App::PLATFORMS.values | [ "" ]
   HIDE_REWARDED_OPTIONS = [ true, false ]
@@ -170,7 +173,5 @@ class OfferCacher
         end
       end
     end
-
   end
-
 end

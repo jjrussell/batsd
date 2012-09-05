@@ -7,7 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
-  include Offer::ShowRateAlgorithms
+  include Offer::Budgeting
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
@@ -281,6 +281,7 @@ class Offer < ActiveRecord::Base
   def clone_and_save!
     new_offer = clone
     new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+    new_offer.bid = [new_offer.bid, new_offer.min_bid].max
 
     yield new_offer if block_given?
 
@@ -418,6 +419,10 @@ class Offer < ActiveRecord::Base
 
   def video_offer?
     item_type == 'VideoOffer'
+  end
+
+  def has_adjustable_bid?
+    item_type != 'OfferpalOffer' && item_type != 'RatingOffer'
   end
 
   def show_in_active_campaigns?
