@@ -25,7 +25,7 @@ class Reseller < ActiveRecord::Base
 
   scope :to_payout, select("#{Reseller.quoted_table_name}.*, sum(pending_earnings) AS pending_earnings, sum(next_payout_amount) AS next_payout_amount").
     where("#{Partner.quoted_table_name}.pending_earnings != ?", 0).
-    joins(:partners).includes(:partners).order("#{Reseller.quoted_table_name}.name ASC").group("#{Partner.quoted_table_name}.reseller_id")
+    joins(:partners).order("#{Reseller.quoted_table_name}.name ASC").group("#{Partner.quoted_table_name}.reseller_id")
   scope :payout_info_changed, lambda { |start_date, end_date|
     joins(:partners => :payout_info).where("#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date)
   }
