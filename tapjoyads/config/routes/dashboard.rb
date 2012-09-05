@@ -33,12 +33,7 @@ Tapjoyad::Application.routes.draw do
       resources :user_sessions, :only => [:new, :create, :destroy, :index]
       resources :users, :except => [:show, :destroy]
       resources :apps, :except => [:destroy] do
-        resources :non_rewarded, :only => [:index] do
-          collection do
-            post :toggle
-          end
-        end
-        
+        resource :non_rewarded, :only => [:new, :edit, :create, :update, :show ], :controller => :non_rewarded
         collection do
           get :search
           post :set_custom_url_scheme

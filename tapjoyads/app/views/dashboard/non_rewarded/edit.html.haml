@@ -1,8 +1,9 @@
-- @page_title = 'Non-Rewarded'
+- @page_title = 'Edit Non-Rewarded'
 
-%h3 Set Up Non-Rewarded
+%h3
+  = @page_title
 
-= form_for [@app, @currency], :html => {:class => 'tjform'} do |f|
+= form_for [@app, @currency], :url => { :action => 'update' }, :html => {:class => 'tjform'} do |f|
   %table.currency_form
     %tr
       %th
@@ -41,11 +42,6 @@
           .tapjoy-enabled Enabled
         - else
           .tapjoy-disabled Disabled
-    - unless @app.partner.accepted_publisher_tos?
-      %tr
-        %td{ :colspan => 2 }
-          = check_box_tag :terms_of_service
-          = label_tag :terms_of_service, raw("I agree to the Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}")
 
     - if permitted_to?(:edit, :dashboard_statz)
       = render :partial => 'dashboard/currencies/admin_fields', :locals => {:f => f}
@@ -58,13 +54,6 @@
       #help_test_device_last_run_time.help ?
     %table
       %tr
-        %td
-          Non-Rewarded Status:
-        %th
-          = @enabled ? 'ENABLED' : 'DISABLED'
-      %tr
-        %th
-          = submit_tag "#{@enabled ? 'Disable' : 'Enable' } Non-Rewarded"
         %th UDID
         %th Last run time
       - @udids_to_check.each do |arr|

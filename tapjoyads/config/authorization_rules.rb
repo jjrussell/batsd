@@ -18,7 +18,7 @@ authorization do
     has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_videos, :to => [:index, :options, :update_options]
-    has_permission_on :dashboard_non_rewarded, :to => [:index, :toggle]
+    has_permission_on :dashboard_non_rewarded, :to => [ :new, :create, :edit, :update ]
   end
 
   role :agency do
