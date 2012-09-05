@@ -430,44 +430,29 @@ describe Partner do
     end
 
     it 'builds a payout' do
-      subject.payouts.should_receive(:build).and_return(@payout)
+      subject.payouts.should_receive(:create).and_return(@payout)
       subject.make_payout(@amount)
     end
+  end
 
-    context 'when the payout is valid and saved' do
-      before :each do
-        @payout.stub(:save => true)
-        subject.payouts.stub(:build => @payout)
+  describe '#calculate_payout_threshold' do
+    subject { FactoryGirl.create :partner }
+
+    context 'when the amount breaks the base threshold' do
+      let(:amount) { Partner::BASE_PAYOUT_THRESHOLD + 1_000_00 }
+
+      it 'overrides the base payout threshold' do
+        subject.should_receive(:payout_threshold=).with(amount * Partner::APPROVED_INCREASE_PERCENTAGE)
+        subject.calculate_payout_threshold(amount)
       end
+    end
+
+    context 'when the amount does not break the base threshold' do
+      let(:amount) { 100_00 }
 
       it 'sets the payout threshold to the base' do
         subject.should_receive(:payout_threshold=).with(Partner::BASE_PAYOUT_THRESHOLD)
-        subject.make_payout(@amount)
-      end
-    end
-
-    context 'when the payout is not valid' do
-      before :each do
-        @payout.stub(:save => false)
-        subject.payouts.stub(:build => @payout)
-      end
-
-      it 'does not update the payout threshold' do
-        subject.should_not_receive(:payout_threshold=)
-        subject.make_payout(@amount)
-      end
-    end
-
-    context 'when the payout threshold breaks the base threshold' do
-      before :each do
-        @payout.stub(:save => true, :amount => (50_000.00 * 100).round)
-        subject.payouts.stub(:build => @payout)
-        @amount = @payout.amount / 100
-      end
-
-      it 'overrides the base payout threshold' do
-        subject.should_receive(:payout_threshold=).with(@payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE)
-        subject.make_payout(@amount)
+        subject.calculate_payout_threshold(amount)
       end
     end
   end
