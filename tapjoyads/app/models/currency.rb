@@ -358,6 +358,7 @@ class Currency < ActiveRecord::Base
   end
 
   def floored_reward_value(offer)
-    (offer.payment * get_spend_share(offer)).to_i
+    floored_value = (offer.payment * get_spend_share(offer)).to_i
+    floored_value.zero? ? 1 : floored_value
   end
 end
