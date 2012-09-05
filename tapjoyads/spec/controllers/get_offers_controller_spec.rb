@@ -185,9 +185,9 @@ describe GetOffersController do
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
     end
 
     it 'renders json with correct fields' do

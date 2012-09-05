@@ -1,12 +1,12 @@
 %p<
   %strong<
-    = "Missing Currency Support Request - #{@offer.name}"
+    = "Missing Currency Support Request"
 %div
   = support_request_field :email,             @email_address
   = support_request_field :udid,              "#{@device.key} #{@device.dashboard_device_info_tool_url}"
-  = support_request_field :offer,             "#{@offer.name} #{@offer.dashboard_statz_url}"
+  = support_request_field :offer,             "#{@offer.dashboard_statz_url}"
   = support_request_field :offer_value,       @support_request.offer_value.abs
-  = support_request_field :currency,          "#{@currency.name} #{@currency.dashboard_app_currency_url}"
+  = support_request_field :currency,          "#{@currency.dashboard_app_currency_url}"
   = support_request_field :reward_amount,     @currency.get_visual_reward_amount(@offer)
   = support_request_field :publisher_partner, "#{@partner_name} #{@partner_url}"
   = support_request_field :publisher_app,     "#{@app.name} #{@app.dashboard_app_url}"
