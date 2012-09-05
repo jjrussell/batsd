@@ -308,6 +308,23 @@ describe Currency do
     end
   end
 
+  describe '#get_raw_reward_value' do
+    context 'tricky rounding' do
+      before :each do
+        @offer = FactoryGirl.create(:app).primary_offer
+        @offer.update_attributes({:payment => 50})
+        @currency.conversion_rate = 270_000
+        @currency.spend_share = 0.595
+      end
+
+      it 'matches the amount we send pubs' do
+        currency_amount = @currency.get_raw_reward_value(@offer)
+        pub_amount = @currency.get_publisher_amount(@offer) / 100.0
+        currency_amount.should == pub_amount * @currency.conversion_rate
+      end
+    end
+  end
+
   describe '#get_reward_amount' do
     context 'when given a RatingOffer' do
       before :each do
