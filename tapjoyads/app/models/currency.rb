@@ -359,6 +359,10 @@ class Currency < ActiveRecord::Base
 
   def floored_reward_value(offer)
     floored_value = (offer.payment * get_spend_share(offer)).to_i
-    floored_value.zero? ? 1 : floored_value
+    if get_advertiser_amount(offer) < 0 && floored_value == 0
+      1
+    else
+      floored_value
+    end
   end
 end
