@@ -1,0 +1,79 @@
+%h3= "View experiment: " + @experiment.name
+
+#experiments
+  .running
+    .label This experiment is currently
+    .status{:class => @experiment.running?}= !@experiment.running? ? 'not running' : 'running'
+
+    - if @experiment.running?
+      .started_at
+        .label Started at
+        .time= @experiment.started_at
+      .due_at
+        .label Ends automatically at
+        .time= @experiment.due_at
+      .clear
+      .conclude= link_to 'Conclude', conclude_tools_experiment_path(@experiment), :method => 'post'
+
+    - elsif @experiment.concluded?
+      .started_at
+        .label Started at
+        .time= @experiment.started_at
+      .ended_at
+        .label Ended at
+        .time= @experiment.ended_at
+
+    - else
+      .scheduled_at
+        .label Scheduled to start at
+        .time= @experiment.started_at
+      - if @experiment.due_at
+        .due_at
+          .label Ends automatically at
+          .time= @experiment.due_at
+      .clear
+      .begin= link_to 'Begin', start_tools_experiment_path(@experiment), :method => 'post'
+
+  .clear
+  %br
+  %br
+  .attributes
+    .owner
+      .label Experiment owner
+      .value= @experiment.owner.email rescue 'nobody'
+    .split
+      .label Test %:
+      .value= @experiment.ratio
+    .bucket_type
+      .label Bucket Type:
+      .value= @experiment.bucket_type
+    .population
+      .label Required population size
+      .value= @experiment.population_size
+    - if @experiment.bucket_type == 'optimization'
+      .apps
+        .label App ids
+        .value= @experiment.app_ids
+    .stats
+      .buckets
+        .label Bucekts used
+        .value= @experiment.buckets.count
+      .devices
+        .label Actual population size
+        .value= @experiment.buckets.map(&:size).reduce(:+)
+    .desc
+      .label Description
+      .value= @experiment.description
+
+.clear
+%br
+%br
+
+- unless @experiment.concluded?
+  .edit= link_to 'Edit this experiment', edit_tools_experiment_path(@experiment)
+
+- if @experiment.scheduled?
+  .cancel= link_to 'Cancel this experiment', tools_experiment_path(@experiment), :method => :delete
+
+.index= link_to 'Experiment list', tools_experiments_path
+
