@@ -9,18 +9,18 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
   end
 
   def create
-    failed_payouts = []
+    success = true
     @reseller = Reseller.find(params[:reseller_id])
 
     @reseller.partners.each do |partner|
       payout = partner.make_payout(partner.next_payout_amount / 100.0)
-      failed_payouts << partner.name unless payout.persisted?
+      success = false unless payout.persisted?
 
       log_activity(payout)
       log_activity(partner) if payout.persisted?
     end
 
-    render :json => { :success => failed_payouts.empty? }
+    render :json => { :success => success }
   end
 
   private
