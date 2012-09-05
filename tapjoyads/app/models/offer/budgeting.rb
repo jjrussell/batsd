@@ -1,4 +1,4 @@
-module Offer::ShowRateAlgorithms
+module Offer::Budgeting
 
   attr_accessor :recent_clicks, :recent_installs
   attr_accessor :calculated_conversion_rate, :calculated_min_conversion_rate, :cvr_timeframe
@@ -140,7 +140,7 @@ module Offer::ShowRateAlgorithms
       stat_types = %w(paid_installs)
       appstats_overall = Appstats.new(self.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
       total_installs = appstats_overall.stats['paid_installs'].sum
-      if total_installs > self.overall_budget
+      if total_installs > (0.95 * self.overall_budget)
         Rails.logger.info "App over overall_budget. Overriding any calculations and setting show rate to 0." if log_info
         new_show_rate = 0
       end
