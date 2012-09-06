@@ -153,11 +153,8 @@ describe Job::QueueConversionTrackingController do
     end
 
     context 'a reward already exists in the system' do
-      before :each do
-        Reward.any_instance.should_receive(:save!).and_raise(Simpledb::ExpectedAttributeError.new 'test error')
-      end
-
-      it 'ignores the expectation failure and stops' do
+      it 'does not try to update reward' do
+        Reward.any_instance.should_not_receive(:save!)
         do_get
       end
     end

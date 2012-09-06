@@ -58,7 +58,7 @@ class Job::MasterReloadStatzController < Job::JobController
       cached_money[:total][:count] += result[:count]
       cached_money[:total][:adv_amount] += result[:adv_amount]
       cached_money[:total][:pub_amount] += result[:pub_amount]
-      if result[:source] == 'tj_games'
+      if result[:source] == 'tj_games' || result[:source] == 'tj_display'
         cached_money[:tj_games][:count] += result[:count]
         cached_money[:tj_games][:adv_amount] += result[:adv_amount]
         cached_money[:tj_games][:pub_amount] += result[:pub_amount]

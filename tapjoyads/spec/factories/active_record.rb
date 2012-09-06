@@ -40,6 +40,12 @@ FactoryGirl.define do
     end
   end
 
+  factory :payops_user, :parent => :user do
+     after_build do |payops_user|
+      payops_user.user_roles << UserRole.find_or_create_by_name('payops')
+    end
+  end
+
   factory :payout_manager_user, :parent => :user do
      after_build do |payout_manager|
       payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
