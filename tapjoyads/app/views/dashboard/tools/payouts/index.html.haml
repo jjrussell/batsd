@@ -45,7 +45,8 @@
       %th Payout Amount
       %th Current Payout Created
       %th Payout Info
-      %th Action
+      - if permitted_to?(:create, :dashboard_tools_payouts)
+        %th Action
       %th Confirmed Status
       %th Confirmation Notes
   %tbody
@@ -88,8 +89,8 @@
           %td
             %span.not_present
               %strong Not Present
-        %td
-          - if permitted_to?(:create, :dashboard_tools_payouts)
+        - if permitted_to?(:create, :dashboard_tools_payouts)
+          %td
             = form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
               = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
               = submit_tag 'Create Payout', :class => 'submit'
