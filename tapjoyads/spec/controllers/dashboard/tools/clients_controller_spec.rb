@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Dashboard::Tools::ClientsController do
   before :each do
     activate_authlogic
-    login_as(FactoryGirl.create(:account_mgr_user))
+    login_as(FactoryGirl.create(:payops_user))
     @client = FactoryGirl.create(:client, :name => 'BBB')
     @client2 = FactoryGirl.create(:client, :name => 'AAA')
     @partner = FactoryGirl.create(:partner, :client => @client)
@@ -12,6 +12,7 @@ describe Dashboard::Tools::ClientsController do
 
   describe '#index' do
     it 'returns all clients ordered by name' do
+      login_as(FactoryGirl.create(:account_mgr_user))
       get(:index)
       assigns[:clients].should == [ @client2, @client ]
     end

@@ -1,6 +1,7 @@
 %h1= @page_title
 
-%h4= link_to '[Add New Client]', new_tools_client_path
+- if permitted_to?(:new, :dashboard_tools_clients)
+  %h4= link_to '[Add New Client]', new_tools_client_path
 
 %table#clients_table.tablesorter
   %thead
@@ -8,7 +9,8 @@
       %th Id
       %th{ :class => 'headerSortDown header' } Name
       %th Partners
-      %th{ :colspan => 2 } Actions
+      - if permitted_to?(:edit, :dashboard_tools_clients)
+        %th{ :colspan => 2 } Actions
   %tbody
     - @clients.each do |client|
       - class_names = cycle('', 'odd')
@@ -18,8 +20,9 @@
         %td
           - client.partners.each do |partner|
             = link_to(partner.name||'(no name)', partner)
-        %td= link_to '[Edit]', edit_tools_client_path(client)
-        %td= link_to '[Manage partners]', tools_client_path(client.id)
+        - if permitted_to?(:edit, :dashboard_tools_clients)
+          %td= link_to '[Edit]', edit_tools_client_path(client)
+          %td= link_to '[Manage partners]', tools_client_path(client.id)
 
 - content_for :page_javascript do
   :plain
