@@ -9,12 +9,13 @@ describe SupportRequest do
     @currency = FactoryGirl.create(:currency, :app => @app)
     @device = FactoryGirl.create(:device)
     publisher_app = FactoryGirl.create(:app)
-    @click = FactoryGirl.create(:click,  :udid                 => @device.key,
-                              :currency_id          => @currency.id,
-                              :offer_id             => @offer.id,
-                              :publisher_app_id     => publisher_app.id,
-                              :publisher_partner_id => publisher_app.partner_id,
-                              :publisher_user_id    => "click_test_user" )
+    @click = FactoryGirl.create(:click,  :udid        => @device.key,
+                                :currency_id          => @currency.id,
+                                :offer_id             => @offer.id,
+                                :publisher_app_id     => publisher_app.id,
+                                :publisher_partner_id => publisher_app.partner_id,
+                                :publisher_user_id    => "click_test_user",
+                                :source               => "offerwall" )
 
     @user_agent = "rspec"
     @params =  {  :language_code        => "en",
@@ -147,6 +148,16 @@ describe SupportRequest do
       @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
       @support_request.gamer_id.should be_blank
     end
+
+    it "leaves click_source blank" do
+      @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+      @support_request.click_source.should be_blank
+    end
+
+    it "stores lives_at from a constant" do
+      @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+      @support_request.lives_at.should == 'offerwall'
+    end
   end
 
   describe '#fill_from_click' do
@@ -203,6 +214,16 @@ describe SupportRequest do
         @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
         @support_request.offer_value.should == @click.advertiser_amount
       end
+
+      it "stores the click's source from the click object" do
+        @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.click_source.should == @click.source
+      end
+
+      it "stores lives_at from a constant" do
+        @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.lives_at.should == 'offerwall'
+      end
     end
 
     context 'when no click is provided' do
@@ -250,6 +271,16 @@ describe SupportRequest do
         @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
         currency = Currency.find_in_cache(@params[:currency_id])
         @support_request.managed_currency.should == currency.try(:tapjoy_managed?)
+      end
+
+      it "stores the click's source from the click object" do
+        @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.click_source.should be_blank
+      end
+
+      it "stores lives_at from a constant" do
+        @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
+        @support_request.lives_at.should == 'offerwall'
       end
     end
 
