@@ -48,7 +48,7 @@ Vagrant::Config.run do |config|
     chef.add_recipe "apt"
     chef.add_recipe "build-essential"
     chef.add_recipe "rvm::vagrant"
-    chef.add_recipe "rvm::system"
+    chef.add_recipe "rvm::user"
     chef.add_recipe "git"
     chef.add_recipe "memcached"
     chef.add_recipe "mysql"
@@ -58,13 +58,15 @@ Vagrant::Config.run do |config|
     chef.add_recipe "vim"
     chef.json = {
       :rvm => {
-        :rubies => ['1.8.7'],
-        :user_rubies => ['1.8.7'],
-        :default_ruby => '1.8.7',
-        :user_default_ruby => '1.8.7',
-        :global_gems => [
-          { :name => 'chef' }
-        ]
+        :user_installs => [
+          {
+            :user => 'vagrant',
+            :rubies => ['1.8.7'],
+            :user_rubies => ['1.8.7'],
+            :default_ruby => '1.8.7',
+            :user_default_ruby => '1.8.7',
+          }
+        ],
       },
       :mysql => {
         :server_root_password => ''
