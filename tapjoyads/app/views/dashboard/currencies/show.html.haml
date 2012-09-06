@@ -106,7 +106,7 @@
     - @udids_to_check.each do |arr|
       %tr
         %td= arr[0]
-        %td= arr[1]
+        %td= last_run_time_link(arr[1], @currency.app_id, arr[0])
 
   - if @currency.tapjoy_managed?
     %h3
