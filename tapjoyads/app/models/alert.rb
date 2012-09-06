@@ -8,6 +8,7 @@ class Alert
     @recipients_field = alert['recipients_field']
     @recipients       = alert['recipients']
     @run_at_hours     = alert['run_at_hours']
+    @values_at_hours  = alert['values_at_hours']
 
     @time             = time
 
@@ -26,6 +27,29 @@ class Alert
     end
   end
 
+  class << self
+    def run_all
+      find_all.each { |alert| alert.run }
+    end
+
+    def find_all
+      alerts_keys.map { |key| s3_alert(key) }.flatten
+    end
+
+    def s3_alert(key)
+      json = alerts_bucket.objects[key].read
+      JSON.parse(json).map { |alert| Alert.new(alert) }
+    end
+
+    def alerts_keys
+      alerts_bucket.objects.map(&:key).reject { |keys| keys.last == "/" }
+    end
+
+    def alerts_bucket
+      @alerts_bucket ||= S3.bucket(BucketNames::ALERTS)
+    end
+  end
+
   private
 
   def skip?
@@ -35,7 +59,11 @@ class Alert
   end
 
   def prepare_query
-    @query.gsub!('|_HOUR_|', @time.hour.to_s)
+    if @values_at_hours.has_key?(@time.hour)
+      @values_at_hours[@time.hour].each_pair do |str,sub|
+        @query.gsub!(str, sub)
+      end
+    end
   end
 
   def push(rows)
