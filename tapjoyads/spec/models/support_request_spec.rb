@@ -156,7 +156,7 @@ describe SupportRequest do
 
     it "stores lives_at from a constant" do
       @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
-      @support_request.lives_at.should == 'offerwall'
+      @support_request.lives_in.should == 'offerwall'
     end
   end
 
@@ -222,7 +222,7 @@ describe SupportRequest do
 
       it "stores lives_at from a constant" do
         @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
-        @support_request.lives_at.should == 'offerwall'
+        @support_request.lives_in.should == 'offerwall'
       end
     end
 
@@ -280,7 +280,7 @@ describe SupportRequest do
 
       it "stores lives_at from a constant" do
         @support_request.fill_from_click(nil, @params, @gamer_device, @gamer, @user_agent)
-        @support_request.lives_at.should == 'offerwall'
+        @support_request.lives_in.should == 'offerwall'
       end
     end
 

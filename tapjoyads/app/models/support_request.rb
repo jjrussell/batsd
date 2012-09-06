@@ -28,7 +28,7 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :click_id
   self.sdb_attr :gamer_id
   self.sdb_attr :offer_value, :type => :int
-  self.sdb_attr :lives_at
+  self.sdb_attr :lives_in
   self.sdb_attr :click_source
 
   def fill_from_params(params, app, currency, offer, user_agent)
@@ -92,7 +92,7 @@ class SupportRequest < SimpledbResource
 
     self.managed_currency       = currency.try(:tapjoy_managed?)
 
-    self.lives_at = REQUEST_SOURCE
+    self.lives_in = REQUEST_SOURCE
 
     if click.present?
       self.app_id               = click.offer.item_id
