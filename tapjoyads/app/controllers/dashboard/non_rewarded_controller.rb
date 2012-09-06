@@ -51,6 +51,8 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
         flash.now[:error] = "Could not update non-rewarded."
       end
       redirect_to :action => :edit
+    else
+      redirect_to :action => :create
     end
   end
 

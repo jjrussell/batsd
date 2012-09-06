@@ -6,8 +6,8 @@
 %h4
   Setting up Non-Rewarded enables advertisers to display non-incentivized ads on this app. To start publishing non-rewarded ad units, click the setup button below. Your request will be submitted to our approval queue and we will notify you as soon as your app has been approved! If you have any questions, please contact: <a href="mailto:support+enable@tapjoy.com">support+enable@tapjoy.com</a>
 
-- unless @app.partner.accepted_publisher_tos?
-  = raw("I agree to the Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}")
-  = check_box :terms_of_service
-
-= button_to 'Setup', :action => :create
+= form_tag :url => { :action => 'create' }, :html => {:class => 'tjform'} do
+  - unless @app.partner.accepted_publisher_tos?
+    = label_tag raw("I agree to the Tapjoy #{link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'}")
+    = check_box_tag :terms_of_service
+  = submit_tag 'Setup'
