@@ -33,16 +33,17 @@ class Alert
     end
 
     def find_all
+      alerts_keys = alerts_bucket.objects.map(&:key).reject { |keys| keys.last == "/" }
       alerts_keys.map { |key| s3_alert(key) }.flatten
     end
 
     def s3_alert(key)
       json = alerts_bucket.objects[key].read
-      JSON.parse(json).map { |alert| Alert.new(alert) }
-    end
-
-    def alerts_keys
-      alerts_bucket.objects.map(&:key).reject { |keys| keys.last == "/" }
+      begin
+        JSON.parse(json).map { |alert| Alert.new(alert) }
+      rescue JSON::ParserError => e
+        TapjoyMailer.deliver_generic_alert(e, ['aaron@tapjoy.com', 'chris.compeau@tapjoy.com'])
+      end
     end
 
     def alerts_bucket
