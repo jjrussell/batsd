@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120731133709) do
+ActiveRecord::Schema.define(:version => 20120905184544) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -196,6 +196,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "publisher_reseller_id",  :limit => 36
     t.string   "advertiser_reseller_id", :limit => 36
     t.float    "spend_share"
+    t.string   "store_name"
   end
 
   add_index "conversions", ["advertiser_offer_id", "created_at", "reward_type"], :name => "index_on_advertiser_offer_id_created_at_and_reward_type"
