@@ -106,7 +106,7 @@ module Offer::Rejecting
     %w(1165fbbf-c5c1-4fee-951f-52a8beb81d8d 7aeb04d3-9796-4ec1-90e9-f7b7e506969a bca84192-05f6-42c6-bb50-7ca3e0feb38c e973496a-1e69-4198-8c29-392bc01306ba f904bea5-05ee-4df7-b480-1767010f8cb9 18dcb8bf-7556-481b-88da-7b9d959c2d4b 49cabdd5-0f88-4d87-8483-e70c12edf760 97a839d2-2dd0-4ae4-b0db-ca72fb8d6473 6c4d9387-50a3-4dde-b6f8-6e3acda0e3e2) =>
     %w(1165fbbf-c5c1-4fee-951f-52a8beb81d8d 7aeb04d3-9796-4ec1-90e9-f7b7e506969a bca84192-05f6-42c6-bb50-7ca3e0feb38c e973496a-1e69-4198-8c29-392bc01306ba f904bea5-05ee-4df7-b480-1767010f8cb9 18dcb8bf-7556-481b-88da-7b9d959c2d4b 49cabdd5-0f88-4d87-8483-e70c12edf760 97a839d2-2dd0-4ae4-b0db-ca72fb8d6473 6c4d9387-50a3-4dde-b6f8-6e3acda0e3e2),
     # Conquer Online HD iOS
-    %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) => 
+    %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) =>
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202),
   }
 
@@ -202,7 +202,11 @@ module Offer::Rejecting
 
   def reject_reasons(reject_functions)
     reject_functions.select do |function_hash|
-      send(function_hash[:method], *function_hash[:parameters])
+      if function_hash.keys.include?(:parameters)
+        send(function_hash[:method], *function_hash[:parameters])
+      else
+        send(function_hash[:method])
+      end
     end.map do |function_hash|
       function_hash[:reason].humanize
     end
