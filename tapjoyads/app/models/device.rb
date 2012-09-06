@@ -28,6 +28,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
+  self.sdb_attr :pending_coupons, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
@@ -424,6 +425,16 @@ class Device < SimpledbShardedResource
 
   def can_view_offers?
     !(opted_out? || banned? || suspended?)
+  end
+
+  def set_pending_coupon(offer_id)
+    self.pending_coupons += [offer_id]
+    save
+  end
+
+  def remove_pending_coupon(offer_id)
+    self.pending_coupons -= [offer_id]
+    save
   end
 
   private

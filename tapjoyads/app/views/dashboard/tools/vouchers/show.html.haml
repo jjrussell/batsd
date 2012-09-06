@@ -1,0 +1,65 @@
+- @page_title = "Coupon - #{@coupon.name}"
+
+%h1= @page_title
+%table#coupons_table.tablesorter
+  %thead
+    %tr
+      %th Name
+      %th Type
+      %th Discount Value
+      %th Created
+      %th Start
+      %th Expiration
+  %tbody
+    %tr
+      %td= link_to(@coupon.name, statz_path(@coupon))
+      %td= @coupon.discount_type
+      %td= @coupon.discount_type == "currency" ? number_to_currency(@coupon.discount_value.to_f) : @coupon.discount_value
+      %td.nowrap= @coupon.created_at.to_s(:pub)
+      %td.nowrap= @coupon.start_date.to_s(:pub)
+      %td.nowrap= @coupon.end_date.to_s(:pub)
+
+%h1 Vouchers
+%table#vouchers_table.tablesorter
+  %thead
+    %tr
+      %th Email Address
+      %th Acquired On
+      %th Expires On
+      %th Barcode URL
+      %th Redemption Code
+      %th Completed?
+  %tbody
+    - @vouchers.each do |voucher|
+      %tr
+        %td= voucher.email_address
+        %td= voucher.acquired_at
+        %td= voucher.expires_at
+        %td= link_to('Barcode', voucher.barcode_url)
+        %td= voucher.redemption_code
+        %td= voucher.completed
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+    .icon {
+      max-width: 60px;
+      overflow: hidden;
+    }
