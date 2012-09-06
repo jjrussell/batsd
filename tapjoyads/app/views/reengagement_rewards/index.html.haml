@@ -43,9 +43,9 @@
         Come back each day and get rewards!
       - else
         = @reengagement_offer.instructions
-    = link_to :back do
+    = link_to ReengagementRewardsController::OK_BUTTON_URL do
       %span.button
-        Okay
+        OK
   .footer.clearfix
     = image_tag @app.get_icon_url, :alt => "App Icon", :name => "App Icon", :height => "50", :id => "app_icon", :class => "app_icon floatl"
 
