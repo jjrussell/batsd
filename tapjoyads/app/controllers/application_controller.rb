@@ -316,7 +316,7 @@ class ApplicationController < ActionController::Base
 
   # TODO make this more general so nobody needs to go WebRequest.new in a controller -KB
   def generate_web_request
-    if params[:source] == 'tj_games'
+    if params[:source] == 'tj_games' || params[:source] == 'tj_display'
       wr_path = 'tjm_offers'
     elsif params[:source] == 'featured'
       wr_path = 'featured_offer_requested'

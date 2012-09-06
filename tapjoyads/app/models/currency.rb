@@ -254,7 +254,7 @@ class Currency < ActiveRecord::Base
   end
 
   def hide_rewarded_app_installs_for_version?(app_version, source)
-    return false if source == 'tj_games'
+    return false if source == 'tj_games' || source == 'tj_display'
     return false unless hide_rewarded_app_installs?
     return true if minimum_hide_rewarded_app_installs_version.blank?
     return false unless app_version.present?
