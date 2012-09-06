@@ -5,3 +5,6 @@
 .rbenv-version
 .powder
 .env
+.vagrant
+cookbooks
+tmp
