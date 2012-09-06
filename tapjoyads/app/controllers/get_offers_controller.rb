@@ -149,9 +149,11 @@ class GetOffersController < ApplicationController
     end
 
     params[:source] = 'offerwall' if params[:source].blank?
-    params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
 
-    set_offerwall_experiment
+    # No experiment running at this time
+    # params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
+    # set_offerwall_experiment
+    params[:exp] = 'control'
 
     if @save_web_requests
       @web_request = generate_web_request
