@@ -12,9 +12,9 @@ class TapjoyMailer < ActionMailer::Base
   def alert(alert, rows, recipients)
     from 'Tapjoy <noc@tapjoy.com>'
     recipients recipients
-    cc alert['recipients'] unless recipients.sort == alert['recipients'].sort
-    subject "[ALERT] #{alert['message']}"
-    body :rows => rows, :fields => alert['fields']
+    cc alert.recipients unless recipients.sort == alert.recipients.sort
+    subject "[ALERT] #{alert.message}"
+    body :rows => rows, :fields => alert.fields
   end
 
   def sms_sent(phone, message)
