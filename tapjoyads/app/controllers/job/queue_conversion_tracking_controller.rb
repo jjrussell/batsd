@@ -80,39 +80,37 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     end
 
     reward = Reward.new(:key => click.reward_key)
-    reward.put('created', installed_at_epoch)
-    reward.type                   = click.type
-    reward.publisher_app_id       = click.publisher_app_id
-    reward.advertiser_app_id      = click.advertiser_app_id
-    reward.displayer_app_id       = click.displayer_app_id
-    reward.offer_id               = click.offer_id
-    reward.currency_id            = click.currency_id
-    reward.publisher_user_id      = click.publisher_user_id
-    reward.advertiser_amount      = click.advertiser_amount
-    reward.publisher_amount       = click.publisher_amount
-    reward.displayer_amount       = click.displayer_amount
-    reward.currency_reward        = click.currency_reward
-    reward.tapjoy_amount          = click.tapjoy_amount
-    reward.source                 = click.source
-    reward.udid                   = click.udid
-    reward.country                = click.country
-    reward.reward_key_2           = click.reward_key_2
-    reward.exp                    = click.exp
-    reward.viewed_at              = click.viewed_at
-    reward.click_key              = click.key
-    reward.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
-    reward.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
-    reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
-    reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
-    reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
-    reward.mac_address            = click.mac_address
-    reward.device_type            = click.device_type
-    reward.offerwall_rank         = click.offerwall_rank
+    if reward.is_new
+      reward.put('created', installed_at_epoch)
+      reward.type                   = click.type
+      reward.publisher_app_id       = click.publisher_app_id
+      reward.advertiser_app_id      = click.advertiser_app_id
+      reward.displayer_app_id       = click.displayer_app_id
+      reward.offer_id               = click.offer_id
+      reward.currency_id            = click.currency_id
+      reward.publisher_user_id      = click.publisher_user_id
+      reward.advertiser_amount      = click.advertiser_amount
+      reward.publisher_amount       = click.publisher_amount
+      reward.displayer_amount       = click.displayer_amount
+      reward.currency_reward        = click.currency_reward
+      reward.tapjoy_amount          = click.tapjoy_amount
+      reward.source                 = click.source
+      reward.udid                   = click.udid
+      reward.country                = click.country
+      reward.reward_key_2           = click.reward_key_2
+      reward.exp                    = click.exp
+      reward.viewed_at              = click.viewed_at
+      reward.click_key              = click.key
+      reward.publisher_partner_id   = click.publisher_partner_id || currency.partner_id
+      reward.advertiser_partner_id  = click.advertiser_partner_id || offer.partner_id
+      reward.publisher_reseller_id  = click.publisher_reseller_id || currency.reseller_id
+      reward.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
+      reward.spend_share            = click.spend_share || currency.get_spend_share(offer)
+      reward.mac_address            = click.mac_address
+      reward.device_type            = click.device_type
+      reward.offerwall_rank         = click.offerwall_rank
 
-    begin
-      reward.save!(:expected_attr => { 'type' => nil })
-    rescue Simpledb::ExpectedAttributeError => e
-      return
+      reward.save!
     end
 
     begin
