@@ -202,7 +202,7 @@ module Offer::Rejecting
 
   def reject_reasons(reject_functions)
     reject_functions.select do |function_hash|
-      if function_hash.keys.include?("parameters")
+      if function_hash.keys.include?(:parameters)
         send(function_hash[:method], *function_hash[:parameters])
       else
         send(function_hash[:method])
