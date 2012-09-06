@@ -11,8 +11,8 @@ class AdminDeviceLastRun
           :is_temporary => params[:udid_is_temporary].present?
         )
 
-        if @device.last_run_time_tester?
-          AdminDeviceLastRun.set(
+        if @device.last_run_time_tester? || AdminDevice.where(:udid => params[:udid]).any?
+          AdminDeviceLastRun.add(
             :udid => params[:udid],
             :app_id => params[:app_id],
             # some controllers like to set their own @web_request

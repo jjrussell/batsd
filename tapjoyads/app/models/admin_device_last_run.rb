@@ -16,34 +16,30 @@ class AdminDeviceLastRun < SimpledbResource
   # opts.keys == [:udid] => last time this admin device ran any app
   # opts.keys == [:app_id] => last time any admin device ran this app
   def self.for(opts = {})
+    limit = opts[:limit]
     opts = opts.slice(:udid, :app_id)
     raise ArgumentError if opts.empty?
 
     select_options = {
       :where    => opts.collect { |k, v| %{#{k} = "#{v}"} }.join(' and ') + " and time is not null",
-      :order_by => 'time DESC',
-      :limit    => 1,
+      :order_by => 'time DESC'
     }
 
-    self.select(select_options)[:items].first
+    limit and select_options.merge(:limit => limit)
+
+    self.select(select_options)[:items]
   end
 
   # set the last run for a [:udid, :app_id] tuple (to now)
   # and store data with the associated web request
-  def self.set(opts = {})
+  def self.add(opts = {})
     raise ArgumentError unless [:udid, :app_id].all? { |key| opts[key].present? }
     raise ArgumentError unless opts[:web_request].is_a?(WebRequest)
 
-    last_run = self.for(opts)
-
-    if last_run
-      last_run.time = Time.zone.now
-    else
-      last_run = self.new
-      last_run.udid   = opts[:udid]
-      last_run.app_id = opts[:app_id]
-      last_run.time   = Time.zone.now
-    end
+    last_run = self.new
+    last_run.udid   = opts[:udid]
+    last_run.app_id = opts[:app_id]
+    last_run.time   = Time.zone.now
 
     # We mp-snagged these parameters from WebRequest,
     # so we have to mp-assign them
