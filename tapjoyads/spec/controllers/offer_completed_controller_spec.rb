@@ -71,4 +71,70 @@ describe OfferCompletedController do
       end
     end
   end
+
+  describe '#adility' do
+    before :each do
+      @voucher = FactoryGirl.create(:voucher)
+      Click.stub(:new).with(:key => @voucher[:click_key]).and_return(@click)
+      Offer.stub(:find_in_cache).and_return(@offer)
+      Device.stub(:new).with(:key => @click.udid).and_return(@device)
+      @device.stub(:has_app?).with(@click.advertiser_app_id).and_return(false)
+      @parameters = { :voucher => { :id => @voucher.id, :status => 'redeemed' }}
+      Voucher.stub(:find).and_return(@voucher)
+    end
+    context 'no voucher id passed in' do
+      before :each do
+        @device.should_not_receive(:remove_pending_coupon).with(@offer.id)
+        get(:adility, {})
+      end
+      it 'should give an error message on blank voucher id' do
+        assigns(:error_message).should == 'unexpected adility callback'
+      end
+      it 'should render error template' do
+        response.should render_template('layouts/error')
+      end
+    end
+    context 'valid params (voucher present, status is redeemed, and not completed)' do
+      before :each do
+        @device.should_receive(:remove_pending_coupon).with(@offer.id)
+        get(:adility, @parameters)
+      end
+      it 'should have instance variable source' do
+        assigns(:source).should == 'adility'
+      end
+      it 'should have instance variable voucher' do
+        assigns(:voucher).should == @voucher
+      end
+      it 'renders success template' do
+        response.should render_template('layouts/success')
+      end
+    end
+    context 'voucher already completed' do
+      before :each do
+        @voucher.completed = true
+        @voucher.save
+        @device.should_not_receive(:remove_pending_coupon).with(@offer.id)
+        get(:adility, @parameters)
+      end
+      it 'should give an error message on blank voucher id' do
+        assigns(:error_message).should == 'unexpected adility callback'
+      end
+      it 'should render error template' do
+        response.should render_template('layouts/error')
+      end
+    end
+    context 'voucher status not redeemed' do
+      before :each do
+        @device.should_not_receive(:remove_pending_coupon).with(@offer.id)
+        @parameters.merge!({ :voucher => { :status => 'fail' }})
+        get(:adility, @parameters)
+      end
+      it 'should give an error message on blank voucher id' do
+        assigns(:error_message).should == 'unexpected adility callback'
+      end
+      it 'should render error template' do
+        response.should render_template('layouts/error')
+      end
+    end
+  end
 end

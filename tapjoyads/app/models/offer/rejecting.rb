@@ -147,6 +147,9 @@ module Offer::Rejecting
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
       { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
+      { :method => :has_coupon_already_pending?, :parameters => [device], :reason => 'coupon_already_requested'},
+      { :method => :has_coupon_offer_expired?, :reason => 'coupon_expired'},
+      { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'}
     ]
     reject_reasons(reject_functions)
   end
@@ -187,7 +190,10 @@ module Offer::Rejecting
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     app_store_reject?(store_whitelist) ||
     distribution_reject?(store_name) ||
-    miniscule_reward_reject?(currency)
+    miniscule_reward_reject?(currency) ||
+    has_coupon_already_pending?(device) ||
+    has_coupon_offer_not_started? ||
+    has_coupon_offer_expired?
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -234,7 +240,23 @@ module Offer::Rejecting
     currency.charges?(self) && partner_balance <= 0
   end
 
+  def has_coupon_already_pending?(device)
+     has_valid_coupon?(device) && device.pending_coupons.include?(self.id)
+  end
+
+  def has_coupon_offer_not_started?
+    has_valid_coupon? && self.coupon.start_date > Date.today
+  end
+
+  def has_coupon_offer_expired?
+    has_valid_coupon? && self.coupon.end_date <= Date.today
+  end
+
   private
+
+  def has_valid_coupon?(device=true)
+    self.present? && device.present? && !multi_complete? && item_type == 'Coupon'
+  end
 
   def offer_is_the_publisher?(currency)
     return false unless currency

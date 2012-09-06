@@ -12,10 +12,10 @@
       %td= select_tag :source, options_for_select(['tj_games', 'offerwall'].map { |source| [source, source] }, params[:source])
     %tr
       %td= label_tag :platform, 'Publisher App Platform'
-      %td= select_tag :platform, options_for_select(OfferCacher::PLATFORMS, params[:platform])
+      %td= select_tag :platform, options_for_select(OfferCacher::PLATFORM_AND_DEVICE_TYPES.keys, params[:platform])
     %tr
       %td= label_tag :device_type, 'User Device Type'
-      %td= select_tag :device_type, options_for_select(OfferCacher::DEVICE_TYPES, params[:device_type])
+      %td= select_tag :device_type, options_for_select(OfferCacher::PLATFORM_AND_DEVICE_TYPES.values.flatten, params[:device_type])
     %tr
       %td= label_tag :country, 'Country'
       %td= text_field_tag :country, params[:country], :size => '20'

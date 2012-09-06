@@ -1,0 +1,43 @@
+- @page_title = 'Edit Coupon'
+
+%h1= @page_title
+
+= form_for([:tools, @coupon], :method => :put, :html => { :multipart => true }) do |f|
+  %table
+    %tr
+      %th= label_tag 'Partner'
+      %td
+        = @partner.name
+        = f.hidden_field :partner_id
+    %tr
+      %th= f.label :name
+      %td= f.text_field 'name'
+      %td= error_message_on(@coupon, :name)
+    %tr
+      %th= f.label :description
+      %td= f.text_area 'description'
+      %td= error_message_on(@coupon, :description)
+    %tr
+      %th= f.label :illustration_url
+      %td= f.text_field 'illustration_url'
+      %td= error_message_on(@coupon, :illustration_url)
+    %tr
+      %th= f.label :fine_print
+      %td= f.text_field 'fine_print'
+      %td= error_message_on(@coupon, :fine_print)
+    %tr
+      %th= f.label :price
+      %td= f.text_field 'price', :value => '$0.00', :class => 'currency_field'
+      %td= error_message_on(@coupon, :price)
+    %tr
+      %th= f.label :instructions
+      %td= f.text_area :instructions
+      %td= error_message_on(@coupon, :instructions)
+    %tr
+      %th= label_tag "Current Icon", "Current Icon"
+      %td= image_tag @coupon.get_icon_url, :size => '57x57'
+    %tr
+      %th= f.label :icon, 'Upload New Icon'
+      %td= f.file_field :icon
+      %td= error_message_on(@coupon, :icon)
+  = submit_tag 'Update'
