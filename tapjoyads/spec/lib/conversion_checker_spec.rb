@@ -13,14 +13,6 @@ describe ConversionChecker do
       checker.risk_message.should be_nil
     end
 
-    it 'returns false for an invalid Playdom user ID' do
-      Currency.any_instance.stub(:callback_url).and_return(Currency::PLAYDOM_CALLBACK_URL)
-      @click.publisher_user_id = 'BADMOFO'
-      checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
-      checker.should_not be_acceptable_risk
-      checker.risk_message.should match(/Playdom/)
-    end
-
     it 'returns false for a pubuser associated with too many udids' do
       PublisherUser.any_instance.stub(:update!).and_return(false)
       checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))

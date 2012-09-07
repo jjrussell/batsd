@@ -26,21 +26,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
 
-    if callback_url == Currency::PLAYDOM_CALLBACK_URL
-      first_char = publisher_user_id[0, 1]
-      publisher_user_id = publisher_user_id[1..-1]
-
-      if first_char == 'F'
-        callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' # facebook url
-      elsif first_char == 'M' || first_char == 'P'
-        callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' # myspace/iphone url
-      else
-        reward.send_currency_status = 'InvalidPlaydomUserId'
-        reward.save
-        return
-      end
-    end
-
     unless callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
       mark = '?'
       mark = '&' if callback_url =~ /\?/
