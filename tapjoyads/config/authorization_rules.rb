@@ -159,6 +159,7 @@ authorization do
     has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
+    has_permission_on :dashboard_tools, :to => [:monthly_rev_share_report, :download_monthly_rev_share_report]
   end
 
   role :games_editor do

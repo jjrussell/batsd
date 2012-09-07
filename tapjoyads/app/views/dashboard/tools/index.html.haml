@@ -20,6 +20,8 @@
       %li= link_to 'Payout Freezes', tools_payout_freezes_path
     - if permitted_to? :index, :dashboard_tools_network_costs             # payops
       %li= link_to 'Network Costs', tools_network_costs_path
+    - if permitted_to? :monthly_rev_share_report, :dashboard_tools        # payops
+      %li= link_to 'Monthly Rev Share Report', monthly_rev_share_report_tools_path
     - if permitted_to? :publishers_without_payout_info, :dashboard_tools  # payout_manager
       %li= link_to 'Pubs Without W9', publishers_without_payout_info_tools_path
     - if permitted_to? :publisher_payout_info_changes, :dashboard_tools   # payout_manager
