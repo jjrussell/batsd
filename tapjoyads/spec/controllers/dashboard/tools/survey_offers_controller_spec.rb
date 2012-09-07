@@ -175,9 +175,10 @@ describe Dashboard::Tools::SurveyOffersController do
 
   describe '#toggle_enabled' do
     context 'given an enabled survey' do
-      it 'diables the survey' do
+      it 'disables the survey' do
         # hard to fake the primary_offer being enabled
         SurveyOffer.stub(:find).with(survey_offer.id).and_return(survey_offer)
+        SurveyOffer.stub(:find).with(survey_offer.id, :include => nil, :select => nil).and_return(survey_offer)
         survey_offer.stub(:enabled?).and_return(true)
         survey_offer.should_receive(:enabled=).with(false)
         get(:toggle_enabled, :id => survey_offer.id)
