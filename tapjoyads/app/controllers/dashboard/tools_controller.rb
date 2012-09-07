@@ -627,7 +627,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
           item.after_state['rev_share'],
           item.after_state['account_manager_notes'],
         ]
-        data << row.map{|attr| attr.to_s.gsub(",", ' ')}.join(",")
+        data << row.map{|attr| attr.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')}.join(",")
       end
     end until next_token.nil?
 
