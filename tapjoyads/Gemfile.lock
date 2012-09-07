@@ -149,6 +149,7 @@ GEM
     gherkin (2.11.2)
       json (>= 1.4.6)
     git (1.2.5)
+    gli (2.0.0)
     growl (1.0.3)
     guard (1.2.3)
       listen (>= 0.4.2)
@@ -194,6 +195,12 @@ GEM
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
       rb-inotify (~> 0.8.8)
+    localeapp (0.5.1)
+      gli
+      i18n
+      json
+      rest-client
+      ya2yaml
     locales (1.0.0)
     mail (2.2.19)
       activesupport (>= 2.3.6)
@@ -273,6 +280,8 @@ GEM
       json (~> 1.4)
     read_from_slave (0.4.0)
     redis (2.2.2)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     right_http_connection (1.3.0)
     rmagick (2.12.2)
     rspec (2.10.0)
@@ -370,6 +379,7 @@ GEM
     xml-simple (1.1.1)
     xpath (0.1.4)
       nokogiri (~> 1.3)
+    ya2yaml (0.31)
 
 PLATFORMS
   ruby
@@ -418,6 +428,7 @@ DEPENDENCIES
   kgio (= 2.7.2)
   launchy
   libxml-ruby (= 1.1.3)
+  localeapp
   locales
   mail_safe (= 0.3.1)
   memcached (= 1.3.2)
