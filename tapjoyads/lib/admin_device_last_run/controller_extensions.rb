@@ -17,9 +17,14 @@ class AdminDeviceLastRun
         return true if @device.last_run_time_tester?
 
         # The slowest check; for partner test devices
-        Currency.where(:app_id => params[:app_id]).
-          collect(&:get_test_device_ids).inject(:+).
-          any? { |udid| udid == params[:udid] }
+        begin
+          Currency.where(:app_id => params[:app_id]).
+            collect(&:get_test_device_ids).inject(:+).
+            any? { |udid| udid == params[:udid] }
+        rescue
+          # the map reduce above could result in nil.any?, so rescue with false
+          false
+        end
       end
 
       def track_admin_device
