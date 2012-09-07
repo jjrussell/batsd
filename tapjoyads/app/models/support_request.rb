@@ -7,6 +7,8 @@ class SupportRequest < SimpledbResource
   belongs_to :click, :foreign_key => 'key'
   belongs_to :gamer
 
+  REQUEST_SOURCE = 'offerwall'
+
   self.domain_name = 'support_requests'
 
   self.sdb_attr :udid
@@ -26,6 +28,8 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :click_id
   self.sdb_attr :gamer_id
   self.sdb_attr :offer_value, :type => :int
+  self.sdb_attr :lives_in
+  self.sdb_attr :click_source
 
   def fill_from_params(params, app, currency, offer, user_agent)
     fill( :params     => params,
@@ -88,12 +92,15 @@ class SupportRequest < SimpledbResource
 
     self.managed_currency       = currency.try(:tapjoy_managed?)
 
+    self.lives_in = REQUEST_SOURCE
+
     if click.present?
       self.app_id               = click.offer.item_id
       self.currency_id          = click.currency_id
       self.offer_id             = click.offer_id
       self.click_id             = click.id
       self.offer_value          = click.advertiser_amount
+      self.click_source         = click.source
     else
       self.app_id               = app.present? ? app.id : params[:app_id]
       self.currency_id          = currency.present? ? currency.id : params[:currency_id]
@@ -101,6 +108,7 @@ class SupportRequest < SimpledbResource
       offer_click               = offer.present? ? get_last_click(params[:udid], offer) : nil
       self.click_id             = offer_click.present? ? offer_click.id : nil
       self.offer_value          = offer.present? ? offer.payment : nil
+      self.click_source         = nil
     end
   end
 end

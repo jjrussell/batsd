@@ -40,6 +40,12 @@ FactoryGirl.define do
     end
   end
 
+  factory :payops_user, :parent => :user do
+     after_build do |payops_user|
+      payops_user.user_roles << UserRole.find_or_create_by_name('payops')
+    end
+  end
+
   factory :payout_manager_user, :parent => :user do
      after_build do |payout_manager|
       payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
@@ -366,5 +372,39 @@ FactoryGirl.define do
 
   factory :client do
     name  { FactoryGirl.generate(:name) }
+  end
+
+  factory :coupon do
+    association :partner
+    provider_id                   { FactoryGirl.generate(:name) }
+    name                          'Amazon'
+    description                   'Amazing savings from Amazon'
+    fine_print                    'Buy all the things!'
+    illustration_url              'http://someillustration.com'
+    start_date                    { Date.today }
+    end_date                      { Date.today + 1.day }
+    discount_type                 'currency'
+    discount_value                '$30.00'
+    advertiser_id                 'amazon'
+    advertiser_name               'Amazon'
+    advertiser_url                'http://amazon.com'
+    vouchers_expire_type          'absolute'
+    vouchers_expire_date          { Time.zone.now + 1.day }
+    url                           'http://tapjoy.com/coupons/show'
+    instructions                  'do some stuff'
+    price                         1
+  end
+
+  factory :voucher do
+    association :coupon
+    id                   { FactoryGirl.generate(:name) }
+    click_key            { FactoryGirl.generate(:name) }
+    ref_id               { FactoryGirl.generate(:name) }
+    redemption_code      { FactoryGirl.generate(:name) }
+    acquired_at          { Date.today }
+    expires_at           { Date.today + 1.day }
+    barcode_url          'http://somebarcode.com'
+    completed            false
+    email_address        'tapjoy@tapjoy.com'
   end
 end

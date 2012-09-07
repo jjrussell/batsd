@@ -84,14 +84,6 @@ authorization do
     has_permission_on :dashboard_tools_earnings_adjustments, :to => [ :new, :create ]
   end
 
-  role :payops do
-    includes :money
-    has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
-    has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
-    has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
-    has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
-  end
-
   role :payout_manager do
     includes :payops
     has_permission_on :dashboard_tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
@@ -154,10 +146,19 @@ authorization do
     has_permission_on :dashboard_tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
     has_permission_on :dashboard_tools_brand_offers, :to => [ :index, :create, :delete ]
     has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
-    has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
+    has_permission_on :dashboard_tools_clients, :to => [ :index ]
     has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
+  end
+
+  role :payops do
+    includes :account_mgr
+    has_permission_on :dashboard_tools_clients, :to => [ :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
+    has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
+    has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
+    has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
+    has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
   end
 
   role :games_editor do
@@ -210,5 +211,7 @@ authorization do
     has_permission_on :dashboard_tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :dashboard_tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
+    has_permission_on :dashboard_tools_coupons, :to => [ :index, :new, :create, :show, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
   end
 end

@@ -12,12 +12,15 @@ class Dashboard::DashboardController < ApplicationController
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
+  before_filter :inform_of_new_insights
   around_filter :set_time_zone
 
   NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
                     Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+
+  NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\">newest version of Tapjoy Insights</a>"
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -129,6 +132,10 @@ class Dashboard::DashboardController < ApplicationController
       flash.now[:notice] = NEW_SDK_NOTICE
       cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
     end
+  end
+
+  def inform_of_new_insights
+    flash[:notice] = NEW_INSIGHTS_NOTICE if current_user && flash[:notice].blank?
   end
 
   def nag_user_about_payout_info

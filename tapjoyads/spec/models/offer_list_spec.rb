@@ -142,7 +142,7 @@ describe OfferList do
 
           it 'returns the deeplink offer in the offerwall' do
             list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
+            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
           end
 
           it 'inserts deeplink offers in small lists' do
@@ -179,7 +179,7 @@ describe OfferList do
 
           it 'returns the deeplink offer in the offerwall' do
             list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer, @offers[3]]
+            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
           end
 
           it 'inserts deeplink offers in small lists' do
@@ -206,26 +206,6 @@ describe OfferList do
         end
       end
 
-      context 'with a rating offer' do
-        before :each do
-          @rating = FactoryGirl.create(:rating_offer)
-          @app.enabled_rating_offer_id = @rating.id
-          Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
-          @rating.primary_offer.stub(:postcache_reject?).and_return(false)
-        end
-
-        it 'should return the rating offer first, but there is a defect so it raises a NameError' do
-          list = OfferList.new({:include_rating_offer => true}.merge(@base_params))
-
-          #I think the intended logic is:
-          #  offers.should == [@rating.primary_offer] + @offers[0..1]
-          #but there's a defect; see offer_list.rb
-          lambda {
-            list.get_offers(0, 3)
-          }.should raise_error(NameError)
-        end
-      end
-
       context 'with no special offers' do
         it 'returns the normal first page' do
           list = OfferList.new(@base_params)
@@ -235,26 +215,18 @@ describe OfferList do
     end
 
     context 'second page' do
-      context 'with a deeplink and rating offer' do
+      context 'with a deeplink offer' do
         before :each do
           @currency.update_attributes({:external_publisher => true})
           @deeplink = @currency.deeplink_offer
           Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
-          @rating = FactoryGirl.create(:rating_offer)
-
-          @app.enabled_rating_offer_id = @rating.id
-          Offer.stub(:find_in_cache).with(@rating.primary_offer.id).and_return(@rating.primary_offer)
-          @rating.primary_offer.stub(:postcache_reject?).and_return(false)
         end
 
         it 'skips the special offers' do
           list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-          list.get_offers(5, 5).should include @offers[4..8]
-          #first page should have been: rating, offers[0], offers[1], deeplink, offers[2]
-          #so, second page should be: offers[3], offers[4], offers[5], offers[6], offers[7]
-          #EXCEPT there is a defect that always skips rating offers (see above), so:
-          #first page is: offers[0], offers[1], offers[2], deeplink, offers[3]
-          #second page is: offers[4..8]
+          list.get_offers(5, 5).should include @offers[5..9]
+          # first page should be: offers[0], offers[1], deeplink, offers[2], offers[3], offers[4]
+          # so, second page should be: offers[5], offers[6], offers[7], offers[8], offers[9]
         end
       end
 
