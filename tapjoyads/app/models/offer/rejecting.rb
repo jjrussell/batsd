@@ -428,10 +428,11 @@ module Offer::Rejecting
   def tapjoy_games_retargeting_reject?(device)
     has_tjm = device.present? ? device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID) : false
     if TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
-      device && !has_tjm
+      return (device && !has_tjm)
     elsif TAPJOY_GAMES_OFFERS.include?(item_id)
-      device && has_tjm
+      return (device && has_tjm)
     end
+    false
   end
 
   def source_reject?(source)

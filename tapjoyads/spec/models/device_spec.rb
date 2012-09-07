@@ -149,10 +149,11 @@ describe Device do
           @offer.save
         end
 
-        context 'where a protocol_handler defined' do
+        context 'where a protocol_handler is defined' do
           it "sets the target app key in sdkless_clicks column to the protocol_handler name" do
             @offer.item.protocol_handler = "handler.name"
-            @offer.item.save
+            @offer.item.save!
+            @offer.app_protocol_handler(true) # re-memoize this value
             @device.handle_sdkless_click!(@offer, @now)
             @device.sdkless_clicks.should have_key "handler.name"
           end

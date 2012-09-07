@@ -145,15 +145,19 @@ describe GetOffersController do
         publisher_app = FactoryGirl.create(:app, :platform => 'android')
         publisher_app.add_app_metadata('android.GFan', 'def789')
         @currency = FactoryGirl.create(:currency, :app => publisher_app)
+
         @offer1 = FactoryGirl.create(:generic_offer).primary_offer
-        @offer1.update_attributes(:payment => 10)
         @offer1.partner.balance = 10
+        @offer1.update_attributes!(:payment => 10)
+
         @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
         @offer2.partner.balance = 10
+
         app = FactoryGirl.create(:app, :platform => 'android')
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
+
         OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
         @params = {
           :udid => 'stuff',
