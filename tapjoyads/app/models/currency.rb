@@ -157,9 +157,9 @@ class Currency < ActiveRecord::Base
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = offer.payment * get_spend_share(offer)
+      reward_value = floored_reward_value(offer)
     end
-    reward_value  * conversion_rate / 100.0
+    reward_value * conversion_rate / 100.0
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
@@ -168,7 +168,7 @@ class Currency < ActiveRecord::Base
     elsif offer.payment == 2
       1
     else
-      (offer.payment * get_spend_share(offer)).to_i
+      floored_reward_value(offer)
     end
   end
 
@@ -254,7 +254,7 @@ class Currency < ActiveRecord::Base
   end
 
   def hide_rewarded_app_installs_for_version?(app_version, source)
-    return false if source == 'tj_games'
+    return false if source == 'tj_games' || source == 'tj_display'
     return false unless hide_rewarded_app_installs?
     return true if minimum_hide_rewarded_app_installs_version.blank?
     return false unless app_version.present?
@@ -355,5 +355,14 @@ class Currency < ActiveRecord::Base
 
   def find_all_in_string(model, str_list)
     model.find_all_by_id(str_list.split(';'))
+  end
+
+  def floored_reward_value(offer)
+    floored_value = (offer.payment * get_spend_share(offer)).to_i
+    if get_advertiser_amount(offer) < 0 && floored_value == 0
+      1
+    else
+      floored_value
+    end
   end
 end

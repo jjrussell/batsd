@@ -36,6 +36,7 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :processed_actions,          :type => :json,  :default_value => []
   self.sdb_attr :final_risk_score,           :type => :float
   self.sdb_attr :force_converted_by
+  self.sdb_attr :store_name
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')

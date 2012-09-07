@@ -41,18 +41,11 @@ Clone your forked repo locally
 git clone git@github.com:[your github nickname]/tapjoyserver.git
 ```
 
-Add main tapjoyserver repo as remote repo (for updating your code with the latest):
+Run setup
 
 ```
-git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
-```
-
-It is important that it's named "tapjoy" for deploy script to work
-
-Now setup the pre-commit hook (within the tapjoyserver repo):
-
-```
-ln -s .pre-commit .git/hooks/
+cd tapjoyads
+bundle exec rake setup
 ```
 
 Setting up VM
@@ -98,6 +91,10 @@ exit
 ```
 After you've generated these keys and shared them with your root user, you can add this key to github for seamless fetching.
 
+If you get annoyed to have to change into the /vagrant directory every time, just add it to the end of your .bashrc file:
+```
+cd /vagrant/
+```
 Running the tests
 -----------------
 

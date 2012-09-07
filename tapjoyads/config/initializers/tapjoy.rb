@@ -65,8 +65,6 @@ AWS.config(
 GAMES_CONFIG = YAML::load_file("#{Rails.root}/config/games.yaml")[Rails.env]
 MARKETPLACE_CONFIG = YAML::load_file("#{Rails.root}/config/marketplace.yaml")[Rails.env]
 
-Sprockets::Tj.init_assets
-
 VERTICA_CONFIG = YAML::load_file("#{Rails.root}/config/vertica.yml")[Rails.env]
 
 TEXTFREE_PUB_APP_ID = '6b69461a-949a-49ba-b612-94c8e7589642'
@@ -78,7 +76,14 @@ TJM_SESSION_TIMEOUT = 1.hour.to_i
 HOSTNAME = `hostname`.strip
 
 Dir.chdir Rails.root do
-  GIT_REV = `git rev-parse --verify HEAD`.strip
+  GIT_REV = begin
+      show = `git show --decorate HEAD | head -n 1`.strip
+      tag = show.match(/tag: (\d+)/)
+      commit = show.match(/commit (\w+)/)
+      tag ? tag[1] : (commit ? commit[1][0,7] : '')
+    rescue
+      ''
+    end
   GIT_BRANCH = `git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`.split.last.strip rescue ''
 end
 

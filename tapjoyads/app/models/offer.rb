@@ -7,7 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
-  include Offer::ShowRateAlgorithms
+  include Offer::Budgeting
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
@@ -18,7 +18,7 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer Coupon)
   REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
@@ -111,6 +111,7 @@ class Offer < ActiveRecord::Base
   belongs_to :app_metadata
   belongs_to :source_offer, :class_name => 'Offer'
   belongs_to :prerequisite_offer, :class_name => 'Offer'
+  belongs_to :coupon, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost
@@ -242,6 +243,7 @@ class Offer < ActiveRecord::Base
   }
   scope :trackable, :conditions => { :item_type => ['VideoOffer', 'ActionOffer','App','VideoOffer','GenericOffer']}
   scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
+  scope :coupon_offers, :conditions => { :item_type => 'Coupon' }
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
@@ -281,6 +283,7 @@ class Offer < ActiveRecord::Base
   def clone_and_save!
     new_offer = clone
     new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+    new_offer.bid = [new_offer.bid, new_offer.min_bid].max
 
     yield new_offer if block_given?
 
@@ -353,6 +356,10 @@ class Offer < ActiveRecord::Base
     item_id == id
   end
 
+  def is_coupon?
+    item_type == 'Coupon'
+  end
+
   def send_low_conversion_email?
     primary? || !primary_offer_enabled?
   end
@@ -420,8 +427,16 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def has_adjustable_bid?
+    item_type != 'OfferpalOffer' && item_type != 'RatingOffer'
+  end
+
+  def coupon_offer?
+    item_type == 'Coupon'
+  end
+
   def show_in_active_campaigns?
-    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
+    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon)/
   end
 
   def video_icon_url(options = {})
@@ -449,11 +464,14 @@ class Offer < ActiveRecord::Base
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
+    bust_cache = options.delete(:bust_cache) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
-    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url << "?ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
   def self.remove_icon!(guid, video_offer = false)
@@ -635,7 +653,11 @@ class Offer < ActiveRecord::Base
   end
 
   def store_id_for_feed
-    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+    if item_type == 'App'
+      third_party_data || Offer.hashed_icon_id(id)
+    else
+      Offer.hashed_icon_id(id)
+    end
   end
 
   def uploaded_icon?
@@ -882,7 +904,6 @@ class Offer < ActiveRecord::Base
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
     reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink?
-    reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value.to_i > 0
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
     reasons
@@ -917,7 +938,7 @@ class Offer < ActiveRecord::Base
       else
         is_paid? ? (price * 0.50).round : 10
       end
-    elsif item_type == 'ActionOffer'
+    elsif item_type == 'ActionOffer' || is_coupon?
       is_paid? ? (price * 0.50).round : 10
     elsif video_offer?
       2

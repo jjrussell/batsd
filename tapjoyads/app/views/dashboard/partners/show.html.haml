@@ -18,6 +18,12 @@
   - if permitted_to?(:new, :dashboard_tools_video_offers)
     |
     = link_to("Create Video Offer", new_tools_video_offer_path(:partner_id => @partner.id))
+  - if permitted_to?(:new, :dashboard_tools_coupons)
+    |
+    = link_to("Create Coupons", new_tools_coupon_path(:partner_id => @partner.id))
+  - if permitted_to?(:index, :dashboard_tools_coupons) && @partner.coupons.present?
+    |
+    = link_to("View Coupons", tools_coupons_path(:partner_id => @partner.id))
   |
   = link_to('Activity Log', activities_path(:partner_id => @partner.id))
   |

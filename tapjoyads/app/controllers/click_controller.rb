@@ -71,6 +71,12 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def coupon
+    create_click('coupon')
+
+    redirect_to(destination_url)
+  end
+
   def test_offer
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
@@ -302,6 +308,7 @@ class ClickController < ApplicationController
     click.offerwall_rank         = params[:offerwall_rank]
     click.device_type            = params[:device_type]
     click.geoip_country          = geoip_data[:country]
+    click.store_name             = params[:store_name]
 
     click.save
 

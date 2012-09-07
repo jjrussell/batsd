@@ -250,6 +250,7 @@ ul#offers li .offer .desc {
 ul#offers li .offer .icon {
   padding: 0 10px 0 6px;
   min-width: 50px;
+  position: relative;
 }
 
 ul#offers li .offer .icon .action-item {

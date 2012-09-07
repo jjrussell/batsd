@@ -1,7 +1,7 @@
 - @page_title = "Edit offer: #{@offer.name_with_suffix}"
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url, :size => '57x57', :id => 'icon')
 
 %h1= @offer.name_with_suffix
 
@@ -170,13 +170,6 @@
         = error_message_on @offer, :show_rate
     %tr
       %th
-        = f.label(:bid)
-        #help_bid.help ?
-      %td
-        = f.currency_field(:bid)
-        = error_message_on @offer, :bid
-    %tr
-      %th
         = f.label(:min_conversion_rate, 'Min CVR')
         #help_min_conversion_rate.help ?
       %td
@@ -230,7 +223,7 @@
       %td
         = f.text_field(:publisher_app_whitelist)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer', 'VideoOffer' ].include?(@offer.item_type)
+    - if @offer.has_adjustable_bid?
       %tr
         %th
           = f.label(:bid)
@@ -375,7 +368,10 @@
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
     %tr
-      %td{ :colspan => 2}
+      %td{ :colspan => 2 }
+        %iframe#icon_upload{:src => edit_tools_offer_icon_path(:id => @offer.id)}
+    %tr
+      %td{ :colspan => 2 }
         = render('dashboard/offer_creatives/iframes', :offer => @offer)
 
 .hidden
@@ -572,4 +568,9 @@
       width: 100%;
       border: none;
       height: 35px;
+    }
+    #icon_upload {
+      border: medium none;
+      height: #{@offer.uploaded_icon? ? '55' : '35'}px;
+      width: 100%;
     }

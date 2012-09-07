@@ -185,9 +185,9 @@ describe GetOffersController do
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @deeplink, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
     end
 
     it 'renders json with correct fields' do
@@ -427,7 +427,7 @@ describe GetOffersController do
       get(:index, @params.merge(:exp => 10))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == '10'
+      web_request.exp.should == 'control'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'

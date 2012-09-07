@@ -37,6 +37,15 @@ describe Job::QueueCreateConversionsController do
       @offer.update_attributes!(:conversion_tracking_urls => 'http://www.example.com')
     end
 
+    context 'when conversions already exist' do
+      it 'doesnt queue third party tracking' do
+        Conversion.any_instance.stub(:save!).and_raise(ActiveRecord::StatementInvalid)
+        Conversion.any_instance.stub(:errors).and_return(:id =>['has already been taken'])
+        @offer.should_not_receive(:queue_conversion_tracking_requests)
+        get(:run_job, :message => 'reward_key')
+      end
+    end
+
     it 'enqueues conversion tracking GET requests properly' do
       @offer.should_receive(:queue_conversion_tracking_requests).with(
         :timestamp        => @reward.created.to_i,

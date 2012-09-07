@@ -40,7 +40,7 @@ describe OfferInstructionsController do
         @offer.stub(:complete_action_url).and_return('some_website_url')
         @params = {
           :data                  => ObjectEncryptor.encrypt(:data => 'some_data'),
-          :id                    => @offer[:id],
+          :id                    => @offer.id,
           :udid                  => UUIDTools::UUID.random_create.to_s,
           :publisher_app_id      => @currency.app.id,
           :click_key             => '5',

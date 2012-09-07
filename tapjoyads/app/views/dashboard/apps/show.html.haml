@@ -108,19 +108,7 @@
       - if @app.languages.present?
         %tr.app_data.hidden
           %th Languages
-          %td#app_languages= @app.languages
-      - if @app.deeplink_offers.present?
-        %tr
-          %th Copy Promo Link URLs
-          %td
-            %ul{ :style => "margin-top: 5px;" } 
-              - @app.deeplink_offers.each do |o|
-                - offer = o.primary_offer
-                %li
-                  =offer.name
-                  \-
-                  =clippy(offer.url)
-      
+          %td#app_languages= @app.languages      
       - if permitted_to?(:edit, :dashboard_statz)
         = render('dashboard/apps/admin_fields', :f => f)
       %tr

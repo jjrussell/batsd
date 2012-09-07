@@ -370,7 +370,9 @@ ul#offers {
     }
 
     .offer-right {
-      margin-left: 88px;
+      position: absolute;
+      left: 88px;
+      width: 100%;
     }
 
     .about {

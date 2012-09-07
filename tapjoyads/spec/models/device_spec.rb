@@ -674,4 +674,30 @@ describe Device do
       @device.suspended?.should be_false
     end
   end
+
+  describe '#set_pending_coupon' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+      @device.stub(:save).and_return(true)
+      @device.set_pending_coupon('123456')
+    end
+
+    it 'should have an array with offer id' do
+      @device.pending_coupons.should include('123456')
+    end
+  end
+
+  describe '#remove_pending_coupon' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+      @device.stub(:save).and_return(true)
+      @device.set_pending_coupon('123')
+      @device.set_pending_coupon('456')
+      @device.remove_pending_coupon('123')
+    end
+
+    it 'should have an array with offer id' do
+      @device.pending_coupons.should include('456')
+    end
+  end
 end
