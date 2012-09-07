@@ -457,6 +457,12 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
+  it "doesn't reject miniscule offers with the override enabled" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.rate_filter_override = true
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
+
   it "excludes the appropriate columns for the for_offer_list scope" do
     offer = Offer.for_offer_list.find(@offer.id)
     fetched_cols = offer.attribute_names & Offer.column_names
@@ -478,7 +484,7 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id'
+                                  'app_metadata_id', 'rate_filter_override'
                                 ].sort
   end
 

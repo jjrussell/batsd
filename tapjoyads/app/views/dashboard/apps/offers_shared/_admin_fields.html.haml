@@ -137,6 +137,12 @@
     %td
       = f.select(:screen_layout_sizes, options_for_select(@app.screen_layout_sizes, @offer.get_screen_layout_sizes.to_a), {}, :multiple => true)
       = error_message_on @offer, :screen_layout_sizes
+%tr.admin
+  %th
+    = f.label(:rate_filter_override)
+    #help_rate_filter_override.help ?
+  %td
+    = f.check_box(:rate_filter_override)
 
 .hidden
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
@@ -157,6 +163,7 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
+  #help_rate_filter_override_content{ :name => 'Rate Filter Override' } Normally, a rewarded offer is filtered out of the offerwall when the value of the offer is very small compared to the value of the rewarded virtual currency. By enabling this setting, the offer will be shown regardless of its value. Only meaningful for rewarded offers.
 
 - content_for :page_javascript do
   :plain
