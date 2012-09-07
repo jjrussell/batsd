@@ -75,6 +75,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_send_welcome_emails(/index)' => 'queue_send_welcome_emails#index'
     match 'queue_send_welcome_emails_via_exact_target(/index)' => 'queue_send_welcome_emails_via_exact_target#index'
     match 'queue_suspicious_gamer_emails(/index)' => 'queue_suspicious_gamer_emails#index'
+    match 'queue_terminate_nodes(/index)' => 'queue_terminate_nodes#index'
     match 'queue_third_party_tracking(/index)' => 'queue_third_party_tracking#index'
     match 'queue_udid_reports(/index)' => 'queue_udid_reports#index'
     match 'queue_update_monthly_account(/index)' => 'queue_update_monthly_account#index'

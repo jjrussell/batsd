@@ -96,6 +96,7 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     builder (2.1.2)
+    bunny (0.8.0)
     capybara (1.1.2)
       mime-types (>= 1.16)
       nokogiri (>= 1.3.3)
@@ -103,6 +104,22 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
+    chef (0.10.8)
+      bunny (>= 0.6.0)
+      erubis
+      highline
+      json (>= 1.4.4, <= 1.6.1)
+      mixlib-authentication (>= 1.1.0)
+      mixlib-cli (>= 1.1.0)
+      mixlib-config (>= 1.1.2)
+      mixlib-log (>= 1.3.0)
+      moneta
+      net-ssh (~> 2.1.3)
+      net-ssh-multi (~> 1.1.0)
+      ohai (>= 0.6.0)
+      rest-client (>= 1.0.4, < 1.7.0)
+      treetop (~> 1.4.9)
+      uuidtools
     childprocess (0.3.5)
       ffi (~> 1.0, >= 1.0.6)
     coderay (1.0.7)
@@ -176,6 +193,7 @@ GEM
     httpi (1.1.1)
       rack
     i18n (0.5.0)
+    ipaddress (0.8.0)
     jeweler (1.8.4)
       bundler (~> 1.0)
       git (>= 1.2.5)
@@ -212,10 +230,16 @@ GEM
     memcached (1.3.2)
     method_source (0.8)
     mime-types (1.19)
+    mixlib-authentication (1.3.0)
+      mixlib-log
+    mixlib-cli (1.2.2)
+    mixlib-config (1.1.2)
+    mixlib-log (1.4.1)
     mogli (0.0.33)
       hashie (~> 1.1.0)
       httparty (>= 0.4.3)
       multi_json (~> 1.0.3)
+    moneta (0.6.0)
     money (5.0.0)
       i18n (~> 0.4)
       json
@@ -223,10 +247,23 @@ GEM
     multi_xml (0.4.0)
     multipart-post (1.1.0)
     mysql (2.8.1)
+    net-ssh (2.1.4)
+    net-ssh-gateway (1.1.0)
+      net-ssh (>= 1.99.1)
+    net-ssh-multi (1.1)
+      net-ssh (>= 2.1.4)
+      net-ssh-gateway (>= 0.99.0)
     newrelic_rpm (3.3.0)
     nokogiri (1.5.5)
     nori (1.1.2)
     oauth (0.4.5)
+    ohai (6.14.0)
+      ipaddress
+      mixlib-cli
+      mixlib-config
+      mixlib-log
+      systemu
+      yajl-ruby
     options (2.3.0)
       fattr
     parallel (0.5.17)
@@ -337,6 +374,7 @@ GEM
       sprockets (= 2.1.2)
     sqlite3 (1.3.3)
     syslog-logger (1.6.4)
+    systemu (2.5.2)
     term-ansicolor (1.0.7)
     thin (1.4.1)
       daemons (>= 1.0.9)
@@ -380,6 +418,7 @@ GEM
     xpath (0.1.4)
       nokogiri (~> 1.3)
     ya2yaml (0.31)
+    yajl-ruby (1.1.0)
 
 PLATFORMS
   ruby
@@ -396,6 +435,7 @@ DEPENDENCIES
   awesome_print
   aws-sdk (= 1.3.9)
   capybara
+  chef (= 0.10.8)
   country-select
   cucumber
   cucumber-rails
