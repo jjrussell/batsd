@@ -1,4 +1,4 @@
-if Rails.env.development? or Rails.env.test?
+if Rails.env.development?
   require 'localeapp/rails'
 
   Localeapp.configure do |config|
