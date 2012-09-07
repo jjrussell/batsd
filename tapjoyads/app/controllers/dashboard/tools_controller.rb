@@ -612,16 +612,18 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       %Q(after_state not like '%"rev_share":""%'),
     ].join(' and ')
 
-    data = ['time,partner_id,user,old_rev_share,new_rev_share,notes']
+    data = ['time,partner_id,partner_name,user,old_rev_share,new_rev_share,notes']
     next_token = nil
 
     begin
       response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => next_token)
       next_token = response[:next_token]
       response[:items].each do |item|
+        partner = Partner.find(item.partner_id)
         row = [
           item.updated_at,
-          item.partner_id,
+          partner.id,
+          partner.name,
           item.user,
           item.before_state['rev_share'],
           item.after_state['rev_share'],
