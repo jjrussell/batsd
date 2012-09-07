@@ -16,6 +16,15 @@ module Offer::BannerCreatives
     end
   end
 
+  # keep a record of creatives that have already been uploaded during the save process
+  # this helps with transactional integrity
+  def uploaded_banner_creatives
+    return @uploaded_banner_creatives unless @uploaded_banner_creatives.nil?
+    @uploaded_banner_creatives = {}
+    Offer::ALL_CUSTOM_AD_SIZES.each { |size| @uploaded_banner_creatives[size] = [] }
+    @uploaded_banner_creatives
+  end
+
   %w(banner_creatives approved_banner_creatives).each do |method_name|
     class_eval <<-EOS
       def #{method_name}
@@ -84,6 +93,7 @@ module Offer::BannerCreatives
     return unless banner_creative_sizes.include?(size)
     self.banner_creatives += [size] unless has_banner_creative?(size)
     send("banner_creative_#{size}_blob=", image_data)
+    set_primary_key if new_record? # we use "id" below, so we need to be sure it's set
     self.creatives_dict = creatives_dict.merge(size => "#{Offer.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
   end
 
@@ -192,7 +202,9 @@ module Offer::BannerCreatives
 
     banner_creative_sizes(true).each do |size|
       image_data = send("banner_creative_#{size}_blob")
-      creative_blobs[size] = image_data if !image_data.blank?
+      if !image_data.blank? && !uploaded_banner_creatives[size].include?(image_data)
+        creative_blobs[size] = image_data
+      end
     end
 
     return if (!banner_creatives_changed? && creative_blobs.empty?)
@@ -232,11 +244,13 @@ module Offer::BannerCreatives
     end
   end
 
+  # this is called just before caching the offer (after_commit)
   def clear_creative_blobs
     Offer::ALL_CUSTOM_AD_SIZES.each do |size|
       blob = send("banner_creative_#{size}_blob")
       blob.replace("") if blob
     end
+    @uploaded_banner_creatives = nil
   end
 
   def delete_banner_creative!(size, format = nil)
@@ -246,7 +260,7 @@ module Offer::BannerCreatives
     raise BannerSyncError.new("Encountered unexpected error while deleting existing file, please try again.", "custom_creative_#{size}_blob")
   end
 
-  #upload still updates all of the old columns, as well as populates the new one.
+  # upload still updates all of the old columns, as well as populates the new one.
   def upload_banner_creative!(blob, size, format = nil)
     format ||= banner_creative_format(size)
     begin
@@ -262,7 +276,7 @@ module Offer::BannerCreatives
       raise BannerSyncError.new("New file is invalid - unable to convert to .#{format}.", "custom_creative_#{size}_blob")
     end
 
-    width, height = size.split("x").collect{|x|x.to_i}
+    width, height = size.split("x").collect{ |x| x.to_i }
     raise BannerSyncError.new("New file has invalid dimensions.", "custom_creative_#{size}_blob") if [width, height] != [creative.columns, creative.rows]
 
     begin
@@ -270,6 +284,8 @@ module Offer::BannerCreatives
     rescue
       raise BannerSyncError.new("Encountered unexpected error while uploading new file, please try again.", "custom_creative_#{size}_blob")
     end
+
+    uploaded_banner_creatives[size] << blob
 
     # Add to memcache
     begin

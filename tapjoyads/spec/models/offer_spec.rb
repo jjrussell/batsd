@@ -1103,43 +1103,74 @@ describe Offer do
   end
 
   context "An App Offer for a free app" do
-    before :each do
-      Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
-    end
+    # need to use the HasOneAssociation's "target" in order for stubbing to work
+    let(:offer) { @offer.target }
 
     context "with banner_creatives" do
       before :each do
-        @offer.featured = true
-        @offer.banner_creatives = %w(480x320 320x480)
+        offer.banner_creatives = %w(320x50 640x100)
       end
 
       it "fails if asset data not provided" do
-        @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
+        offer.save.should be_false
+        offer.errors[:custom_creative_320x50_blob].join.should == "320x50 custom creative file not provided."
+        offer.errors[:custom_creative_640x100_blob].join.should == "640x100 custom creative file not provided."
       end
 
-      it "uploads assets to s3 when data is provided" do
-        @offer.banner_creative_480x320_blob = "image_data"
-        @offer.banner_creative_320x480_blob = "image_data"
+      context "when asset data is provided" do
+        before :each do
+          @image_320x50 = read_asset('custom_320x50.png', 'banner_ads')
+          @image_640x100 = read_asset('custom_640x100.png', 'banner_ads')
+          offer.banner_creative_320x50_blob = @image_320x50
+          offer.banner_creative_640x100_blob = @image_640x100
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+          offer.stub(:banner_creative_s3_object).and_return(FakeObject.new("dummy_data"))
+        end
 
-        @offer.save!
+        it "uploads assets to s3" do
+          offer.should_receive(:upload_banner_creative!).with(@image_320x50, "320x50").and_return(nil)
+          offer.should_receive(:upload_banner_creative!).with(@image_640x100, "640x100").and_return(nil)
+
+          offer.save!
+        end
+
+        it "keeps instance variables intact if a transaction error occurs" do
+          begin
+            ActiveRecord::Base.transaction do
+              offer.save!
+              raise "intentional transaction error"
+            end
+          rescue => e
+            raise e unless e.message == "intentional transaction error"
+          end
+
+          offer.banner_creative_320x50_blob.should == @image_320x50
+          offer.banner_creative_640x100_blob.should == @image_640x100
+          offer.uploaded_banner_creatives['320x50'].should == [@image_320x50]
+          offer.uploaded_banner_creatives['640x100'].should == [@image_640x100]
+
+          offer.save! # ensure that calling save again doesn't break
+        end
+
+        it "should clear instance variables if transaction succeeds" do
+          offer.save!
+
+          offer.banner_creative_320x50_blob.should be_empty
+          offer.banner_creative_640x100_blob.should be_empty
+          offer.instance_variable_get("@uploaded_banner_creatives").should be_nil
+        end
       end
 
       it "copies s3 assets over when cloned" do
         s3object = FakeObject.new("")
         s3object.write("image_data")
-        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(s3object)
-        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(s3object)
+        offer.stub(:banner_creative_s3_object).with("320x50").and_return(s3object)
+        offer.stub(:banner_creative_s3_object).with("640x100").and_return(s3object)
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+        offer.should_receive(:upload_banner_creative!).with("image_data", "320x50").and_return(nil)
+        offer.should_receive(:upload_banner_creative!).with("image_data", "640x100").and_return(nil)
 
-        clone = @offer.clone
+        clone = offer.clone
         clone.bid = clone.min_bid
 
         clone.save!

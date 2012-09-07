@@ -275,7 +275,7 @@ class Offer < ActiveRecord::Base
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
         blob = banner_creative_s3_object(size).read
-        clone.send("banner_creative_#{size}_blob=", blob)
+        clone.add_banner_creative(blob, size)
       end
     end
   end
