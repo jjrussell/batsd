@@ -106,7 +106,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def last_run
-    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :udid => params[:udid], :limit => 20)
+    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :udid => params[:udid])
 
     if params[:time] && time = Time.zone.parse(params[:time])
       @last_run = @runs.find { |run| run.time.change(:usec => 0) == time }

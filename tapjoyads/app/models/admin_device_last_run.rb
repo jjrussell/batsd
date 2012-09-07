@@ -16,16 +16,15 @@ class AdminDeviceLastRun < SimpledbResource
   # opts.keys == [:udid] => last time this admin device ran any app
   # opts.keys == [:app_id] => last time any admin device ran this app
   def self.for(opts = {})
-    limit = opts[:limit]
-    opts = opts.slice(:udid, :app_id)
+    limit = opts[:limit] || 20
+    opts.slice!(:udid, :app_id)
     raise ArgumentError if opts.empty?
 
     select_options = {
       :where    => opts.collect { |k, v| %{#{k} = "#{v}"} }.join(' and ') + " and time is not null",
-      :order_by => 'time DESC'
+      :order_by => 'time DESC',
+      :limit => limit
     }
-
-    limit and select_options.merge(:limit => limit)
 
     self.select(select_options)[:items]
   end
