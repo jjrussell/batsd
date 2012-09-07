@@ -23,6 +23,9 @@ Tapjoyad::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.i18n_js_cache = true
+  config.assets.compile = true
+  config.assets.debug = false
+  config.assets.digest = true
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
