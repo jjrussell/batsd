@@ -18,6 +18,11 @@ class Job::QueueTerminateNodesController < Job::SqsReaderController
         node.destroy
       rescue Net::HTTPServerException
         # node not found... weird, but don't want to fail anyway
+        Airbrake.notify_or_ignore(
+                                    :error_class => 'Chef::NodeDeleteFailed',
+                                    :error_message => "Couldn't delete node #{node.name}",
+                                    :params => {:node_name => node.name, :instance_id => instance_id(message.body)}
+                                  )
       end
     end
   end
