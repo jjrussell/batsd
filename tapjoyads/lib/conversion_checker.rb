@@ -33,10 +33,6 @@ class ConversionChecker
   end
 
   def acceptable_risk?
-    # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
-    if @currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && @click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
-      @risk_message = "InvalidPlaydomUserId" and return block_conversion
-    end
 
     unless @publisher_user.update!(@click.udid)
       @risk_message = "TooManyUdidsForPublisherUserId" and return block_conversion

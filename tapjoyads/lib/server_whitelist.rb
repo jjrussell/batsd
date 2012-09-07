@@ -3,8 +3,10 @@ class ServerWhitelist
     '38.104.224.62',                         # Tapjoy SF added 2012.06.04
     '38.104.183.198',                        # Tapjoy Atlanta added 2012.06.04
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
+    ['173.166.99.161', '173.166.99.177'],    # Tapjoy Boston added 2012.08.30
     '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
     '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
+    '23.22.177.185',                         # Tapjoy dashboard server added 2012.08.30
     '184.170.255.101',                       # Tapjoy support server added 2012.08.01
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
