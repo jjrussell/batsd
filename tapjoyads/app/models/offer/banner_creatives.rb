@@ -16,15 +16,6 @@ module Offer::BannerCreatives
     end
   end
 
-  # keep a record of creatives that have already been uploaded during the save process
-  # this helps with transactional integrity
-  def uploaded_banner_creatives
-    return @uploaded_banner_creatives unless @uploaded_banner_creatives.nil?
-    @uploaded_banner_creatives = {}
-    Offer::ALL_CUSTOM_AD_SIZES.each { |size| @uploaded_banner_creatives[size] = [] }
-    @uploaded_banner_creatives
-  end
-
   %w(banner_creatives approved_banner_creatives).each do |method_name|
     class_eval <<-EOS
       def #{method_name}
@@ -157,6 +148,15 @@ module Offer::BannerCreatives
   def nullify_banner_creatives
     write_attribute(:banner_creatives, nil) if banner_creatives.empty?
     write_attribute(:approved_banner_creatives, nil) if approved_banner_creatives.empty?
+  end
+
+  # keep a record of creatives that have already been uploaded during the save process
+  # this helps with transactional integrity
+  def uploaded_banner_creatives
+    return @uploaded_banner_creatives unless @uploaded_banner_creatives.nil?
+    @uploaded_banner_creatives = {}
+    Offer::ALL_CUSTOM_AD_SIZES.each { |size| @uploaded_banner_creatives[size] = [] }
+    @uploaded_banner_creatives
   end
 
   def sync_creative_approval

@@ -1146,8 +1146,9 @@ describe Offer do
 
           offer.banner_creative_320x50_blob.should == @image_320x50
           offer.banner_creative_640x100_blob.should == @image_640x100
-          offer.uploaded_banner_creatives['320x50'].should == [@image_320x50]
-          offer.uploaded_banner_creatives['640x100'].should == [@image_640x100]
+          uploaded_banner_creatives = offer.send(:uploaded_banner_creatives) # private method
+          uploaded_banner_creatives['320x50'].should == [@image_320x50]
+          uploaded_banner_creatives['640x100'].should == [@image_640x100]
 
           offer.save! # ensure that calling save again doesn't break
         end
