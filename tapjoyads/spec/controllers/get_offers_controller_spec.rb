@@ -26,7 +26,7 @@ describe GetOffersController do
       @offer4.save
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(offers)
+      OfferCacher.stub(:get_offers_prerejected).and_return(offers)
       RailsCache.stub(:get).and_return(nil)
       controller.stub(:ip_address).and_return('208.90.212.38')
       @params = {
@@ -77,7 +77,7 @@ describe GetOffersController do
     #   it "favors the promoted inventory" do
     #     @currency.stub(:partner_get_promoted_offers).and_return([@offer2.id])
     #     @currency.stub(:get_promoted_offers).and_return([@offer3.id])
-    #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
+    #     OfferCacher.stub(:get_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
     #
     #     get(:index, @params)
     #     offer_list = assigns(:offer_list)
@@ -87,7 +87,7 @@ describe GetOffersController do
     #   it "restricts the number of slots used for promotion" do
     #     @offer3.stub(:rank_score).and_return(1004)
     #     @currency.stub(:get_promoted_offers).and_return([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
-    #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
+    #     OfferCacher.stub(:get_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
     #
     #     get(:index, @params)
     #     assigns(:offer_list)[3].rank_score.should == 1004
@@ -132,7 +132,7 @@ describe GetOffersController do
         offer4 = offer1.clone
         offer4.save
         offer4.partner.balance = 10
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
+        OfferCacher.stub(:get_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
 
         get(:index, @params)
         assigns(:offer_list).include?([offer1, offer2, offer4]).should be_false
@@ -154,7 +154,7 @@ describe GetOffersController do
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+        OfferCacher.stub(:get_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
         @params = {
           :udid => 'stuff',
           :publisher_user_id => 'more_stuff',
@@ -262,7 +262,7 @@ describe GetOffersController do
     end
 
     it 'should queue up tracking url calls' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address       => @controller.send(:ip_address),
         :udid             => 'stuff',
@@ -272,13 +272,13 @@ describe GetOffersController do
     end
 
     it 'assigns test offer for test devices' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       get(:webpage, @params.merge(:udid => @device.id))
       assigns(:test_offers).should_not be_nil
     end
 
     it 'does not log impressions when there are no offers' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+      OfferCacher.stub(:get_offers_prerejected).and_return([])
       RailsCache.stub(:get).and_return(nil)
       @currency.deeplink_offer.primary_offer.tapjoy_enabled = false
       @currency.deeplink_offer.primary_offer.save!
@@ -297,7 +297,7 @@ describe GetOffersController do
       @offer.partner.balance = 10
       @offer.save
       controller.stub(:ip_address).and_return('208.90.212.38')
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -344,8 +344,8 @@ describe GetOffersController do
           device_type,
         ]
 
-        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_1).once.and_return([])
-        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
+        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_1).once.and_return([])
+        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
 
         get(:featured, @params)
       end
@@ -362,7 +362,7 @@ describe GetOffersController do
 
     context 'without an offer' do
       before :each do
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+        OfferCacher.stub(:get_offers_prerejected).and_return([])
         RailsCache.stub(:get).and_return(nil)
         get(:featured, @params)
       end

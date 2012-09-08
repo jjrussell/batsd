@@ -27,8 +27,6 @@ module Offer::Ranking
     rank_scores = {}
     CurrencyGroup.find_each do |currency_group|
       score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
-      score += 5 if item_type == "ActionOffer"
-      score += 10 if price == 0
       rank_scores[currency_group.id] = score
     end
     rank_scores
@@ -38,12 +36,10 @@ module Offer::Ranking
     precache_rank_scores[currency_group_id]
   end
 
-  def postcache_rank_score(currency, source, is_promoted)
+  def postcache_rank_score(currency)
     self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
     self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
     self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
-    self.rank_score += 1000000 if is_promoted
-    # self.rank_score -= 100 if source == 'tj_games' && item_type == 'GenericOffer' && !pay_per_click?
     rank_score
   end
 
