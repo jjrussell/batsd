@@ -106,7 +106,13 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def last_run
-    @last_run = AdminDeviceLastRun.for(:app_id => @offer.item_id, :udid => params[:udid])
+    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :udid => params[:udid])
+
+    if params[:time] && time = Time.zone.parse(params[:time])
+      @last_run = @runs.find { |run| run.time.change(:usec => 0) == time }
+    else
+      @last_run = @runs.first
+    end
   end
 
   def global
