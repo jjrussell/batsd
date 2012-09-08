@@ -56,9 +56,9 @@ class OfferCacher
       end
     end
 
-    def cache_offers_prerejected(offers, type, save_to_s3 = false, do_sort=true)
+    def cache_offers_prerejected(offers, type, save_to_s3 = false)
       offers.each { |o| o.run_callbacks(:cache); o.clear_association_cache }
-      offer_list = do_sort ? offers.sort_by {|o| -(o.rank_score) } : offers
+      offer_list = offers.sort_by {|o| -(o.rank_score) }
       PLATFORM_AND_DEVICE_TYPES.each do |platform, device_types|
         HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
           device_types.each do |device_type|
