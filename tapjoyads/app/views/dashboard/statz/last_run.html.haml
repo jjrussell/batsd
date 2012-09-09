@@ -1,4 +1,4 @@
-- @page_title = "Last run time for offer: #{@offer.name_with_suffix}"
+- @page_title = "WebRequest for offer: #{@offer.name_with_suffix}"
 
 .icon= link_to image_tag(@offer.get_icon_url, :size => '57x57'), statz_path(@offer)
 
@@ -19,6 +19,12 @@
         %tr
           %td= key
           %td= val
+
+  - if @runs.size > 1
+    %h4 Previous Runs
+    %ul
+      - @runs.each do |run|
+        %li= last_run_time_link(run)
 
   - content_for :page_styles do
     :plain
