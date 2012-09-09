@@ -11,6 +11,10 @@ describe ActionView do
       I18n.backend.store_translations :es, :hello_name => "Hola, %{not_the_name}"
     end
 
+    after :each do
+      I18n.locale = nil
+    end
+
     it 'uses the correct locale' do
       helper.t(:hello_world).should == "Hello, world."
       I18n.locale = :es
