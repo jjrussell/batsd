@@ -6,10 +6,7 @@ class AdminDeviceLastRun
 
     module InstanceMethods
       def should_track_device?
-        # The easiest check
-        return true if AdminDevice.where(:udid => params[:udid]).any?
-
-        # The second easiest check, and sets @device
+        # The easiest check, and sets @device
         @device ||= Device.new(
           :key => params[:udid],
           :is_temporary => params[:udid_is_temporary].present?
