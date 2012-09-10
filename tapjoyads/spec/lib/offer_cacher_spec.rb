@@ -46,14 +46,8 @@ describe OfferCacher do
     end
   end
 
-  it "caches unsorted offers prerejected", :non_sorted do
-    OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false, false)
-    offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
-    offers.map {|o| o.rank_score}.should == @ranks
-  end
-
   it "caches sorted offers prerejected", :sorted do
-    OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false, true)
+    OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false)
     offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
     offers.map {|o| o.rank_score}.should == @ranks.sort.reverse
   end
