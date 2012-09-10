@@ -528,7 +528,6 @@ DEPENDENCIES
   spork
   sprockets_rails3_backport
   sqlite3 (= 1.3.3)
-  syslog-logger (= 1.6.4)
   test_after_commit
   thin
   tilt (= 1.3.3)
