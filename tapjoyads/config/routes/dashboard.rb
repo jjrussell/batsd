@@ -227,9 +227,9 @@ Tapjoyad::Application.routes.draw do
           get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
+          get :monthly_rev_share_report
+          get :download_monthly_rev_share_report
         end
-
-
       end
 
       namespace :tools do
