@@ -20,7 +20,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :open_udid
   self.sdb_attr :android_id
-  self.sdb_attr :id_for_advertising
+  self.sdb_attr :apple_idfa
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -63,9 +63,9 @@ class Device < SimpledbShardedResource
     put('android_id', new_value)
   end
 
-  def id_for_advertising=(new_value)
-    @create_device_identifiers ||= (self.id_for_advertising != new_value)
-    put('id_for_advertising', new_value)
+  def apple_idfa=(new_value)
+    @create_device_identifiers ||= (self.apple_idfa != new_value)
+    put('apple_idfa', new_value)
   end
 
   def initialize(options = {})
@@ -99,7 +99,7 @@ class Device < SimpledbShardedResource
 
     self.mac_address = params[:mac_address] if params[:mac_address].present?
     self.android_id = params[:android_id] if params[:android_id].present?
-    self.id_for_advertising = params[:id_for_advertising] if params[:id_for_advertising].present?
+    self.apple_idfa = params[:apple_idfa] if params[:apple_idfa].present?
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -277,7 +277,7 @@ class Device < SimpledbShardedResource
     all_identifiers << Digest::SHA1.hexdigest(key)
     all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
-    all_identifiers.push(id_for_advertising) if self.id_for_advertising.present?
+    all_identifiers.push(apple_idfa) if self.apple_idfa.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
       all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
