@@ -42,7 +42,6 @@ class Job < ActiveRecord::Base
   attr_reader :next_run_time
 
   def path
-    return nil unless job_type == 'master' # shouldn't be a need for path unless job_type is master
     "/job/#{self.controller}/#{self.action}"
   end
 
