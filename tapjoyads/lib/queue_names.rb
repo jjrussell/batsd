@@ -32,4 +32,5 @@ class QueueNames
   RECORD_UPDATES             = "#{BASE_NAME}RecordUpdates"
   CACHE_OPTIMIZED_OFFER_LIST = "#{BASE_NAME}CacheOptimizedOfferList"
   SEND_COUPON_EMAILS         = "#{BASE_NAME}SendCouponEmails"
+  CACHE_RECORD_NOT_FOUND     = "#{BASE_NAME}CacheRecordNotFound"
 end
