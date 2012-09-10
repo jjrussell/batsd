@@ -60,6 +60,7 @@ Spork.prefork do
       DeferredGarbageCollection.start
     end
     config.before(:each) do
+      AnalyticsLogger::AMQPClient.stub(:publish)
       Resolv.stub!(:getaddress=>'1.1.1.1')
       RightAws::SdbInterface.stub!(:new => FakeSdb.new)
       SimpledbResource.reset_connection
