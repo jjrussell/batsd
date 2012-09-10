@@ -600,6 +600,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
   def download_monthly_rev_share_report
     start_time = Time.zone.parse(params[:start_time]).beginning_of_month
+    year  = start_time.year
     month = start_time.month
     start_time = start_time.to_f
 
@@ -633,7 +634,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       end
     end until next_token.nil?
 
-    send_data(data.join("\n"), :type => 'text/csv', :filename => "monthly_rev_share_#{month}.csv")
+    send_data(data.join("\n"), :type => 'text/csv', :filename => "monthly_rev_share_#{year}_#{month}.csv")
   end
 
   private
