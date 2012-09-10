@@ -18,42 +18,38 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
   end
 
   def new
-    redirect_to :action => :edit if @currency
+    redirect_to edit_app_non_rewarded_path(:app_id => @app.id) if @currency
   end
 
   def edit
-    redirect_to :action => :new unless @currency
+    redirect_to new_app_non_rewarded_path(:app_id => @app.id) unless @currency
   end
 
   def create
     unless @currency
       @currency = @app.build_non_rewarded
       if @currency.save
-        flash[:notice] = "Non-rewarded has been created."
-        redirect_to :action => :edit
+        flash[:notice] = "Non-rewarded has been created." # TODO i18n
       else
-        flash.now[:error] = "Could not create non-rewarded."
-        redirect_to :action => :new
+        flash.now[:error] = "Could not create non-rewarded." # TODO i18n
       end
     end
+    redirect_to app_non_rewarded_path(:app_id => @app.id)
   end
 
   def update
-    if @currency
-      allowed_attr_names = [ :test_devices, :minimum_offerwall_bid, :minimum_featured_bid, :minimum_display_bid ]
-      if permitted_to?(:edit, :dashboard_statz)
-        allowed_attr_names += [ :tapjoy_enabled, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override ]
-      end
-      @currency.safe_update_attributes(params[:currency], allowed_attr_names)
-      if @currency.save
-        flash[:notice] = "Non-rewarded has been updated."
-      else
-        flash.now[:error] = "Could not update non-rewarded."
-      end
-      redirect_to :action => :edit
-    else
-      redirect_to :action => :create
+    @currency or (redirect_to(new_app_non_rewarded_path(:app_id => @app.id)) and return)
+    allowed_attr_names = [ :test_devices, :minimum_offerwall_bid, :minimum_featured_bid, :minimum_display_bid ]
+    if permitted_to?(:edit, :dashboard_statz)
+      allowed_attr_names += [ :tapjoy_enabled, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override ]
     end
+    begin
+      @currency.safe_update_attributes(params[:currency], allowed_attr_names)
+      flash[:notice] = "Non-rewarded has been updated." # TODO i18n
+    rescue
+      flash.now[:error] = "Could not update non-rewarded."  # TODO i18n
+    end
+    redirect_to app_non_rewarded_path(:app_id => @app.id)
   end
 
   private
@@ -64,8 +60,8 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
         log_activity(@partner)
         @partner.update_attribute :accepted_publisher_tos, true
       else
-        flash[:error] = 'You must accept the terms of service to set up non-rewarded.'
-        render :new
+        flash[:error] = 'You must accept the terms of service to set up non-rewarded.'  # TODO i18n
+        redirect_to app_non_rewarded_path(:app_id => @app.id)
       end
     end
   end
