@@ -29,6 +29,7 @@ class ConnectController < ApplicationController
     @web_request = WebRequest.new
     @web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.raw_url = request.url
+    update_web_request_store_name(App.find_in_cache(params[:app_id]), @web_request)
 
     path_list = @device.handle_connect!(params[:app_id], params)
     path_list.each do |path|

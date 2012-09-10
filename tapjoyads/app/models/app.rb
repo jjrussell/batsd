@@ -32,6 +32,7 @@ class App < ActiveRecord::Base
       },
       :default_store_name => 'android.GooglePlay',
       :default_display_store_name => 'Google Play',
+      :default_sdk_store_name => 'google',
       :default_actions_file_name => "TapjoyPPA.java",
       :versions =>  %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0),
       :cell_download_limit_bytes => 99.gigabyte,

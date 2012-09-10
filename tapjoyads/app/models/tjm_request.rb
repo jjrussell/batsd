@@ -1,4 +1,4 @@
-class TjmRequest < SyslogMessage
+class TjmRequest < AnalyticsLogger::Message
 
   PATH_MAP = {
     'homepage' => {
