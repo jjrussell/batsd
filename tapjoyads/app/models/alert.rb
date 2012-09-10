@@ -62,8 +62,8 @@ class Alert
   end
 
   def prepare_query
-    if @values_at_hours.has_key?(@time.hour)
-      @values_at_hours[@time.hour].each_pair do |str,sub|
+    if @values_at_hours && @values_at_hours.has_key?(@time.hour.to_s)
+      @values_at_hours[@time.hour.to_s].each_pair do |str,sub|
         @query.gsub!(str, sub)
       end
     end
