@@ -181,7 +181,6 @@ class SimpledbResource
     end
     raise e
   rescue Exception => e
-    raise e
     if e.is_a?(RightAws::AwsError)
       Mc.increment_count("failed_sdb_saves.sdb.#{@this_domain_name}.#{(now.to_f / 1.hour).to_i}", false, 1.day)
     else
