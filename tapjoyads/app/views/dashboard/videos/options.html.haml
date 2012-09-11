@@ -71,7 +71,9 @@
 
       $('#apps_main .tjform').bind('ajax:before', function() {
         $('#app_submit').attr('disabled', true);
-        $('.flash').fadeOut();
+        $('.flash').fadeOut(400, function() {
+          $(this).html('<span class="message"></span>');
+        });
       }).bind('ajax:success', function() {
         $('#flash_notice span.message').text('Video options updated!').parents('.flash').fadeIn();
       }).bind('ajax:error', function() {
