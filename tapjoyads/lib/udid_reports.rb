@@ -26,8 +26,12 @@ class UdidReports
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select(:domain_name => "rewards_#{i}", :where => conditions) do |reward|
         if reward.udid? || reward.mac_address?
-          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
-          outfile.puts(line)
+          begin
+            line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
+            outfile.puts(line)
+          rescue Exception => e
+            # generate comment line with error info in the report when supported
+          end
         end
       end
     end
