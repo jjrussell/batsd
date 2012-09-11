@@ -25,25 +25,25 @@ class WebRequest < SyslogMessage
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
   }
   STAT_TO_PATH_MAP = {
-    'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id',           :use_like => true  },
-    'new_users'                 => { :paths => [ 'new_user' ],                            :attr_name => 'app_id',           :use_like => true  },
-    'daily_active_users'        => { :paths => [ 'daily_user' ],                          :attr_name => 'app_id',           :use_like => true  },
-    'monthly_active_users'      => { :paths => [ 'monthly_user' ],                        :attr_name => 'app_id',           :use_like => true  },
-    'hourly_impressions'        => { :paths => [ 'adshown' ],                             :attr_name => 'app_id',           :use_like => false },
-    'vg_purchases'              => { :paths => [ 'purchased_vg' ],                        :attr_name => 'app_id',           :use_like => false },
-    'vg_store_views'            => { :paths => [ 'get_vg_items' ],                        :attr_name => 'app_id',           :use_like => false },
-    'offerwall_views'           => { :paths => [ 'offers' ],                              :attr_name => 'app_id',           :use_like => false },
-    'tjm_offerwall_views'       => { :paths => [ 'tjm_offers' ],                          :attr_name => 'app_id',           :use_like => false },
-    'featured_offers_requested' => { :paths => [ 'featured_offer_requested' ],            :attr_name => 'app_id',           :use_like => true  },
-    'featured_offers_shown'     => { :paths => [ 'featured_offer_shown' ],                :attr_name => 'app_id',           :use_like => true  },
-    'display_ads_requested'     => { :paths => [ 'display_ad_requested' ],                :attr_name => 'displayer_app_id', :use_like => true  },
-    'display_ads_shown'         => { :paths => [ 'display_ad_shown' ],                    :attr_name => 'displayer_app_id', :use_like => true  },
-    'display_clicks'            => { :paths => [ 'offer_click' ],                         :attr_name => 'displayer_app_id', :use_like => false },
-    'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id', :use_like => false },
-    'tjm_offers_opened'         => { :paths => [ 'tjm_offer_click' ],                     :attr_name => 'publisher_app_id', :use_like => false },
-    'tjm_display_offers_opened' => { :paths => [ 'tj_display_offer_click' ],              :attr_name => 'publisher_app_id', :use_like => false },
-    'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id', :use_like => false },
-    'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click', 'tj_display_offer_click' ], :attr_name => 'offer_id', :use_like => false },
+    'logins'                    => { :paths => [ 'connect' ],                             :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'new_users'                 => { :paths => [ 'new_user' ],                            :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'daily_active_users'        => { :paths => [ 'daily_user' ],                          :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'monthly_active_users'      => { :paths => [ 'monthly_user' ],                        :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'hourly_impressions'        => { :paths => [ 'adshown' ],                             :attr_name => 'app_id',           :segment_by_store => true,  :use_like => false },
+    'vg_purchases'              => { :paths => [ 'purchased_vg' ],                        :attr_name => 'app_id',           :segment_by_store => true,  :use_like => false },
+    'vg_store_views'            => { :paths => [ 'get_vg_items' ],                        :attr_name => 'app_id',           :segment_by_store => true,  :use_like => false },
+    'offerwall_views'           => { :paths => [ 'offers' ],                              :attr_name => 'app_id',           :segment_by_store => true,  :use_like => false },
+    'tjm_offerwall_views'       => { :paths => [ 'tjm_offers' ],                          :attr_name => 'app_id',           :segment_by_store => true,  :use_like => false },
+    'featured_offers_requested' => { :paths => [ 'featured_offer_requested' ],            :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'featured_offers_shown'     => { :paths => [ 'featured_offer_shown' ],                :attr_name => 'app_id',           :segment_by_store => true,  :use_like => true  },
+    'display_ads_requested'     => { :paths => [ 'display_ad_requested' ],                :attr_name => 'displayer_app_id', :segment_by_store => true,  :use_like => true  },
+    'display_ads_shown'         => { :paths => [ 'display_ad_shown' ],                    :attr_name => 'displayer_app_id', :segment_by_store => true,  :use_like => true  },
+    'display_clicks'            => { :paths => [ 'offer_click' ],                         :attr_name => 'displayer_app_id', :segment_by_store => true,  :use_like => false },
+    'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id', :segment_by_store => true,  :use_like => false },
+    'tjm_offers_opened'         => { :paths => [ 'tjm_offer_click' ],                     :attr_name => 'publisher_app_id', :segment_by_store => true,  :use_like => false },
+    'tjm_display_offers_opened' => { :paths => [ 'tj_display_offer_click' ],              :attr_name => 'publisher_app_id', :segment_by_store => true,  :use_like => false },
+    'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id', :segment_by_store => true,  :use_like => false },
+    'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click', 'tj_display_offer_click' ], :attr_name => 'offer_id', :segment_by_store => false, :use_like => false },
   }
 
   self.define_attr :udid
@@ -225,16 +225,23 @@ class WebRequest < SyslogMessage
       stat_definitions.each do |stat_definition|
         attr_value = send(stat_definition[:attr])
         if attr_value.present?
-          mc_key = Stats.get_memcache_count_key(stat_definition[:stat], attr_value, time)
-          Mc.increment_count(mc_key, false, 1.day)
+          increment_running_counts(stat_definition[:stat], attr_value, time)
         end
       end
 
       if p == 'purchased_vg'
-        mc_key = Stats.get_memcache_count_key([ 'virtual_goods', virtual_good_id ], app_id, time)
-        Mc.increment_count(mc_key, false, 1.day)
+        increment_running_counts([ 'virtual_goods', virtual_good_id ], app_id, time)
       end
     end
   end
 
+  def increment_running_counts(stat_name_or_path, attr_value, time)
+    keys = [ Stats.get_memcache_count_key(stat_name_or_path, attr_value, time) ]
+    if store_name && STAT_TO_PATH_MAP[stat_name_or_path] && STAT_TO_PATH_MAP[stat_name_or_path][:segment_by_store]
+      keys << Stats.get_memcache_count_key(stat_name_or_path, attr_value, time, store_name)
+    end
+    keys.each do |mc_key|
+      Mc.increment_count(mc_key, false, 1.day)
+    end
+  end
 end

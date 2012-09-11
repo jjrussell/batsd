@@ -68,6 +68,7 @@ class Reward < SimpledbShardedResource
       c.publisher_reseller_id  = publisher_reseller_id
       c.advertiser_reseller_id = advertiser_reseller_id
       c.spend_share            = spend_share
+      c.store_name             = store_name
     end
 
     if displayer_app_id.present? && source == 'display_ad'
@@ -87,6 +88,7 @@ class Reward < SimpledbShardedResource
         c.publisher_reseller_id            = publisher_reseller_id
         c.advertiser_reseller_id           = advertiser_reseller_id
         c.spend_share                      = spend_share
+        c.store_name                       = store_name
       end
     end
 
