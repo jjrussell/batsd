@@ -164,7 +164,7 @@ class GetOffersController < ApplicationController
 
     if library_version.control_video_caching?
       # Allow developers to override app settings to hide videos
-      if params[:hide_videos] =~ '^1|true$'
+      if params[:hide_videos] =~ /^1|true$/
         @all_videos = false
         @video_offer_ids = []
       else
