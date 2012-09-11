@@ -66,39 +66,32 @@ class Mc
     keys = keys.to_a
     key  = keys.shift
     caches ||= [ @@cache ]
+    #We use missing_caches to make sure to distribute data in the event of a miss
     missing_caches = []
-    dead_caches = []
-    error_caches = []
 
-    cache = caches.first
-    cache = cache.clone if clone
+    #We use this for looping on the current key with the list of available caches
+    available_caches = caches.clone
 
     value = nil
     log_info_with_time("Read from memcache") do
       begin
-        value = cache.get(CGI::escape(key))
-        Rails.logger.info("Memcache key found: #{key}")
+        #Grab a cache to try
+        cache = available_caches.shift        
+        unless cache.nil?
+          cache = cache.clone if clone
+          value = cache.get(CGI::escape(key))
+          Rails.logger.info("Memcache key found: #{key}")
+        end
       rescue Memcached::NotFound
         missing_caches << cache
-        if (caches - missing_caches).length > 0
-          cache = (caches - missing_caches).first
-          retry
-        end
-        Rails.logger.info("Memcache key not found: #{key}")
-      rescue Memcached::ServerIsMarkedDead => e
-        dead_caches << cache
-        if (caches - dead_caches).length > 0
-          cache = (caches - dead_caches).first
-          retry
-        end
+        Rails.logger.info("Memcache key not found in cache, retrying: #{key}")        
+        retry
+      rescue Memcached::ServerIsMarkedDead => e        
         Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
+        retry
       rescue Memcached::ServerError => e
-        error_caches << cache
-        if (caches - error_caches).length > 0
-          cache = (caches - error_caches).first
-          retry
-        end
         Rails.logger.info("Memcached::ServerError: #{e.message}")
+        retry
       rescue Memcached::NoServersDefined => e
         Rails.logger.info("Memcached::NoServersDefined: #{e}")
       rescue Memcached::ATimeoutOccurred => e
