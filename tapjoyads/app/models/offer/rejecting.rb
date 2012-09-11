@@ -473,6 +473,6 @@ module Offer::Rejecting
   def miniscule_reward_reject?(currency)
     currency && currency.rewarded? && rewarded? &&
       currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
-      item_type != 'DeeplinkOffer' && !rate_filter_override
+      item_type != 'DeeplinkOffer'# && !rate_filter_override
   end
 end
