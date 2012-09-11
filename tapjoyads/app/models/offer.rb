@@ -435,8 +435,12 @@ class Offer < ActiveRecord::Base
     item_type == 'Coupon'
   end
 
+  def survey_offer?
+    item_type == 'SurveyOffer'
+  end
+
   def show_in_active_campaigns?
-    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon)/
+    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon|SurveyOffer)/
   end
 
   def video_icon_url(options = {})

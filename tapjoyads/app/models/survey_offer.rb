@@ -118,10 +118,15 @@ private
     primary_offer.partner_id        = partner_id || TAPJOY_PARTNER_ID
     primary_offer.name              = name
     primary_offer.hidden            = hidden
-    primary_offer.reward_value      = 15 # WTF?
     primary_offer.price             = 0
     primary_offer.url               = generate_url
-    primary_offer.bid               = @bid || 0
+    if @bid
+      primary_offer.bid             = @bid
+      primary_offer.reward_value    = @bid
+    else
+      primary_offer.bid             ||= 0
+      primary_offer.reward_value    ||= 0
+    end
     primary_offer.name_suffix       = 'Survey'
     primary_offer.device_types      = Offer::ALL_DEVICES.to_json
     primary_offer.tapjoy_enabled    = true
