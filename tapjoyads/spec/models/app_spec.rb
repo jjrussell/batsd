@@ -907,4 +907,35 @@ describe App do
       @app.build_non_rewarded.should == @currency
     end
   end
+
+  describe '#associated_offers?' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    it 'should not return the primary offer' do
+      @app.associated_offers.should_not include(@app.primary_offer)
+    end
+
+    it 'should include secondary offers ' do
+      @secondary_offer = @app.primary_offer.clone
+      @secondary_offer.save!
+      @app.associated_offers.should include(@secondary_offer)
+    end
+
+
+    it 'should exclude offers not matching properties' do
+      @secondary_offer = @app.primary_offer.clone
+      Offer.any_instance.stub(:foo).and_return(:bar)
+      @secondary_offer.save!
+      @app.associated_offers(:foo => :baz).should_not include(@secondary_offer)
+    end
+
+    it 'should include offers  matching properties' do
+      @secondary_offer = @app.primary_offer.clone
+      Offer.any_instance.stub(:foo).and_return(:bar)
+      @secondary_offer.save!
+      @app.associated_offers(:foo => :bar).should include(@secondary_offer)
+    end
+  end
 end

@@ -1,0 +1,92 @@
+-if @app.associated_offers.count == 0
+  %p#show_associated= "[#{@app.tapjoy_enabled_associated_offers.count} Associated Offers]"
+-else
+  #associated_offers
+    %a#show_associated{:href=>'#'}= "[#{@app.tapjoy_enabled_associated_offers.count} Associated Offers]"
+    #associated_list
+      %a.close_button{:href=>'#'} x
+      %h3 Associated Offers
+      .primary_offer
+        Main:
+        =link_to(@app.primary_offer.name_with_suffix)
+      %table
+        %tbody
+          %tr
+            %th Name
+            %th Suffix
+            %th Active
+            %th
+          - @app.tapjoy_enabled_associated_offers.each do |offer|
+            %tr{:class => [cycle('odd','even'), offer.enabled? ? 'enabled' : 'disabled'] }
+              %td= offer.name
+              %td= offer.name_suffix
+              %td= offer.enabled? ? 'Yes' : 'No'
+
+  - content_for :page_javascript do
+    :plain
+      $('#show_associated, #associated_offers .close_button').click(function() {
+        $('#associated_list').slideToggle();
+        return false;
+      });
+
+  - content_for :page_styles do
+    :plain
+
+      #associated_offers {
+       position: relative;
+      }
+
+      #associated_offers .close_button {
+        float: right;
+        width: 10px;
+      }
+
+      #associated_offers h3 {
+        text-align: center;
+        color: #929292;
+        margin: 4px 0px;
+      }
+
+      #associated_offers .primary_offer {
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
+
+      #associated_offers table {
+        border-spacing: 0;
+        width: 100%;
+        font-size: 12px
+      }
+
+      #associated_offers th {
+        background-color: #D6D6D6;
+        color: #5E5E5E;
+        text-align: left;
+        padding: 4px;
+      }
+
+      #associated_offers td {
+        padding: 4px;
+      }
+
+      #associated_offers tr.disabled {
+        color: #c5c5c5;
+      }
+
+      #associated_offers tr.even {
+        background-color: #EBEBEB;
+      }
+
+      #associated_list {
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        display: none;
+        background: #fff;
+        width: 400px;
+        padding: 8px;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0,0,0, .5);
+        margin: 20px;
+        z-index: 10;
+      }
