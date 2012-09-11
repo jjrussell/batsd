@@ -38,6 +38,7 @@ Tapjoyad::Application.configure do
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []

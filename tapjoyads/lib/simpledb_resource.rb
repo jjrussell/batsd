@@ -122,10 +122,10 @@ class SimpledbResource
   # an empty attributes hash will be created.
   def load(load_from_memcache = true, consistent = false)
     if load_from_memcache
-      @attributes = Mc.get(get_memcache_key) do
+      @attributes = SimpledbCache.get(get_memcache_key) do
         attrs = load_from_sdb(consistent)
         unless attrs.empty?
-          Mc.put(get_memcache_key, attrs) rescue nil
+          SimpledbCache.put(get_memcache_key, attrs) rescue nil
         end
         attrs
       end
@@ -177,7 +177,7 @@ class SimpledbResource
     end
   rescue ExpectedAttributeError => e
     if save_to_memcache
-      Mc.delete(get_memcache_key) rescue nil
+      SimpledbCache.delete(get_memcache_key) rescue nil
     end
     raise e
   rescue Exception => e
@@ -188,7 +188,7 @@ class SimpledbResource
     end
     unless catch_exceptions
       if save_to_memcache && !from_queue
-        Mc.delete(get_memcache_key) rescue nil
+        SimpledbCache.delete(get_memcache_key) rescue nil
       end
       raise e
     end
@@ -291,7 +291,7 @@ class SimpledbResource
   ##
   # Deletes this entire row immediately (no need to call save after calling this).
   def delete_all(delete_from_memcache = true)
-    Mc.delete(get_memcache_key) if delete_from_memcache
+    SimpledbCache.delete(get_memcache_key) if delete_from_memcache
     @@sdb.delete_attributes(@this_domain_name, key)
   end
 
@@ -683,7 +683,7 @@ protected
   end
 
   def write_to_memcache
-    Mc.compare_and_swap(get_memcache_key) do |mc_attributes|
+    SimpledbCache.compare_and_swap(get_memcache_key) do |mc_attributes|
       if mc_attributes
         mc_attributes.merge!(@attributes_to_replace)
         @attributes_to_add.each do |key, values|
