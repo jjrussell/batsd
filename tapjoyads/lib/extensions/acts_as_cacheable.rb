@@ -48,12 +48,17 @@ module ActsAsCacheable
           true
         end
 
-        def find_in_cache(id, do_lookup = !Rails.env.production?)
+        def find_in_cache(id, do_lookup = !Rails.env.production?, cache_if_not_found = false)
           return nil unless id =~ UUID_REGEX
           object = Mc.distributed_get(cache_key_for(id))
           if object.nil? && do_lookup
-            object = find_by_id(id)
-            object.cache unless object.nil?
+            if cache_if_not_found
+              message = { :model_name => model_name, :id => id }.to_json
+              Sqs.send_message(QueueNames::CACHE_RECORD_NOT_FOUND, message)
+            else
+              object = find_by_id(id)
+              object.cache unless object.nil?
+            end
           end
           object
         end
