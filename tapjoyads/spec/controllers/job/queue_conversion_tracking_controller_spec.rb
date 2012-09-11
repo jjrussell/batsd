@@ -152,9 +152,28 @@ describe Job::QueueConversionTrackingController do
       end
     end
 
+    it 'creates a reward' do
+      reward = FactoryGirl.create(:reward)
+      Reward.stub(:new).and_return(reward)
+      reward.stub(:is_new).and_return(true)
+      reward.should_receive(:save!)
+      do_get
+    end
+
     context 'a reward already exists in the system' do
+      before :each do
+        @reward = FactoryGirl.create(:reward)
+        Reward.stub(:new).and_return(@reward)
+        @reward.stub(:is_new).and_return(false)
+      end
+
       it 'does not try to update reward' do
-        Reward.any_instance.should_not_receive(:save!)
+        @reward.should_not_receive(:save!)
+        do_get
+      end
+      it 'does not create another WebRequest' do
+        request = WebRequest.new(:time => Time.zone.now)
+        WebRequest.should_receive(:new).once().and_return(request);
         do_get
       end
     end
