@@ -30,7 +30,7 @@ class UdidReports
             line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
             outfile.puts(line)
           rescue Exception => e
-            # generate comment line with error info in the report when supported
+            # There can be no comment lines in csv file. Do nothing
           end
         end
       end
