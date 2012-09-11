@@ -32,25 +32,31 @@ describe VideosController do
       get(:index, @params)
     end
 
-    context 'when the publisher app has disabled caching' do
-      before :each do
-        @app.stub(:videos_cache_on? => false)
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
       end
 
-      it 'should not access the offer_list' do
-        controller.should_not_receive(:offer_list)
-        get(:index, @params)
-      end
-    end
+      context 'when the publisher app has disabled caching' do
+        before :each do
+          @app.stub(:videos_cache_on? => false)
+        end
 
-    context 'when hide_videos is true' do
-      before :each do
-        @params[:hide_videos] = 'true'
+        it 'should not access the offer_list' do
+          controller.should_not_receive(:offer_list)
+          get(:index, @params)
+        end
       end
 
-      it 'should not access the offer_list' do
-        controller.should_not_receive(:offer_list)
-        get(:index, @params)
+      context 'when hide_videos is true' do
+        before :each do
+          @params[:hide_videos] = 'true'
+        end
+
+        it 'should not access the offer_list' do
+          controller.should_not_receive(:offer_list)
+          get(:index, @params)
+        end
       end
     end
   end

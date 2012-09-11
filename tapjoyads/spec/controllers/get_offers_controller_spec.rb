@@ -502,25 +502,31 @@ describe GetOffersController do
       assigns(:server_to_server).should == true
     end
 
-    it "should respect the hide_videos parameter" do
-      get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
-      assigns(:video_offer_ids).should be_empty
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
+      end
 
-      get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
-      assigns(:video_offer_ids).should == ['abc', '123']
-    end
+      it "should respect the hide_videos parameter" do
+        get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should be_empty
 
-    it 'respects the apps streaming setting' do
-      app = App.find(@params[:app_id])
-      App.stub(:find_in_cache => app)
-      app.update_attributes(:videos_stream_3g => true)
+        get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should == ['abc', '123']
+      end
 
-      get(:index, @params.merge(:connection_type => 'mobile'))
-      assigns(:all_videos).should be_true
+      it 'respects the apps streaming setting' do
+        app = App.find(@params[:app_id])
+        App.stub(:find_in_cache => app)
+        app.update_attributes(:videos_stream_3g => true)
 
-      app.update_attributes(:videos_stream_3g => false)
-      get(:index, @params.merge(:connection_type => 'mobile'))
-      assigns(:all_videos).should be_false
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_true
+
+        app.update_attributes(:videos_stream_3g => false)
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_false
+      end
     end
   end
 end
