@@ -54,7 +54,7 @@ Setting up VM
 We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
 install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
 
-Now setup librarian and vagrant(run from /Path/To/tapjoyserver/tapjoyads/):
+Now setup librarian and vagrant(run from /Path/To/tapjoyserver/):
 
 ```
 gem install vagrant
@@ -72,7 +72,7 @@ vagrant ssh
 Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
 
 ```
-cd /vagrant
+cd /vagrant/tapjoyads/
 rvmsudo bundle
 bundle
 rake db:create
@@ -93,7 +93,7 @@ After you've generated these keys and shared them with your root user, you can a
 
 If you get annoyed to have to change into the /vagrant directory every time, just add it to the end of your .bashrc file:
 ```
-cd /vagrant/
+cd /vagrant/tapjoyads/
 ```
 Running the tests
 -----------------
