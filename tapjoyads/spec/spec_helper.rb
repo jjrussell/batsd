@@ -70,6 +70,7 @@ Spork.prefork do
     end
 
     config.before(:each) do
+      AnalyticsLogger.stub(:publish => true)
       Resolv.stub!(:getaddress=>'1.1.1.1')
       $fake_sdb = FakeSdb.new
       RightAws::SdbInterface.stub!(:new => $fake_sdb)
