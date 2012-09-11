@@ -72,8 +72,7 @@ vagrant ssh
 Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
 
 ```
-cd /vagrant/tapjoyads/
-rvmsudo bundle
+cd /vagrant/tapjoyads
 bundle
 rake db:create
 rake db:sync
@@ -109,7 +108,7 @@ If any tests fail, ask for help in Flowdock.
 Running the server
 ------------------
 
-Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
+Within Vagrant, you can run the application directly from the `/vagrant/tapjoyads` directory by running:
 
 ```
 rails s thin
