@@ -190,6 +190,7 @@ describe Dashboard::Tools::SurveyOffersController do
 
       it 'enables the survey' do
         SurveyOffer.stub(:find).with(survey_offer.id).and_return(survey_offer)
+        SurveyOffer.stub(:find).with(survey_offer.id, :include => nil, :select => nil).and_return(survey_offer)
         survey_offer.stub(:enabled?).and_return(false)
         survey_offer.should_receive(:enable!)
         get(:toggle_enabled, :id => survey_offer.id)
