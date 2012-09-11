@@ -3,7 +3,7 @@ class Dashboard::VideosController < Dashboard::DashboardController
   layout 'apps'
   current_tab :apps
   before_filter :setup
-  before_filter :inform_of_cache_sdk_version, :only => [:index]
+  before_filter :inform_of_cache_sdk_version, :only => [:options]
   filter_access_to :all
 
   CACHE_SDK_VERSION_NOTICE = "This page enables you to control the caching behavior for video assets on devices using
@@ -34,9 +34,7 @@ class Dashboard::VideosController < Dashboard::DashboardController
 
   private
   def inform_of_cache_sdk_version
-    if current_user && flash.now[:notice].blank?
-      flash.now[:notice] = CACHE_SDK_VERSION_NOTICE
-    end
+    flash.now[:notice] = CACHE_SDK_VERSION_NOTICE if current_user.present?
   end
 
   def setup
