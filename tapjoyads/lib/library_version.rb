@@ -19,7 +19,7 @@ class LibraryVersion
   end
 
   capability :sdkless_integration,   SDKLESS_MIN_LIBRARY_VERSION
-  capability :control_video_caching, '8.2.3'
+  capability :control_video_caching, '8.3.0'
 
   def initialize(version)
     @version = version.to_s
