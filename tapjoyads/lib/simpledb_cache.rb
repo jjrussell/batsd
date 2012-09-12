@@ -12,5 +12,6 @@ class SimpledbCache < Mc
 
     @cache              = Memcached.new(SDB_MEMCACHE_SERVERS, options)
   end
+  self.reset_connection
 
 end
