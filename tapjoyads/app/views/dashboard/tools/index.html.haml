@@ -16,6 +16,8 @@
       %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
     - if permitted_to? :index, :dashboard_tools_payouts                   # payops
       %li= link_to 'Payouts', tools_payouts_path
+    - if permitted_to? :index, :dashboard_tools_resellers_payouts         # payops
+      %li= link_to 'Reseller Payouts', tools_resellers_payouts_path
     - if permitted_to? :index, :dashboard_tools_payout_freezes            # payops
       %li= link_to 'Payout Freezes', tools_payout_freezes_path
     - if permitted_to? :index, :dashboard_tools_network_costs             # payops

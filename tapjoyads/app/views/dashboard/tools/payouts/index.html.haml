@@ -28,6 +28,8 @@
 #unfiltered.hidden
   = link_to 'Filter by payout info modification', '#'
 = form_tag(export_tools_payouts_path(:format => :csv), :method => :get) do
+  - if params[:reseller_id].present?
+    = hidden_field_tag(:reseller_id, params[:reseller_id])
   = submit_tag('Export to CSV')
 = submit_tag('Print All', :id => :print_all)
 %br
@@ -43,7 +45,8 @@
       %th Payout Amount
       %th Current Payout Created
       %th Payout Info
-      %th Action
+      - if permitted_to?(:create, :dashboard_tools_payouts)
+        %th Action
       %th Confirmed Status
       %th Confirmation Notes
   %tbody
@@ -70,7 +73,7 @@
 
         %td= number_to_currency(partner.pending_earnings / 100.0)
         %td= (partner.payout_cutoff_date - 1.day).to_s(:pub)
-        %td= number_to_currency(partner.pending_earnings / 100.0 - partner.next_payout_amount / 100.0)
+        %td= number_to_currency(partner.leftover_payout_amount / 100.0)
         %td= number_to_currency(partner.next_payout_amount / 100.0)
         - if partner.completed_payout_info?
           %td
@@ -86,8 +89,8 @@
           %td
             %span.not_present
               %strong Not Present
-        %td
-          - if permitted_to?(:create, :dashboard_tools_payouts)
+        - if permitted_to?(:create, :dashboard_tools_payouts)
+          %td
             = form_tag tools_payouts_path(:partner_id => partner.id), :method => :post, :class => 'json', :style => 'height:45px;' do
               = text_field_tag 'amount', (partner.next_payout_amount / 100.0), :class => 'amount'
               = submit_tag 'Create Payout', :class => 'submit'
@@ -99,95 +102,11 @@
 
 = will_paginate(@partners) unless params[:print].present?
 %div{ :class => 'popup', :style => 'display:none'}
+- content_for :included_javascripts, javascript_include_tag('tapjoy/payouts')
 - content_for :page_javascript do
   :plain
-    $(function($) {
-      if (#{@start_date.blank?}) {
-        $('#unfiltered').show();
-      } else {
-        $('#filtered').show();
-      }
-      $('#unfiltered a').click(function(){
-        $('#unfiltered').hide();
-        $('#filtered').show();
-        return false;
-      });
-      $('#date_submit').click(function(){
-        var year = $('select#date_year').val();
-        var month = $('select#date_month').val();
-        location.href = location.href.split('?')[0] + '?year=' + year + '&month=' + month;
-      });
-      $('#date_reset').click(function(){
-        $('#filtered').hide();
-        if (#{@start_date.present?}) {
-          location.href = location.href.split('?')[0];
-        } else {
-          $('#unfiltered').show();
-        }
-      });
-
-      $('#date').datepicker();
-      $('form.json').submit(function() {
-        if (!confirm('Are you sure?')) { return false; }
-
-        var spinner = $(this).find('img.spinner');
-        var submit = $(this).find('input.submit');
-        var amount = $(this).find('input.amount');
-        var status = $(this).find('span.status');
-
-        $.ajax({
-          dataType: 'json',
-          type: $(this).attr('method'),
-          url: $(this).attr('action'),
-          data: $(this).serialize(),
-          beforeSend: function() {
-            amount.hide();
-            submit.hide();
-            spinner.show();
-          },
-          complete: function() {
-            spinner.hide();
-          },
-          success: function(response) {
-            if (response.success == true) {
-              status.html('Complete');
-            } else {
-              status.html('Error');
-            }
-          }
-        });
-        return false;
-      });
-      var options = {
-        source: '#{search_partners_path}',
-        delay: 250,
-        minLength: 2,
-        select: function(event, ui) {
-          location.href = '#{tools_payouts_path}?partners_filter='+ ui.item.partner_id;
-        }
-      };
-      $('#partners').focus().autocomplete(options);
-      $('input.clear_filter').click(function(){
-          window.location ='#{tools_payouts_path}';
-      });
-      $('select#confirm_filter').change(function() {
-        var location = '#{tools_payouts_path}?'
-        location += 'confirm_filter=' + $(this).val();
-        window.location = location;
-      });
-      $('#print_all').click(function() {
-        var url ='#{tools_payouts_path}?print=true';
-        var params = window.location.href.split('?');
-        if(params.length > 1) {
-          url += '&'+params[1];
-        }
-        window.location = url;
-      });
-      $(document).ready(function() {
-        if(#{params[:print].present?}) {
-          window.print();
-        }
-      });
+    $(function() {
+      $.initPayouts('#{tools_payouts_path}', #{@start_date.present?});
     });
 
 - content_for :page_styles do

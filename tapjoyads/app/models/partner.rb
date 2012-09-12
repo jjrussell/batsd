@@ -147,6 +147,7 @@ class Partner < ActiveRecord::Base
   scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
+  scope :with_next_payout, where('next_payout_amount > 0')
 
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
@@ -257,6 +258,22 @@ class Partner < ActiveRecord::Base
     else
       reference_date.beginning_of_month
     end
+  end
+
+  def leftover_payout_amount
+    pending_earnings - next_payout_amount
+  end
+
+  def make_payout(amount)
+    cutoff_date = self.payout_cutoff_date - 1.day
+    amount = (amount.to_f * 100).round
+    self.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+  end
+
+  def calculate_payout_threshold(amount)
+    threshold = amount * Partner::APPROVED_INCREASE_PERCENTAGE
+    self.payout_threshold = [threshold, Partner::BASE_PAYOUT_THRESHOLD].max
+    self.save
   end
 
   def reset_balances
