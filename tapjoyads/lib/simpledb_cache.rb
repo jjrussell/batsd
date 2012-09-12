@@ -10,7 +10,7 @@ class SimpledbCache < Mc
       :cache_lookups    => false
     }
 
-    @@cache              = Memcached.new(SDB_MEMCACHE_SERVERS, options)
+    @cache              = Memcached.new(SDB_MEMCACHE_SERVERS, options)
   end
 
 end
