@@ -86,7 +86,12 @@ Tapjoyad::Application.routes.draw do
             post :update_status
           end
         end
-        resources :videos, :only => [:index]
+        resources :videos, :only => [:index] do
+          collection do
+            get :options
+            put :update_options
+          end
+        end
       end
       resource :offer do
         member do

@@ -1,5 +1,5 @@
 xml.instruct!
-xml.TapjoyVideos do
+xml.TapjoyVideos @options do
   @offer_list.each do |offer|
     xml.TapjoyVideo do
       xml.OfferID offer.id
