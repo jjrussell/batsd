@@ -20,11 +20,15 @@ class GetOffersController < ApplicationController
       :deepLink => false, :showBanner => false,
       :showActionLine => true, :showCostBalloon => false,
       :showCurrentApp => false, :squircles => false,
-      :viewID => 'control'
+      :viewID => 'control', :showActionArrow => false
     }
   }
 
-  VIEW_MAP[:test] = VIEW_MAP[:control].merge(:actionLocation => 'left', :viewID => 'test')
+  VIEW_MAP[:test] = VIEW_MAP[:control].merge(
+    :actionLocation => 'left',
+    :viewID => 'test',
+    :showActionArrow => true
+  )
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -150,10 +154,8 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    # No experiment running at this time
-    # params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    # set_offerwall_experiment
-    params[:exp] = 'control'
+    params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
+    set_offerwall_experiment
 
     if @save_web_requests
       @web_request = generate_web_request
