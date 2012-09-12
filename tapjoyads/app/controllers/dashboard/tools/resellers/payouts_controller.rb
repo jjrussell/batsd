@@ -14,7 +14,7 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
 
     Partner.transaction do
       begin
-        @reseller.partners.each do |partner|
+        @reseller.partners.with_next_payout.each do |partner|
           payout = partner.make_payout(partner.next_payout_amount / 100.0)
           log_activity(payout)
           log_activity(partner)

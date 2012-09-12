@@ -147,6 +147,7 @@ class Partner < ActiveRecord::Base
   scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
+  scope :with_next_payout, where('next_payout_amount > 0')
 
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
