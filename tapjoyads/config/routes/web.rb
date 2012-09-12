@@ -44,7 +44,8 @@ Tapjoyad::Application.routes.draw do
   resources :offer_instructions, :only => [:index]
   resources :offer_age_gating, :only => [:index] do
     collection do
-      get :redirect
+      get :redirect_to_click
+      get :redirect_to_get_offers
     end
   end
 

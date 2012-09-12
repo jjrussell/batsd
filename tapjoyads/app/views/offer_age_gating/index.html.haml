@@ -1,12 +1,15 @@
 - age_gating = @offer.age_rating
-- @page_title = t('text.age_gating.title', :age_gating => age_gating)
+- @page_title = @offer.name
 
 #body
+  .top
+    = @offer.name
+
+  %br
   #instructions
     = t('text.age_gating.instructions')
   %br
   %span#error_message
-  %br
   %br
   #inputs
     %select#mm
@@ -16,13 +19,17 @@
     %select#yyyy
   %br
   %br
-  %br
   #continue
     %a{ :href => "javascript: void(0)", :onclick => "return checkAge(#{age_gating})" }
-      = t('text.age_gating.continue_link')
+      %span.button
+        = t('text.age_gating.continue_link')
   #close{ :style => "display:none" }
-    %a{ :href => "javascript: history.back()" }
-      = t('text.age_gating.close_link')
+    %a{ :href => "#{@redirect_to_get_offers_url}" }
+      %span.button
+        = t('text.age_gating.close_link')
+
+  .footer
+    = image_tag("reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr")
 
 .clear
 
@@ -44,9 +51,9 @@
         document.getElementById('inputs').style.display = 'none';
         document.getElementById('continue').style.display = 'none';
         document.getElementById('close').style.display = 'block';
-        setTimeout("history.back();", 3000);
+        setTimeout(location.href = "#{@redirect_to_get_offers_url}", 3000);
       } else {
-        location.href = "#{@redirect_url}&date_of_birth="+yyyy+"/"+mm+"/"+dd;
+        location.href = "#{@redirect_to_click_url}&date_of_birth="+yyyy+"/"+mm+"/"+dd;
       }
     }
 
@@ -91,27 +98,34 @@
       margin-bottom: 10px;
     }
 
-    a {
-      color: white;
-    }
-
     select {
       -webkit-appearance: none;
       font-size: 30px;
     }
 
     #body {
-      text-align: center;
-      margin: 10px 3%;
-      background: black;
+      background: white;
       border: 1px solid #d5d5d5;
-      color: white;
+      border-radius: 12px;
+      color: #333;
+      display: block;
       font-size: 24px;
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      padding-top: 60px;
-      padding-bottom: 60px;
+      margin: 10px 3%;
+      text-align: center;
     }
+
+    .top {
+      background-color: #cd202c;
+      border-radius: inherit;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      font-size: 48px;
+      margin: 0 auto;
+      padding: 6px 0;
+      color: #FFF;
+      margin-top: 0px;
+    }
+
 
     #error_message {
       color: red;
@@ -121,5 +135,35 @@
       clear: both;
     }
 
+    .button {
+      background-color: #CF1623;
+      color: #FFF;
+      cursor: pointer;
+      font-size: 24px;
+      position: relative;
+      width: 120px;
+      padding: 8px 10px;
+      text-align: center;
+      border-radius: 16px;
+      overflow: hidden;
+      -moz-border-radius: 16px;
+      -ms-border-radius: 16px;
+      -o-border-radius: 16px;
+      -webkit-border-radius: 16px;
+      text-shadow: rgba(160, 150, 145, 0.5) -1px 0, rgba(160, 150, 145, 0.3) 0 -1px, rgba(0, 0, 0, 0.5) 0 1px, rgba(0, 0, 0, 0.3) -1px -1px;
+      background-image: -moz-linear-gradient(top, #ea1927 0%, #cf1623 100%);
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, color-stop(0, #ea1927), color-stop(1, #cf1623));
+      background-image: linear-gradient(top, #ea1927, #cf1623);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='$from', EndColorStr='$to');
+    }
 
+    .footer {
+      background: #D1D1D1;
+      border-radius: inherit;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      display: block;
+      margin-top: 30px;
+      padding: 6px 45px;
+    }
 

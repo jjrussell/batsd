@@ -141,6 +141,7 @@ module Offer::Rejecting
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
       { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
+      { :method => :age_gating_reject?, :parameters => device, :reason => 'age_gating'},
     ]
     reject_reasons(reject_functions)
   end
@@ -181,7 +182,8 @@ module Offer::Rejecting
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     app_store_reject?(store_whitelist) ||
     distribution_reject?(store_name) ||
-    miniscule_reward_reject?(currency)
+    miniscule_reward_reject?(currency) ||
+    age_gating_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -441,5 +443,9 @@ module Offer::Rejecting
     currency && currency.rewarded? && rewarded? &&
       currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
       item_type != 'DeeplinkOffer'
+  end
+
+  def age_gating_reject?(device)
+    !Mc.distributed_get("#{OfferAgeGatingController::MC_KEY_PREFIX}.#{device.key}.#{id}").nil?
   end
 end

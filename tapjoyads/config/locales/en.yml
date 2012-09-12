@@ -205,12 +205,11 @@ en:
       prompt: "Please select"
   text:
     age_gating:
-      close_link: "Close"
-      continue_link: "Continue"
+      close_link: "Back"
+      continue_link: "Submit"
       error_message:
-        too_yong: "Sorry, you are too young to access this content!"
+        too_yong: "Sorry, you may not access this content."
       instructions: "Enter your date of birth:"
-      title: "Age Gate %{age_gating}+"
     featured:
       download: Download
       download_and_run: "Just download and run"
