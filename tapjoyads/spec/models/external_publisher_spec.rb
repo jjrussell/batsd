@@ -6,7 +6,8 @@ describe ExternalPublisher do
       I18n.stub(:locale).and_return('en')
       HeaderParser.stub(:device_type).and_return('iphone')
       HeaderParser.stub(:os_version).and_return('ios')
-      @app = double('app', :name => 'test', :partner_name => 'bert', :active_gamer_count => 5, :primary_app_metadata => 15)
+      @primary_app_metadata = double()
+      @app = double('app', :name => 'test', :partner_name => 'bert', :active_gamer_count => 5, :primary_app_metadata => double(15, :developer => 'test_dev'))
       @curr = double('currency', :app_id => '1234', :app => @app,
                      :id => 99, :name => 'dollars', :udid_for_user_id => 'udid', :tapjoy_managed? => true )
       @device = double('device')
