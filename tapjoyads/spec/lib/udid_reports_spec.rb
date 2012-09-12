@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe UdidReports do
   before :each do
-    UdidReports.const_set('NUM_REWARD_DOMAINS', 1) # fake global const as module const for test
-
     UdidReports.stub(:cache_available_months).and_return([1,2,3])
     bucket = FakeBucket.new
     S3.stub(:bucket).with(BucketNames::UDID_REPORTS).and_return(bucket)
@@ -22,23 +20,22 @@ describe UdidReports do
     reward.udid = @device.id
     UdidReports.const_set("REWARD", reward)
     class Reward
-      def self.test_select(options={})
+      def self.test_select_all(options={})
         yield(UdidReports::REWARD)
       end
 
       class << self
-        alias_method :original_select, :select
-        alias_method :select, :test_select
+        alias_method :original_select_all, :select_all
+        alias_method :select_all, :test_select_all
       end
     end
   end
 
   after :each do
-    UdidReports.send(:remove_const, :NUM_REWARD_DOMAINS)
     UdidReports.send(:remove_const, :REWARD)
     class Reward
       class << self
-        alias_method :select, :original_select
+        alias_method :select_all, :original_select_all
       end
     end
     File.unlink(@report_file.path)

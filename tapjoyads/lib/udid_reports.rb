@@ -23,15 +23,13 @@ class UdidReports
     fs_path = "tmp/#{offer_id}_#{date.strftime('%Y-%m-%d')}.s3"
     outfile = File.open(fs_path, 'w')
 
-    NUM_REWARD_DOMAINS.times do |i|
-      Reward.select(:domain_name => "rewards_#{i}", :where => conditions) do |reward|
-        if reward.udid? || reward.mac_address?
-          begin
-            line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
-            outfile.puts(line)
-          rescue Exception => e
-            # There can be no comment lines in csv file. Do nothing
-          end
+    Reward.select_all(:conditions => conditions) do |reward|
+      if reward.udid? || reward.mac_address?
+        begin
+          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
+          outfile.puts(line)
+        rescue Exception => e
+          # There can be no comment lines in csv file. Do nothing
         end
       end
     end
