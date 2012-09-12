@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe UdidReports do
+  let(:good_apps_data) { {"1" => 101, "2" => 202} }
+  let(:bad_apps_data) { "{just plain bad data}" }
+
   before :each do
     UdidReports.stub(:cache_available_months).and_return([1,2,3])
     bucket = FakeBucket.new
@@ -9,12 +12,10 @@ describe UdidReports do
     f = Tempfile.new("udid-report")
     @report_filepath = f.path
     f.unlink
-    @report_file = File.new(@report_filepath, "w")
-    File.stub(:open).and_return(@report_file)
+    report_file = File.new(@report_filepath, "w")
+    File.stub(:open).and_return(report_file)
     @offer_id = 0
     @date_str = "1999-03-01"
-    @good_apps_data = {"1" => 101, "2" => 202}
-    @bad_apps_data = "{just plain bad data}"
     @device = Device.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
     reward = Reward.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
     reward.udid = @device.id
@@ -36,14 +37,15 @@ describe UdidReports do
     class Reward
       class << self
         alias_method :select_all, :original_select_all
+        remove_method :original_select_all
       end
     end
-    File.unlink(@report_file.path)
+    File.unlink(@report_filepath)
   end
 
   describe "#generate_report" do
     it "should generate UDID report" do
-      @device.apps = @good_apps_data
+      @device.apps = good_apps_data
       @device.save
       UdidReports.generate_report(@offer_id, @date_str)
       buf = File.read(@report_filepath)
@@ -51,7 +53,7 @@ describe UdidReports do
     end
 
     it "should generate UDID report even if device has bad data" do
-      @device.apps = @bad_apps_data
+      @device.apps = bad_apps_data
       @device.save
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
       buf = File.read(@report_filepath)
