@@ -20,6 +20,7 @@ class Mc
 
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
+  MAX_KEY_LENGTH = 250
 
   MEMCACHED_ACTIVE_RECORD_MODELS = %w(App Currency Offer SurveyOffer VideoOffer ReengagementOffer)
 
@@ -80,7 +81,7 @@ class Mc
         cache = available_caches.shift
         unless cache.nil?
           cache = cache.clone if clone
-          value = cache.get(CGI::escape(key))
+          value = cache.get(cache_key(key))
           Rails.logger.info("Memcache key found: #{key}")
         end
       rescue Memcached::NotFound
@@ -156,7 +157,7 @@ class Mc
       cache = cache.clone if clone
 
       log_info_with_time("Added to memcache: #{key}") do
-        cache.add(CGI::escape(key), value, time.to_i)
+        cache.add(cache_key(key), value, time.to_i)
       end
     end
   end
@@ -169,7 +170,7 @@ class Mc
       cache = cache.clone if clone
 
       log_info_with_time("Wrote to memcache: #{key}") do
-        cache.set(CGI::escape(key), value, time.to_i)
+        cache.set(cache_key(key), value, time.to_i)
       end
     end
   end
@@ -193,7 +194,7 @@ class Mc
 
   def self.increment_count(key, clone = false, time = 1.week, offset = 1)
     cache = clone ? @cache.clone : @cache
-    key = CGI::escape(key)
+    key = cache_key(key)
 
     begin
       if offset > 0
@@ -211,7 +212,7 @@ class Mc
 
   def self.get_count(key, clone = false)
     cache = clone ? @cache.clone : @cache
-    key = CGI::escape(key)
+    key = cache_key(key)
 
     begin
       count = cache.get(key, false).to_i
@@ -224,7 +225,7 @@ class Mc
 
   def self.compare_and_swap(key, clone = false)
     cache = clone ? @cache.clone : @cache
-    key = CGI::escape(key)
+    key = cache_key(key)
 
     retries = 2
     begin
@@ -248,7 +249,7 @@ class Mc
   def self.delete(key, clone = false, cache = nil)
     cache ||= @cache
     cache = cache.clone if clone
-    key = CGI::escape(key)
+    key = cache_key(key)
 
     begin
       cache.delete(key)
@@ -268,4 +269,7 @@ class Mc
     @cache.flush if totally_serious == 'totally_serious'
   end
 
+  def self.cache_key(key)
+    CGI::escape(key)[0...MAX_KEY_LENGTH]
+  end
 end
