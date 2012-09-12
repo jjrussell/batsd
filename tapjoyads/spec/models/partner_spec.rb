@@ -430,7 +430,7 @@ describe Partner do
     end
 
     it 'builds a payout' do
-      subject.payouts.should_receive(:create).and_return(@payout)
+      subject.payouts.should_receive(:create!).and_return(@payout)
       subject.make_payout(@amount)
     end
   end
