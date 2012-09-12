@@ -9,15 +9,21 @@ class Dashboard::Tools::Resellers::PayoutsController < Dashboard::DashboardContr
   end
 
   def create
-    success = true
+    success = false
     @reseller = Reseller.find(params[:reseller_id])
 
-    @reseller.partners.each do |partner|
-      payout = partner.make_payout(partner.next_payout_amount / 100.0)
-      success = false unless payout.persisted?
-
-      log_activity(payout)
-      log_activity(partner) if payout.persisted?
+    Partner.transaction do
+      begin
+        @reseller.partners.each do |partner|
+          payout = partner.make_payout(partner.next_payout_amount / 100.0)
+          log_activity(payout)
+          log_activity(partner)
+        end
+        success = true
+      rescue ActiveRecord::RecordInvalid => e
+        ::Rails.logger.error "Could not create payout: #{e.message}"
+        raise ActiveRecord::Rollback
+      end
     end
 
     render :json => { :success => success }

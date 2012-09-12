@@ -26,12 +26,17 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
   end
 
   def create
-    partner = Partner.find(params[:partner_id])
-    payout = partner.make_payout(params[:amount])
-    log_activity(payout)
-    log_activity(partner) if payout.persisted?
+    begin
+      partner = Partner.find(params[:partner_id])
+      payout = partner.make_payout(params[:amount])
+      log_activity(payout)
+      log_activity(partner)
+    rescue ActiveRecord::RecordInvalid => e
+      ::Rails.logger.error "Could not create payout: #{e.message}"
+    end
 
-    render :json => { :success => payout.persisted? }
+    # We use #try(:persisted?) because it will be false-y, meaning we don't need to track the status with an extra variable.
+    render :json => { :success => !!payout.try(:persisted?) }
   end
 
   def confirm_payouts
