@@ -11,6 +11,18 @@ describe Mc do
       end
     end
 
+    context 'with a key longer than the allowed maximum' do
+      before :each do
+        @key = "a" * 1000
+      end
+
+      it 'gets and saves successfully' do
+        Mc.put(@key, 1000)
+        Mc.get(@key).should == 1000
+      end
+
+    end
+
     context 'with multiple keys' do
       context 'with first key a miss' do
         it 'returns second key val' do
