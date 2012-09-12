@@ -17,6 +17,7 @@ class Mc
   class << self
     attr_accessor :cache, :distributed_caches
   end
+  self.reset_connection
 
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
