@@ -39,7 +39,7 @@ class GetOffersController < ApplicationController
     end
 
     if @for_preview
-      @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
+      @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id], true, true)], 0]
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
@@ -136,13 +136,13 @@ class GetOffersController < ApplicationController
       @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
       @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
     else
-      @currency = Currency.find_in_cache(params[:currency_id])
+      @currency = Currency.find_in_cache(params[:currency_id], true, true)
       if @currency.present?
         @supports_rewarded = @currency.conversion_rate > 0
         @currency = nil if @currency.app_id != params[:app_id]
       end
     end
-    @publisher_app = App.find_in_cache(params[:app_id])
+    @publisher_app = App.find_in_cache(params[:app_id], true, true)
     return unless verify_records([ @currency, @publisher_app ])
 
     unless @for_preview
