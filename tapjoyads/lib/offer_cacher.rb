@@ -7,9 +7,18 @@ class OfferCacher
                             Offer::FEATURED_BACKFILLED_OFFER_TYPE, Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE,
                             Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
                           ]
-  DEVICE_TYPES          = Offer::ALL_DEVICES | [ "" ]
-  PLATFORMS             = App::PLATFORMS.values | [ "" ]
   HIDE_REWARDED_OPTIONS = [ true, false ]
+  PLATFORM_AND_DEVICE_TYPES = {}
+  App::PLATFORMS.values.each do |platform|
+    case platform
+      when 'Android'
+        PLATFORM_AND_DEVICE_TYPES[platform] = Offer::ANDROID_DEVICES
+      when 'iOS'
+        PLATFORM_AND_DEVICE_TYPES[platform] = Offer::APPLE_DEVICES
+      when 'Windows'
+        PLATFORM_AND_DEVICE_TYPES[platform] = Offer::WINDOWS_DEVICES
+    end
+  end
 
   class << self
 
@@ -49,9 +58,9 @@ class OfferCacher
 
     def cache_unsorted_offers_prerejected(offers, type, save_to_s3 = false)
       offers.each { |o| o.run_callbacks(:cache); o.clear_association_cache }
-      PLATFORMS.each do |platform|
+      PLATFORM_AND_DEVICE_TYPES.each do |platform, device_types|
         HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
-          DEVICE_TYPES.each do |device_type|
+          device_types.each do |device_type|
             cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offers.reject { |o| o.precache_reject?(platform, hide_rewarded_app_installs, device_type) }, save_to_s3)
           end
         end
@@ -164,9 +173,9 @@ class OfferCacher
 
     def populate_rails_cache
       OFFER_TYPES.each do |type|
-        PLATFORMS.each do |platform|
+        PLATFORM_AND_DEVICE_TYPES.each do |platform, device_types|
           HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
-            DEVICE_TYPES.each do |device_type|
+            device_types.each do |device_type|
               RailsCache.put("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", get_unsorted_offers_prerejected(type, platform, hide_rewarded_app_installs, device_type))
             end
           end

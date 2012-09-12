@@ -17,7 +17,7 @@ authorization do
     has_permission_on :dashboard_inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
     has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :dashboard_videos, :to => [:index]
+    has_permission_on :dashboard_videos, :to => [:index, :options, :update_options]
   end
 
   role :agency do
@@ -161,6 +161,7 @@ authorization do
     has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
+    has_permission_on :dashboard_tools, :to => [:monthly_rev_share_report, :download_monthly_rev_share_report]
   end
 
   role :games_editor do
@@ -213,5 +214,7 @@ authorization do
     has_permission_on :dashboard_tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :dashboard_tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
+    has_permission_on :dashboard_tools_coupons, :to => [ :index, :new, :create, :show, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
   end
 end

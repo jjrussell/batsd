@@ -64,6 +64,7 @@ module GetOffersHelper
       parameters << "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&"
       parameters << "currency_name=#{URI::escape(@currency.name)}&"
       parameters << "click_url=#{click_url}&"
+      parameters << "video_url=#{offer.url}&"
       parameters << "video_complete_url=#{video_complete_url}"
 
       "#{prefix}#{parameters}"

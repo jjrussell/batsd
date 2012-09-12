@@ -57,7 +57,7 @@ describe Device do
       @device = FactoryGirl.create(:device)
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
-      @device.advertiser_id = 'test-advertiser-id'
+      @device.idfa = 'test-advertiser-id'
       @device.open_udid = 'test-open-udid'
       @device_identifier = FactoryGirl.create(:device_identifier)
     end
@@ -67,7 +67,7 @@ describe Device do
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.key)).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
-      DeviceIdentifier.should_receive(:new).with(:key => @device.advertiser_id).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.idfa).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
 
@@ -149,10 +149,11 @@ describe Device do
           @offer.save
         end
 
-        context 'where a protocol_handler defined' do
+        context 'where a protocol_handler is defined' do
           it "sets the target app key in sdkless_clicks column to the protocol_handler name" do
             @offer.item.protocol_handler = "handler.name"
-            @offer.item.save
+            @offer.item.save!
+            @offer.app_protocol_handler(true) # re-memoize this value
             @device.handle_sdkless_click!(@offer, @now)
             @device.sdkless_clicks.should have_key "handler.name"
           end
@@ -672,6 +673,32 @@ describe Device do
       @device.suspended?.should be_true
       @device.unsuspend!
       @device.suspended?.should be_false
+    end
+  end
+
+  describe '#set_pending_coupon' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+      @device.stub(:save).and_return(true)
+      @device.set_pending_coupon('123456')
+    end
+
+    it 'should have an array with offer id' do
+      @device.pending_coupons.should include('123456')
+    end
+  end
+
+  describe '#remove_pending_coupon' do
+    before :each do
+      @device = FactoryGirl.create(:device)
+      @device.stub(:save).and_return(true)
+      @device.set_pending_coupon('123')
+      @device.set_pending_coupon('456')
+      @device.remove_pending_coupon('123')
+    end
+
+    it 'should have an array with offer id' do
+      @device.pending_coupons.should include('456')
     end
   end
 end

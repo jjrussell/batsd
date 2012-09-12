@@ -155,8 +155,8 @@ describe SurveyOffer do
       primary_offer.should be_user_enabled
     end
 
-    it 'assigns #reward_value to 15 by default' do
-      primary_offer.reward_value.should == 15
+    it 'assigns #reward_value to the bid value by default' do
+      primary_offer.reward_value.should == primary_offer.bid
     end
 
     it 'assigns #price to 0 by default' do

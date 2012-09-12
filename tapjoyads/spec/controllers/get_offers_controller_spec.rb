@@ -145,15 +145,19 @@ describe GetOffersController do
         publisher_app = FactoryGirl.create(:app, :platform => 'android')
         publisher_app.add_app_metadata('android.GFan', 'def789')
         @currency = FactoryGirl.create(:currency, :app => publisher_app)
+
         @offer1 = FactoryGirl.create(:generic_offer).primary_offer
-        @offer1.update_attributes(:payment => 10)
         @offer1.partner.balance = 10
+        @offer1.update_attributes!(:payment => 10)
+
         @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
         @offer2.partner.balance = 10
+
         app = FactoryGirl.create(:app, :platform => 'android')
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
+
         OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
         @params = {
           :udid => 'stuff',
@@ -424,10 +428,10 @@ describe GetOffersController do
     end
 
     it 'assigns web_request' do
-      get(:index, @params.merge(:exp => 10))
+      get(:index, @params.merge(:exp => 'test'))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == '10'
+      web_request.exp.should == 'test'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
@@ -496,6 +500,33 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
+    end
+
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
+      end
+
+      it "should respect the hide_videos parameter" do
+        get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should be_empty
+
+        get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should == ['abc', '123']
+      end
+
+      it 'respects the apps streaming setting' do
+        app = App.find(@params[:app_id])
+        App.stub(:find_in_cache => app)
+        app.update_attributes(:videos_stream_3g => true)
+
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_true
+
+        app.update_attributes(:videos_stream_3g => false)
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_false
+      end
     end
   end
 end

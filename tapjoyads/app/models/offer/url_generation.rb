@@ -4,7 +4,7 @@ module Offer::UrlGeneration
   end
 
   def destination_url(options)
-    if item_type != 'VideoOffer' && instructions.present?
+    if is_coupon? || (item_type != 'VideoOffer' && instructions.present?)
       instructions_url(options)
     else
       complete_action_url(options)
@@ -42,6 +42,8 @@ module Offer::UrlGeneration
       "#{API_URL_EXT}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
     elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Login'
       "#{API_URL_EXT}/offer_triggered_actions/fb_login?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif is_coupon?
+      "#{API_URL}/coupon_instructions/new?data=#{ObjectEncryptor.encrypt(data)}"
     else
       "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
     end
@@ -126,6 +128,14 @@ module Offer::UrlGeneration
         end
       when 'SurveyOffer'
         final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+      when 'Coupon'
+        params = {
+          :offer_id           => id,
+          :currency_id        => currency.id,
+          :display_multiplier => display_multiplier,
+          :app_id             => publisher_app_id
+        }
+        final_url = "#{API_URL}/coupons/complete?data=#{ObjectEncryptor.encrypt(params)}"
     end
 
     # this is separated from case statement for code readability / separation of concerns
@@ -171,6 +181,7 @@ module Offer::UrlGeneration
     when 'ReengagementOffer'  then 'reengagement'
     when 'SurveyOffer'        then "survey"
     when 'DeeplinkOffer'      then 'deeplink'
+    when 'Coupon'             then 'coupon'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end

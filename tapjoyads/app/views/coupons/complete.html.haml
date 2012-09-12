@@ -1,0 +1,336 @@
+.ui-joy-mask
+  #panel.ui-joy-panel.coupon
+    .header
+      .grey-box.highlight
+        .padit
+          .heading
+            You've earned #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}
+            in #{@publisher_app.name} by completing #{@coupon.name}!
+          %h3 Success
+          .reward-button
+            %a #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])}
+            %a #{@currency.name}
+          .instructions
+            %p.blurb.center
+              The next time you check your inbox there will a coupon for #{@coupon.name}. You need to use the coupon
+              in order to receive your currency of #{@currency.get_visual_reward_amount(@offer, params[:display_multiplier])} #{@currency.name}.
+              #{@coupon.fine_print}.
+
+  #privacy
+    = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+
+  #adsby
+    %span= t('text.shared.ads_by')
+    #logo
+
+    %style{ :type => 'text/css' }
+      :plain
+        html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,abbr,address,cite,code,del,dfn,em,img,ins,kbd,q,samp,small,strong,sub,sup,var,b,i,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{ margin:0; padding:0; border:0; outline:0; font-size:100%; vertical-align:baseline; background:transparent}body{ line-height:1}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{ display:block}nav ul{ list-style:none}blockquote,q{ quotes:none}blockquote:before,blockquote:after,q:before,q:after{ content:''; content:none}a{ margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent}ins{ background-color:#ff9; color:#000; text-decoration:none}mark{ background-color:#ff9; color:#000; font-style:italic; font-weight:bold}del{ text-decoration:line-through}abbr[title],dfn[title]{ border-bottom:1px dotted; cursor:help}table{ border-collapse:collapse; border-spacing:0}hr{ display:block; height:1px; border:0;  border-top:1px solid #ccc; margin:1em 0; padding:0}input,select{ vertical-align:middle}
+
+        body {
+          background-color: #f0f0f0;
+          font-size: 100%/16px;
+          font-family: "Helvetica", Arial, Helvetica, sans-serif;
+          font-weight: normal;
+        }
+
+        .button-wrapper .button {
+          background: url('/images/api/gray_button_tile.png') repeat-x 0 0 !important;
+        }
+
+        h3 {
+          text-align: center;
+          margin-top: 20px;
+        }
+
+        .container {
+          border-bottom: 1px solid #888;
+          box-shadow: inset 0 1px 0 #fff;
+          padding: 10px;
+        }
+
+        #privacy a {
+          font-size: 75%;
+          color: #004E09;
+        }
+
+        #privacy {
+          float: left;
+          margin-left: 5%;
+          text-decoration: underline;
+        }
+
+        #adsby {
+          margin-top: 2px;
+          float: right;
+          margin-right: 5%;
+        }
+
+        span.small {
+          color: #999;
+          display: block;
+          font-size: 85%;
+          margin-top: 5px;
+        }
+
+        .ui-joy-mask {
+          background: rgba(79,79,79, .9);
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          z-index: 99;
+        }
+
+        .ui-joy-panel {
+          background: #f4f4f4;
+          border-radius: 4px;
+          box-shadow: 0 0 4px rgba(0,0,0, .5);
+          font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+          margin: 15px auto;
+          position: relative;
+          width: 90%;
+          z-index: 100;
+        }
+
+        .ui-joy-panel .title-header {
+          margin-top: 20px;
+        }
+
+        .ui-joy-panel .header .heading {
+          background: url('/images/api/header_tile.png') repeat-x 0 0 !important;
+        }
+
+        .ui-joy-panel .grey-box {
+          background: rgb(240,240,240);
+          background: -moz-linear-gradient(top, rgba(240,240,240,1) 0%, rgba(233,233,233,1) 37%, rgba(227,227,227,1) 74%, rgba(222,222,222,1) 100%);
+          background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,240,240,1)), color-stop(37%,rgba(233,233,233,1)), color-stop(74%,rgba(227,227,227,1)), color-stop(100%,rgba(222,222,222,1)));
+          background: -webkit-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+          background: -o-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+          background: -ms-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+          background: linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
+          filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#dedede',GradientType=0 );
+          border-top-left-radius: 3px;
+          border-top-right-radius: 3px;
+          box-shadow: inset 0 -1px 0 #bbb;
+        }
+
+        .ui-joy-panel .instructions {
+          box-shadow: inset 0 1px 0 #fff;
+          color: #6e6e6e;
+          padding: 25px 15px 0;
+          text-shadow: 0 1px 0 #fff;
+        }
+
+        .ui-joy-panel .instructions span {
+          display: block;
+          font-size: 70%;
+        }
+
+        .reward-button {
+          background: -moz-linear-gradient(top, rgba(255,192,0,1) 0%, rgba(255,183,0,1) 36%, rgba(255,156,0,1) 71%, rgba(255,141,0,1) 100%);
+          background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,192,0,1)), color-stop(36%,rgba(255,183,0,1)), color-stop(71%,rgba(255,156,0,1)), color-stop(100%,rgba(255,141,0,1)));
+          background: -webkit-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+          background: -o-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+          background: -ms-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+          background: linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
+          -moz-box-sizing: border-box;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          border: 1px solid #b37201;
+          border-radius: 4px;
+          box-shadow: inset 0 1px 0 #fff736, 0 1px 0 rgba(0,0,0, .1);
+          padding: 7px;
+          width:8%;
+          margin-left:auto;
+          margin-right:auto;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+
+        .reward-button a {
+          color: #fff;
+          display: block;
+          font-size: 100%;
+          font-weight: bold;
+          text-align: center;
+          text-decoration: none;
+          text-shadow: 0 -1px 0 #cc7f26;
+        }
+
+        .grey-box.highlight {
+          border: 1px solid #c1c1c1;
+          border-radius: 4px;
+          box-shadow: none;
+          font-weight: bold;
+        }
+
+        .grey-box.highlight .padit {
+          padding: 12px 10px 12px 0;
+          margin-left: 10px;
+        }
+
+        .ui-joy-panel .grey-box .heading {
+          color: #414141;
+          font-size: 100%;
+          font-weight: 700;
+          margin-left: 5px;
+          text-shadow: 0 1px 0 #f9f9f9;
+        }
+
+        .padit {
+          padding: 5px 6px;
+        }
+
+        .blurb {
+          color: #555;
+          font-size: 84%;
+          line-height: 100%;
+          margin: 5px 0;
+        }
+
+        div.ui-joy-button {
+        }
+
+        div.ui-joy-button.disabled a {
+          cursor: default;
+          opacity: .5;
+        }
+
+        div.ui-joy-button a.text-left {
+          text-align: left;
+        }
+
+        div.ui-joy-button a.text-right {
+          text-align: right;
+        }
+
+        div.ui-joy-button a.text-center {
+          text-align: center;
+        }
+
+        div.ui-joy-button a {
+          display: block;
+          position: relative;
+          text-decoration: none;
+          margin: 0;
+          padding: 6px 8px 7px 8px;
+        }
+
+        div.ui-joy-button.padfix a {
+          padding: 7px 8px 5px 8px;
+        }
+
+        div.ui-joy-button a input {
+          background: none;
+          padding: 0;
+          margin: 0;
+          border: 0;
+          font: bold 12px/100% "Helvetica", Arial, Helvetica, sans-serif;
+          padding-bottom: 2px;
+        }
+
+        div.ui-joy-button a.icon {
+          padding-left: 26px !important;
+        }
+
+        div.ui-joy-button a.icon div.img {
+          width: 20px;
+          height: 20px;
+          position: absolute;
+          left: 5px;
+          top: 4px;
+          z-index: 2;
+        }
+
+        div.ui-joy-button a.icon div.img img {
+          width: 20px;
+          height: 20px;
+        }
+
+        div.ui-joy-button a.icon div.img img.icon-check  {
+          background: url(../../css/images/icons.png) no-repeat -17px -17px;
+        }
+
+        div.ui-joy-button a.image {
+          padding: 0;
+          margin: 0;
+        }
+
+        /**
+         * themes
+         */
+        div.ui-joy-button.tapjoy-inset {
+          margin-top: 20px;
+          color: white;
+          width: 30%;
+          margin-left: auto;
+          margin-right: auto;
+          border: 1px solid black;
+          box-shadow: inset 0 1px 0 #bbbbbb, 0 1px 0 #cecece;
+          border-radius: 6px;
+          background: -moz-linear-gradient(top, #a6a6a6 0%, #9a9a9a 25%, #8d8d8d 50%, #808080 75%, #737373 100%);
+          background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #a6a6a6), color-stop(25%,#9a9a9a), color-stop(50%,#8d8d8d), color-stop(75%,#808080), color-stop(100%,#737373));
+          background: -webkit-linear-gradient(top, #a6a6a6 0%, #9a9a9a 25%, #8d8d8d 50%, #808080 75%, #737373 100%);
+          background: -o-linear-gradient(top, #a6a6a6 0%, #9a9a9a 25%, #8d8d8d 50%, #808080 75%, #737373 100%);
+          background: -ms-linear-gradient(top, #a6a6a6 0%, #9a9a9a 25%, #8d8d8d 50%, #808080 75%, #737373 100%);
+        }
+
+        div.ui-joy-button.tapjoy-inset a input {
+          color: #fff;
+          text-shadow: 0 1px 0 #790404;
+        }
+
+        div.ui-joy-button.tapjoy-inset.hover {
+          opacity: .9;
+        }
+
+        div.ui-joy-button.tapjoy-inset.active {
+          background: -moz-linear-gradient(top, rgba(138,26,26,1) 0%, rgba(133,23,23,1) 25%, rgba(122,18,19,1) 50%, rgba(116,16,17,1) 75%, rgba(108,12,13,1) 100%);
+          background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(138,26,26,1)), color-stop(25%,rgba(133,23,23,1)), color-stop(50%,rgba(122,18,19,1)), color-stop(75%,rgba(116,16,17,1)), color-stop(100%,rgba(108,12,13,1)));
+          background: -webkit-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+          background: -o-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+          background: -ms-linear-gradient(top, rgba(138,26,26,1) 0%,rgba(133,23,23,1) 25%,rgba(122,18,19,1) 50%,rgba(116,16,17,1) 75%,rgba(108,12,13,1) 100%);
+          box-shadow: inset 0 1px 0 #790404, 0 1px 0 #c84245;
+          border: 1px solid #790404;
+        }
+
+        #adsby { margin-top: 2px; float: right; margin-right: 5%; }
+        #adsby span { display: inline-block; font-size: 13px; text-decoration: none; vertical-align: top; height: 20px; }
+        #adsby #logo { background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAUCAYAAAAOTSQ2AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBNUU5NjZFRkZFNUYxMUUwOTJCN0UxMzQ3MTUzNTk5NCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBNUU5NjZGMEZFNUYxMUUwOTJCN0UxMzQ3MTUzNTk5NCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkE1RTk2NkVERkU1RjExRTA5MkI3RTEzNDcxNTM1OTk0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkE1RTk2NkVFRkU1RjExRTA5MkI3RTEzNDcxNTM1OTk0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Z3rhigAAB/hJREFUeNrMVgls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) no-repeat; }
+        #adsby #logo { display: inline-block; width: 39px; height: 20px; }
+
+
+/[if gte IE 9]
+  %style{:type => 'text/css'}
+    :plain
+      .gradient {
+         filter: none;
+      }
+
+      .button-wrapper .button {
+        background: url('/images/api/gray_button_tile.png') repeat-x 0 0 !important;
+      }
+
+      ul#offers li .reward {
+        background: url('/images/api/reward_tile.png') repeat-x 0 0 !important;
+      }
+
+      .ui-joy-panel .header .heading {
+        background: url('/images/api/header_tile.png') repeat-x 0 0 !important;
+      }
+
+      @media (max-width:425px){
+        .button-wrapper {
+          .button {
+            font-size: 90%;
+          }
+        }
+
+        .blurb {
+          color: #555;
+          font-size: 84%;
+          line-height: 100%;
+          margin: 5px 0;
+        }

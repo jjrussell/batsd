@@ -44,5 +44,17 @@ describe ActsAsCacheable do
         CacheableObject.find_in_cache(@foo.id, false)
       end
     end
+
+    context 'throw the cache call to a queue' do
+      before :each do
+        @foo.stub(:id).and_return(UUIDTools::UUID.random_create.to_s)
+        Mc.any_instance.stub(:distributed_get).and_return(nil)
+      end
+
+      it 'sqs should receive send_message call' do
+        Sqs.should_receive(:send_message).with(QueueNames::CACHE_RECORD_NOT_FOUND, { :model_name => 'CacheableObject', :id => @foo.id }.to_json)
+        CacheableObject.find_in_cache(@foo.id, true, true)
+      end
+    end
   end
 end

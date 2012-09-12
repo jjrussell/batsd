@@ -40,7 +40,7 @@ class FakeSdb
     end
   end
 
-  def select(query, next_token = nil, consistent = nil)
+  def select(query, next_token = nil, consistent = nil, &block)
     options = parse_query(query)
     domain = options.delete(:from).first.gsub(/[`"']/, '') # strip quotes
     records = fake_sdb_data(domain).dup
@@ -49,6 +49,13 @@ class FakeSdb
       # ruby 1.9 has Hash#keep_if, so let's pretend we doo tooo
       proc = keep_if_proc(options[:where])
       records.delete_if { |key, record| !proc.call(key, record) }
+    end
+
+    if block.is_a?(Proc)
+      # Yield each record
+      records.each do |key, record|
+        block.call(record)
+      end
     end
 
     case options[:select].first

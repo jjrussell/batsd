@@ -29,6 +29,8 @@ Tapjoyad::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.i18n_js_cache = false
+  config.assets.compile = true
+  config.assets.debug = true
 end
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")
@@ -37,6 +39,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
@@ -54,6 +57,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
+MASTERJOBS_URL = local_config['masterjobs_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/dev_tapjoy'
 XMAN = local_config['xman'] || false
 

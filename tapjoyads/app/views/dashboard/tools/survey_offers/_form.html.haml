@@ -1,6 +1,9 @@
+
 %h1= @page_title
 
+
 = form_for( [ :tools, @survey_offer], :html => { :multipart => true, :class => 'tjform' }) do |f|
+  = link_to 'Cancel', tools_survey_offers_path
 
   .field
     = f.label :name, "Name"
@@ -39,6 +42,7 @@
     %button.add_question_button
       Add Question
   = f.submit
+
 
 .hidden
   #help_name_content{:name => 'Name'}

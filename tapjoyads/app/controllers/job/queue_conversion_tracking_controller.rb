@@ -47,6 +47,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     attempt.spend_share            = click.spend_share || currency.get_spend_share(offer)
     attempt.mac_address            = click.mac_address
+    attempt.store_name             = click.store_name
     attempt.created                = installed_at_epoch
     attempt.save
 
@@ -81,6 +82,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
 
     reward = Reward.new(:key => click.reward_key)
     if reward.is_new
+      reward_existed = false
+
       reward.put('created', installed_at_epoch)
       reward.type                   = click.type
       reward.publisher_app_id       = click.publisher_app_id
@@ -109,8 +112,40 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.mac_address            = click.mac_address
       reward.device_type            = click.device_type
       reward.offerwall_rank         = click.offerwall_rank
+      reward.store_name             = click.store_name
 
-      reward.save!
+      begin
+        reward.save!(:expected_attr => { 'type' => nil })
+      rescue Simpledb::ExpectedAttributeError => e
+        reward_existed = true
+      end
+
+      unless reward_existed
+        web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
+        web_request.path              = 'reward'
+        web_request.type              = reward.type
+        web_request.publisher_app_id  = reward.publisher_app_id
+        web_request.advertiser_app_id = reward.advertiser_app_id
+        web_request.displayer_app_id  = reward.displayer_app_id
+        web_request.offer_id          = reward.offer_id
+        web_request.currency_id       = reward.currency_id
+        web_request.publisher_user_id = reward.publisher_user_id
+        web_request.advertiser_amount = reward.advertiser_amount
+        web_request.publisher_amount  = reward.publisher_amount
+        web_request.displayer_amount  = reward.displayer_amount
+        web_request.tapjoy_amount     = reward.tapjoy_amount
+        web_request.currency_reward   = reward.currency_reward
+        web_request.source            = reward.source
+        web_request.udid              = reward.udid
+        web_request.country           = reward.country
+        web_request.exp               = reward.exp
+        web_request.viewed_at         = reward.viewed_at
+        web_request.click_key         = reward.click_key
+        web_request.device_type       = reward.device_type
+        web_request.offerwall_rank    = reward.offerwall_rank
+        web_request.store_name        = reward.store_name
+        web_request.save
+      end
     end
 
     begin
@@ -149,30 +184,6 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     device.set_last_run_time(click.advertiser_app_id)
     device.set_last_run_time(click.publisher_app_id) if !device.has_app?(click.publisher_app_id) || device.last_run_time(click.publisher_app_id) < 1.week.ago
     device.save
-
-    web_request = WebRequest.new(:time => Time.zone.at(installed_at_epoch.to_f))
-    web_request.path              = 'reward'
-    web_request.type              = reward.type
-    web_request.publisher_app_id  = reward.publisher_app_id
-    web_request.advertiser_app_id = reward.advertiser_app_id
-    web_request.displayer_app_id  = reward.displayer_app_id
-    web_request.offer_id          = reward.offer_id
-    web_request.currency_id       = reward.currency_id
-    web_request.publisher_user_id = reward.publisher_user_id
-    web_request.advertiser_amount = reward.advertiser_amount
-    web_request.publisher_amount  = reward.publisher_amount
-    web_request.displayer_amount  = reward.displayer_amount
-    web_request.tapjoy_amount     = reward.tapjoy_amount
-    web_request.currency_reward   = reward.currency_reward
-    web_request.source            = reward.source
-    web_request.udid              = reward.udid
-    web_request.country           = reward.country
-    web_request.exp               = reward.exp
-    web_request.viewed_at         = reward.viewed_at
-    web_request.click_key         = reward.click_key
-    web_request.device_type       = reward.device_type
-    web_request.offerwall_rank    = reward.offerwall_rank
-    web_request.save
   end
 
   def generate_web_requests(attempt)
@@ -194,6 +205,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.udid                   = attempt.udid
     web_request.country                = attempt.country
     web_request.viewed_at              = attempt.viewed_at
+    web_request.store_name             = attempt.store_name
     web_request.click_key              = attempt.click_key
     web_request.conversion_attempt_key = attempt.key
     web_request.resolution             = attempt.resolution

@@ -10,6 +10,7 @@ describe Offer do
   it { should belong_to :partner }
   it { should belong_to :item }
   it { should belong_to :prerequisite_offer }
+  it { should belong_to :coupon }
 
   it { should validate_presence_of :partner }
   it { should validate_presence_of :item }
@@ -456,6 +457,12 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
+  it "doesn't reject miniscule offers with the override enabled" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.rate_filter_override = true
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
+
   it "excludes the appropriate columns for the for_offer_list scope" do
     offer = Offer.for_offer_list.find(@offer.id)
     fetched_cols = offer.attribute_names & Offer.column_names
@@ -477,7 +484,7 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id'
+                                  'app_metadata_id', 'rate_filter_override'
                                 ].sort
   end
 
@@ -1102,45 +1109,79 @@ describe Offer do
   end
 
   context "An App Offer for a free app" do
-    before :each do
-      Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
-    end
+    # need to use the HasOneAssociation's "target" in order for stubbing to work
+    let(:offer) { @offer.target }
 
     context "with banner_creatives" do
       before :each do
-        @offer.featured = true
-        @offer.banner_creatives = %w(480x320 320x480)
+        offer.banner_creatives = %w(320x50 640x100)
       end
 
       it "fails if asset data not provided" do
-        @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
+        offer.save.should be_false
+        offer.errors[:custom_creative_320x50_blob].join.should == "320x50 custom creative file not provided."
+        offer.errors[:custom_creative_640x100_blob].join.should == "640x100 custom creative file not provided."
       end
 
-      it "uploads assets to s3 when data is provided" do
-        @offer.banner_creative_480x320_blob = "image_data"
-        @offer.banner_creative_320x480_blob = "image_data"
+      context "when asset data is provided" do
+        before :each do
+          @image_320x50 = read_asset('custom_320x50.png', 'banner_ads')
+          @image_640x100 = read_asset('custom_640x100.png', 'banner_ads')
+          offer.banner_creative_320x50_blob = @image_320x50
+          offer.banner_creative_640x100_blob = @image_640x100
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+          offer.stub(:banner_creative_s3_object).and_return(FakeObject.new("dummy_data"))
+        end
 
-        @offer.save!
+        it "uploads assets to s3" do
+          offer.should_receive(:upload_banner_creative!).with(@image_320x50, "320x50").and_return(nil)
+          offer.should_receive(:upload_banner_creative!).with(@image_640x100, "640x100").and_return(nil)
+
+          offer.save!
+        end
+
+        it "keeps instance variables intact if a transaction error occurs" do
+          begin
+            ActiveRecord::Base.transaction do
+              offer.save!
+              raise "intentional transaction error"
+            end
+          rescue => e
+            raise e unless e.message == "intentional transaction error"
+          end
+
+          offer.banner_creative_320x50_blob.should == @image_320x50
+          offer.banner_creative_640x100_blob.should == @image_640x100
+          uploaded_banner_creatives = offer.send(:uploaded_banner_creatives) # private method
+          uploaded_banner_creatives['320x50'].should == [@image_320x50]
+          uploaded_banner_creatives['640x100'].should == [@image_640x100]
+
+          offer.save! # ensure that calling save again doesn't break
+        end
+
+        it "should clear instance variables if transaction succeeds" do
+          offer.save!
+
+          offer.banner_creative_320x50_blob.should be_empty
+          offer.banner_creative_640x100_blob.should be_empty
+          offer.instance_variable_get("@uploaded_banner_creatives").should be_nil
+        end
       end
 
       it "copies s3 assets over when cloned" do
         s3object = FakeObject.new("")
         s3object.write("image_data")
-        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(s3object)
-        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(s3object)
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+        offer.stub(:banner_creative_s3_object).with("320x50").and_return(s3object)
+        offer.stub(:banner_creative_s3_object).with("640x100").and_return(s3object)
 
-        clone = @offer.clone
+        clone = offer.clone
+        clone.instance_variable_set('@mock_proxy', nil) # reset rspec magic-ness, since we called .clone
+
+        clone.should_receive(:upload_banner_creative!).with("image_data", "320x50")
+        clone.should_receive(:upload_banner_creative!).with("image_data", "640x100")
+
         clone.bid = clone.min_bid
-
         clone.save!
       end
     end
@@ -1533,12 +1574,6 @@ describe Offer do
         end
       end
     end
-    context 'Has a reward value with no payment' do
-      it 'should return an array with \'Has a reward value with no Payment\'' do
-        @offer.payment = 0
-        @offer.get_disabled_reasons.should == ['Has a reward value with no Payment']
-      end
-    end
   end
 
   context "show_rate_algorithms" do
@@ -1665,6 +1700,38 @@ describe Offer do
       subject.tracking_for = nil
       subject.save.should be_false
       subject.errors[:tracking_for_id].should be
+    end
+  end
+
+  describe '#show_in_active_campaigns?' do
+    context 'VideoOffer, App, GenericOffer, ActionOffer, Coupon' do
+      it 'should return true if item_type is in context' do
+        ['VideoOffer', 'App', 'GenericOffer', 'ActionOffer', 'Coupon'].each do |offer|
+          @offer.item_type = offer
+          @offer.show_in_active_campaigns?.should be_true
+        end
+      end
+    end
+    context 'Unrelated offer' do
+      it 'should return false' do
+        @offer.item_type = 'FailOffer'
+        @offer.show_in_active_campaigns?.should be_false
+      end
+    end
+  end
+
+  describe '#is_coupon?' do
+    context 'is a coupon' do
+      it 'should return true' do
+        @offer.item_type = 'Coupon'
+        @offer.is_coupon?.should be_true
+      end
+    end
+    context 'is not a coupon' do
+      it 'should return false' do
+        @offer.item_type = 'ActionOffer'
+        @offer.is_coupon?.should be_false
+      end
     end
   end
 end

@@ -19,6 +19,7 @@ Tapjoyad::Application.routes.draw do
     match :survey
     match :test_offer
     match :test_video_offer
+    match :coupon
   end
   # TODO: make display_ad routes better
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
@@ -43,6 +44,7 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
+  resources :coupon_instructions, :only => [:new, :create]
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
   match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
@@ -53,6 +55,7 @@ Tapjoyad::Application.routes.draw do
   match 'offer_completed/gambit' => 'offer_completed#gambit'
   match 'offer_completed/paypal' => 'offer_completed#paypal'
   match 'offer_completed/socialvibe' => 'offer_completed#socialvibe'
+  match 'offer_completed/adility' => 'offer_completed#adility'
 
   resource :points do
     collection do
@@ -77,6 +80,8 @@ Tapjoyad::Application.routes.draw do
       get :complete
     end
   end
+
+  match 'coupons/complete' => 'coupons#complete', :as => :coupon_complete
 
   match 'privacy' => 'documents#privacy'
   match 'privacy.html' => 'documents#privacy'

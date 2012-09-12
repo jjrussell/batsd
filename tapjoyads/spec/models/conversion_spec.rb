@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+# TODO: test REWARD_TYPES
+
 describe Conversion do
   subject { FactoryGirl.create(:conversion) }
 
