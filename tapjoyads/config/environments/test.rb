@@ -111,9 +111,6 @@ TAPJOY_GAMES_INVITATION_OFFER_ID = '8a9e4550-6230-40f4-bd6b-6c376fd37ac3'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 
-AMQP_URL = 'amqp://guest:guest@localhost'
-ANALYTICS_REDIS_URL = 'redis://127.0.0.1:6379'
-
 Savon.configure do |config|
   ##
   ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
