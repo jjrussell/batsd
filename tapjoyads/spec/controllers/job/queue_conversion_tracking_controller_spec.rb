@@ -178,6 +178,15 @@ describe Job::QueueConversionTrackingController do
       end
     end
 
+    context 'a reward is simultaneously created' do
+      it 'does not create another WebRequest' do
+        Reward.any_instance.stub(:save!).and_raise(Simpledb::ExpectedAttributeError)
+        request = WebRequest.new(:time => Time.zone.now)
+        WebRequest.should_receive(:new).once().and_return(request);
+        do_get
+      end
+    end
+
     context 'offer is rewarded and the currency has a callback url' do
       before :each do
         offer = FactoryGirl.create(:app).primary_offer
