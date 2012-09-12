@@ -109,9 +109,6 @@ ENV['position_in_class']   = "before"
 ENV['exclude_tests']       = "true"
 ENV['exclude_fixtures']    = "true"
 
-AMQP_URL = 'amqp://guest:guest@localhost'
-ANALYTICS_REDIS_URL = 'redis://127.0.0.1:6379'
-
 Savon.configure do |config|
   ##
   ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
