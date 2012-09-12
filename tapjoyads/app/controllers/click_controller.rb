@@ -264,7 +264,7 @@ class ClickController < ApplicationController
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
-    update_web_request_store_name(App.find_in_cache(params[:publisher_app_id]), @web_request)
+    update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 
   def save_web_request

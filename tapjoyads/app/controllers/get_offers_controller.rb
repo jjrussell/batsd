@@ -157,7 +157,7 @@ class GetOffersController < ApplicationController
 
     if @save_web_requests
       @web_request = generate_web_request
-      update_web_request_store_name(@publisher_app, @web_request)
+      update_web_request_store_name(@web_request, nil, @publisher_app)
     end
     @show_papaya = false
     @papaya_offers = {}
@@ -197,7 +197,7 @@ class GetOffersController < ApplicationController
   def save_impressions
     if @save_web_requests
       web_request = generate_web_request
-      update_web_request_store_name(@publisher_app, web_request)
+      update_web_request_store_name(web_request, nil, @publisher_app)
       @offer_list.each_with_index do |offer, i|
         web_request.replace_path('offerwall_impression')
         web_request.offer_id = offer.id

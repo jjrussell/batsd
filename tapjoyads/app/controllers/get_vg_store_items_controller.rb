@@ -14,7 +14,7 @@ class GetVgStoreItemsController < ApplicationController
 
     web_request = WebRequest.new
     web_request.put_values('get_vg_items', params, ip_address, geoip_data, request.headers['User-Agent'])
-    update_web_request_store_name(App.find_in_cache(params[:app_id]), web_request)
+    update_web_request_store_name(web_request, params[:app_id])
     web_request.save
   end
 
