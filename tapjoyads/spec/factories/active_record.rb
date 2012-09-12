@@ -14,6 +14,13 @@ FactoryGirl.define do
     end
   end
 
+  factory :optimized_rank_boost, :parent => :user do
+    after_build do |optim|
+      role = UserRole.find_or_create_by_name('optimized_rank_boost', :employee => true)
+      optim.user_roles << role
+    end
+  end
+
   factory :account_mgr_user, :parent => :user do
     association :current_partner, :factory => :partner
     after_build do |account_mgr|
@@ -258,6 +265,7 @@ FactoryGirl.define do
     start_time { Time.zone.now }
     end_time   { Time.zone.now + 1.hour }
     amount 1
+    rank_boost_type 'native'
   end
 
   factory :action_offer do

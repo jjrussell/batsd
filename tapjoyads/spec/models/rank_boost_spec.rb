@@ -21,29 +21,98 @@ describe RankBoost do
   end
 
   context "starting before now and ending after now" do
-    before :each do
-      @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now)
-    end
-
-    it "is active" do
-      @rank_boost.should be_active
-    end
-
-    it "is in the active scope" do
-      RankBoost.active.should include @rank_boost
-    end
-
-    context "that is deactivated" do
+    context 'not optimized rank boost' do
       before :each do
-        @rank_boost.deactivate!
+        @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now)
       end
 
-      it "is no longer active" do
-        @rank_boost.should_not be_active
+      it "is active" do
+        @rank_boost.should be_active
       end
 
-      it "is not in the active scope" do
-        RankBoost.active.should_not include @rank_boost
+      it "is in the active scope" do
+        RankBoost.active.should include @rank_boost
+      end
+
+      it 'is in the not_optimized scope' do
+        RankBoost.not_optimized.should include @rank_boost
+      end
+
+      it 'is not in the optimized scope' do
+        RankBoost.optimized.should_not include @rank_boost
+      end
+
+      it 'is in the active not_optimized scope' do
+        RankBoost.active.not_optimized.should include @rank_boost
+      end
+
+      context "that is deactivated" do
+        before :each do
+          @rank_boost.deactivate!
+        end
+
+        it "is no longer active" do
+          @rank_boost.should_not be_active
+        end
+
+        it "is not in the active scope" do
+          RankBoost.active.should_not include @rank_boost
+        end
+
+        it 'is in the not_optimized scope' do
+          RankBoost.not_optimized.should include @rank_boost
+        end
+
+        it 'is not in the optimized scope' do
+          RankBoost.optimized.should_not include @rank_boost
+        end
+      end
+    end
+    context 'optimized rank boost' do
+      before :each do
+        @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now, :rank_boost_type => 'optimized')
+      end
+
+      it "is active" do
+        @rank_boost.should be_active
+      end
+
+      it "is in the active scope" do
+        RankBoost.active.should include @rank_boost
+      end
+
+      it 'is in the optimized scope' do
+        RankBoost.optimized.should include @rank_boost
+      end
+
+      it 'is not in the not_optimized scope' do
+        RankBoost.not_optimized.should_not include @rank_boost
+      end
+
+      it 'is in the active optimized scope' do
+        RankBoost.active.optimized.should include @rank_boost
+      end
+
+      context "that is deactivated" do
+        before :each do
+          @rank_boost.deactivate!
+        end
+
+        it "is no longer active" do
+          @rank_boost.should_not be_active
+        end
+
+        it "is not in the active scope" do
+          RankBoost.active.should_not include @rank_boost
+        end
+
+        it 'is not in the not_optimized scope' do
+          RankBoost.not_optimized.should_not include @rank_boost
+        end
+
+        it 'is in the optimized scope' do
+          RankBoost.optimized.should include @rank_boost
+        end
       end
     end
   end

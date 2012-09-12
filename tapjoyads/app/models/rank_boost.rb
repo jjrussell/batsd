@@ -16,7 +16,7 @@ class RankBoost < ActiveRecord::Base
 
   belongs_to :offer
 
-  validates_presence_of :start_time, :end_time, :offer
+  validates_presence_of :start_time, :end_time, :offer, :rank_boost_type
   validates_numericality_of :amount, :allow_nil => false, :only_integer => true
   validate :check_times
 
@@ -24,6 +24,8 @@ class RankBoost < ActiveRecord::Base
 
   scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
   scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
+  scope :optimized, lambda { { :conditions => [ "rank_boost_type = ?", "optimized" ] } }
+  scope :not_optimized, lambda { { :conditions => [ "rank_boost_type != ?", "optimized" ] } }
 
   def partner_id
     offer.partner_id
@@ -39,6 +41,10 @@ class RankBoost < ActiveRecord::Base
     self.save
   end
 
+  def is_optimized?
+    rank_boost_type == 'optimized'
+  end
+
 private
 
   def check_times
@@ -48,7 +54,7 @@ private
   end
 
   def calculate_rank_boost_for_offer
-    offer.calculate_rank_boost!
+    self.is_optimized? ? offer.calculate_optimized_rank_boost! : offer.calculate_rank_boost!
   end
 
 end

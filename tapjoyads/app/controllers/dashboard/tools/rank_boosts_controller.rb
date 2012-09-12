@@ -4,10 +4,9 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :setup
-  after_filter :save_activity_logs, :only => [ :create, :update, :deactivate ]
 
   def index
-    boosts = RankBoost.includes([:offer])
+    boosts = RankBoost.includes([:offer]).not_optimized
     if params[:filter] == 'active' && @offer.present?
       boosts = boosts.active.where(:offer_id => @offer.id)
     elsif params[:filter] == 'active'
@@ -26,7 +25,8 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   def create
     @rank_boost = RankBoost.new(params[:rank_boost])
     log_activity(@rank_boost)
-    if @rank_boost.save
+    if @rank_boost.save && @offer.present?
+      save_activity_logs
       flash[:notice] = 'Rank Boost created.'
       redirect_to statz_path(@rank_boost.offer_id)
     else
@@ -39,7 +39,8 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
 
   def update
     log_activity(@rank_boost)
-    if @rank_boost.update_attributes(params[:rank_boost])
+    if @rank_boost.update_attributes(params[:rank_boost]) && @offer.present?
+      save_activity_logs
       flash[:notice] = 'Rank Boost updated.'
       redirect_to statz_path(@rank_boost.offer_id)
     else
@@ -49,7 +50,8 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
 
   def deactivate
     log_activity(@rank_boost)
-    if @rank_boost.deactivate!
+    if @rank_boost.deactivate! && @offer.present?
+      save_activity_logs
       flash[:notice] = 'Rank Boost deactivated.'
     else
       flash[:error] = 'Rank Boost could not be deactivated.'

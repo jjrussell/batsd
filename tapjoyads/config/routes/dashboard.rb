@@ -330,6 +330,11 @@ Tapjoyad::Application.routes.draw do
             post :deactivate
           end
         end
+        resources :optimized_rank_boosts, :except => [:show, :destroy] do
+          member do
+            post :deactivate
+          end
+        end
         resources :external_publishers, :only => [:index, :update]
         resources :jobs, :except => [:show]
         resources :earnings_adjustments, :only => [:new, :create]

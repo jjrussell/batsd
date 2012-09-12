@@ -2,7 +2,7 @@
   Please note that the start time and end time will be recorded in
   %span.timezone #{current_user.time_zone}
   time zone.
-= form_for [ :tools, @rank_boost ], :html => { :class => 'tjform' } do |f|
+= form_for [ :tools, @optimized_rank_boost ], :html => { :class => 'tjform' } do |f|
 
   %table
     %tr
@@ -11,44 +11,44 @@
         #help_offer.help ?
       %td
         = text_field_tag('search_box', @offer.present? ? @offer.search_result_name : '', :size => '40')
-        = error_message_on @rank_boost, :offer
+        = error_message_on @optimized_rank_boost, :offer
         = f.hidden_field :offer_id
     %tr
       %th
         = f.label :start_time, 'Start Time'
         #help_start_time.help ?
       %td
-        = f.text_field :start_time, :value => @rank_boost.start_time.present? ? @rank_boost.start_time.to_s(:mdy_ampm) : ''
-        = error_message_on @rank_boost, :start_time
+        = f.text_field :start_time, :value => @optimized_rank_boost.start_time.present? ? @optimized_rank_boost.start_time.to_s(:mdy_ampm) : ''
+        = error_message_on @optimized_rank_boost, :start_time
     %tr
       %th
         = f.label :end_time, 'End Time'
         #help_end_time.help ?
       %td
-        = f.text_field :end_time, :value => @rank_boost.end_time.present? ? @rank_boost.end_time.to_s(:mdy_ampm) : ''
-        = error_message_on @rank_boost, :end_time
+        = f.text_field :end_time, :value => @optimized_rank_boost.end_time.present? ? @optimized_rank_boost.end_time.to_s(:mdy_ampm) : ''
+        = error_message_on @optimized_rank_boost, :end_time
     %tr
       %th
         = f.label :amount, 'Amount'
         #help_amount.help ?
       %td
         = f.text_field :amount
-        = error_message_on @rank_boost, :amount
+        = error_message_on @optimized_rank_boost, :amount
     %tr
       %th
         = f.label :rank_boost_type, 'Rank Boost Type'
         #help_boost.help ?
       %td
-        = f.text_field :rank_boost_type, :value => 'native', :readonly => true
+        = f.text_field :rank_boost_type, :value => 'optimized', :readonly => true
     %tr
-      %td{ :colspan => 2 }= f.submit 'Save Offer Rank Boost'
+      %td{ :colspan => 2 }= f.submit 'Save Optimized Offer Rank Boost'
 
 .hidden
   #help_offer_content{ :name => 'Offer Name' } The name of the offer. The offer must be selected from the search results in the dropdown.
   #help_start_time_content{ :name => 'Start Time' } When the boost should start.
   #help_end_time_content{ :name => 'End Time' } When the boost should end.
   #help_amount_content{ :name => 'Amount' } How strong the boosting effect should be. Negative numbers will hurt the offer's rank. Values should generally fall between -10 and 10.
-  #help_boost_content{ :name => 'Rank Boost Type' } This field is locked. You are creating an offer with a native rank boost type.
+  #help_boost_content{ :name => 'Rank Boost Type' } This field is locked. You are creating an optimized offer to boost an offer's rank.
 
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
 
@@ -82,3 +82,4 @@
       color: #44a;
       background-color: #ff0;
     }
+

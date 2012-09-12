@@ -144,6 +144,13 @@
     - if permitted_to? :index, :dashboard_tools_shared_files  # file_sharer
       %li= link_to 'My Shared Files', tools_shared_files_path
 
+- if has_permissions_for_one_of? :optimized_rank_boost
+  .page-header
+    %h3 Optimized Rank Boosts
+  %ul
+    - if permitted_to? :index, :dashboard_tools_optimized_rank_boosts
+      %li= link_to 'Manage Optimized Rank Boosts', tools_optimized_rank_boosts_path
+
 - content_for :page_javascript do
   - if permitted_to? :show, :dashboard_statz
     :plain
