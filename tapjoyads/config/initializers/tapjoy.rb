@@ -52,6 +52,8 @@ TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
 RECEIPT_EMAIL = 'email.receipts@tapjoy.com'
 GAMES_ANDROID_MARKET_URL = 'https://play.google.com/store/apps/details?id=com.tapjoy.tapjoy'
 
+SYSLOG_NG_LOGGER = SyslogLogger.new("#{RUN_MODE_PREFIX}rails-web_requests")
+
 Mc.cache.flush if CLEAR_MEMCACHE
 
 AWS.config(
@@ -88,5 +90,3 @@ end
 # Add "RightAws::AwsError: sdb.amazonaws.com temporarily unavailable: (getaddrinfo: Temporary failure in name resolution)"
 # to the list of transient problems which will automatically get retried by RightAws.
 RightAws::RightAwsBase.amazon_problems = RightAws::RightAwsBase.amazon_problems | ['temporarily unavailable', 'InvalidClientTokenId', 'InternalError', 'QueryTimeout']
-
-AnalyticsLogger.default_message_data = {:hostname => HOSTNAME}
