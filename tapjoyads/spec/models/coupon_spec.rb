@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe Coupon do
 
-  subject { FactoryGirl.create(:coupon) }
-
-  it { should have_many(:vouchers) }
   it { should have_many(:offers) }
   it { should belong_to(:partner) }
   it { should belong_to(:prerequisite_offer) }
