@@ -428,10 +428,10 @@ describe GetOffersController do
     end
 
     it 'assigns web_request' do
-      get(:index, @params.merge(:exp => 10))
+      get(:index, @params.merge(:exp => 'test'))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == 'control'
+      web_request.exp.should == 'test'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
@@ -500,6 +500,33 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
+    end
+
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
+      end
+
+      it "should respect the hide_videos parameter" do
+        get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should be_empty
+
+        get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should == ['abc', '123']
+      end
+
+      it 'respects the apps streaming setting' do
+        app = App.find(@params[:app_id])
+        App.stub(:find_in_cache => app)
+        app.update_attributes(:videos_stream_3g => true)
+
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_true
+
+        app.update_attributes(:videos_stream_3g => false)
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_false
+      end
     end
   end
 end

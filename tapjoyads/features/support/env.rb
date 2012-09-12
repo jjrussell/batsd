@@ -43,6 +43,13 @@ rescue NameError
   raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
 end
 
+# Allow step definitions to wait until jQuery is no longer 'active' (eg. has open XHR sockets)
+def wait_for_ajax(timeout = Capybara.default_wait_time)
+  page.wait_until(timeout) do
+    page.evaluate_script 'jQuery.active == 0'
+  end
+end
+
 # Fix for an error with the onchange event handler in Capybara:
 # https://groups.google.com/forum/?fromgroups#!topic/ruby-capybara/LZ6eu0kuRY0
 class Capybara::Selenium::Node < Capybara::Driver::Node
@@ -78,6 +85,10 @@ Before('@tapjoy_marketer') do
   # activate_authlogic
   # UserSession.create!(@user)
 end
+AfterStep('@pause') do
+  sleep(1)
+end
+
 # You may also want to configure DatabaseCleaner to use different strategies for certain features and scenarios.
 # See the DatabaseCleaner documentation for details. Example:
 #

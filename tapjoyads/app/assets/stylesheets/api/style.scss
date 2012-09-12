@@ -216,6 +216,7 @@ ul#offers {
       -webkit-appearance: none;
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
+      overflow: hidden;
 
       a {
         text-decoration: none;
@@ -372,7 +373,7 @@ ul#offers {
     .offer-right {
       position: absolute;
       left: 88px;
-      width: 100%;
+      width: 70%;
     }
 
     .about {
@@ -415,6 +416,13 @@ ul#offers {
       text-shadow: 0 1px 0 rgba(255,255,255, 1);
       width: 100%;
     }
+  }
+
+  li.with-arrow {
+    background-image: url(/images/offerwall/arrow-right-gray.png);
+    background-position: 98% 50%;
+    background-repeat: no-repeat;
+    background-size: 20px;
   }
 }
 
