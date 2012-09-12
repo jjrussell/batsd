@@ -108,6 +108,9 @@ module Offer::Rejecting
     # Conquer Online HD iOS
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) =>
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202),
+    # Blitzoo Games
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b) =>
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
