@@ -115,6 +115,7 @@ FactoryGirl.define do
     store_name 'iphone.AppStore'
     store_id   { FactoryGirl.generate(:name) }
     name       { FactoryGirl.generate(:name) }
+    developer  { FactoryGirl.generate(:name) }
   end
 
   factory :app_metadata_mapping do
