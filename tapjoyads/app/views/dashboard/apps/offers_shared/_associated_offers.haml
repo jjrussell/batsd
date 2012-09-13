@@ -17,10 +17,11 @@
             %th Active
             %th
           - @app.tapjoy_enabled_associated_offers.each do |offer|
-            %tr{:class => [cycle('odd','even'), offer.enabled? ? 'enabled' : 'disabled'] }
+            %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
               %td= offer.name_suffix
-              %td= offer.enabled? ? 'Yes' : 'No'
+              %td
+                %input{:type => "checkbox", :checked => offer.user_enabled?, :offer_id => offer.id, :url => toggle_app_offer_path(:id => offer.id, :app_id => @app.id) }
 
   - content_for :page_javascript do
     :plain
@@ -28,6 +29,19 @@
         $('#associated_list').slideToggle();
         return false;
       });
+
+      $('#associated_offers input').click( function(event) {
+        $(this).prop("disabled", true)
+        event.stopPropagation();
+        $.post($(this).attr('url'), {"user_enabled" : $(this).prop("checked")}, function(){
+          $(event.target).prop("checked",  !$(event.target).prop("checked"))
+          $("#offer_row_" + $(event.target).attr('offer_id')).toggleClass('disabled')
+        })
+        .always (function () {
+          $(event.target).prop("disabled", false)
+        })
+        return false;
+      })
 
   - content_for :page_styles do
     :plain
