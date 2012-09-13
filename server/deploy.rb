@@ -72,7 +72,7 @@ Dir.chdir "tapjoyads" do
   system "../server/update_geoip.rb"
 
   puts "Precompiling assets"
-  system "RAILS_ENV=production bundle exec assets:precompile"
+  system "RAILS_ENV=production bundle exec rake assets:precompile"
 
   puts "Restarting unicorn"
   system "../server/start_or_reload_unicorn.rb"
