@@ -127,7 +127,6 @@ describe GetOffersController do
         offer2.partner.balance = 10
         offer3 = offer1.clone
         offer3.save
-        offer3.stub(:rank_score).and_return(100000)
         offer3.partner.balance = 10
         offer4 = offer1.clone
         offer4.save
@@ -135,8 +134,8 @@ describe GetOffersController do
         OfferCacher.stub(:get_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
 
         get(:index, @params)
-        assigns(:offer_list).include?([offer1, offer2, offer4]).should be_false
-        assigns(:offer_list).include?(offer3).should be_true
+        assigns(:offer_list).include?([offer2, offer3, offer4]).should be_false
+        assigns(:offer_list).include?(offer1).should be_true
       end
     end
 

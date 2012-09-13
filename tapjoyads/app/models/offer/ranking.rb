@@ -2,7 +2,7 @@ module Offer::Ranking
 
   def self.included(base)
     base.class_eval do
-      attr_accessor :rank_score
+      attr_writer :rank_score
       before_save :calculate_ranking_fields
     end
   end
@@ -33,14 +33,11 @@ module Offer::Ranking
   end
 
   def precache_rank_score_for(currency_group_id)
-    precache_rank_scores[currency_group_id]
+    precache_rank_scores[CurrencyGroup::DEFAULT_ID]
   end
 
-  def postcache_rank_score(currency)
-    self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
-    self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
-    self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
-    rank_score
+  def rank_score
+    @rank_score ||= precache_rank_score_for(CurrencyGroup::DEFAULT_ID) || 0
   end
 
   def bid_for_ranks

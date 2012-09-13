@@ -201,12 +201,7 @@ class OfferList
       OfferCacher.get_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
     end.value
 
-    if @currency
-      default_offers.each { |o| o.postcache_rank_score(@currency) }
-      default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
-    else
-      default_offers
-    end
+    default_offers
   end
 
   def optimization_reject?(offer)
