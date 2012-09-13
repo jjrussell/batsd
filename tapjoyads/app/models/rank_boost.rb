@@ -13,7 +13,8 @@
 
 class RankBoost < ActiveRecord::Base
   OPTIMIZED_RANK_BOOST_MAX = 1000
-  RANK_BOOST_TYPES = %w(native optimized)
+  NATIVE_VALUE = 0
+  OPTIMIZED_VALUE = 1
 
   include UuidPrimaryKey
 
@@ -28,8 +29,8 @@ class RankBoost < ActiveRecord::Base
 
   scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
   scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
-  scope :optimized, lambda { { :conditions => [ "rank_boost_type = ?", 1 ] } }
-  scope :not_optimized, lambda { { :conditions => [ "rank_boost_type != ?", 1 ] } }
+  scope :optimized, lambda { { :conditions => [ "rank_boost_type = ?", OPTIMIZED_VALUE ] } }
+  scope :not_optimized, lambda { { :conditions => [ "rank_boost_type != ?", OPTIMIZED_VALUE ] } }
 
   def partner_id
     offer.partner_id
@@ -46,7 +47,7 @@ class RankBoost < ActiveRecord::Base
   end
 
   def optimized?
-    RANK_BOOST_TYPES[rank_boost_type] == 'optimized'
+    rank_boost_type == OPTIMIZED_VALUE
   end
 
 private
