@@ -16,7 +16,6 @@ BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26b
                         '355195000000017', '6f2493936ac99c3068d4da6eca711926c496df66500362dceb4b745a63084cf5',
                         '358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8'])
 
-UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
 
 MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
