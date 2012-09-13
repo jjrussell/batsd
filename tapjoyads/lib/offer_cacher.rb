@@ -78,7 +78,16 @@ class OfferCacher
       bucket = S3.bucket(BucketNames::OFFER_DATA) if save_to_s3
       group = 0
 
-      offers.compact.each_slice(GROUP_SIZE) do |offer_group|
+      current_time = Time.now
+      cached_offer_list = CachedOfferList.new
+
+      post_processed_offer_with_rank = []
+      compacted_offers = offers.compact.each_with_index do |offer, i|
+        offer.cached_offer_list_id = cached_offer_list.id
+        post_processed_offer_with_rank << {'offer_id' => offer.id, 'rank' => (i + 1)}
+      end
+
+      compacted_offers.each_slice(GROUP_SIZE) do |offer_group|
         bucket.objects["#{s3_key}.#{group}"].write(:data => Marshal.dump(offer_group)) if save_to_s3
         Mc.distributed_put("#{mc_key}.#{group}", offer_group, false, 1.day)
         group += 1
@@ -87,6 +96,13 @@ class OfferCacher
       bucket.objects["#{s3_key}.#{group}"].write(:data => Marshal.dump([])) if save_to_s3
       Mc.distributed_put("#{mc_key}.#{group}", [], false, 1.day)
       group += 1
+
+      cached_offer_list.generated_at = current_time
+      cached_offer_list.cached_at = current_time
+      cached_offer_list.memcached_key = mc_key
+      cached_offer_list.offer_list = post_processed_offer_with_rank
+      cached_offer_list.cached_offer_type = 'native'
+      cached_offer_list.save
 
       if save_to_s3
         while bucket.objects["#{s3_key}.#{group}"].exists?

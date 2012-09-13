@@ -66,4 +66,8 @@ class FakeObject
   def exists?
     @data ? true : false
   end
+
+  def last_modified
+    Time.now.to_s
+  end
 end

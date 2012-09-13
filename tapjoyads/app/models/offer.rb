@@ -93,6 +93,7 @@ class Offer < ActiveRecord::Base
   MAC_ADDRESS_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf)
 
   attr_reader :video_button_tracking_offers
+  attr_accessor :cached_offer_list_id
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts

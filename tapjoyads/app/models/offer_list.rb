@@ -148,19 +148,12 @@ class OfferList
   end
 
   def sorted_offers_with_rejections(currency_group_id)
-    offers.each do |offer|
-      class << offer; attr_accessor :rejections; end
-      offer.rejections = rejections_for(offer)
-    end
-
+    add_rejections!(offers)
     offers
   end
 
   def sorted_optimized_offers_with_rejections
-    optimized_offers.each do |offer|
-      class << offer; attr_accessor :rejections; end
-      offer.rejections = rejections_for(offer)
-    end
+    add_rejections!(optimized_offers)
     optimized_offers
   end
 
@@ -222,5 +215,12 @@ class OfferList
     offer.postcache_rejections(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
+  end
+
+  def add_rejections!(offers)
+    offers.each do |offer|
+      class << offer; attr_accessor :rejections; end
+      offer.rejections = rejections_for(offer)
+    end
   end
 end
