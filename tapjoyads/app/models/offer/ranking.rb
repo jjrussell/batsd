@@ -37,7 +37,7 @@ module Offer::Ranking
   end
 
   def rank_score
-    @rank_score ||= precache_rank_score_for(CurrencyGroup::DEFAULT_ID) || 0
+    @rank_score ||= (precache_rank_score_for(CurrencyGroup::DEFAULT_ID) || 0)
   end
 
   def bid_for_ranks
