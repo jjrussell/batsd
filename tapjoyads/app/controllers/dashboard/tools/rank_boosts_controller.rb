@@ -5,6 +5,8 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
 
   before_filter :setup
 
+  PER_PAGE = 200
+
   def index
     boosts = RankBoost.includes([:offer]).not_optimized
     if params[:filter] == 'active' && @offer.present?
@@ -14,7 +16,7 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
     elsif @offer.present?
       boosts = boosts.where(:offer_id => @offer.id)
     end
-    @rank_boosts = boosts.paginate(:page => params[:page], :per_page => 200)
+    @rank_boosts = boosts.paginate(:page => params[:page], :per_page => PER_PAGE)
   end
 
   def new
@@ -25,11 +27,16 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   def create
     @rank_boost = RankBoost.new(params[:rank_boost])
     log_activity(@rank_boost)
-    if @rank_boost.save && @offer.present?
-      save_activity_logs
-      flash[:notice] = 'Rank Boost created.'
-      redirect_to statz_path(@rank_boost.offer_id)
+    if @offer.present?
+      if @rank_boost.save
+        save_activity_logs
+        flash[:notice] = 'Rank Boost created.'
+        redirect_to statz_path(@rank_boost.offer_id)
+      else
+        render :new
+      end
     else
+      flash[:error] = "Offer can't be blank."
       render :new
     end
   end
@@ -39,18 +46,23 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
 
   def update
     log_activity(@rank_boost)
-    if @rank_boost.update_attributes(params[:rank_boost]) && @offer.present?
-      save_activity_logs
-      flash[:notice] = 'Rank Boost updated.'
-      redirect_to statz_path(@rank_boost.offer_id)
+    if @offer.present?
+      if @rank_boost.update_attributes(params[:rank_boost])
+        save_activity_logs
+        flash[:notice] = 'Rank Boost updated.'
+        redirect_to statz_path(@rank_boost.offer_id)
+      else
+        render :edit
+      end
     else
+      flash[:error] = "Offer can't be blank."
       render :edit
     end
   end
 
   def deactivate
     log_activity(@rank_boost)
-    if @rank_boost.deactivate! && @offer.present?
+    if @rank_boost.deactivate!
       save_activity_logs
       flash[:notice] = 'Rank Boost deactivated.'
     else

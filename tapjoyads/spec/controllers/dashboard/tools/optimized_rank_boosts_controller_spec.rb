@@ -9,6 +9,19 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     login_as(optimized)
   end
 
+  describe 'rank boost object amount too high' do
+    before :each do
+      @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized', :amount => 4000)
+      @rank_boost.valid?
+    end
+    it 'should not be valid (amount > 1000)' do
+      @rank_boost.should_not be_valid
+    end
+    it 'should have errors' do
+      @rank_boost.errors[:amount].should include("Amount must be <= 1000")
+    end
+  end
+
   describe '#index' do
     context 'with an offer' do
       context 'active rank boosts' do
@@ -183,20 +196,41 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       end
     end
     context 'invalid' do
-      before :each do
-        RankBoost.any_instance.stub(:save).and_return(false)
-        @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
-        RankBoost.stub(:new).and_return(@rank_boost)
-        @params = { :rank_boost =>
-                    { :start_time => @rank_boost.start_time,
-                      :end_time => @rank_boost.end_time,
-                      :rank_boost_type => @rank_boost.rank_boost_type,
-                      :offer_id => @rank_boost.offer.id,
-                      :amount => @rank_boost.amount } }
-        post(:create, @params)
+      context 'unable to save rank boost object' do
+        before :each do
+          RankBoost.any_instance.stub(:save).and_return(false)
+          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
+          RankBoost.stub(:new).and_return(@rank_boost)
+          @params = { :rank_boost =>
+                      { :start_time => @rank_boost.start_time,
+                        :end_time => @rank_boost.end_time,
+                        :rank_boost_type => @rank_boost.rank_boost_type,
+                        :offer_id => @rank_boost.offer.id,
+                        :amount => @rank_boost.amount } }
+          post(:create, @params)
+        end
+        it 'it renders new page' do
+          response.should render_template('new')
+        end
       end
-      it 'it renders new page' do
-        response.should render_template('new')
+      context 'offer is not present' do
+        before :each do
+          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
+          @params = { :rank_boost =>
+                      { :start_time => @rank_boost.start_time,
+                        :end_time => @rank_boost.end_time,
+                        :rank_boost_type => @rank_boost.rank_boost_type,
+                        :amount => @rank_boost.amount } }
+          RankBoost.stub(:new).and_return(@rank_boost)
+          Offer.stub(:find).and_return(nil)
+          post(:create, @params)
+        end
+        it 'has a flash error message' do
+          flash[:error].should == "Offer can't be blank."
+        end
+        it 'renders new page' do
+          response.should render_template('new')
+        end
       end
     end
   end
@@ -237,16 +271,34 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       end
     end
     context 'invalid' do
-      before :each do
-        RankBoost.any_instance.stub(:update_attributes).and_return(false)
-        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
-        @params = { :rank_boost =>
-                    { :amount => 10 },
-                    :id => @rank_boost.id }
-        put(:update, @params)
+      context 'unable to update rank boost object' do
+        before :each do
+          RankBoost.any_instance.stub(:update_attributes).and_return(false)
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @params = { :rank_boost =>
+                      { :amount => 10 },
+                      :id => @rank_boost.id }
+          put(:update, @params)
+        end
+        it 'redirects to offer\'s statz page' do
+          should render_template('edit')
+        end
       end
-      it 'redirects to offer\'s statz page' do
-        should render_template('edit')
+      context 'offer is not present' do
+        before :each do
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @params = { :rank_boost =>
+                      { :amount => 10 },
+                      :id => @rank_boost.id }
+          Offer.stub(:find).and_return(nil)
+          put(:update, @params)
+        end
+        it 'has a flash error message' do
+          flash[:error].should == "Offer can't be blank."
+        end
+        it 'renders new page' do
+          response.should render_template('edit')
+        end
       end
     end
   end

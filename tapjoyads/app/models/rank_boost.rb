@@ -12,6 +12,8 @@
 #
 
 class RankBoost < ActiveRecord::Base
+  OPTIMIZED_RANK_BOOST_MAX = 1000
+
   include UuidPrimaryKey
 
   belongs_to :offer
@@ -19,6 +21,7 @@ class RankBoost < ActiveRecord::Base
   validates_presence_of :start_time, :end_time, :offer, :rank_boost_type
   validates_numericality_of :amount, :allow_nil => false, :only_integer => true
   validate :check_times
+  validate :check_optimized_boost_rank_value
 
   after_save :calculate_rank_boost_for_offer
 
@@ -57,4 +60,7 @@ private
     self.is_optimized? ? offer.calculate_optimized_rank_boost! : offer.calculate_rank_boost!
   end
 
+  def check_optimized_boost_rank_value
+    errors.add :amount, "Amount must be <= 1000" if amount.present? && amount > OPTIMIZED_RANK_BOOST_MAX && is_optimized?
+  end
 end
