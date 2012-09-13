@@ -69,7 +69,7 @@ MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
 ]
 SDB_MEMCACHE_SERVERS = [
-  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-sdb-20120912.fqfjqv.0001.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
