@@ -11,13 +11,12 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
     state = params[:state] =~ /^-?\d+$/ ? params[:state].to_i : Approval.enumerate_state('pending')
     @conditions[:state] = state if state > -1
 
-    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC', :include => :item)
+    @approvals = Approval.where(@conditions).includes(:item).order('created_at ASC').paginate(:page => params[:page])
   end
 
   def history
     @conditions[:state] = Approval.enumerate_states('approved', 'rejected')
-
-    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at DESC')
+    @approvals = Approval.where(@conditions).order('created_at DESC').paginate(:page => params[:page])
     render :index
   end
 
@@ -25,7 +24,7 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
     @conditions[:owner_id] = current_user.id
     @hide_owner = true
 
-    @approvals = Approval.all(:conditions => @conditions, :order => 'created_at ASC')
+    @approvals = Approval.where(@conditions).order('created_at ASC').paginate(:page => params[:page])
     render :index
   end
 

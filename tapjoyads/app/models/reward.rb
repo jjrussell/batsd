@@ -34,6 +34,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :device_type
   self.sdb_attr :offerwall_rank
+  self.sdb_attr :store_name
 
   belongs_to :offer
 

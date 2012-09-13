@@ -421,4 +421,40 @@ describe Partner do
       @partner.should_not be_valid
     end
   end
+
+  describe '#make_payout' do
+    subject { FactoryGirl.create :partner }
+
+    before :each do
+      @payout = FactoryGirl.build(:payout, :partner => subject, :amount => (100.00 * 100).round)
+      @amount = @payout.amount / 100
+    end
+
+    it 'builds a payout' do
+      subject.payouts.should_receive(:create!).and_return(@payout)
+      subject.make_payout(@amount)
+    end
+  end
+
+  describe '#calculate_payout_threshold' do
+    subject { FactoryGirl.create :partner }
+
+    context 'when the amount breaks the base threshold' do
+      let(:amount) { Partner::BASE_PAYOUT_THRESHOLD + 1_000_00 }
+
+      it 'overrides the base payout threshold' do
+        subject.should_receive(:payout_threshold=).with(amount * Partner::APPROVED_INCREASE_PERCENTAGE)
+        subject.calculate_payout_threshold(amount)
+      end
+    end
+
+    context 'when the amount does not break the base threshold' do
+      let(:amount) { 100_00 }
+
+      it 'sets the payout threshold to the base' do
+        subject.should_receive(:payout_threshold=).with(Partner::BASE_PAYOUT_THRESHOLD)
+        subject.calculate_payout_threshold(amount)
+      end
+    end
+  end
 end

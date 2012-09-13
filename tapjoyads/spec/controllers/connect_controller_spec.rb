@@ -62,7 +62,7 @@ describe ConnectController do
           get(:index, @params.merge(:connection_type => 'awesome'))
           response.body.should include('Success')
 
-          last_run = AdminDeviceLastRun.for(@params)
+          last_run = AdminDeviceLastRun.for(@params).first
           last_run.ip_address.should == '0.0.0.0'
           last_run.connection_type.should == 'awesome'
         end

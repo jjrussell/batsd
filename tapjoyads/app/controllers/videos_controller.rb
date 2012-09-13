@@ -5,10 +5,24 @@ class VideosController < ApplicationController
   before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
-    @offer_list = offer_list.get_offers(0, 100).first
+    @options = Hash.new
 
-    if @currency.get_test_device_ids.include?(params[:udid])
-      @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
+    if library_version.control_video_caching?
+      @options.merge!({
+        :cache_auto   => @publisher_app.videos_cache_auto?,
+        :cache_wifi   => @publisher_app.videos_cache_wifi?,
+        :cache_mobile => @publisher_app.videos_cache_3g?
+      })
+    end
+
+    if @show_cached_videos
+      @offer_list = offer_list.get_offers(0, 100).first
+
+      if @currency.get_test_device_ids.include?(params[:udid])
+        @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
+      end
+    else
+      @offer_list = []
     end
   end
 
@@ -42,6 +56,13 @@ class VideosController < ApplicationController
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
     return unless verify_records([ @publisher_app, @currency ])
+
+    if library_version.control_video_caching?
+      @hide_videos = params[:hide_videos] =~ /^1|true$/
+      @show_cached_videos = !@hide_videos && @publisher_app.videos_cache_on?(params[:connection_type])
+    else
+      @show_cached_videos = true
+    end
   end
 
   def offer_list

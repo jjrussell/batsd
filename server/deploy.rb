@@ -71,6 +71,9 @@ Dir.chdir "tapjoyads" do
   puts "Updating GeoIPCity Data"
   system "../server/update_geoip.rb"
 
+  puts "Precompiling assets"
+  puts `bundle exec rake assets:precompile`
+
   puts "Restarting unicorn"
   system "../server/start_or_reload_unicorn.rb"
 

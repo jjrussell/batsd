@@ -23,6 +23,24 @@ class Reseller < ActiveRecord::Base
   validates_presence_of :name
   validates_numericality_of :rev_share, :reseller_rev_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
 
+  scope :to_payout, select("#{Reseller.quoted_table_name}.*, sum(pending_earnings) AS pending_earnings, sum(next_payout_amount) AS next_payout_amount").
+    where("#{Partner.quoted_table_name}.pending_earnings != ?", 0).
+    joins(:partners).order("#{Reseller.quoted_table_name}.name ASC").group("#{Partner.quoted_table_name}.reseller_id")
+  scope :payout_info_changed, lambda { |start_date, end_date|
+    joins(:partners => :payout_info).where("#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date)
+  }
+
+  # These attributes are from the .to_payout scope and need to be read as floats, not strings.
+  %w(pending_earnings next_payout_amount).each do |field|
+    define_method field do
+      (read_attribute(field) || 0).to_f
+    end
+  end
+
+  def leftover_payout_amount
+    pending_earnings - next_payout_amount
+  end
+
   def update_partners_and_currencies
     if rev_share_changed?
       partners.each do |p|

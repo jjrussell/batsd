@@ -7,8 +7,7 @@ class Currency < ActiveRecord::Base
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
-  PLAYDOM_CALLBACK_URL = 'PLAYDOM_DEFINED'
-  SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL, PLAYDOM_CALLBACK_URL ]
+  SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL ]
 
   belongs_to :app
   belongs_to :partner
@@ -254,7 +253,7 @@ class Currency < ActiveRecord::Base
   end
 
   def hide_rewarded_app_installs_for_version?(app_version, source)
-    return false if source == 'tj_games'
+    return false if source == 'tj_games' || source == 'tj_display'
     return false unless hide_rewarded_app_installs?
     return true if minimum_hide_rewarded_app_installs_version.blank?
     return false unless app_version.present?

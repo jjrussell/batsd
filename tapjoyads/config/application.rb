@@ -64,6 +64,10 @@ module Tapjoyad
     end
 
     config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || 'DEFAULT_NON_PROD_API_KEY'
+
+    config.assets.enabled = true
+    config.assets.version = '1.0'
+    config.assets.precompile = YAML.load_file("#{Rails.root}/config/precompile_assets.yml")
   end
 
 end

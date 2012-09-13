@@ -108,6 +108,9 @@ module Offer::Rejecting
     # Conquer Online HD iOS
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) =>
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202),
+    # Blitzoo Games SlotSpot iOS
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b) =>
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -147,6 +150,9 @@ module Offer::Rejecting
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
       { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
+      { :method => :has_coupon_already_pending?, :parameters => [device], :reason => 'coupon_already_requested'},
+      { :method => :has_coupon_offer_expired?, :reason => 'coupon_expired'},
+      { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'}
     ]
     reject_reasons(reject_functions)
   end
@@ -187,7 +193,10 @@ module Offer::Rejecting
     rewarded_offerwall_non_rewarded_reject?(currency, source) ||
     app_store_reject?(store_whitelist) ||
     distribution_reject?(store_name) ||
-    miniscule_reward_reject?(currency)
+    miniscule_reward_reject?(currency) ||
+    has_coupon_already_pending?(device) ||
+    has_coupon_offer_not_started? ||
+    has_coupon_offer_expired?
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -196,7 +205,11 @@ module Offer::Rejecting
 
   def reject_reasons(reject_functions)
     reject_functions.select do |function_hash|
-      send(function_hash[:method], *function_hash[:parameters])
+      if function_hash.keys.include?(:parameters)
+        send(function_hash[:method], *function_hash[:parameters])
+      else
+        send(function_hash[:method])
+      end
     end.map do |function_hash|
       function_hash[:reason].humanize
     end
@@ -234,7 +247,23 @@ module Offer::Rejecting
     currency.charges?(self) && partner_balance <= 0
   end
 
+  def has_coupon_already_pending?(device)
+     has_valid_coupon?(device) && device.pending_coupons.include?(self.id)
+  end
+
+  def has_coupon_offer_not_started?
+    has_valid_coupon? && self.coupon.start_date > Date.today
+  end
+
+  def has_coupon_offer_expired?
+    has_valid_coupon? && self.coupon.end_date <= Date.today
+  end
+
   private
+
+  def has_valid_coupon?(device=true)
+    self.present? && device.present? && !multi_complete? && item_type == 'Coupon'
+  end
 
   def offer_is_the_publisher?(currency)
     return false unless currency
@@ -402,10 +431,11 @@ module Offer::Rejecting
   def tapjoy_games_retargeting_reject?(device)
     has_tjm = device.present? ? device.has_app?(TAPJOY_GAMES_REGISTRATION_OFFER_ID) || device.has_app?(LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID) : false
     if TAPJOY_GAMES_RETARGETED_OFFERS.include?(item_id)
-      device && !has_tjm
+      return (device && !has_tjm)
     elsif TAPJOY_GAMES_OFFERS.include?(item_id)
-      device && has_tjm
+      return (device && has_tjm)
     end
+    false
   end
 
   def source_reject?(source)
@@ -429,7 +459,7 @@ module Offer::Rejecting
   end
 
   def sdkless_reject?(library_version)
-    sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
+    sdkless? && !library_version.to_library_version.sdkless_integration?
   end
 
   def app_store_reject?(store_whitelist)
@@ -446,6 +476,6 @@ module Offer::Rejecting
   def miniscule_reward_reject?(currency)
     currency && currency.rewarded? && rewarded? &&
       currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
-      item_type != 'DeeplinkOffer'
+      item_type != 'DeeplinkOffer' && !rate_filter_override
   end
 end

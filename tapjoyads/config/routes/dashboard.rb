@@ -86,7 +86,12 @@ Tapjoyad::Application.routes.draw do
             post :update_status
           end
         end
-        resources :videos, :only => [:index]
+        resources :videos, :only => [:index] do
+          collection do
+            get :options
+            put :update_options
+          end
+        end
       end
       resource :offer do
         member do
@@ -149,7 +154,7 @@ Tapjoyad::Application.routes.draw do
         end
         member do
           get :last_run_times
-          get 'last_runs/:udid', :action => :last_run, :as => :device_last_run
+          get 'last_runs/:udid(/time/:time)', :action => :last_run, :as => :device_last_run
           get :udids
           get :support_request_reward_ratio
           get :show_rate_reasons
@@ -227,9 +232,9 @@ Tapjoyad::Application.routes.draw do
           get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
+          get :monthly_rev_share_report
+          get :download_monthly_rev_share_report
         end
-
-
       end
 
       namespace :tools do
@@ -264,6 +269,12 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :premier_partners, :only => [:index]
+        resources :coupons do
+          member do
+            put :toggle_enabled
+          end
+        end
+        resources :vouchers, :only => [:show]
         resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
         resources :orders, :only => [:new, :create] do
           collection do
@@ -295,6 +306,9 @@ Tapjoyad::Application.routes.draw do
           member do
             get :info
           end
+        end
+        namespace :resellers do
+          resources :payouts, :only => [:index, :create]
         end
         resources :enable_offer_requests, :only => [:update, :index]
         resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]

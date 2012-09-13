@@ -72,7 +72,8 @@ class AppStore
   }
 
   SDK_STORE_NAMES = {
-    'gfan' => 'android.GFan'
+    'google' => 'android.GooglePlay',
+    'gfan'   => 'android.GFan',
   }
 
   def self.find(id)

@@ -34,6 +34,8 @@ class Conversion < ActiveRecord::Base
     'video'                       => 6,
     'reengagement'                => 7,
     'deeplink'                    => 8,
+    'survey'                      => 9,
+    'coupon'                      => 10,
 
     # Special
     'imported'                    => 999,
@@ -47,6 +49,9 @@ class Conversion < ActiveRecord::Base
     'display_action'              => 1005,
     'display_video'               => 1006,
     'display_reengagement'        => 1007,
+    'display_deeplink'            => 1008,
+    'display_survey'              => 1009,
+    'display_coupon'              => 1010,
 
     # Featured types (all base types +2000)
     'featured_offer'              => 2000,
@@ -57,6 +62,9 @@ class Conversion < ActiveRecord::Base
     'featured_action'             => 2005,
     'featured_video'              => 2006,
     'featured_reengagement'       => 2007,
+    'featured_deeplink'           => 2008,
+    'featured_survey'             => 2009,
+    'featured_coupon'             => 2010,
 
     # TJM types (all base types +3000)
     'tjm_offer'                   => 3000,
@@ -67,6 +75,9 @@ class Conversion < ActiveRecord::Base
     'tjm_action'                  => 3005,
     'tjm_video'                   => 3006,
     'tjm_reengagement'            => 3007,
+    'tjm_deeplink'                => 3008,
+    'tjm_survey'                  => 3009,
+    'tjm_coupon'                  => 3010,
   }
 
   STAT_TO_REWARD_TYPE_MAP = {

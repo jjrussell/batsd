@@ -1,0 +1,4 @@
+= form_tag download_monthly_rev_share_report_tools_path, :method => 'get' do
+  = label_tag :start_time
+  = select_tag 'start_time', options_for_select(@months.reverse)
+  = submit_tag 'Generate'

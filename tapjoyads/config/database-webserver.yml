@@ -1,3 +1,7 @@
 production:
   adapter: sqlite3
   database: db/production.sqlite
+
+production_slave:
+  adapter: sqlite3
+  database: db/production.sqlite

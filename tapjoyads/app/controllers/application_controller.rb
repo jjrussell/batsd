@@ -1,5 +1,6 @@
 # Multiple STI subclasses in one file needs this line to be findable in development mode
 require_dependency 'review_moderation_vote'
+require_dependency 'library_version'
 
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
@@ -301,7 +302,11 @@ class ApplicationController < ActionController::Base
   end
 
   def sdkless_supported?
-    params[:library_version].to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION) && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+    library_version.sdkless_integration? && (params[:sdk_type] == 'offers' || params[:sdk_type] == 'virtual_goods')
+  end
+
+  def library_version
+    @library_version ||= LibraryVersion.new(params[:library_version])
   end
 
   def generate_verifier(more_data = [])
@@ -316,7 +321,7 @@ class ApplicationController < ActionController::Base
 
   # TODO make this more general so nobody needs to go WebRequest.new in a controller -KB
   def generate_web_request
-    if params[:source] == 'tj_games'
+    if params[:source] == 'tj_games' || params[:source] == 'tj_display'
       wr_path = 'tjm_offers'
     elsif params[:source] == 'featured'
       wr_path = 'featured_offer_requested'
@@ -331,6 +336,15 @@ class ApplicationController < ActionController::Base
     web_request.raw_url = request.url
 
     web_request
+  end
+
+  def update_web_request_store_name(app, web_request)
+    return if app.nil?
+    return if web_request.store_name
+
+    if app.platform == 'android'
+      web_request.store_name = App::PLATFORM_DETAILS[app.platform][:default_sdk_store_name]
+    end
   end
 
   def device_type

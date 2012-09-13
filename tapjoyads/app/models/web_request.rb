@@ -12,6 +12,8 @@ class WebRequest < SyslogMessage
     'tjm_offers'               => [ { :stat => 'tjm_offerwall_views',       :attr => :app_id } ],
     'tjm_offer_click'          => [ { :stat => 'tjm_offers_opened',         :attr => :publisher_app_id },
                                     { :stat => 'paid_clicks',               :attr => :offer_id } ],
+    'tj_display_offer_click'   => [ { :stat => 'tjm_display_offers_opened', :attr => :publisher_app_id },
+                                    { :stat => 'paid_clicks',               :attr => :offer_id } ],
     'featured_offer_requested' => [ { :stat => 'featured_offers_requested', :attr => :app_id } ],
     'featured_offer_shown'     => [ { :stat => 'featured_offers_shown',     :attr => :app_id } ],
     'display_ad_requested'     => [ { :stat => 'display_ads_requested',     :attr => :displayer_app_id } ],
@@ -39,8 +41,9 @@ class WebRequest < SyslogMessage
     'display_clicks'            => { :paths => [ 'offer_click' ],                         :attr_name => 'displayer_app_id', :use_like => false },
     'offers_opened'             => { :paths => [ 'offer_click' ],                         :attr_name => 'publisher_app_id', :use_like => false },
     'tjm_offers_opened'         => { :paths => [ 'tjm_offer_click' ],                     :attr_name => 'publisher_app_id', :use_like => false },
+    'tjm_display_offers_opened' => { :paths => [ 'tj_display_offer_click' ],              :attr_name => 'publisher_app_id', :use_like => false },
     'featured_offers_opened'    => { :paths => [ 'featured_offer_click' ],                :attr_name => 'publisher_app_id', :use_like => false },
-    'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click' ], :attr_name => 'offer_id', :use_like => false },
+    'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click', 'tj_display_offer_click' ], :attr_name => 'offer_id', :use_like => false },
   }
 
   self.define_attr :udid
@@ -49,7 +52,7 @@ class WebRequest < SyslogMessage
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
-  self.define_attr :advertiser_id
+  self.define_attr :idfa
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool
@@ -157,7 +160,7 @@ class WebRequest < SyslogMessage
     self.sha1_udid            = params[:sha1_udid]
     self.sha1_mac_address     = params[:sha1_mac_address]
     self.android_id           = params[:android_id]
-    self.advertiser_id        = params[:advertiser_id]
+    self.idfa                 = params[:idfa]
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
     self.udid_via_lookup      = params[:udid_via_lookup]

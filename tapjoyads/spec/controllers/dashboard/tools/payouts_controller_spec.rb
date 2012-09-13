@@ -72,9 +72,8 @@ describe Dashboard::Tools::PayoutsController do
       context 'when payout not saved properly' do
         before :each do
           payout = FactoryGirl.create(:payout, :partner => @partner)
-          payout.stub(:save).and_return(false)
-          payouts = mock('build',:build => payout)
-          @partner.stub(:payouts).and_return(payouts)
+          payout.stub(:persisted? => false, :save => false)
+          @partner.stub(:make_payout).and_return(payout)
           Partner.stub(:find).with('faux').and_return(@partner)
         end
 
