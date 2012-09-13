@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
     t.text     "countries_blacklist"
     t.text     "languages"
     t.text     "screenshots"
+    t.string   "developer"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true

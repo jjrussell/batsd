@@ -4,6 +4,7 @@
 #
 #  id                  :string(36)      not null, primary key
 #  name                :string(255)
+#  developer           :string(255)
 #  description         :text
 #  price               :integer(4)      default(0)
 #  store_name          :string(255)     not null
@@ -196,5 +197,6 @@ class AppMetadata < ActiveRecord::Base
     self.supported_devices   = data[:supported_devices].present? ? data[:supported_devices].to_json : nil
     self.countries_blacklist = blacklist unless blacklist.nil?
     self.languages           = data[:languages]
+    self.developer           = data[:publisher]
   end
 end
