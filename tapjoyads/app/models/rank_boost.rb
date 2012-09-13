@@ -44,7 +44,7 @@ class RankBoost < ActiveRecord::Base
     self.save
   end
 
-  def is_optimized?
+  def optimized?
     rank_boost_type == 'optimized'
   end
 
@@ -57,10 +57,10 @@ private
   end
 
   def calculate_rank_boost_for_offer
-    self.is_optimized? ? offer.calculate_optimized_rank_boost! : offer.calculate_rank_boost!
+    self.optimized? ? offer.calculate_optimized_rank_boost! : offer.calculate_rank_boost!
   end
 
   def check_optimized_boost_rank_value
-    errors.add :amount, "Amount must be <= 1000" if amount.present? && amount > OPTIMIZED_RANK_BOOST_MAX && is_optimized?
+    errors.add :amount, "Amount must be <= 1000" if amount.present? && amount > OPTIMIZED_RANK_BOOST_MAX && optimized?
   end
 end
