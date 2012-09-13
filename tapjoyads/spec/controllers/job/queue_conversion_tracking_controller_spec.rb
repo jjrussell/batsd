@@ -106,7 +106,7 @@ describe Job::QueueConversionTrackingController do
       before :each do
         @click.advertiser_amount = 20
         @click.tapjoy_amount = 30
-        @offer = Offer.find_in_cache(@click.offer_id, true)
+        @offer = Offer.find_in_cache(@click.offer_id, :do_lookup => true)
         @offer.stub(:is_paid?).and_return(true)
         Offer.stub(:find_in_cache).and_return(@offer)
         @device = FactoryGirl.create(:device)
