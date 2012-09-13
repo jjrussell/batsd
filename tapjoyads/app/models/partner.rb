@@ -267,7 +267,9 @@ class Partner < ActiveRecord::Base
   def make_payout(amount)
     cutoff_date = self.payout_cutoff_date - 1.day
     amount = (amount.to_f * 100).round
-    self.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    payout = self.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    calculate_payout_threshold(amount)
+    payout
   end
 
   def calculate_payout_threshold(amount)
