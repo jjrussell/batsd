@@ -265,7 +265,7 @@ FactoryGirl.define do
     start_time { Time.zone.now }
     end_time   { Time.zone.now + 1.hour }
     amount 1
-    rank_boost_type 'native'
+    rank_boost_type 0
   end
 
   factory :action_offer do

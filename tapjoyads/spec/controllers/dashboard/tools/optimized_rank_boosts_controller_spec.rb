@@ -11,7 +11,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
 
   describe 'rank boost object amount too high' do
     before :each do
-      @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized', :amount => 4000)
+      @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 1, :amount => 4000)
       @rank_boost.valid?
     end
     it 'should not be valid (amount > 1000)' do
@@ -26,7 +26,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'with an offer' do
       context 'active rank boosts' do
         before :each do
-          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
           RankBoost.stub(:find).and_return(@rank_boost)
           @offer = @rank_boost.offer
           @params = { :filter => 'active', :id => @rank_boost.id, :page => 1 }
@@ -45,7 +45,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       context 'no active rank boosts' do
         context 'with active param passed in' do
           before :each do
-            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized', :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
+            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1, :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
             RankBoost.stub(:find).and_return(@rank_boost)
             @offer = @rank_boost.offer
             @params = { :filter => 'active', :id => @rank_boost.id, :page => 1 }
@@ -63,7 +63,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
         end
         context 'without active param passed in' do
           before :each do
-            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized', :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
+            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1, :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
             RankBoost.stub(:find).and_return(@rank_boost)
             @offer = @rank_boost.offer
             @params = { :id => @rank_boost.id, :page => 1 }
@@ -84,7 +84,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'without an offer' do
       context 'active rank boosts' do
         before :each do
-          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
           @params = { :filter => 'active', :page => 1 }
           get(:index, @params)
         end
@@ -101,7 +101,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       context 'no active rank boosts' do
         context 'with active param passed in' do
           before :each do
-            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized', :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
+            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1, :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
             @offer = @rank_boost.offer
             @params = { :filter => 'active', :page => 1 }
             get(:index, @params)
@@ -118,7 +118,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
         end
         context 'without active param passed in' do
           before :each do
-            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized', :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
+            @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1, :start_time => Time.zone.now + 2.days, :end_time => Time.zone.now + 3.days)
             @offer = @rank_boost.offer
             @params = { :page => 1 }
             get(:index, @params)
@@ -178,7 +178,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'valid' do
       before :each do
         RankBoost.any_instance.stub(:save).and_return(true)
-        @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
+        @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 1)
         RankBoost.stub(:new).and_return(@rank_boost)
         @params = { :rank_boost =>
                     { :start_time => @rank_boost.start_time,
@@ -199,7 +199,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       context 'unable to save rank boost object' do
         before :each do
           RankBoost.any_instance.stub(:save).and_return(false)
-          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 1)
           RankBoost.stub(:new).and_return(@rank_boost)
           @params = { :rank_boost =>
                       { :start_time => @rank_boost.start_time,
@@ -215,7 +215,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       end
       context 'offer is not present' do
         before :each do
-          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.build(:rank_boost, :rank_boost_type => 1)
           @params = { :rank_boost =>
                       { :start_time => @rank_boost.start_time,
                         :end_time => @rank_boost.end_time,
@@ -237,7 +237,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
 
   describe '#edit' do
     before :each do
-      @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+      @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
       RankBoost.stub(:find).and_return(@rank_boost)
       @params = { :id => @rank_boost.id }
       get(:edit, @params)
@@ -257,7 +257,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'valid' do
       before :each do
         RankBoost.any_instance.stub(:update_attributes).and_return(true)
-        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
         @params = { :rank_boost =>
                     { :amount => 10 },
                     :id => @rank_boost.id }
@@ -274,7 +274,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       context 'unable to update rank boost object' do
         before :each do
           RankBoost.any_instance.stub(:update_attributes).and_return(false)
-          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
           @params = { :rank_boost =>
                       { :amount => 10 },
                       :id => @rank_boost.id }
@@ -286,7 +286,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       end
       context 'offer is not present' do
         before :each do
-          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+          @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
           @params = { :rank_boost =>
                       { :amount => 10 },
                       :id => @rank_boost.id }
@@ -307,7 +307,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'valid deactivation' do
       before :each do
         RankBoost.any_instance.stub(:deactivate!).and_return(true)
-        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
         @params = { :id => @rank_boost.id, :offer_id => @rank_boost.offer.id }
         post(:deactivate, @params)
       end
@@ -321,7 +321,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
     context 'invalid deactivation' do
       before :each do
         RankBoost.any_instance.stub(:deactivate!).and_return(false)
-        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 'optimized')
+        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
         @params = { :id => @rank_boost.id, :offer_id => @rank_boost.offer.id }
         post(:deactivate, @params)
       end

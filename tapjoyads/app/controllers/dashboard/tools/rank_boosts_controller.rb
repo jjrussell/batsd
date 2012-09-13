@@ -25,9 +25,9 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   end
 
   def create
-    @rank_boost = RankBoost.new(params[:rank_boost])
-    log_activity(@rank_boost)
     if @offer.present?
+      @rank_boost = RankBoost.new(params[:rank_boost])
+      log_activity(@rank_boost)
       if @rank_boost.save
         save_activity_logs
         flash[:notice] = 'Rank Boost created.'
@@ -45,8 +45,8 @@ class Dashboard::Tools::RankBoostsController < Dashboard::DashboardController
   end
 
   def update
-    log_activity(@rank_boost)
     if @offer.present?
+      log_activity(@rank_boost)
       if @rank_boost.update_attributes(params[:rank_boost])
         save_activity_logs
         flash[:notice] = 'Rank Boost updated.'

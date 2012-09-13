@@ -35,12 +35,6 @@
         = f.text_field :amount
         = error_message_on @optimized_rank_boost, :amount
     %tr
-      %th
-        = f.label :rank_boost_type, 'Rank Boost Type'
-        #help_boost.help ?
-      %td
-        = f.text_field :rank_boost_type, :value => 'optimized', :readonly => true
-    %tr
       %td{ :colspan => 2 }= f.submit 'Save Optimized Offer Rank Boost'
 
 .hidden
