@@ -87,6 +87,8 @@ Tapjoyad::Application.routes.draw do
     match 'queue_cache_optimized_offer_list/run_job' => 'queue_cache_optimized_offer_list#run_job'
     match 'queue_cache_record_not_found(/index)' => 'queue_cache_record_not_found#index'
     match 'queue_cache_record_not_found/run_job' => 'queue_cache_record_not_found#run_job'
+    match 'queue_send_coupon_emails(/index)' => 'queue_send_coupon_emails#index'
+    match 'queue_send_coupon_emails/run_job' => 'queue_send_coupon_emails#run_job'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
 
