@@ -207,6 +207,8 @@ authorization do
     includes :products
     includes :file_sharer
     includes :sales_rep_mgr
+    includes :partner_changer
+    includes :payout_manager
     has_permission_on :dashboard_pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]

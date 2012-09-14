@@ -338,13 +338,21 @@ class ApplicationController < ActionController::Base
     web_request
   end
 
-  def update_web_request_store_name(app, web_request)
-    return if app.nil?
+  def update_web_request_store_name(web_request, app_id, app = nil)
     return if web_request.store_name
 
-    if app.platform == 'android'
-      web_request.store_name = App::PLATFORM_DETAILS[app.platform][:default_sdk_store_name]
+    platform = if params[:platform]
+      params[:platform]
+    elsif params[:device_type] == 'android'
+      'android'
+    elsif app
+      app.platform
+    elsif app_id
+      cached_app = App.find_in_cache(app_id)
+      cached_app.platform if cached_app
     end
+
+    web_request.store_name = App::PLATFORM_DETAILS['android'][:default_sdk_store_name] if platform == 'android'
   end
 
   def device_type

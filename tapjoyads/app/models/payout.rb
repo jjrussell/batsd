@@ -29,7 +29,6 @@ class Payout < ActiveRecord::Base
   validates_inclusion_of :status, :in => STATUS_CODES
 
   after_create :update_balance
-  after_create :update_payout_threshold
 
   scope :created_between, lambda { |start_time, end_time| { :conditions => [ "created_at >= ? AND created_at < ?", start_time, end_time ] } }
 
@@ -54,10 +53,6 @@ class Payout < ActiveRecord::Base
   def update_balance
     return true if amount == 0
     Partner.connection.execute("UPDATE partners SET pending_earnings = (pending_earnings - #{amount}), next_payout_amount = (next_payout_amount - #{amount}) WHERE id = '#{partner_id}'")
-  end
-
-  def update_payout_threshold
-    partner.calculate_payout_threshold(self.amount)
   end
 
 end

@@ -88,7 +88,7 @@ class DisplayAdController < ApplicationController
     params[:impression_id] = UUIDTools::UUID.random_create.to_s
     web_request = WebRequest.new(:time => now)
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
-    update_web_request_store_name(@publisher_app, web_request)
+    update_web_request_store_name(web_request, nil, @publisher_app)
 
     if currency.get_test_device_ids.include?(params[:udid])
       offer = @publisher_app.test_offer
