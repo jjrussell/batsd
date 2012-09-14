@@ -66,6 +66,8 @@ class OptimizedOfferList
         end
       end.compact
 
+      offers = offers.sort_by {|offer| -offer.rank_score }
+
       group = 0
       puts "saving #{cache_key} to Memcache"
       begin

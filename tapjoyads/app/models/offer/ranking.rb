@@ -81,4 +81,20 @@ module Offer::Ranking
     end
   end
 
+  def is_reasonable_rank_boost?
+    rank_boost <= RankBoost::RANKSCORE_THRESHOLD
+  end
+
+  def override_rank_score!
+    if rank_boost.present? && rank_boost != 0
+      if rank_boost > 0
+        if publisher_app_whitelist.present? && is_reasonable_rank_boost?
+            self.rank_score = rank_boost
+        end
+      else
+        self.rank_score = rank_boost
+      end
+    end
+  end
+
 end

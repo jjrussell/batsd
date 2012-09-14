@@ -14,6 +14,8 @@
 class RankBoost < ActiveRecord::Base
   include UuidPrimaryKey
 
+  RANKSCORE_THRESHOLD = 1000
+
   belongs_to :offer
 
   validates_presence_of :start_time, :end_time, :offer
