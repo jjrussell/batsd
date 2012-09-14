@@ -13,30 +13,24 @@ class Dashboard::PartnersController < Dashboard::DashboardController
   def index
     if current_user.role_symbols.include?(:agency)
       @partners = current_user.partners.order('created_at DESC').includes([ :offers, :users ]).paginate(:page => params[:page])
+    elsif params[:q]
+      query = params[:q].gsub("'", '')
+      @partners = Partner.search(query).includes(:offers).paginate(:page => params[:page]).uniq
     else
-      if params[:criterion] == 'q'
-        query = params[:q].gsub("'", '')
-        @partners = Partner.search(query).includes(:offers).paginate(:page => params[:page]).uniq
-      elsif params[:criterion] == 'managed_by' && params[:managed_by].present? && params[:managed_by] != 'all'
-        if params[:managed_by] == 'none'
-          @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page]).reject do |partner|
-            partner.account_managers.present?
-          end
-        else
-          user = User.find_by_id(params[:managed_by], :include => [:partners])
-          @partners = user.partners.paginate(:page => params[:page])
-        end
-      elsif params[:criterion] == 'country' && params[:country].present?
-        @partners = Partner.where('country = ?', params[:country]).includes(:offers).paginate(:page => params[:page]).uniq
-      else
-        @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
-      end
+      @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
     end
-    render 'index'
   end
 
   def managed_by
-    redirect_to :action => 'index', :criterion => 'managed_by', :managed_by => params[:id]
+    if params[:id] == 'none'
+      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page]).reject do |partner|
+        partner.account_managers.present?
+      end
+    else
+      user = User.find_by_id(params[:id], :include => [ :partners ])
+      @partners = user.partners.paginate(:page => params[:page])
+    end
+    render 'index'
   end
 
   def mail_chimp_info
