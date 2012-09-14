@@ -63,6 +63,6 @@ private
   end
 
   def check_optimized_boost_rank_value
-    errors.add :amount, "Amount must be <= 1000" if amount.present? && amount > OPTIMIZED_RANK_BOOST_MAX && optimized?
+    errors.add :amount, "Amount must be <= #{OPTIMIZED_RANK_BOOST_MAX}" if amount.present? && amount > OPTIMIZED_RANK_BOOST_MAX && optimized?
   end
 end

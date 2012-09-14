@@ -18,7 +18,7 @@ describe Dashboard::Tools::OptimizedRankBoostsController do
       @rank_boost.should_not be_valid
     end
     it 'should have errors' do
-      @rank_boost.errors[:amount].should include("Amount must be <= 1000")
+      @rank_boost.errors[:amount].should include("Amount must be <= #{RankBoost::OPTIMIZED_RANK_BOOST_MAX}")
     end
   end
 
