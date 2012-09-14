@@ -114,7 +114,7 @@ class Click < SimpledbShardedResource
 
   def advertiser_app
     begin
-      App.find_in_cache(advertiser_app_id, true)
+      App.find_in_cache(advertiser_app_id, :do_lookup => true)
     rescue ActiveRecord::RecordNotFound
       nil
     end

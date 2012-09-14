@@ -12,8 +12,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     raise "Click not found: #{json['click_key']}" if click.nil?
     installed_at_epoch = json['install_timestamp']
 
-    offer = Offer.find_in_cache(click.offer_id, true)
-    currency = Currency.find_in_cache(click.currency_id, true)
+    offer = Offer.find_in_cache(click.offer_id, :do_lookup => true)
+    currency = Currency.find_in_cache(click.currency_id, :do_lookup => true)
 
     if click.installed_at? ||
       (!click.force_convert && offer.item_type != 'GenericOffer' && click.clicked_at < (Time.zone.now - 2.days)) ||

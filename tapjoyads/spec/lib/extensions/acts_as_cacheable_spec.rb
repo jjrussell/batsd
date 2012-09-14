@@ -30,7 +30,7 @@ describe ActsAsCacheable do
 
       it 'calls Mc.get once' do
         Mc.should_receive(:get).once
-        CacheableObject.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => false)
       end
     end
 
@@ -41,7 +41,7 @@ describe ActsAsCacheable do
 
       it 'does not call Mc.get with invalid key' do
         Mc.should_not_receive(:get)
-        CacheableObject.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => false)
       end
     end
 
@@ -53,7 +53,7 @@ describe ActsAsCacheable do
 
       it 'sqs should receive send_message call' do
         Sqs.should_receive(:send_message).with(QueueNames::CACHE_RECORD_NOT_FOUND, { :model_name => 'CacheableObject', :id => @foo.id }.to_json)
-        CacheableObject.find_in_cache(@foo.id, true, true)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => true, :queue => true)
       end
     end
   end
