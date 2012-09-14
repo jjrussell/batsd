@@ -19,7 +19,7 @@ describe Offer::Ranking do
       @offer.rank_score.should == 100.8
     end
 
-    it "should override rank score with rank boost when publisher_app_whitelist is not blank" do
+    it "should not override rank score with rank boost when publisher_app_whitelist is not blank" do
       @rank_boost.amount = 200
       @rank_boost.save
       @offer.calculate_rank_boost!
@@ -41,6 +41,18 @@ describe Offer::Ranking do
       @offer.save
 
       @offer.rank_score.should == 200
+    end
+
+    it "should not override rank score with rank boost when publisher_app_whitelist is not blank but rank boost > 1000" do
+      @rank_boost.amount = 1500
+      @rank_boost.save
+      @offer.calculate_rank_boost!
+
+      @offer.publisher_app_whitelist = "0001"
+      @offer.override_rank_score!
+      @offer.save
+
+      @offer.rank_score.should == 100.8
     end
 
     it "should override rank score with rank boost when rank boost < 0" do

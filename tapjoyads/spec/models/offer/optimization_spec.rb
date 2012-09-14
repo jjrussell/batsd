@@ -50,6 +50,18 @@ describe Offer::Optimization do
         @offer.rank_score.should == (500 + 200.7).floor
       end
 
+      it "should not override rank_score with rank_boost with addition of rank_boost and optimized rank_score if publisher_app_whitelist is present but rank boost > 1000" do
+        @rank_boost.amount = 1500
+        @rank_boost.save
+
+        @offer.calculate_rank_boost!
+        @offer.publisher_app_whitelist = "0001"
+        @offer.save
+
+        @offer.optimization_override(@offer_hash, false)
+        @offer.rank_score.should == 200.7
+      end
+
       it "should override rank_score with rank_boost with addition of rank_boost and optimized rank_score if rank_boost < 0", :negative_rank_boost do
         @rank_boost.amount = -800
         @rank_boost.save
