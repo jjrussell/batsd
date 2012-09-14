@@ -20,7 +20,7 @@ class Dashboard::DashboardController < ApplicationController
                     If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
                     <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
 
-  NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\">newest version of Tapjoy Insights</a>"
+  NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\" target=\"_blank\">newest version of Tapjoy Insights</a>"
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
