@@ -26,7 +26,7 @@ namespace :setup do
     run "Adding pre-commit hooks", "ln -s ../.pre-commit ../.git/hooks/"
   end
 
-  task :rvm do 
+  task :rvm do
     if !system("which rvm > /dev/null")
       say "RVM is not installed. Skipping ruby setup"
     elsif !File.exists?(".rvmrc")
@@ -56,7 +56,7 @@ namespace :setup do
   end
 
   task :geoip do
-    run "Downloading geoip data", 
+    run "Downloading geoip data",
       "curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > data/GeoIPCity.dat",
       "touch data/GeoIPCity.version"
   end

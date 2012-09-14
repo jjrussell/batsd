@@ -108,7 +108,7 @@
       - if @app.languages.present?
         %tr.app_data.hidden
           %th Languages
-          %td#app_languages= @app.languages      
+          %td#app_languages= @app.languages
       - if permitted_to?(:edit, :dashboard_statz)
         = render('dashboard/apps/admin_fields', :f => f)
       %tr

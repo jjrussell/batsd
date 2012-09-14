@@ -22,7 +22,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
     end
 
-    currency = Currency.find_in_cache(reward.currency_id, true)
+    currency = Currency.find_in_cache(reward.currency_id, :do_lookup => true)
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
 
@@ -36,7 +36,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         "mac_address=#{reward.mac_address}",
       ]
       if currency.send_offer_data?
-        offer = Offer.find_in_cache(reward.offer_id, true)
+        offer = Offer.find_in_cache(reward.offer_id, :do_lookup => true)
         url_params += [
           "storeId=#{CGI::escape(offer.store_id_for_feed)}",
           "application=#{CGI::escape(offer.name)}",
