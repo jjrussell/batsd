@@ -3,7 +3,8 @@ class OfferTriggeredActionsController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :setup
 
-  layout 'offer_instructions', :only => [ :load_app, :fb_login, :fb_visit ]
+  # layout 'offer_instructions', :only => [ :load_app, :fb_login, :fb_visit ]
+  layout 'instructions', :only => [ :load_app, :fb_login, :fb_visit ]
 
   def load_app
     @protocol_handler_url = @offer.generic_offer_protocol_handler
