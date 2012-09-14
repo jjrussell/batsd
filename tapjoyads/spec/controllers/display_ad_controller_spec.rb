@@ -9,7 +9,7 @@ describe DisplayAdController do
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
+      OfferCacher.stub(:get_offers_prerejected).and_return([ @offer ])
 
       @bucket = FakeBucket.new
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
@@ -193,7 +193,7 @@ describe DisplayAdController do
 
       context 'with unfilled request' do
         before :each do
-          OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+          OfferCacher.stub(:get_offers_prerejected).and_return([])
         end
 
         it 'should not queue up tracking url calls' do
