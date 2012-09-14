@@ -1,0 +1,22 @@
+- @page_title = 'Create Coupons'
+
+%h1= @page_title
+
+= form_tag(tools_coupons_path, :method => 'post', :multipart => true) do
+  %table
+    %tr
+      %th= label_tag 'Partner'
+      %td
+        = @partner.name
+        = hidden_field_tag :partner_id, @partner.id
+    %tr
+      %th= label_tag :price
+      %td= text_field_tag 'price', '$0.00', :class => 'currency_field'
+    %tr
+      %th= label_tag :instructions
+      %td= text_area_tag :instructions
+    %tr
+      %th= label_tag :icon, 'Upload Icon'
+      %td= file_field_tag :icon
+  %p Confirm that you want to create coupons.
+  =submit_tag('Confirm')

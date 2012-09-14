@@ -173,7 +173,7 @@ describe Job::QueueSendCurrencyController do
     it 'should save the reward' do
       Currency.
         should_receive(:find_in_cache).
-        with(@currency.id, true).
+        with(@currency.id, {:do_lookup => true}).
         and_return(@currency)
 
       get(:run_job, :message => @reward.id)
@@ -280,7 +280,7 @@ describe Job::QueueSendCurrencyController do
 
       Offer.
         should_receive(:find_in_cache).
-        with(offer.id, true).
+        with(offer.id, {:do_lookup => true}).
         and_return(offer)
 
       get(:run_job, :message => @reward.id)
@@ -308,64 +308,4 @@ describe Job::QueueSendCurrencyController do
     end
   end
 
-  describe 'with callback url for Playdom' do
-    before :each do
-      @currency.update_attribute(:callback_url, Currency::PLAYDOM_CALLBACK_URL)
-
-      @url_start = "http://offer-dynamic-lb.playdom.com/tapjoy/mob/"
-      @url_end = "/fp/main?snuid=bill&currency=#{@reward.currency_reward}&mac_address="
-    end
-
-    it 'should set callback for facebook' do
-      @reward.publisher_user_id = 'Fbill'
-      @reward.save
-
-      callback_url = "#{@url_start}facebook#{@url_end}"
-
-      Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
-        and_return(@mock_response)
-
-      get(:run_job, :message => @reward.id)
-    end
-
-    it 'should set callback for myspace' do
-      @reward.publisher_user_id = 'Mbill'
-      @reward.save
-
-      callback_url = "#{@url_start}myspace#{@url_end}"
-
-      Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
-        and_return(@mock_response)
-
-      get(:run_job, :message => @reward.id)
-    end
-
-    it 'should set callback for iphone' do
-      @reward.publisher_user_id = 'Pbill'
-      @reward.save
-
-      callback_url = "#{@url_start}myspace#{@url_end}"
-
-      Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
-        and_return(@mock_response)
-
-      get(:run_job, :message => @reward.id)
-    end
-
-    it 'should set InvalidPlaydomUserId' do
-      @reward.publisher_user_id = 'Gbill'
-      @reward.save
-
-      get(:run_job, :message => @reward.id)
-
-      reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.send_currency_status.should == 'InvalidPlaydomUserId'
-    end
-  end
 end

@@ -20,6 +20,8 @@
   = link_to('[Edit Generic Offer]', edit_tools_generic_offer_path(@offer.item_id))
 - if permitted_to?(:edit, :dashboard_tools_video_offers) && @offer.video_offer?
   = link_to('[Edit Video Offer]', edit_tools_video_offer_path(@offer.item_id))
+- if permitted_to?(:edit, :dashboard_tools_generic_offers) && @offer.survey_offer?
+  = link_to('[Edit Survey Offer]', edit_tools_survey_offer_path(@offer.item_id))
 - if permitted_to? :last_run_times, :dashboard_statz
   = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
 - if permitted_to? :udids, :dashboard_statz

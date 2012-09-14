@@ -97,7 +97,7 @@ class Utils
           puts "#{Time.zone.now.to_s(:db)} - finished #{counter} UDIDs, #{new_udids} new (global), #{existing_udids} existing (global), #{invalid_udids} invalid, #{parse_errors} parse errors"
           app_new_udids.each {|app_id,count| puts "\tnew UDIDs (per app): #{count} #{app_id}"}
           app_existing_udids.each {|app_id, count| puts "\texisting UDIDs (per app): #{count} #{app_id}"}
-          app_deleted_udids.each {|app_id, count| puts "\tdeleted: #{count} #{app_id}"} 
+          app_deleted_udids.each {|app_id, count| puts "\tdeleted: #{count} #{app_id}"}
         end
       end
     end

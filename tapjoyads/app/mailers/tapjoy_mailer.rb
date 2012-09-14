@@ -9,12 +9,19 @@ class TapjoyMailer < ActionMailer::Base
     body(:error => error)
   end
 
+  def generic_alert(error, recipients)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients recipients
+    subject "Error: #{error.class}"
+    body(:error => error)
+  end
+
   def alert(alert, rows, recipients)
     from 'Tapjoy <noc@tapjoy.com>'
     recipients recipients
-    cc alert['recipients'] unless recipients.sort == alert['recipients'].sort
-    subject "[ALERT] #{alert['message']}"
-    body :rows => rows, :fields => alert['fields']
+    cc alert.recipients unless recipients.sort == alert.recipients.sort
+    subject "[ALERT] #{alert.message}"
+    body :rows => rows, :fields => alert.fields
   end
 
   def sms_sent(phone, message)
@@ -183,6 +190,19 @@ class TapjoyMailer < ActionMailer::Base
 
   def offer_creative_rejected(email_address, offer, size, offer_link)
     offer_creative_updated(:rejected, email_address, offer, size, offer_link)
+  end
+
+  def email_coupon_offer(email_address, barcode, expires_at, redemption_code, description, name, advertiser)
+    from 'Tapjoy <noreply@tapjoy.com>'
+    recipients email_address
+    content_type 'text/html'
+    subject 'Tapjoy coupon request'
+    body( :barcode         => barcode,
+          :description     => description,
+          :redemption_code => redemption_code,
+          :expries_on      => expires_at,
+          :name            => name,
+          :advertiser      => advertiser )
   end
 
   private

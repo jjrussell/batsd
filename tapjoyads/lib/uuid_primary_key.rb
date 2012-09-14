@@ -16,7 +16,7 @@ module UuidPrimaryKey
 
   # ensures that each new record has a UUID assigned to the 'id' field.
   def set_primary_key
-    self.id = UUIDTools::UUID.random_create.to_s unless id =~ UUID_REGEX
+    self.id = UUIDTools::UUID.random_create.to_s unless id.uuid?
     true
   end
 

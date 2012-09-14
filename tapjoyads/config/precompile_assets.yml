@@ -1,0 +1,11 @@
+---
+- api/android.css
+- api/style.css
+- lib/screw-spinner.css
+- lib/screw-spinner.js
+- offerwall/offerwall.css
+- offerwall/offerwall.js
+- shared/foreplay.js
+- shared/i18n.js
+- tools/link-apps.js
+- tools/link_apps.css

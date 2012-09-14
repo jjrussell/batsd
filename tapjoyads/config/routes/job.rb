@@ -75,6 +75,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_send_welcome_emails(/index)' => 'queue_send_welcome_emails#index'
     match 'queue_send_welcome_emails_via_exact_target(/index)' => 'queue_send_welcome_emails_via_exact_target#index'
     match 'queue_suspicious_gamer_emails(/index)' => 'queue_suspicious_gamer_emails#index'
+    match 'queue_terminate_nodes(/index)' => 'queue_terminate_nodes#index'
     match 'queue_third_party_tracking(/index)' => 'queue_third_party_tracking#index'
     match 'queue_udid_reports(/index)' => 'queue_udid_reports#index'
     match 'queue_update_monthly_account(/index)' => 'queue_update_monthly_account#index'
@@ -84,6 +85,10 @@ Tapjoyad::Application.routes.draw do
     match 'queue_record_updates/run_job' => 'queue_record_updates#run_job'
     match 'queue_cache_optimized_offer_list(/index)' => 'queue_cache_optimized_offer_list#index'
     match 'queue_cache_optimized_offer_list/run_job' => 'queue_cache_optimized_offer_list#run_job'
+    match 'queue_cache_record_not_found(/index)' => 'queue_cache_record_not_found#index'
+    match 'queue_cache_record_not_found/run_job' => 'queue_cache_record_not_found#run_job'
+    match 'queue_send_coupon_emails(/index)' => 'queue_send_coupon_emails#index'
+    match 'queue_send_coupon_emails/run_job' => 'queue_send_coupon_emails#run_job'
     match 'sqs_reader(/index)' => 'sqs_reader#index'
   end
 

@@ -27,7 +27,7 @@ class SimpledbShardedResource < SimpledbResource
   end
 
   def self.select_all(options = {}, &block)
-    conditions = options.delete(:conditions)
+    conditions = options.delete(:conditions) || options.delete(:where)
     consistent = options.delete(:consistent)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 

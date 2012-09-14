@@ -2,11 +2,11 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   ReengagementOffer
 
   layout :resolve_layout
- 
+
   current_tab :apps
 
   before_filter :setup
-  
+
   filter_access_to :all
 
   DAY_0_INSTRUCTIONS = "Come back each day and get rewards!"

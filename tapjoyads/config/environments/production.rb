@@ -48,6 +48,9 @@ Tapjoyad::Application.configure do
   config.active_support.deprecation = :notify
 
   config.i18n_js_cache = true
+  config.assets.compile = true
+  config.assets.debug = false
+  config.assets.digest = true
 
   config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || raise('Please provide an API key')
 end
@@ -65,12 +68,18 @@ MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
 ]
+SDB_MEMCACHE_SERVERS = [
+  'tj-sdb-20120912.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-sdb-20120912.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-sdb-20120912.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
+]
 DISTRIBUTED_MEMCACHE_SERVERS = [
   'localhost:21210', # couchbase us-east-1b
   'localhost:21211', # couchbase us-east-1c
   'localhost:21212', # couchbase us-east-1d
-  # fucker bit the dust
-  # 'localhost:21213', # couchbase us-east-1e
+  'localhost:21213', # couchbase us-east-1e
 ]
 
 SPROCKETS_CONFIG = {
@@ -84,6 +93,7 @@ API_URL = local_config['api_url'] || 'https://ws.tapjoyads.com'
 API_URL_EXT = local_config['api_url_ext'] || 'http://ws-ext.tapjoy.com'
 DASHBOARD_URL = local_config['dashboard_url'] || 'https://dashboard.tapjoy.com'
 WEBSITE_URL = local_config['website_url'] || 'https://www.tapjoy.com'
+MASTERJOBS_URL = local_config['masterjobs_url'] || 'https://masterjobs.tapjoy.net'
 CLOUDFRONT_URL = 'https://d21x2jbj16e06e.cloudfront.net'
 XMAN = false
 

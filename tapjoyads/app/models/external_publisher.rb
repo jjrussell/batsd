@@ -5,7 +5,8 @@ class ExternalPublisher
   def initialize(currency)
     self.app_id = currency.app_id
     self.app_name = currency.app.name
-    self.partner_name = currency.app.partner_name
+    self.partner_name = currency.app.primary_app_metadata.try(:developer)
+    self.partner_name = currency.app.partner_name if partner_name.blank?
     self.active_gamer_count = currency.app.active_gamer_count
     self.app_metadata_id = currency.app.primary_app_metadata.id if currency.app.primary_app_metadata
     add_currency(currency)
@@ -21,7 +22,8 @@ class ExternalPublisher
   end
 
   def get_icon_url(options = {})
-    Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(app_id)))
+    icon_id = (app_metadata_id ? app_metadata_id : app_id)
+    Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(icon_id)))
   end
 
   def get_offerwall_url(device, currency, accept_language_str, user_agent_str, gamer_id = nil, no_log = false)

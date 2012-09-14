@@ -25,8 +25,11 @@ describe GetOffersController do
       @offer4.partner.balance = 10
       @offer4.save
 
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
+
       offers = [ @offer, @offer2, @offer3, @offer4 ]
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(offers)
+      OfferCacher.stub(:get_offers_prerejected).and_return(offers)
       RailsCache.stub(:get).and_return(nil)
       controller.stub(:ip_address).and_return('208.90.212.38')
       @params = {
@@ -77,7 +80,7 @@ describe GetOffersController do
     #   it "favors the promoted inventory" do
     #     @currency.stub(:partner_get_promoted_offers).and_return([@offer2.id])
     #     @currency.stub(:get_promoted_offers).and_return([@offer3.id])
-    #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
+    #     OfferCacher.stub(:get_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
     #
     #     get(:index, @params)
     #     offer_list = assigns(:offer_list)
@@ -87,7 +90,7 @@ describe GetOffersController do
     #   it "restricts the number of slots used for promotion" do
     #     @offer3.stub(:rank_score).and_return(1004)
     #     @currency.stub(:get_promoted_offers).and_return([@offer1.id, @offer2.id, @offer5.id, @offer4.id])
-    #     OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
+    #     OfferCacher.stub(:get_offers_prerejected).and_return([@offer1, @offer2, @offer3, @offer4, @offer5])
     #
     #     get(:index, @params)
     #     assigns(:offer_list)[3].rank_score.should == 1004
@@ -127,16 +130,15 @@ describe GetOffersController do
         offer2.partner.balance = 10
         offer3 = offer1.clone
         offer3.save
-        offer3.stub(:rank_score).and_return(100000)
         offer3.partner.balance = 10
         offer4 = offer1.clone
         offer4.save
         offer4.partner.balance = 10
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
+        OfferCacher.stub(:get_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
 
         get(:index, @params)
-        assigns(:offer_list).include?([offer1, offer2, offer4]).should be_false
-        assigns(:offer_list).include?(offer3).should be_true
+        assigns(:offer_list).include?([offer2, offer3, offer4]).should be_false
+        assigns(:offer_list).include?(offer1).should be_true
       end
     end
 
@@ -145,16 +147,22 @@ describe GetOffersController do
         publisher_app = FactoryGirl.create(:app, :platform => 'android')
         publisher_app.add_app_metadata('android.GFan', 'def789')
         @currency = FactoryGirl.create(:currency, :app => publisher_app)
+
         @offer1 = FactoryGirl.create(:generic_offer).primary_offer
-        @offer1.update_attributes(:payment => 10)
         @offer1.partner.balance = 10
+        @offer1.update_attributes!(:payment => 10)
+
         @offer2 = FactoryGirl.create(:app, :platform => 'android').primary_offer
         @offer2.partner.balance = 10
+
         app = FactoryGirl.create(:app, :platform => 'android')
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+
+        OfferCacher.stub(:get_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+        Currency.stub(:find_in_cache).and_return(@currency)
+        App.stub(:find_in_cache).and_return(@currency.app)
         @params = {
           :udid => 'stuff',
           :publisher_user_id => 'more_stuff',
@@ -240,6 +248,9 @@ describe GetOffersController do
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       @offer.save
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
+      Offer.stub(:find_in_cache).and_return(@offer)
     end
 
     context 'with redesign specified' do
@@ -262,7 +273,7 @@ describe GetOffersController do
     end
 
     it 'should queue up tracking url calls' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address       => @controller.send(:ip_address),
         :udid             => 'stuff',
@@ -272,13 +283,13 @@ describe GetOffersController do
     end
 
     it 'assigns test offer for test devices' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       get(:webpage, @params.merge(:udid => @device.id))
       assigns(:test_offers).should_not be_nil
     end
 
     it 'does not log impressions when there are no offers' do
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+      OfferCacher.stub(:get_offers_prerejected).and_return([])
       RailsCache.stub(:get).and_return(nil)
       @currency.deeplink_offer.primary_offer.tapjoy_enabled = false
       @currency.deeplink_offer.primary_offer.save!
@@ -297,13 +308,15 @@ describe GetOffersController do
       @offer.partner.balance = 10
       @offer.save
       controller.stub(:ip_address).and_return('208.90.212.38')
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
     end
 
     it 'should mark the pub app as using non-html responses' do
@@ -344,8 +357,8 @@ describe GetOffersController do
           device_type,
         ]
 
-        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_1).once.and_return([])
-        OfferCacher.stub(:get_unsorted_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
+        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_1).once.and_return([])
+        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
 
         get(:featured, @params)
       end
@@ -362,7 +375,7 @@ describe GetOffersController do
 
     context 'without an offer' do
       before :each do
-        OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+        OfferCacher.stub(:get_offers_prerejected).and_return([])
         RailsCache.stub(:get).and_return(nil)
         get(:featured, @params)
       end
@@ -420,14 +433,16 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
       get(:index, @params)
     end
 
     it 'assigns web_request' do
-      get(:index, @params.merge(:exp => 10))
+      get(:index, @params.merge(:exp => 'test'))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == '10'
+      web_request.exp.should == 'test'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
@@ -496,6 +511,33 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
+    end
+
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
+      end
+
+      it "should respect the hide_videos parameter" do
+        get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should be_empty
+
+        get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should == ['abc', '123']
+      end
+
+      it 'respects the apps streaming setting' do
+        app = App.find(@params[:app_id])
+        App.stub(:find_in_cache => app)
+        app.update_attributes(:videos_stream_3g => true)
+
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_true
+
+        app.update_attributes(:videos_stream_3g => false)
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_false
+      end
     end
   end
 end

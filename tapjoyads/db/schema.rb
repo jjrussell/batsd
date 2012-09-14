@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120731133709) do
+ActiveRecord::Schema.define(:version => 20120907032607) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.text     "countries_blacklist"
     t.text     "languages"
     t.text     "screenshots"
+    t.string   "developer"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -141,6 +142,11 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.boolean  "reengagement_campaign_enabled",               :default => false
     t.boolean  "uses_non_html_responses",                     :default => false, :null => false
     t.string   "custom_url_scheme"
+    t.boolean  "videos_enabled",                              :default => true,  :null => false
+    t.boolean  "videos_cache_auto",                           :default => false, :null => false
+    t.boolean  "videos_cache_wifi",                           :default => false, :null => false
+    t.boolean  "videos_cache_3g",                             :default => false, :null => false
+    t.boolean  "videos_stream_3g",                            :default => false, :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -204,6 +210,40 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "conversions", ["id", "created_at"], :name => "index_conversions_on_id_and_created_at", :unique => true
   add_index "conversions", ["publisher_app_id", "created_at", "reward_type"], :name => "index_on_publisher_app_id_created_at_and_reward_type"
   add_index "conversions", ["publisher_partner_id", "created_at"], :name => "index_conversions_on_publisher_partner_id_and_created_at"
+
+  create_table "coupons", :id => false, :force => true do |t|
+    t.string   "id",                          :limit => 36,                    :null => false
+    t.string   "provider_id",                 :limit => 36,                    :null => false
+    t.string   "partner_id",                  :limit => 36,                    :null => false
+    t.string   "prerequisite_offer_id",       :limit => 36
+    t.string   "name",                                                         :null => false
+    t.text     "description"
+    t.text     "fine_print"
+    t.string   "illustration_url"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.string   "discount_type"
+    t.string   "discount_value"
+    t.string   "advertiser_id"
+    t.string   "advertiser_name"
+    t.string   "advertiser_url"
+    t.text     "advertiser_description"
+    t.string   "vouchers_expire_type"
+    t.date     "vouchers_expire_date"
+    t.string   "vouchers_expire_time_unit"
+    t.integer  "vouchers_expire_time_amount"
+    t.string   "url"
+    t.text     "instructions"
+    t.integer  "price",                                     :default => 0
+    t.boolean  "hidden",                                    :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "coupons", ["id"], :name => "index_coupons_on_id"
+  add_index "coupons", ["partner_id"], :name => "index_coupons_on_partner_id"
+  add_index "coupons", ["prerequisite_offer_id"], :name => "index_coupons_on_prerequisite_offer_id"
+  add_index "coupons", ["provider_id"], :name => "index_coupons_on_provider_id"
 
   create_table "creative_approval_queue", :force => true do |t|
     t.string "offer_id", :limit => 36, :null => false
@@ -744,6 +784,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "app_metadata_id",                   :limit => 36
     t.string   "source_offer_id",                   :limit => 36
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
+    t.boolean  "rate_filter_override",                                                          :default => false, :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -857,6 +898,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.datetime "live_date"
     t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
     t.boolean  "enable_risk_management",                                                    :default => false,     :null => false
+    t.string   "country"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -1144,6 +1186,23 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
   add_index "video_offers", ["id"], :name => "index_video_offers_on_id", :unique => true
   add_index "video_offers", ["partner_id"], :name => "index_video_offers_on_partner_id"
   add_index "video_offers", ["prerequisite_offer_id"], :name => "index_video_offers_on_prerequisite_offer_id"
+
+  create_table "vouchers", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                    :null => false
+    t.string   "click_key",       :limit => 36,                    :null => false
+    t.string   "ref_id",          :limit => 36,                    :null => false
+    t.string   "coupon_id",       :limit => 36,                    :null => false
+    t.string   "redemption_code",                                  :null => false
+    t.date     "acquired_at",                                      :null => false
+    t.date     "expires_at",                                       :null => false
+    t.string   "barcode_url",                                      :null => false
+    t.string   "email_address",                                    :null => false
+    t.boolean  "completed",                     :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "vouchers", ["id"], :name => "index_vouchers_on_id"
 
   create_table "wfhs", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false

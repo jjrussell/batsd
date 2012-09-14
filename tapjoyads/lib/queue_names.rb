@@ -22,6 +22,7 @@ class QueueNames
   SELECT_VG_ITEMS            = "#{BASE_NAME}SelectVgItems"
   SEND_CURRENCY              = "#{BASE_NAME}SendCurrency"
   SUSPICIOUS_GAMERS          = "#{BASE_NAME}SuspiciousGamers"
+  TERMINATE_NODES            = "#{BASE_NAME}TerminateNodes"
   THIRD_PARTY_TRACKING       = "#{BASE_NAME}ThirdPartyTracking"
   UDID_REPORTS               = "#{BASE_NAME}UdidReports"
   UPDATE_MONTHLY_ACCOUNT     = "#{BASE_NAME}UpdateMonthlyAccount"
@@ -30,4 +31,6 @@ class QueueNames
   UPDATE_PAPAYA_USER_COUNT   = "#{BASE_NAME}UpdatePapayaUserCount"
   RECORD_UPDATES             = "#{BASE_NAME}RecordUpdates"
   CACHE_OPTIMIZED_OFFER_LIST = "#{BASE_NAME}CacheOptimizedOfferList"
+  SEND_COUPON_EMAILS         = "#{BASE_NAME}SendCouponEmails"
+  CACHE_RECORD_NOT_FOUND     = "#{BASE_NAME}CacheRecordNotFound"
 end

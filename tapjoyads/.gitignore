@@ -24,8 +24,6 @@ public/assets/*
 public/translations
 db/schema-dev.rb
 db/webserver-dev.sqlite
-cookbooks
-.vagrant
 
 # Bundler
 vendor/bundle

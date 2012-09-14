@@ -10,15 +10,18 @@ class Mc
       :cache_lookups    => false
     }
 
-    @@cache              = Memcached.new(MEMCACHE_SERVERS, options)
-    @@distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
+    @cache              = Memcached.new(MEMCACHE_SERVERS, options)
+    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
   end
 
-  cattr_accessor :cache, :distributed_caches
+  class << self
+    attr_accessor :cache, :distributed_caches
+  end
   self.reset_connection
 
   # Memcache counts can't go below 0. Set the offset to 2^32/2 for all counts.
   COUNT_OFFSET = 2147483648
+  MAX_KEY_LENGTH = 250
 
   MEMCACHED_ACTIVE_RECORD_MODELS = %w(App Currency Offer SurveyOffer VideoOffer ReengagementOffer)
 
@@ -65,40 +68,33 @@ class Mc
   def self.get(keys, clone = false, caches = nil, &block)
     keys = keys.to_a
     key  = keys.shift
-    caches ||= [ @@cache ]
+    caches ||= [ @cache ]
+    #We use missing_caches to make sure to distribute data in the event of a miss
     missing_caches = []
-    dead_caches = []
-    error_caches = []
 
-    cache = caches.first
-    cache = cache.clone if clone
+    #We use this for looping on the current key with the list of available caches
+    available_caches = caches.clone
 
     value = nil
     log_info_with_time("Read from memcache") do
       begin
-        value = cache.get(CGI::escape(key))
-        Rails.logger.info("Memcache key found: #{key}")
+        #Grab a cache to try
+        cache = available_caches.shift
+        unless cache.nil?
+          cache = cache.clone if clone
+          value = cache.get(cache_key(key))
+          Rails.logger.info("Memcache key found: #{key}")
+        end
       rescue Memcached::NotFound
         missing_caches << cache
-        if (caches - missing_caches).length > 0
-          cache = (caches - missing_caches).first
-          retry
-        end
-        Rails.logger.info("Memcache key not found: #{key}")
+        Rails.logger.info("Memcache key not found in cache, retrying: #{key}")
+        retry
       rescue Memcached::ServerIsMarkedDead => e
-        dead_caches << cache
-        if (caches - dead_caches).length > 0
-          cache = (caches - dead_caches).first
-          retry
-        end
         Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
+        retry
       rescue Memcached::ServerError => e
-        error_caches << cache
-        if (caches - error_caches).length > 0
-          cache = (caches - error_caches).first
-          retry
-        end
         Rails.logger.info("Memcached::ServerError: #{e.message}")
+        retry
       rescue Memcached::NoServersDefined => e
         Rails.logger.info("Memcached::NoServersDefined: #{e}")
       rescue Memcached::ATimeoutOccurred => e
@@ -140,7 +136,7 @@ class Mc
   end
 
   def self.distributed_get(key, clone = false)
-    value = Mc.get(key, clone, @@distributed_caches.shuffle) do
+    value = Mc.get(key, clone, @distributed_caches.shuffle) do
       yield if block_given?
     end
 
@@ -158,11 +154,11 @@ class Mc
   # Adds the value to memcached, not replacing an existing value
   def self.add(key, value, clone = false, time = 1.week, cache = nil)
     if value
-      cache ||= @@cache
+      cache ||= @cache
       cache = cache.clone if clone
 
       log_info_with_time("Added to memcache: #{key}") do
-        cache.add(CGI::escape(key), value, time.to_i)
+        cache.add(cache_key(key), value, time.to_i)
       end
     end
   end
@@ -171,11 +167,11 @@ class Mc
   # Saves value to memcached, as long as value is not nil.
   def self.put(key, value, clone = false, time = 1.week, cache = nil)
     if value
-      cache ||= @@cache
+      cache ||= @cache
       cache = cache.clone if clone
 
       log_info_with_time("Wrote to memcache: #{key}") do
-        cache.set(CGI::escape(key), value, time.to_i)
+        cache.set(cache_key(key), value, time.to_i)
       end
     end
   end
@@ -184,7 +180,7 @@ class Mc
     if value
       errors = []
       log_info_with_time("Wrote to memcache - distributed") do
-        @@distributed_caches.each do |cache|
+        @distributed_caches.each do |cache|
           begin
             Mc.put(key, value, clone, time, cache)
           rescue Exception => e
@@ -193,13 +189,13 @@ class Mc
         end
       end
 
-      raise errors.first if errors.length == @@distributed_caches.length
+      raise errors.first if errors.length == @distributed_caches.length
     end
   end
 
   def self.increment_count(key, clone = false, time = 1.week, offset = 1)
-    cache = clone ? @@cache.clone : @@cache
-    key = CGI::escape(key)
+    cache = clone ? @cache.clone : @cache
+    key = cache_key(key)
 
     begin
       if offset > 0
@@ -216,8 +212,8 @@ class Mc
   end
 
   def self.get_count(key, clone = false)
-    cache = clone ? @@cache.clone : @@cache
-    key = CGI::escape(key)
+    cache = clone ? @cache.clone : @cache
+    key = cache_key(key)
 
     begin
       count = cache.get(key, false).to_i
@@ -229,17 +225,17 @@ class Mc
   end
 
   def self.compare_and_swap(key, clone = false)
-    c = clone ? @@cache.clone : @@cache
-    key = CGI::escape(key)
+    cache = clone ? @cache.clone : @cache
+    key = cache_key(key)
 
     retries = 2
     begin
-      c.cas(key) do |mc_val|
+      cache.cas(key) do |mc_val|
         yield mc_val
       end
     rescue Memcached::NotFound
       # Attribute hasn't been stored yet.
-      c.set(key, yield(nil))
+      cache.set(key, yield(nil))
     rescue Memcached::ConnectionDataExists => e
       # Attribute was modified before it could write.
       if retries > 0
@@ -252,9 +248,9 @@ class Mc
   end
 
   def self.delete(key, clone = false, cache = nil)
-    cache ||= @@cache
+    cache ||= @cache
     cache = cache.clone if clone
-    key = CGI::escape(key)
+    key = cache_key(key)
 
     begin
       cache.delete(key)
@@ -264,14 +260,17 @@ class Mc
   end
 
   def self.distributed_delete(key, clone = false)
-    @@distributed_caches.each do |cache|
+    @distributed_caches.each do |cache|
       Mc.delete(key, clone, cache) rescue nil
     end
     nil
   end
 
   def self.flush(totally_serious)
-    @@cache.flush if totally_serious == 'totally_serious'
+    @cache.flush if totally_serious == 'totally_serious'
   end
 
+  def self.cache_key(key)
+    CGI::escape(key)[0...MAX_KEY_LENGTH]
+  end
 end

@@ -10,11 +10,11 @@ class ConversionChecker
     @entity_keys = []
     @resolution_update_keys = []
 
-    @offer = Offer.find_in_cache(@click.offer_id, true)
+    @offer = Offer.find_in_cache(@click.offer_id, :do_lookup => true)
     @entity_keys << "OFFER.#{@offer.id}"
     @entity_keys << "ADVERTISER.#{@offer.partner_id}"
 
-    @currency = Currency.find_in_cache(@click.currency_id, true)
+    @currency = Currency.find_in_cache(@click.currency_id, :do_lookup => true)
     @entity_keys << "APP.#{@currency.app_id}"
     @entity_keys << "PUBLISHER.#{@currency.partner_id}"
 
@@ -33,10 +33,6 @@ class ConversionChecker
   end
 
   def acceptable_risk?
-    # Try to stop Playdom users from click-frauding (specifically from Mobsters: Big Apple)
-    if @currency.callback_url == Currency::PLAYDOM_CALLBACK_URL && @click.publisher_user_id !~ /^(F|M|P)[0-9]+$/
-      @risk_message = "InvalidPlaydomUserId" and return block_conversion
-    end
 
     unless @publisher_user.update!(@click.udid)
       @risk_message = "TooManyUdidsForPublisherUserId" and return block_conversion
