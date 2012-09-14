@@ -268,9 +268,8 @@ class Conversion < ActiveRecord::Base
       stat_path = [ 'countries', (Stats::COUNTRY_CODES[country].present? ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
       keys << Stats.get_memcache_count_key(stat_path, attr_value, time)
     end
-    if store_name && STAT_TO_REWARD_TYPE_MAP[stat_name] && STAT_TO_REWARD_TYPE_MAP[stat_name][:segment_by_store]
-      keys << Stats.get_memcache_count_key(stat_name, attr_value, time, store_name)
-    end
+    segment_stat = Stats.get_segment_stat(stat_name, store_name)
+    keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
 
     keys.each do |mc_key|
       Mc.increment_count(mc_key, false, 1.day, count_inc)

@@ -105,10 +105,18 @@ class Stats < SimpledbResource
 
   ##
   # Gets the memcache key for a specific stat_name_or_path and app_id. The key will be unique for the hour.
-  def self.get_memcache_count_key(stat_name_or_path, app_id, time, store_name = nil)
+  def self.get_memcache_count_key(stat_name_or_path, app_id, time)
     stat_name_string = Array(stat_name_or_path).join(',')
-    stat_name_string << ".#{store_name}" if store_name
     "stats.#{stat_name_string}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
+  end
+
+  def self.get_segment_stat(stat, store_name)
+    "#{stat}.#{store_name}" if store_name && Stats.segment_by_store?(stat)
+  end
+
+  def self.segment_by_store?(stat)
+    (WebRequest::STAT_TO_PATH_MAP[stat] && WebRequest::STAT_TO_PATH_MAP[stat][:segment_by_store]) ||
+    (Conversion::STAT_TO_REWARD_TYPE_MAP[stat] && Conversion::STAT_TO_REWARD_TYPE_MAP[stat][:segment_by_store])
   end
 
   ##

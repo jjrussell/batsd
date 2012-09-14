@@ -237,9 +237,8 @@ class WebRequest < SyslogMessage
 
   def increment_running_counts(stat_name_or_path, attr_value, time)
     keys = [ Stats.get_memcache_count_key(stat_name_or_path, attr_value, time) ]
-    if store_name && STAT_TO_PATH_MAP[stat_name_or_path] && STAT_TO_PATH_MAP[stat_name_or_path][:segment_by_store]
-      keys << Stats.get_memcache_count_key(stat_name_or_path, attr_value, time, store_name)
-    end
+    segment_stat = Stats.get_segment_stat(stat_name_or_path, store_name)
+    keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
     keys.each do |mc_key|
       Mc.increment_count(mc_key, false, 1.day)
     end
