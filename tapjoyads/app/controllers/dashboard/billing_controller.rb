@@ -172,6 +172,10 @@ class Dashboard::BillingController < Dashboard::DashboardController
       end
     else
       @payout_info = PayoutInfo.new
+      if current_partner.country.present?
+        @payout_info.payment_country = current_partner.country
+        @payout_info.address_country = current_partner.country
+      end
     end
   end
 

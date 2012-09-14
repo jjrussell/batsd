@@ -48,6 +48,9 @@
 #  payout_info_confirmation      :boolean(1)      default(FALSE), not null
 #  payout_threshold_confirmation :boolean(1)      default(FALSE), not null
 #  live_date                     :datetime
+#  use_server_whitelist          :boolean(1)      default(FALSE), not null
+#  enable_risk_management        :boolean(1)      default(FALSE), not null
+#  country                       :string(255)
 #
 
 class Partner < ActiveRecord::Base

@@ -77,6 +77,7 @@
   .metadata Approved publisher: #{@partner.approved_publisher?}
   .metadata Account managers: #{@partner.account_managers.map{|u| u.username}.join(', ')}
   .metadata Sales rep: #{@partner.sales_rep}
+  .metadata Country: #{@partner.country}
   .metadata Internal notes: #{@partner.account_manager_notes}
   .metadata
     Current Offer Discount:

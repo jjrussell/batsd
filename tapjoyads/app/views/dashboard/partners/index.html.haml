@@ -4,15 +4,20 @@
 - if permitted_to? :new, :dashboard_partners
   = link_to 'Create a New Partner Account', new_partner_path
 
-- unless current_user.role_symbols.include?(:agency)
-  .right
-    Managed by:
-    - options = options_for_select(@account_managers, params[:id])
-    = select_tag('managed_by', options)
-  = form_tag(partners_path, :method => :get, :class => 'tjform') do
-    = label_tag(:q, "Name or Email Address:")
-    = text_field_tag(:q, params[:q], :size => '40')
-    = submit_tag('Search')
+  - agent = current_user.role_symbols.include?(:agency)
+  .tjform
+    = form_tag(partners_path, :method => :get) do
+      = label_tag(:criterion, "Search by: ")
+      - crit_opts = [['Name or Email Address','q']]
+      - unless agent
+        - crit_opts << ['Managed by', 'managed_by']
+      - crit_opts << ['Country','country']
+      = select_tag('criterion', options_for_select(crit_opts, params[:criterion] || 'q'))
+      = text_field_tag(:q, params[:q], :size => '40')
+      - unless agent
+        = select_tag('managed_by', options_for_select(@account_managers, params[:managed_by]))
+      = select_tag('country', options_for_select(list_of_countries, params[:country]), {:include_blank => true})
+      = submit_tag('Search')
 
 = render :partial => "shared/partner_table", :locals => { :partners => @partners }
 = will_paginate(@partners)
@@ -50,15 +55,13 @@
 - content_for :page_javascript do
   :plain
     $(function($){
-      $('#managed_by').change(function(){
-        if ($(this).val() == 'all') {
-          location.href = '/partners/';
-        } else if ($(this).val() == 'none') {
-          location.href = '/partners/managed_by/none';
-        } else {
-          location.href = '/partners/managed_by/' + $(this).val();
-        }
+      $('#criterion').change(function() {
+        $.each(['q','managed_by','country'], function() {
+          elem = $('#' + this);
+          if (elem) { elem.toggle($('#criterion').val() == this) };
+        });
       });
+      $('#criterion').trigger('change')
 
       $('td.account_manager select,td.sales_rep select').change(function(){
         var form = $(this).parent('form');
