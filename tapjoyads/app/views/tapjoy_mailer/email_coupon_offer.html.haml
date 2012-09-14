@@ -3,7 +3,7 @@
 %p
   Take your coupon to #{@advertiser} and present the barcode below.
 %p
-  = image_tag(@barcode)
+  = image_tag(@barcode) unless @barcode.blank?
 %p
   Redemption code: #{@redemption_code}
 %p

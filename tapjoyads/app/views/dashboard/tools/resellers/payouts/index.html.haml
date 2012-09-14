@@ -1,0 +1,97 @@
+- @page_title = 'Reseller Payouts'
+
+%h1= @page_title
+
+%h3
+  Payout Freeze Status:
+  - if @freeze_enabled
+    %span{ :class => 'enabled' } Enabled
+  - else
+    %span{ :class => 'disabled' } Disabled
+  - if permitted_to? :index, :dashboard_tools_payout_freezes
+    = link_to '[modify]', tools_payout_freezes_path
+
+- if @start_date.present?
+  %h3
+    For resellers with payout info modified between
+    = @start_date.to_s(:pub)
+    and
+    = @end_date.to_s(:pub)
+
+#filtered.hidden
+  Information updated in:
+  = select_date((@start_date || Time.zone.now), :order => [:year, :month], :discard_day => true, :start_year => 2011, :end_year => Time.zone.now.year)
+  = submit_tag('Update', :id => :date_submit)
+  = submit_tag('Reset', :id => :date_reset)
+#unfiltered.hidden
+  = link_to 'Filter by payout info modification', '#'
+
+%table
+  %thead
+    %tr
+      %th Partner
+      %th Pending Earnings
+      %th Payout Amount
+      %th Current Payout Created
+      - if permitted_to?(:create, :dashboard_tools_resellers_payouts)
+        %th Action
+  %tbody
+    - @resellers.each do |reseller|
+      %tr
+        %td
+          %strong Partner Name:
+          = reseller.name
+          %br/
+          %strong ID:
+          = link_to reseller.id, tools_payouts_path(:reseller_id => reseller.id)
+
+        %td= number_to_currency(reseller.pending_earnings / 100.0)
+        %td= number_to_currency(reseller.leftover_payout_amount / 100.0)
+        %td= number_to_currency(reseller.next_payout_amount / 100.0)
+        - if permitted_to?(:create, :dashboard_tools_resellers_payouts)
+          %td
+            = form_tag tools_resellers_payouts_path, :method => :post, :class => 'json' do
+              = hidden_field_tag :reseller_id, reseller.id
+              = submit_tag 'Create Payouts'
+              %img.spinner{ :src => '/images/spinner.gif', :style => 'display:none;' }
+              %span.status
+          - else
+            &nbsp;
+
+%div{ :class => 'popup', :style => 'display:none'}
+- content_for :included_javascripts, javascript_include_tag('tapjoy/payouts')
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.initPayouts('#{tools_payouts_path}', #{@start_date.present?});
+    });
+
+- content_for :page_styles do
+  :plain
+    #main {
+      width: 1200px;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid gray;
+      padding: 5px;
+      font-size: 12px;
+    }
+    table form.json {
+      display: inline;
+    }
+
+    span.enabled {
+      color: green;
+    }
+
+    span.disabled {
+      color: red;
+    }
+
+    h3 a {
+      text-decoration: none;
+      font-size: 14px;
+    }

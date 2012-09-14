@@ -173,7 +173,7 @@ describe Job::QueueSendCurrencyController do
     it 'should save the reward' do
       Currency.
         should_receive(:find_in_cache).
-        with(@currency.id, true).
+        with(@currency.id, {:do_lookup => true}).
         and_return(@currency)
 
       get(:run_job, :message => @reward.id)
@@ -280,7 +280,7 @@ describe Job::QueueSendCurrencyController do
 
       Offer.
         should_receive(:find_in_cache).
-        with(offer.id, true).
+        with(offer.id, {:do_lookup => true}).
         and_return(offer)
 
       get(:run_job, :message => @reward.id)

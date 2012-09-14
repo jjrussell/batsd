@@ -1,0 +1,85 @@
+%h3 Video Caching and Streaming Options (Publishers Only)
+
+= form_for(@app, :url => update_options_app_videos_path(@app), :remote => true, :html => {:class => 'tjform'}) do |f|
+  %table
+    %tr
+      %th(width=200)
+        = f.label(:videos_enabled, 'Enable Video Ads')
+        #help_videos_enabled.help ?
+      %td
+        = f.check_box(:videos_enabled)
+        = error_message_on @app, :videos_enabled
+    %tr.hideable.caches.hidden
+      %th
+        = f.label(:videos_cache_wifi, 'Cache over WiFi')
+        #help_videos_cache_wifi.help ?
+      %td
+        = f.check_box(:videos_cache_wifi)
+        = error_message_on @app, :videos_cache_wifi
+    %tr.hideable.caches.hidden
+      %th
+        = f.label(:videos_cache_3g, 'Cache over 3G')
+        #help_videos_cache_3g.help ?
+      %td
+        = f.check_box(:videos_cache_3g)
+        = error_message_on @app, :videos_cache_3g
+    %tr.hideable.caches_hidden.hidden
+      %th
+        = f.label(:videos_cache_auto, 'Automatic Caching')
+        #help_videos_cache_auto.help ?
+      %td
+        = f.check_box(:videos_cache_auto)
+        = error_message_on @app, :videos_cache_auto
+    %tr.hideable.hidden
+      %th
+        = f.label(:videos_stream_3g, 'Stream over 3G')
+        #help_videos_stream_3g.help ?
+      %td
+        = f.check_box(:videos_stream_3g)
+        = error_message_on @app, :videos_stream_3g
+    %tr
+      %td{ :colspan => 2 }= f.submit('Save Changes')
+
+.hidden
+  #help_videos_enabled_content{ :name => 'Enable Videos' } If this option is disabled video ads will never appear in your app.
+  #help_videos_cache_wifi_content{ :name => 'Cache Videos on WiFi' } If enabled, video ads will be pre-cached when a user is connected via WiFi.
+  #help_videos_cache_3g_content{ :name => 'Cache Videos on 3G' } If enabled, video ads will be pre-cached when a user is connected via 3G.
+  #help_videos_cache_auto_content{ :name => 'Automatic Caching' } If enabled, the SDK will automatically determine the best caching mode. For more advanced control disable this option.
+  #help_videos_stream_3g_content{ :name => 'Stream Videos on 3G' } If enabled, videos will be streamed when a user is connected via 3G.
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      var cacheOptions = $('.caches input:checkbox');
+      cacheOptions.change(function() {
+        var count = cacheOptions.filter(':checked').length
+        if (count > 0) {
+          $('.caches_hidden').removeClass('hidden');
+        } else {
+          $('.caches_hidden').addClass('hidden');
+        }
+      });
+
+      $('#app_videos_enabled').change(function() {
+        if ($(this).is(':checked')) {
+          $('.hideable').removeClass('hidden');
+          cacheOptions.trigger('change');
+        } else {
+          $('.hideable').addClass('hidden');
+        }
+      }).trigger('change');
+
+      $('#apps_main .tjform').bind('ajax:before', function() {
+        $('#app_submit').attr('disabled', true);
+        $('.flash').fadeOut(400, function() {
+          $(this).html('<span class="message"></span>');
+        });
+      }).bind('ajax:success', function() {
+        $('#flash_notice span.message').text('Video options updated!').parents('.flash').fadeIn();
+      }).bind('ajax:error', function() {
+        $('#flash_warning span.message').text('There was an error updating your video options!').parents('.flash').fadeIn();
+      }).bind('ajax:complete', function() {
+        $('#app_submit').attr('disabled', false);
+      });
+    });
+

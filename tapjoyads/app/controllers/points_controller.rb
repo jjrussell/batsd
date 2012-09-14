@@ -123,6 +123,7 @@ private
     if @success
       web_request = WebRequest.new
       web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
+      update_web_request_store_name(web_request, params[:app_id])
       web_request.save
     end
   end

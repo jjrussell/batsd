@@ -45,11 +45,11 @@ Tapjoy.Graph = {
     if (options.decimals) {
       g.Set('chart.scale.decimals', options.decimals);
     }
-    
+
     if (options.drawGrid != null) {
       g.Set('chart.background.grid', options.drawGrid);
     }
-    
+
   },
 
   clone: function clone(obj) {
@@ -150,12 +150,12 @@ Tapjoy.Graph = {
     try {
       var g = new RGraph.Line(id + '_graph');
       g.original_data = obj['graph_left']['data'];
-      RGraph.Clear(g.canvas); 
-    
+      RGraph.Clear(g.canvas);
+
       g.Set('chart.key', legendKeys);
       g.Set('chart.key.background', 'rgba(255,255,255,0.5)');
       g.Set('chart.key.position', 'gutter');
-    
+
       g.Set('chart.labels', obj['xLabels']);
       g.Set('chart.text.angle', 90);
 
@@ -168,7 +168,7 @@ Tapjoy.Graph = {
         decimals: obj['graph_left']['decimals']
       });
       g.Draw();
-    
+
 
       if (obj['graph_right']) {
         var g2 = new RGraph.Line(id + '_graph');
@@ -258,7 +258,7 @@ Tapjoy.Graph = {
       if (obj[group] && obj[group]['totals']) {
         for (var j = 0, name; name = obj[group]['names'][j]; j++) {
           var value = obj[group]['totals'][j];
-          
+
           if (value || value == 0) {
             html.push(name + ': ' + value);
           }

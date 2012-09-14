@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120731133709) do
+ActiveRecord::Schema.define(:version => 20120907032607) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.text     "countries_blacklist"
     t.text     "languages"
     t.text     "screenshots"
+    t.string   "developer"
   end
 
   add_index "app_metadatas", ["id"], :name => "index_app_metadatas_on_id", :unique => true
@@ -141,6 +142,11 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.boolean  "reengagement_campaign_enabled",               :default => false
     t.boolean  "uses_non_html_responses",                     :default => false, :null => false
     t.string   "custom_url_scheme"
+    t.boolean  "videos_enabled",                              :default => true,  :null => false
+    t.boolean  "videos_cache_auto",                           :default => false, :null => false
+    t.boolean  "videos_cache_wifi",                           :default => false, :null => false
+    t.boolean  "videos_cache_3g",                             :default => false, :null => false
+    t.boolean  "videos_stream_3g",                            :default => false, :null => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -778,6 +784,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.string   "app_metadata_id",                   :limit => 36
     t.string   "source_offer_id",                   :limit => 36
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
+    t.boolean  "rate_filter_override",                                                          :default => false, :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -891,6 +898,7 @@ ActiveRecord::Schema.define(:version => 20120731133709) do
     t.datetime "live_date"
     t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
     t.boolean  "enable_risk_management",                                                    :default => false,     :null => false
+    t.string   "country"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

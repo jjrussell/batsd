@@ -275,7 +275,7 @@ class Offer < ActiveRecord::Base
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
         blob = banner_creative_s3_object(size).read
-        clone.send("banner_creative_#{size}_blob=", blob)
+        clone.add_banner_creative(blob, size)
       end
     end
   end
@@ -435,8 +435,12 @@ class Offer < ActiveRecord::Base
     item_type == 'Coupon'
   end
 
+  def survey_offer?
+    item_type == 'SurveyOffer'
+  end
+
   def show_in_active_campaigns?
-    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon)/
+    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon|SurveyOffer)/
   end
 
   def video_icon_url(options = {})

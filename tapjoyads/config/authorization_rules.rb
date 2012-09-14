@@ -17,7 +17,7 @@ authorization do
     has_permission_on :dashboard_inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
     has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :dashboard_videos, :to => [:index]
+    has_permission_on :dashboard_videos, :to => [:index, :options, :update_options]
   end
 
   role :agency do
@@ -88,6 +88,7 @@ authorization do
     includes :payops
     has_permission_on :dashboard_tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
     has_permission_on :dashboard_tools_payouts, :to => [ :create, :confirm_payouts ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :create, :disable ]
   end
 
@@ -156,9 +157,11 @@ authorization do
     includes :account_mgr
     has_permission_on :dashboard_tools_clients, :to => [ :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
     has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :index ]
     has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
     has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
+    has_permission_on :dashboard_tools, :to => [:monthly_rev_share_report, :download_monthly_rev_share_report]
   end
 
   role :games_editor do
@@ -204,6 +207,7 @@ authorization do
     includes :products
     includes :file_sharer
     includes :sales_rep_mgr
+    has_permission_on :dashboard_partners, :to => [ :new, :create ]
     has_permission_on :dashboard_pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]

@@ -6,19 +6,16 @@ class AdminDeviceLastRun
 
     module InstanceMethods
       def should_track_device?
-        # The easiest check
-        return true if AdminDevice.where(:udid => params[:udid]).any?
-
-        # The second easiest check, and sets @device
+        # The easiest check, and sets @device
         @device ||= Device.new(
           :key => params[:udid],
           :is_temporary => params[:udid_is_temporary].present?
         )
         return true if @device.last_run_time_tester?
 
-        # The slowest check; for partner test devices
+        # Check for partner test device
         begin
-          Currency.where(:app_id => params[:app_id]).
+          Currency.find_all_in_cache_by_app_id(params[:app_id]).
             collect(&:get_test_device_ids).inject(:+).
             any? { |udid| udid == params[:udid] }
         rescue

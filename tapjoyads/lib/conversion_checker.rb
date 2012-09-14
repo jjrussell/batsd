@@ -10,11 +10,11 @@ class ConversionChecker
     @entity_keys = []
     @resolution_update_keys = []
 
-    @offer = Offer.find_in_cache(@click.offer_id, true)
+    @offer = Offer.find_in_cache(@click.offer_id, :do_lookup => true)
     @entity_keys << "OFFER.#{@offer.id}"
     @entity_keys << "ADVERTISER.#{@offer.partner_id}"
 
-    @currency = Currency.find_in_cache(@click.currency_id, true)
+    @currency = Currency.find_in_cache(@click.currency_id, :do_lookup => true)
     @entity_keys << "APP.#{@currency.app_id}"
     @entity_keys << "PUBLISHER.#{@currency.partner_id}"
 

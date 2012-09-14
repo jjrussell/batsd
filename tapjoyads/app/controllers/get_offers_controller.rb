@@ -20,11 +20,15 @@ class GetOffersController < ApplicationController
       :deepLink => false, :showBanner => false,
       :showActionLine => true, :showCostBalloon => false,
       :showCurrentApp => false, :squircles => false,
-      :viewID => 'control'
+      :viewID => 'control', :showActionArrow => false
     }
   }
 
-  VIEW_MAP[:test] = VIEW_MAP[:control].merge(:actionLocation => 'left', :viewID => 'test')
+  VIEW_MAP[:test] = VIEW_MAP[:control].merge(
+    :actionLocation => 'left',
+    :viewID => 'test',
+    :showActionArrow => true
+  )
 
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
@@ -35,7 +39,7 @@ class GetOffersController < ApplicationController
     end
 
     if @for_preview
-      @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id])], 0]
+      @offer_list, @more_data_available = [[Offer.find_in_cache(params[:offer_id], :queue => true )], 0]
     else
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
@@ -132,13 +136,13 @@ class GetOffersController < ApplicationController
       @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
       @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
     else
-      @currency = Currency.find_in_cache(params[:currency_id])
+      @currency = Currency.find_in_cache(params[:currency_id], :queue => true)
       if @currency.present?
         @supports_rewarded = @currency.conversion_rate > 0
         @currency = nil if @currency.app_id != params[:app_id]
       end
     end
-    @publisher_app = App.find_in_cache(params[:app_id])
+    @publisher_app = App.find_in_cache(params[:app_id], :queue => true)
     return unless verify_records([ @currency, @publisher_app ])
 
     unless @for_preview
@@ -150,16 +154,31 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    # No experiment running at this time
-    # params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    # set_offerwall_experiment
-    params[:exp] = 'control'
+    params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
+    set_offerwall_experiment
 
     if @save_web_requests
       @web_request = generate_web_request
+      update_web_request_store_name(@web_request, nil, @publisher_app)
     end
     @show_papaya = false
     @papaya_offers = {}
+
+    if library_version.control_video_caching?
+      # Allow developers to override app settings to hide videos
+      if params[:hide_videos] =~ /^1|true$/
+        @all_videos = false
+        @video_offer_ids = []
+      else
+        # If video streaming is on for this connection type we want to return all videos
+        @all_videos = @publisher_app.videos_stream_on?(params[:connection_type])
+        # But if it's not on, and caching is enabled, we will have gotten back a list of cached videos
+        @video_offer_ids = params[:video_offer_ids].to_s.split(',')
+      end
+    else
+      @all_videos = params[:all_videos]
+      @video_offer_ids = params[:video_offer_ids].to_s.split(',')
+    end
 
     #TJG app offers will show wifi only icon (except for android there's no cell download limit yet), for offerwall only windows phone will show the icon
     @show_wifi_only = (params[:show_wifi_only] == '1') || (params[:device_type] == 'windows')
@@ -180,8 +199,8 @@ class GetOffersController < ApplicationController
       :os_version           => params[:os_version],
       :source               => params[:source],
       :screen_layout_size   => params[:screen_layout_size],
-      :video_offer_ids      => params[:video_offer_ids].to_s.split(','),
-      :all_videos           => params[:all_videos],
+      :video_offer_ids      => @video_offer_ids,
+      :all_videos           => @all_videos,
       :algorithm            => @algorithm,
       :algorithm_options    => @algorithm_options,
       :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
@@ -196,6 +215,7 @@ class GetOffersController < ApplicationController
   def save_impressions
     if @save_web_requests
       web_request = generate_web_request
+      update_web_request_store_name(web_request, nil, @publisher_app)
       @offer_list.each_with_index do |offer, i|
         web_request.replace_path('offerwall_impression')
         web_request.offer_id = offer.id

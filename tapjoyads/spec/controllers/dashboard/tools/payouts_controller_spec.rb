@@ -18,10 +18,19 @@ describe Dashboard::Tools::PayoutsController do
   end
 
   describe '#confirm_payouts' do
-    context 'when not payout manager' do
+    context 'when not admin, and not payout manager' do
       it 'does not succeed' do
-        post(:confirm_payouts, :id => @partner.id)
+        @user = FactoryGirl.create(:user)
+        login_as(@user)
+        post(:confirm_payouts, :partner_id => @partner.id)
         response.should_not be_success
+      end
+    end
+
+    context 'when admin' do
+      it 'succeeds' do
+        post(:confirm_payouts, :partner_id => @partner.id)
+        response.should be_success
       end
     end
 
@@ -72,9 +81,8 @@ describe Dashboard::Tools::PayoutsController do
       context 'when payout not saved properly' do
         before :each do
           payout = FactoryGirl.create(:payout, :partner => @partner)
-          payout.stub(:save).and_return(false)
-          payouts = mock('build',:build => payout)
-          @partner.stub(:payouts).and_return(payouts)
+          payout.stub(:persisted? => false, :save => false)
+          @partner.stub(:make_payout).and_return(payout)
           Partner.stub(:find).with('faux').and_return(@partner)
         end
 

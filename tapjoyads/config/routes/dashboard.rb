@@ -86,7 +86,12 @@ Tapjoyad::Application.routes.draw do
             post :update_status
           end
         end
-        resources :videos, :only => [:index]
+        resources :videos, :only => [:index] do
+          collection do
+            get :options
+            put :update_options
+          end
+        end
       end
       resource :offer do
         member do
@@ -227,9 +232,9 @@ Tapjoyad::Application.routes.draw do
           get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
+          get :monthly_rev_share_report
+          get :download_monthly_rev_share_report
         end
-
-
       end
 
       namespace :tools do
@@ -301,6 +306,9 @@ Tapjoyad::Application.routes.draw do
           member do
             get :info
           end
+        end
+        namespace :resellers do
+          resources :payouts, :only => [:index, :create]
         end
         resources :enable_offer_requests, :only => [:update, :index]
         resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]

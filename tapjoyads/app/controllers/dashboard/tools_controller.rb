@@ -5,7 +5,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
-  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
+  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance, :monthly_rev_share_report ]
   before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
 
@@ -593,6 +593,48 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
     flash[:message] = "Force conversion request sent. It may take some time for this request to be processed."
     redirect_to :action => :device_info, :click_key => click.key
+  end
+
+  def monthly_rev_share_report
+  end
+
+  def download_monthly_rev_share_report
+    start_time = Time.zone.parse(params[:start_time]).beginning_of_month
+    year  = start_time.year
+    month = start_time.month
+    start_time = start_time.to_f
+
+    where_clause = [
+      %Q(`updated-at` is not null),
+      %Q(`updated-at` >= '#{start_time}'),
+      %Q(`updated-at` <  '#{start_time + 1.month}'),
+      %Q(after_state     like '%"rev_share":%'),
+      %Q(after_state not like '%"rev_share":null%'),
+      %Q(after_state not like '%"rev_share":""%'),
+    ].join(' and ')
+
+    data = ['time,partner_id,partner_name,user,old_rev_share,new_rev_share,notes']
+    next_token = nil
+
+    begin
+      response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => next_token)
+      next_token = response[:next_token]
+      response[:items].each do |item|
+        partner = Partner.find(item.partner_id)
+        row = [
+          item.updated_at,
+          partner.id,
+          partner.name,
+          item.user,
+          item.before_state['rev_share'],
+          item.after_state['rev_share'],
+          item.after_state['account_manager_notes'],
+        ]
+        data << row.map{|attr| attr.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')}.join(",")
+      end
+    end until next_token.nil?
+
+    send_data(data.join("\n"), :type => 'text/csv', :filename => "monthly_rev_share_#{year}_#{month}.csv")
   end
 
   private

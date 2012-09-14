@@ -25,6 +25,9 @@ describe GetOffersController do
       @offer4.partner.balance = 10
       @offer4.save
 
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
+
       offers = [ @offer, @offer2, @offer3, @offer4 ]
       OfferCacher.stub(:get_offers_prerejected).and_return(offers)
       RailsCache.stub(:get).and_return(nil)
@@ -156,7 +159,10 @@ describe GetOffersController do
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
+
         OfferCacher.stub(:get_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
+        Currency.stub(:find_in_cache).and_return(@currency)
+        App.stub(:find_in_cache).and_return(@currency.app)
         @params = {
           :udid => 'stuff',
           :publisher_user_id => 'more_stuff',
@@ -242,6 +248,9 @@ describe GetOffersController do
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       @offer.save
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
+      Offer.stub(:find_in_cache).and_return(@offer)
     end
 
     context 'with redesign specified' do
@@ -306,6 +315,8 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
     end
 
     it 'should mark the pub app as using non-html responses' do
@@ -422,14 +433,16 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+      Currency.stub(:find_in_cache).and_return(@currency)
+      App.stub(:find_in_cache).and_return(@currency.app)
       get(:index, @params)
     end
 
     it 'assigns web_request' do
-      get(:index, @params.merge(:exp => 10))
+      get(:index, @params.merge(:exp => 'test'))
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == 'control'
+      web_request.exp.should == 'test'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'
@@ -498,6 +511,33 @@ describe GetOffersController do
       assigns(:server_to_server).should == false
       get(:webpage, @params.merge(:library_version => 'SERVER'))
       assigns(:server_to_server).should == true
+    end
+
+    context 'when the accessing SDK supports video cache controls' do
+      before(:each) do
+        controller.stub(:library_version => mock(:control_video_caching? => true))
+      end
+
+      it "should respect the hide_videos parameter" do
+        get(:index, @params.merge(:hide_videos => 'true', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should be_empty
+
+        get(:index, @params.merge(:hide_videos => 'false', :video_offer_ids => 'abc,123'))
+        assigns(:video_offer_ids).should == ['abc', '123']
+      end
+
+      it 'respects the apps streaming setting' do
+        app = App.find(@params[:app_id])
+        App.stub(:find_in_cache => app)
+        app.update_attributes(:videos_stream_3g => true)
+
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_true
+
+        app.update_attributes(:videos_stream_3g => false)
+        get(:index, @params.merge(:connection_type => 'mobile'))
+        assigns(:all_videos).should be_false
+      end
     end
   end
 end

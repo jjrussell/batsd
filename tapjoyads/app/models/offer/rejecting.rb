@@ -108,6 +108,12 @@ module Offer::Rejecting
     # Conquer Online HD iOS
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202) =>
     %w(b58dcbe2-3947-4b3c-9f40-5f483c3426ba 0158a09c-0bac-4a20-b408-d37ba704f273 b28aa701-88e7-4567-9bfe-468f4a876652 497550e9-8073-41ba-a13c-ce1585d52202),
+    # Blitzoo Games SlotSpot iOS
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b) =>
+    %w(e3ee1af4-9ae9-4a73-aff1-8043a02cd42d 6cf115c1-7e44-4548-aea1-e34f3669669b 7ec1fe0c-9962-4f45-a479-fb44f885ef71 7f9a59ba-644b-4163-9c9e-e6036edeacdc 8461aa8c-fcb1-4334-bcee-964ee797816b),
+    # Shell
+    %w(ca346e70-486a-438f-aaa1-71bcf9922597 a43b4682-f55d-4e92-9b55-0be4f391ad78 6a622dda-a3ac-45f4-a618-2e831086a145 0d4756e6-90df-4429-b8cb-6a0f9253b8c6 b855242a-d5b7-46f9-a585-4f11525e7dac 740a3370-1d8d-4fb1-8656-cd41d0404b22 8b183ff8-2a5e-458e-bdc6-41e11147aaf0 2bf4a059-bae1-4a1b-aac2-57a019074d53 635cdf2c-35fa-480d-a448-d43519a90c21 5da6b900-9a7d-4a36-a2a1-5baa8c4904b3) =>
+    %w(ca346e70-486a-438f-aaa1-71bcf9922597 a43b4682-f55d-4e92-9b55-0be4f391ad78 6a622dda-a3ac-45f4-a618-2e831086a145 0d4756e6-90df-4429-b8cb-6a0f9253b8c6 b855242a-d5b7-46f9-a585-4f11525e7dac 740a3370-1d8d-4fb1-8656-cd41d0404b22 8b183ff8-2a5e-458e-bdc6-41e11147aaf0 2bf4a059-bae1-4a1b-aac2-57a019074d53 635cdf2c-35fa-480d-a448-d43519a90c21 5da6b900-9a7d-4a36-a2a1-5baa8c4904b3),
   }
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
@@ -456,7 +462,7 @@ module Offer::Rejecting
   end
 
   def sdkless_reject?(library_version)
-    sdkless? && !library_version.to_s.version_greater_than_or_equal_to?(SDKLESS_MIN_LIBRARY_VERSION)
+    sdkless? && !library_version.to_library_version.sdkless_integration?
   end
 
   def app_store_reject?(store_whitelist)
@@ -473,6 +479,6 @@ module Offer::Rejecting
   def miniscule_reward_reject?(currency)
     currency && currency.rewarded? && rewarded? &&
       currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
-      item_type != 'DeeplinkOffer'
+      item_type != 'DeeplinkOffer' && !rate_filter_override
   end
 end

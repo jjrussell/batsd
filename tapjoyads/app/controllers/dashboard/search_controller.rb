@@ -5,7 +5,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   def offers
     term = params[:term]
 
-    if term =~ UUID_REGEX
+    if term.uuid?
       conditions = [ "id = ?", term ]
     elsif params[:app_offers_only]
       conditions = [ "name LIKE ? AND item_type = ?", "%#{term}%", 'app' ]
@@ -66,7 +66,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   def partners
     term = params[:term].to_s.strip
 
-    if term =~ UUID_REGEX
+    if term.uuid?
       conditions = [ "id = ?", term ]
       results = Partner.find(:all,
         :conditions => conditions,
@@ -128,7 +128,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
   def currencies
     term = params[:term].to_s.strip
 
-    if term =~ UUID_REGEX
+    if term.uuid?
       conditions = [ "id = ? OR app_id = ?", term, term ]
       find_options = {
         :conditions => conditions,

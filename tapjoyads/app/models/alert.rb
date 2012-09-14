@@ -16,7 +16,7 @@ class Alert
   end
 
   def run
-    unless skip?
+    if run?
       begin
         rows = vertica.query(@query).rows
       rescue Vertica::Error::QueryError
@@ -53,15 +53,17 @@ class Alert
 
   private
 
-  def skip?
-    unless @run_at_hours.blank?
+  def run?
+    if @run_at_hours.blank?
+      true
+    else
       @run_at_hours.include?(@time.hour)
     end
   end
 
   def prepare_query
-    if @values_at_hours.has_key?(@time.hour)
-      @values_at_hours[@time.hour].each_pair do |str,sub|
+    if @values_at_hours && @values_at_hours.has_key?(@time.hour.to_s)
+      @values_at_hours[@time.hour.to_s].each_pair do |str,sub|
         @query.gsub!(str, sub)
       end
     end
