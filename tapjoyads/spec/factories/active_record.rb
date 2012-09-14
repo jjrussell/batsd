@@ -14,9 +14,9 @@ FactoryGirl.define do
     end
   end
 
-  factory :optimized_rank_boost, :parent => :user do
+  factory :optimized_rank_booster, :parent => :user do
     after_build do |optim|
-      role = UserRole.find_or_create_by_name('optimized_rank_boost', :employee => true)
+      role = UserRole.find_or_create_by_name('optimized_rank_booster', :employee => true)
       optim.user_roles << role
     end
   end

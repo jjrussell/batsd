@@ -221,7 +221,7 @@ authorization do
     has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
   end
 
-  role :optimized_rank_boost do
+  role :optimized_rank_booster do
     has_permission_on :dashboard_tools_optimized_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
   end
 end

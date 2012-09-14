@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Dashboard::Tools::OptimizedRankBoostsController do
   before :each do
     activate_authlogic
-    optimized = FactoryGirl.create(:optimized_rank_boost)
+    optimized = FactoryGirl.create(:optimized_rank_booster)
     @partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
     optimized.partners << @partner
     login_as(optimized)
