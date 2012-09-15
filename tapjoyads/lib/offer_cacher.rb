@@ -62,7 +62,7 @@ class OfferCacher
       PLATFORM_AND_DEVICE_TYPES.each do |platform, device_types|
         HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
           device_types.each do |device_type|
-            cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offer_list.reject { |o| o.precache_reject?(platform, hide_rewarded_app_installs, device_type), save_to_s3)
+            cache_offer_list("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", offer_list.reject { |o| o.precache_reject?(platform, hide_rewarded_app_installs, device_type)}, save_to_s3)
           end
         end
       end
