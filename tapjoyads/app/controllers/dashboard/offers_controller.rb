@@ -12,7 +12,8 @@ class Dashboard::OffersController < Dashboard::DashboardController
   ELEVATED_SAFE_ATTRIBUTES = BASE_SAFE_ATTRIBUTES | [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
                                :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-                               :dma_codes, :regions, :carriers, :cities, :rate_filter_override ]
+                               :dma_codes, :regions, :carriers, :cities, :rate_filter_override,
+                               :x_partner_prerequisites, :x_partner_exclusion_prerequisites ]
 
   def new
     offer_params = {}

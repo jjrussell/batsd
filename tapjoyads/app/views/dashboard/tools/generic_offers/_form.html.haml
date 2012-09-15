@@ -27,6 +27,18 @@
         = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @generic_offer, :exclusion_prerequisite_offer_ids
     %tr
+      %th
+        = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
+      %td
+        = f.text_area(:x_partner_prerequisites, :rows => 5)
+        = error_message_on @generic_offer, :x_partner_prerequisites
+    %tr
+      %th
+        = f.label(:x_partner_exclusion_prerequisites, 'Cross Partner Exclusion Prerequisites')
+      %td
+        = f.text_area(:x_partner_exclusion_prerequisites, :rows => 5)
+        = error_message_on @generic_offer, :x_partner_exclusion_prerequisites
+    %tr
       %th= f.label :category
       %td
         = f.select :category, GenericOffer::CATEGORIES, :include_blank => true
