@@ -48,11 +48,25 @@ cd tapjoyads
 bundle exec rake setup
 ```
 
+
+If you get an error, you can try
+
+```
+bundle install
+```
+
+if it fails on mysql gem, you can try
+
+```
+gem install mysql -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
+bundle install
+```
+
+
 Setting up VM
 -------------
 
-We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
-install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
+We run the environment inside of a Virtualbox VM setup through Vagrant. You will need Virtualbox for it, but Vagrant currently supports versions 4.0 and 4.1 only. Download it from [virtualbox old builds](https://www.virtualbox.org/wiki/Download_Old_Builds_4_1) and install. 
 
 Now setup librarian and vagrant(run from /Path/To/tapjoyserver/):
 
