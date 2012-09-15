@@ -20,7 +20,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_external_publishers/populate_potential' => 'master_external_publishers#populate_potential'
     match 'master_failed_sqs_writes(/index)' => 'master_failed_sqs_writes#index'
     match 'master_get_store_info(/index)' => 'master_get_store_info#index'
-    match 'master_grab_disabled_popular_offers(/index)' => 'master_grab_disab#index'
+    match 'master_grab_disabled_popular_offers(/index)' => 'master_grab_disabled_popular_offers#index'
     match 'master_group_daily_stats(/index)' => 'master_group_daily_stats#index'
     match 'master_group_hourly_stats(/index)' => 'master_group_hourly_stats#index'
     match 'master_healthz(/index)' => 'master_healthz#index'
