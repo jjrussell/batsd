@@ -15,11 +15,5 @@ class OfferPrerequisitesValidator < ActiveModel::Validator
         end
       end
     end
-    if record.x_partner_prerequisites.present?
-      record.errors[:x_partner_prerequisites] << 'prerequisite offers found in exclusion prerequisite offers.' if (record.get_x_partner_prerequisites & record.get_x_partner_exclusion_prerequisites).any?
-    end
-    if record.x_partner_exclusion_prerequisites.present?
-      record.errors[:x_partner_exclusion_prerequisites] << 'prerequisite offer found in exclusion prerequisite offers.' if record.get_x_partner_exclusion_prerequisites.include?(record.prerequisite_offer_id)
-    end
   end
 end
