@@ -57,7 +57,7 @@
     %li= link_to 'App Reviews', tools_app_reviews_path
     %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
-- if has_permissions_for_one_of? :account_mgr, :role_mgr, :partner_changer
+- if has_permissions_for_one_of? :account_mgr, :role_mgr, :partner_changer, :optimized_rank_booster
   .page-header
     %h3 Account Management
   %ul
@@ -77,6 +77,8 @@
       %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
     - if permitted_to? :index, :dashboard_tools_rank_boosts                 # account_mgr
       %li= link_to 'Manage Rank Boosts', tools_rank_boosts_path
+    - if permitted_to? :index, :dashboard_tools_optimized_rank_boosts       #optimized_rank_booster
+      %li= link_to 'Manage Optimized Rank Boosts', tools_optimized_rank_boosts_path
     - if permitted_to? :sanitize_users, :dashboard_tools                    # account_mgr
       %li= link_to 'Sanitize Users Table', sanitize_users_tools_path
     - if permitted_to? :create, :dashboard_tools_role_assignments     # account_mgr, role_mgr
@@ -143,13 +145,6 @@
       %li= link_to 'WFH', tools_wfhs_path
     - if permitted_to? :index, :dashboard_tools_shared_files  # file_sharer
       %li= link_to 'My Shared Files', tools_shared_files_path
-
-- if has_permissions_for_one_of? :optimized_rank_boost
-  .page-header
-    %h3 Optimized Rank Boosts
-  %ul
-    - if permitted_to? :index, :dashboard_tools_optimized_rank_boosts
-      %li= link_to 'Manage Optimized Rank Boosts', tools_optimized_rank_boosts_path
 
 - content_for :page_javascript do
   - if permitted_to? :show, :dashboard_statz
