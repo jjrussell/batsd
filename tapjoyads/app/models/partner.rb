@@ -48,6 +48,9 @@
 #  payout_info_confirmation      :boolean(1)      default(FALSE), not null
 #  payout_threshold_confirmation :boolean(1)      default(FALSE), not null
 #  live_date                     :datetime
+#  use_server_whitelist          :boolean(1)      default(FALSE), not null
+#  enable_risk_management        :boolean(1)      default(FALSE), not null
+#  country                       :string(255)
 #
 
 class Partner < ActiveRecord::Base
@@ -267,7 +270,9 @@ class Partner < ActiveRecord::Base
   def make_payout(amount)
     cutoff_date = self.payout_cutoff_date - 1.day
     amount = (amount.to_f * 100).round
-    self.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    payout = self.payouts.create!(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
+    calculate_payout_threshold(amount)
+    payout
   end
 
   def calculate_payout_threshold(amount)

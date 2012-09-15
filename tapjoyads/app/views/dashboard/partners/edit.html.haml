@@ -83,6 +83,10 @@
     = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
     .disabled_partner_names
       != @partner.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
+  .field
+    = f.label :country
+    #help_country.help ?
+    = f.select :country, options_for_select(list_of_countries, @partner.country), {:include_blank => true}
   - if current_user.is_admin?
     .category
       Admin-only fields:
@@ -115,6 +119,8 @@
     Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
+  #help_country_content{:name => 'Country'}
+    Primary country of partner
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
   #help_discount_all_offer_types_content{:name => 'Discount all offer types'}

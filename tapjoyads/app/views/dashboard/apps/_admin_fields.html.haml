@@ -12,7 +12,7 @@
   %tr.admin
     %th Copy Promo Link URLs
     %td
-      %ul{ :style => "margin-top: 5px;" } 
+      %ul{ :style => "margin-top: 5px;" }
         - @app.deeplink_offers.each do |o|
           - offer = o.primary_offer
           %li

@@ -904,6 +904,7 @@ ActiveRecord::Schema.define(:version => 20120917165503) do
     t.datetime "live_date"
     t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
     t.boolean  "enable_risk_management",                                                    :default => false,     :null => false
+    t.string   "country"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

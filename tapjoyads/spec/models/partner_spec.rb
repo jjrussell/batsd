@@ -27,6 +27,7 @@ describe Partner do
     should validate_numericality_of(:rev_share)
     should validate_numericality_of(:direct_pay_share)
     should validate_presence_of(:name)
+    should_not validate_presence_of(:country)
   end
 
   describe 'A Partner' do

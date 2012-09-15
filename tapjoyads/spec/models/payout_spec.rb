@@ -31,20 +31,6 @@ describe Payout do
     end
   end
 
-  context 'when creating a payout' do
-    let(:partner) { FactoryGirl.create(:partner, :pending_earnings => 100) }
-
-    before :each do
-      Payout.any_instance.stub(:partner => partner)
-    end
-
-    it 'should update the partners payout threshold' do
-      amount = 100
-      partner.should_receive(:calculate_payout_threshold).with(amount)
-      FactoryGirl.create(:payout, :partner => partner, :amount => amount)
-    end
-  end
-
   describe '#status_string' do
     before :each do
       @payout = FactoryGirl.create(:payout)

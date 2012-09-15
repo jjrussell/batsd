@@ -63,7 +63,7 @@ describe ConversionChecker do
 
       context 'a single-complete offer' do
         before :each do
-          offer = Offer.find_in_cache(@click.offer_id, true)
+          offer = Offer.find_in_cache(@click.offer_id, :do_lookup => true)
           offer.multi_complete = false
           Offer.stub(:find_in_cache).and_return(offer)
         end

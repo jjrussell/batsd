@@ -18,10 +18,19 @@ describe Dashboard::Tools::PayoutsController do
   end
 
   describe '#confirm_payouts' do
-    context 'when not payout manager' do
+    context 'when not admin, and not payout manager' do
       it 'does not succeed' do
-        post(:confirm_payouts, :id => @partner.id)
+        @user = FactoryGirl.create(:user)
+        login_as(@user)
+        post(:confirm_payouts, :partner_id => @partner.id)
         response.should_not be_success
+      end
+    end
+
+    context 'when admin' do
+      it 'succeeds' do
+        post(:confirm_payouts, :partner_id => @partner.id)
+        response.should be_success
       end
     end
 

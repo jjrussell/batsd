@@ -10,7 +10,7 @@ module ActionView
         end
       end
 
-      alias_method_chain :translate, :rescue_interpolation_errors    
+      alias_method_chain :translate, :rescue_interpolation_errors
       alias :t :translate
 
     end

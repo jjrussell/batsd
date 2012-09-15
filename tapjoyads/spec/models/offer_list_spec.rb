@@ -42,7 +42,7 @@ describe OfferList do
     end
 
     it 'overwrites the platform_name parameter with the app platform name' do
-      OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, 'Windows', anything, anything)
+      OfferCacher.should_receive(:get_offers_prerejected).with(anything, 'Windows', anything, anything)
       OfferList.new(:publisher_app => @app, :platform_name => 'ValueFromParameter', :type => Offer::DISPLAY_OFFER_TYPE).offers
     end
 
@@ -54,14 +54,14 @@ describe OfferList do
       it 'uses the app platform for windows or android' do
         ['android', 'windows'].each do |platform|
           @app.platform = platform
-          OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, platform)
+          OfferCacher.should_receive(:get_offers_prerejected).with(anything, anything, anything, platform)
           OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
         end
       end
 
       it 'uses itouch for any other platform' do
         other_platforms = App::PLATFORMS.keys - ['android', 'windows']
-        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'itouch').exactly(other_platforms.count).times
+        OfferCacher.should_receive(:get_offers_prerejected).with(anything, anything, anything, 'itouch').exactly(other_platforms.count).times
         other_platforms.each do |platform|
           @app.platform = platform
           OfferList.new(:publisher_app => @app, :device_type => nil, :type => Offer::DISPLAY_OFFER_TYPE).offers
@@ -75,7 +75,7 @@ describe OfferList do
       end
 
       it 'uses the parameter value, rather than the app platform' do
-        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(anything, anything, anything, 'android')
+        OfferCacher.should_receive(:get_offers_prerejected).with(anything, anything, anything, 'android')
         OfferList.new(:publisher_app => @app, :device_type => 'Android 2.3.4', :type => Offer::DISPLAY_OFFER_TYPE).offers
       end
     end
@@ -93,7 +93,7 @@ describe OfferList do
         Offer::FEATURED_BACKFILLED_OFFER_TYPE => Offer::NON_REWARDED_FEATURED_BACKFILLED_OFFER_TYPE,
         Offer::DISPLAY_OFFER_TYPE => Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
       }.each do |type,nonrew_equiv|
-        OfferCacher.should_receive(:get_unsorted_offers_prerejected).with(nonrew_equiv, anything, anything, anything).and_return([])
+        OfferCacher.should_receive(:get_offers_prerejected).with(nonrew_equiv, anything, anything, anything).and_return([])
         OfferList.new(:currency => @currency, :type => type).offers
       end
     end
@@ -104,7 +104,7 @@ describe OfferList do
       @offers = []
       10.times { @offers << FactoryGirl.create(:video_offer).primary_offer }
       @offers.each { |x| x.partner.balance = 10; x.save }
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return(@offers)
+      OfferCacher.stub(:get_offers_prerejected).and_return(@offers)
       @currency = FactoryGirl.create(:currency)
       @app = @currency.app
       @base_params = {:device => FactoryGirl.create(:device), :publisher_app => @app, :currency => @currency, :video_offer_ids => @offers.map { |o| o.id }}
