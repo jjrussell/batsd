@@ -77,7 +77,7 @@ librarian-chef install
 vagrant up
 ```
 
-SSH into the vm and verify that postinstall script ran:
+SSH into the vm:
 
 ```
 vagrant ssh
