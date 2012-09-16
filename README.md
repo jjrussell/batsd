@@ -77,11 +77,25 @@ librarian-chef install
 vagrant up
 ```
 
-SSH into the vm:
+SSH into the vm and verify that postinstall script ran:
 
 ```
 vagrant ssh
 ```
+
+Create ssh keys on your vagrant instance.
+
+```
+ssh-keygen -t rsa -C "user_email@tapjoy.com"
+sudo su
+cd ~/.ssh 
+# if there is no such directory, create it (mkdir ~/.ssh)
+ln -s /home/vagrant/.ssh/id_rsa.pub id_rsa.pub
+ln -s /home/vagrant/.ssh/id_rsa id_rsa
+exit
+```
+
+After you've generated these keys and shared them with your root user, add this key to your github account.
 
 Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
 
@@ -91,18 +105,6 @@ bundle
 rake db:create
 rake db:sync
 ```
-
-Some little tweaks to make bundler run seamlessly, you may want to create ssh keys on your vagrant instance.
-(these assume ssh keys haven't been generated in Vagrant)
-```
-ssh-keygen -t rsa -C "user_email@tapjoy.com"
-sudo su
-cd ~/.ssh
-ln -s /home/vagrant/.ssh/id_rsa.pub id_rsa.pub
-ln -s /home/vagrant/.ssh/id_rsa id_rsa
-exit
-```
-After you've generated these keys and shared them with your root user, you can add this key to github for seamless fetching.
 
 If you get annoyed to have to change into the /vagrant directory every time, just add it to the end of your .bashrc file:
 ```
