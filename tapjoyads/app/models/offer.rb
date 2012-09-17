@@ -117,14 +117,14 @@ class Offer < ActiveRecord::Base
   belongs_to :coupon, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
-  validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :partner, :item, :name, :url, :rank_boost, :optimized_rank_boost
   validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
-  validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
+  validates_numericality_of :rank_boost, :optimized_rank_boost, :allow_nil => false, :only_integer => true
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
@@ -766,7 +766,11 @@ class Offer < ActiveRecord::Base
   end
 
   def calculate_rank_boost!
-    update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
+    update_attribute(:rank_boost, rank_boosts.active.not_optimized.sum(:amount))
+  end
+
+  def calculate_optimized_rank_boost!
+    update_attribute(:optimized_rank_boost, rank_boosts.active.optimized.sum(:amount))
   end
 
   def set_reseller_from_partner

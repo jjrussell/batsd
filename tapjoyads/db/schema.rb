@@ -243,7 +243,6 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
   add_index "coupons", ["id"], :name => "index_coupons_on_id"
   add_index "coupons", ["partner_id"], :name => "index_coupons_on_partner_id"
   add_index "coupons", ["prerequisite_offer_id"], :name => "index_coupons_on_prerequisite_offer_id"
-  add_index "coupons", ["provider_id"], :name => "index_coupons_on_provider_id"
 
   create_table "creative_approval_queue", :force => true do |t|
     t.string "offer_id", :limit => 36, :null => false
@@ -983,13 +982,14 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
   add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "offer_id",   :limit => 36, :null => false
-    t.datetime "start_time",               :null => false
-    t.datetime "end_time",                 :null => false
-    t.integer  "amount",                   :null => false
+    t.string   "id",              :limit => 36, :null => false
+    t.string   "offer_id",        :limit => 36, :null => false
+    t.datetime "start_time",                    :null => false
+    t.datetime "end_time",                      :null => false
+    t.integer  "amount",                        :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "rank_boost_type",               :null => false
   end
 
   add_index "rank_boosts", ["id"], :name => "index_rank_boosts_on_id", :unique => true
