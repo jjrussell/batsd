@@ -13,14 +13,14 @@
 
 class RankBoost < ActiveRecord::Base
   OPTIMIZED_RANK_BOOST_MAX = 1000
-  NATIVE_VALUE = 0
-  OPTIMIZED_VALUE = 1
+  NATIVE = false
+  OPTIMIZED = true
 
   include UuidPrimaryKey
 
   belongs_to :offer
 
-  validates_presence_of :start_time, :end_time, :offer, :rank_boost_type
+  validates_presence_of :start_time, :end_time, :offer
   validates_numericality_of :amount, :allow_nil => false, :only_integer => true
   validate :check_times
   validate :check_optimized_boost_rank_value
@@ -29,8 +29,8 @@ class RankBoost < ActiveRecord::Base
 
   scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
   scope :for_offer, lambda { |offer_id| { :conditions => [ "offer_id = ?", offer_id] } }
-  scope :optimized, lambda { { :conditions => [ "rank_boost_type = ?", OPTIMIZED_VALUE ] } }
-  scope :not_optimized, lambda { { :conditions => [ "rank_boost_type != ?", OPTIMIZED_VALUE ] } }
+  scope :optimized, lambda { { :conditions => [ "optimized = ?", OPTIMIZED ] } }
+  scope :not_optimized, lambda { { :conditions => [ "optimized = ?", NATIVE ] } }
 
   def partner_id
     offer.partner_id
@@ -44,10 +44,6 @@ class RankBoost < ActiveRecord::Base
   def deactivate!
     self.end_time = Time.zone.now if (end_time > Time.zone.now)
     self.save
-  end
-
-  def optimized?
-    rank_boost_type == OPTIMIZED_VALUE
   end
 
 private

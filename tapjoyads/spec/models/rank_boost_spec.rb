@@ -70,7 +70,7 @@ describe RankBoost do
     end
     context 'optimized rank boost' do
       before :each do
-        @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now, :rank_boost_type => 1)
+        @rank_boost = FactoryGirl.create(:rank_boost, :start_time => 1.hour.ago, :end_time => 1.hour.from_now, :optimized => true)
       end
 
       it "is active" do
@@ -138,7 +138,7 @@ describe RankBoost do
     end
     context 'optimized' do
       before :each do
-        @rank_boost = FactoryGirl.create(:rank_boost, :rank_boost_type => 1)
+        @rank_boost = FactoryGirl.create(:rank_boost, :optimized => true)
       end
       it 'returns true' do
         @rank_boost.optimized?.should be_true
