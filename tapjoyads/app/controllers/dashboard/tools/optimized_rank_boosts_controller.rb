@@ -26,7 +26,7 @@ class Dashboard::Tools::OptimizedRankBoostsController < Dashboard::DashboardCont
 
   def create
     if @offer.present?
-      @optimized_rank_boost = RankBoost.new(params[:rank_boost].merge({:optimized => RankBoost::OPTIMIZED}))
+      @optimized_rank_boost = RankBoost.new(params[:rank_boost].merge({:optimized => true}))
       log_activity(@optimized_rank_boost)
       if @optimized_rank_boost.save
         save_activity_logs

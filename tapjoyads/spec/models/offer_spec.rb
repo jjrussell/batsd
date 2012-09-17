@@ -1747,7 +1747,7 @@ describe Offer do
 
   describe '#calculate_optimized_rank_boost!' do
     before :each do
-      @rank_boost = FactoryGirl.create(:rank_boost, :optimized => RankBoost::OPTIMIZED)
+      @rank_boost = FactoryGirl.create(:rank_boost, :optimized => true)
       @rank_boost.offer.calculate_optimized_rank_boost!
     end
     it 'has a rank_boost based on the records amount' do
