@@ -23,7 +23,8 @@ namespace :setup do
 
   task :git do
     run "Adding tapjoy git remote", "git remote | grep tapjoy || git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git"
-    run "Adding pre-commit hooks", "ln -s ../.pre-commit ../.git/hooks/"
+    # This will fail inside a vagrant install. We should find a long-term solution
+    #run "Adding pre-commit hooks", "ln -s ../.pre-commit ../.git/hooks/"
   end
 
   task :rvm do
@@ -38,7 +39,7 @@ namespace :setup do
   end
 
   task :tmp do
-    directory "tmp"
+    Dir.mkdir "tmp"
   end
 
   task :configs do

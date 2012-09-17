@@ -41,8 +41,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
     respond_to do |format|
       format.html do
         @associated_offers = @offer.find_associated_offers
-        @active_boosts = @offer.rank_boosts.active
+        @active_boosts = @offer.rank_boosts.active.not_optimized
         @total_boost = @active_boosts.map(&:amount).sum
+        @optimized_boosts = @offer.rank_boosts.active.optimized
+        @total_optimized_boosts = @optimized_boosts.map(&:amount).sum
       end
 
       format.json do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120907032607) do
+ActiveRecord::Schema.define(:version => 20120917200604) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                               :limit => 36,                    :null => false
@@ -785,6 +785,7 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
     t.string   "source_offer_id",                   :limit => 36
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
     t.boolean  "rate_filter_override",                                                          :default => false, :null => false
+    t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -983,17 +984,19 @@ ActiveRecord::Schema.define(:version => 20120907032607) do
   add_index "press_releases", ["published_at"], :name => "index_press_releases_on_published_at"
 
   create_table "rank_boosts", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "offer_id",   :limit => 36, :null => false
-    t.datetime "start_time",               :null => false
-    t.datetime "end_time",                 :null => false
-    t.integer  "amount",                   :null => false
+    t.string   "id",         :limit => 36,                    :null => false
+    t.string   "offer_id",   :limit => 36,                    :null => false
+    t.datetime "start_time",                                  :null => false
+    t.datetime "end_time",                                    :null => false
+    t.integer  "amount",                                      :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "optimized",                :default => false, :null => false
   end
 
   add_index "rank_boosts", ["id"], :name => "index_rank_boosts_on_id", :unique => true
   add_index "rank_boosts", ["offer_id"], :name => "index_rank_boosts_on_offer_id"
+  add_index "rank_boosts", ["optimized"], :name => "index_rank_boosts_on_optimized"
 
   create_table "rating_offers", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                    :null => false

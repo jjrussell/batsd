@@ -484,7 +484,7 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id', 'rate_filter_override'
+                                  'app_metadata_id', 'rate_filter_override', 'optimized_rank_boost'
                                 ].sort
   end
 
@@ -1734,5 +1734,24 @@ describe Offer do
       end
     end
   end
-end
 
+  describe '#calculate_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost)
+      @rank_boost.offer.calculate_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.rank_boost.should == @rank_boost.amount
+    end
+  end
+
+  describe '#calculate_optimized_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost, :optimized => true)
+      @rank_boost.offer.calculate_optimized_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.optimized_rank_boost.should == @rank_boost.amount
+    end
+  end
+end
