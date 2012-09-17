@@ -39,7 +39,6 @@ module SdbMigrator
     result = write_to_sdb_without_mirror(expected_attr)
     #Write to the new domain
     retry_count = 0
-    #Only save to the new domain if it's a new object
     begin
       #If we're here, we didn't error out, it's time to try to write to the new domain
 
