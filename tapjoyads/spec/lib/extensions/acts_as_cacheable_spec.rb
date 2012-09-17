@@ -52,6 +52,7 @@ describe ActsAsCacheable do
       end
 
       it 'sqs should receive send_message call' do
+        CacheableObject.stub(:find_by_id).and_return(nil)
         Sqs.should_receive(:send_message).with(QueueNames::CACHE_RECORD_NOT_FOUND, { :model_name => 'CacheableObject', :id => @foo.id }.to_json)
         CacheableObject.find_in_cache(@foo.id, :do_lookup => true, :queue => true)
       end
