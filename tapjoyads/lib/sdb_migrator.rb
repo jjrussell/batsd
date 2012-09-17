@@ -37,10 +37,10 @@ module SdbMigrator
     #Try to write to the current domain, note that this call will error out with some frequency
     #We'll just go ahead and pass that error back up the call chain
     result = write_to_sdb_without_mirror(expected_attr)
-    #Write to the new domain
+    #If we're here, we didn't error out, it's time to try to write to the new domain
+    
     retry_count = 0
-    begin
-      #If we're here, we didn't error out, it's time to try to write to the new domain
+    begin      
 
       #We're going to need to clone the attributes over to the mirror, so keep this for backup
       old_attributes_to_add = @attributes_to_add.clone
