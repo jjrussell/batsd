@@ -1,6 +1,7 @@
 class Downloader
   ##
   # Make a GET request to the specified url and return the contents of the response.
+  #
   def self.get(url, options = {})
     headers = options.delete(:headers) { {} }
     timeout = options.delete(:timeout) { 2 }
