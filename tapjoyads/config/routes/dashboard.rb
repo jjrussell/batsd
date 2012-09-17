@@ -200,6 +200,7 @@ Tapjoyad::Application.routes.draw do
       match 'search/brands' => 'search#brands', :as => :search_brands
 
       match 'premier' => 'premier#edit', :as => :premier
+      resources :survey_results, :only => [:new, :create]
       resources :tools, :only => :index do
         collection do
           post :update_user_roles
