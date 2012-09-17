@@ -189,7 +189,6 @@ Tapjoyad::Application.routes.draw do
 
         end
 
-        resources :payout_infos, :only => [:index, :update]
       end
 
       match 'partners/managed_by/:id' => 'partners#managed_by'
@@ -201,7 +200,6 @@ Tapjoyad::Application.routes.draw do
       match 'search/brands' => 'search#brands', :as => :search_brands
 
       match 'premier' => 'premier#edit', :as => :premier
-      resources :survey_results, :only => [:new, :create]
       resources :tools, :only => :index do
         collection do
           post :update_user_roles
@@ -349,7 +347,6 @@ Tapjoyad::Application.routes.draw do
             post :mass_resolve
           end
         end
-        resources :press_releases, :only => [:index, :new, :create, :edit, :update]
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]

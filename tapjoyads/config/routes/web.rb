@@ -72,7 +72,6 @@ Tapjoyad::Application.routes.draw do
       get :incomplete_offers
     end
   end
-  resources :tools_surveys, :only => [:edit, :create]
   resources :user_events, :only => [:create]
 
   resources :videos, :only => [:index] do
@@ -82,9 +81,6 @@ Tapjoyad::Application.routes.draw do
   end
 
   match 'coupons/complete' => 'coupons#complete', :as => :coupon_complete
-
-  match 'privacy' => 'documents#privacy'
-  match 'privacy.html' => 'documents#privacy'
   match 'game_state/load' => 'game_state#load', :as => :load_game_state
   match 'game_state/save' => 'game_state#save', :as => :save_game_state
   match 'log_device_app/:action/:id' => 'connect#index'
