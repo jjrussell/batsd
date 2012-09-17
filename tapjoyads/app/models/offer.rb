@@ -89,6 +89,9 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
+  UDID_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf f7cc4972-7349-42dd-a696-7fcc9dcc2d03)
+  MAC_ADDRESS_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf)
+
   attr_reader :video_button_tracking_offers
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -929,6 +932,16 @@ class Offer < ActiveRecord::Base
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+  end
+
+
+  # TODO: specs when these are real
+  def requires_udid?
+    UDID_REQUIRED_OFFERS.include?(id)
+  end
+
+  def requires_mac_address?
+    MAC_ADDRESS_REQUIRED_OFFERS.include?(id)
   end
 
   private
