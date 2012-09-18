@@ -439,10 +439,9 @@ describe GetOffersController do
     end
 
     it 'assigns web_request' do
-      get(:index, @params.merge(:exp => 'test'))
+      get(:index, @params)
       web_request = assigns(:web_request)
       assigns(:now).to_s.should == web_request.viewed_at.to_s
-      web_request.exp.should == 'test'
       web_request.user_agent.should == @request.headers["User-Agent"]
       web_request.ip_address.should == '208.90.212.38'
       web_request.source.should == 'offerwall'

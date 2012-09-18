@@ -73,7 +73,7 @@ end
 
 
 Before('@tapjoy_marketer') do
-  @partner ||= FactoryGirl.create(:partner,      :id => TAPJOY_PARTNER_ID)
+  @partner ||= FactoryGirl.create(:partner,      :id => TAPJOY_PARTNER_ID, :balance => 10_000)
   @user    ||= FactoryGirl.create(:partner_user, :current_partner => @partner)
   @user.user_roles << UserRole.find_or_create_by_name('admin', :employee => true)
 
