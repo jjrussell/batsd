@@ -6,7 +6,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :new_dev_credit, :create_dev_credit]
-  before_filter :get_account_managers, :only => [ :index, :managed_by ]
+  before_filter :get_account_managers, :only => [ :index, :managed_by, :by_country ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
 
@@ -19,6 +19,16 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     else
       @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
     end
+  end
+
+  def by_country
+    if params[:country] == 'all'
+      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+    else
+      @partners = Partner.scoped_by_country(params[:country]).paginate(:page => params[:page])
+      @country = params[:country]
+    end
+    render 'index'
   end
 
   def managed_by
