@@ -75,4 +75,35 @@ describe Dashboard::PartnersController do
       @controller.send(:current_partner).should == @partner2
     end
   end
+
+  context '#update' do
+    let(:current_user)  { FactoryGirl.create(:admin) }
+    let(:partner)       { FactoryGirl.create(:partner, :users => [current_user]) }
+
+    let(:params)        {{ :id => partner.id, :partner => {:name => "Some new name"} }}
+
+    before(:each) do
+      login_as(current_user)
+      controller.stub(:current_user).and_return(current_user)
+    end
+
+    context 'a user who is a Tapjoy employee' do
+      before(:each) { current_user.stub(:employee?).and_return(true) }
+
+      it "can change the partner's name" do
+        put(:update, params)
+        partner.reload
+        partner.name.should == "Some new name"
+      end
+    end
+
+    context 'a user who is not a Tapjoy employee' do
+      before(:each) { current_user.stub(:employee?).and_return(false) }
+      it "cannot change the partner's name" do
+        put(:update, params)
+        partner.reload
+        partner.name.should_not == "Some new name"
+      end
+    end
+  end
 end
