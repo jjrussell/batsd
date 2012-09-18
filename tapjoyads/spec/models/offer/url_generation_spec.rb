@@ -8,15 +8,14 @@ describe Offer::UrlGeneration do
     @app      = Factory :app
     @offer    = @app.primary_offer
     @currency = Factory :currency
-    @app      = FactoryGirl.create :app
-    @offer    = @app.primary_offer
 
-    @params   = {
-      :udid => '123456',
-      :publisher_app_id => 'app_id',
-      :currency => @currency
-    }
-
+    @app = FactoryGirl.create :app
+    @offer = @app.primary_offer
+    @device = FactoryGirl.create(:device)
+    @params = { :udid => '123456',
+                :tapjoy_device_id => @device.key,
+                :publisher_app_id => 'app_id',
+                :currency => @currency }
     subject { Offer::UrlGeneration }
     ObjectEncryptor.stub(:encrypt).and_return('some_data')
   end
@@ -75,16 +74,16 @@ describe Offer::UrlGeneration do
   describe '#complete_action_url' do
     before :each do
       params = {
-        :udid               => 'TAPJOY_UDID',
-        :source             => 'TAPJOY_GENERIC_SOURCE',
-        :uid                => 'TAPJOY_EXTERNAL_UID',
-        :click_key          => 'TAPJOY_HASHED_KEY',
-        :invite             => 'TAPJOY_GENERIC_INVITE',
-        :survey             => 'TAPJOY_SURVEY',
-        :device_click_ip    => 'TAPJOY_DEVICE_CLICK_IP',
-        :eid                => 'TJM_EID',
-        :data               => 'DATA',
-        :hashed_mac         => 'TAPJOY_HASHED_MAC'
+        :tapjoy_device_id => 'TAPJOY_DEVICE_ID',
+        :source           => 'TAPJOY_GENERIC_SOURCE',
+        :uid              => 'TAPJOY_EXTERNAL_UID',
+        :click_key        => 'TAPJOY_HASHED_KEY',
+        :invite           => 'TAPJOY_GENERIC_INVITE',
+        :survey           => 'TAPJOY_SURVEY',
+        :device_click_ip  => 'TAPJOY_DEVICE_CLICK_IP',
+        :eid              => 'TJM_EID',
+        :data             => 'DATA',
+        :hashed_mac       => 'TAPJOY_HASHED_MAC'
       }
 
       @dummy.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
@@ -95,14 +94,15 @@ describe Offer::UrlGeneration do
       @mac               = 'my_device_mac'
       @publisher_app_id  = 'publisher_app_id'
       @publisher_user_id = 'publisher_user_id'
-      @currency          = FactoryGirl.create(:currency)
+      @currency = FactoryGirl.create(:currency)
+      @device = FactoryGirl.create(:device)
 
       @source = 'source_token'
       @dummy.stub(:source_token).and_return(@source)
 
       partner_id = 'partner_id'
       @dummy.stub(:partner_id).and_return(partner_id)
-      @uid = Device.advertiser_device_id(@udid, partner_id)
+      @uid = Device.advertiser_device_id(@device.key, partner_id)
 
       @itunes_affil = 'itunes_affil'
       @display_multiplier = 'display_multiplier'
@@ -117,11 +117,11 @@ describe Offer::UrlGeneration do
         :itunes_link_affiliate => @itunes_affil,
         :publisher_user_id     => @publisher_user_id,
         :display_multiplier    => @display_multiplier,
-        :mac_address           => @mac
-      }
+        :mac_address           => @mac,
+        :tapjoy_device_id      => @device.key }
 
       # 'global' macros (with some exceptions, as specified in this file)
-      @complete_action_url = @dummy.url.gsub('TAPJOY_UDID', @udid)
+      @complete_action_url = @dummy.url.gsub('TAPJOY_DEVICE_ID', @device.key)
       @complete_action_url.gsub!('TAPJOY_GENERIC_SOURCE', @source)
       @complete_action_url.gsub!('TAPJOY_EXTERNAL_UID', @uid)
       @complete_action_url.gsub!('TAPJOY_DEVICE_CLICK_IP', @device_click_ip)
@@ -135,7 +135,7 @@ describe Offer::UrlGeneration do
     context 'for ActionOffers' do
       it 'should not replace any macros' do
         @dummy.stub(:item_type).and_return('ActionOffer')
-        @complete_action_url.gsub!(@udid, 'TAPJOY_UDID') # reverse this... ActionOffers are special-cased
+        @complete_action_url.gsub!(@device.key, 'TAPJOY_DEVICE_ID') # reverse this... ActionOffers are special-cased
         @dummy.complete_action_url(@options.merge(:device_type => nil)).should == @complete_action_url
       end
     end
@@ -255,11 +255,13 @@ describe Offer::UrlGeneration do
           :itunes_link_affiliate => 'hijklmno',
           :display_multiplier    => 1,
           :library_version       => 1,
-          :os_version            => 5
+          :os_version            => 5,
+          :tapjoy_device_id      => 'tapjoy-device-id'
         }
 
         data = {
           :id                    => @offer.id,
+          :tapjoy_device_id      => options[:tapjoy_device_id],
           :udid                  => options[:udid],
           :publisher_app_id      => options[:publisher_app_id],
           :click_key             => options[:click_key],
@@ -290,7 +292,7 @@ describe Offer::UrlGeneration do
     before :each do
       @click_params = { :publisher_app => @app, :publisher_user_id => '123',
                         :udid => '123456', :currency_id => 'curr',
-                        :source => 'phone', :viewed_at => Time.now }
+                        :source => 'phone', :viewed_at => Time.now, :tapjoy_device_id => 'tapjoy-device-id' }
 
     end
     context 'item_type is Coupon' do

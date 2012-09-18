@@ -316,6 +316,12 @@
             #help_requires_admin_device.help ?
           %td
             = f.check_box(:requires_admin_device)
+        %tr.admin
+          %th
+            = f.label(:requires_advertising_id)
+            #help_requires_advertising_id.help ?
+          %td
+            = f.check_box(:requires_advertising_id)
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -484,6 +490,8 @@
     Requires an offer to only show if a Mac Address is present.
   #help_requires_admin_device_content{ :name => 'Requires Admin Device' }
     This offer will only show up on admin devices.
+  #help_requires_advertising_id_content{ :name => 'Requires Advertising ID' }
+    Requires an offer to only show if an Advertising ID is present.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

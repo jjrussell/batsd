@@ -33,12 +33,14 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     offer_id_count         = Hash.new(0)
     publisher_app_id_count = Hash.new(0)
     udid_count             = Hash.new(0)
+    tapjoy_device_id_count = Hash.new(0)
     @total                 = 0
 
     SupportRequest.select(:where => "`updated-at` >= '#{@start_time.to_f}' AND `updated-at` < '#{@end_time.to_f}'") do |sr|
       offer_id_count[sr.offer_id] += 1
       publisher_app_id_count[sr.app_id] += 1
       udid_count[sr.udid] += 1
+      tapjoy_device_id_count[sr.tapjoy_device_id] += 1
       @total += 1
     end
 
@@ -66,6 +68,12 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     top_udids = udid_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
     top_udids.each do |id, count|
       @udids[id] = { :count => count, :object => id }
+    end
+
+    @tapjoy_device_ids = ActiveSupport::OrderedHash.new
+    top_tapjoy_device_ids = tapjoy_device_id_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
+    top_tapjoy_device_ids.each do |id, count|
+      @tapjoy_device_ids[id] = { :count => count, :object => id }
     end
   end
 end

@@ -49,7 +49,7 @@
       %th Attempt Date
       %th Advertiser
       %th Publisher
-      %th UDID
+      %th Device ID
       %th Country
       %th Resolution
       %th Block Reason
@@ -63,7 +63,7 @@
         %td= link_to(attempt.created.to_s(:pub_ampm_sec), view_conversion_attempt_tools_path(:conversion_attempt_key => attempt.key))
         %td= link_app_to_statz(@apps[attempt.advertiser_app_id])
         %td= link_app_to_statz(@apps[attempt.publisher_app_id])
-        %td= link_to(attempt.udid, device_info_tools_path(:udid => attempt.udid))
+        %td= link_to(attempt.tapjoy_device_id, device_info_tools_path(:device_id => attempt.tapjoy_device_id))
         %td= attempt.country
         %td= attempt.resolution
         %td= attempt.block_reason

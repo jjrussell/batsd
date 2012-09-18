@@ -4,12 +4,13 @@ describe AdminDeviceLastRun do
   before(:each) do
     # fixtures
     run_time = Time.zone.parse('2000-01-01 00:00:00')
-    %w{d1 d2 d3}.each do |udid|
+    %w{d1 d2 d3}.each do |device_id|
       %w{a1 a2 a3}.each do |app_id|
-        last_run        = AdminDeviceLastRun.new
-        last_run.udid   = udid
-        last_run.app_id = app_id
-        last_run.time   = run_time
+        last_run                  = AdminDeviceLastRun.new
+        last_run.tapjoy_device_id = device_id
+        last_run.udid             = device_id
+        last_run.app_id           = app_id
+        last_run.time             = run_time
         last_run.save
 
         run_time = run_time.advance(:hours => 1)
