@@ -15,7 +15,7 @@ describe Reseller do
   end
 
   describe '.to_payout' do
-    before :all do
+    before :each do
       @reseller = FactoryGirl.create :reseller
       @pending  = 0
       @payout   = 0
