@@ -199,7 +199,6 @@ class Dashboard::BillingController < Dashboard::DashboardController
       redirect_to payout_info_billing_path
     else
       if !@payout_info.valid?
-        raise @payout_info.errors.inspect
         flash.now[:error] = 'Please complete all fields to save.'
       else
         flash.now[:error] = @payout_info.errors.map do |error|
