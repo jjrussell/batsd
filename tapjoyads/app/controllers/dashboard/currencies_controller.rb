@@ -36,11 +36,11 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
     end
 
     if @currency.safe_update_attributes(currency_params, safe_attributes)
-      flash[:notice] = 'Currency was successfully updated.'
+      flash[:notice] = 'Successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else
       flash.now[:error] = 'Update unsuccessful'
-      render :action => :show
+      render :action => :show and return
     end
   end
 
@@ -104,8 +104,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
 
   private
   def setup
-    @app = find_app(params[:app_id])
-
+    @app = App.find(params[:app_id])
     if params[:id]
       @currency = @app.currencies.find(params[:id])
     end

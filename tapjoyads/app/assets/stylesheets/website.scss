@@ -38,6 +38,12 @@ a img {
 .vertical-menu li {
   list-style: none;
 }
+.vertical-menu li.title {
+  padding: 5px;
+  margin-top: 10px;
+  margin-left: 10px;
+  font-weight: bold;
+}
 .vertical-menu li.with_padding {
   padding: 5px;
 }
