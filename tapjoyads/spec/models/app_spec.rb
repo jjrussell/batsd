@@ -16,6 +16,7 @@ describe App do
   it { should have_one :primary_app_metadata }
   it { should have_one :primary_app_metadata_mapping }
   it { should belong_to :partner }
+  it { should have_one :non_rewarded }
 
   # Check validations
   it { should validate_presence_of :partner }
@@ -887,6 +888,23 @@ describe App do
       it 'should not be true' do
         @app.should_not be_videos_stream_on(@connection)
       end
+    end
+  end
+
+  describe '#build_non_rewarded' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+      @partner = @app.partner
+      @currency = FactoryGirl.create(:currency,
+                                     :conversion_rate => 0,
+                                     :callback_url => Currency::NO_CALLBACK_URL,
+                                     :name => Currency::NON_REWARDED_NAME,
+                                     :app_id => @app.id,
+                                     :partner => @partner)
+      Currency.stub(:new).and_return(@currency)
+    end
+    it 'returns the currency object' do
+      @app.build_non_rewarded.should == @currency
     end
   end
 end
