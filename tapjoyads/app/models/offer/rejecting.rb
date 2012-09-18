@@ -155,7 +155,9 @@ module Offer::Rejecting
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
       { :method => :has_coupon_already_pending?, :parameters => [device], :reason => 'coupon_already_requested'},
       { :method => :has_coupon_offer_expired?, :reason => 'coupon_expired'},
-      { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'}
+      { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'},
+      { :method => :udid_required_reject?, :parameters => [device], :reason => 'udid_required'},
+      { :method => :mac_address_required_reject?, :parameters => [device], :reason => 'mac_address_required'}
     ]
     reject_reasons(reject_functions)
   end
@@ -199,7 +201,9 @@ module Offer::Rejecting
     miniscule_reward_reject?(currency) ||
     has_coupon_already_pending?(device) ||
     has_coupon_offer_not_started? ||
-    has_coupon_offer_expired?
+    has_coupon_offer_expired? ||
+    udid_required_reject?(device) ||
+    mac_address_required_reject?(device)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -483,4 +487,13 @@ module Offer::Rejecting
       currency.get_raw_reward_value(self) < MINISCULE_REWARD_THRESHOLD &&
       item_type != 'DeeplinkOffer' && !rate_filter_override
   end
+
+  def udid_required_reject?(device)
+    device && requires_udid? && !device.id.udid?
+  end
+
+  def mac_address_required_reject?(device)
+    device && requires_mac_address? && device.mac_address.blank?
+  end
+
 end

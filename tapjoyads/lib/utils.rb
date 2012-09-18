@@ -167,9 +167,18 @@ class Utils
     puts "moved #{count} orphaned items from #{BucketNames::FAILED_SDB_SAVES}"
   end
 
-  def self.resend_failed_callbacks(currency_id, status)
+  def self.resend_failed_callbacks(currency_id, status=nil)
     count = 0
-    Reward.select_all(:conditions => "currency_id = '#{currency_id}' and send_currency_status = '#{status}'") do |reward|
+
+    conditions = ['currency_id = ? AND send_currency_status ', currency_id]
+    if status.nil?
+      conditions[0] << 'IS NULL'
+    else
+      conditions[0] << '= ?'
+      conditions << status
+    end
+
+    Reward.select_all(:conditions => conditions) do |reward|
       reward.delete('sent_currency')
       reward.delete('send_currency_status')
       begin

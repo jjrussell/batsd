@@ -105,6 +105,12 @@
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
 = link_to('[View all boosts]', tools_rank_boosts_path(:offer_id => @offer.id))
+%br
+- if permitted_to?(:index, :dashboard_tools_optimized_rank_boosts)
+  %a#show_optimized_boosts{:href => '#'} [#{@optimized_boosts.size} active optimized rank boosts]
+- if permitted_to?(:new, :dashboard_tools_optimized_rank_boosts)
+  = link_to('[Create optimized rank boost]', new_tools_optimized_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all optimized boosts]', tools_optimized_rank_boosts_path(:offer_id => @offer.id))
 #boosts_list
   %h5 Total Active Boost: #{@total_boost}x
   %ul
@@ -113,6 +119,18 @@
         #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
         = link_to('[Edit]', edit_tools_rank_boost_path(boost))
         = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+.clear
+
+#optimized_boosts_list.hidden
+  %h5 Total Active Optimized Boost: #{@total_optimized_boosts}x
+  %ul
+    - @optimized_boosts.each do |boost|
+      %li
+        #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
+        - if permitted_to?(:edit, :dashboard_tools_optimized_rank_boosts)
+          = link_to('[Edit]', edit_tools_optimized_rank_boost_path(boost))
+        - if permitted_to?(:deactivate, :dashboard_tools_optimized_rank_boosts)
+          = link_to('[Deactivate]', deactivate_tools_optimized_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
 
 .clear
 
@@ -231,9 +249,13 @@
       return false;
     });
 
-
     $('#show_boosts').click(function() {
       $('#boosts_list').toggle();
+      return false;
+    });
+
+    $('#show_optimized_boosts').click(function() {
+      $('#optimized_boosts_list').toggle();
       return false;
     });
 

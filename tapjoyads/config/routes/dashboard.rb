@@ -189,7 +189,6 @@ Tapjoyad::Application.routes.draw do
 
         end
 
-        resources :payout_infos, :only => [:index, :update]
       end
 
       match 'partners/managed_by/:id' => 'partners#managed_by'
@@ -331,6 +330,11 @@ Tapjoyad::Application.routes.draw do
             post :deactivate
           end
         end
+        resources :optimized_rank_boosts, :except => [:show, :destroy] do
+          member do
+            post :deactivate
+          end
+        end
         resources :external_publishers, :only => [:index, :update]
         resources :jobs, :except => [:show]
         resources :earnings_adjustments, :only => [:new, :create]
@@ -349,7 +353,6 @@ Tapjoyad::Application.routes.draw do
             post :mass_resolve
           end
         end
-        resources :press_releases, :only => [:index, :new, :create, :edit, :update]
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]

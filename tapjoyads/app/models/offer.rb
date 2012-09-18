@@ -89,6 +89,9 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
+  UDID_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf f7cc4972-7349-42dd-a696-7fcc9dcc2d03)
+  MAC_ADDRESS_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf)
+
   attr_reader :video_button_tracking_offers
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
@@ -114,14 +117,14 @@ class Offer < ActiveRecord::Base
   belongs_to :coupon, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
-  validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :partner, :item, :name, :url, :rank_boost, :optimized_rank_boost
   validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
-  validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
+  validates_numericality_of :rank_boost, :optimized_rank_boost, :allow_nil => false, :only_integer => true
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
@@ -775,7 +778,11 @@ class Offer < ActiveRecord::Base
   end
 
   def calculate_rank_boost!
-    update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
+    update_attribute(:rank_boost, rank_boosts.active.not_optimized.sum(:amount))
+  end
+
+  def calculate_optimized_rank_boost!
+    update_attribute(:optimized_rank_boost, rank_boosts.active.optimized.sum(:amount))
   end
 
   def set_reseller_from_partner
@@ -941,6 +948,16 @@ class Offer < ActiveRecord::Base
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+  end
+
+
+  # TODO: specs when these are real
+  def requires_udid?
+    UDID_REQUIRED_OFFERS.include?(id)
+  end
+
+  def requires_mac_address?
+    MAC_ADDRESS_REQUIRED_OFFERS.include?(id)
   end
 
   private
