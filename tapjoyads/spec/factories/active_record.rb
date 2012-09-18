@@ -424,4 +424,19 @@ FactoryGirl.define do
     instructions                  'do some stuff'
     price                         1
   end
+
+  factory :experiment do
+    name              { FactoryGirl.generate(:name) }
+    owner             { Factory(:user) }
+    description       'Experiment Description'
+    started_at        Date.tomorrow
+    due_at            Date.today.advance(:days => 10)
+    ratio             50
+    population_size   1
+    bucket_type       'optimization'
+  end
+
+  factory :experiment_bucket do
+    bucket_type 'optimization'
+  end
 end
