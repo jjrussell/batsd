@@ -190,6 +190,8 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
+  validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
@@ -612,6 +614,16 @@ class Offer < ActiveRecord::Base
     Set.new(publisher_app_whitelist.split(';'))
   end
   memoize :get_publisher_app_whitelist
+
+  def get_x_partner_prerequisites
+    Set.new(x_partner_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_prerequisites
+
+  def get_x_partner_exclusion_prerequisites
+    Set.new(x_partner_exclusion_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_exclusion_prerequisites
 
   def get_platform
     types = get_device_types

@@ -10,6 +10,20 @@
         = @offer.item.countries_blacklist
 %tr.admin
   %th
+    = f.label :x_partner_prerequisites, 'Cross Partner Prerequisites'
+    #help_x_partner_prerequisites.help ?
+  %td
+    = f.text_area :x_partner_prerequisites, :rows => 3
+    = error_message_on @offer, :x_partner_prerequisites
+%tr.admin
+  %th
+    = f.label :x_partner_exclusion_prerequisites, 'Cross Partner Exclusion Prerequisites'
+    #help_x_partner_exclusion_prerequisites.help ?
+  %td
+    = f.text_area :x_partner_exclusion_prerequisites, :rows => 3
+    = error_message_on @offer, :x_partner_exclusion_prerequisites
+%tr.admin
+  %th
     = f.label(:regions)
     #help_regions.help ?
   %td
@@ -105,7 +119,7 @@
     = f.label(:publisher_app_whitelist)
     #help_publisher_app_whitelist.help ?
   %td
-    = f.text_field(:publisher_app_whitelist)
+    = f.text_area(:publisher_app_whitelist, :rows => 5)
     = error_message_on @offer, :publisher_app_whitelist
 - if [ 'App', 'EmailOffer', 'GenericOffer' ].include?(@offer.item_type)
   %tr.admin
@@ -157,6 +171,10 @@
   #help_overall_budget_content{ :name => 'Overall Budget' } The maximum number of conversions to complete in the lifetime of this offer. This is merely a hard limit so it is likely that the offer will go over-budget.
   #help_rank_score_content{ :name => 'Rank Score' } The last computed rank score for this offer.
   #help_min_bid_override_content{ :name => 'Min Bid Override' } Manually set the minimum allowed bid for this offer.
+  #help_x_partner_prerequisites_content{ :name => 'Prerequisites' }
+    This action will only be shown to users who have completed all the prerequisite offers. Must be a ";" separated list of publisher offer IDs.
+  #help_x_partner_exclusion_prerequisites_content{ :name => 'Exclusion Prerequisites' }
+    This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers. Must be a ";" separated list of publisher offer IDs.
 
 - content_for :page_javascript do
   :plain
