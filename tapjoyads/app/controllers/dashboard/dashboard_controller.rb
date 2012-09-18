@@ -15,10 +15,10 @@ class Dashboard::DashboardController < ApplicationController
   before_filter :inform_of_new_insights
   around_filter :set_time_zone
 
-  NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
-                    Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
-                    If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
-                    <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+  NEW_SDK_NOTICE = "Please update to the latest Tapjoy SDK v8.3 to take advantage of the latest changes for both iOS and Android
+                    (<a href='http://www.tapjoy.com/sdk/' target='_blank'>http://www.tapjoy.com/sdk</a>).
+                    Visit the knowledge center for the entire change log to this version.
+                    (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
 
   NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\" target=\"_blank\">newest version of Tapjoy Insights</a>"
 
@@ -128,9 +128,8 @@ class Dashboard::DashboardController < ApplicationController
   end
 
   def inform_of_new_sdk
-    if current_user && flash.now[:notice].blank? && (!cookies[:informed_sdk].present? || ObjectEncryptor.decrypt(cookies[:informed_sdk]) != '8.1.8')
+    if current_user && flash.now[:notice].blank?
       flash.now[:notice] = NEW_SDK_NOTICE
-      cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
     end
   end
 
