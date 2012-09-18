@@ -31,7 +31,7 @@ describe Dashboard::CurrenciesController do
     end
     context 'tapjoy enabled is false' do
       before :each do
-        @currency.tapjoy_enabled = false
+        Currency.any_instance.stub(:tapjoy_enabled?).and_return(false)
         get(:show, @params)
       end
       it 'has an instance variable udids_to_check' do
