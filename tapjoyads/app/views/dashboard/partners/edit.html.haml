@@ -2,11 +2,12 @@
 
 %h1= @partner.name
 
+- disabled = !current_user.employee?
 = form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
     = f.label :name
     #help_name.help ?
-    = f.text_field :name
+    = f.text_field :name, :disabled => disabled
     = error_message_on(@partner, :name)
   .field
     = f.label :approved_publisher
@@ -105,7 +106,7 @@
 
 .hidden
   #help_name_content{:name => 'Name'}
-    The partner's name. Finance will be notified if the name is changed.
+    The partner's name. Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
     Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.
