@@ -384,19 +384,11 @@ class Device < SimpledbShardedResource
     # skip clicks which could be caused by double clicking
     return nil if temp_click_hashes.present? && (click_id == temp_click_hashes[num_clicks-1]['id'])
 
-    end_period = (Time.now - RECENT_CLICKS_RANGE).to_f
+    cutoff_time = (Time.now - RECENT_CLICKS_RANGE).to_f
 
-    shift_index = 0
-    temp_click_hashes.each_with_index do |temp_click_hash, i|
-      if temp_click_hash['clicked_at'] < end_period
-        shift_index = i+1
-      else
-        break
-      end
-    end
-    temp_click_hashes.shift(shift_index)
-
+    temp_click_hashes.reject! {|click_hash| click_hash['clicked_at'] < cutoff_time }
     temp_click_hashes << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
+
     self.recent_click_hashes = temp_click_hashes
     @retry_save_on_fail = true
     save
