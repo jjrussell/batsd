@@ -58,12 +58,12 @@ private
   end
 
   def save_survey_result
-    SurveyResult.new(
-      :udid       => params[:udid],
-      :click_key  => params[:click_key],
-      :geoip_data => geoip_data,
-      :answers    => @answers
-    ).save
+    result = SurveyResult.new
+    result.udid       = params[:udid]
+    result.click_key  = params[:click_key]
+    result.geoip_data = geoip_data
+    result.answers    = @answers
+    result.save
   end
 
   def reward_survey_completion
