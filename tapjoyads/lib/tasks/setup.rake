@@ -39,7 +39,7 @@ namespace :setup do
   end
 
   task :tmp do
-    Dir.mkdir "tmp"
+    Dir.mkdir "tmp" unless File.exists?("tmp")
   end
 
   task :configs do

@@ -1,6 +1,5 @@
 class Dashboard::PartnersController < Dashboard::DashboardController
   layout 'tabbed'
-
   current_tab :partners
 
   filter_access_to :all
@@ -96,6 +95,8 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
     safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage, :discount_all_offer_types, :country ]
     safe_attributes += [ :use_server_whitelist, :enable_risk_management ] if current_user.is_admin?
+
+    params[:partner].delete(:name) unless current_user.employee?
 
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)

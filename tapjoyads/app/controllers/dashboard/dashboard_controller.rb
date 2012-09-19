@@ -15,7 +15,7 @@ class Dashboard::DashboardController < ApplicationController
   before_filter :inform_of_new_insights
   around_filter :set_time_zone
 
-  NEW_SDK_NOTICE = "Please update to the latest Tapjoy SDK v8.3 to take advantage of the latest changes for both iOS and Android
+  NEW_SDK_NOTICE = "Don't forget to update to Tapjoy SDK v8.3 in order to ensure effective monetization and distribution of your applications
                     (<a href='http://www.tapjoy.com/sdk/' target='_blank'>http://www.tapjoy.com/sdk</a>).
                     Visit the knowledge center for the entire change log to this version.
                     (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
