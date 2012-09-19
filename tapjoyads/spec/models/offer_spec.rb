@@ -1081,6 +1081,33 @@ describe Offer do
         @offer.should_not be_valid
       end
     end
+
+    context "when daily_cap_type is specified" do
+      it "allows blank values" do
+        @offer.daily_cap_type = ''
+        @offer.should be_valid
+      end
+
+      it "allows nil" do
+        @offer.daily_cap_type = nil
+        @offer.should be_valid
+      end
+
+      it "allows :budget" do
+        @offer.daily_cap_type = :budget
+        @offer.should be_valid
+      end
+
+      it "allows :installs" do
+        @offer.daily_cap_type = :installs
+        @offer.should be_valid
+      end
+
+      it "disallows other values" do
+        @offer.daily_cap_type = :something
+        @offer.should_not be_valid
+      end
+    end
   end
 
   describe '#missing_app_store_id?' do

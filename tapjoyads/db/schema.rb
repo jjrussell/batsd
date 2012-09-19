@@ -792,6 +792,7 @@ ActiveRecord::Schema.define(:version => 20120917215503) do
     t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
     t.text     "x_partner_prerequisites",                                                                          :null => false
     t.text     "x_partner_exclusion_prerequisites",                                                                :null => false
+    t.string   "daily_cap_type"
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

@@ -52,6 +52,7 @@ class Offer < ActiveRecord::Base
                                     audition_factor
                                     created_at
                                     daily_budget
+                                    daily_cap_type
                                     hidden
                                     instructions
                                     instructions_overridden
@@ -132,6 +133,7 @@ class Offer < ActiveRecord::Base
   validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
+  validates_inclusion_of :daily_cap_type, :allow_blank => true, :allow_nil => true, :in => [ :installs, :budget ]
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
       types = JSON.parse(value)
@@ -951,7 +953,6 @@ class Offer < ActiveRecord::Base
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
   end
 
-
   # TODO: specs when these are real
   def requires_udid?
     UDID_REQUIRED_OFFERS.include?(id)
@@ -959,6 +960,15 @@ class Offer < ActiveRecord::Base
 
   def requires_mac_address?
     MAC_ADDRESS_REQUIRED_OFFERS.include?(id)
+  end
+
+  def daily_cap_type
+    value = read_attribute(:daily_cap_type)
+    value.blank? ? nil : value.to_sym
+  end
+
+  def daily_cap_type=(value)
+    write_attribute(:daily_cap_type, value.blank? ? nil : value.to_sym)
   end
 
   private
