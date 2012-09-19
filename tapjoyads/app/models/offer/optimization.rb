@@ -21,7 +21,7 @@ module Offer::Optimization
     optimized_info = {}
 
     optimization_override_show_rate(optimized_info, offer_hash, log_info)
-    optimization_override_rank_score(optimized_info, offer_hash, log_info)
+    optimization_override_rank_score(optimized_info, offer_hash)
 
     optimized_info.each do |key, value|
       self.send("#{key}=", value)
@@ -35,18 +35,12 @@ module Offer::Optimization
     optimized_info[:show_rate] = new_show_rate
   end
 
-  def optimization_override_rank_score(optimized_info, offer_hash={}, log_info=true)
+  def optimization_override_rank_score(optimized_info, offer_hash={})
     optimized_info[:rank_score] = offer_hash['rank_score'] if offer_hash['rank_score']
 
-    if rank_boost != 0
+    if (rank_boost > 0 && publisher_app_whitelist.present? && is_reasonable_rank_boost?) || rank_boost < 0
       offer_hash_rank_score = offer_hash['rank_score'] || 0
-      if rank_boost > 0
-        if publisher_app_whitelist.present? && is_reasonable_rank_boost?
-            optimized_info[:rank_score] = (rank_boost + offer_hash_rank_score).floor
-        end
-      else
-        optimized_info[:rank_score] = (rank_boost + offer_hash_rank_score).floor
-      end
+      optimized_info[:rank_score] = (rank_boost + offer_hash_rank_score).floor
     end
   end
 end
