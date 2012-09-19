@@ -446,6 +446,6 @@ module Offer::Rejecting
   end
 
   def age_gating_reject?(device)
-    !Mc.distributed_get("#{OfferAgeGatingController::MC_KEY_PREFIX}.#{device.key}.#{id}").nil?
+    !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
   end
 end

@@ -4,8 +4,6 @@ class OfferAgeGatingController < ApplicationController
 
   layout 'iphone', :only => :index
 
-  MC_KEY_PREFIX = 'offer.age.gating.device.offer'
-
   def index
     data = ObjectEncryptor.decrypt(params[:data])
     @offer = Offer.find_in_cache(data[:offer_id])
@@ -30,7 +28,7 @@ class OfferAgeGatingController < ApplicationController
   def redirect_to_get_offers
     data = ObjectEncryptor.decrypt(params[:data])
 
-    Mc.distributed_put("#{MC_KEY_PREFIX}.#{params[:udid]}.#{data[:offer_id]}", "gating", false, 2.hour)
+    Mc.distributed_put("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{params[:udid]}.#{data[:offer_id]}", "gating", false, 2.hour)
 
     redirect_to("#{API_URL}/get_offers/webpage?#{data.to_query}")
   end

@@ -88,6 +88,8 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
+  MC_KEY_AGE_GATING_PREFIX = 'offer.age_gating.device.offer'
+
   attr_reader :video_button_tracking_offers
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
