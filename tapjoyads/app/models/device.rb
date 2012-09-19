@@ -28,6 +28,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
+  self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
 
   SKIP_TIMEOUT = 24.hours
