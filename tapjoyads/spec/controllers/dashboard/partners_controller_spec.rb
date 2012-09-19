@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Dashboard::PartnersController do
+
   before :each do
     activate_authlogic
   end
@@ -73,6 +74,23 @@ describe Dashboard::PartnersController do
 
     it "changes the current_partner" do
       @controller.send(:current_partner).should == @partner2
+    end
+  end
+
+  context "when searching" do
+    integrate_views
+
+    before :each do
+      @user = FactoryGirl.create(:account_mgr_user)
+      login_as(@user)
+
+      @partner = FactoryGirl.create(:partner, :country => 'United States of America')
+    end
+
+    it "filters partners by country" do
+       get :by_country, :country => 'United States of America'
+       response.should be_successful
+       response.body.should include("<td>United States of America</td>")
     end
   end
 

@@ -12,12 +12,18 @@ cd /vagrant
 git clone git@github.com:[your github nickname]/tapjoyserver.git
 ```
 
-Install necessary gems under ruby 1.8.7 and run the repo setup script:
+Install necessary gems under ruby 1.8.7:
 
 ```
 cd /vagrant/tapjoyserver/tapjoyads
 rvm use 1.8.7-p357
 bundle
+```
+
+Copy the database config file and run setup script:
+
+```
+cp config/database-default.yml config/database.yml
 rake setup
 ```
 
