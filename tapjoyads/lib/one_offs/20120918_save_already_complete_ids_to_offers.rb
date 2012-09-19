@@ -5,8 +5,12 @@ class OneOffs
         offer = Offer.find_by_id(offer_id)
         if offer.present?
           puts offer.name
-          v.delete(offer_id)
-          offer.x_partner_exclusion_prerequisites = offer.get_x_partner_exclusion_prerequisites.merge(v.to_set).to_a.join(';')
+          complete_ids_set = Set.new
+          v.each do |already_complete_id|
+            next if already_complete_id == offer_id
+            complete_ids_set.add(already_complete_id) if Offer.find_by_id(already_complete_id).present?
+          end
+          offer.x_partner_exclusion_prerequisites = offer.get_x_partner_exclusion_prerequisites.merge(complete_ids_set).to_a.join(';')
           offer.save! if offer.x_partner_exclusion_prerequisites_changed?
         else
           puts "offer id: #{offer_id} not found"
