@@ -94,7 +94,10 @@ class Dashboard::AppsController < Dashboard::DashboardController
     log_activity(@app)
 
     @app.name = params[:app][:name]
-    @app.protocol_handler = params[:app][:protocol_handler] if permitted_to? :edit, :dashboard_statz
+    if permitted_to? :edit, :dashboard_statz
+      @app.protocol_handler = params[:app][:protocol_handler]
+      @app.exclusion_apps = params[:app][:exclusion_apps]
+    end
 
     App.transaction do
       if params[:state] == 'live' && params[:store_id].present?

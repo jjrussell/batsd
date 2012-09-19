@@ -98,6 +98,7 @@ class App < ActiveRecord::Base
   validates_presence_of :partner, :name, :secret_key
   validates_inclusion_of :platform, :in => PLATFORMS.keys
   validates_numericality_of :active_gamer_count, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates :exclusion_apps, :id_list => {:of => App}, :allow_blank => true
 
   before_validation :generate_secret_key, :on => :create
 
@@ -421,6 +422,11 @@ class App < ActiveRecord::Base
     end
   end
 
+  def get_exclusion_apps
+    Set.new(exclusion_apps.split(';'))
+  end
+  memoize :get_exclusion_apps
+
   private
 
   def update_reengagements_with_enable_or_disable(enable)
@@ -496,6 +502,7 @@ class App < ActiveRecord::Base
     update_offers if partner_id_changed? || name_changed? || hidden_changed?
     update_rating_offer if rating_offer.present? && (partner_id_changed? || name_changed?)
     update_action_offers if partner_id_changed? || hidden_changed?
+    update_primary_offer if exclusion_apps_changed?
   end
 
   def update_currencies
@@ -507,4 +514,13 @@ class App < ActiveRecord::Base
       end
     end
   end
+
+  def update_primary_offer
+    if primary_offer.present?
+      new_set = primary_offer.get_x_partner_exclusion_prerequisites.merge(self.get_exclusion_apps)
+      primary_offer.x_partner_exclusion_prerequisites = new_set.to_a.join(';')
+      primary_offer.save! if primary_offer.x_partner_exclusion_prerequisites_changed?
+    end
+  end
+
 end

@@ -191,7 +191,7 @@ class Offer < ActiveRecord::Base
     end
   end
   validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
-  validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
+  #validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
