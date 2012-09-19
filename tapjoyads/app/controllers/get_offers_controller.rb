@@ -24,12 +24,6 @@ class GetOffersController < ApplicationController
     }
   }
 
-  VIEW_MAP[:test] = VIEW_MAP[:control].merge(
-    :actionLocation => 'left',
-    :viewID => 'test',
-    :showActionArrow => true
-  )
-
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
@@ -154,8 +148,9 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    params[:exp] = nil if params[:type] == Offer::CLASSIC_OFFER_TYPE
-    set_offerwall_experiment
+    # No experiment currently running
+    # set_offerwall_experiment
+    params[:exp] = 'control'
 
     if @save_web_requests
       @web_request = generate_web_request
@@ -221,6 +216,7 @@ class GetOffersController < ApplicationController
         web_request.offer_id = offer.id
         web_request.offerwall_rank = i + @start_index + 1
         web_request.offerwall_rank_score = offer.rank_score
+        web_request.cached_offer_list_id = offer.cached_offer_list_id
         web_request.save
 
         # for third party tracking vendors

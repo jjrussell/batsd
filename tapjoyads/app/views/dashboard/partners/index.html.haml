@@ -7,12 +7,17 @@
 - unless current_user.role_symbols.include?(:agency)
   .right
     Managed by:
-    - options = options_for_select(@account_managers, params[:id])
-    = select_tag('managed_by', options)
+    - managers = options_for_select(@account_managers, params[:id])
+    = select_tag('managed_by', managers)
+
   = form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
     = submit_tag('Search')
+
+  .left
+    By Country:
+    = select_tag('country', options_for_select(list_of_countries, @country || nil), :include_blank => true)
 
 = render :partial => "shared/partner_table", :locals => { :partners => @partners }
 = will_paginate(@partners)
@@ -57,6 +62,14 @@
           location.href = '/partners/managed_by/none';
         } else {
           location.href = '/partners/managed_by/' + $(this).val();
+        }
+      });
+
+      $('#country').change(function(){
+        if ($(this).val() == '') {
+          location.href = '/partners/by_country/all';
+        } else {
+          location.href = '/partners/by_country/' + $(this).val();
         }
       });
 

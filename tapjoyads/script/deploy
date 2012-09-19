@@ -39,6 +39,10 @@ class Deploy
         @options[:skip_schema_check] = true
       end
 
+      opts.on('--skip-assets') do
+        @options[:skip_assets] = true
+      end
+
       opts.on_tail('-h', '--help') do
         print_usage_and_exit
       end
@@ -64,7 +68,10 @@ class Deploy
       create_deploy_tag
     end
     check_schema if @options[:environment] == 'production' && !@options[:skip_schema_check]
-    system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}") if execute_cloudrun
+    system("bundle exec rake assets:precompile") unless @options[:skip_assets]
+    if execute_cloudrun
+      system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}")
+    end
     system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
     system("git checkout master")
     puts "Done deploying: #{Time.now}"
@@ -74,9 +81,10 @@ class Deploy
 
   def print_usage_and_exit
     puts "USAGE: script/deploy [options]"
-    puts "    -e, --environment (optional): The environment to deploy to. Can be 'test', 'util', or 'production'. Default is 'test'."
     puts "    -c, --cherry-pick (optional): If you've already cherry-picked the changes, deploy won't auto-merge master in."
+    puts "    -e, --environment (optional): The environment to deploy to. Can be 'test', 'util', or 'production'. Default is 'test'."
     puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test and util deploys, creates a new tag for production deploys."
+    puts "    --skip-assets (optional): Skips asset compilation."
     exit
   end
 

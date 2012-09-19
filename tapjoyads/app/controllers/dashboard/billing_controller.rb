@@ -184,8 +184,13 @@ class Dashboard::BillingController < Dashboard::DashboardController
       :tax_country, :account_type, :billing_name, :tax_id, :signature, :terms,
       :address_country, :address_1, :address_2, :address_city, :address_state, :address_postal_code,
       :payout_method, :bank_name, :bank_address, :bank_account_number, :bank_routing_number,
-      :payment_country, :paypal_email,
+      :payment_country, :paypal_email
     ]
+
+    unless current_user.employee? || @payout_info.new_record?
+      [:billing_name, :beneficiary_name, :tax_id].each { |field| params[:payout_info].delete(field) }
+    end
+
     if @payout_info.safe_update_attributes(params[:payout_info], safe_attributes)
       log_activity(current_partner)
       current_partner.payout_info_confirmation = false

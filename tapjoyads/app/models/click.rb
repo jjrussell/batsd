@@ -1,7 +1,7 @@
 class Click < SimpledbShardedResource
   include SdbMigrator
   new_configuration :new_num_domains => 100, :new_domain_name => "clicksV2"
-  
+
   MAX_HISTORY = 20
 
   belongs_to :device, :foreign_key => 'udid'
@@ -58,6 +58,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :force_convert, :type => :bool
   self.sdb_attr :force_converted_by
   self.sdb_attr :store_name
+  self.sdb_attr :cached_offer_list_id
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS

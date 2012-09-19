@@ -487,30 +487,49 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
-  it "excludes the appropriate columns for the for_offer_list scope" do
-    offer = Offer.for_offer_list.find(@offer.id)
-    fetched_cols = offer.attribute_names & Offer.column_names
 
-    (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
-    fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
-                                  'name', 'url', 'price', 'bid', 'payment',
-                                  'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
-                                  'age_rating', 'multi_complete', 'featured',
-                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
-                                  'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id', 'rate_filter_override', 'optimized_rank_boost',
-                                  'x_partner_prerequisites', 'x_partner_exclusion_prerequisites'
-                                ].sort
+  describe '.for_offer_list' do
+    INCLUDED_COLUMNS = %w{
+      id item_id item_type partner_id name url price bid payment conversion_rate show_rate
+      self_promote_only device_types countries age_rating multi_complete featured
+      publisher_app_whitelist direct_pay reward_value third_party_data payment_range_low
+      payment_range_high icon_id_override rank_boost normal_bid normal_conversion_rate
+      normal_avg_revenue normal_price over_threshold rewarded reseller_id cookie_tracking
+      min_os_version screen_layout_sizes interval banner_creatives dma_codes regions wifi_only
+      approved_sources approved_banner_creatives sdkless carriers cities impression_tracking_urls
+      click_tracking_urls conversion_tracking_urls creatives_dict prerequisite_offer_id
+      exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
+      optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
+    }
+
+    EXCLUDED_COLUMNS = %w{
+      account_manager_notes active allow_negative_balance audition_factor created_at
+      daily_budget hidden instructions instructions_overridden last_daily_stats_aggregation_time
+      last_stats_aggregation_time low_balance min_bid_override min_conversion_rate name_suffix
+      next_daily_stats_aggregation_time next_stats_aggregation_time overall_budget pay_per_click
+      stats_aggregation_interval tapjoy_enabled tapjoy_sponsored updated_at url_overridden
+      user_enabled tracking_for_id tracking_for_type source_offer_id
+    }
+
+    let(:offer)   {Offer.for_offer_list.find(@offer.id)}
+    let(:columns) {offer.attribute_names & Offer.column_names}
+
+    it "has #{INCLUDED_COLUMNS.length} columns" do
+      columns.length.should == INCLUDED_COLUMNS.length
+    end
+
+    INCLUDED_COLUMNS.each do |column|
+      it "includes the #{column} column" do
+        columns.should include column
+      end
+    end
+
+    EXCLUDED_COLUMNS.each do |column|
+      it "does not include the #{column} column" do
+        columns.should_not include column
+      end
+    end
+
   end
 
   context "with min_bid_override set" do
@@ -1059,6 +1078,33 @@ describe Offer do
 
       it "disallows pay-per-click offers" do
         @offer.pay_per_click = true
+        @offer.should_not be_valid
+      end
+    end
+
+    context "when daily_cap_type is specified" do
+      it "allows blank values" do
+        @offer.daily_cap_type = ''
+        @offer.should be_valid
+      end
+
+      it "allows nil" do
+        @offer.daily_cap_type = nil
+        @offer.should be_valid
+      end
+
+      it "allows :budget" do
+        @offer.daily_cap_type = :budget
+        @offer.should be_valid
+      end
+
+      it "allows :installs" do
+        @offer.daily_cap_type = :installs
+        @offer.should be_valid
+      end
+
+      it "disallows other values" do
+        @offer.daily_cap_type = :something
         @offer.should_not be_valid
       end
     end

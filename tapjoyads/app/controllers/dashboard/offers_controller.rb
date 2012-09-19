@@ -8,7 +8,7 @@ class Dashboard::OffersController < Dashboard::DashboardController
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
                                :min_os_version, :screen_layout_sizes, :countries,
-                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids ]
+                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids, :daily_cap_type ]
   ELEVATED_SAFE_ATTRIBUTES = BASE_SAFE_ATTRIBUTES | [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
                                :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
@@ -63,7 +63,10 @@ class Dashboard::OffersController < Dashboard::DashboardController
     params[:offer].delete(:payment)
 
     params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
-    params[:offer][:daily_budget] = 0 if params[:daily_budget] == 'off'
+    if params[:daily_budget] == 'off'
+      params[:offer][:daily_budget] = 0
+      params[:offer][:daily_cap_type] = nil
+    end
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
     safe_attributes = BASE_SAFE_ATTRIBUTES
