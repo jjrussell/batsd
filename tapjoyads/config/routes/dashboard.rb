@@ -193,6 +193,8 @@ Tapjoyad::Application.routes.draw do
       end
 
       match 'partners/managed_by/:id' => 'partners#managed_by'
+      match 'partners/by_country/:country' => 'partners#by_country'
+
       match 'search/gamers' => 'search#gamers', :as => :search_gamers
       match 'search/offers' => 'search#offers', :as => :search_offers
       match 'search/users' => 'search#users', :as => :search_users

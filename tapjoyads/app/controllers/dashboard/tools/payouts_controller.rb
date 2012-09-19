@@ -50,7 +50,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
     data = [
       'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
       'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
-      'Confirmed,Notes'
+      'Confirmed,Notes,Legal_Name,Tax_ID'
      ]
     managers = {}
     User.account_managers.each do |user|
@@ -73,7 +73,9 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
           partner.completed_payout_info? ? partner.payout_info.payout_method : '',
           account_manager_email,
           partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
-          confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
+          confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : '',
+          partner.payout_info.billing_name,
+          partner.payout_info.decrypt_tax_id
         ]
       data << line.join(',')
     end

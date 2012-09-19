@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Dashboard::PartnersController do
+
   before :each do
     activate_authlogic
   end
@@ -73,6 +74,54 @@ describe Dashboard::PartnersController do
 
     it "changes the current_partner" do
       @controller.send(:current_partner).should == @partner2
+    end
+  end
+
+  context "when searching" do
+    integrate_views
+
+    before :each do
+      @user = FactoryGirl.create(:account_mgr_user)
+      login_as(@user)
+
+      @partner = FactoryGirl.create(:partner, :country => 'United States of America')
+    end
+
+    it "filters partners by country" do
+       get :by_country, :country => 'United States of America'
+       response.should be_successful
+       response.body.should include("<td>United States of America</td>")
+    end
+  end
+
+  context '#update' do
+    let(:current_user)  { FactoryGirl.create(:admin) }
+    let(:partner)       { FactoryGirl.create(:partner, :users => [current_user]) }
+
+    let(:params)        {{ :id => partner.id, :partner => {:name => "Some new name"} }}
+
+    before(:each) do
+      login_as(current_user)
+      controller.stub(:current_user).and_return(current_user)
+    end
+
+    context 'a user who is a Tapjoy employee' do
+      before(:each) { current_user.stub(:employee?).and_return(true) }
+
+      it "can change the partner's name" do
+        put(:update, params)
+        partner.reload
+        partner.name.should == "Some new name"
+      end
+    end
+
+    context 'a user who is not a Tapjoy employee' do
+      before(:each) { current_user.stub(:employee?).and_return(false) }
+      it "cannot change the partner's name" do
+        put(:update, params)
+        partner.reload
+        partner.name.should_not == "Some new name"
+      end
     end
   end
 end
