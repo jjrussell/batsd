@@ -16,7 +16,7 @@ class RankBoost < ActiveRecord::Base
 
   include UuidPrimaryKey
 
-  RANK_SCORE_THRESHOLD = 1000
+  RANK_SCORE_THRESHOLD = OPTIMIZED_RANK_BOOST_MAX
 
   belongs_to :offer
 

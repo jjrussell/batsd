@@ -66,7 +66,7 @@ describe OfferCacher do
 
       OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false)
       offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
-      offers.map {|o| o.rank_score}.should == [30, 5.0, 4.0, 2.0, 1.0]
+      offers.map {|o| o.rank_score}.should == [33.0, 5.0, 4.0, 2.0, 1.0]
     end
   end
 end
