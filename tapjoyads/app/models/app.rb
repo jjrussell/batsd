@@ -507,5 +507,4 @@ class App < ActiveRecord::Base
       end
     end
   end
-
 end
