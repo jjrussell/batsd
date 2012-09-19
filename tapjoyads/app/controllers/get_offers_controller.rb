@@ -216,6 +216,7 @@ class GetOffersController < ApplicationController
         web_request.offer_id = offer.id
         web_request.offerwall_rank = i + @start_index + 1
         web_request.offerwall_rank_score = offer.rank_score
+        web_request.cached_offer_list_id = offer.cached_offer_list_id
         web_request.save
 
         # for third party tracking vendors

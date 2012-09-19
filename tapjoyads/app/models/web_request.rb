@@ -139,6 +139,7 @@ class WebRequest < SyslogMessage
   self.define_attr :raw_url
   self.define_attr :controller
   self.define_attr :controller_action
+  self.define_attr :cached_offer_list_id
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
