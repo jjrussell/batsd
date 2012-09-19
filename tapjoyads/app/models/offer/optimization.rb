@@ -36,11 +36,12 @@ module Offer::Optimization
   end
 
   def optimization_override_rank_score(optimized_info, offer_hash={})
-    optimized_info[:rank_score] = offer_hash['rank_score'] if offer_hash['rank_score']
-
-    if (rank_boost > 0 && publisher_app_whitelist.present? && is_reasonable_rank_boost?) || rank_boost < 0
+    if rank_boost == 0
+      optimized_info[:rank_score] = offer_hash['rank_score'] if offer_hash['rank_score']
+    else
       offer_hash_rank_score = offer_hash['rank_score'] || 0
-      optimized_info[:rank_score] = (rank_boost + offer_hash_rank_score).floor
+      overriden = override_rank_score!(offer_hash_rank_score)
+      optimized_info[:rank_score] = offer_hash['rank_score'] unless overriden
     end
   end
 end
