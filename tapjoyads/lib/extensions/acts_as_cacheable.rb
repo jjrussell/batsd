@@ -55,11 +55,12 @@ module ActsAsCacheable
           raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
           object = Mc.distributed_get(cache_key_for(id))
-          if object.nil? && do_lookup
+          if object.nil?
             if queue_record_not_found
               message = { :model_name => model_name, :id => id }.to_json
               Sqs.send_message(QueueNames::CACHE_RECORD_NOT_FOUND, message)
-            else
+            end
+            if do_lookup
               object = find_by_id(id)
               object.cache unless object.nil?
             end

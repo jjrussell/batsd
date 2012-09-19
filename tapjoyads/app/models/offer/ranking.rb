@@ -15,7 +15,8 @@ module Offer::Ranking
     self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
     self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid_for_ranks - stats[:bid_mean]) / stats[:bid_std_dev]
     self.over_threshold         = bid >= 40 ? 1 : 0
-    self.rank_boost             = rank_boosts.active.sum(:amount)
+    self.rank_boost             = rank_boosts.active.not_optimized.sum(:amount)
+    self.optimized_rank_boost   = rank_boosts.active.optimized.sum(:amount)
   end
 
   def calculate_ranking_fields!

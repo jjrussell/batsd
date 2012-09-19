@@ -285,12 +285,24 @@ describe Offer do
 
   it "rejects depending on prerequisites" do
     device = Factory(:device)
-    app = FactoryGirl.create :app
+    app = FactoryGirl.create :app, { :partner_id => @offer.partner_id }
     prerequisite_offer = app.primary_offer
     @offer.send(:prerequisites_not_complete?, device).should == false
     @offer.update_attributes({ :prerequisite_offer_id => prerequisite_offer.id })
     @offer.send(:prerequisites_not_complete?, device).should == true
     device.set_last_run_time(app.id)
+    @offer.send(:prerequisites_not_complete?, device).should == false
+
+    app2 = FactoryGirl.create :app
+    prerequisite_offer2 = app2.primary_offer
+    generic_offer = FactoryGirl.create :generic_offer
+    prerequisite_offer3 = generic_offer.primary_offer
+    @offer.update_attributes({ :x_partner_prerequisites => "#{prerequisite_offer2.id};#{prerequisite_offer3.id}" })
+    @offer.get_x_partner_prerequisites(:reload)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(app2.id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(generic_offer.id)
     @offer.send(:prerequisites_not_complete?, device).should == false
 
     exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
@@ -305,6 +317,18 @@ describe Offer do
     device.set_last_run_time(exclusion_offer2.item_id)
     @offer.send(:prerequisites_not_complete?, device).should == true
     device.set_last_run_time(exclusion_offer3.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+
+    @offer.exclusion_prerequisite_offer_ids = nil
+    @offer.get_exclusion_prerequisite_offer_ids
+    @offer.send(:prerequisites_not_complete?, device).should == false
+    exclusion_offer4 = (FactoryGirl.create :action_offer).primary_offer
+    exclusion_offer5 = (FactoryGirl.create :generic_offer).primary_offer
+    @offer.update_attributes({ :x_partner_exclusion_prerequisites => "#{exclusion_offer4.id};#{exclusion_offer5.id}" })
+    @offer.get_x_partner_exclusion_prerequisites(:reload)
+    device.set_last_run_time(exclusion_offer4.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(exclusion_offer5.item_id)
     @offer.send(:prerequisites_not_complete?, device).should == true
   end
 
@@ -484,7 +508,8 @@ describe Offer do
                                   'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
                                   'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
                                   'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id', 'rate_filter_override'
+                                  'app_metadata_id', 'rate_filter_override', 'optimized_rank_boost',
+                                  'x_partner_prerequisites', 'x_partner_exclusion_prerequisites'
                                 ].sort
   end
 
@@ -1734,5 +1759,24 @@ describe Offer do
       end
     end
   end
-end
 
+  describe '#calculate_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost)
+      @rank_boost.offer.calculate_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.rank_boost.should == @rank_boost.amount
+    end
+  end
+
+  describe '#calculate_optimized_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost, :optimized => true)
+      @rank_boost.offer.calculate_optimized_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.optimized_rank_boost.should == @rank_boost.amount
+    end
+  end
+end

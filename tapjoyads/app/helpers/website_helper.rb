@@ -276,5 +276,9 @@ EOJS
       employee.full_name
     end
   end
+
+  def get_offer_links_by_ids(ids, object=Offer)
+    ids.map { |id| link_to(object.find_by_id(id).name, statz_path(id)) }.join(', ')
+  end
 end
 

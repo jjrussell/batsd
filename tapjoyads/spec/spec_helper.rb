@@ -61,7 +61,8 @@ Spork.prefork do
     end
     config.before(:each) do
       Resolv.stub!(:getaddress=>'1.1.1.1')
-      RightAws::SdbInterface.stub!(:new => FakeSdb.new)
+      $fake_sdb = FakeSdb.new
+      RightAws::SdbInterface.stub!(:new => $fake_sdb)
       SimpledbResource.reset_connection
       AWS::S3.stub!(:new => FakeS3.new)
       Sqs.stub(:send_message)

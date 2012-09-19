@@ -5,7 +5,7 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
   filter_access_to :all
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
-  BASE_SAFE_ATTRIBUTES = %w(name prerequisite_offer_id exclusion_prerequisite_offer_ids instructions primary_offer_attributes_id)
+  BASE_SAFE_ATTRIBUTES = %w(name prerequisite_offer_id exclusion_prerequisite_offer_ids instructions primary_offer_attributes_id x_partner_prerequisites x_partner_exclusion_prerequisites)
 
   BASE_OFFER_SAFE_ATTRIBUTES = Dashboard::OffersController::BASE_SAFE_ATTRIBUTES.map do |attribute|
     "primary_offer_attributes_#{attribute}"
