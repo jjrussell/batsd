@@ -328,7 +328,7 @@ describe Dashboard::OffersController do
           :exclusion_prerequisite_offer_ids, :daily_cap_type, :tapjoy_enabled, :allow_negative_balance,
           :pay_per_click, :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
           :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities, :rate_filter_override, :daily_cap_type,
+          :dma_codes, :regions, :carriers, :cities, :rate_filter_override,
           :x_partner_prerequisites, :x_partner_exclusion_prerequisites ]
         @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @offer = mock('offer')
