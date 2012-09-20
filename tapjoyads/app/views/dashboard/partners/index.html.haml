@@ -17,7 +17,8 @@
 
   .left
     By Country:
-    = select_tag('country', options_for_select(list_of_countries, @country || nil), :include_blank => true)
+    - countries = options_for_select(list_of_countries, @country || nil)
+    = select_tag('country', countries, :include_blank => true)
 
 = render :partial => "shared/partner_table", :locals => { :partners => @partners }
 = will_paginate(@partners)
@@ -73,25 +74,27 @@
         }
       });
 
-      $('td.account_manager select,td.sales_rep select').change(function(){
+      $('td.account_manager select,td.sales_rep select, td.country select').change(function(){
         var form = $(this).parent('form');
         var url = form.attr('action');
         var key = $(this).attr('name');
         var data = {};
         data[key] = [$(this).val()];
         form.siblings('img').show();
+
         $.ajax({
           data: data,
-          error: function() {
-            form.siblings('.message').show().text('fail!!!');
-            form.siblings('img').hide();
-          },
-          success: function() {
-            form.siblings('.message').show().text('success!');
-            form.siblings('img').hide();
-          },
           type: 'put',
           url: url
+        });
+
+        $(form).ajaxComplete(function(e,xhr,settings) {
+          $(this).siblings('img').hide();
+
+          var rsp = xhr.getResponseHeader('X-Message');
+          $(this).siblings('.message').show().text(rsp);
+          $(this).siblings('.message').fadeOut(8000);
+
         });
       });
 
