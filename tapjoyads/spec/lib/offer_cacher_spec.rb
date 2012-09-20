@@ -48,7 +48,7 @@ describe OfferCacher do
     end
   end
 
-  describe "#get_offers_prerejected" do
+  describe ".get_offers_prerejected" do
     it "caches sorted offers prerejected", :sorted do
       OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false)
       offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
