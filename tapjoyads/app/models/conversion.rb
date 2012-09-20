@@ -81,22 +81,24 @@ class Conversion < ActiveRecord::Base
   }
 
   STAT_TO_REWARD_TYPE_MAP = {
-    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id' },
-    'published_installs'        => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id' },
-    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id' },
-    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id' },
-    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 8, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id' },
-    'jailbroken_installs'       => { :reward_types => [ 4, 2004, 3004 ],                            :attr_name => 'advertiser_offer_id' },
-    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
-    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
-    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
-    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
-    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id', :sum_attr => :advertiser_amount },
-    'tjm_offers'                => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id' },
-    'tjm_published_installs'    => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id' },
-    'tjm_offers_revenue'        => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
-    'tjm_installs_revenue'      => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id', :sum_attr => :publisher_amount },
+    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'published_installs'        => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 8, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false },
+    'jailbroken_installs'       => { :reward_types => [ 4, 2004, 3004 ],                            :attr_name => 'advertiser_offer_id', :segment_by_store => false },
+    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false, :sum_attr => :advertiser_amount },
+    'tjm_offers'                => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'tjm_published_installs'    => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'tjm_offers_revenue'        => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'tjm_installs_revenue'      => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
   }
+
+  attr_accessor :store_name
 
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :advertiser_offer, :class_name => 'Offer'
@@ -238,17 +240,7 @@ class Conversion < ActiveRecord::Base
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])
       count_inc  = stat_definition[:increment].present? ? send(stat_definition[:increment]) : 1
-
-      if attr_value.present?
-        mc_key = Stats.get_memcache_count_key(stat_name, attr_value, created_at)
-        Mc.increment_count(mc_key, false, 1.day, count_inc)
-
-        if stat_name == 'paid_installs' || stat_name == 'installs_spend'
-          stat_path = [ 'countries', (Stats::COUNTRY_CODES[country].present? ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
-          mc_key = Stats.get_memcache_count_key(stat_path, attr_value, created_at)
-          Mc.increment_count(mc_key, false, 1.day, count_inc)
-        end
-      end
+      increment_running_counts(stat_name, attr_value, created_at, count_inc) if attr_value.present?
     end
   end
 
@@ -266,4 +258,18 @@ class Conversion < ActiveRecord::Base
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_partner_id}'") unless advertiser_amount == 0
   end
 
+  def increment_running_counts(stat_name, attr_value, time, count_inc)
+    keys = [ Stats.get_memcache_count_key(stat_name, attr_value, time) ]
+
+    if stat_name == 'paid_installs' || stat_name == 'installs_spend'
+      stat_path = [ 'countries', (Stats::COUNTRY_CODES[country].present? ? "#{stat_name}.#{country}" : "#{stat_name}.other") ]
+      keys << Stats.get_memcache_count_key(stat_path, attr_value, time)
+    end
+    segment_stat = Stats.get_segment_stat(stat_name, store_name)
+    keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
+
+    keys.each do |mc_key|
+      Mc.increment_count(mc_key, false, 1.day, count_inc)
+    end
+  end
 end

@@ -6,6 +6,46 @@ describe ClickController do
     @currency = FactoryGirl.create(:currency)
   end
 
+  context "for all click types" do
+    before :each do
+      @offer = FactoryGirl.create(:generic_offer).primary_offer
+      @offer.tapjoy_enabled = true
+      @offer.payment = 1
+      @offer.user_enabled = true
+      @params = {
+        :udid => 'stuff',
+        :offer_id => @offer.id,
+        :viewed_at =>  (Time.zone.now - 1.hour).to_f,
+        :currency_id => @currency.id,
+        :publisher_app_id => 'pub_app_id'
+      }
+      controller.stub(:verify_params).and_return(true)
+      Offer.stub(:find_in_cache).and_return(@offer)
+      Currency.stub(:find_in_cache).and_return(@currency)
+      @click = Click.new
+      Click.stub(:new).and_return(@click)
+    end
+
+    it "saves the click" do
+      get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff'))
+      @click.advertiser_app_id.should == 'even_more_stuff'
+    end
+
+    context "when store_name param is passed" do
+      it "saves store_name param in click" do
+        get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
+        @click.store_name.should == 'some_store'
+      end
+    end
+
+    context "when app is android and store_name param is not passed" do
+      it "saves default store_name param in click" do
+        get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :platform => 'android'))
+        @click.store_name.should == 'google'
+      end
+    end
+  end
+
   describe "#generic" do
     context "for the TJM invitation offer" do
       before :each do
