@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120917215503) do
+ActiveRecord::Schema.define(:version => 20120919233009) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -602,6 +602,7 @@ ActiveRecord::Schema.define(:version => 20120917215503) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "max_concurrency",               :default => 0,       :null => false
+    t.string   "uri"
   end
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
