@@ -7,9 +7,12 @@ class AppStore
   ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
   WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
   WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
-  WINDOWS_APP_IMAGES  = "http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true"
-  GFAN_APP_URL        = "http://api.gfan.com/market/api/getProductDetail"
+  WINDOWS_APP_IMAGES  = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
+  GFAN_APP_URL        = 'http://api.gfan.com/market/api/getProductDetail'
   GFAN_SEARCH_URL     = "http://api.gfan.com/market/api/search"
+  T_STORE_APP_URL     = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
+  T_STORE_SEARCH_URL  = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
+  T_STORE_PID         = 'api_key pending from T-Store'
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -62,6 +65,14 @@ class AppStore
       :info_url  => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
       :exclusive => true
     }),
+    'android.TStore' => AppStore.new({
+      :id        => 'android.TStore',
+      :name      => 'TStore (Korea)',
+      :platform  => 'android',
+      :store_url => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_PID}&pid=STORE_ID",
+      :info_url  => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_PID}&pid=STORE_ID",
+      :exclusive => true
+    }),
     'windows.Marketplace' => AppStore.new({
       :id        => 'windows.Marketplace',
       :name      => 'Marketplace',
@@ -74,6 +85,7 @@ class AppStore
   SDK_STORE_NAMES = {
     'google' => 'android.GooglePlay',
     'gfan'   => 'android.GFan',
+    'tstore' => 'android.TStore',
   }
 
   def self.find(id)
@@ -94,6 +106,8 @@ class AppStore
     when 'android'
       if store_name == 'android.GFan'
         self.fetch_app_by_id_for_gfan(id)
+      elsif store_name == 'android.TStore'
+        self.fetch_app_by_id_from_tstore(id)
       else
         self.fetch_app_by_id_for_android(id)
       end
@@ -132,6 +146,8 @@ class AppStore
     when 'android'
       if store_name == 'android.GFan'
         self.search_gfan_app_store(term)
+      elsif store_name == 'android.TStore'
+        self.search_tstore(term)
       else
         self.search_android_market(term.gsub(/-/,' '))
       end
@@ -298,6 +314,10 @@ class AppStore
     end
   end
 
+  def self.fetch_app_by_id_for_tstore(id)
+
+  end
+
   def self.search_apple_app_store(term, country)
     country = 'us' if country.blank?
     response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
@@ -388,6 +408,10 @@ class AppStore
       Notifier.alert_new_relic(AppStoreSearchFailed, "search_gfan_store failed for term: #{term}")
       raise "Invalid response."
     end
+  end
+
+  def self.search_tstore(term)
+
   end
 
   def self.request(url, params={}, data=nil)
