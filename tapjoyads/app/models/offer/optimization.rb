@@ -40,8 +40,8 @@ module Offer::Optimization
       optimized_info[:rank_score] = offer_hash['rank_score'] if offer_hash['rank_score']
     else
       offer_hash_rank_score = offer_hash['rank_score'] || 0
-      overriden = override_rank_score!(offer_hash_rank_score)
-      optimized_info[:rank_score] = offer_hash['rank_score'] unless overriden
+      overridden = override_rank_score(offer_hash_rank_score)
+      optimized_info[:rank_score] = offer_hash['rank_score'] unless overridden
     end
   end
 end
