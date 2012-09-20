@@ -39,7 +39,12 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       flash[:notice] = 'Successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else
-      flash.now[:error] = 'Update unsuccessful'
+      error_msg = "Update unsuccessful."
+      account_manager_email = @app.partner.account_managers.detect { |am| am.email.present? }.try(:email)
+      if account_manager_email.present?
+        error_msg = "#{error_msg} If you have any questions, <a href=\"mailto:#{account_manager_email}\">email your account manager</a>."
+      end
+      flash.now[:error] = error_msg
       render :action => :show and return
     end
   end
