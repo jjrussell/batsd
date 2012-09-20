@@ -88,7 +88,7 @@ class App < ActiveRecord::Base
     :source => :app_metadata,
     :conditions => "app_metadata_mappings.is_primary = true"
   has_many :reengagement_offers
-  has_one :non_rewarded, :class_name => 'Currency', :conditions => "conversion_rate = 0 AND name = \"#{Currency::NON_REWARDED_NAME}\""
+  has_one :non_rewarded, :class_name => 'Currency', :conditions => {:conversion_rate => 0}
 
   belongs_to :partner
 

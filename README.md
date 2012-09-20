@@ -1,11 +1,11 @@
 tapjoyserver repo setup
 -----------------------
 
-First configure Git and get the Tapjoy repo.
+First, fork this repository to your github account.
 
-In github, fork this repository.
+Make sure you have your VM set up - if you don't, follow [these instructions](https://github.com/Tapjoy/vagrant) first.
 
-If you're on the vm, go into `/vagrant` and clone the repository:
+When you are in your VM, go into `/vagrant` directory and clone the repository:
 
 ```
 cd /vagrant

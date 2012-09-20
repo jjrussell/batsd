@@ -194,6 +194,34 @@ class Utils
     count
   end
 
+  #
+  #   regenerate rewards report for offer over a given month
+  #   assume current year.
+  #
+  def self.regenerate_rewards_report(offer, start_date, end_date, opts={:cleanup => true})
+    statistics = Appstats.new(offer.id, {
+        :start_time => Time.zone.parse(start_date),
+        :end_time => Time.zone.parse(end_date),
+        :granularity => :hourly,
+        :stat_types => %w[ paid_installs ]
+    }).stats
+
+    raise "No paid installs for offer in given period" unless statistics['paid_installs'].sum > 0
+
+    start_date.upto(end_date) do |date_str|
+      date = Time.zone.parse(date_str).beginning_of_day
+      if opts[:cleanup]
+        # delete old file
+        report = "#{offer.id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
+        reports = S3.bucket(BucketNames::UDID_REPORTS).objects
+        reports.delete(report)
+      end
+
+      # generate new file
+      UdidReports.generate_report(offer.id, date_str)
+    end
+  end
+
   class Memcache
     # Use these functions to facilitate switching memcache servers.
     #

@@ -37,7 +37,7 @@ describe UdidReports do
     class Reward
       class << self
         alias_method :select_all, :original_select_all
-        remove_method :original_select_all
+        remove_method :test_select_all
       end
     end
     File.unlink(@report_filepath)
