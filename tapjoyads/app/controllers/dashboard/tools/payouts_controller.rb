@@ -74,8 +74,8 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
           account_manager_email,
           partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
           confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : '',
-          partner.payout_info.billing_name,
-          partner.payout_info.decrypt_tax_id
+          (partner.payout_info.try(:billing_name) || ''),
+          (partner.payout_info.try(:decrypt_tax_id) || '')
         ]
       data << line.join(',')
     end
