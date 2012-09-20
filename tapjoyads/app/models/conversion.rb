@@ -240,10 +240,7 @@ class Conversion < ActiveRecord::Base
       stat_name  = stat_definition[:stat]
       attr_value = send(stat_definition[:attr])
       count_inc  = stat_definition[:increment].present? ? send(stat_definition[:increment]) : 1
-
-      if attr_value.present?
-        increment_running_counts(stat_name, attr_value, created_at, count_inc)
-      end
+      increment_running_counts(stat_name, attr_value, created_at, count_inc) if attr_value.present?
     end
   end
 

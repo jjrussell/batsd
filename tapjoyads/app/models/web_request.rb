@@ -224,14 +224,9 @@ class WebRequest < SyslogMessage
 
       stat_definitions.each do |stat_definition|
         attr_value = send(stat_definition[:attr])
-        if attr_value.present?
-          increment_running_counts(stat_definition[:stat], attr_value, time)
-        end
+        increment_running_counts(stat_definition[:stat], attr_value, time) if attr_value.present?
       end
-
-      if p == 'purchased_vg'
-        increment_running_counts([ 'virtual_goods', virtual_good_id ], app_id, time)
-      end
+      increment_running_counts([ 'virtual_goods', virtual_good_id ], app_id, time) if p == 'purchased_vg'
     end
   end
 
