@@ -908,34 +908,49 @@ describe App do
     end
   end
 
-  describe '#associated_offers?' do
-    before :each do
-      @app = FactoryGirl.create(:app)
+  describe '#associated_offers' do
+    subject { FactoryGirl.create(:app) }
+
+    it 'excludes the primary offer' do
+      subject.associated_offers.should_not include subject.primary_offer
     end
 
-    it 'should not return the primary offer' do
-      @app.associated_offers.should_not include(@app.primary_offer)
+    context 'by default' do #no params...
+      context 'given secondary offers' do
+        let!(:secondary_offers) { 3.times.map { o = subject.primary_offer.clone; o.save!; o } }
+
+        it 'includes all secondary offers' do
+          secondary_offers.all? { |offer| subject.associated_offers.include?(offer) }.should be_true
+        end
+      end
     end
 
-    it 'should include secondary offers ' do
-      @secondary_offer = @app.primary_offer.clone
-      @secondary_offer.save!
-      @app.associated_offers.should include(@secondary_offer)
-    end
+    context 'called with a key-value list of properties' do
+      let(:properties) { {:foo => :bar} }
 
+      context 'given an app with secondary offers' do
+        let(:offer_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(:bar)
+          o
+        end
 
-    it 'should exclude offers not matching properties' do
-      @secondary_offer = @app.primary_offer.clone
-      Offer.any_instance.stub(:foo).and_return(:bar)
-      @secondary_offer.save!
-      @app.associated_offers(:foo => :baz).should_not include(@secondary_offer)
-    end
+        let(:offer_not_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(nil)
+          o
+        end
 
-    it 'should include offers  matching properties' do
-      @secondary_offer = @app.primary_offer.clone
-      Offer.any_instance.stub(:foo).and_return(:bar)
-      @secondary_offer.save!
-      @app.associated_offers(:foo => :bar).should include(@secondary_offer)
+        before(:each) { subject.stub(:offers).and_return [ offer_matching_properties, offer_not_matching_properties ] }
+
+        it 'excludes secondary offers not matching those properties' do
+          subject.associated_offers(properties).should_not include offer_not_matching_properties
+        end
+
+        it 'includes secondary offers matching those properties' do
+          subject.associated_offers(properties).should include offer_matching_properties
+        end
+      end
     end
   end
 end
