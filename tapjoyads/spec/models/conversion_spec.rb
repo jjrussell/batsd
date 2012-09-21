@@ -47,4 +47,35 @@ describe Conversion do
       adv_partner.balance.should == -100
     end
   end
+
+  describe '#update_realtime_stats' do
+    it "increments stats for offer" do
+      subject.update_realtime_stats
+      Mc.get_count(Stats.get_memcache_count_key('paid_installs', subject.advertiser_offer_id, subject.created_at)).should == 1
+      Mc.get_count(Stats.get_memcache_count_key('installs_spend', subject.advertiser_offer_id, subject.created_at)).should == -100
+    end
+
+    it "increments stats for app" do
+      subject.update_realtime_stats
+      Mc.get_count(Stats.get_memcache_count_key('published_installs', subject.publisher_app_id, subject.created_at)).should == 1
+      Mc.get_count(Stats.get_memcache_count_key('installs_revenue', subject.publisher_app_id, subject.created_at)).should == 70
+    end
+
+    context "when store_name is not set" do
+      it "doesn't increments stats for store" do
+        subject.update_realtime_stats
+        Mc.get_count(Stats.get_memcache_count_key('installs_revenue', subject.publisher_app_id, subject.created_at)).should == 70
+        Mc.get_count(Stats.get_memcache_count_key('installs_revenue.google', subject.publisher_app_id, subject.created_at)).should == 0
+      end
+    end
+
+    context "when store_name is set" do
+      it 'increments stats for app generally and for the specific store' do
+        subject.store_name = 'google'
+        subject.update_realtime_stats
+        Mc.get_count(Stats.get_memcache_count_key('installs_revenue', subject.publisher_app_id, subject.created_at)).should == 70
+        Mc.get_count(Stats.get_memcache_count_key('installs_revenue.google', subject.publisher_app_id, subject.created_at)).should == 70
+      end
+    end
+  end
 end
