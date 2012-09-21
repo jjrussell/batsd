@@ -33,6 +33,9 @@ $(function($){
       if (store_name == 'android.GFan') {
         $('#search_button').val('Search GFan (China)');
         $('span#app_store_name').text('GFan (China).');
+      } else if (store_name == 'android.TStore') {
+        $('#search_button').val('Search T-Store (Korea)');
+        $('span#app_store_name').text('T-Store (Korea).');
       } else {
         $('#search_button').val('Search Google Play');
         $('span#app_store_name').text('Google Play.');

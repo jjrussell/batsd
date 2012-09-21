@@ -10,9 +10,9 @@ class AppStore
   WINDOWS_APP_IMAGES  = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
   GFAN_APP_URL        = 'http://api.gfan.com/market/api/getProductDetail'
   GFAN_SEARCH_URL     = "http://api.gfan.com/market/api/search"
-  T_STORE_APP_URL     = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
+  T_STORE_SPID         = 'api_key pending from T-Store'
+  T_STORE_APP_URL     = "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo"
   T_STORE_SEARCH_URL  = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
-  T_STORE_PID         = 'api_key pending from T-Store'
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -67,10 +67,10 @@ class AppStore
     }),
     'android.TStore' => AppStore.new({
       :id        => 'android.TStore',
-      :name      => 'TStore (Korea)',
+      :name      => 'T-Store (Korea)',
       :platform  => 'android',
-      :store_url => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_PID}&pid=STORE_ID",
-      :info_url  => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_PID}&pid=STORE_ID",
+      :store_url => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_SPID}&pid=STORE_ID",
+      :info_url  => "http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo&sp_id=#{T_STORE_SPID}&pid=STORE_ID",
       :exclusive => true
     }),
     'windows.Marketplace' => AppStore.new({
@@ -107,7 +107,7 @@ class AppStore
       if store_name == 'android.GFan'
         self.fetch_app_by_id_for_gfan(id)
       elsif store_name == 'android.TStore'
-        self.fetch_app_by_id_from_tstore(id)
+        self.fetch_app_by_id_for_tstore(id)
       else
         self.fetch_app_by_id_for_android(id)
       end
@@ -315,7 +315,23 @@ class AppStore
   end
 
   def self.fetch_app_by_id_for_tstore(id)
-
+    response = request(T_STORE_APP_URL + "&sp_id=#{T_STORE_SPID}&pid=#{CGI::escape(id)}")
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      result = doc.find('//Result').first
+      {
+        :item_id          => id,
+        :title            => CGI::unescapeHTML(result['name']),
+        :description      => CGI::unescapeHTML(result['desc']),
+        :icon_url         => result['icon_url'],
+        :publisher        => CGI::unescapeHTML(result['dev_name']),
+        :price            => result['charge'].to_f,
+        :user_rating      => result['rate'].to_f,
+        :categories       => [result['category']],
+      }
+    else
+      raise "Invalid response."
+    end
   end
 
   def self.search_apple_app_store(term, country)
@@ -411,7 +427,23 @@ class AppStore
   end
 
   def self.search_tstore(term)
-
+    response = request(T_STORE_SEARCH_URL + "&sp_id=#{T_STORE_SPID}&display_count=10&current_page=1&keyword=#{term}&order=D")
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      return doc.find('//ITEM').map do |item|
+        {
+          :item_id          => product['product_id'],
+          :title            => CGI::unescapeHTML(product['title']),
+          :description      => CGI::unescapeHTML(product['description']),
+          :icon_url         => product['image_url'],
+          :price            => (product['price'].to_i / 100).to_f,
+          :user_rating      => product['rate'].to_f,
+        }
+      end
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_tstore failed for term: #{term}")
+      raise "Invalid response."
+    end
   end
 
   def self.request(url, params={}, data=nil)
