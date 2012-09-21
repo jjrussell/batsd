@@ -78,19 +78,48 @@ describe Dashboard::PartnersController do
   end
 
   context "when searching" do
-    integrate_views
+    let(:user)    { FactoryGirl.create(:account_mgr_user) }
 
     before :each do
-      @user = FactoryGirl.create(:account_mgr_user)
-      login_as(@user)
-
-      @partner = FactoryGirl.create(:partner, :country => 'United States of America')
+      login_as(user)
     end
 
-    it "filters partners by country" do
-       get :by_country, :country => 'United States of America'
-       response.should be_successful
-       response.body.should include("<td>United States of America</td>")
+    context 'by country' do
+      let(:country) { 'United States of America' }
+      let(:partner) { FactoryGirl.create(:partner, :country => country) }
+
+      before :each do
+        get :by_country, :country => country
+      end
+
+      it 'responds with the indicated country' do
+        assigns(:country).should == country
+      end
+
+      it 'responds with partners known to be from indicated country' do
+        assigns(:partners).should include partner
+      end
+
+      it 'responds only with partners from the indicated country' do
+        assigns(:partners).all? { |p| p.country == country }.should be_true
+      end
+    end
+
+    context 'by manager' do
+      let(:manager) { FactoryGirl.create(:account_mgr_user) }
+      let(:partner) { FactoryGirl.create(:partner, :account_managers => [manager]) }
+
+      before :each do
+        get :managed_by, :id => manager.id
+      end
+
+      it 'responds with partners known to be managed by indicated manager' do
+        assigns(:partners).should include partner
+      end
+
+      it 'responds only with partners managed by indicated manager' do
+        assigns(:partners).all? { |p| p.account_managers.include(manager) }.should be_true
+      end
     end
   end
 
