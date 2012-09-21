@@ -67,7 +67,7 @@ class AppStore
     }),
     'android.SKTStore' => AppStore.new({
       :id        => 'android.SKTStore',
-      :name      => 'SKT-Store (Korea)',
+      :name      => 'T-Store (Korea)',
       :platform  => 'android',
       :store_url => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
       :info_url  => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
