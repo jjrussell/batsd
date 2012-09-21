@@ -1,18 +1,18 @@
 class AppStore
   attr_accessor :id, :name, :platform, :store_url, :info_url
 
-  ANDROID_APP_URL     = 'https://play.google.com/store/apps/details?id='
-  ANDROID_SEARCH_URL  = 'https://play.google.com/store/search?c=apps&q='
-  ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
-  ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
-  WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
-  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
-  WINDOWS_APP_IMAGES  = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
-  GFAN_APP_URL        = 'http://api.gfan.com/market/api/getProductDetail'
-  GFAN_SEARCH_URL     = "http://api.gfan.com/market/api/search"
-  SKT_STORE_SPID        = 'api_key pending from T-Store'
-  SKT_STORE_APP_URL     = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
-  SKT_STORE_SEARCH_URL  = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
+  ANDROID_APP_URL      = 'https://play.google.com/store/apps/details?id='
+  ANDROID_SEARCH_URL   = 'https://play.google.com/store/search?c=apps&q='
+  ITUNES_APP_URL       = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
+  ITUNES_SEARCH_URL    = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
+  WINDOWS_APP_URL      = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
+  WINDOWS_SEARCH_URL   = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
+  WINDOWS_APP_IMAGES   = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
+  GFAN_APP_URL         = 'http://api.gfan.com/market/api/getProductDetail'
+  GFAN_SEARCH_URL      = "http://api.gfan.com/market/api/search"
+  SKT_STORE_SPID       = 'api_key pending from T-Store'
+  SKT_STORE_APP_URL    = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
+  SKT_STORE_SEARCH_URL = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
