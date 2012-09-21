@@ -90,9 +90,6 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
-  UDID_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf f7cc4972-7349-42dd-a696-7fcc9dcc2d03)
-  MAC_ADDRESS_REQUIRED_OFFERS = %w(3020a55b-9895-4187-ba9f-8273ea0b26bf)
-
   attr_reader :video_button_tracking_offers
   attr_accessor :cached_offer_list_id
 
@@ -130,7 +127,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_inclusion_of :daily_cap_type, :allow_blank => true, :allow_nil => true, :in => [ :installs, :budget ]
@@ -951,15 +948,6 @@ class Offer < ActiveRecord::Base
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
-  end
-
-  # TODO: specs when these are real
-  def requires_udid?
-    UDID_REQUIRED_OFFERS.include?(id)
-  end
-
-  def requires_mac_address?
-    MAC_ADDRESS_REQUIRED_OFFERS.include?(id)
   end
 
   def daily_cap_type
