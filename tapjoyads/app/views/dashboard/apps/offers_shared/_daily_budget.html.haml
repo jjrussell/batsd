@@ -1,0 +1,47 @@
+%tr#daily_budget
+  %th
+    = f.label :daily_budget, 'Conversions Cap'
+    #help_daily.help ?
+  %td.daily_budget
+    = label_tag :daily_budget_off, 'Unlimited'
+    = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
+    &nbsp;
+    = label_tag :daily_budget_on, 'Daily Limit'
+    = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
+    - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
+    #daily_budget_fields{ :class => budget_fields_class }
+      %table.daily_caps
+        %tr
+          %td
+            = f.radio_button(:daily_cap_type, :installs, :class => 'cap_type togglable')
+            = f.label(:daily_cap_type, 'Daily Installs:', :value => :installs, :class => 'installs daily_alloc_label')
+          %td
+            = f.text_field(:daily_budget, :class => "togglable installs #{@offer.daily_cap_type == :installs ? '' : 'hidden'}")
+            #offer_daily_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :installs ? 'hidden' : ''}"}
+              = number_with_delimiter(@offer.daily_budget)
+        %tr
+          %td
+            = f.radio_button(:daily_cap_type, :budget, :class => 'cap_type toggleable')
+            = f.label(:daily_cap_type, 'Daily Budget:', :value => :budget, :class => 'budget daily_alloc_label')
+          %td
+            = text_field_tag('estimated_budget', '', :class => "togglable estimated_budget #{@offer.daily_cap_type == :budget ? '' : 'hidden'}", :size => 20)
+            #estimated_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :budget ? 'hidden' : ''}"}
+      = error_message_on @offer, :daily_budget
+
+- content_for :included_javascripts, javascript_include_tag('tapjoy/daily-budget')
+
+- content_for :page_styles do
+  :plain
+    .daily_alloc {
+      display: inline;
+    }
+    div.hidden {
+      display: none;
+    }
+    .daily_budget {
+      padding-top: 5px;
+    }
+    .daily_caps td {
+      height: 30px;
+      white-space: nowrap;
+    }

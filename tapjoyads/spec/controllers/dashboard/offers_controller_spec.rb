@@ -354,6 +354,46 @@ describe Dashboard::OffersController do
       end
     end
 
+    context 'when unlimited daily conversion cap gets changed to a daily limited number of installs' do
+      before :each do
+        @offer = @app.primary_offer
+        @params = { :id           => @offer.id,
+                    :app_id       => @app.id,
+                    :daily_budget => 'on',
+                    :offer        => { :daily_cap_type  => 'installs',
+                                       :daily_budget    => '1,000' }}
+      end
+
+      it 'sets the daily cap type to :installs' do
+        put :update, @params
+        @offer.reload
+        @offer.daily_cap_type.should == :installs
+      end
+
+      it 'saves the daily budget' do
+        put :update, @params
+        @offer.reload
+        @offer.daily_budget.should == 1000
+      end
+    end
+
+    context 'when unlimited daily conversion cap gets changed to a daily limited budget' do
+      before :each do
+        @offer = @app.primary_offer
+        @params = { :id           => @offer.id,
+                    :app_id       => @app.id,
+                    :daily_budget => 'on',
+                    :offer        => { :daily_cap_type  => 'budget',
+                                       :daily_budget    => '1,000' }}
+      end
+
+      it 'sets the daily cap type to :budget' do
+        put :update, @params
+        @offer.reload
+        @offer.daily_cap_type.should == :budget
+      end
+    end
+
     context 'when a daily limited conversion cap gets changed to an unlimited one' do
       before :each do
         @offer = @app.primary_offer
