@@ -26,6 +26,7 @@
         - if @app.primary_non_rewarded_offer.present? && @app.primary_non_rewarded_offer.tapjoy_enabled?
           %li.inception= link_to 'Scheduling', app_offer_offer_events_path(@app, @app.primary_non_rewarded_offer), :class => (controller.controller_name == 'offer_events' && @offer == @app.primary_non_rewarded_offer ? 'selected' : '')
       %li= link_to 'Videos', app_videos_path(@app), :class => (controller.controller_name == 'video' && controller.action_name == 'index') ? 'selected' : ''
+      %li= link_to 'Push Notifications', app_push_index_path(@app), :class => (controller.controller_name == 'push' && controller.action_name == 'index') ? 'selected' : ''
       %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
 
       %li.title Publish
