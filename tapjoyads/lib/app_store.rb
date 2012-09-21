@@ -9,7 +9,7 @@ class AppStore
   WINDOWS_SEARCH_URL   = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
   WINDOWS_APP_IMAGES   = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
   GFAN_APP_URL         = 'http://api.gfan.com/market/api/getProductDetail'
-  GFAN_SEARCH_URL      = "http://api.gfan.com/market/api/search"
+  GFAN_SEARCH_URL      = 'http://api.gfan.com/market/api/search'
   SKT_STORE_SPID       = 'api_key pending from T-Store'
   SKT_STORE_APP_URL    = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
   SKT_STORE_SEARCH_URL = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
