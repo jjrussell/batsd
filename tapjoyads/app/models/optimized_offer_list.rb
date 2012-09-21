@@ -66,6 +66,7 @@ class OptimizedOfferList
         end
       end.compact
 
+      offers = offers.sort_by {|offer| -offer.rank_score }
       current_time = Time.now
       cached_offer_list = CachedOfferList.new
       post_processed_offer_with_rank = []

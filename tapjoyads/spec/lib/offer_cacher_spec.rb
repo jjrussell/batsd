@@ -42,13 +42,17 @@ describe OfferCacher do
       class << self
         alias_method :distributed_put, :original_distributed_put
         alias_method :distributed_get_and_put, :original_distributed_get_and_put
+        remove_method :cache_test_distributed_put
+        remove_method :cache_test_distributed_get_and_put
       end
     end
   end
 
-  it "caches sorted offers prerejected", :sorted do
-    OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false)
-    offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
-    offers.map {|o| o.rank_score}.should == @ranks.sort.reverse
+  describe ".get_offers_prerejected" do
+    it "caches sorted offers prerejected", :sorted do
+      OfferCacher.cache_offers_prerejected(@offers, Offer::CLASSIC_OFFER_TYPE, false)
+      offers = OfferCacher.get_offers_prerejected(Offer::CLASSIC_OFFER_TYPE, @platform, false, @device_type)
+      offers.map {|o| o.rank_score}.should == @ranks.sort.reverse
+    end
   end
 end

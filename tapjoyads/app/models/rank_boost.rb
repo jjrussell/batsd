@@ -16,6 +16,8 @@ class RankBoost < ActiveRecord::Base
 
   include UuidPrimaryKey
 
+  RANK_SCORE_THRESHOLD = OPTIMIZED_RANK_BOOST_MAX
+
   belongs_to :offer
 
   validates_presence_of :start_time, :end_time, :offer
