@@ -161,7 +161,7 @@ class Dashboard::DashboardController < ApplicationController
     redirect_on_nil = options.delete(:redirect_on_nil) { true }
     if permitted_to? :edit, :dashboard_statz
       app = App.find_by_id(app_id)
-    else
+    elsif current_partner.present?
       app = current_partner.apps.find_by_id(app_id)
     end
     if app.nil? && redirect_on_nil
