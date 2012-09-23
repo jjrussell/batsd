@@ -25,6 +25,7 @@ class AdminDeviceLastRun
       end
 
       def track_admin_device
+        return if params[:udid].blank?
         @device ||= Device.new(
           :key => params[:udid],
           :is_temporary => params[:udid_is_temporary].present?
