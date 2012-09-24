@@ -398,6 +398,7 @@ Tapjoyad::Application.routes.draw do
             post :confirm_payouts
           end
         end
+        resources :cached_offer_lists, :only => [:index, :show]
       end
       resources :ops, :only => :index do
         collection do

@@ -1,0 +1,27 @@
+- @page_title = 'Cached Offer Lists'
+
+%h1= @page_title
+
+= render('search')
+
+
+
+
+%table#attributes.tablesorter
+  %thead
+    %tr
+      %th ID
+      %th Generated At
+      %th Cached At
+      %th Type
+      %th Source
+      %th Memcached Key
+  %tbody
+    - @cached_offer_lists.each do |cached_offer_list|
+      %tr
+        %td= link_to(cached_offer_list.key, tools_cached_offer_list_path(cached_offer_list.key))
+        %td= cached_offer_list.generated_at
+        %td= cached_offer_list.cached_at
+        %td= cached_offer_list.cached_offer_type
+        %td= cached_offer_list.source
+        %td= cached_offer_list.memcached_key
