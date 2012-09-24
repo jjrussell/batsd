@@ -308,6 +308,18 @@
             #help_rate_filter_override.help ?
           %td
             = f.check_box(:rate_filter_override)
+        %tr.admin
+          %th
+            = f.label(:requires_udid)
+            #help_requires_udid.help ?
+          %td
+            = f.check_box(:requires_udid)
+        %tr.admin
+          %th
+            = f.label(:requires_mac_address)
+            #help_requires_mac_address.help ?
+          %td
+            = f.check_box(:requires_mac_address)
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -471,6 +483,10 @@
   - if current_user.is_admin?
     #help_rate_filter_override_content{ :name => 'Rate Filter Override' }
       Normally, a rewarded offer is filtered out of the offerwall when the value of the offer is very small compared to the value of the rewarded virtual currency. By enabling this setting, the offer will be shown regardless of its value. Only meaningful for rewarded offers.
+    #help_requires_udid_content{ :name => 'Requires UDID' }
+      Requires an offer to only show if a UDID is present.
+    #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
+      Requires an offer to only show if a Mac Address is present.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

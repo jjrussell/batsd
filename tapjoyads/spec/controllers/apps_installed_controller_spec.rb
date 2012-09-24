@@ -41,37 +41,37 @@ describe AppsInstalledController do
       it "returns an error when udid is omitted" do
         @params.delete(:udid)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when app_id is omitted" do
         @params.delete(:app_id)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when library_version is omitted" do
         @params.delete(:library_version)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when sdk_type is omitted" do
         @params.delete(:sdk_type)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when verifier is omitted" do
         @params.delete(:verifier)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when package_names is omitted" do
         @params.delete(:package_names)
         get(:index, @params)
-        response.body.should include('missing required params')
+        response.body.should include('missing parameters')
       end
 
       it "returns an error when verifier is invalid" do
