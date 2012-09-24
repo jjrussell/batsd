@@ -173,10 +173,11 @@
       = error_message_on @offer, :screen_layout_sizes
 
 .hidden
-  #help_prerequisite_content{:name => 'Prerequisite Offer'}
-    This offer will only be shown to users who have already completed the prerequisite offer.
-  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
-    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
+  - unless omit_prereqs
+    #help_prerequisite_content{:name => 'Prerequisite Offer'}
+      This offer will only be shown to users who have already completed the prerequisite offer.
+    #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+      This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
