@@ -1,22 +1,27 @@
 class Job::MasterUpdateCloudwatchAsStatsController < Job::JobController
+  REQUEST_QUEUE_TIME_THRESHOLD = 10.0
 
   # Failures raise exceptions while getting the metrics
   # We want to store request queue time even if we don't get cpu,
-  # however we don't store cpu time unless we have request queue time.
+  # however we don't store cpu time unless we integrate request queue time.
   def index
+    queue_time = newrelic_request_queue_time
     metrics = [
       {
         'MetricName' => 'api-newrelic-queue-time',
         'Unit' => 'Milliseconds',
-        'Value' => newrelic_request_queue_time
+        'Value' => queue_time
       }
     ]
 
+    # Scale down metric - if queuing, crank up the metric
     begin
+      scale_down_metric = api_cpu_utilization
+      scale_down_metric = 100.0 if queue_time >= Job::MasterUpdateCloudwatchAsStatsController::REQUEST_QUEUE_TIME_THRESHOLD
       metrics << {
-        'MetricName' => 'api-cpu-util',
+        'MetricName' => 'api-scale-down-metric',
         'Unit' => 'Percent',
-        'Value' => api_cpu_utilization
+        'Value' => scale_down_metric
       }
     rescue
     end
