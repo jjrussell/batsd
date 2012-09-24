@@ -1,7 +1,3 @@
-- @reward_class = params[:exp] == 'test' ? 'reward-left' : ''
-- @offer_class  = params[:exp] == 'test' ? 'offer-right' : ''
-- @li_class     = params[:exp] == 'test' ? 'with-arrow'  : ''
-
 #panel.ui-joy-panel.video
   .header
     .heading.gradient
@@ -13,9 +9,9 @@
   .offers-wrapper
     %ul#offers
       - @video_buttons.each do |button|
-        %li{:class => @li_class}
+        %li
           %a{:href => get_click_url(button.tracking_offer, :source => 'secondary')}
-            .reward.gradient{:class => @reward_class}
+            .reward.gradient
               - if @currency.get_reward_amount(button.tracking_offer) > 0
                 %span.earn= t('text.shared.earn_verb')
                 %span.big= @currency.get_visual_reward_amount(button.tracking_offer, params[:display_multiplier])
@@ -24,7 +20,7 @@
                 %span.big= t('text.games.tap_here')
               %span.free= visual_cost(button.tracking_offer)
 
-            .offer{:class => @offer_class}
+            .offer
               .icon
                 .rounded
                 %img.cover{:src => button.tracking_offer.get_icon_url(:source => :cloudfront, :size => '57')}

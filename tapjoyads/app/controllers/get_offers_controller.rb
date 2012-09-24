@@ -24,6 +24,8 @@ class GetOffersController < ApplicationController
     }
   }
 
+  VIEW_MAP[:test] = VIEW_MAP[:control].dup # no changes for this experiment
+
   def webpage
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
@@ -148,9 +150,7 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    # No experiment currently running
-    # set_offerwall_experiment
-    params[:exp] = 'control'
+    set_offerwall_experiment
 
     if @save_web_requests
       @web_request = generate_web_request
