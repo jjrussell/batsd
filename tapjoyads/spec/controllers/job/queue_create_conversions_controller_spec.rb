@@ -38,6 +38,7 @@ describe Job::QueueCreateConversionsController do
     end
 
     it 'enqueues a conversion-notification message' do
+      @publisher_app.update_attributes('notifications_enabled' => true)
       Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
       get(:run_job, :message => 'reward_key')
     end
