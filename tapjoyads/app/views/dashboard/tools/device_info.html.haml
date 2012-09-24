@@ -144,7 +144,7 @@
             %td
               - if app.is_publisher_offer?
                 - app.item.currencies .each do |currency|
-                  = link_to award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid])
+                  = link_to "Award #{currency.name}", award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid])
 
   - if @apps.length > 5
     = link_to('(show all)', '#', { :id => 'show_more_apps' })
