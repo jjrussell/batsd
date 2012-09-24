@@ -236,6 +236,19 @@ FactoryGirl.define do
     conversion_rate 100
   end
 
+  factory :currency_group do
+    id   CurrencyGroup::DEFAULT_ID
+    name "default"
+    normal_conversion_rate 3
+    normal_bid 1
+    normal_price -2
+    normal_avg_revenue 5
+    random 1
+    over_threshold 6
+    rank_boost 1
+    category_match 0
+  end
+
   factory :monthly_accounting do
     association :partner
     month                      { Time.zone.now.month }

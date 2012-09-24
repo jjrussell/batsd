@@ -19,7 +19,7 @@ describe FormatChecks do
   end
 
   context '#udid?' do
-    it 'correctly identifies udids' do 
+    it 'correctly identifies udids' do
       "eb25d9b88f5238051ae7600197760e52ce6e8453".udid?.should be_true
       "ade749ccc744336ad81cbcdbf36a5720778c6f13".udid?.should be_true
       "0a06b4187777522094f42d039a665c8a58f0d733".udid?.should be_true

@@ -70,9 +70,21 @@ describe ConnectController do
     end
 
     context 'without required parameters' do
-      it "returns an error code" do
-        get(:index)
-        response.response_code.should == 400
+      it 'should 400 when udid is blank' do
+        get(:index, { :app_id => 'test_app', :udid => '' })
+        should respond_with 400
+      end
+      it 'should have a missing params message' do
+        get(:index, { :app_id => 'test_app', :udid => '' })
+        response.body.should == 'missing parameters: udid'
+      end
+      it 'should 400 when udid and app_id is blank' do
+        get(:index, { :app_id => '', :udid => '' })
+        should respond_with 400
+      end
+      it 'should have a missing params message' do
+        get(:index, { :app_id => '', :udid => '' })
+        response.body.should == 'missing parameters: app_id, udid'
       end
     end
 

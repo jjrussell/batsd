@@ -120,6 +120,17 @@ class App < ActiveRecord::Base
 
   memoize :partner_name, :partner_dashboard_partner_url
 
+
+  def associated_offers(props = {})
+    offers.reject do |offer|
+      offer.id == self.id || (props.present? && props.detect() { |prop,val| offer.send(prop) != val })
+    end
+  end
+
+  def tapjoy_enabled_associated_offers()
+    associated_offers(:tapjoy_enabled => true)
+  end
+
   def price
     primary_app_metadata ? primary_app_metadata.price : 0
   end

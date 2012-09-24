@@ -907,4 +907,50 @@ describe App do
       @app.build_non_rewarded.should == @currency
     end
   end
+
+  describe '#associated_offers' do
+    subject { FactoryGirl.create(:app) }
+
+    it 'excludes the primary offer' do
+      subject.associated_offers.should_not include subject.primary_offer
+    end
+
+    context 'by default' do #no params...
+      context 'given secondary offers' do
+        let!(:secondary_offers) { 3.times.map { o = subject.primary_offer.clone; o.save!; o } }
+
+        it 'includes all secondary offers' do
+          secondary_offers.all? { |offer| subject.associated_offers.include?(offer) }.should be_true
+        end
+      end
+    end
+
+    context 'called with a key-value list of properties' do
+      let(:properties) { {:foo => :bar} }
+
+      context 'given an app with secondary offers' do
+        let(:offer_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(:bar)
+          o
+        end
+
+        let(:offer_not_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(nil)
+          o
+        end
+
+        before(:each) { subject.stub(:offers).and_return [ offer_matching_properties, offer_not_matching_properties ] }
+
+        it 'excludes secondary offers not matching those properties' do
+          subject.associated_offers(properties).should_not include offer_not_matching_properties
+        end
+
+        it 'includes secondary offers matching those properties' do
+          subject.associated_offers(properties).should include offer_matching_properties
+        end
+      end
+    end
+  end
 end

@@ -1,15 +1,18 @@
 class AppStore
   attr_accessor :id, :name, :platform, :store_url, :info_url
 
-  ANDROID_APP_URL     = 'https://play.google.com/store/apps/details?id='
-  ANDROID_SEARCH_URL  = 'https://play.google.com/store/search?c=apps&q='
-  ITUNES_APP_URL      = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
-  ITUNES_SEARCH_URL   = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
-  WINDOWS_APP_URL     = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
-  WINDOWS_SEARCH_URL  = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
-  WINDOWS_APP_IMAGES  = "http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true"
-  GFAN_APP_URL        = "http://api.gfan.com/market/api/getProductDetail"
-  GFAN_SEARCH_URL     = "http://api.gfan.com/market/api/search"
+  ANDROID_APP_URL      = 'https://play.google.com/store/apps/details?id='
+  ANDROID_SEARCH_URL   = 'https://play.google.com/store/search?c=apps&q='
+  ITUNES_APP_URL       = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsLookup'
+  ITUNES_SEARCH_URL    = 'http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/wa/wsSearch'
+  WINDOWS_APP_URL      = 'http://catalog.zune.net/v3.2/en-US/apps/_APPID_?store=Zest&clientType=WinMobile+7.0'
+  WINDOWS_SEARCH_URL   = 'http://catalog.zune.net/v3.2/_ACCEPT_LANGUAGE_/?includeApplications=true&prefix='
+  WINDOWS_APP_IMAGES   = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
+  GFAN_APP_URL         = 'http://api.gfan.com/market/api/getProductDetail'
+  GFAN_SEARCH_URL      = 'http://api.gfan.com/market/api/search'
+  SKT_STORE_SPID       = 'api_key pending from T-Store'
+  SKT_STORE_APP_URL    = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
+  SKT_STORE_SEARCH_URL = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -62,6 +65,14 @@ class AppStore
       :info_url  => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
       :exclusive => true
     }),
+    'android.SKTStore' => AppStore.new({
+      :id        => 'android.SKTStore',
+      :name      => 'T-Store (Korea)',
+      :platform  => 'android',
+      :store_url => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
+      :info_url  => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
+      :exclusive => true
+    }),
     'windows.Marketplace' => AppStore.new({
       :id        => 'windows.Marketplace',
       :name      => 'Marketplace',
@@ -74,6 +85,7 @@ class AppStore
   SDK_STORE_NAMES = {
     'google' => 'android.GooglePlay',
     'gfan'   => 'android.GFan',
+    'skt'    => 'android.SKTStore',
   }
 
   def self.find(id)
@@ -94,6 +106,8 @@ class AppStore
     when 'android'
       if store_name == 'android.GFan'
         self.fetch_app_by_id_for_gfan(id)
+      elsif store_name == 'android.SKTStore'
+        self.fetch_app_by_id_for_skt_store(id)
       else
         self.fetch_app_by_id_for_android(id)
       end
@@ -132,6 +146,8 @@ class AppStore
     when 'android'
       if store_name == 'android.GFan'
         self.search_gfan_app_store(term)
+      elsif store_name == 'android.SKTStore'
+        self.search_skt_store(term)
       else
         self.search_android_market(term.gsub(/-/,' '))
       end
@@ -298,6 +314,26 @@ class AppStore
     end
   end
 
+  def self.fetch_app_by_id_for_skt_store(id)
+    response = request(SKT_STORE_APP_URL + "&sp_id=#{SKT_STORE_SPID}&pid=#{CGI::escape(id)}")
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      result = doc.find('//Result').first
+      {
+        :item_id          => id,
+        :title            => CGI::unescapeHTML(result['name']),
+        :description      => CGI::unescapeHTML(result['desc']),
+        :icon_url         => result['icon_url'],
+        :publisher        => CGI::unescapeHTML(result['dev_name']),
+        :price            => result['charge'].to_f,
+        :user_rating      => result['rate'].to_f,
+        :categories       => [result['category']],
+      }
+    else
+      raise "Invalid response."
+    end
+  end
+
   def self.search_apple_app_store(term, country)
     country = 'us' if country.blank?
     response = request(ITUNES_SEARCH_URL, {:media => 'software', :term => term, :country => country})
@@ -386,6 +422,26 @@ class AppStore
       end
     else
       Notifier.alert_new_relic(AppStoreSearchFailed, "search_gfan_store failed for term: #{term}")
+      raise "Invalid response."
+    end
+  end
+
+  def self.search_skt_store(term)
+    response = request(SKT_STORE_SEARCH_URL + "&sp_id=#{SKT_STORE_SPID}&display_count=10&current_page=1&keyword=#{term}&order=D")
+    if response.status == 200
+      doc = XML::Parser.string(response.body).parse
+      return doc.find('//ITEM').map do |item|
+        {
+          :item_id          => product['product_id'],
+          :title            => CGI::unescapeHTML(product['title']),
+          :description      => CGI::unescapeHTML(product['description']),
+          :icon_url         => product['image_url'],
+          :price            => (product['price'].to_i / 100).to_f,
+          :user_rating      => product['rate'].to_f,
+        }
+      end
+    else
+      Notifier.alert_new_relic(AppStoreSearchFailed, "search_tstore failed for term: #{term}")
       raise "Invalid response."
     end
   end

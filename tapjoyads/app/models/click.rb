@@ -1,7 +1,7 @@
 class Click < SimpledbShardedResource
   include SdbMigrator
   new_configuration :new_num_domains => 100, :new_domain_name => "clicksV2"
-  
+
   MAX_HISTORY = 20
 
   belongs_to :device, :foreign_key => 'udid'
