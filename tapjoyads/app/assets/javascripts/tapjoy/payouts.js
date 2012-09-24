@@ -1,5 +1,5 @@
 $(function($) {
-  $.initPayouts = function(redirectPath, hasDateFilter) {
+  $.initPayouts = function(redirectPath, lookupPath, hasDateFilter) {
 
     var redirect = function(query) {
       var path = redirectPath;
@@ -74,7 +74,7 @@ $(function($) {
       return false;
     });
     var options = {
-      source: redirectPath,
+      source: lookupPath,
       delay: 250,
       minLength: 2,
       select: function(event, ui) {
