@@ -50,6 +50,7 @@ class Offer < ActiveRecord::Base
                                     active
                                     allow_negative_balance
                                     audition_factor
+                                    auto_update_icon
                                     created_at
                                     daily_budget
                                     daily_cap_type
@@ -66,15 +67,15 @@ class Offer < ActiveRecord::Base
                                     next_stats_aggregation_time
                                     overall_budget
                                     pay_per_click
+                                    source_offer_id
                                     stats_aggregation_interval
                                     tapjoy_enabled
                                     tapjoy_sponsored
-                                    updated_at
-                                    url_overridden
-                                    user_enabled
                                     tracking_for_id
                                     tracking_for_type
-                                    source_offer_id )
+                                    updated_at
+                                    url_overridden
+                                    user_enabled )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
@@ -516,7 +517,7 @@ class Offer < ActiveRecord::Base
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
     if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
-      return
+      return false
     end
 
     if video_offer
@@ -557,6 +558,7 @@ class Offer < ActiveRecord::Base
 
     Mc.delete(icon_cache_key(guid))
     CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
+    true
   end
 
   def remove_icon!
@@ -585,7 +587,9 @@ class Offer < ActiveRecord::Base
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
     guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
     Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
-    self.update_attributes!(:icon_id_override => guid) unless [app_metadata_id, item_id].include?(guid)
+    unless [app_metadata_id, item_id].include?(guid)
+      self.update_attributes!(:icon_id_override => guid, :auto_update_icon => default_auto_update_icon_value)
+    end
   end
 
   def save(*)
@@ -985,6 +989,10 @@ class Offer < ActiveRecord::Base
     else
       0
     end
+  end
+
+  def default_auto_update_icon_value
+    app_offer?(false) || item_type == 'DeeplinkOffer' # TODO: add DeeplinkOffer to app_offer? method
   end
 
   def is_test_device?(currency, device)

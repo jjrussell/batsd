@@ -7,7 +7,10 @@ module OfferParentIconMethods
 
   def save_icon!(icon_src_blob)
     return app_primary_app_metadata.save_icon!(icon_src_blob) if app_primary_app_metadata.present?
-    Offer.upload_icon!(icon_src_blob, id, self.class.name == 'VideoOffer')
+    return unless Offer.upload_icon!(icon_src_blob, id, self.class.name == 'VideoOffer')
+    offers.each do |offer|
+      offer.remove_icon! if offer.auto_update_icon?
+    end
   end
 
   private

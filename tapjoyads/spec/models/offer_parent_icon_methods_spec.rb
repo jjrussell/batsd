@@ -111,6 +111,15 @@ describe OfferParentIconMethods do
           Offer.should_receive(:upload_icon!).with(image_data, subject.id, true)
         end
       end
+
+      it "should respect child offers' 'auto_update_icon' field" do
+        Offer.stub(:upload_icon!).and_return(true)
+
+        offers = [Offer.new(:auto_update_icon => true), Offer.new(:auto_update_icon => false)]
+        offers[0].should_receive(:remove_icon!).once
+        offers[1].should_not_receive(:remove_icon!)
+        subject.stub(:offers).and_return(offers)
+      end
     end
 
     after :each do
