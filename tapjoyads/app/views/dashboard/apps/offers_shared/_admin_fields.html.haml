@@ -142,6 +142,18 @@
   %td
     = f.currency_field(:min_bid_override, {}, :class => 'allow_nil')
     = error_message_on @offer, :min_bid_override
+%tr.admin
+  %th
+    = f.label(:requires_udid)
+    #help_requires_udid.help ?
+  %td
+    = f.check_box(:requires_udid)
+%tr.admin
+  %th
+    = f.label(:requires_mac_address)
+    #help_requires_mac_address.help ?
+  %td
+    = f.check_box(:requires_mac_address)
 
 - if @app.screen_layout_sizes.any?
   %tr.admin
@@ -175,6 +187,10 @@
     This action will only be shown to users who have completed all the prerequisite offers. Must be a ";" separated list of publisher offer IDs.
   #help_x_partner_exclusion_prerequisites_content{ :name => 'Exclusion Prerequisites' }
     This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers. Must be a ";" separated list of publisher offer IDs.
+  #help_requires_udid_content{ :name => 'Requires UDID' }
+    Requires an offer to only show if a UDID is present.
+  #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
+    Requires an offer to only show if a Mac Address is present.
 
 - content_for :page_javascript do
   :plain

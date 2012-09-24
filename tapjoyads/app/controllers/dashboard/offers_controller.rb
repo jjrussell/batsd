@@ -13,7 +13,8 @@ class Dashboard::OffersController < Dashboard::DashboardController
                                :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
                                :dma_codes, :regions, :carriers, :cities, :rate_filter_override,
-                               :x_partner_prerequisites, :x_partner_exclusion_prerequisites ]
+                               :x_partner_prerequisites, :x_partner_exclusion_prerequisites, :requires_mac_address,
+                               :requires_udid ]
 
   def new
     offer_params = {}
