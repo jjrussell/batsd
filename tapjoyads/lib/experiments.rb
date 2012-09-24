@@ -5,12 +5,14 @@ class Experiments
     :offerwall_redesign => %w{control test}
   }
 
+  RANDOMIZER = 'b1396e852a6e87c659967574602b2985'
+
   def self.choose(udid, options = {})
     if udid.present?
       experiment = options[:experiment]
       experiment_ids = EXPERIMENTS[experiment]
       return nil if experiment_ids.blank?
-      udid_index = Digest::MD5.hexdigest("#{udid}#{experiment}").hex % experiment_ids.length
+      udid_index = Digest::MD5.hexdigest("#{RANDOMIZER}#{udid}#{experiment}").hex % experiment_ids.length
 
       experiment_ids[udid_index]
     end
