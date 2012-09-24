@@ -223,6 +223,7 @@ Tapjoyad::Application.routes.draw do
           get :device_info
           get :failed_sdb_saves
           post :resolve_clicks
+          get :award_currencies
           post :award_currencies
           get :disabled_popular_offers
           get :sqs_lengths

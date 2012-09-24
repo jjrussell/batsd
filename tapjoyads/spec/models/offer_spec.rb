@@ -27,6 +27,9 @@ describe Offer do
   it { should validate_numericality_of :payment_range_low }
   it { should validate_numericality_of :payment_range_high }
 
+  it { should ensure_inclusion_of(:requires_udid).in_array([true, false]) }
+  it { should ensure_inclusion_of(:requires_mac_address).in_array([true, false]) }
+
   before :each do
     @app = FactoryGirl.create :app
     @offer = @app.primary_offer
@@ -500,6 +503,7 @@ describe Offer do
       click_tracking_urls conversion_tracking_urls creatives_dict prerequisite_offer_id
       exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
       optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
+      requires_udid requires_mac_address
     }
 
     EXCLUDED_COLUMNS = %w{

@@ -30,7 +30,7 @@ class Job::QueueFailedSdbSavesController < Job::SqsReaderController
     begin
       queued_sdb_item.save!(@options.merge({ :from_queue => true }))
     rescue RightAws::AwsError => e
-      if e.message =~ /NumberSubmittedAttributesExceeded/
+      if e.message =~ /NumberItemAttributesExceeded|NumberSubmittedAttributesExceeded/
         obj.copy_to(@num_attrs_path)
       else
         raise e

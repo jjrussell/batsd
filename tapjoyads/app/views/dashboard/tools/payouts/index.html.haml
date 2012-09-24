@@ -106,7 +106,7 @@
 - content_for :page_javascript do
   :plain
     $(function() {
-      $.initPayouts('#{tools_payouts_path}', #{@start_date.present?});
+      $.initPayouts('#{tools_payouts_path}', '#{search_partners_path}', #{@start_date.present?});
     });
 
 - content_for :page_styles do

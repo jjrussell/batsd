@@ -14,7 +14,7 @@ describe SurveyResultsController do
   describe '#new' do
     it 'verifies params' do
       get(:new)
-      response.body.should =~ /missing required params/
+      response.body.should =~ /missing parameters/
     end
 
     it 'assigns survey questions' do

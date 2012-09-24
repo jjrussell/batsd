@@ -98,6 +98,7 @@ after_fork do |server, worker|
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
   $redis.client.reconnect
+  at_exit { defined?(NewRelic) and NewRelic::Agent.shutdown({:force_send=>true}) }
 end
 
 # Read environment settings from .env. This allows the environment to be changed during a unicorn
