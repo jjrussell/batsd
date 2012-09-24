@@ -25,7 +25,7 @@ describe ClickController do
       it "requires gamer_id" do
         get(:generic, @params)
         response.status.should == 400
-        response.body.should == 'missing parameters'
+        response.body.should include('missing parameters')
       end
 
       it "creates the correct click_key and redirects" do
