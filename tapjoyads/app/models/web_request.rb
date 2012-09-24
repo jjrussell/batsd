@@ -59,6 +59,8 @@ class WebRequest < SyslogMessage
   self.define_attr :udid_is_temporary, :type => :bool
   self.define_attr :app_id
   self.define_attr :offer_id
+  self.define_attr :offer_is_paid, :type => :bool
+  self.define_attr :offer_daily_budget, :type => :int
   self.define_attr :advertiser_app_id
   self.define_attr :publisher_app_id
   self.define_attr :displayer_app_id
@@ -95,6 +97,7 @@ class WebRequest < SyslogMessage
   self.define_attr :tap_points
   self.define_attr :publisher_amount, :type => :int
   self.define_attr :advertiser_amount, :type => :int
+  self.define_attr :advertiser_balance, :type => :int
   self.define_attr :displayer_amount, :type => :int
   self.define_attr :tapjoy_amount, :type => :int
   self.define_attr :currency_reward, :type => :int
@@ -175,8 +178,11 @@ class WebRequest < SyslogMessage
     self.device_name          = params[:device_name]
     self.library_version      = params[:library_version]
     self.offer_id             = params[:offer_id]
+    self.offer_is_paid        = params[:offer_is_paid]
+    self.offer_daily_budget   = params[:offer_daily_budget]
     self.publisher_app_id     = params[:publisher_app_id]
     self.advertiser_app_id    = params[:advertiser_app_id]
+    self.advertiser_balance   = params[:advertiser_balance]
     self.displayer_app_id     = params[:displayer_app_id]
     self.device_ip            = params[:device_ip]
     self.type                 = params[:type] if params[:type].present?

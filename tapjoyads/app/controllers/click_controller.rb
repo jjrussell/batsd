@@ -190,6 +190,8 @@ class ClickController < ApplicationController
               else                      'offer_click'
               end
     build_web_request(wr_path)
+    @web_request.offer_is_paid = @offer.is_paid?
+    @web_request.offer_daily_budget = @offer.daily_budget
   end
 
   def currency_disabled?
