@@ -5,4 +5,8 @@
       %td= f.text_field :name, :size => 42
       %td= error_message_on @client, :name
     %tr
+      %th= f.label :payment_type
+      %td= f.text_field :payment_type, :size => 20
+      %td= error_message_on @client, :payment_type
+    %tr
       %td{ :colspan => 2 }= f.submit 'Save'
