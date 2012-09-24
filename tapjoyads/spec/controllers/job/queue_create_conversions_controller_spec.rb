@@ -37,6 +37,11 @@ describe Job::QueueCreateConversionsController do
       @offer.update_attributes!(:conversion_tracking_urls => 'http://www.example.com')
     end
 
+    it 'enqueues a conversion-notification message' do
+      Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
+      get(:run_job, :message => 'reward_key')
+    end
+
     context 'when conversions already exist' do
       it 'doesnt queue third party tracking' do
         Conversion.any_instance.stub(:save!).and_raise(ActiveRecord::StatementInvalid)

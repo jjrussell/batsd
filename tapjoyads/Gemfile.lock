@@ -56,6 +56,14 @@ GIT
     bunny (0.8.0.1)
 
 GIT
+  remote: git@github.com:Tapjoy/notifications_client.git
+  revision: 9f5a4f5533149e56bcc18ec131498f091b682177
+  specs:
+    notifications_client (0.1.0)
+      json
+      rest-client
+
+GIT
   remote: git@github.com:Tapjoy/signage.git
   revision: b7cb6eaca5e2148da550eba599c684ace2b68f09
   specs:
@@ -532,6 +540,7 @@ DEPENDENCIES
   mysql (= 2.8.1)
   newrelic_rpm (= 3.3.0)
   nokogiri (= 1.5.5)
+  notifications_client!
   oauth (= 0.4.5)
   parallel_tests
   patron (= 0.4.4)

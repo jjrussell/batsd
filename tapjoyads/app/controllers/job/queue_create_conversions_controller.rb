@@ -19,6 +19,9 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
       unprocessed = false unless save_conversion(c)
     end
 
+    #TODO - check flag on publisher_app to send push notification or not
+    Sqs.send_message(QueueNames::CONVERSION_NOTIFICATIONS, reward.key) if unprocessed
+
     # for third party tracking vendors
     if reward.offer.conversion_tracking_urls.any? && unprocessed # only do click lookup if necessary
       reward.offer.queue_conversion_tracking_requests(
