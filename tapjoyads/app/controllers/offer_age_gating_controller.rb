@@ -21,7 +21,10 @@ class OfferAgeGatingController < ApplicationController
     data = ObjectEncryptor.decrypt(params[:data])
     offer = Offer.find_in_cache(data[:offer_id])
 
-    redirect_to(get_click_url(offer, params[:options].merge!({ :date_of_birth => params[:date_of_birth] })))
+    options = params[:options] || {}
+    options[:date_of_birth] = params[:date_of_birth]
+
+    redirect_to(get_click_url(offer, options))
   end
 
   # put gating to memcached then reload offer wall
