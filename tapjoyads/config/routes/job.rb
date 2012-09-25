@@ -6,6 +6,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_alerts(/index)' => 'master_alerts#index'
     match 'master_android_app_ranks(/index)' => 'master_android_app_ranks#index'
     match 'master_android_market_format(/index)' => 'master_android_market_format#index'
+    match 'master_apple_epf(/index)' => 'master_apple_epf#index'
     match 'master_archive_conversions(/index)' => 'master_archive_conversions#index'
     match 'master_cache_offers(/index)' => 'master_cache_offers#index'
     match 'master_cache_popular_apps(/index)' => 'master_cache_popular_apps#index'
