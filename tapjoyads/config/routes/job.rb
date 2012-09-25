@@ -43,6 +43,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_set_exclusivity_and_premier_discounts(/index)' => 'master_set_exclusivity_and_premier_discounts#index'
     match 'master_udid_reports(/index)' => 'master_udid_reports#index'
     match 'master_update_app_active_gamer_count(/index)' => 'master_update_app_active_gamer_count#index'
+    match 'master_update_cloudwatch_as_stats(/index)' => 'master_update_cloudwatch_as_stats#index'
     match 'master_update_linkshare_clicks(/index)' => 'master_update_linkshare_clicks#index'
     match 'master_update_monthly_account(/index)' => 'master_update_monthly_account#index'
     match 'master_update_papaya_devices(/index)' => 'master_update_papaya_devices#index'
