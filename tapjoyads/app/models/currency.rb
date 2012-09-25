@@ -38,8 +38,10 @@ class Currency < ActiveRecord::Base
         begin
           uri = URI.parse(value)
           Resolv.getaddress(uri.host || '')
-        rescue URI::InvalidURIError, Resolv::ResolvError => e
+        rescue URI::InvalidURIError => e
           record.errors.add(attribute, 'is not a valid url')
+        rescue Resolv::ResolvError => e
+          record.errors.add(attribute, 'host cannot be resolved')
         end
       end
     end
