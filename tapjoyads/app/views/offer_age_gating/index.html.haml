@@ -57,27 +57,28 @@
       }
     }
 
-    function datePopulate(){
-      var monthtext=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
-      var today=new Date();
-      var dayfield=document.getElementById('dd');
-      var monthfield=document.getElementById('mm');
-      var yearfield=document.getElementById('yyyy');
+    function datePopulate() {
+      var monthtext = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+      var today = new Date();
+      var dayfield = document.getElementById('dd');
+      var monthfield = document.getElementById('mm');
+      var yearfield = document.getElementById('yyyy');
 
-      for (var d=0; d<31; d++)
-          dayfield.options[d]=new Option(d+1, d+1);
-      dayfield.options[today.getDate()]=new Option(today.getDate(), today.getDate(), true, true); //select today's day
-
-      for (var m=0; m<12; m++)
-          monthfield.options[m]=new Option(monthtext[m], m+1);
-      monthfield.options[today.getMonth()]=new Option(monthtext[today.getMonth()], today.getMonth()+1, true, true); //select today's month
-
-      var thisyear=today.getFullYear();
-      for (var y=0; y<100; y++){
-          yearfield.options[y]=new Option(thisyear, thisyear);
-          thisyear-=1;
+      for (var d = 1; d <= 31; d++) {
+        dayfield.options[d] = new Option(d, d);
       }
-      yearfield.options[0]=new Option(today.getFullYear(), today.getFullYear(), true, true); //select today's year
+      dayfield.options[today.getDate()] = new Option(today.getDate(), today.getDate(), true, true); // select today's day
+
+      for (var m = 0; m < 12; m++) {
+        monthfield.options[m] = new Option(monthtext[m], m+1);
+      }
+      monthfield.options[today.getMonth()] = new Option(monthtext[today.getMonth()], today.getMonth() + 1, true, true); // select today's month
+
+      var thisyear = today.getFullYear();
+      for (var y = 0; y < 100; y++) {
+        yearfield.options[y] = new Option(thisyear - y, thisyear - y);
+      }
+      yearfield.options[0] = new Option(today.getFullYear(), today.getFullYear(), true, true); // select today's year
     }
 
 - content_for :page_styles do
