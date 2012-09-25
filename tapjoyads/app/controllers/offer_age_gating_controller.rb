@@ -14,6 +14,7 @@ class OfferAgeGatingController < ApplicationController
 
   # passing params[:date_of_birth] to click controller for web_request logging
   def redirect_to_click
+    @now = Time.zone.now
     @currency = Currency.find_in_cache(params[:currency_id])
     @publisher_app = App.find_in_cache(params[:app_id])
 
