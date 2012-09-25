@@ -22,14 +22,11 @@ describe AppMetadata do
     end
   end
 
-  describe '#save_icon' do
+  describe '#save_icon!' do
     it 'calls Offer.upload_icon! and passes appropriate args' do
-      url = 'url'
       image_data = 'img'
-      subject.offers.should_receive(:blank?).and_return(false)
-      subject.should_receive(:download_blob).with(url).and_return(image_data)
-      Offer.should_receive(:upload_icon!).with(image_data, subject.id)
-      subject.send(:save_icon, url)
+      Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
+      subject.save_icon!(image_data)
     end
   end
 

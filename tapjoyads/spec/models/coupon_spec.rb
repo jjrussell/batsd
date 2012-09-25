@@ -81,7 +81,7 @@ describe Coupon do
   describe '#save_icon!' do
     it 'calls Offer.upload_icon! and passes appropriate args' do
       image_data = "img"
-      Offer.should_receive(:upload_icon!).with(image_data, subject.id)
+      Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
       subject.save_icon!(image_data)
     end
   end

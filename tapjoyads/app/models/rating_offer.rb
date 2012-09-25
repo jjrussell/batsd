@@ -39,10 +39,6 @@ class RatingOffer < ActiveRecord::Base
     app_version.blank? ? id : (id + '.' + app_version)
   end
 
-  def save_icon!(icon_src_blob)
-    Offer.upload_icon!(icon_src_blob, id)
-  end
-
   private
 
   def set_name_and_description
