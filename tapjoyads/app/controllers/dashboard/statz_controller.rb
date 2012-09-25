@@ -37,6 +37,13 @@ class Dashboard::StatzController < Dashboard::DashboardController
     if support_requests && rewards
       @srr_ratio = support_request_ratio_text(support_requests, rewards)
     end
+    app = App.find(@offer.app_id) if @offer.app_offer?
+    if app && @offer.id == app.id && app.platform == 'android' && app.app_metadatas.count > 1
+      @store_options = {}
+      app.app_metadatas.each do |meta|
+        @store_options[meta.store.name] = meta.store.sdk_name
+      end
+    end
 
     respond_to do |format|
       format.html do
@@ -156,7 +163,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   def load_appstats
     return @appstats if defined? @appstats
-    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true }
+    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :store_name => @store_name }
     if params[:action] == 'global'
       key = nil
       options[:cache_hours] = 0
@@ -169,6 +176,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   def setup
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
+    @store_name = params[:store_name] if params[:store_name].present?
   end
 
   def load_partner_stats

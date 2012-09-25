@@ -22,6 +22,13 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def show
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
+    app = App.find(@offer.app_id) if @offer.app_offer?
+    if app && @offer.id == app.id && app.platform == 'android' && app.app_metadatas.count > 1
+      @store_options = {}
+      app.app_metadatas.each do |meta|
+        @store_options[meta.store.name] = meta.store.sdk_name
+      end
+    end
 
     respond_to do |format|
       format.html do
@@ -96,12 +103,13 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def load_appstats
     return @appstats if defined? @appstats
-    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true }
+    options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :store_name => @store_name }
     @appstats = Appstats.new(@offer.id, options)
   end
 
   def setup
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
+    @store_name = params[:store_name] if params[:store_name].present?
   rescue ArgumentError
     redirect_to :date => '', :end_date => '', :granularity => ''
   end

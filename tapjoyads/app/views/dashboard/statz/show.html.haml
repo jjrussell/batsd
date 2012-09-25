@@ -11,7 +11,7 @@
 .clear
 
 %form#change_date.tjform
-  = render 'dashboard/reporting/date_range_fields'
+  = render :partial => 'dashboard/reporting/date_range_fields', :locals => { :store_options => @store_options }
 
 %h4 Offer
 - if permitted_to? :edit, :dashboard_statz
