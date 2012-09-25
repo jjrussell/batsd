@@ -1,7 +1,7 @@
 -if @app.associated_offers.count == 0
-  %p#show_associated= "[#{@app.tapjoy_enabled_associated_offers.count} Associated Offers]"
+  %p#show_associated= "[0 Associated Offers]"
 -else
-  #associated_offers
+  #associated_offers.offer_list
     %a#show_associated{:href=>'#'}= "[#{@app.tapjoy_enabled_associated_offers.count} Associated Offers]"
     #associated_list
       %a.close_button{:href=>'#'} x
@@ -15,7 +15,6 @@
             %th Name
             %th Suffix
             %th Active
-            %th
           - @app.tapjoy_enabled_associated_offers.each do |offer|
             %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
@@ -26,218 +25,245 @@
                   %label.on On
                   %label.off Off
                   %span.switch
+-if @current_user.is_admin?
+  -if @app.tapjoy_disabled_associated_offers.count == 0
+    %p#show_disabled= "[0 Disabled Offers]"
+  -else
+    #disabled_offers.offer_list
+      %a#show_disabled{:href=>'#'}= "[#{@app.tapjoy_disabled_associated_offers.count} Disabled Offers]"
+      #disabled_list
+        %a.close_button{:href=>'#'} x
+        %h3 Disabled Offers
+        .primary_offer
+          Main:
+          =link_to(@app.primary_offer.name_with_suffix, edit_statz_path(:id => @app.primary_offer.id))
+        %table
+          %tbody
+            %tr
+              %th Name
+              %th Suffix
+            - @app.tapjoy_disabled_associated_offers.each do |offer|
+              %tr{:class => [cycle('odd','even')], :id => "offer_row_#{offer.id}" }
+                %td= offer.name
+                %td
+                  =link_to(offer.name_suffix, edit_statz_path(:id => offer.id))
 
-  - content_for :page_javascript do
-    :plain
-      $('#show_associated, #associated_offers .close_button').click(function() {
-        $('#associated_list').slideToggle();
-        return false;
-      });
+    - content_for :page_javascript do
+      :plain
+        $('#show_associated, #associated_offers .close_button').click(function() {
+          $('#associated_list').slideToggle();
+          return false;
+        });
 
-      $('#associated_offers input').click( function(event) {
-        $(this).prop("disabled", true)
-        $(event.target).siblings().addClass('loading')
+        $('#show_disabled, #disabled_offers .close_button').click(function() {
+          $('#disabled_list').slideToggle();
+          return false;
+        });
 
-        $.post($(this).attr('url'), {"user_enabled" : $(this).prop("checked")}, function(){
-          $("#offer_row_" + $(event.target).attr('offer_id')).toggleClass('disabled')
+        $('#associated_offers input').click( function(event) {
+          $(this).prop("disabled", true)
+          $(event.target).siblings().addClass('loading')
+
+          $.post($(this).attr('url'), {"user_enabled" : $(this).prop("checked")}, function(){
+            $("#offer_row_" + $(event.target).attr('offer_id')).toggleClass('disabled')
+          })
+          .fail (function() {
+            $(event.target).prop("checked", !$(event.target).prop("checked"))
+          })
+          .always (function () {
+            $(event.target).prop("disabled", false)
+            $(event.target).siblings().removeClass('loading')
+          })
         })
-        .fail (function() {
-          $(event.target).prop("checked", !$(event.target).prop("checked"))
-        })
-        .always (function () {
-          $(event.target).prop("disabled", false)
-          $(event.target).siblings().removeClass('loading')
-        })
-      })
 
-  - content_for :page_styles do
-    :plain
+- content_for :page_styles do
+  :plain
 
-      #associated_offers {
-       position: relative;
-      }
+    .offer_list {
+     position: relative;
+    }
 
-      #associated_offers .close_button {
-        float: right;
-        width: 10px;
-      }
+    .offer_list .close_button {
+      float: right;
+      width: 10px;
+    }
 
-      #associated_offers h3 {
-        text-align: center;
-        color: #929292;
-        margin: 4px 0px;
-      }
+    .offer_list h3 {
+      text-align: center;
+      color: #929292;
+      margin: 4px 0px;
+    }
 
-      #associated_offers .primary_offer {
-        font-weight: bold;
-        margin-bottom: 3px;
-      }
+    .offer_list .primary_offer {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
 
-      #associated_offers table {
-        border-spacing: 0;
-        width: 100%;
-        font-size: 12px
-      }
+    .offer_list table {
+      border-spacing: 0;
+      width: 100%;
+      font-size: 12px
+    }
 
-      #associated_offers th {
-        background-color: #D6D6D6;
-        color: #5E5E5E;
-        text-align: left;
-        padding: 4px;
-      }
+    .offer_list th {
+      background-color: #D6D6D6;
+      color: #5E5E5E;
+      text-align: left;
+      padding: 4px;
+    }
 
-      #associated_offers td {
-        padding: 4px;
-      }
+    .offer_list td {
+      padding: 4px;
+    }
 
-      #associated_offers tr.disabled {
-        color: #c5c5c5;
-      }
+    .offer_list tr.disabled {
+      color: #c5c5c5;
+    }
 
-      #associated_offers tr.even {
-        background-color: #EBEBEB;
-      }
+    .offer_list tr.even {
+      background-color: #EBEBEB;
+    }
 
-      #associated_list {
-        position: absolute;
-        left: 20px;
-        top: 10px;
-        display: none;
-        background: #fff;
-        width: 400px;
-        padding: 8px;
-        border-radius: 15px;
-        box-shadow: 0 0 10px rgba(0,0,0, .5);
-        margin: 20px;
-        z-index: 10;
-      }
+    #associated_list, #disabled_list {
+      position: absolute;
+      left: 20px;
+      top: 10px;
+      display: none;
+      background: #fff;
+      width: 400px;
+      padding: 8px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0, .5);
+      margin: 20px;
+      z-index: 10;
+    }
 
-      .toggle-bg{
-        display: block;
-        height: 20px;
-        position: relative;
-        width: 45px;
-      }
+    .toggle-bg{
+      display: block;
+      height: 20px;
+      position: relative;
+      width: 45px;
+    }
 
-      .toggle-bg input{
-        height: 20px;
-        left: 0;
-        margin: 0;
-        opacity: 0;
-        padding: 0;
-        position: absolute;
-        top: 0;
-        width: 55px;
-        z-index: 2;
-        zoom: 1;
-        filter: alpha(opacity=0);
-      }
+    .toggle-bg input{
+      height: 20px;
+      left: 0;
+      margin: 0;
+      opacity: 0;
+      padding: 0;
+      position: absolute;
+      top: 0;
+      width: 55px;
+      z-index: 2;
+      zoom: 1;
+      filter: alpha(opacity=0);
+    }
 
-      .switch{
-        background: #ffffff;
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNzUlIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNmZWZlZmUiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI1MSUiIHN0b3AtY29sb3I9IiNmZGZkZmQiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjEiLz4KICA8L3JhZGlhbEdyYWRpZW50PgogIDxyZWN0IHg9Ii01MCIgeT0iLTUwIiB3aWR0aD0iMTAxIiBoZWlnaHQ9IjEwMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-radial-gradient(center, ellipse cover, #ffffff 0%, #fefefe 50%, #fdfdfd 51%, #ffffff 100%);
-        background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(50%,#fefefe), color-stop(51%,#fdfdfd), color-stop(100%,#ffffff));
-        background: -webkit-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
-        background: -o-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
-        background: -ms-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
-        background: radial-gradient(ellipse at center, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=1 );
+    .switch{
+      background: #ffffff;
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPHJhZGlhbEdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNzUlIj4KICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNmZWZlZmUiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSI1MSUiIHN0b3AtY29sb3I9IiNmZGZkZmQiIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjEiLz4KICA8L3JhZGlhbEdyYWRpZW50PgogIDxyZWN0IHg9Ii01MCIgeT0iLTUwIiB3aWR0aD0iMTAxIiBoZWlnaHQ9IjEwMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-radial-gradient(center, ellipse cover, #ffffff 0%, #fefefe 50%, #fdfdfd 51%, #ffffff 100%);
+      background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(50%,#fefefe), color-stop(51%,#fdfdfd), color-stop(100%,#ffffff));
+      background: -webkit-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
+      background: -o-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
+      background: -ms-radial-gradient(center, ellipse cover, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
+      background: radial-gradient(ellipse at center, #ffffff 0%,#fefefe 50%,#fdfdfd 51%,#ffffff 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff',GradientType=1 );
 
-         -khtml-border-radius: 30px;
-           -moz-border-radius: 30px;
-            -ms-border-radius: 30px;
-             -o-border-radius: 30px;
-        -webkit-border-radius: 30px;
-                border-radius: 30px;
+       -khtml-border-radius: 30px;
+         -moz-border-radius: 30px;
+          -ms-border-radius: 30px;
+           -o-border-radius: 30px;
+      -webkit-border-radius: 30px;
+              border-radius: 30px;
 
 
-         -khtml-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
-           -moz-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
-            -ms-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
-             -o-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
-        -webkit-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
-                box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+       -khtml-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+         -moz-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+          -ms-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+           -o-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+      -webkit-box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
+              box-shadow: 0 1px 1px #65727b, 0 0 1px #b6bdc2;
 
-         -khtml-transition: left .2s ease;
-           -moz-transition: left .2s ease;
-            -ms-transition: left .2s ease;
-             -o-transition: left .2s ease;
-        -webkit-transition: left .2s ease;
-                transition: left .2s ease;
+       -khtml-transition: left .2s ease;
+         -moz-transition: left .2s ease;
+          -ms-transition: left .2s ease;
+           -o-transition: left .2s ease;
+      -webkit-transition: left .2s ease;
+              transition: left .2s ease;
 
-        display: block;
-        position: absolute;
-        height: 20px;
-        left: -1px;
-        position: relative;
-        top: 0;
-        width: 20px;
-        z-index: 1;
-      }
+      display: block;
+      position: absolute;
+      height: 20px;
+      left: -1px;
+      position: relative;
+      top: 0;
+      width: 20px;
+      z-index: 1;
+    }
 
-      .toggle-bg label, .toggle-bg label.loading.on {
-        background: #f6f8f9;
-        background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2ZjhmOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2U1ZWJlZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iI2Q3ZGVlMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNWY3ZjkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-        background: -moz-linear-gradient(top, #f6f8f9 0%, #e5ebee 50%, #d7dee3 51%, #f5f7f9 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f6f8f9), color-stop(50%,#e5ebee), color-stop(51%,#d7dee3), color-stop(100%,#f5f7f9));
-        background: -webkit-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
-        background: -o-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
-        background: -ms-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
-        background: linear-gradient(to bottom, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 );
+    .toggle-bg label, .toggle-bg label.loading.on {
+      background: #f6f8f9;
+      background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y2ZjhmOSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2U1ZWJlZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUxJSIgc3RvcC1jb2xvcj0iI2Q3ZGVlMyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmNWY3ZjkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+      background: -moz-linear-gradient(top, #f6f8f9 0%, #e5ebee 50%, #d7dee3 51%, #f5f7f9 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f6f8f9), color-stop(50%,#e5ebee), color-stop(51%,#d7dee3), color-stop(100%,#f5f7f9));
+      background: -webkit-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
+      background: -o-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
+      background: -ms-linear-gradient(top, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
+      background: linear-gradient(to bottom, #f6f8f9 0%,#e5ebee 50%,#d7dee3 51%,#f5f7f9 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 );
 
-         -khtml-border-radius: 30px;
-           -moz-border-radius: 30px;
-            -ms-border-radius: 30px;
-             -o-border-radius: 30px;
-        -webkit-border-radius: 30px;
-                border-radius: 30px;
+       -khtml-border-radius: 30px;
+         -moz-border-radius: 30px;
+          -ms-border-radius: 30px;
+           -o-border-radius: 30px;
+      -webkit-border-radius: 30px;
+              border-radius: 30px;
 
-         -khtml-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-           -moz-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-            -ms-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-             -o-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-        -webkit-box-shadow: 0 1px 0 #fff, inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-                box-shadow: 0 1px 0 #fff, inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
-        display: block;
-        width: 35px;
-        float: left;
-        font-size: 10px;
-        line-height: 20px;
-        border-radius: 30px;
-        text-align: center
-      }
+       -khtml-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+         -moz-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+          -ms-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+           -o-box-shadow: 0 1px 0 #fff, inset 0 0 2px #3f4c6b, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+      -webkit-box-shadow: 0 1px 0 #fff, inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+              box-shadow: 0 1px 0 #fff, inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+      display: block;
+      width: 35px;
+      float: left;
+      font-size: 10px;
+      line-height: 20px;
+      border-radius: 30px;
+      text-align: center
+    }
 
-      .toggle-bg label.on{
-        background: -moz-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f6f8f9), color-stop(50%,#e5ebee), color-stop(51%,#d7dee3), color-stop(100%,#f5f7f9));
-        background: -webkit-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
-        background: -o-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
-        background: -ms-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
-        background: linear-gradient(to bottom, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 );
-        color: #fff;
-        padding-right: 20px;
-      }
+    .toggle-bg label.on{
+      background: -moz-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f6f8f9), color-stop(50%,#e5ebee), color-stop(51%,#d7dee3), color-stop(100%,#f5f7f9));
+      background: -webkit-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
+      background: -o-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
+      background: -ms-linear-gradient(top, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
+      background: linear-gradient(to bottom, #3672dc, #4085ec 50%, #4d8fef 50%, #76adfc 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=0 );
+      color: #fff;
+      padding-right: 20px;
+    }
 
-      .toggle-bg label.off{
-        padding-left:20px;
-      }
+    .toggle-bg label.off{
+      padding-left:20px;
+    }
 
-      .toggle-bg input:checked~label.off
-      {
-        display:none;
-      }
+    .toggle-bg input:checked~label.off
+    {
+      display:none;
+    }
 
-      .toggle-bg input:not(:checked)~label.on
-      {
-        display:none;
-      }
+    .toggle-bg input:not(:checked)~label.on
+    {
+      display:none;
+    }
 
-      .toggle-bg input:checked~.switch{left: -1px;} /* initial toggle position */
+    .toggle-bg input:checked~.switch{left: -1px;} /* initial toggle position */
 
-      .toggle-bg input:checked~.switch{left: 35px;} /* final relative toggle position */
+    .toggle-bg input:checked~.switch{left: 35px;} /* final relative toggle position */
 
-      .toggle-bg inpuxt:checked{z-index: 0;}
+    .toggle-bg inpuxt:checked{z-index: 0;}
 ​
