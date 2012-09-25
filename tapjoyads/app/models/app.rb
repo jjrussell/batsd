@@ -131,6 +131,10 @@ class App < ActiveRecord::Base
     associated_offers(:tapjoy_enabled => true)
   end
 
+  def tapjoy_disabled_associated_offers
+    associated_offers(:tapjoy_enabled => false)
+  end
+
   def price
     primary_app_metadata ? primary_app_metadata.price : 0
   end

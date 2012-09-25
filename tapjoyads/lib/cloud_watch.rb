@@ -16,7 +16,6 @@ class CloudWatch
       return response_generator(:action => 'PutMetricData', :params => params)
     end
 
-    private
 
     # allow us to have a one line call in each method which will do all of the work
     # in making the actual request to AWS.
@@ -32,6 +31,13 @@ class CloudWatch
       return http_response
     end
 
+    def parse_xml_response(xml, raise_this_on_failure=nil)
+      Crack::XML.parse(xml).tap do |parsed|
+        raise raise_this_on_failure if raise_this_on_failure && parsed['ErrorResponse']
+      end
+    end
+
+    private
     # Make the connection to AWS passing in our request.
     def make_request(action, params, data='')
 
