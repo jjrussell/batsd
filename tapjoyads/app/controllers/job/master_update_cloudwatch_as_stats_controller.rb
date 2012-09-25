@@ -36,20 +36,20 @@ class Job::MasterUpdateCloudwatchAsStatsController < Job::JobController
   end
 
   private
-    def newrelic_request_queue_time
-      try_three_times do
-        request_queue_time = NewrelicMetric.get('WebFrontend/QueueTime', 'average_value')
-        (request_queue_time * 1000).round(2)
-      end
+  def newrelic_request_queue_time
+    try_three_times do
+      request_queue_time = NewrelicMetric.get('WebFrontend/QueueTime', 'average_value')
+      (request_queue_time * 1000).round(2)
     end
+  end
 
-    def api_cpu_utilization
-      try_three_times do
-        now = Time.now.utc
+  def api_cpu_utilization
+    try_three_times do
+      now = Time.now.utc
 
-        response = CloudWatch.response_generator(
-           :action => 'GetMetricStatistics',
-           :params => {'Namespace'=>'AWS/EC2',
+      response = CloudWatch.response_generator(
+         :action => 'GetMetricStatistics',
+         :params => {'Namespace'=>'AWS/EC2',
                      'MetricName'=>'CPUUtilization',
                      'StartTime'=>(now-60).iso8601,
                      'EndTime'=>now.iso8601,
@@ -57,21 +57,21 @@ class Job::MasterUpdateCloudwatchAsStatsController < Job::JobController
                      'Statistics.member.1'=>'Average',
                      'Dimensions.member.1.Name'=>'AutoScalingGroupName',
                      'Dimensions.member.1.Value'=>'ApiGroup'})
-        stat = parse_cloudwatch_response(response.body, 'unable to get cpu api')
-        cpu_util = stat['GetMetricStatisticsResponse']['GetMetricStatisticsResult']['Datapoints']['member']['Average']
-        cpu_util.to_f.round(2)
-      end
+      stat = CloudWatch.parse_xml_response(response.body, 'unable to get cpu api')
+      cpu_util = stat['GetMetricStatisticsResponse']['GetMetricStatisticsResult']['Datapoints']['member']['Average']
+      cpu_util.to_f.round(2)
     end
+  end
 
-    # These external api's fail quite often, retrying does no harm.
-    def try_three_times
-      retry_times = 0
-      begin
-        yield
-      rescue => e
-        retry_times = retry_times + 1
-        retry unless retry_times >= 3
-        raise e
-      end
+  # These external api's fail quite often, retrying does no harm.
+  def try_three_times
+    retry_times = 0
+    begin
+      yield
+    rescue => e
+      retry_times = retry_times + 1
+      retry unless retry_times >= 3
+      raise e
     end
+  end
 end
