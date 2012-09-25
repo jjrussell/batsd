@@ -12,12 +12,15 @@ class Dashboard::DashboardController < ApplicationController
   before_filter :check_employee_device
   before_filter :set_recent_partners
   before_filter :inform_of_new_sdk
+  before_filter :inform_of_new_insights
   around_filter :set_time_zone
 
-  NEW_SDK_NOTICE = "A new iOS SDK (v8.1.8) update is now available <a href='/sdk'>here</a> for both Publishers and Advertisers.
-                    Moving forward, please update the Tapjoy SDK for all apps you're submitting to Apple. Our updated SDK now tracks w/ MAC Address.
-                    If you have any questions/concerns, please contact <a href='mailto:support@tapjoy.com'>support@tapjoy.com</a>.
-                    <br><br>Read more at our blog: <a href='http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/'>http://blog.tapjoy.com/for-developers/tapjoy-sdk-update/</a>"
+  NEW_SDK_NOTICE = "Don't forget to update to Tapjoy SDK v8.3 in order to ensure effective monetization and distribution of your applications
+                    (<a href='http://www.tapjoy.com/sdk/' target='_blank'>http://www.tapjoy.com/sdk</a>).
+                    Visit the knowledge center for the entire change log to this version.
+                    (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
+
+  NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\" target=\"_blank\">newest version of Tapjoy Insights</a>"
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -125,10 +128,13 @@ class Dashboard::DashboardController < ApplicationController
   end
 
   def inform_of_new_sdk
-    if current_user && flash.now[:notice].blank? && (!cookies[:informed_sdk].present? || ObjectEncryptor.decrypt(cookies[:informed_sdk]) != '8.1.8')
+    if current_user && flash.now[:notice].blank?
       flash.now[:notice] = NEW_SDK_NOTICE
-      cookies[:informed_sdk] = {:value => ObjectEncryptor.encrypt('8.1.8'), :expires => 1.year.from_now }
     end
+  end
+
+  def inform_of_new_insights
+    flash[:notice] = NEW_INSIGHTS_NOTICE if current_user && flash[:notice].blank?
   end
 
   def nag_user_about_payout_info
@@ -151,15 +157,23 @@ class Dashboard::DashboardController < ApplicationController
     end
   end
 
-  def find_app(app_id)
+  def find_app(app_id, options = {})
+    redirect_on_nil = options.delete(:redirect_on_nil) { true }
     if permitted_to? :edit, :dashboard_statz
-      App.find(app_id)
-    else
+      app = App.find_by_id(app_id)
+    elsif current_partner.present?
       app = current_partner.apps.find_by_id(app_id)
-      return app unless app.nil?
-      path = current_partner.apps.first || new_app_path
-      flash[:error] = "Couldn't find app with ID #{app_id}"
-      redirect_to path
     end
+    if app.nil? && redirect_on_nil
+      redirect_on_app_not_found(app_id)
+    else
+      app
+    end
+  end
+
+  def redirect_on_app_not_found(app_id)
+    path = current_partner.apps.first || new_app_path
+    flash[:error] = "Couldn't find app with ID #{app_id}"
+    redirect_to path
   end
 end

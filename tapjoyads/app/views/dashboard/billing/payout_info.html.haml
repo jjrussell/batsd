@@ -7,6 +7,7 @@
   %h2 Payment Information
   %p Please enter in your payment and tax information. We require this information for payouts as well as compliance with tax authorities. We use industry standard technology to store your tax and payment information.
 
+  - disabled  = !(current_user.employee? || @payout_info.new_record?)
   = form_for [current_partner, @payout_info], :url => update_payout_info_billing_index_path, :html => { :method => :put } do |f|
     %table.payout_info
       %tbody
@@ -32,7 +33,7 @@
             = f.label :billing_name, 'Legal Name'
             .help.no-help ?
           %td
-            = f.text_field(:billing_name)
+            = f.text_field(:billing_name, :disabled => disabled)
             = f.error_message_on(:billing_name)
         %tr
           %th
@@ -46,7 +47,7 @@
             = f.label :tax_id, 'Tax ID'
             #help_tin.help ?
           %td
-            = encrypted_field(f, @payout_info, :tax_id)
+            = encrypted_field(f, @payout_info, :tax_id, :disabled => disabled)
             = f.error_message_on(:tax_id)
         %tr
           %td{:colspan => 2}
@@ -56,7 +57,7 @@
             = f.label :beneficiary_name, 'Beneficiary Name'
             .help.no-help ?
           %td
-            = f.text_field(:beneficiary_name)
+            = f.text_field(:beneficiary_name, :disabled => disabled)
             = f.error_message_on(:beneficiary_name)
         %tr
           %th
@@ -190,7 +191,7 @@
 
 .hidden
   #help_billing_name_content{:name => 'Legal Name'}
-    Must match name on tax return.
+    Must match name on tax return. Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
   #help_doing_business_as_content{:name => 'Doing Business As'}
     (Optional) Trade name under which your business is being conducted,
     if applicable.
@@ -214,6 +215,8 @@
   #help_tin_content{:name => 'Tax ID'}
     %strong U.S.:
     Your Taxpayer Information Number (TIN) is either your Social Security Number (SSN) if you are an individual or your Employer ID Number (EIN) if you are a corporation or partnership.
+
+    Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
     %br/
     %br/
     %strong International:

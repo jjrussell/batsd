@@ -23,9 +23,13 @@ Tapjoyad::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.i18n_js_cache = true
+  config.assets.compile = true
+  config.assets.debug = false
+  config.assets.digest = true
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
@@ -48,6 +52,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
+MASTERJOBS_URL = local_config['masterjobs_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/staging_tapjoy'
 XMAN = false
 

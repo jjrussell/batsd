@@ -20,6 +20,8 @@
   = link_to('[Edit Generic Offer]', edit_tools_generic_offer_path(@offer.item_id))
 - if permitted_to?(:edit, :dashboard_tools_video_offers) && @offer.video_offer?
   = link_to('[Edit Video Offer]', edit_tools_video_offer_path(@offer.item_id))
+- if permitted_to?(:edit, :dashboard_tools_generic_offers) && @offer.survey_offer?
+  = link_to('[Edit Survey Offer]', edit_tools_survey_offer_path(@offer.item_id))
 - if permitted_to? :last_run_times, :dashboard_statz
   = link_to('[View Last Run Times]', last_run_times_statz_path(@offer.id))
 - if permitted_to? :udids, :dashboard_statz
@@ -87,10 +89,15 @@
   = property_row('Cookie Tracking', @offer.cookie_tracking?, false)
   = property_row('Approved sources', "[ #{@offer.get_approved_sources.to_a.join(', ')} ]", "[  ]")
   - unless @offer.publisher_app_whitelist.blank?
-    = property_row('Publisher app whitelist', @offer.get_publisher_app_whitelist.map { |id| link_to(App.find(id).name, statz_path(id)) }.join(', '))
-  - if @offer.item_type == 'ActionOffer' && @offer.third_party_data?
-    - prereq = @offer.item.prerequisite_offer
-    = property_row('Prerequisite', link_to(prereq.name, statz_path(prereq)))
+    = property_row('Publisher app whitelist', get_offer_links_by_ids(@offer.get_publisher_app_whitelist, App))
+  - if @offer.prerequisite_offer_id.present?
+    = property_row('Prerequisite', link_to(@offer.prerequisite_offer.name, statz_path(@offer.prerequisite_offer_id)))
+  - if @offer.get_exclusion_prerequisite_offer_ids.present?
+    = property_row('Exclusion prerequisites', get_offer_links_by_ids(@offer.get_exclusion_prerequisite_offer_ids))
+  - if @offer.x_partner_prerequisites.present?
+    = property_row('Cross partner prerequisites', get_offer_links_by_ids(@offer.get_x_partner_prerequisites))
+  - if @offer.x_partner_exclusion_prerequisites.present?
+    = property_row('Cross partner exclusion prerequisites', get_offer_links_by_ids(@offer.get_x_partner_exclusion_prerequisites))
   - if permitted_to?(:edit, :dashboard_statz) && @offer.account_manager_notes.present?
     = property_row('Internal Notes', @offer.account_manager_notes, false)
   = property_row('id', @offer.id + ' - ' + clippy(@offer.id))
@@ -98,6 +105,12 @@
 %a#show_boosts{:href => '#'} [#{@active_boosts.size} active rank boosts]
 = link_to('[Create rank boost]', new_tools_rank_boost_path(:offer_id => @offer.id))
 = link_to('[View all boosts]', tools_rank_boosts_path(:offer_id => @offer.id))
+%br
+- if permitted_to?(:index, :dashboard_tools_optimized_rank_boosts)
+  %a#show_optimized_boosts{:href => '#'} [#{@optimized_boosts.size} active optimized rank boosts]
+- if permitted_to?(:new, :dashboard_tools_optimized_rank_boosts)
+  = link_to('[Create optimized rank boost]', new_tools_optimized_rank_boost_path(:offer_id => @offer.id))
+= link_to('[View all optimized boosts]', tools_optimized_rank_boosts_path(:offer_id => @offer.id))
 #boosts_list
   %h5 Total Active Boost: #{@total_boost}x
   %ul
@@ -106,6 +119,18 @@
         #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
         = link_to('[Edit]', edit_tools_rank_boost_path(boost))
         = link_to('[Deactivate]', deactivate_tools_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
+.clear
+
+#optimized_boosts_list.hidden
+  %h5 Total Active Optimized Boost: #{@total_optimized_boosts}x
+  %ul
+    - @optimized_boosts.each do |boost|
+      %li
+        #{boost.amount}x: #{boost.start_time.to_s(:mdy_ampm)} - #{boost.end_time.to_s(:mdy_ampm)} --
+        - if permitted_to?(:edit, :dashboard_tools_optimized_rank_boosts)
+          = link_to('[Edit]', edit_tools_optimized_rank_boost_path(boost))
+        - if permitted_to?(:deactivate, :dashboard_tools_optimized_rank_boosts)
+          = link_to('[Deactivate]', deactivate_tools_optimized_rank_boost_path(boost), :method => :post, :confirm => 'Are you sure?')
 
 .clear
 
@@ -224,9 +249,13 @@
       return false;
     });
 
-
     $('#show_boosts').click(function() {
       $('#boosts_list').toggle();
+      return false;
+    });
+
+    $('#show_optimized_boosts').click(function() {
+      $('#optimized_boosts_list').toggle();
       return false;
     });
 

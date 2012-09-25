@@ -27,6 +27,7 @@ describe Partner do
     should validate_numericality_of(:rev_share)
     should validate_numericality_of(:direct_pay_share)
     should validate_presence_of(:name)
+    should_not validate_presence_of(:country)
   end
 
   describe 'A Partner' do
@@ -122,15 +123,13 @@ describe Partner do
       end
 
       it "updates its currencies's spend_share when saved" do
-        Timecop.freeze(Time.parse('2012-08-01')) do # forcing new algorithm
-          @partner.rev_share = 0.42
-          @partner.save!
+        @partner.rev_share = 0.42
+        @partner.save!
 
-          @currency1.reload
-          @currency2.reload
-          @currency1.spend_share.should == 0.3822
-          @currency2.spend_share.should == 0.3822
-        end
+        @currency1.reload
+        @currency2.reload
+        @currency1.spend_share.should == (0.42 * SpendShare.current_ratio)
+        @currency2.spend_share.should == (0.42 * SpendShare.current_ratio)
       end
 
       it "updates its currencies's direct_pay_share when saved" do
@@ -420,6 +419,42 @@ describe Partner do
     it 'must not have tapjoy in the name' do
       @partner.name = ' Tapjoy '
       @partner.should_not be_valid
+    end
+  end
+
+  describe '#make_payout' do
+    subject { FactoryGirl.create :partner }
+
+    before :each do
+      @payout = FactoryGirl.build(:payout, :partner => subject, :amount => (100.00 * 100).round)
+      @amount = @payout.amount / 100
+    end
+
+    it 'builds a payout' do
+      subject.payouts.should_receive(:create!).and_return(@payout)
+      subject.make_payout(@amount)
+    end
+  end
+
+  describe '#calculate_payout_threshold' do
+    subject { FactoryGirl.create :partner }
+
+    context 'when the amount breaks the base threshold' do
+      let(:amount) { Partner::BASE_PAYOUT_THRESHOLD + 1_000_00 }
+
+      it 'overrides the base payout threshold' do
+        subject.should_receive(:payout_threshold=).with(amount * Partner::APPROVED_INCREASE_PERCENTAGE)
+        subject.calculate_payout_threshold(amount)
+      end
+    end
+
+    context 'when the amount does not break the base threshold' do
+      let(:amount) { 100_00 }
+
+      it 'sets the payout threshold to the base' do
+        subject.should_receive(:payout_threshold=).with(Partner::BASE_PAYOUT_THRESHOLD)
+        subject.calculate_payout_threshold(amount)
+      end
     end
   end
 end

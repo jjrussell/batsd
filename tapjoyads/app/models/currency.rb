@@ -7,8 +7,9 @@ class Currency < ActiveRecord::Base
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
-  PLAYDOM_CALLBACK_URL = 'PLAYDOM_DEFINED'
-  SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL, PLAYDOM_CALLBACK_URL ]
+  SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL ]
+
+  NON_REWARDED_NAME = "Non-Rewarded"
 
   belongs_to :app
   belongs_to :partner
@@ -27,7 +28,7 @@ class Currency < ActiveRecord::Base
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
     if SPECIAL_CALLBACK_URLS.include?(value)
-      if record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?
+      if record.conversion_rate > 0 && (record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?)
         record.errors.add(attribute, 'cannot be managed if the app has multiple currencies')
       end
     else
@@ -60,6 +61,8 @@ class Currency < ActiveRecord::Base
 
   scope :for_ios, :joins => :app, :conditions => "#{App.quoted_table_name}.platform = 'iphone'"
   scope :just_app_ids, :select => :app_id, :group => :app_id
+  scope :rewarded, :conditions => 'conversion_rate > 0'
+  scope :non_rewarded, :conditions => 'conversion_rate = 0'
   scope :tapjoy_enabled, :conditions => 'tapjoy_enabled'
   scope :udid_for_user_id, :conditions => "udid_for_user_id"
   scope :external_publishers, :conditions => "external_publisher and tapjoy_enabled"
@@ -95,6 +98,8 @@ class Currency < ActiveRecord::Base
   delegate :categories, :to => :app
   delegate :get_promoted_offers, :enable_risk_management?, :to => :partner, :prefix => true
   memoize :postcache_weights, :categories, :partner_get_promoted_offers, :partner_enable_risk_management?
+
+  delimited_field :test_devices
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
@@ -155,9 +160,9 @@ class Currency < ActiveRecord::Base
     elsif offer.partner_id == partner_id
       reward_value = offer.payment
     else
-      reward_value = offer.payment * get_spend_share(offer)
+      reward_value = floored_reward_value(offer)
     end
-    reward_value  * conversion_rate / 100.0
+    reward_value * conversion_rate / 100.0
   end
 
   def get_publisher_amount(offer, displayer_app = nil)
@@ -166,7 +171,7 @@ class Currency < ActiveRecord::Base
     elsif offer.payment == 2
       1
     else
-      (offer.payment * get_spend_share(offer)).to_i
+      floored_reward_value(offer)
     end
   end
 
@@ -211,7 +216,7 @@ class Currency < ActiveRecord::Base
   end
 
   def get_test_device_ids
-    Set.new(test_devices.split(';'))
+    test_devices
   end
   memoize :get_test_device_ids
 
@@ -252,7 +257,7 @@ class Currency < ActiveRecord::Base
   end
 
   def hide_rewarded_app_installs_for_version?(app_version, source)
-    return false if source == 'tj_games'
+    return false if source == 'tj_games' || source == 'tj_display'
     return false unless hide_rewarded_app_installs?
     return true if minimum_hide_rewarded_app_installs_version.blank?
     return false unless app_version.present?
@@ -311,7 +316,7 @@ class Currency < ActiveRecord::Base
   end
 
   def sanitize_attributes
-    self.test_devices    = test_devices.gsub(/\s/, '').gsub(/;{2,}/, ';').downcase
+    self.test_devices = test_devices.to_a.collect { |val| val.to_s.gsub(/\s/, '') }.reject { |val| val.blank? }
     self.disabled_offers = disabled_offers.gsub(/\s/, '')
   end
 
@@ -353,5 +358,14 @@ class Currency < ActiveRecord::Base
 
   def find_all_in_string(model, str_list)
     model.find_all_by_id(str_list.split(';'))
+  end
+
+  def floored_reward_value(offer)
+    floored_value = (offer.payment * get_spend_share(offer)).to_i
+    if get_advertiser_amount(offer) < 0 && floored_value == 0
+      1
+    else
+      floored_value
+    end
   end
 end

@@ -33,6 +33,8 @@ class VideoOffer < ActiveRecord::Base
   validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
   validate :video_exists, :unless => :new_record?
   validates_numericality_of :age_gating, :only_integer => true, :allow_blank => true, :message => "can only be whole number or empty."
+  validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
+  validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
   before_save :update_video_url
@@ -79,6 +81,24 @@ class VideoOffer < ActiveRecord::Base
     app_targeting? && !has_video_button_for_store?(store_name)
   end
 
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id, true)
+  end
+
+  def get_x_partner_prerequisites
+    Set.new(x_partner_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_prerequisites
+
+  def get_x_partner_exclusion_prerequisites
+    Set.new(x_partner_exclusion_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_exclusion_prerequisites
+
   private
 
   def create_primary_offer
@@ -94,6 +114,8 @@ class VideoOffer < ActiveRecord::Base
     offer.prerequisite_offer_id = prerequisite_offer_id
     offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
     offer.age_rating = age_gating
+    offer.x_partner_prerequisites = x_partner_prerequisites
+    offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites
     offer.save!
   end
 
@@ -103,6 +125,8 @@ class VideoOffer < ActiveRecord::Base
       offer.name = name if name_changed?
       offer.prerequisite_offer_id = prerequisite_offer_id if prerequisite_offer_id_changed?
       offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids if exclusion_prerequisite_offer_ids_changed?
+      offer.x_partner_prerequisites = x_partner_prerequisites if x_partner_prerequisites_changed?
+      offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites if x_partner_exclusion_prerequisites_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
       offer.age_rating = age_gating

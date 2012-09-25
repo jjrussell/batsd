@@ -1,13 +1,5 @@
 require 'spec_helper'
 
-def read_asset(name, directory='banner_ads')
-  if RUBY_VERSION < '1.9'
-    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
-  else
-    File.read("#{Rails.root}/spec/assets/#{directory}/#{name}", :encoding => "BINARY")
-  end
-end
-
 describe DisplayAdController do
   render_views
 
@@ -17,9 +9,9 @@ describe DisplayAdController do
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([ @offer ])
+      OfferCacher.stub(:get_offers_prerejected).and_return([ @offer ])
 
-      @bucket = S3.bucket(BucketNames::TAPJOY)
+      @bucket = FakeBucket.new
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
       @currency = FactoryGirl.create(:currency, :conversion_rate => 0)
@@ -47,7 +39,7 @@ describe DisplayAdController do
           @offer.rewarded = false
 
           object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          @custom_banner = read_asset('custom_320x50.png')
+          @custom_banner = read_asset('custom_320x50.png', 'banner_ads')
 
           object.stub(:read).and_return(@custom_banner)
           bucket_objects = { @offer.banner_creative_path('320x50') => object }
@@ -89,7 +81,7 @@ describe DisplayAdController do
           obj_round_mask.stub(:read).and_return(round_mask)
           obj_icon_shadow.stub(:read).and_return(icon_shadow)
 
-          @generated_banner = read_asset('generated_320x50.png')
+          @generated_banner = read_asset('generated_320x50.png', 'banner_ads')
         end
 
         it 'returns proper image' do
@@ -201,7 +193,7 @@ describe DisplayAdController do
 
       context 'with unfilled request' do
         before :each do
-          OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([])
+          OfferCacher.stub(:get_offers_prerejected).and_return([])
         end
 
         it 'should not queue up tracking url calls' do
@@ -222,7 +214,7 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('320x50') => 'file' }
           @bucket.stub(:objects).and_return(bucket_objects)
           s3_object = @bucket.objects[@offer.banner_creative_path('320x50')]
-          custom_banner = read_asset('custom_320x50.png')
+          custom_banner = read_asset('custom_320x50.png', 'banner_ads')
           s3_object.stub(:read).and_return(custom_banner)
 
           get(:index, @params.merge(:format => 'json'))
@@ -236,10 +228,10 @@ describe DisplayAdController do
           bucket_objects = { @offer.banner_creative_path('640x100') => 'file' }
           @bucket.stub(:objects).and_return(bucket_objects)
           s3_object = @bucket.objects[@offer.banner_creative_path('640x100')]
-          custom_banner = read_asset('custom_640x100.png')
+          custom_banner = read_asset('custom_640x100.png', 'banner_ads')
           s3_object.stub(:read).and_return(custom_banner)
 
-          get(:index, @params)
+          get(:index, @params.merge(:format => "xml"))
           response.content_type.should == 'application/xml'
           Base64.decode64(assigns['image']).should == custom_banner
         end
@@ -258,7 +250,7 @@ describe DisplayAdController do
         end
 
         it 'returns proper image data in xml' do
-          get(:index, @params)
+          get(:index, @params.merge(:format => "xml"))
           response.content_type.should == 'application/xml'
         end
       end

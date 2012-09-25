@@ -67,7 +67,7 @@
         "</div>"
       ],
       offers: [
-        "<div class='offer clearfix'>"+
+        "<div class='offer clearfix{offer_extra_classes}'>"+
           "<div class='icon'>"+
             "{cover}"+
             "{wifi}"+
@@ -408,6 +408,8 @@
         item.wifi =  item.requiresWifi ? '<div class="wifi">WiFi</div>' : '';
         item.action = '<div class="action ' + type + '">'+ ($.labels.actions[type] || '') +'</div>';
         item.cover = $.format($.tpl.cover[type === 'video' ? 0 : 1], { icon: item.iconURL });
+
+        if($.data.showActionArrow) item.offer_extra_classes = ' with-arrow';
 
         offer = $.format($.tpl[offerType][0], item) + $.format($.tpl.offers[0], item);
 

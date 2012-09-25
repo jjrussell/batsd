@@ -1,5 +1,6 @@
 class BucketNames
   ADIMAGES            = RUN_MODE_PREFIX + 'adimages'
+  ALERTS              = RUN_MODE_PREFIX + 'tj-alerts'
   CONVERSION_ARCHIVES = RUN_MODE_PREFIX + 'conversion-archives'
   FAILED_SDB_SAVES    = RUN_MODE_PREFIX + 'failed-sdb-saves-generic'
   FAILED_SQS_WRITES   = RUN_MODE_PREFIX + 'failed-sqs-writes'
@@ -19,4 +20,5 @@ class BucketNames
   UDID_REPORTS        = RUN_MODE_PREFIX + 'udid-reports'
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS        = RUN_MODE_PREFIX + 'web-requests'
+  APPLE_EPF           = RUN_MODE_PREFIX + 'apple-epf'
 end

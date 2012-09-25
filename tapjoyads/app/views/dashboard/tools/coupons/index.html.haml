@@ -1,0 +1,93 @@
+- @page_title = "#{@partner[:name]}'s Coupons"
+
+%h1= @page_title
+- if permitted_to?(:new, :dashboard_tools_coupons)
+  = link_to("Create Coupons", new_tools_coupon_path(:partner_id => current_partner))
+
+  %table#coupons_table.tablesorter
+    %thead
+      %tr
+        %th Name
+        %th Type
+        %th Discount Value
+        %th URL
+        %th Created
+        %th Start
+        %th Expiration
+        %th Vouchers?
+        %th Edit
+        %th Delete
+        %th Enable
+    %tbody
+      - @coupons.each do |coupon|
+        %tr{ :class => cycle('even', 'odd') }
+          %td= link_to(coupon.name, statz_path(coupon))
+          %td= coupon.discount_type
+          %td= coupon.discount_type == "currency" ? number_to_currency(coupon.discount_value.to_f) : coupon.discount_value
+          %td= link_to(truncate(coupon.url, :length => 40), coupon.url)
+          %td.nowrap= coupon.created_at.to_s(:pub)
+          %td.nowrap= coupon.start_date.to_s(:pub)
+          %td.nowrap= coupon.end_date.to_s(:pub)
+          - if permitted_to?(:show, :dashboard_tools_vouchers)
+            %td.nowrap= coupon.vouchers.any? ? link_to('Yes', tools_voucher_path(:id => coupon.id)) : 'No'
+          - if permitted_to?(:edit, :dashboard_tools_coupons)
+            %td= link_to('Edit', edit_tools_coupon_path(:id => coupon.id))
+          - if permitted_to?(:destroy, :dashboard_tools_coupons)
+            %td= link_to('Remove', tools_coupon_path(:id => coupon.id), :method => :delete, :confirm => 'Are you sure you want to remove this coupon?')
+          - if permitted_to?(:toggle_enabled, :dashboard_tools_coupons)
+            %td= coupon.enabled? ? link_to('Disable', toggle_enabled_tools_coupon_path(:id => coupon.id), :method => :put) : link_to('Enable', toggle_enabled_tools_coupon_path(:id => coupon.id), :method => :put)
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $.tablesorter.addParser({
+        id: 'currency-column',
+        is: function(s) { return false; },
+        type: 'numeric',
+        format: function(s) {
+          return s.replace(/\$/g, '').replace(/,/g, '');
+        }
+      });
+      $("#coupons_table").tablesorter({
+        widgets: ['zebra'],
+        headers: {
+          0:  { sorter: false },
+          1:  { sorter: false },
+          2:  { sorter: 'currency-column' },
+          3:  { sorter: false },
+          8:  { sorter: false },
+          9:  { sorter: false }
+        }
+      });
+    });
+
+- content_for :page_styles do
+  :plain
+    table.tablesorter {
+      border-collapse: separate;
+    }
+    table.tablesorter th.up_arrow {
+      background-position: 100% 50%;
+      background-repeat: no-repeat;
+      background-image: url(/stylesheets/themes/blue/asc.gif);
+      background-color: #8DBDD8;
+    }
+    .offer {
+      display: inline-block;
+      padding-right: 10px;
+      padding-top: 5px;
+    }
+    .nowrap {
+      white-space: nowrap;
+    }
+    .act_as_button {
+      font-size: 10px!important;
+      padding:2px!important;
+    }
+    .agency {
+      color: red;
+    }
+    .icon {
+      max-width: 60px;
+      overflow: hidden;
+    }

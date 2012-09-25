@@ -38,6 +38,18 @@
         +
         = error_message_on @video_offer, :age_gating
     %tr
+      %th
+        = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
+      %td
+        = f.text_area(:x_partner_prerequisites, :rows => 5)
+        = error_message_on @video_offer, :x_partner_prerequisites
+    %tr
+      %th
+        = f.label(:x_partner_exclusion_prerequisites, 'Cross Partner Exclusion Prerequisites')
+      %td
+        = f.text_area(:x_partner_exclusion_prerequisites, :rows => 5)
+        = error_message_on @video_offer, :x_partner_exclusion_prerequisites
+    %tr
       %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
       %td= file_field_tag :video
     - if !@video_offer.new_record?

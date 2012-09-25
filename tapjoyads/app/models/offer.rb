@@ -7,7 +7,7 @@ class Offer < ActiveRecord::Base
   include Offer::BannerCreatives
   include Offer::ThirdPartyTracking
   include Offer::Optimization
-  include Offer::ShowRateAlgorithms
+  include Offer::Budgeting
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
@@ -18,8 +18,8 @@ class Offer < ActiveRecord::Base
   ANDROID_DEVICES = %w( android )
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
-  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer)
-  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer DeeplinkOffer))
+  ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer Coupon)
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -49,8 +49,10 @@ class Offer < ActiveRecord::Base
   OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
                                     active
                                     allow_negative_balance
+                                    audition_factor
                                     created_at
                                     daily_budget
+                                    daily_cap_type
                                     hidden
                                     instructions
                                     instructions_overridden
@@ -91,6 +93,7 @@ class Offer < ActiveRecord::Base
   MC_KEY_AGE_GATING_PREFIX = 'offer.age_gating.device.offer'
 
   attr_reader :video_button_tracking_offers
+  attr_accessor :cached_offer_list_id
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :rank_boosts
@@ -112,22 +115,24 @@ class Offer < ActiveRecord::Base
   belongs_to :app_metadata
   belongs_to :source_offer, :class_name => 'Offer'
   belongs_to :prerequisite_offer, :class_name => 'Offer'
+  belongs_to :coupon, :foreign_key => "item_id"
 
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
-  validates_presence_of :partner, :item, :name, :url, :rank_boost
+  validates_presence_of :partner, :item, :name, :url, :rank_boost, :optimized_rank_boost
   validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :min_bid_override, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :conversion_rate, :greater_than_or_equal_to => 0
-  validates_numericality_of :rank_boost, :allow_nil => false, :only_integer => true
+  validates_numericality_of :rank_boost, :optimized_rank_boost, :allow_nil => false, :only_integer => true
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
+  validates_inclusion_of :daily_cap_type, :allow_blank => true, :allow_nil => true, :in => [ :installs, :budget ]
   validates_each :device_types, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     begin
       types = JSON.parse(value)
@@ -187,6 +192,8 @@ class Offer < ActiveRecord::Base
       record.errors.add(attribute, "cannot be enabled without valid store id")
     end
   end
+  validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
+  validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
   before_validation :update_payment
@@ -235,9 +242,15 @@ class Offer < ActiveRecord::Base
   scope :to_aggregate_hourly_stats, lambda { { :conditions => [ "next_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :to_aggregate_daily_stats, lambda { { :conditions => [ "next_daily_stats_aggregation_time < ?", Time.zone.now ], :select => :id } }
   scope :updated_before, lambda { |time| { :conditions => [ "#{quoted_table_name}.updated_at < ?", time ] } }
-  scope :app_offers, :conditions => "item_type = 'App' or item_type = 'ActionOffer'"
+  scope :app_offers, lambda { |*args|
+    only_client_facing = args.empty? ? true : args.first
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    { :conditions => ["item_type IN (?)", item_types] }
+  }
   scope :trackable, :conditions => { :item_type => ['VideoOffer', 'ActionOffer','App','VideoOffer','GenericOffer']}
   scope :video_offers, :conditions => { :item_type => 'VideoOffer' }
+  scope :coupon_offers, :conditions => { :item_type => 'Coupon' }
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
@@ -252,9 +265,9 @@ class Offer < ActiveRecord::Base
 
   delegate :balance, :pending_earnings, :name, :cs_contact_email, :approved_publisher?, :rev_share, :use_server_whitelist?, :to => :partner, :prefix => true
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
-  delegate :trigger_action, :to => :generic_offer, :prefix => true, :allow_nil => true
+  delegate :trigger_action, :protocol_handler, :to => :generic_offer, :prefix => true, :allow_nil => true
   delegate :store_name, :to => :app_metadata, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :app_metadata_store_name
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :generic_offer_protocol_handler, :app_metadata_store_name
 
   alias_method :events, :offer_events
   alias_method :random, :rand
@@ -269,13 +282,41 @@ class Offer < ActiveRecord::Base
       # set up banner_creatives to be copied on save
       banner_creatives.each do |size|
         blob = banner_creative_s3_object(size).read
-        clone.send("banner_creative_#{size}_blob=", blob)
+        clone.add_banner_creative(blob, size)
       end
     end
   end
 
-  def app_offer?
-    item_type == 'App' || item_type == 'ActionOffer'
+  def clone_and_save!
+    new_offer = clone
+    new_offer.attributes = { :created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :icon_id_override => nil }
+    new_offer.bid = [new_offer.bid, new_offer.min_bid].max
+
+    yield new_offer if block_given?
+
+    transaction do
+      new_offer.save!
+      new_offer.save_icon!(icon_s3_object.read, true) if icon_id_override.present?
+    end
+
+    new_offer
+  end
+
+  def icon_s3_object
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
+  end
+
+  def app_offer?(only_client_facing = true)
+    item_types = %w(App ActionOffer)
+    item_types += %w(RatingOffer ReengagementOffer) unless only_client_facing
+    item_types.include?(item_type)
+  end
+
+  def app_id
+    return nil unless app_offer?(false)
+    return item_id if item_type == 'App'
+    item.app_id
   end
 
   def missing_app_store_id?
@@ -322,6 +363,10 @@ class Offer < ActiveRecord::Base
     item_id == id
   end
 
+  def is_coupon?
+    item_type == 'Coupon'
+  end
+
   def send_low_conversion_email?
     primary? || !primary_offer_enabled?
   end
@@ -345,10 +390,12 @@ class Offer < ActiveRecord::Base
   def is_paid?
     price > 0
   end
+  alias_method :paid?, :is_paid?
 
   def is_free?
     !is_paid?
   end
+  alias_method :free?, :is_free?
 
   def user_bid_warning
     is_paid? ? price / 100.0 : 1
@@ -361,6 +408,7 @@ class Offer < ActiveRecord::Base
   def is_enabled?
     is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
   end
+  alias_method :enabled?, :is_enabled?
 
   def can_be_promoted?
     primary? && rewarded? && is_enabled?
@@ -386,8 +434,20 @@ class Offer < ActiveRecord::Base
     item_type == 'VideoOffer'
   end
 
+  def has_adjustable_bid?
+    item_type != 'OfferpalOffer' && item_type != 'RatingOffer'
+  end
+
+  def coupon_offer?
+    item_type == 'Coupon'
+  end
+
+  def survey_offer?
+    item_type == 'SurveyOffer'
+  end
+
   def show_in_active_campaigns?
-    item_type == 'VideoOffer' || item_type == 'App' || item_type == 'GenericOffer' || item_type == 'ActionOffer'
+    item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon|SurveyOffer)/
   end
 
   def video_icon_url(options = {})
@@ -406,28 +466,60 @@ class Offer < ActiveRecord::Base
     Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
+  def self.icon_cache_key(guid)
+    "icon.s3.#{guid}"
+  end
+
   def self.get_icon_url(options = {})
     source     = options.delete(:source)   { :s3 }
     icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
+    bust_cache = options.delete(:bust_cache) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
-    "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
+    url << "?ts=#{Time.now.to_i}" if bust_cache
+    url
   end
 
-  def save_icon!(icon_src_blob, id_for_icon = self.id)
-    icon_id = Offer.hashed_icon_id(id_for_icon)
+  def self.remove_icon!(guid, video_offer = false)
+    icon_id = Offer.hashed_icon_id(guid)
+    bucket  = S3.bucket(BucketNames::TAPJOY)
+    src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
+
+    src_obj.delete if src_obj.exists?
+
+    paths = if video_offer
+              ["icons/200/#{icon_id}.jpg"]
+            else
+              ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
+            end
+
+    paths.each do |path|
+      obj = bucket.objects[path]
+      obj.delete if obj.exists?
+    end
+
+    Mc.delete(icon_cache_key(guid))
+    CloudFront.invalidate(guid, paths)
+  end
+
+  def self.upload_icon!(icon_src_blob, guid, video_offer = false)
+    icon_id = Offer.hashed_icon_id(guid)
     bucket  = S3.bucket(BucketNames::TAPJOY)
     src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
+    if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+      return
+    end
 
-    return if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
+    if video_offer
+      paths = ["icons/200/#{icon_id}.jpg"]
 
-    if video_offer?
       icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
       corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
       corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
@@ -436,41 +528,66 @@ class Offer < ActiveRecord::Base
       icon_200.alpha(Magick::OpaqueAlphaChannel)
 
       icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
-      bucket.objects["icons/200/#{icon_id}.jpg"].write(:data => icon_200_blob, :acl => :public_read)
+      bucket.objects[paths.first].write(:data => icon_200_blob, :acl => :public_read)
       src_obj.write(:data => icon_src_blob, :acl => :public_read)
+    else
+      paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
 
-      Mc.delete("icon.s3.#{id}")
-      paths = ["icons/200/#{icon_id}.jpg"]
-      CloudFront.invalidate(id, paths) if existing_icon_blob.present?
-      return
+      icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
+
+      corner_mask_blob = bucket.objects["display/round_mask.png"].read
+      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
+      icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
+      icon_256 = icon_256.opaque('#ffffff00', 'white')
+      icon_256.alpha(Magick::OpaqueAlphaChannel)
+
+      icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
+      icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
+      icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
+      icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
+
+      bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
+      bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
+      bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
+      src_obj.write(:data => icon_src_blob, :acl => :public_read)
     end
 
-    icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-
-    corner_mask_blob = bucket.objects["display/round_mask.png"].read
-    corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-    icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-    icon_256 = icon_256.opaque('#ffffff00', 'white')
-    icon_256.alpha(Magick::OpaqueAlphaChannel)
-
-    icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-    icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-    icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-    icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
-
-    bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-    bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-    bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-    src_obj.write(:data => icon_src_blob, :acl => :public_read)
-
-    Mc.delete("icon.s3.#{id}")
-    paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-    CloudFront.invalidate(id, paths) if existing_icon_blob.present?
+    Mc.delete(icon_cache_key(guid))
+    CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
   end
 
-  def save(perform_validation = true)
-    super(:validate => perform_validation)
+  def remove_icon!
+    guid = icon_id
+
+    # only allow removing of offer-specific, manually-uploaded icons
+    return if [item_id, app_metadata_id, app_id].include?(guid)
+
+    Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
+
+    icon_id_override = item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
+    self.update_attributes!(:icon_id_override => icon_id_override)
+  end
+
+  def save_icon!(icon_src_blob, override = false)
+    # Here's how this works...
+    # When an offer's icon is requested, it will use the 'icon_id' method,
+    # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
+    # The icon_id_override field will be used, however, if it is not nil.
+    #
+    # This method ('save_icon!') will therefore use icon_id by default when uploading the icon,
+    # and icon_id_override only if override == true
+    #
+    # What this allows for is one icon file to be shared between offers with the same parent.
+    #
+    # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
+    guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
+    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
+    self.update_attributes!(:icon_id_override => guid) unless [app_metadata_id, item_id].include?(guid)
+  end
+
+  def save(*)
+    super
   rescue BannerSyncError => bse
     self.errors.add(bse.offer_attr_name.to_sym, bse.message) if bse.offer_attr_name.present?
     false
@@ -499,6 +616,16 @@ class Offer < ActiveRecord::Base
     Set.new(publisher_app_whitelist.split(';'))
   end
   memoize :get_publisher_app_whitelist
+
+  def get_x_partner_prerequisites
+    Set.new(x_partner_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_prerequisites
+
+  def get_x_partner_exclusion_prerequisites
+    Set.new(x_partner_exclusion_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_exclusion_prerequisites
 
   def get_platform
     types = get_device_types
@@ -547,7 +674,11 @@ class Offer < ActiveRecord::Base
   end
 
   def store_id_for_feed
-    item_type == 'App' ? third_party_data : Offer.hashed_icon_id(id)
+    if item_type == 'App'
+      third_party_data || Offer.hashed_icon_id(id)
+    else
+      Offer.hashed_icon_id(id)
+    end
   end
 
   def uploaded_icon?
@@ -649,7 +780,11 @@ class Offer < ActiveRecord::Base
   end
 
   def calculate_rank_boost!
-    update_attribute(:rank_boost, rank_boosts.active.sum(:amount))
+    update_attribute(:rank_boost, rank_boosts.active.not_optimized.sum(:amount))
+  end
+
+  def calculate_optimized_rank_boost!
+    update_attribute(:optimized_rank_boost, rank_boosts.active.optimized.sum(:amount))
   end
 
   def set_reseller_from_partner
@@ -794,7 +929,6 @@ class Offer < ActiveRecord::Base
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
     reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink?
-    reasons << 'Has a reward value with no Payment' if self.payment == 0 && self.reward_value.to_i > 0
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
     reasons
@@ -822,6 +956,15 @@ class Offer < ActiveRecord::Base
     video_offer? && age_rating
   end
 
+  def daily_cap_type
+    value = read_attribute(:daily_cap_type)
+    value.blank? ? nil : value.to_sym
+  end
+
+  def daily_cap_type=(value)
+    write_attribute(:daily_cap_type, value.blank? ? nil : value.to_sym)
+  end
+
   private
 
   def calculated_min_bid
@@ -833,7 +976,7 @@ class Offer < ActiveRecord::Base
       else
         is_paid? ? (price * 0.50).round : 10
       end
-    elsif item_type == 'ActionOffer'
+    elsif item_type == 'ActionOffer' || is_coupon?
       is_paid? ? (price * 0.50).round : 10
     elsif video_offer?
       2
@@ -928,17 +1071,13 @@ class Offer < ActiveRecord::Base
     featured = options[:featured]
     rewarded = options[:rewarded]
 
-    offer = self.clone
-    offer.attributes = {
-      :created_at => nil,
-      :updated_at => nil,
-      :featured   => !featured.nil? ? featured : self.featured,
-      :rewarded   => !rewarded.nil? ? rewarded : self.rewarded,
-      :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}",
-      :tapjoy_enabled => false }
-    offer.bid = offer.min_bid
-    offer.save!
-    offer
+    clone_and_save! do |new_offer|
+      new_offer.attributes = {
+        :featured    => !featured.nil? ? featured : self.featured,
+        :rewarded    => !rewarded.nil? ? rewarded : self.rewarded,
+        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}" }
+      new_offer.bid = new_offer.min_bid
+    end
   end
 
   def lock_survey_offer

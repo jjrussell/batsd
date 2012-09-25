@@ -32,6 +32,7 @@ class App < ActiveRecord::Base
       },
       :default_store_name => 'android.GooglePlay',
       :default_display_store_name => 'Google Play',
+      :default_sdk_store_name => 'google',
       :default_actions_file_name => "TapjoyPPA.java",
       :versions =>  %w( 1.5 1.6 2.0 2.1 2.2 2.3 3.0 3.1 3.2 4.0),
       :cell_download_limit_bytes => 99.gigabyte,
@@ -65,14 +66,13 @@ class App < ActiveRecord::Base
     },
   }
 
-  TRADEDOUBLER_COUNTRIES = Set.new(%w( GB FR DE IT IE ES NL AT CH BE DK FI NO SE LU PT GR ))
   MAXIMUM_INSTALLS_PER_PUBLISHER = 4000
   PREVIEW_PUBLISHER_APP_ID = "bba49f11-b87f-4c0f-9632-21aa810dd6f1" # EasyAppPublisher... used for "ad preview" generation
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
   has_many :publisher_conversions, :class_name => 'Conversion', :foreign_key => :publisher_app_id
-  has_many :currencies, :order => 'ordinal ASC'
+  has_many :currencies, :order => 'ordinal ASC', :conditions => 'conversion_rate > 0'
   has_one :primary_currency, :class_name => 'Currency', :conditions => 'id = app_id'
   has_one :rating_offer
   has_many :rewarded_featured_offers, :class_name => 'Offer', :as => :item, :conditions => "featured AND rewarded"
@@ -88,6 +88,7 @@ class App < ActiveRecord::Base
     :source => :app_metadata,
     :conditions => "app_metadata_mappings.is_primary = true"
   has_many :reengagement_offers
+  has_one :non_rewarded, :class_name => 'Currency', :conditions => {:conversion_rate => 0}
 
   belongs_to :partner
 
@@ -115,11 +116,20 @@ class App < ActiveRecord::Base
     :supported_devices?, :released_at, :released_at?, :user_rating, :get_countries_blacklist, :countries_blacklist,
     :languages, :info_url, :wifi_required?, :is_ipad_only?, :recently_released?, :bad_rating?, :primary_category,
     :to => :primary_app_metadata, :allow_nil => true
-  delegate :primary_rewarded_featured_offer, :primary_non_rewarded_featured_offer, :primary_non_rewarded_offer,
-    :to => :primary_app_metadata_mapping, :allow_nil => true
   delegate :name, :dashboard_partner_url, :to => :partner, :prefix => true
 
   memoize :partner_name, :partner_dashboard_partner_url
+
+
+  def associated_offers(props = {})
+    offers.reject do |offer|
+      offer.id == self.id || (props.present? && props.detect() { |prop,val| offer.send(prop) != val })
+    end
+  end
+
+  def tapjoy_enabled_associated_offers()
+    associated_offers(:tapjoy_enabled => true)
+  end
 
   def price
     primary_app_metadata ? primary_app_metadata.price : 0
@@ -135,6 +145,18 @@ class App < ActiveRecord::Base
 
   def store_url
     primary_app_metadata ? primary_app_metadata.store_url : AppStore.find(App::PLATFORM_DETAILS[platform][:default_store_name]).store_url
+  end
+
+  def primary_rewarded_featured_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_rewarded_featured_offer : offers.where(:featured => true, :rewarded => true).order(:created_at).first
+  end
+
+  def primary_non_rewarded_featured_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_non_rewarded_featured_offer : offers.where(:featured => true, :rewarded => false).order(:created_at).first
+  end
+
+  def primary_non_rewarded_offer
+    primary_app_metadata ? primary_app_metadata_mapping.primary_non_rewarded_offer : offers.where(:featured => false, :rewarded => false).order(:created_at).first
   end
 
   def platform_name
@@ -172,6 +194,18 @@ class App < ActiveRecord::Base
       :day_number => reengagement_campaign.length,
     }
     reengagement_offers.build(options.merge(default_options))
+  end
+
+  def build_non_rewarded
+    options = {
+      :conversion_rate  => 0,
+      :callback_url     => Currency::NO_CALLBACK_URL,
+      :name             => Currency::NON_REWARDED_NAME,
+      :app_id           => self.id,
+      :tapjoy_enabled   => false,
+      :partner          => self.partner,
+    }
+    Currency.new(options)
   end
 
   def reengagement_campaign
@@ -232,6 +266,12 @@ class App < ActiveRecord::Base
       action_offers.each do |action_offer|
         action_offer.offers.each do |offer|
           offer.update_from_app_metadata(mapping.app_metadata) unless offer.app_metadata
+        end
+      end
+      deeplink_offers.each do |deeplink_offer|
+        deeplink_offer.offers.each do |offer|
+          offer.icon_id_override = mapping.app_metadata.id
+          offer.save! if offer.icon_id_override_changed?
         end
       end
     else
@@ -368,6 +408,28 @@ class App < ActiveRecord::Base
 
   def rewardable_currencies
     @rewardable_currencies ||= currencies.reject{ |c| c.conversion_rate <= 0 }
+  end
+
+  def videos_disabled?; not videos_enabled?; end
+
+  def videos_cache_on?(connection)
+    return false if videos_disabled?
+
+    case connection
+    when 'mobile' then videos_cache_3g?
+    when 'wifi'   then videos_cache_wifi?
+    else false
+    end
+  end
+
+  def videos_stream_on?(connection)
+    return false if videos_disabled?
+
+    case connection
+    when 'mobile' then videos_stream_3g?
+    when 'wifi'   then true
+    else false
+    end
   end
 
   private

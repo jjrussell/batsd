@@ -3,8 +3,10 @@ class ServerWhitelist
     '38.104.224.62',                         # Tapjoy SF added 2012.06.04
     '38.104.183.198',                        # Tapjoy Atlanta added 2012.06.04
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
+    ['173.166.99.161', '173.166.99.177'],    # Tapjoy Boston added 2012.08.30
     '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
     '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
+    '23.22.177.185',                         # Tapjoy dashboard server added 2012.08.30
     '184.170.255.101',                       # Tapjoy support server added 2012.08.01
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
@@ -20,6 +22,7 @@ class ServerWhitelist
     '63.215.202.74',                         # Commission Junction added 2012.05.22
     '209.234.184.1',                         # Commission Junction added 2012.05.22
     '216.34.207.225',                        # Commission Junction added 2012.05.22
+    '64.70.54.15',                           # Commission Junction added 2012.08.13
     '174.129.30.101',                        # HasOffers US East added 2012.05.22
     '50.16.235.30',                          # HasOffers US East added 2012.05.22
     '75.101.156.191',                        # HasOffers US East added 2012.05.22
@@ -46,6 +49,12 @@ class ServerWhitelist
     ['184.106.48.88', '184.106.48.89'],      # Lucky Pacific added 2012.07.10
     ['184.106.88.64', '184.106.88.65'],      # Lucky Pacific added 2012.07.10
     '50.16.235.141',                         # Ring Revenue added 2012.08.02
+    ['66.171.190.226', '66.171.190.231'],    # QuoteWizard added 2012.08.10
+    ['209.63.198.242', '209.63.198.245'],    # QuoteWizard added 2012.08.10
+    ['173.203.168.128', '173.203.168.138'],  # QuoteWizard added 2012.08.10, updated 2012.09.14
+    '216.246.74.21',                         # DiscountMags added 2012.08.20
+    '204.93.181.78',                         # DiscountMags added 2012.08.20
+    '64.91.230.220',                         # ExclusiveCPA LLC added 2012.08.20
   ]
 
   def self.ip_whitelist_includes?(ip_address)

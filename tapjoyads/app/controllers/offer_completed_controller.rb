@@ -1,6 +1,9 @@
 class OfferCompletedController < ApplicationController
 
   before_filter :setup
+  before_filter :validate_adility_params, :only => [ :adility ]
+
+  ADILITY_SOURCE = 'adility'
 
   def index
     complete_conversion
@@ -46,10 +49,30 @@ class OfferCompletedController < ApplicationController
     complete_conversion
   end
 
+  def adility
+    @voucher.update_attributes(:completed => true)
+    params[:click_key] = @voucher.click_key
+    complete_conversion
+  end
+
 private
 
   def setup
     @now = Time.zone.now
+  end
+
+  def validate_adility_params
+    if params[:voucher].present? && params[:voucher][:id].present? && params[:voucher][:status] == 'redeemed'
+      @source = ADILITY_SOURCE
+      @voucher = Voucher.find(:all, :conditions => { :ref_id => params[:voucher][:id] })
+      unless @voucher.present? && !@voucher.completed?
+        @error_message = "unexpected adility callback"
+        notify_and_render_error(false)
+      end
+    else
+      @error_message = "unexpected adility callback"
+      notify_and_render_error(false)
+    end
   end
 
   def complete_conversion
@@ -117,6 +140,7 @@ private
       @error_message = "offer has already been completed by this device for click {#{click.key}}"
       notify_and_render_error(false)
     else
+      device.remove_pending_coupon(offer.id) if @source == ADILITY_SOURCE
       device.set_last_run_time!(click.advertiser_app_id)
       message = { :click_key => click.key, :install_timestamp => @now.to_f.to_s }.to_json
       Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

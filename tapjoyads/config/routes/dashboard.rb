@@ -33,6 +33,7 @@ Tapjoyad::Application.routes.draw do
       resources :user_sessions, :only => [:new, :create, :destroy, :index]
       resources :users, :except => [:show, :destroy]
       resources :apps, :except => [:destroy] do
+        resource :non_rewarded, :only => [:new, :edit, :create, :update, :show ], :controller => :non_rewarded
         collection do
           get :search
           post :set_custom_url_scheme
@@ -81,12 +82,17 @@ Tapjoyad::Application.routes.draw do
             get :remove
           end
         end
-        resources :reengagement_offers, :except => [:show] do
+        resources :reengagement_offers do
           collection do
             post :update_status
           end
         end
-        resources :videos, :only => [:index]
+        resources :videos, :only => [:index] do
+          collection do
+            get :options
+            put :update_options
+          end
+        end
       end
       resource :offer do
         member do
@@ -94,7 +100,6 @@ Tapjoyad::Application.routes.draw do
           post :percentile
         end
       end
-      resources :reengagement_rewards, :only => [:show]
       resources :offer_creatives, :only => [:show] do
         member do
           get    '/:image_size', :action => :new, :as => :form
@@ -150,6 +155,7 @@ Tapjoyad::Application.routes.draw do
         end
         member do
           get :last_run_times
+          get 'last_runs/:udid(/time/:time)', :action => :last_run, :as => :device_last_run
           get :udids
           get :support_request_reward_ratio
           get :show_rate_reasons
@@ -184,10 +190,11 @@ Tapjoyad::Application.routes.draw do
 
         end
 
-        resources :payout_infos, :only => [:index, :update]
       end
 
       match 'partners/managed_by/:id' => 'partners#managed_by'
+      match 'partners/by_country/:country' => 'partners#by_country'
+
       match 'search/gamers' => 'search#gamers', :as => :search_gamers
       match 'search/offers' => 'search#offers', :as => :search_offers
       match 'search/users' => 'search#users', :as => :search_users
@@ -216,6 +223,7 @@ Tapjoyad::Application.routes.draw do
           get :device_info
           get :failed_sdb_saves
           post :resolve_clicks
+          get :award_currencies
           post :award_currencies
           get :disabled_popular_offers
           get :sqs_lengths
@@ -227,9 +235,9 @@ Tapjoyad::Application.routes.draw do
           get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
+          get :monthly_rev_share_report
+          get :download_monthly_rev_share_report
         end
-
-
       end
 
       namespace :tools do
@@ -264,6 +272,12 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :premier_partners, :only => [:index]
+        resources :coupons do
+          member do
+            put :toggle_enabled
+          end
+        end
+        resources :vouchers, :only => [:show]
         resources :generic_offers, :only => [:index, :new, :create, :edit, :update]
         resources :orders, :only => [:new, :create] do
           collection do
@@ -286,6 +300,7 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export
@@ -294,6 +309,9 @@ Tapjoyad::Application.routes.draw do
           member do
             get :info
           end
+        end
+        namespace :resellers do
+          resources :payouts, :only => [:index, :create]
         end
         resources :enable_offer_requests, :only => [:update, :index]
         resources :admin_devices, :only => [:index, :new, :create, :edit, :update, :destroy]
@@ -316,6 +334,11 @@ Tapjoyad::Application.routes.draw do
             post :deactivate
           end
         end
+        resources :optimized_rank_boosts, :except => [:show, :destroy] do
+          member do
+            post :deactivate
+          end
+        end
         resources :external_publishers, :only => [:index, :update]
         resources :jobs, :except => [:show]
         resources :earnings_adjustments, :only => [:new, :create]
@@ -334,7 +357,6 @@ Tapjoyad::Application.routes.draw do
             post :mass_resolve
           end
         end
-        resources :press_releases, :only => [:index, :new, :create, :edit, :update]
         resources :recommenders, :only => [:index, :create]
         resources :gamers, :only => [:index, :show]
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]

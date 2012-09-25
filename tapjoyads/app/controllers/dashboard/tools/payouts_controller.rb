@@ -26,18 +26,17 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
   end
 
   def create
-    partner = Partner.find(params[:partner_id])
-    cutoff_date = partner.payout_cutoff_date - 1.day
-    amount = (params[:amount].to_f * 100).round
-    payout = partner.payouts.build(:amount => amount, :month => cutoff_date.month, :year => cutoff_date.year)
-    log_activity(payout)
-    if (payout_saved = payout.save)
+    begin
+      partner = Partner.find(params[:partner_id])
+      payout = partner.make_payout(params[:amount])
+      log_activity(payout)
       log_activity(partner)
-      payout_threshold = payout.amount * Partner::APPROVED_INCREASE_PERCENTAGE
-      partner.payout_threshold = payout_threshold > Partner::BASE_PAYOUT_THRESHOLD ? payout_threshold : Partner::BASE_PAYOUT_THRESHOLD
-      partner.save
+    rescue ActiveRecord::RecordInvalid => e
+      ::Rails.logger.error "Could not create payout: #{e.message}"
     end
-    render :json => { :success => payout_saved }
+
+    # We use #try(:persisted?) because it will be false-y, meaning we don't need to track the status with an extra variable.
+    render :json => { :success => !!payout.try(:persisted?) }
   end
 
   def confirm_payouts
@@ -51,7 +50,7 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
     data = [
       'Partner_Name,Partner_id,Pending_Earnings,Cutoff_Date,Payout_Amount,' <<
       'Current_Payout_Created,Payout_Method,Account_Manager_Email,' <<
-      'Confirmed,Notes'
+      'Confirmed,Notes,Legal_Name,Tax_ID'
      ]
     managers = {}
     User.account_managers.each do |user|
@@ -74,7 +73,9 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
           partner.completed_payout_info? ? partner.payout_info.payout_method : '',
           account_manager_email,
           partner.confirmed_for_payout? ? 'Confirmed' : 'Unconfirmed',
-          confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : ''
+          confirmation_notes.present? ? confirmation_notes.join(';').gsub(/[,]/, '_') : '',
+          (partner.payout_info.try(:billing_name) || ''),
+          (partner.payout_info.try(:decrypt_tax_id) || '')
         ]
       data << line.join(',')
     end
@@ -93,5 +94,9 @@ class Dashboard::Tools::PayoutsController < Dashboard::DashboardController
 
     @partners = @partners.includes([:payout_info, :users ])
     @partners = @partners.where('id = ?', params[:partners_filter]) if params[:partners_filter].present?
+
+    if params[:reseller_id]
+      @partners = @partners.where(:reseller_id => params[:reseller_id])
+    end
   end
 end

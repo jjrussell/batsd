@@ -28,6 +28,7 @@ class CurrencyGroup < ActiveRecord::Base
   PRECACHE_WEIGHT_COLUMNS = [ :normal_conversion_rate, :normal_bid, :normal_price, :normal_avg_revenue, :random, :over_threshold, :rank_boost ]
   POSTCACHE_WEIGHT_COLUMNS = [ :category_match ]
   WEIGHTS = PRECACHE_WEIGHT_COLUMNS + POSTCACHE_WEIGHT_COLUMNS
+  DEFAULT_ID = "0c3d2212-ce65-47eb-835e-ac6f5f915c24"
 
   def precache_weights
     PRECACHE_WEIGHT_COLUMNS.inject({}) { |weights_hash, column| weights_hash[column] = send(column); weights_hash }

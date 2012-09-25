@@ -5,7 +5,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   filter_access_to :all
 
   before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
-  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance ]
+  before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance, :monthly_rev_share_report ]
   before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
 
@@ -215,13 +215,39 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         @device = nil
         return
       end
-      @cut_off_date = (params[:cut_off_date] || Time.zone.now).to_i
-      conditions = [
-        "udid = '#{udid}'",
-        "clicked_at < '#{@cut_off_date}'",
-        "clicked_at > '#{@cut_off_date - 1.month}'",
-      ].join(' and ')
-      @clicks = []
+
+      if params[:use_recent_clicks].present?
+        use_recent_clicks = params[:start_date].blank? && params[:end_date].blank?
+      else
+        use_recent_clicks = false
+      end
+      now = Time.zone.now
+
+      if use_recent_clicks
+        @start_date = now - Device::RECENT_CLICKS_RANGE
+        @end_date = now
+        @clicks = @device.recent_clicks.reverse
+      else
+        @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
+        @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
+
+        @start_date = now if @start_date > now
+        @end_date = now if @end_date > now
+
+        conditions = [
+          "udid = '#{udid}'",
+          "clicked_at > '#{@start_date.to_i}'",
+          "clicked_at < '#{@end_date.to_i}'",
+        ].join(' and ')
+        @clicks = []
+        NUM_CLICK_DOMAINS.times do |i|
+          Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
+            @clicks << click unless click.tapjoy_games_invitation_primary_click?
+          end
+          @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
+        end
+      end
+
       @rewarded_clicks_count = 0
       @jailbroken_count = 0
       @not_rewarded_count = 0
@@ -230,30 +256,28 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @force_converted_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
-      click_app_ids = []
-      NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
-          @clicks << click unless click.tapjoy_games_invitation_primary_click?
-          if click.installed_at?
-            @rewards[click.reward_key] = Reward.find(click.reward_key)
-            if click.force_convert
-              @force_converted_count += 1
-            elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
-              @rewarded_clicks_count += 1
-            else
-              @rewarded_failed_clicks_count += 1
-            end
+      click_app_ids = nil, []
+      @clicks.each do |click|
+        next if click.tapjoy_games_invitation_primary_click?
+        if click.installed_at?
+          @rewards[click.reward_key] = Reward.find(click.reward_key)
+          if click.force_convert
+            @force_converted_count += 1
+          elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
+            @rewarded_clicks_count += 1
+          else
+            @rewarded_failed_clicks_count += 1
           end
-          @jailbroken_count += 1 if click.type =~ /install_jailbroken/
-          if click.block_reason?
-            if click.block_reason =~ /TooManyUdidsForPublisherUserId/
-              @blocked_count += 1
-            else
-              @not_rewarded_count += 1
-            end
-          end
-          click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
         end
+        @jailbroken_count += 1 if click.type =~ /install_jailbroken/
+        if click.block_reason?
+          if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+            @blocked_count += 1
+          else
+            @not_rewarded_count += 1
+          end
+        end
+        click_app_ids.push(click.publisher_app_id, click.advertiser_app_id, click.displayer_app_id)
       end
 
       # find all apps at once and store in look up table
@@ -265,9 +289,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
         [ @device.last_run_time(app.id), app ]
       end.sort_by(&:first).reverse
-      @clicks = @clicks.sort_by do |click|
-        -click.clicked_at.to_f
-      end
 
     elsif params[:email_address].present?
       @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
@@ -572,6 +593,48 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
     flash[:message] = "Force conversion request sent. It may take some time for this request to be processed."
     redirect_to :action => :device_info, :click_key => click.key
+  end
+
+  def monthly_rev_share_report
+  end
+
+  def download_monthly_rev_share_report
+    start_time = Time.zone.parse(params[:start_time]).beginning_of_month
+    year  = start_time.year
+    month = start_time.month
+    start_time = start_time.to_f
+
+    where_clause = [
+      %Q(`updated-at` is not null),
+      %Q(`updated-at` >= '#{start_time}'),
+      %Q(`updated-at` <  '#{start_time + 1.month}'),
+      %Q(after_state     like '%"rev_share":%'),
+      %Q(after_state not like '%"rev_share":null%'),
+      %Q(after_state not like '%"rev_share":""%'),
+    ].join(' and ')
+
+    data = ['time,partner_id,partner_name,user,old_rev_share,new_rev_share,notes']
+    next_token = nil
+
+    begin
+      response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => next_token)
+      next_token = response[:next_token]
+      response[:items].each do |item|
+        partner = Partner.find(item.partner_id)
+        row = [
+          item.updated_at,
+          partner.id,
+          partner.name,
+          item.user,
+          item.before_state['rev_share'],
+          item.after_state['rev_share'],
+          item.after_state['account_manager_notes'],
+        ]
+        data << row.map{|attr| attr.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')}.join(",")
+      end
+    end until next_token.nil?
+
+    send_data(data.join("\n"), :type => 'text/csv', :filename => "monthly_rev_share_#{year}_#{month}.csv")
   end
 
   private

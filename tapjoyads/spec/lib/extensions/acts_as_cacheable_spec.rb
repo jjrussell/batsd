@@ -30,7 +30,7 @@ describe ActsAsCacheable do
 
       it 'calls Mc.get once' do
         Mc.should_receive(:get).once
-        CacheableObject.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => false)
       end
     end
 
@@ -41,7 +41,20 @@ describe ActsAsCacheable do
 
       it 'does not call Mc.get with invalid key' do
         Mc.should_not_receive(:get)
-        CacheableObject.find_in_cache(@foo.id, false)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => false)
+      end
+    end
+
+    context 'throw the cache call to a queue' do
+      before :each do
+        @foo.stub(:id).and_return(UUIDTools::UUID.random_create.to_s)
+        Mc.any_instance.stub(:distributed_get).and_return(nil)
+      end
+
+      it 'sqs should receive send_message call' do
+        CacheableObject.stub(:find_by_id).and_return(nil)
+        Sqs.should_receive(:send_message).with(QueueNames::CACHE_RECORD_NOT_FOUND, { :model_name => 'CacheableObject', :id => @foo.id }.to_json)
+        CacheableObject.find_in_cache(@foo.id, :do_lookup => true, :queue => true)
       end
     end
   end

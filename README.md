@@ -1,81 +1,36 @@
-```
-   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
- $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-.$$$?        $$$$
-=$$$         $$$I
- $$$$.      =$$$. , .$$$$$$$7 .$$$.$$$$$   .$$$   .$$$$$$I   $$$    $$$$
- +$$$$$     $$$$   $$$$$$$$$,  $$$$$$$$$I  I$$$  ~$$$$$$$$$  $$$,  :$$$
-   7$$$     $$$$  $$$$  ?$$$   $$$.  $$$$  $$$= .$$$$  7$$$  $$$~  $$$,
-           +$$$7 .$$$   $$$7  =$$$   $$$$ .$$$  $$$$   7$$$  $$$+ $$$$
-           $$$$: I$$I   $$$,  $$$+   $$$. I$$$  $$$$   $$$$  $$$I,$$$
-           $$$$  I$$$?,7$$$  .$$$: ?$$$$  $$$$  $$$$: 7$$$.  +$$$$$$
-           $$$?   $$$$$:$$$~ I$$$$$$$$.   $$$=  .$$$$$$$$    .$$$$$,
-                             $$$$        .$$$                 $$$$,
-                             $$$+        I$$$                $$$$7
-                             +++     ,~~~$$$+~~~~~~~~~~~~+I$$$$$,
-                                 ~$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-                               ,$$$$$$$$$$$$$$$$$$$$$$$$$$$7~
-                               $$$$     $$$$
-                              ?$$$      $$$=
-                              7$$$     $$$$
-                               $$$$$$$$$$$
-                               .$$$$$$$$:
-```
+tapjoyserver repo setup
+-----------------------
 
-Environment Setup
-=================
+First, fork this repository to your github account.
 
-First configure Git and get the Tapjoy repo.
+Make sure you have your VM set up - if you don't, follow [these instructions](https://github.com/Tapjoy/vagrant) first.
 
-Setup git following these instructions: http://help.github.com/mac-set-up-git/
-
-In github, fork tapjoyserver repository:
-
-  * main repo location: `https://github.com/Tapjoy/tapjoyserver`
-  * click "Fork"
-
-Clone your forked repo locally
-
-
-```
-git clone git@github.com:[your github nickname]/tapjoyserver.git
-```
-
-Add main tapjoyserver repo as remote repo (for updating your code with the latest):
-
-```
-git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
-```
-
-It is important that it's named "tapjoy" for deploy script to work
-
-Setting up VM
--------------
-
-We run the environment inside of a Virtualbox VM setup through Vagrant. To set it up, first
-install [virtualbox](http://www.virtualbox.org/wiki/Downloads).
-
-Now setup librarian and vagrant:
-
-```
-gem install vagrant
-gem install librarian
-librarian-chef install
-vagrant up
-```
-
-SSH into the vm:
-
-```
-vagrant ssh
-```
-
-Setup the database by syncing the production db with the vm db (this will overwrite any pre-existing changes)
+When you are in your VM, go into `/vagrant` directory and clone the repository:
 
 ```
 cd /vagrant
-rvmsudo bundle
+git clone git@github.com:[your github nickname]/tapjoyserver.git
+```
+
+Install necessary gems under ruby 1.8.7:
+
+```
+cd /vagrant/tapjoyserver/tapjoyads
+rvm use 1.8.7-p357
 bundle
+```
+
+Copy the database config file and run setup script:
+
+```
+cp config/database-default.yml config/database.yml
+rake setup
+```
+
+Setup the database by syncing the production db with the local db:
+
+```
+cd /vagrant/tapjoyserver/tapjoyads
 rake db:create
 rake db:sync
 ```
@@ -94,12 +49,10 @@ If any tests fail, ask for help in Flowdock.
 Running the server
 ------------------
 
-Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
+Within Vagrant, you can run the application directly from the `/vagrant/tapjoyserver/tapjoyads` directory by running:
 
 ```
 rails s thin
 ```
 
 To access, go to [http://127.0.0.1:8080](http://127.0.0.1:8080).
-
-[Some information on stopping the VM](http://vagrantup.com/v1/docs/getting-started/teardown.html)

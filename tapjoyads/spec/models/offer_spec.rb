@@ -10,6 +10,7 @@ describe Offer do
   it { should belong_to :partner }
   it { should belong_to :item }
   it { should belong_to :prerequisite_offer }
+  it { should belong_to :coupon }
 
   it { should validate_presence_of :partner }
   it { should validate_presence_of :item }
@@ -26,6 +27,9 @@ describe Offer do
   it { should validate_numericality_of :payment_range_low }
   it { should validate_numericality_of :payment_range_high }
 
+  it { should ensure_inclusion_of(:requires_udid).in_array([true, false]) }
+  it { should ensure_inclusion_of(:requires_mac_address).in_array([true, false]) }
+
   before :each do
     @app = FactoryGirl.create :app
     @offer = @app.primary_offer
@@ -35,6 +39,189 @@ describe Offer do
     @offer.update_attributes({:bid => 500})
     @offer.reload
     @offer.payment.should == 500
+  end
+
+  describe "#save_icon!" do
+    before :each do
+      @image_data = "fake image data"
+      @icon_id = "icon_id"
+
+      img = Magick::Image.from_blob(read_asset('round_mask.png', 'display'))
+      Magick::Image.stub(:from_blob).and_return(img)
+
+      bucket = FakeBucket.new
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
+
+      @secondary_offer = @offer.clone
+      @secondary_offer.save!
+    end
+
+    context "given only image data" do
+      before :each do
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
+      end
+
+      context "for a primary offer" do
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@offer.app_metadata_id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
+
+            @offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses id for guid" do
+            @offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@offer.id).once.and_return(@icon_id)
+            @offer.save_icon!(@image_data)
+
+            @offer.icon_id_override.should be_nil
+          end
+        end
+      end
+
+      context "for a secondary offer" do
+        context "with app_metadata_id set" do
+          it "uses app_metadata_id for guid" do
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.app_metadata_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
+
+            @secondary_offer.icon_id_override.should be_nil
+          end
+        end
+
+        context "without app_metadata_id set" do
+          it "uses item_id for guid" do
+            @secondary_offer.app_metadata_id = nil
+            Offer.should_receive(:hashed_icon_id).with(@secondary_offer.item_id).once.and_return(@icon_id)
+            @secondary_offer.save_icon!(@image_data)
+
+            @secondary_offer.icon_id_override.should be_nil
+          end
+        end
+      end
+
+      context "for an offer with icon_id_override already set" do
+        it "uses icon_id_override for guid" do
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+          @offer.save_icon!(@image_data)
+
+          @offer.icon_id_override.should == guid
+        end
+      end
+    end
+
+    context "with override = true" do
+      it "uses new guid for icon_id_override" do
+        @s3object.should_receive(:write).with(:data => @image_data, :acl => :public_read).once
+
+        guid = "guid"
+        UUIDTools::UUID.should_receive(:random_create).once.and_return(guid)
+        Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        @offer.save_icon!(@image_data, true)
+
+        @offer.icon_id_override.should == guid
+        @offer.changed?.should be_false # offer was saved
+      end
+    end
+  end
+
+  describe '.remove_icon!' do
+    before :each do
+      @icon_id = 'icon_id'
+
+      bucket = FakeBucket.new
+      S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(bucket)
+      @s3object = bucket.objects["icons/src/#{@icon_id}.jpg"]
+    end
+
+    context "for a direct-parent offer" do
+      context "without icon_id_override set" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
+        end
+      end
+
+      context "with icon_id_override set" do
+        before :each do
+          guid = "guid"
+          @offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        end
+
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+
+        context "without pre-existing image" do
+          it "still unsets icon_id_override" do
+            @s3object.should_receive(:delete).never
+            @offer.remove_icon!
+
+            @offer.icon_id_override.should be_nil
+            @offer.changed?.should be_false # offer was saved
+          end
+        end
+      end
+    end
+
+    context "for an indirect-parent App offer" do
+      before :each do
+        parent = Factory :action_offer
+        @action_offer = parent.primary_offer
+      end
+
+      context "with icon_id_override_set to app_metadata_id" do
+        it "does nothing" do
+          @s3object.should_receive(:delete).never
+          @offer.remove_icon!
+
+          @action_offer.icon_id_override.should == @action_offer.app_metadata_id
+        end
+      end
+
+      context "with icon_id_override != app_id" do
+        before :each do
+          guid = "guid"
+          @action_offer.update_attributes!(:icon_id_override => guid)
+          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+        end
+
+        context "with pre-existing image" do
+          it "removes image" do
+            @s3object.write("pre-existing image data")
+            @s3object.should_receive(:delete).once
+            @action_offer.remove_icon!
+
+            @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
+          end
+        end
+
+        context "without pre-existing image" do
+          it "still resets icon_id_override to app_id" do
+            @s3object.should_receive(:delete).never
+            @action_offer.remove_icon!
+
+            @action_offer.icon_id_override.should == @action_offer.app_id
+            @action_offer.changed?.should be_false # offer was saved
+          end
+        end
+      end
+    end
   end
 
   describe "applies discounts correctly" do
@@ -101,7 +288,7 @@ describe Offer do
 
   it "rejects depending on prerequisites" do
     device = Factory(:device)
-    app = FactoryGirl.create :app
+    app = FactoryGirl.create :app, { :partner_id => @offer.partner_id }
     prerequisite_offer = app.primary_offer
     @offer.send(:prerequisites_not_complete?, device).should == false
     @offer.update_attributes({ :prerequisite_offer_id => prerequisite_offer.id })
@@ -109,7 +296,20 @@ describe Offer do
     device.set_last_run_time(app.id)
     @offer.send(:prerequisites_not_complete?, device).should == false
 
+    app2 = FactoryGirl.create :app
+    prerequisite_offer2 = app2.primary_offer
+    generic_offer = FactoryGirl.create :generic_offer
+    prerequisite_offer3 = generic_offer.primary_offer
+    @offer.update_attributes({ :x_partner_prerequisites => "#{prerequisite_offer2.id};#{prerequisite_offer3.id}" })
+    @offer.get_x_partner_prerequisites(:reload)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(app2.id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(generic_offer.id)
+    @offer.send(:prerequisites_not_complete?, device).should == false
+
     exclusion_offer1 = (FactoryGirl.create :action_offer).primary_offer
+    exclusion_offer1.update_attributes({ :multi_complete => true })
     exclusion_offer2 = (FactoryGirl.create :generic_offer).primary_offer
     exclusion_offer3 = (FactoryGirl.create :video_offer).primary_offer
     @offer.exclusion_prerequisite_offer_ids = "[\"#{exclusion_offer1.id}\", \"#{exclusion_offer2.id}\", \"#{exclusion_offer3}\"]"
@@ -120,6 +320,18 @@ describe Offer do
     device.set_last_run_time(exclusion_offer2.item_id)
     @offer.send(:prerequisites_not_complete?, device).should == true
     device.set_last_run_time(exclusion_offer3.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+
+    @offer.exclusion_prerequisite_offer_ids = nil
+    @offer.get_exclusion_prerequisite_offer_ids
+    @offer.send(:prerequisites_not_complete?, device).should == false
+    exclusion_offer4 = (FactoryGirl.create :action_offer).primary_offer
+    exclusion_offer5 = (FactoryGirl.create :generic_offer).primary_offer
+    @offer.update_attributes({ :x_partner_exclusion_prerequisites => "#{exclusion_offer4.id};#{exclusion_offer5.id}" })
+    @offer.get_x_partner_exclusion_prerequisites(:reload)
+    device.set_last_run_time(exclusion_offer4.item_id)
+    @offer.send(:prerequisites_not_complete?, device).should == true
+    device.set_last_run_time(exclusion_offer5.item_id)
     @offer.send(:prerequisites_not_complete?, device).should == true
   end
 
@@ -225,15 +437,6 @@ describe Offer do
     @offer.send(:carriers_reject?, mobile_carrier_code).should == false
   end
 
-  it "returns proper linkshare account url" do
-    url = 'http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=TEST&mt=8'
-    linkshare_url = Linkshare.add_params(url)
-    linkshare_url.should == "#{url}&partnerId=30&siteID=OxXMC6MRBt4"
-
-    linkshare_url = Linkshare.add_params(url, 'tradedoubler')
-    linkshare_url.should == "#{url}&partnerId=2003&tduid=UK1800811"
-  end
-
   it "rejects based on source" do
     @offer.approved_sources = ['tj_games']
     @offer.send(:source_reject?, 'offerwall').should be_true
@@ -281,29 +484,56 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
-  it "excludes the appropriate columns for the for_offer_list scope" do
-    offer = Offer.for_offer_list.find(@offer.id)
-    fetched_cols = offer.attribute_names & Offer.column_names
+  it "doesn't reject miniscule offers with the override enabled" do
+    currency = FactoryGirl.create(:currency, {:conversion_rate => 1})
+    @offer.rate_filter_override = true
+    @offer.send(:miniscule_reward_reject?, currency).should be_false
+  end
 
-    (fetched_cols & Offer::OFFER_LIST_EXCLUDED_COLUMNS).should == []
-    fetched_cols.sort.should == [ 'id', 'item_id', 'item_type', 'partner_id',
-                                  'name', 'url', 'price', 'bid', 'payment',
-                                  'conversion_rate', 'show_rate', 'self_promote_only',
-                                  'device_types', 'countries',
-                                  'age_rating', 'multi_complete', 'featured',
-                                  'publisher_app_whitelist', 'direct_pay', 'reward_value',
-                                  'third_party_data', 'payment_range_low',
-                                  'payment_range_high', 'icon_id_override', 'rank_boost',
-                                  'normal_bid', 'normal_conversion_rate', 'normal_avg_revenue',
-                                  'normal_price', 'over_threshold', 'rewarded', 'reseller_id',
-                                  'cookie_tracking', 'min_os_version', 'screen_layout_sizes',
-                                  'interval', 'banner_creatives', 'dma_codes', 'regions',
-                                  'wifi_only', 'approved_sources', 'approved_banner_creatives',
-                                  'sdkless', 'carriers', 'cities', 'impression_tracking_urls',
-                                  'click_tracking_urls', 'conversion_tracking_urls', 'creatives_dict',
-                                  'prerequisite_offer_id', 'exclusion_prerequisite_offer_ids',
-                                  'app_metadata_id'
-                                ].sort
+
+  describe '.for_offer_list' do
+    INCLUDED_COLUMNS = %w{
+      id item_id item_type partner_id name url price bid payment conversion_rate show_rate
+      self_promote_only device_types countries age_rating multi_complete featured
+      publisher_app_whitelist direct_pay reward_value third_party_data payment_range_low
+      payment_range_high icon_id_override rank_boost normal_bid normal_conversion_rate
+      normal_avg_revenue normal_price over_threshold rewarded reseller_id cookie_tracking
+      min_os_version screen_layout_sizes interval banner_creatives dma_codes regions wifi_only
+      approved_sources approved_banner_creatives sdkless carriers cities impression_tracking_urls
+      click_tracking_urls conversion_tracking_urls creatives_dict prerequisite_offer_id
+      exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
+      optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
+      requires_udid requires_mac_address
+    }
+
+    EXCLUDED_COLUMNS = %w{
+      account_manager_notes active allow_negative_balance audition_factor created_at
+      daily_budget hidden instructions instructions_overridden last_daily_stats_aggregation_time
+      last_stats_aggregation_time low_balance min_bid_override min_conversion_rate name_suffix
+      next_daily_stats_aggregation_time next_stats_aggregation_time overall_budget pay_per_click
+      stats_aggregation_interval tapjoy_enabled tapjoy_sponsored updated_at url_overridden
+      user_enabled tracking_for_id tracking_for_type source_offer_id
+    }
+
+    let(:offer)   {Offer.for_offer_list.find(@offer.id)}
+    let(:columns) {offer.attribute_names & Offer.column_names}
+
+    it "has #{INCLUDED_COLUMNS.length} columns" do
+      columns.length.should == INCLUDED_COLUMNS.length
+    end
+
+    INCLUDED_COLUMNS.each do |column|
+      it "includes the #{column} column" do
+        columns.should include column
+      end
+    end
+
+    EXCLUDED_COLUMNS.each do |column|
+      it "does not include the #{column} column" do
+        columns.should_not include column
+      end
+    end
+
   end
 
   context "with min_bid_override set" do
@@ -815,7 +1045,6 @@ describe Offer do
       end
     end
 
-
     context "when SDK-less is enabled" do
       before :each do
         @offer.device_types = %w( android ).to_json
@@ -856,6 +1085,33 @@ describe Offer do
         @offer.should_not be_valid
       end
     end
+
+    context "when daily_cap_type is specified" do
+      it "allows blank values" do
+        @offer.daily_cap_type = ''
+        @offer.should be_valid
+      end
+
+      it "allows nil" do
+        @offer.daily_cap_type = nil
+        @offer.should be_valid
+      end
+
+      it "allows :budget" do
+        @offer.daily_cap_type = :budget
+        @offer.should be_valid
+      end
+
+      it "allows :installs" do
+        @offer.daily_cap_type = :installs
+        @offer.should be_valid
+      end
+
+      it "disallows other values" do
+        @offer.daily_cap_type = :something
+        @offer.should_not be_valid
+      end
+    end
   end
 
   describe '#missing_app_store_id?' do
@@ -892,48 +1148,115 @@ describe Offer do
     end
   end
 
-  context "An App Offer for a free app" do
-    before :each do
-      Offer.any_instance.stub(:cache) # for some reason the acts_as_cacheable stuff screws up the ability to stub methods as expected
-      @offer = FactoryGirl.create(:app).primary_offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+  describe '#clone_and_save!' do
+    it 'uses fresh created_at, updated_at, and tapjoy_enabled values' do
+      new_offer = @offer.clone_and_save!
+      new_offer.created_at.should_not == @offer.created_at
+      new_offer.updated_at.should_not == @offer.updated_at
+      new_offer.tapjoy_enabled.should be_false
     end
+
+    it 'uses the min_bid amount if necessary' do
+      @offer.bid = @offer.min_bid + 1
+      new_offer = @offer.clone_and_save!
+      new_offer.bid.should == @offer.bid
+
+      @offer.bid = @offer.min_bid - 1
+      new_offer = @offer.clone_and_save!
+      new_offer.bid.should == @offer.min_bid
+    end
+
+    it 'copies overridden icon' do
+      @offer = @offer.target # need to use the HasOneAssociation's "target" in order for stubbing to work
+
+      @offer.icon_id_override = UUIDTools::UUID.random_create.to_s
+
+      new_offer = @offer.clone
+      new_offer.should_receive(:save_icon!).with("image_data", true).and_return(nil)
+      @offer.stub(:clone).and_return(new_offer)
+
+      s3object = FakeObject.new("")
+      s3object.write("image_data")
+      @offer.stub(:icon_s3_object).and_return(s3object)
+
+      @offer.clone_and_save!
+    end
+  end
+
+  context "An App Offer for a free app" do
+    # need to use the HasOneAssociation's "target" in order for stubbing to work
+    let(:offer) { @offer.target }
 
     context "with banner_creatives" do
       before :each do
-        @offer.featured = true
-        @offer.banner_creatives = %w(480x320 320x480)
+        offer.banner_creatives = %w(320x50 640x100)
       end
 
       it "fails if asset data not provided" do
-        @offer.save.should be_false
-        @offer.errors[:custom_creative_480x320_blob].join.should == "480x320 custom creative file not provided."
-        @offer.errors[:custom_creative_320x480_blob].join.should == "320x480 custom creative file not provided."
+        offer.save.should be_false
+        offer.errors[:custom_creative_320x50_blob].join.should == "320x50 custom creative file not provided."
+        offer.errors[:custom_creative_640x100_blob].join.should == "640x100 custom creative file not provided."
       end
 
-      it "uploads assets to s3 when data is provided" do
-        @offer.banner_creative_480x320_blob = "image_data"
-        @offer.banner_creative_320x480_blob = "image_data"
+      context "when asset data is provided" do
+        before :each do
+          @image_320x50 = read_asset('custom_320x50.png', 'banner_ads')
+          @image_640x100 = read_asset('custom_640x100.png', 'banner_ads')
+          offer.banner_creative_320x50_blob = @image_320x50
+          offer.banner_creative_640x100_blob = @image_640x100
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+          offer.stub(:banner_creative_s3_object).and_return(FakeObject.new("dummy_data"))
+        end
 
-        @offer.save!
+        it "uploads assets to s3" do
+          offer.should_receive(:upload_banner_creative!).with(@image_320x50, "320x50").and_return(nil)
+          offer.should_receive(:upload_banner_creative!).with(@image_640x100, "640x100").and_return(nil)
+
+          offer.save!
+        end
+
+        it "keeps instance variables intact if a transaction error occurs" do
+          begin
+            ActiveRecord::Base.transaction do
+              offer.save!
+              raise "intentional transaction error"
+            end
+          rescue => e
+            raise e unless e.message == "intentional transaction error"
+          end
+
+          offer.banner_creative_320x50_blob.should == @image_320x50
+          offer.banner_creative_640x100_blob.should == @image_640x100
+          uploaded_banner_creatives = offer.send(:uploaded_banner_creatives) # private method
+          uploaded_banner_creatives['320x50'].should == [@image_320x50]
+          uploaded_banner_creatives['640x100'].should == [@image_640x100]
+
+          offer.save! # ensure that calling save again doesn't break
+        end
+
+        it "should clear instance variables if transaction succeeds" do
+          offer.save!
+
+          offer.banner_creative_320x50_blob.should be_empty
+          offer.banner_creative_640x100_blob.should be_empty
+          offer.instance_variable_get("@uploaded_banner_creatives").should be_nil
+        end
       end
 
       it "copies s3 assets over when cloned" do
-        class S3Object
-          def read; return "image_data"; end
-        end
+        s3object = FakeObject.new("")
+        s3object.write("image_data")
 
-        @offer.stub(:banner_creative_s3_object).with("480x320").and_return(S3Object.new)
-        @offer.stub(:banner_creative_s3_object).with("320x480").and_return(S3Object.new)
+        offer.stub(:banner_creative_s3_object).with("320x50").and_return(s3object)
+        offer.stub(:banner_creative_s3_object).with("640x100").and_return(s3object)
 
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "480x320").and_return(nil)
-        @offer.should_receive(:upload_banner_creative!).with("image_data", "320x480").and_return(nil)
+        clone = offer.clone
+        clone.instance_variable_set('@mock_proxy', nil) # reset rspec magic-ness, since we called .clone
 
-        clone = @offer.clone
+        clone.should_receive(:upload_banner_creative!).with("image_data", "320x50")
+        clone.should_receive(:upload_banner_creative!).with("image_data", "640x100")
+
         clone.bid = clone.min_bid
-
         clone.save!
       end
     end
@@ -1111,19 +1434,19 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests
         end
@@ -1147,7 +1470,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_impression_tracking_requests" do
+      describe "#queue_impression_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_impression_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1157,7 +1480,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_click_tracking_requests" do
+      describe "#queue_click_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_click_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1167,7 +1490,7 @@ describe Offer do
         end
       end
 
-      describe ".queue_conversion_tracking_requests" do
+      describe "#queue_conversion_tracking_requests" do
         it "should queue up the proper GET requests" do
           @offer.queue_conversion_tracking_requests(
             :timestamp        => @ts.to_i,
@@ -1326,12 +1649,6 @@ describe Offer do
         end
       end
     end
-    context 'Has a reward value with no payment' do
-      it 'should return an array with \'Has a reward value with no Payment\'' do
-        @offer.payment = 0
-        @offer.get_disabled_reasons.should == ['Has a reward value with no Payment']
-      end
-    end
   end
 
   context "show_rate_algorithms" do
@@ -1435,6 +1752,81 @@ describe Offer do
       it 'shows offers listed in TAPJOY_GAMES_RETARGETED_OFFERS list' do
         @retarget_offer.send(:tapjoy_games_retargeting_reject?, @device).should == false
       end
+    end
+  end
+
+  context "audition" do
+    it "should have default audition as Offer::Optimization::AUDITION_FACTORS[:medium]" do
+      Offer.new.audition_factor.should == Offer::Optimization::AUDITION_FACTORS[:medium]
+    end
+  end
+
+  context 'given a tracking offer' do
+    let(:video_button) { FactoryGirl.create :video_button }
+    let(:generic_offer) { FactoryGirl.create :generic_offer }
+
+    subject do
+      video_button.tracking_source_offer_id = generic_offer.primary_offer.id
+      video_button.save!
+      video_button.tracking_offer
+    end
+
+    it 'prevents the tracking offer from becoming a non-tracking offer' do
+      subject.tracking_for = nil
+      subject.save.should be_false
+      subject.errors[:tracking_for_id].should be
+    end
+  end
+
+  describe '#show_in_active_campaigns?' do
+    context 'VideoOffer, App, GenericOffer, ActionOffer, Coupon' do
+      it 'should return true if item_type is in context' do
+        ['VideoOffer', 'App', 'GenericOffer', 'ActionOffer', 'Coupon'].each do |offer|
+          @offer.item_type = offer
+          @offer.show_in_active_campaigns?.should be_true
+        end
+      end
+    end
+    context 'Unrelated offer' do
+      it 'should return false' do
+        @offer.item_type = 'FailOffer'
+        @offer.show_in_active_campaigns?.should be_false
+      end
+    end
+  end
+
+  describe '#is_coupon?' do
+    context 'is a coupon' do
+      it 'should return true' do
+        @offer.item_type = 'Coupon'
+        @offer.is_coupon?.should be_true
+      end
+    end
+    context 'is not a coupon' do
+      it 'should return false' do
+        @offer.item_type = 'ActionOffer'
+        @offer.is_coupon?.should be_false
+      end
+    end
+  end
+
+  describe '#calculate_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost)
+      @rank_boost.offer.calculate_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.rank_boost.should == @rank_boost.amount
+    end
+  end
+
+  describe '#calculate_optimized_rank_boost!' do
+    before :each do
+      @rank_boost = FactoryGirl.create(:rank_boost, :optimized => true)
+      @rank_boost.offer.calculate_optimized_rank_boost!
+    end
+    it 'has a rank_boost based on the records amount' do
+      @rank_boost.offer.optimized_rank_boost.should == @rank_boost.amount
     end
   end
 end

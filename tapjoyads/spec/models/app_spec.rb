@@ -16,6 +16,7 @@ describe App do
   it { should have_one :primary_app_metadata }
   it { should have_one :primary_app_metadata_mapping }
   it { should belong_to :partner }
+  it { should have_one :non_rewarded }
 
   # Check validations
   it { should validate_presence_of :partner }
@@ -696,6 +697,259 @@ describe App do
 
       it 'has available versions' do
         (@app.os_versions - %w( 7.0 )).should be_empty
+      end
+    end
+  end
+
+  describe '#primary_rewarded_featured_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_rewarded_featured_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary rewarded featured offer' do
+        @app.primary_rewarded_featured_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary rewarded featured offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_rewarded_featured_clone
+        @app.primary_rewarded_featured_offer.should === @offer
+        @app.primary_rewarded_featured_offer.should_not === other_offer
+      end
+    end
+  end
+
+  describe '#primary_non_rewarded_featured_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_non_rewarded_featured_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary non-rewarded featured offer' do
+        @app.primary_non_rewarded_featured_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary non-rewarded featured offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_non_rewarded_featured_clone
+        @app.primary_non_rewarded_featured_offer.should === @offer
+        @app.primary_non_rewarded_featured_offer.should_not === other_offer
+      end
+    end
+  end
+
+  describe '#primary_non_rewarded_offer' do
+    before :each do
+      @app = FactoryGirl.create :non_live_app
+      @offer = @app.primary_offer.create_non_rewarded_clone
+    end
+
+    context 'with non-live app' do
+      it 'returns primary non-rewarded offer' do
+        @app.primary_non_rewarded_offer.should == @offer
+      end
+    end
+
+    context 'with live app' do
+      it 'returns primary non-rewarded offer' do
+        @app.add_app_metadata('android.GooglePlay', 'xyz123', true)
+        @app.reload
+        app_metadata = @app.add_app_metadata('android.GFan', 'abcdefg', false)
+        @app.reload
+        other_offer = @app.app_metadata_mappings.where(:is_primary => false).first.primary_offer.create_non_rewarded_clone
+        @app.primary_non_rewarded_offer.should === @offer
+        @app.primary_non_rewarded_offer.should_not === other_offer
+      end
+    end
+  end
+
+  describe '#videos_cache_on?' do
+    before :each do
+      @app = FactoryGirl.create :app
+    end
+
+    context 'when the connection type is wifi' do
+      before :each do
+        @connection = 'wifi'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should be true if caching over wifi is enabled' do
+        @app.update_attributes(:videos_cache_wifi => true)
+        @app.should be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true if caching over wifi is disabled' do
+        @app.update_attributes(:videos_cache_wifi => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+    end
+
+    context 'when the connection type is mobile' do
+      before :each do
+        @connection = 'mobile'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should be true if caching over 3g is enabled' do
+        @app.update_attributes(:videos_cache_3g => true)
+        @app.should be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true if caching over 3g is disabled' do
+        @app.update_attributes(:videos_cache_3g => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+    end
+
+    context 'when the connection type is other' do
+      before :each do
+        @connection = 'other'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_cache_on(@connection)
+      end
+
+      it 'should not be true' do
+        @app.should_not be_videos_cache_on(@connection)
+      end
+    end
+  end
+
+  describe '#videos_stream_on?' do
+    before :each do
+      @app = FactoryGirl.create :app
+    end
+
+    context 'when the connection type is wifi' do
+      before :each do
+        @connection = 'wifi'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+
+      it 'should be true if videos are enabled' do
+        @app.should be_videos_stream_on(@connection)
+      end
+    end
+
+    context 'when the connection type is mobile' do
+      before :each do
+        @connection = 'mobile'
+      end
+
+      it 'should not be true if videos are disabled' do
+        @app.update_attributes(:videos_enabled => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+
+      it 'should be true if streaming over 3g is enabled' do
+        @app.update_attributes(:videos_stream_3g => true)
+        @app.should be_videos_stream_on(@connection)
+      end
+
+      it 'should not be true if streaming over 3g is disabled' do
+        @app.update_attributes(:videos_stream_3g => false)
+        @app.should_not be_videos_stream_on(@connection)
+      end
+    end
+
+    context 'when the connection type is other' do
+      before :each do
+        @connection = 'other'
+      end
+
+      it 'should not be true' do
+        @app.should_not be_videos_stream_on(@connection)
+      end
+    end
+  end
+
+  describe '#build_non_rewarded' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+      @partner = @app.partner
+      @currency = FactoryGirl.create(:currency,
+                                     :conversion_rate => 0,
+                                     :callback_url => Currency::NO_CALLBACK_URL,
+                                     :name => Currency::NON_REWARDED_NAME,
+                                     :app_id => @app.id,
+                                     :partner => @partner)
+      Currency.stub(:new).and_return(@currency)
+    end
+    it 'returns the currency object' do
+      @app.build_non_rewarded.should == @currency
+    end
+  end
+
+  describe '#associated_offers' do
+    subject { FactoryGirl.create(:app) }
+
+    it 'excludes the primary offer' do
+      subject.associated_offers.should_not include subject.primary_offer
+    end
+
+    context 'by default' do #no params...
+      context 'given secondary offers' do
+        let!(:secondary_offers) { 3.times.map { o = subject.primary_offer.clone; o.save!; o } }
+
+        it 'includes all secondary offers' do
+          secondary_offers.all? { |offer| subject.associated_offers.include?(offer) }.should be_true
+        end
+      end
+    end
+
+    context 'called with a key-value list of properties' do
+      let(:properties) { {:foo => :bar} }
+
+      context 'given an app with secondary offers' do
+        let(:offer_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(:bar)
+          o
+        end
+
+        let(:offer_not_matching_properties) do
+          o = subject.primary_offer.clone
+          o.stub(:foo).and_return(nil)
+          o
+        end
+
+        before(:each) { subject.stub(:offers).and_return [ offer_matching_properties, offer_not_matching_properties ] }
+
+        it 'excludes secondary offers not matching those properties' do
+          subject.associated_offers(properties).should_not include offer_not_matching_properties
+        end
+
+        it 'includes secondary offers matching those properties' do
+          subject.associated_offers(properties).should include offer_matching_properties
+        end
       end
     end
   end

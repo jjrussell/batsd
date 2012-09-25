@@ -17,9 +17,9 @@ class OptimizedOfferList
     def cache_all
       s3_optimization_keys.each do |key|
         begin
-          cache_offer_list(key)
+          Sqs.send_message(QueueNames::CACHE_OPTIMIZED_OFFER_LIST, key)
         rescue
-          puts "failed to cache #{key}"
+          puts "failed to insert CACHE_OPTIMIZED_OFFER_LIST job for #{key} into queue"
         end
       end
     end
@@ -40,21 +40,41 @@ class OptimizedOfferList
       offers
     end
 
+    def delete_cached_offer_list(cache_key)
+      group = 0
+      until (offer_group = Mc.distributed_get("#{cache_key}.#{group}")).nil?
+        Mc.distributed_delete("#{cache_key}.#{group}")
+        group += 1
+      end
+    end
+
     def cache_offer_list(key)
       # TODO: New relic alerts?
       cache_key = cache_key_for_options(options_for_s3_key(key))
-      offers_json = s3_json_offer_data(key)
-      Mc.distributed_delete(cache_key) and return if offers_json['enabled'] == 'false'
+      offers_json, last_modified_at = s3_json_offer_data(key)
+      if offers_json['enabled'] == 'false'
+        delete_cached_offer_list(cache_key)
+        return
+      end
 
       offers = offers_json['offers'].collect do |offer_hash|
         begin
-          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).tap do |offer|
-            offer.optimization_override!(offer_hash, false)
-          end.for_caching
+          next unless Offer.find(offer_hash['offer_id']).enabled?
+          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).optimization_override(offer_hash, false).for_caching
         rescue
           puts "Error with #{offer_hash.inspect}" and next
         end
       end.compact
+
+      offers = offers.sort_by {|offer| -offer.rank_score }
+      current_time = Time.now
+      cached_offer_list = CachedOfferList.new
+      post_processed_offer_with_rank = []
+
+      offers.each_with_index do |offer, i|
+        offer.cached_offer_list_id = cached_offer_list.id
+        post_processed_offer_with_rank << {'offer_id' => offer.id, 'rank' => (i + 1)}
+      end
 
       group = 0
       puts "saving #{cache_key} to Memcache"
@@ -80,6 +100,14 @@ class OptimizedOfferList
       # rescue
       #   puts "saving #{cache_key} to S3 failed"
       # end
+
+      cached_offer_list.generated_at = last_modified_at
+      cached_offer_list.cached_at = current_time
+      cached_offer_list.memcached_key = cache_key
+      cached_offer_list.offer_list = post_processed_offer_with_rank
+      cached_offer_list.cached_offer_type = 'optimized'
+      cached_offer_list.source = key
+      cached_offer_list.save
 
       Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
       # s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump([]))
@@ -138,8 +166,9 @@ class OptimizedOfferList
     end
 
     def s3_json_offer_data(id)
-      json = s3_optimization_bucket.objects[id].read
-      JSON.parse(json)
+      s3_object = s3_optimization_bucket.objects[id]
+      json = s3_object.read
+      [JSON.parse(json), s3_object.last_modified]
     end
 
     def s3_optimization_bucket

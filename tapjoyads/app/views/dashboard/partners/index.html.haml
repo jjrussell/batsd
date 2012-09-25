@@ -7,12 +7,18 @@
 - unless current_user.role_symbols.include?(:agency)
   .right
     Managed by:
-    - options = options_for_select(@account_managers, params[:id])
-    = select_tag('managed_by', options)
+    - managers = options_for_select(@account_managers, params[:id])
+    = select_tag('managed_by', managers)
+
   = form_tag(partners_path, :method => :get, :class => 'tjform') do
     = label_tag(:q, "Name or Email Address:")
     = text_field_tag(:q, params[:q], :size => '40')
     = submit_tag('Search')
+
+  .left
+    By Country:
+    - countries = options_for_select(list_of_countries, @country || nil)
+    = select_tag('country', countries, :include_blank => true)
 
 = render :partial => "shared/partner_table", :locals => { :partners => @partners }
 = will_paginate(@partners)
@@ -60,25 +66,35 @@
         }
       });
 
-      $('td.account_manager select,td.sales_rep select').change(function(){
+      $('#country').change(function(){
+        if ($(this).val() == '') {
+          location.href = '/partners/by_country/all';
+        } else {
+          location.href = '/partners/by_country/' + $(this).val();
+        }
+      });
+
+      $('td.account_manager select,td.sales_rep select, td.country select').change(function(){
         var form = $(this).parent('form');
         var url = form.attr('action');
         var key = $(this).attr('name');
         var data = {};
         data[key] = [$(this).val()];
         form.siblings('img').show();
+
         $.ajax({
           data: data,
-          error: function() {
-            form.siblings('.message').show().text('fail!!!');
-            form.siblings('img').hide();
-          },
-          success: function() {
-            form.siblings('.message').show().text('success!');
-            form.siblings('img').hide();
-          },
           type: 'put',
           url: url
+        });
+
+        $(form).ajaxComplete(function(e,xhr,settings) {
+          $(this).siblings('img').hide();
+
+          var rsp = xhr.getResponseHeader('X-Message');
+          $(this).siblings('.message').show().text(rsp);
+          $(this).siblings('.message').fadeOut(8000);
+
         });
       });
 
@@ -91,3 +107,4 @@
         },
       });
     });
+

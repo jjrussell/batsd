@@ -22,24 +22,9 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       raise SkippedSendCurrency.new("not attempting to ping the callback for #{reward.currency_id}")
     end
 
-    currency = Currency.find_in_cache(reward.currency_id, true)
+    currency = Currency.find_in_cache(reward.currency_id, :do_lookup => true)
     publisher_user_id = reward.publisher_user_id
     callback_url = currency.callback_url
-
-    if callback_url == Currency::PLAYDOM_CALLBACK_URL
-      first_char = publisher_user_id[0, 1]
-      publisher_user_id = publisher_user_id[1..-1]
-
-      if first_char == 'F'
-        callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/facebook/fp/main' # facebook url
-      elsif first_char == 'M' || first_char == 'P'
-        callback_url = 'http://offer-dynamic-lb.playdom.com/tapjoy/mob/myspace/fp/main' # myspace/iphone url
-      else
-        reward.send_currency_status = 'InvalidPlaydomUserId'
-        reward.save
-        return
-      end
-    end
 
     unless callback_url == Currency::TAPJOY_MANAGED_CALLBACK_URL
       mark = '?'
@@ -51,7 +36,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         "mac_address=#{reward.mac_address}",
       ]
       if currency.send_offer_data?
-        offer = Offer.find_in_cache(reward.offer_id, true)
+        offer = Offer.find_in_cache(reward.offer_id, :do_lookup => true)
         url_params += [
           "storeId=#{CGI::escape(offer.store_id_for_feed)}",
           "application=#{CGI::escape(offer.name)}",

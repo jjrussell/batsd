@@ -1,0 +1,49 @@
+- @page_title = "WebRequest for offer: #{@offer.name_with_suffix}"
+
+.icon= link_to image_tag(@offer.get_icon_url, :size => '57x57'), statz_path(@offer)
+
+%h1= link_to @offer.name_with_suffix, statz_path(@offer)
+
+.clear
+
+- if @last_run
+  %table#admin_devices_table.tablesorter
+    %thead
+      %tr
+        %th Parameter Name
+        %th Value
+    %tbody
+      - @last_run.attribute_names.each do |key|
+        - next unless @last_run.respond_to?(key) && val = @last_run.send(key)
+        - next if ['id', 'key'].include?(key)
+        %tr
+          %td= key
+          %td= val
+
+  - if @runs.size > 1
+    %h4 Previous Runs
+    %ul
+      - @runs.each do |run|
+        %li= last_run_time_link(run)
+
+  - content_for :page_styles do
+    :plain
+      .icon {
+        float: left;
+        padding: 20px 0;
+      }
+
+      table {
+        border-collapse: separate;
+      }
+
+      form {
+        padding-bottom: 20px;
+      }
+
+      .tjform input[type=submit] {
+        margin: 0;
+        float: none;
+      }
+- else
+  This device has never run on this offer.

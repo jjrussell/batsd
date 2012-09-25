@@ -4,7 +4,7 @@ module Offer::UrlGeneration
   end
 
   def destination_url(options)
-    if item_type != 'VideoOffer' && instructions.present?
+    if is_coupon? || (item_type != 'VideoOffer' && instructions.present?)
       instructions_url(options)
     else
       complete_action_url(options)
@@ -38,8 +38,12 @@ module Offer::UrlGeneration
 
     if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
       "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Protocol Handler'
+      "#{API_URL_EXT}/offer_triggered_actions/load_app?data=#{ObjectEncryptor.encrypt(data)}"
     elsif item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Login'
       "#{API_URL_EXT}/offer_triggered_actions/fb_login?data=#{ObjectEncryptor.encrypt(data)}"
+    elsif is_coupon?
+      "#{API_URL}/coupon_instructions/new?data=#{ObjectEncryptor.encrypt(data)}"
     else
       "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
     end
@@ -58,85 +62,111 @@ module Offer::UrlGeneration
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    final_url = url.gsub('TAPJOY_UDID', udid.to_s)
+    # these item types don't replace any macros
+    case item_type
+      when 'VideoOffer', 'TestVideoOffer'
+        params = {
+          :offer_id          => id,
+          :app_id            => publisher_app_id,
+          :currency_id       => currency.id,
+          :udid              => udid,
+          :publisher_user_id => publisher_user_id
+        }
+        return "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+      when 'DeeplinkOffer'
+        params = { :udid => udid, :id => currency.id, :click_key => click_key }
+        return "#{WEBSITE_URL}/earn?data=#{ObjectEncryptor.encrypt(params)}"
+    end
+
+    # now we'll replace macros and whatnot
+    final_url = url.clone
+
+    ## TODO remove this when Apple stops whelering
+    if final_url =~ /phobos\.apple\.com\/WebObjects\/MZStore\.woa\/wa\/viewSoftware\?id=/
+      final_url.gsub!('phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=', 'itunes.apple.com/app//id')
+    end
+
+    # deal with non-item_type-specific macros
     final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
     final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
+
+    # Not sure why ActionOffers don't respect this macro, but not going to mess with it, without a full understanding
+    final_url.gsub!('TAPJOY_UDID', udid.to_s) unless item_type == 'ActionOffer'
+
+    # now for item_type-specific macros
     case item_type
-    when 'App'
-      final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
-      final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
-      if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
-        subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
-        final_url.sub!('market://search?q=', subbed_string)
-      end
-    when 'EmailOffer'
-      final_url += "&publisher_app_id=#{publisher_app_id}"
-    when 'GenericOffer'
-      advertiser_app_id = click_key.to_s.split('.')[1]
-      final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
-      final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
-      final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
-      final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
-      data = {
-        :offer_id           => id,
-        :currency_id        => currency.id,
-        :display_multiplier => display_multiplier
-      }
-      final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
-      if has_variable_payment?
-        extra_params = {
-          :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
-          :cvr      => currency.spend_share * currency.conversion_rate / 100,
-          :currency => CGI::escape(currency.name),
+      when 'App'
+        final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+        final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
+        if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
+          subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
+          final_url.sub!('market://search?q=', subbed_string)
+        end
+      when 'EmailOffer'
+        final_url << "&publisher_app_id=#{publisher_app_id}"
+      when 'GenericOffer'
+        advertiser_app_id = click_key.to_s.split('.')[1]
+        final_url.gsub!('TAPJOY_GENERIC_INVITE', advertiser_app_id) if advertiser_app_id
+        final_url.gsub!('TAPJOY_GENERIC', click_key.to_s)
+        final_url = "#{WEBSITE_URL}#{final_url}" if final_url.include?('TJM_EID')
+        final_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(publisher_app_id))
+        data = {
+          :offer_id           => id,
+          :currency_id        => currency.id,
+          :display_multiplier => display_multiplier
         }
-        mark = '?'
-        mark = '&' if final_url =~ /\?/
-        final_url += "#{mark}#{extra_params.to_query}"
-      end
-    when 'ActionOffer'
-      final_url = url.gsub('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
-    when 'SurveyOffer'
-      final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
-      final_url = ObjectEncryptor.encrypt_url(final_url)
-    when 'VideoOffer', 'TestVideoOffer'
-      params = {
-        :offer_id           => id,
-        :app_id             => publisher_app_id,
-        :currency_id        => currency.id,
-        :udid               => udid,
-        :publisher_user_id  => publisher_user_id
-      }
-      final_url = "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
-    when 'DeeplinkOffer'
-      params = { :udid => udid, :id => currency.id, :click_key => click_key }
-      data=ObjectEncryptor.encrypt(params)
-      final_url = "#{WEBSITE_URL}/earn?data=#{data}"
+        final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
+        if has_variable_payment?
+          extra_params = {
+            :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
+            :cvr      => currency.spend_share * currency.conversion_rate / 100,
+            :currency => CGI::escape(currency.name),
+          }
+          mark = '?'
+          mark = '&' if final_url =~ /\?/
+          final_url += "#{mark}#{extra_params.to_query}"
+        end
+      when 'SurveyOffer'
+        final_url.gsub!('TAPJOY_SURVEY', click_key.to_s)
+      when 'Coupon'
+        params = {
+          :offer_id           => id,
+          :currency_id        => currency.id,
+          :display_multiplier => display_multiplier,
+          :app_id             => publisher_app_id
+        }
+        final_url = "#{API_URL}/coupons/complete?data=#{ObjectEncryptor.encrypt(params)}"
     end
+
+    # this is separated from case statement for code readability / separation of concerns
+    return ObjectEncryptor.encrypt_url(final_url) if item_type == 'SurveyOffer'
+
     final_url
   end
 
   def click_url(options)
-    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
-    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
-    udid               = options.delete(:udid)               { |k| raise "#{k} is a required argument" }
-    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
-    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
-    app_version        = options.delete(:app_version)        { nil }
-    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
-    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
-    exp                = options.delete(:exp)                { nil }
-    primary_country    = options.delete(:primary_country)    { nil }
-    language_code      = options.delete(:language_code)      { nil }
-    display_multiplier = options.delete(:display_multiplier) { 1 }
-    device_name        = options.delete(:device_name)        { nil }
-    library_version    = options.delete(:library_version)    { nil }
-    gamer_id           = options.delete(:gamer_id)           { nil }
-    os_version         = options.delete(:os_version)         { nil }
-    mac_address        = options.delete(:mac_address)        { nil }
-    device_type        = options.delete(:device_type)        { nil }
-    offerwall_rank     = options.delete(:offerwall_rank)     { nil }
-    view_id            = options.delete(:view_id)            { nil }
-    date_of_birth      = options.delete(:date_of_birth)      { nil }
+    publisher_app         = options.delete(:publisher_app)        { |k| raise "#{k} is a required argument" }
+    publisher_user_id     = options.delete(:publisher_user_id)    { |k| raise "#{k} is a required argument" }
+    udid                  = options.delete(:udid)                 { |k| raise "#{k} is a required argument" }
+    currency_id           = options.delete(:currency_id)          { |k| raise "#{k} is a required argument" }
+    source                = options.delete(:source)               { |k| raise "#{k} is a required argument" }
+    app_version           = options.delete(:app_version)          { nil }
+    viewed_at             = options.delete(:viewed_at)            { |k| raise "#{k} is a required argument" }
+    displayer_app_id      = options.delete(:displayer_app_id)     { nil }
+    exp                   = options.delete(:exp)                  { nil }
+    primary_country       = options.delete(:primary_country)      { nil }
+    language_code         = options.delete(:language_code)        { nil }
+    display_multiplier    = options.delete(:display_multiplier)   { 1 }
+    device_name           = options.delete(:device_name)          { nil }
+    library_version       = options.delete(:library_version)      { nil }
+    gamer_id              = options.delete(:gamer_id)             { nil }
+    os_version            = options.delete(:os_version)           { nil }
+    mac_address           = options.delete(:mac_address)          { nil }
+    device_type           = options.delete(:device_type)          { nil }
+    offerwall_rank        = options.delete(:offerwall_rank)       { nil }
+    view_id               = options.delete(:view_id)              { nil }
+    store_name            = options.delete(:store_name)           { nil }
+    date_of_birth         = options.delete(:date_of_birth)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -152,34 +182,37 @@ module Offer::UrlGeneration
     when 'ReengagementOffer'  then 'reengagement'
     when 'SurveyOffer'        then "survey"
     when 'DeeplinkOffer'      then 'deeplink'
+    when 'Coupon'             then 'coupon'
     else
       raise "click_url requested for an offer that should not be enabled. offer_id: #{id}"
     end
 
     data = {
-      :advertiser_app_id  => item_id,
-      :publisher_app_id   => publisher_app.id,
-      :publisher_user_id  => publisher_user_id,
-      :udid               => udid,
-      :source             => source,
-      :offer_id           => id,
-      :app_version        => app_version,
-      :viewed_at          => viewed_at.to_f,
-      :currency_id        => currency_id,
-      :primary_country    => primary_country,
-      :displayer_app_id   => displayer_app_id,
-      :exp                => exp,
-      :language_code      => language_code,
-      :display_multiplier => display_multiplier,
-      :device_name        => device_name,
-      :library_version    => library_version,
-      :gamer_id           => gamer_id,
-      :mac_address        => mac_address,
-      :os_version         => os_version,
-      :device_type        => device_type,
-      :offerwall_rank     => offerwall_rank,
-      :view_id            => view_id,
-      :date_of_birth      => date_of_birth
+      :advertiser_app_id    => item_id,
+      :publisher_app_id     => publisher_app.id,
+      :publisher_user_id    => publisher_user_id,
+      :udid                 => udid,
+      :source               => source,
+      :offer_id             => id,
+      :app_version          => app_version,
+      :viewed_at            => viewed_at.to_f,
+      :currency_id          => currency_id,
+      :primary_country      => primary_country,
+      :displayer_app_id     => displayer_app_id,
+      :exp                  => exp,
+      :language_code        => language_code,
+      :display_multiplier   => display_multiplier,
+      :device_name          => device_name,
+      :library_version      => library_version,
+      :gamer_id             => gamer_id,
+      :mac_address          => mac_address,
+      :os_version           => os_version,
+      :device_type          => device_type,
+      :offerwall_rank       => offerwall_rank,
+      :view_id              => view_id,
+      :store_name           => store_name,
+      :cached_offer_list_id => cached_offer_list_id,
+      :date_of_birth        => date_of_birth,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

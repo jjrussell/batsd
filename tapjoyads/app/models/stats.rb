@@ -110,6 +110,15 @@ class Stats < SimpledbResource
     "stats.#{stat_name_string}.#{app_id}.#{(time.to_i / 1.hour).to_i}"
   end
 
+  def self.get_segment_stat(stat, store_name)
+    "#{stat}.#{store_name}" if store_name && Stats.segment_by_store?(stat)
+  end
+
+  def self.segment_by_store?(stat)
+    (WebRequest::STAT_TO_PATH_MAP[stat] && WebRequest::STAT_TO_PATH_MAP[stat][:segment_by_store]) ||
+    (Conversion::STAT_TO_REWARD_TYPE_MAP[stat] && Conversion::STAT_TO_REWARD_TYPE_MAP[stat][:segment_by_store])
+  end
+
   ##
   # Updates the count of a stat for a given hour.
   # stat_name_or_path: Which stat to update

@@ -148,4 +148,23 @@ module StatzHelper
 
     tr_classes.compact.join(' ')
   end
+
+  def last_run_time_link(*args)
+    if args.size == 1 && args.first.is_a?(AdminDeviceLastRun)
+      run = args.first
+      link_to(run.time, device_last_run_statz_path(
+        run.app_id, run.udid, run.time
+      ))
+    elsif args.size == 3
+      text, item_id, udid = args
+
+      if text != 'Never'
+        link_to(text, device_last_run_statz_path(item_id, udid))
+      else
+        text
+      end
+    else
+      raise ArgumentError
+    end
+  end
 end

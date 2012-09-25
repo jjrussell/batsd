@@ -112,11 +112,19 @@ describe Dashboard::OffersController do
   end
 
   describe '#edit' do
+    context 'offer id is given in place of app id' do
+      it 'gracefully redirects' do
+        offer = FactoryGirl.create :action_offer, :app => @app
+        get(:edit, :app_id => offer.id, :id => offer.id)
+        response.should redirect_to(:controller => 'dashboard/apps', :action => :show, :id => @app.id)
+      end
+    end
+
     context 'when app offer is enabled' do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => true)
         @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
         mock_find.stub(:find).with('oid').and_return(@offer)
@@ -133,7 +141,7 @@ describe Dashboard::OffersController do
       before :each do
         @offer = mock('mock offer', :tapjoy_enabled? => false)
         @offer.should_receive(:app_metadata).and_return(@app.primary_app_metadata)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(@offer)
         mock_find = mock('test')
         mock_find.stub(:find).with('oid').and_return(@offer)
@@ -228,7 +236,7 @@ describe Dashboard::OffersController do
       it 'returns percentile and ordinalized percentiles in a json response' do
         offer = mock('offer', :percentile => 24)
         offer.stub(:bid=)
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @controller.stub(:log_activity).with(offer)
         @app.stub(:primary_offer).and_return(offer)
 
@@ -244,9 +252,9 @@ describe Dashboard::OffersController do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(false)
         @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only,
           :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
-          :exclusion_prerequisite_offer_ids]
+          :exclusion_prerequisite_offer_ids, :daily_cap_type]
 
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @offer = mock('offer')
         @controller.stub(:log_activity).with(@offer)
         @app.stub(:primary_offer).and_return(@offer)
@@ -312,24 +320,63 @@ describe Dashboard::OffersController do
       end
     end
 
-    context 'when permitted to edit->dashboard_statz' do
+    context 'given a caller who is permitted to edit->dashboard_statz' do
       before :each do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(true)
-        @safe_attributes = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
-          :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
-          :exclusion_prerequisite_offer_ids, :tapjoy_enabled, :allow_negative_balance,
-          :pay_per_click, :name, :name_suffix, :show_rate, :min_conversion_rate,
-          :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
-          :dma_codes, :regions, :carriers, :cities ]
-        @controller.stub(:find_app).with(@app.id).and_return(@app)
+        @controller.stub(:find_app).with(@app.id, anything).and_return(@app)
         @offer = mock('offer')
-        @controller.stub(:log_activity).with(@offer)
+        @controller.stub(:log_activity).and_return(true)
         @app.stub(:primary_offer).and_return(@offer)
       end
 
-      it 'will call with expanded attributes' do
-        @offer.stub(:safe_update_attributes).with({}, @safe_attributes).once.and_return(true)
-        post(:update, :app_id => @app.id, :offer => {})
+      SAFE_ATTRIBUTES = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
+            :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
+            :exclusion_prerequisite_offer_ids, :tapjoy_enabled, :allow_negative_balance,
+            :pay_per_click, :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
+            :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,
+            :dma_codes, :regions, :carriers, :cities, :rate_filter_override, :daily_cap_type,
+            :x_partner_prerequisites, :x_partner_exclusion_prerequisites ]
+
+      it "can update only safe atrtibutes on the related Offer" do
+        @offer.stub(:safe_update_attributes) do |garbage, attributes|
+          attributes.each { |attribute| SAFE_ATTRIBUTES.should include attribute }
+          post(:update, :app_id => @app.id, :offer => {})
+        end
+      end
+
+      context "can update every safe attribute of the related Offer," do
+        SAFE_ATTRIBUTES.each do |attribute|
+          it "including '#{attribute}'" do
+            @offer.should_receive(:safe_update_attributes) { |garbage, attributes| attributes.should include attribute }
+            post(:update, :app_id => @app.id, :offer => {})
+          end
+        end
+      end
+    end
+
+    context 'when a daily limited conversion cap gets changed to an unlimited one' do
+      before :each do
+        @offer = @app.primary_offer
+        @offer.daily_budget = 1000
+        @offer.daily_cap_type = 'budget'
+        @offer.save
+        @controller.stub(:log_activity).with(@offer)
+        @params = { :id           => @offer.id,
+                    :app_id       => @app.id,
+                    :daily_budget => 'off',
+                    :offer        => {} }
+      end
+
+      it 'clears its daily cap type' do
+        put :update, @params
+        @offer.reload
+        @offer.daily_cap_type.should be_nil
+      end
+
+      it 'zeros out its daily budget' do
+        put :update, @params
+        @offer.reload
+        @offer.daily_budget.should be_zero
       end
     end
   end

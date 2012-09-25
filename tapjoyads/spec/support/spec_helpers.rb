@@ -28,4 +28,12 @@ module SpecHelpers
     RightAws::SdbInterface.unstub!(:new)
     SimpledbResource.reset_connection
   end
+
+  def read_asset(name, directory)
+    if RUBY_VERSION < '1.9'
+      File.read("#{Rails.root}/spec/assets/#{directory}/#{name}")
+    else
+      File.read("#{Rails.root}/spec/assets/#{directory}/#{name}", :encoding => "BINARY")
+    end
+  end
 end

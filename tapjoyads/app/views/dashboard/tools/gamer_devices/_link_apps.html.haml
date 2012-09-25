@@ -11,9 +11,9 @@
             .app-name.left= app[1].app_name
 
 - content_for :page_head do
-  = css_tag 'lib/screw-spinner'
-  = css_tag 'tools/link_apps'
+  = stylesheet_link_tag 'lib/screw-spinner'
+  = stylesheet_link_tag 'tools/link_apps'
 
 - content_for :included_javascripts do
-  = js_tag 'lib/screw-spinner'
-  = js_tag 'tools/link-apps'
+  = javascript_include_tag 'lib/screw-spinner'
+  = javascript_include_tag 'tools/link-apps'

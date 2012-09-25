@@ -17,6 +17,10 @@ class ClickController < ApplicationController
     redirect_to(destination_url)
   end
 
+  def determine_link_affiliates
+    @itunes_link_affiliate = Linkshare.affiliate_token(geoip_data[:country])
+  end
+
   def reengagement
     create_click('reengagement')
     handle_pay_per_click
@@ -63,6 +67,12 @@ class ClickController < ApplicationController
   def deeplink
     create_click('deeplink')
     handle_pay_per_click
+
+    redirect_to(destination_url)
+  end
+
+  def coupon
+    create_click('coupon')
 
     redirect_to(destination_url)
   end
@@ -254,6 +264,7 @@ class ClickController < ApplicationController
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
+    update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 
   def save_web_request
@@ -298,6 +309,8 @@ class ClickController < ApplicationController
     click.offerwall_rank         = params[:offerwall_rank]
     click.device_type            = params[:device_type]
     click.geoip_country          = geoip_data[:country]
+    click.store_name             = params[:store_name].blank? && @web_request ? @web_request.store_name : params[:store_name]
+    click.cached_offer_list_id   = params[:cached_offer_list_id]
 
     click.save
 

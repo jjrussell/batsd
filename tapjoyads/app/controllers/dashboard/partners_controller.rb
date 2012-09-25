@@ -1,14 +1,16 @@
 class Dashboard::PartnersController < Dashboard::DashboardController
   layout 'tabbed'
-
   current_tab :partners
+
+
 
   filter_access_to :all
 
   before_filter :find_partner, :only => [ :show, :make_current, :manage, :update, :edit, :new_transfer, :create_transfer, :reporting, :set_tapjoy_sponsored, :new_dev_credit, :create_dev_credit]
-  before_filter :get_account_managers, :only => [ :index, :managed_by ]
+  before_filter :get_account_managers, :only => [ :index, :managed_by, :by_country ]
   before_filter :set_platform, :only => [ :reporting ]
   after_filter :save_activity_logs, :only => [ :update, :create_transfer ]
+  after_filter :flash_to_headers, :only => [:update]
 
   def index
     if current_user.role_symbols.include?(:agency)
@@ -19,6 +21,16 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     else
       @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
     end
+  end
+
+  def by_country
+    if params[:country] == 'all'
+      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
+    else
+      @partners = Partner.scoped_by_country(params[:country]).paginate(:page => params[:page])
+      @country = params[:country]
+    end
+    render 'index'
   end
 
   def managed_by
@@ -54,6 +66,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
     @partner.name = params[:partner][:name]
     @partner.contact_name = params[:partner][:contact_name]
     @partner.contact_phone = params[:partner][:contact_phone]
+    @partner.country = params[:partner][:country]
     @partner.users << current_user
 
     if @partner.save
@@ -83,7 +96,18 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       params[:partner][:sales_rep] = sales_rep
     end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos, :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners, :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos, :cs_contact_email, :sales_rep, :max_deduction_percentage, :discount_all_offer_types ]
+    if params[:partner].include?(:country)
+      params[:partner][:country] = params[:partner][:country].first if params[:partner][:country].is_a? Array
+    end
+
+    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos,
+                        :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners,
+                        :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos,
+                        :cs_contact_email, :sales_rep, :max_deduction_percentage, :discount_all_offer_types, :country ]
+    safe_attributes += [ :use_server_whitelist, :enable_risk_management ] if current_user.is_admin?
+
+    params[:partner].delete(:name) unless current_user.employee?
+
     name_was = @partner.name
     if @partner.safe_update_attributes(params[:partner], safe_attributes)
       if name_was != @partner.name
@@ -234,5 +258,17 @@ private
     @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort
     @account_managers.unshift(['All', 'all'])
     @account_managers.push(['Not assigned', 'none'])
+  end
+
+  def flash_to_headers
+    return unless request.xhr?
+
+    if flash[:error]
+      response.headers['X-Message'] = flash[:error]
+    elsif flash[:notice]
+      response.headers['X-Message'] = flash[:notice]
+    end
+
+    flash.discard
   end
 end

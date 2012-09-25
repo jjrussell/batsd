@@ -41,7 +41,7 @@
         = f.label :callback_url, 'Callback URL'
         #help_callback_url.help ?
       %td
-        = f.text_field :callback_url
+        = f.text_field :callback_url, :class => 'monospace'
         = error_message_on(@currency, :callback_url)
     %tr.unmanaged
       %th
@@ -49,7 +49,7 @@
         #help_secret_key.help ?
       %td
         .box_with_right_label
-          = f.text_field :secret_key
+          = f.text_field :secret_key, :class => 'monospace'
           = error_message_on(@currency, :secret_key)
           .right_label
             = link_to("Generate random", "javascript:$.noop();", :id => 'generate_link')
@@ -58,7 +58,7 @@
         = f.label :test_devices, 'Test devices'
         #help_test_devices.help ?
       %td
-        = f.text_area :test_devices
+        = f.text_area :test_devices, :class => 'monospace'
         = error_message_on(@currency, :test_devices)
     %tr
       %th
@@ -106,7 +106,7 @@
     - @udids_to_check.each do |arr|
       %tr
         %td= arr[0]
-        %td= arr[1]
+        %td= last_run_time_link(arr[1], @currency.app_id, arr[0])
 
   - if @currency.tapjoy_managed?
     %h3
@@ -185,7 +185,7 @@
     Sets the device's balance back to the currency's initial value.
   #help_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. Users will NOT be able to earn currency until this is enabled.
-    Please email publishersupport@tapjoy.com to get approval.
+    Please email support+enable@tapjoy.com to get approval.
 
 - content_for :page_javascript do
   :plain

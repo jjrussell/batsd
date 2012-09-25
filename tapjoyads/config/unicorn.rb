@@ -17,7 +17,7 @@ elsif server_type == "dev"
   worker_processes 2
   timeout 90
 elsif server_type == 'webserver'
-  worker_processes 8
+  worker_processes 12
   timeout 90
 else
   worker_processes 10
@@ -52,6 +52,10 @@ end
 # http://www.rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
 if GC.respond_to?(:copy_on_write_friendly=)
   GC.copy_on_write_friendly = true
+end
+
+if GC.respond_to?(:enable_stats)
+  GC.enable_stats
 end
 
 
@@ -90,7 +94,24 @@ after_fork do |server, worker|
 
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
   defined?(Mc) and Mc.reset_connection
+  defined?(SimpledbCache) and SimpledbCache.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
   $redis.client.reconnect
+  at_exit { defined?(NewRelic) and NewRelic::Agent.shutdown({:force_send=>true}) }
+end
+
+# Read environment settings from .env. This allows the environment to be changed during a unicorn
+# upgrade via USR2
+before_exec do |server|
+  env_files = [ File.join(ENV['HOME'], '.tapjoyserver.env'), File.join(app_dir, '.env') ]
+
+  env_files.each do |env_file|
+    if File.exists?(env_file)
+      File.foreach(env_file) do |line|
+        k,v = line.split('=').map{ |v| v.strip }
+        ENV[k]=v
+      end
+    end
+  end
 end

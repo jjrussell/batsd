@@ -60,24 +60,6 @@
           Offer Name
           #help_offer_name.help ?
         %td= @offer.name
-      %tr
-        %th
-          = f.label :name, 'Prerequisite'
-          #help_prerequisite.help ?
-        %td
-          - offer_options = options_for_prerequisites(@offer)
-          - prerequisites_options = offer_options
-          - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || @offer.prerequisite_offer_id.blank?))
-          = f.select :prerequisite_offer_id, prerequisites_options
-          = error_message_on @offer, :prerequisite_offer_id
-      %tr
-        %th
-          = f.label :name, 'Exclusion Prerequisites'
-          #help_exclusion_prerequisites.help ?
-        %td
-          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
-          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @offer, :exclusion_prerequisite_offer_ids
       %tr{ :class => (@app.store_id? ? '' : 'hidden')}
         %th
           = f.label "View Ads"
@@ -93,7 +75,7 @@
         %th
           = f.label :daily_budget, 'Conversions Cap'
           #help_daily.help ?
-        %td
+        %td.daily_budget
           = label_tag :daily_budget_off, 'Unlimited'
           = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
           &nbsp;
@@ -101,12 +83,27 @@
           = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
           - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
           #daily_budget_fields{ :class => budget_fields_class }
-            = f.label(:daily_budget, 'Daily Installs:', :class => 'installs')
-            = f.text_field(:daily_budget, :class => 'togglable installs')
-            %br
-            = label_tag('estimated_budget', 'Daily Budget:', :class => 'budget')
-            = text_field_tag('estimated_budget', '', :class => 'togglable estimated_budget', :size => 20)
+            %table.daily_caps
+              %tr
+                %td
+                  = f.radio_button(:daily_cap_type, :installs, :class => 'cap_type togglable')
+                  = f.label(:daily_cap_type, 'Daily Installs:', :value => :installs, :class => 'installs daily_alloc_label')
+                %td
+                  = f.text_field(:daily_budget, :class => "togglable installs #{@offer.daily_cap_type == :installs ? '' : 'hidden'}")
+                  #offer_daily_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :installs ? 'hidden' : ''}"}
+                    = @offer.daily_budget
+              %tr
+                %td
+                  = f.radio_button(:daily_cap_type, :budget, :class => 'cap_type toggleable')
+                  = f.label(:daily_cap_type, 'Daily Budget:', :value => :budget, :class => 'budget daily_alloc_label')
+                %td
+                  = text_field_tag('estimated_budget', '', :class => "togglable estimated_budget #{@offer.daily_cap_type == :budget ? '' : 'hidden'}", :size => 20)
+                  #estimated_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :budget ? 'hidden' : ''}"}
             = error_message_on @offer, :daily_budget
+      %tr
+        %th
+        %td.premier
+          Please note the minimum daily cap is 500 installs, and daily budget caps are estimates and not guaranteed. It is your responsibility to monitor daily campaign activity.
       %tr
         %th
           Balance
@@ -171,10 +168,6 @@
 .hidden
   #help_offer_name_content{:name => 'Offer Name'}
     Name that will be displayed on offer walls.
-  #help_prerequisite_content{:name => 'Prerequisite Offer'}
-    This offer will only be shown to users who have already completed the prerequisite offer.
-  #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
-    This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_view_ads_content{:name => 'View Ads'}
     Shows previews of how offers will be displayed to users. Previews are available for multiple screen resolutions.
   #help_balance_content{:name => 'Balance'}
@@ -239,7 +232,9 @@
         var payment = stringToNumber($('#offer_payment').val());
         var installLimit = stringToNumber($('#offer_daily_budget').val(), true);
         var budget = numberToCurrency(payment * installLimit);
+
         $('#estimated_budget').val(budget);
+        $('#estimated_budget_read_only').html(budget);
       };
 
       var checkValidBudget = function(){
@@ -308,12 +303,15 @@
             return false;
           }
         }
-        return true
+        return true;
       }
 
       var toggleDailyBudget = function() {
         if ($('#offer_daily_budget').val() == 0) {
           $('#offer_daily_budget').val('');
+          $('#offer_daily_budget_read_only').html('');
+          $('#estimated_budget').val('');
+          $('#estimated_budget_read_only').html('');
         }
       };
 
@@ -358,14 +356,18 @@
       $('#offer_daily_budget').change(function() {
         var installsLimit = Math.floor(stringToNumber($(this).val(), true));
         $(this).val(addCommaSeparators(installsLimit));
+        $('#offer_daily_budget_read_only').html($(this).val());
         setEstimatedBudget();
       });
       $('#estimated_budget').change(function() {
           var budget = stringToNumber($(this).val(), true);
           var currentPayment = stringToNumber($('#offer_payment').val(), true);
           var installLimit = Math.floor(budget / currentPayment);
+
           $(this).val(numberToCurrency(budget));
+          $('#estimated_budget_read_only').html($(this).val());
           $('#offer_daily_budget').val(addCommaSeparators(installLimit));
+          $('#offer_daily_budget_read_only').html(addCommaSeparators(installLimit));
           if (!checkValidBudget()) {
             $('#offer_daily_budget').change();
           }
@@ -377,6 +379,18 @@
       $('#daily_budget_off').click(function(){
         $('#daily_budget_fields').slideUp();
         toggleDailyBudget();
+      });
+      $('#offer_daily_cap_type_installs').click(function(){
+        $('#offer_daily_budget_read_only').hide();
+        $('#offer_daily_budget').fadeIn();
+        $('#estimated_budget').hide();
+        $('#estimated_budget_read_only').fadeIn();
+      });
+      $('#offer_daily_cap_type_budget').click(function(){
+        $('#offer_daily_budget').hide();
+        $('#offer_daily_budget_read_only').fadeIn();
+        $('#estimated_budget_read_only').hide();
+        $('#estimated_budget').fadeIn();
       });
       toggleDailyBudget();
 
@@ -475,4 +489,13 @@
       width: 100%;
       border: none;
       height: 35px;
+    }
+    .daily_alloc {
+      display: inline;
+    }
+    .daily_budget {
+      padding-top: 5px;
+    }
+    .daily_caps td {
+      height: 30px;
     }

@@ -48,7 +48,8 @@ module GetOffersHelper
       :device_type        => params[:device_type],
       :offerwall_rank     => options.delete(:offerwall_rank) { nil },
       :view_id            => options.delete(:view_id)        { nil },
-      :date_of_birth      => options.delete(:date_of_birth)  { nil }
+      :date_of_birth      => options.delete(:date_of_birth)  { nil },
+      :store_name         => params[:store_name]
       )
 
     if offer.item_type == 'VideoOffer' || offer.item_type == 'TestVideoOffer'
@@ -69,6 +70,7 @@ module GetOffersHelper
       parameters << "amount=#{@currency.get_visual_reward_amount(offer, params[:display_multiplier])}&"
       parameters << "currency_name=#{URI::escape(@currency.name)}&"
       parameters << "click_url=#{click_url}&"
+      parameters << "video_url=#{offer.url}&"
       parameters << "video_complete_url=#{video_complete_url}"
 
       "#{prefix}#{parameters}"

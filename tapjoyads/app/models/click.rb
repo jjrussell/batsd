@@ -1,4 +1,6 @@
 class Click < SimpledbShardedResource
+  include SdbMigrator
+  new_configuration :new_num_domains => 100, :new_domain_name => "clicksV2"
 
   MAX_HISTORY = 20
 
@@ -55,6 +57,8 @@ class Click < SimpledbShardedResource
   self.sdb_attr :geoip_country
   self.sdb_attr :force_convert, :type => :bool
   self.sdb_attr :force_converted_by
+  self.sdb_attr :store_name
+  self.sdb_attr :cached_offer_list_id
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
@@ -113,7 +117,7 @@ class Click < SimpledbShardedResource
 
   def advertiser_app
     begin
-      App.find_in_cache(advertiser_app_id, true)
+      App.find_in_cache(advertiser_app_id, :do_lookup => true)
     rescue ActiveRecord::RecordNotFound
       nil
     end

@@ -1,16 +1,18 @@
 class Experiments
 
-  OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS =  %w(a_optimization b_optimization)
-  RANKING_EXPERIMENT_IDS = %w(a_offerwall b_offerwall)
+  # Hash of arrays like :experiment_name => [control, test1, test2, ...]
+  EXPERIMENTS = {
+    :offerwall_redesign => %w{control test}
+  }
 
-  EXPERIMENTS = { :show_rate_237 => OFFERWALL_SHOW_RATE_237_EXPERIMENT_IDS, :ranking => RANKING_EXPERIMENT_IDS }
+  RANDOMIZER = 'b1396e852a6e87c659967574602b2985'
 
   def self.choose(udid, options = {})
     if udid.present?
       experiment = options[:experiment]
       experiment_ids = EXPERIMENTS[experiment]
       return nil if experiment_ids.blank?
-      udid_index = Digest::MD5.hexdigest("#{udid}#{experiment}").hex % experiment_ids.length
+      udid_index = Digest::MD5.hexdigest("#{RANDOMIZER}#{udid}#{experiment}").hex % experiment_ids.length
 
       experiment_ids[udid_index]
     end

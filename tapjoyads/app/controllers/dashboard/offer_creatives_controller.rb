@@ -82,7 +82,7 @@ class Dashboard::OfferCreativesController < Dashboard::DashboardController
 
     # Strict type checks in case we haven't set @success (nil is falsy, we don't want to show an error when there isn't one)
     if @success === true
-      redir[:success_message] = "File #{request.method == :delete ? 'removed' : 'uploaded'} successfully."
+      redir[:success_message] = "File #{request.delete? ? 'removed' : 'uploaded'} successfully."
     elsif @success === false
       redir[:error_message] = @offer.errors["custom_creative_#{@image_size}_blob".to_sym]
     end

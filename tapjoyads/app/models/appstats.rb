@@ -78,10 +78,10 @@ class Appstats
     end
 
     # tjm_rewards_opened
-    if @stats['tjm_offers_opened']
+    if @stats['tjm_offers_opened'] and @stats['tjm_display_offers_opened']
       @stats['tjm_rewards_opened'] = []
       @stats['tjm_offers_opened'].length.times do |i|
-        @stats['tjm_rewards_opened'][i] = @stats['tjm_offers_opened'][i]
+        @stats['tjm_rewards_opened'][i] = @stats['tjm_offers_opened'][i] + @stats['tjm_display_offers_opened'][i]
       end
     end
 
@@ -438,18 +438,28 @@ class Appstats
 
   def self.get_times(start_time_string, end_time_string, use_utc = true)
     now = use_utc ? Time.now.utc : Time.zone.now
+    default_start_time = now.beginning_of_hour - 23.hours
+    default_interval   = 24.hours
     if start_time_string.blank?
-      start_time = now.beginning_of_hour - 23.hours
+      start_time = default_start_time
     else
-      start_time = (use_utc ? start_time_string.to_time : Time.zone.parse(start_time_string)).beginning_of_day
-      start_time = now.beginning_of_hour - 23.hours if start_time > now
+      begin
+        start_time = (use_utc ? start_time_string.to_time : Time.zone.parse(start_time_string)).beginning_of_day
+        start_time = default_start_time if start_time > now
+      rescue ArgumentError
+        start_time = default_start_time
+      end
     end
 
     if end_time_string.blank?
-      end_time = start_time + 24.hours
+      end_time = start_time + default_interval
     else
-      end_time = (use_utc ? end_time_string.to_time : Time.zone.parse(end_time_string)).end_of_day
-      end_time = now if end_time <= start_time || end_time > now
+      begin
+        end_time = (use_utc ? end_time_string.to_time : Time.zone.parse(end_time_string)).end_of_day
+        end_time = now if end_time <= start_time || end_time > now
+      rescue ArgumentError
+        end_time = start_time + default_interval
+      end
     end
 
     [start_time, end_time]

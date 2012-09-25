@@ -27,6 +27,11 @@ describe FakeSdb do
       'sing' => ['wrong']
     })
 
+    # For null querying
+    db.put_attributes('foo', 'five', {
+      'rhyme' => ['fail']
+    })
+
     db.put_attributes('ints', 'one', {
       'val' => [1]
     })
@@ -57,7 +62,18 @@ describe FakeSdb do
   describe 'with no conditions' do
     it 'returns all rows' do
       rows = subject.select('select * from foo')[:items]
-      rows.size.should == 4
+      rows.size.should == 5
+    end
+
+    it 'supports ordering and limiting' do
+      rows = subject.select('select * from ints order by val desc')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four three two one}
+
+      rows = subject.select('select * from ints order by val asc')[:items]
+      rows.collect(&:keys).flatten.should == %w{one two three four five}
+
+      rows = subject.select('select * from ints order by val desc limit 2')[:items]
+      rows.collect(&:keys).flatten.should == %w{five four}
     end
   end
 
@@ -97,6 +113,38 @@ describe FakeSdb do
       rows.size.should == 2
       rows.collect(&:keys).flatten.sort.should == %w{five four}
     end
+
+    it 'handles "is null" and "is not null"' do
+      rows = subject.select(
+        %{select * from foo where ping is not null}
+      )[:items]
+
+      rows.size.should == 4
+      rows.collect(&:keys).flatten.sort.should == %w{four one three two} # alphabetical whoa
+
+      rows = subject.select(
+        %{select * from foo where ping is null}
+      )[:items]
+
+      rows.size.should == 1
+      rows.collect(&:keys).flatten.should == %w{five}
+    end
+
+    it 'handles negative numbers' do
+      subject.put_attributes('ints', 'negative_two', {
+      'val' => [-2]
+      })
+
+      subject.put_attributes('ints', 'negative_one', {
+        'val' => [-1]
+      })
+
+      rows = subject.select(
+        %{select * from ints where val <= 0}
+      )[:items]
+
+      rows.collect(&:keys).flatten.sort.should == %w{negative_one negative_two}
+    end
   end
 
   describe 'with one `and` operator' do
@@ -134,6 +182,22 @@ describe FakeSdb do
       result = subject.select(%{select count(*) from foo where ping = 'pong' and bing = 'bong'})
       result[:items][0]['Domain']['Count'].should == [2]
     end
+
+    it 'handles negative numbers' do
+      subject.put_attributes('ints', 'negative_two', {
+      'val' => [-2]
+      })
+
+      subject.put_attributes('ints', 'negative_one', {
+        'val' => [-1]
+      })
+
+      rows = subject.select(
+        %{select * from ints where val <= 0 and val > -2}
+      )[:items]
+
+      rows.collect(&:keys).flatten.sort.should == %w{negative_one}
+    end
   end
 
   describe 'with one `or` operator' do
@@ -144,6 +208,15 @@ describe FakeSdb do
 
       rows.size.should == 2
       rows.collect(&:keys).flatten.sort.should == %w{one two}
+    end
+
+    it 'handles null comparison' do
+      rows = subject.select(
+        %{select * from foo where ping = 'wrong' or ping is null}
+      )[:items]
+
+      rows.size.should == 2
+      rows.collect(&:keys).flatten.sort.should == %w{five two}
     end
 
     it 'can mix equality and inequality' do
@@ -193,6 +266,12 @@ describe FakeSdb do
 
       record['one'].should have_key('thing')
       record['one'].should_not have_key('ping')
+    end
+
+    it 'can be yielded to a block individually' do
+      sum = 0
+      subject.select('select * from ints') { |row| sum += row['val'][0] }
+      sum.should == 15
     end
   end
 

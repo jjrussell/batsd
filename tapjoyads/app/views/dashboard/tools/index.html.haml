@@ -16,10 +16,14 @@
       %li= link_to 'Failed Invoices', failed_invoices_tools_orders_path
     - if permitted_to? :index, :dashboard_tools_payouts                   # payops
       %li= link_to 'Payouts', tools_payouts_path
+    - if permitted_to? :index, :dashboard_tools_resellers_payouts         # payops
+      %li= link_to 'Reseller Payouts', tools_resellers_payouts_path
     - if permitted_to? :index, :dashboard_tools_payout_freezes            # payops
       %li= link_to 'Payout Freezes', tools_payout_freezes_path
     - if permitted_to? :index, :dashboard_tools_network_costs             # payops
       %li= link_to 'Network Costs', tools_network_costs_path
+    - if permitted_to? :monthly_rev_share_report, :dashboard_tools        # payops
+      %li= link_to 'Monthly Rev Share Report', monthly_rev_share_report_tools_path
     - if permitted_to? :publishers_without_payout_info, :dashboard_tools  # payout_manager
       %li= link_to 'Pubs Without W9', publishers_without_payout_info_tools_path
     - if permitted_to? :publisher_payout_info_changes, :dashboard_tools   # payout_manager
@@ -53,7 +57,7 @@
     %li= link_to 'App Reviews', tools_app_reviews_path
     %li= link_to 'My Apps Featured Content', tools_featured_contents_path
 
-- if has_permissions_for_one_of? :account_mgr, :role_mgr, :partner_changer
+- if has_permissions_for_one_of? :account_mgr, :role_mgr, :partner_changer, :optimized_rank_booster
   .page-header
     %h3 Account Management
   %ul
@@ -73,6 +77,8 @@
       %li= link_to 'Disabled Popular Offers', disabled_popular_offers_tools_path
     - if permitted_to? :index, :dashboard_tools_rank_boosts                 # account_mgr
       %li= link_to 'Manage Rank Boosts', tools_rank_boosts_path
+    - if permitted_to? :index, :dashboard_tools_optimized_rank_boosts       #optimized_rank_booster
+      %li= link_to 'Manage Optimized Rank Boosts', tools_optimized_rank_boosts_path
     - if permitted_to? :sanitize_users, :dashboard_tools                    # account_mgr
       %li= link_to 'Sanitize Users Table', sanitize_users_tools_path
     - if permitted_to? :create, :dashboard_tools_role_assignments     # account_mgr, role_mgr

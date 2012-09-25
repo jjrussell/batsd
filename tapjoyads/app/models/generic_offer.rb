@@ -15,16 +15,18 @@
 #  instructions     :text
 #  category         :string(255)
 #  trigger_action   :string(255)
+#  protocol_handler :string(255)
 #
 
 class GenericOffer < ActiveRecord::Base
   include ActiveModel::Validations
   include UuidPrimaryKey
+  extend ActiveSupport::Memoizable
   acts_as_trackable :instructions => :instructions, :url => :url, :third_party_data => :third_party_data
 
   CATEGORIES = [ 'CPA', 'Social', 'Non-Native Video', 'Other' ]
 
-  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like' ]
+  TRIGGER_ACTIONS = [ 'Facebook Login', 'Facebook Like', 'Protocol Handler' ]
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
@@ -35,6 +37,8 @@ class GenericOffer < ActiveRecord::Base
   validates_presence_of :partner, :name, :url, :category
   validates_presence_of :prerequisite_offer, :if => Proc.new { |generic_offer| generic_offer.prerequisite_offer_id? }
   validates_inclusion_of :category, :in => CATEGORIES, :allow_blank => true
+  validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
+  validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
   after_create :create_primary_offer
@@ -43,6 +47,24 @@ class GenericOffer < ActiveRecord::Base
   scope :visible, :conditions => { :hidden => false }
 
   json_set_field :exclusion_prerequisite_offer_ids
+
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
+  end
+
+  def get_x_partner_prerequisites
+    Set.new(x_partner_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_prerequisites
+
+  def get_x_partner_exclusion_prerequisites
+    Set.new(x_partner_exclusion_prerequisites.split(';'))
+  end
+  memoize :get_x_partner_exclusion_prerequisites
 
   private
 
@@ -58,6 +80,8 @@ class GenericOffer < ActiveRecord::Base
     offer.third_party_data = third_party_data
     offer.prerequisite_offer_id = prerequisite_offer_id
     offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
+    offer.x_partner_prerequisites = x_partner_prerequisites
+    offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites
     offer.save!
   end
 

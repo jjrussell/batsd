@@ -20,7 +20,7 @@
           %td
             = raw wfh_span(wfh)
           %td
-            = formatted_wfh_dates(wfh)
+            = formatted_wfh_dates(wfh).html_safe
           %td
             - if wfh.description.present?
               .description= wfh.description

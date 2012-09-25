@@ -7,13 +7,13 @@
 %body
   #branding.clearfix
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-    = render :partial => 'currency_selector'  
+    = render :partial => 'currency_selector'
 
   - if @test_offers.present?
     #test_offers
       - unless @currency.tapjoy_enabled?
         .explanation
-          You must email #{mail_to("publishersupport@tapjoy.com")} before users will be able to view offers.
+          You must email #{mail_to("support+enable@tapjoy.com")} before users will be able to view offers.
       %ul
         - @test_offers.each do |test_offer|
           %li
@@ -34,9 +34,6 @@
       = t('text.offerwall.load_more')
 
   .container.nbb
-    %p{:id => "moreoffers", :class => "moreoffers"}
-      = t('text.offerwall.earn_more')
-
     #visit.button.gradientfix
       = t('text.offerwall.visit')
 
@@ -57,5 +54,5 @@
         fetchURL = #{get_next_link_json_redesign.to_json},
         data = #{@final.to_json};
 
-= embed_js 'shared/i18n'
-= embed_js "offerwall/offerwall"
+= javascript_include_tag 'shared/i18n'
+= javascript_include_tag "offerwall/offerwall"

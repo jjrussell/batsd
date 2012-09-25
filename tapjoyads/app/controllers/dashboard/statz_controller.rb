@@ -5,7 +5,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
+  before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
   after_filter :save_activity_logs, :only => [ :update ]
@@ -41,8 +41,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
     respond_to do |format|
       format.html do
         @associated_offers = @offer.find_associated_offers
-        @active_boosts = @offer.rank_boosts.active
+        @active_boosts = @offer.rank_boosts.active.not_optimized
         @total_boost = @active_boosts.map(&:amount).sum
+        @optimized_boosts = @offer.rank_boosts.active.optimized
+        @total_optimized_boosts = @optimized_boosts.map(&:amount).sum
       end
 
       format.json do
@@ -79,8 +81,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def create
-    new_offer = @offer.clone
-    new_offer.update_attributes!(:created_at => nil, :updated_at => nil, :tapjoy_enabled => false, :name_suffix => params[:suffix])
+    new_offer = @offer.clone_and_save! { |new_offer| new_offer.name_suffix = params[:suffix] }
     flash[:notice] = "Successfully created offer"
     redirect_to statz_path(new_offer)
   end
@@ -103,6 +104,16 @@ class Dashboard::StatzController < Dashboard::DashboardController
       device = Device.new(:key => admin_device.udid)
       last_run_time = device.has_app?(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
       @last_run_times << [ admin_device, last_run_time ]
+    end
+  end
+
+  def last_run
+    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :udid => params[:udid])
+
+    if params[:time] && time = Time.zone.parse(params[:time])
+      @last_run = @runs.find { |run| run.time.change(:usec => 0) == time }
+    else
+      @last_run = @runs.first
     end
   end
 

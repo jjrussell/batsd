@@ -9,7 +9,7 @@ describe FullscreenAdController do
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.name = "Consistent Name"
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
-      OfferCacher.stub(:get_unsorted_offers_prerejected).and_return([@offer])
+      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
 
       @currency = FactoryGirl.create(:currency)
       @params = {

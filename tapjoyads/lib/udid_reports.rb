@@ -1,11 +1,13 @@
 class UdidReports
 
-  def self.queue_daily_jobs(date_str=nil)
+  def self.queue_daily_jobs(date_str=nil, offer_list=[])
     date_str ||= (Time.zone.now.beginning_of_day - 1.day).strftime('%Y-%m-%d')
     start_time = Time.zone.parse(date_str)
     end_time   = start_time + 1.day
 
-    Offer.find_each do |offer|
+    opts = offer_list.present? ? {:conditions => {:id => offer_list}} : {}
+
+    Offer.find_each(opts) do |offer|
       # don't generate UDID reports for the Groupon offers that are whitelisted to TTR4
       next if offer.id == '853874a4-de66-4c00-b2bd-d51f456736f1' || offer.id == '17694838-2caa-4869-8808-0baf126daef9'
 
@@ -23,11 +25,13 @@ class UdidReports
     fs_path = "tmp/#{offer_id}_#{date.strftime('%Y-%m-%d')}.s3"
     outfile = File.open(fs_path, 'w')
 
-    NUM_REWARD_DOMAINS.times do |i|
-      Reward.select(:domain_name => "rewards_#{i}", :where => conditions) do |reward|
-        if reward.udid? || reward.mac_address?
+    Reward.select_all(:conditions => conditions) do |reward|
+      if reward.udid? || reward.mac_address?
+        begin
           line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
           outfile.puts(line)
+        rescue Exception => e
+          # There can be no comment lines in csv file. Do nothing
         end
       end
     end

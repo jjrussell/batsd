@@ -1,12 +1,21 @@
 class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   ReengagementOffer
 
-  layout 'apps'
+  layout :resolve_layout
+
   current_tab :apps
-  before_filter :setup, :except => [ :show ]
+
+  before_filter :setup
+
   filter_access_to :all
 
   DAY_0_INSTRUCTIONS = "Come back each day and get rewards!"
+
+  def show
+    verify_params([:id])
+    @reengagement_offers = @app.reengagement_campaign if @app
+    @currencies = @app.currencies if @reengagement_offers.present?
+  end
 
   def index
     if @app.currencies.present? && @app.currencies.any?(&:tapjoy_enabled?)
@@ -67,6 +76,15 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   end
 
   private
+
+  def resolve_layout
+    case action_name
+    when 'show'
+      'mobile'
+    else
+      'apps'
+    end
+  end
 
   def setup
     if  params[:app_id].present?

@@ -19,11 +19,13 @@ Tapjoyad::Application.routes.draw do
     match :survey
     match :test_offer
     match :test_video_offer
+    match :coupon
   end
   # TODO: make display_ad routes better
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
+  match 'impression'         => 'impression#index'
   resource :fullscreen_ad, :only => [:index], :controller => :fullscreen_ad do
     collection do
       match :index
@@ -48,15 +50,18 @@ Tapjoyad::Application.routes.draw do
       get :redirect_to_get_offers
     end
   end
+  resources :coupon_instructions, :only => [:new, :create]
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
   match 'offer_triggered_actions/fb_login' => 'offer_triggered_actions#fb_login'
+  match 'offer_triggered_actions/load_app' => 'offer_triggered_actions#load_app'
 
   match 'offer_completed' => 'offer_completed#index'
   match 'offer_completed/boku' => 'offer_completed#boku'
   match 'offer_completed/gambit' => 'offer_completed#gambit'
   match 'offer_completed/paypal' => 'offer_completed#paypal'
   match 'offer_completed/socialvibe' => 'offer_completed#socialvibe'
+  match 'offer_completed/adility' => 'offer_completed#adility'
 
   resource :points do
     collection do
@@ -73,7 +78,6 @@ Tapjoyad::Application.routes.draw do
       get :incomplete_offers
     end
   end
-  resources :tools_surveys, :only => [:edit, :create]
   resources :user_events, :only => [:create]
 
   resources :videos, :only => [:index] do
@@ -82,8 +86,7 @@ Tapjoyad::Application.routes.draw do
     end
   end
 
-  match 'privacy' => 'documents#privacy'
-  match 'privacy.html' => 'documents#privacy'
+  match 'coupons/complete' => 'coupons#complete', :as => :coupon_complete
   match 'game_state/load' => 'game_state#load', :as => :load_game_state
   match 'game_state/save' => 'game_state#save', :as => :save_game_state
   match 'log_device_app/:action/:id' => 'connect#index'
@@ -96,6 +99,16 @@ Tapjoyad::Application.routes.draw do
         match :daily
         match :partner_index
         match :partner_daily
+      end
+    end
+  end
+
+  namespace :api do
+    namespace :data do
+      resources :devices, :only => [:show] do
+        collection do
+          post :set_last_run_time
+        end
       end
     end
   end

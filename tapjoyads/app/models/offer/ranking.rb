@@ -2,7 +2,7 @@ module Offer::Ranking
 
   def self.included(base)
     base.class_eval do
-      attr_accessor :rank_score
+      attr_writer :rank_score
       before_save :calculate_ranking_fields
     end
   end
@@ -15,7 +15,8 @@ module Offer::Ranking
     self.normal_avg_revenue     = (stats[:avg_revenue_std_dev] == 0) ? 0 : (avg_revenue - stats[:avg_revenue_mean]) / stats[:avg_revenue_std_dev]
     self.normal_bid             = (stats[:bid_std_dev] == 0) ? 0 : (bid_for_ranks - stats[:bid_mean]) / stats[:bid_std_dev]
     self.over_threshold         = bid >= 40 ? 1 : 0
-    self.rank_boost             = rank_boosts.active.sum(:amount)
+    self.rank_boost             = rank_boosts.active.not_optimized.sum(:amount)
+    self.optimized_rank_boost   = rank_boosts.active.optimized.sum(:amount)
   end
 
   def calculate_ranking_fields!
@@ -27,24 +28,17 @@ module Offer::Ranking
     rank_scores = {}
     CurrencyGroup.find_each do |currency_group|
       score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
-      score += 5 if item_type == "ActionOffer"
-      score += 10 if price == 0
       rank_scores[currency_group.id] = score
     end
     rank_scores
   end
 
   def precache_rank_score_for(currency_group_id)
-    precache_rank_scores[currency_group_id]
+    precache_rank_scores[CurrencyGroup::DEFAULT_ID]
   end
 
-  def postcache_rank_score(currency, source, is_promoted)
-    self.rank_score = precache_rank_score_for(currency.currency_group_id) || 0
-    self.rank_score += (categories & currency.categories).length.to_f / currency.categories.length * (currency.postcache_weights[:category_match] || 0) if currency.categories.any?
-    self.rank_score += 1000000 if !featured? && !rewarded? && currency.conversion_rate == 0 && item_type == 'App' && price == 0
-    self.rank_score += 1000000 if is_promoted
-    # self.rank_score -= 100 if source == 'tj_games' && item_type == 'GenericOffer' && !pay_per_click?
-    rank_score
+  def rank_score
+    @rank_score ||= (precache_rank_score_for(CurrencyGroup::DEFAULT_ID) || 0)
   end
 
   def bid_for_ranks
@@ -81,4 +75,15 @@ module Offer::Ranking
     end
   end
 
+  def is_reasonable_rank_boost?
+    rank_boost <= RankBoost::RANK_SCORE_THRESHOLD
+  end
+
+  def override_rank_score(base_rank_score=0)
+    if (rank_boost > 0 && publisher_app_whitelist.present? && is_reasonable_rank_boost?) || rank_boost < 0
+      self.rank_score = (rank_boost + base_rank_score).floor
+      return true
+    end
+    return false
+  end
 end

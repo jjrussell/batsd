@@ -2,11 +2,12 @@
 
 %h1= @partner.name
 
+- disabled = !current_user.employee?
 = form_for(@partner, nil, :html => { :class => 'tjform' }) do |f|
   .field
     = f.label :name
     #help_name.help ?
-    = f.text_field :name
+    = f.text_field :name, :disabled => disabled
     = error_message_on(@partner, :name)
   .field
     = f.label :approved_publisher
@@ -83,12 +84,29 @@
     = error_message_on(@partner, :disabled_partners) if @partner.errors.on :disabled_partners
     .disabled_partner_names
       != @partner.get_disabled_partners.map { |p| link_to(p.name, partner_path(p)) }.join(', ')
+  .field
+    = f.label :country
+    #help_country.help ?
+    = f.select :country, options_for_select(list_of_countries, @partner.country), {:include_blank => true}
+  - if current_user.is_admin?
+    .category
+      Admin-only fields:
+    .field.admin
+      = f.label :use_server_whitelist
+      #help_use_server_whitelist.help ?
+      = f.check_box :use_server_whitelist
+      = error_message_on(@partner, :use_server_whitelist) if @partner.errors.on :use_server_whitelist
+    .field.admin
+      = f.label :enable_risk_management
+      #help_enable_risk_management.help ?
+      = f.check_box :enable_risk_management
+      = error_message_on(@partner, :enable_risk_management) if @partner.errors.on :enable_risk_management
 
   = submit_tag "Update"
 
 .hidden
   #help_name_content{:name => 'Name'}
-    The partner's name. Finance will be notified if the name is changed.
+    The partner's name. Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
     Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.
@@ -102,6 +120,8 @@
     Email of the Tapjoy sales rep for this partner.
   #help_disabled_partners_content{:name => 'Disabled partners'}
     Offers belonging to partners that are in this list will not be shown in this partner's offerwalls.
+  #help_country_content{:name => 'Country'}
+    Primary country of partner
   #help_billing_email_content{:name => 'Billing email'}
     The email contact used for invoicing.
   #help_discount_all_offer_types_content{:name => 'Discount all offer types'}
@@ -121,6 +141,10 @@
     Example: A pub with rev share of 70% and max deduction percentage of 7% will have an effective rev share between 65-70%. (70% * 93% = 65%)
   #help_accepted_publisher_tos_content{:name => 'Accepted publisher ToS'}
     Has this partner accepted the publisher terms of service?
+  #help_use_server_whitelist_content{:name => 'Use Server Whitelist'}
+    Check calls to convert generic offers against server IP whitelist?
+  #help_enable_risk_management_content{:name => 'Enable Risk Management'}
+    Run all conversions through checks in Risk Management framework?
 
 - content_for :page_styles do
   :plain
@@ -146,6 +170,15 @@
     .field {
       margin-bottom: 5px;
       margin-left: 200px;
+    }
+
+    .category {
+      margin-bottom: 5px;
+      margin-left: 100px;
+    }
+
+    .admin label {
+      color: blue;
     }
 
     .disabled_partner_names {

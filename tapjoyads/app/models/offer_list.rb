@@ -16,7 +16,6 @@ class OfferList
     @screen_layout_size         = options.delete(:screen_layout_size)
     @source                     = options.delete(:source)
     @exp                        = options.delete(:exp)
-    @include_rating_offer       = options.delete(:include_rating_offer) { false }
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
@@ -106,11 +105,15 @@ class OfferList
     found_offer_item_ids = Set.new
     offers_to_find = start + max_offers
     found_offers = 0
+    offers_left = 0
 
     unless @algorithm.blank?
       # TODO: dry this up.
       optimized_offers.each_with_index do |offer, i|
-        return [ returned_offers, optimized_offers.length - i ] if found_offers >= offers_to_find
+        if found_offers >= offers_to_find
+          offers_left = optimized_offers.length - i
+          break
+        end
 
         unless optimization_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
           returned_offers << offer if found_offers >= start
@@ -120,8 +123,11 @@ class OfferList
       end
     end
 
-    augmented_offer_list.each_with_index do |offer, i|
-      return [ returned_offers, augmented_offer_list.length - i ] if found_offers >= offers_to_find
+    default_offers.each_with_index do |offer, i|
+      if found_offers >= offers_to_find
+        offers_left += default_offers.length - i
+        break
+      end
 
       unless postcache_reject?(offer) || found_offer_item_ids.include?(offer.item_id)
         returned_offers << offer if found_offers >= start
@@ -130,37 +136,24 @@ class OfferList
       end
     end
 
-    [ returned_offers, 0 ]
-  end
-
-  def sorted_offers_with_rejections(currency_group_id)
-    all_offers = offers.clone
-
-    all_offers.each do |offer|
-      class << offer; attr_accessor :rejections; end
-      offer.rejections = rejections_for(offer)
-    end
-
-    all_offers = all_offers.sort_by { |offer| -offer.precache_rank_score_for(currency_group_id) }
-
-    # todo: we're duplicating code here, fix it
-    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
+    if DEEPLINK_POSITION >= start && @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks?
-        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
-        class << deeplink_offer; attr_accessor :rejections; end
-        deeplink_offer.rejections = rejections_for(deeplink_offer)
+      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer) && !found_offer_item_ids.include?(deeplink_offer.item_id)
+        position = [ DEEPLINK_POSITION, returned_offers.length ].min
+        returned_offers.insert(position, deeplink_offer)
       end
     end
 
-    all_offers
+    [ returned_offers, offers_left ]
+  end
+
+  def sorted_offers_with_rejections(currency_group_id)
+    add_rejections!(offers)
+    offers
   end
 
   def sorted_optimized_offers_with_rejections
-    optimized_offers.each do |offer|
-      class << offer; attr_accessor :rejections; end
-      offer.rejections = rejections_for(offer)
-    end
+    add_rejections!(optimized_offers)
     optimized_offers
   end
 
@@ -198,34 +191,10 @@ class OfferList
     return [] if (@device && !@device.can_view_offers?) || (@currency && !@currency.tapjoy_enabled?)
 
     default_offers = RailsCache.get_and_put("offers.#{@type}.#{@platform_name}.#{@hide_rewarded_app_installs}.#{@normalized_device_type}") do
-      OfferCacher.get_unsorted_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
+      OfferCacher.get_offers_prerejected(@type, @platform_name, @hide_rewarded_app_installs, @normalized_device_type)
     end.value
 
-    default_offers.each { |o| o.postcache_rank_score(@currency, @source, false) } if @currency
-
     default_offers
-  end
-
-  def augmented_offer_list
-    all_offers = []
-
-    if @include_rating_offer && @publisher_app.enabled_rating_offer_id.present?
-      rate_app_offer = Offer.find_in_cache(enabled_rating_offer_id) #BUG: should be @publisher_app.enabled_rating_offer_id
-      if rate_app_offer.present? && rate_app_offer.accepting_clicks? && !postcache_reject?(rate_app_offer)
-        all_offers << rate_app_offer
-      end
-    end
-
-    all_offers += default_offers.sort { |a,b| b.rank_score <=> a.rank_score }
-
-    if @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
-      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer)
-        all_offers.insert(DEEPLINK_POSITION, deeplink_offer)
-      end
-    end
-
-    all_offers.compact
   end
 
   def optimization_reject?(offer)
@@ -246,5 +215,12 @@ class OfferList
     offer.postcache_rejections(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
       @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
       @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
+  end
+
+  def add_rejections!(offers)
+    offers.each do |offer|
+      class << offer; attr_accessor :rejections; end
+      offer.rejections = rejections_for(offer)
+    end
   end
 end

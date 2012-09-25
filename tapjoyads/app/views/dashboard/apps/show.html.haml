@@ -86,8 +86,8 @@
             = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else
             %a#app_store_link{ :target => '_blank' }
-      - if @app.store_id.present?
-        %tr.app_data.hidden
+      - if @app.store_id.present? && permitted_to?(:edit, :dashboard_statz)
+        %tr.admin.app_data.hidden
           %th
             Custom URL Scheme
             #help_custom_url_scheme.help ?
@@ -111,7 +111,6 @@
           %td#app_languages= @app.languages
       - if permitted_to?(:edit, :dashboard_statz)
         = render('dashboard/apps/admin_fields', :f => f)
-
       %tr
         %td{ :colspan => 2 }= f.submit @app.store_name ? "Update from #{AppStore.find(@app.store_name).name}" : 'Save', :id => 'submit_button'
 

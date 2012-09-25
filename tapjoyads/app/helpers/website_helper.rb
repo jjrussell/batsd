@@ -254,9 +254,9 @@ EOJS
     object.send(field_name)
   end
 
-  def encrypted_field(form, object, field_name)
+  def encrypted_field(form, object, field_name, opts={})
     value = decrypt_if_permitted(object, field_name, object.changed.include?(field_name.to_s))
-    form.text_field(field_name, :value => value)
+    form.text_field(field_name, opts.merge!(:value => value))
   end
 
   def photo_for(employee)
@@ -275,6 +275,10 @@ EOJS
     else
       employee.full_name
     end
+  end
+
+  def get_offer_links_by_ids(ids, object=Offer)
+    ids.map { |id| link_to(object.find_by_id(id).name, statz_path(id)) }.join(', ')
   end
 end
 

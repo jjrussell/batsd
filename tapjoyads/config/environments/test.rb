@@ -38,6 +38,7 @@ Tapjoyad::Application.configure do
 end
 
 MEMCACHE_SERVERS             = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
 DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
@@ -59,6 +60,7 @@ API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
+MASTERJOBS_URL = local_config['masterjobs_url'] || 'http://localhost:3000'
 CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
 XMAN = false
 

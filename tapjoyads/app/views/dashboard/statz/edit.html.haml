@@ -1,13 +1,13 @@
 - @page_title = "Edit offer: #{@offer.name_with_suffix}"
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+.icon= image_tag(@offer.get_icon_url, :size => '57x57', :id => 'icon')
 
 %h1= @offer.name_with_suffix
 
 .clear
 
-= form_for(:offer, @offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
+= form_for(@offer, :as => :offer, :url => { :action => :update }, :html => { :method => :put, :class => 'tjform' }) do |f|
   %table
     %tr
       %th
@@ -131,27 +131,49 @@
         = f.label(:account_manager_notes, 'Internal Notes')
         #help_account_manager_notes.help ?
       %td
-        = f.text_area(:account_manager_notes)
+        = f.text_area(:account_manager_notes, :rows => 3)
         = error_message_on @offer, :account_manager_notes
-    - if @offer.item_type == 'App'
-      %tr
-        %th
-          = f.label :name, 'Prerequisite'
-          #help_prerequisite.help ?
-        %td
-          - offer_options = options_for_prerequisites(@offer)
-          - prerequisites_options = offer_options
-          - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
-          = f.select :prerequisite_offer_id, prerequisites_options
-          = error_message_on @offer, :prerequisite_offer_id
-      %tr
-        %th
-          = f.label :name, 'Exclusion Prerequisites'
-          #help_exclusion_prerequisites.help ?
-        %td
-          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
-          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @offer, :exclusion_prerequisite_offer_ids
+    %tr
+      %th
+        = f.label :name, 'Prerequisite'
+        #help_prerequisite.help ?
+      %td
+        - offer_options = options_for_prerequisites(@offer)
+        - prerequisites_options = offer_options
+        - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
+        = f.select :prerequisite_offer_id, prerequisites_options
+        = error_message_on @offer, :prerequisite_offer_id
+    %tr
+      %th
+        = f.label :name, 'Exclusion Prerequisites'
+        #help_exclusion_prerequisites.help ?
+      %td
+        = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+        = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+        = error_message_on @offer, :exclusion_prerequisite_offer_ids
+    %tr
+      %th
+        = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
+        #help_x_partner_prerequisites.help ?
+      %td
+        = f.text_area(:x_partner_prerequisites, :rows => 5)
+        = error_message_on @offer, :x_partner_prerequisites
+    %tr
+      %th
+        = f.label(:x_partner_exclusion_prerequisites, 'Cross Partner Exclusion Prerequisites')
+        #help_x_partner_exclusion_prerequisites.help ?
+      %td
+        = f.text_area(:x_partner_exclusion_prerequisites, :rows => 5)
+        = error_message_on @offer, :x_partner_exclusion_prerequisites
+    %tr
+      %th
+        = f.label(:audition_factor)
+        #help_audition_factor.help ?
+      %td
+        - default_selection = @offer.audition_factor || Offer::Optimization::DEFAULT_AUDITION_FACTOR
+        - selections = options_for_select(Offer::Optimization::AUDITION_FACTORS.sort_by{ |label, value| value }.map{|label,value| ["#{label} (#{value})", value]}, default_selection)
+        = f.select(:audition_factor, selections)
+        = error_message_on @offer, :audition_factor
     %tr
       %th
         = f.label(:show_rate)
@@ -212,9 +234,9 @@
         = f.label(:publisher_app_whitelist)
         #help_publisher_app_whitelist.help ?
       %td
-        = f.text_field(:publisher_app_whitelist)
+        = f.text_area(:publisher_app_whitelist, :rows => 5)
         = error_message_on @offer, :publisher_app_whitelist
-    - if [ 'App', 'EmailOffer', 'GenericOffer', 'ActionOffer', 'VideoOffer' ].include?(@offer.item_type)
+    - if @offer.has_adjustable_bid?
       %tr
         %th
           = f.label(:bid)
@@ -279,6 +301,25 @@
               = h(@offer.item.store_url)
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
+      - if current_user.is_admin?
+        %tr.admin
+          %th
+            = f.label(:rate_filter_override)
+            #help_rate_filter_override.help ?
+          %td
+            = f.check_box(:rate_filter_override)
+        %tr.admin
+          %th
+            = f.label(:requires_udid)
+            #help_requires_udid.help ?
+          %td
+            = f.check_box(:requires_udid)
+        %tr.admin
+          %th
+            = f.label(:requires_mac_address)
+            #help_requires_mac_address.help ?
+          %td
+            = f.check_box(:requires_mac_address)
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -359,7 +400,10 @@
     %tr
       %td{ :colspan => 2 }= f.submit('Save Changes')
     %tr
-      %td{ :colspan => 2}
+      %td{ :colspan => 2 }
+        %iframe#icon_upload{:src => edit_tools_offer_icon_path(:id => @offer.id)}
+    %tr
+      %td{ :colspan => 2 }
         = render('dashboard/offer_creatives/iframes', :offer => @offer)
 
 .hidden
@@ -368,6 +412,7 @@
   #help_self_promote_only_content{ :name => 'Self Promote Only' } Only show this offer on offerwalls from the same partner.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
   #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
+  #help_audition_factor_content{ :name => 'Audition-Factor' } Defines how prominently to display the offer when testing for performance.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
   #help_sdkless_content{ :name => 'SDK-less enabled' } Enabling SDK-less capability allows advertisers to bypass integrating the Tapjoy Advertiser SDK into their apps. App installations will be tracked by publisher apps when users engage with the advertiser's offer.  SDK-less offers will only be displayed in publisher apps using SDK version #{SDKLESS_MIN_LIBRARY_VERSION} or later.
@@ -431,6 +476,17 @@
     This offer will only be shown to users who have already completed the prerequisite offer.
   #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
     This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
+  #help_x_partner_prerequisites_content{ :name => 'Prerequisites' }
+    This action will only be shown to users who have completed all the prerequisite offers. Must be a ";" separated list of publisher offer IDs.
+  #help_x_partner_exclusion_prerequisites_content{ :name => 'Exclusion Prerequisites' }
+    This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers. Must be a ";" separated list of publisher offer IDs.
+  - if current_user.is_admin?
+    #help_rate_filter_override_content{ :name => 'Rate Filter Override' }
+      Normally, a rewarded offer is filtered out of the offerwall when the value of the offer is very small compared to the value of the rewarded virtual currency. By enabling this setting, the offer will be shown regardless of its value. Only meaningful for rewarded offers.
+    #help_requires_udid_content{ :name => 'Requires UDID' }
+      Requires an offer to only show if a UDID is present.
+    #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
+      Requires an offer to only show if a Mac Address is present.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
@@ -555,4 +611,9 @@
       width: 100%;
       border: none;
       height: 35px;
+    }
+    #icon_upload {
+      border: medium none;
+      height: #{@offer.uploaded_icon? ? '55' : '35'}px;
+      width: 100%;
     }

@@ -9,7 +9,7 @@ authorization do
     has_permission_on :dashboard_enable_offer_requests, :to => [ :create ]
     has_permission_on :dashboard_reporting, :to => [ :index, :show, :export, :download_udids, :api, :regenerate_api_key, :aggregate, :export_aggregate ]
     has_permission_on :dashboard_action_offers, :to => [ :index, :new, :create, :edit, :update, :toggle, :TJCPPA, :TapjoyPPA, :preview ]
-    has_permission_on :dashboard_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy, :update_status ]
+    has_permission_on :dashboard_reengagement_offers, :to => [ :index, :new, :create, :edit, :update, :destroy, :update_status, :show ]
     has_permission_on :dashboard_billing, :to => [ :index, :add_funds, :transfer_funds, :payout_info, :update_payout_info, :create_transfer, :create_order, :export_statements, :export_orders, :export_payouts, :export_adjustments, :forget_credit_card ]
     has_permission_on :dashboard_users, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_support, :to => [ :index ]
@@ -17,7 +17,8 @@ authorization do
     has_permission_on :dashboard_inventory_management, :to => [ :index, :per_app, :partner_promoted_offers, :promoted_offers ]
     has_permission_on :dashboard_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
-    has_permission_on :dashboard_videos, :to => [:index]
+    has_permission_on :dashboard_videos, :to => [:index, :options, :update_options]
+    has_permission_on :dashboard_non_rewarded, :to => [ :show, :new, :create, :edit, :update ]
   end
 
   role :agency do
@@ -84,18 +85,11 @@ authorization do
     has_permission_on :dashboard_tools_earnings_adjustments, :to => [ :new, :create ]
   end
 
-  role :payops do
-    includes :money
-    has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
-    has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
-    has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
-    has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
-  end
-
   role :payout_manager do
     includes :payops
     has_permission_on :dashboard_tools, :to => [ :payout_info, :publishers_without_payout_info, :publisher_payout_info_changes ]
     has_permission_on :dashboard_tools_payouts, :to => [ :create, :confirm_payouts ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :create ]
     has_permission_on :dashboard_tools_payout_freezes, :to => [ :create, :disable ]
   end
 
@@ -123,12 +117,12 @@ authorization do
     includes :customer_service
     includes :file_sharer
     has_permission_on :dashboard_users, :to => [ :approve ]
-    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons]
+    has_permission_on :dashboard_statz, :to => [ :index, :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :global, :publisher, :advertiser, :support_request_reward_ratio, :show_rate_reasons ]
     has_permission_on :dashboard_search, :to => [ :offers, :partners, :users, :currencies ]
     has_permission_on :dashboard_tools, :to => [ :disabled_popular_offers, :sanitize_users, :update_user, :resolve_clicks, :new_transfer, :device_info, :update_device, :send_currency_failures, :recreate_device_identifiers ]
     has_permission_on :dashboard_tools_enable_offer_requests, :to => [ :index, :update ]
     has_permission_on :dashboard_activities, :to => [ :index ]
-    has_permission_on :dashboard_partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :new_transfer, :create_transfer, :new_dev_credit, :create_dev_credit, :reporting, :agency_api, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
+    has_permission_on :dashboard_partners, :to => [ :index, :show, :edit, :make_current, :manage, :stop_managing, :mail_chimp_info, :update, :managed_by, :by_country, :new_transfer, :create_transfer, :new_dev_credit, :create_dev_credit, :reporting, :agency_api, :set_tapjoy_sponsored, :set_unconfirmed_for_payout ]
     has_permission_on :dashboard_tools_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
     has_permission_on :dashboard_apps, :to => [ :unarchive ]
     has_permission_on :dashboard_offer_creatives, :to => [ :show, :create, :update, :destroy ]
@@ -143,6 +137,7 @@ authorization do
     has_permission_on :dashboard_tools_video_buttons, :to => [ :index, :new, :create, :edit, :update ]
     has_permission_on :dashboard_tools_admin_devices, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_offer_events, :to => [ :index, :new, :create, :edit, :update, :destroy ]
+    has_permission_on :dashboard_tools_offer_icons, :to => [ :edit, :create, :update, :destroy ]
     has_permission_on :dashboard_tools_external_publishers, :to => [ :index, :update ]
     has_permission_on :dashboard_tools_users, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_partner_assignments, :to => [ :create, :destroy ]
@@ -153,10 +148,21 @@ authorization do
     has_permission_on :dashboard_tools_survey_offers, :to => [ :index, :show, :new, :create, :edit, :update, :destroy, :toggle_enabled ]
     has_permission_on :dashboard_tools_brand_offers, :to => [ :index, :create, :delete ]
     has_permission_on :dashboard_tools_brands, :to => [ :index, :new, :create, :edit, :update, :show ]
-    has_permission_on :dashboard_tools_clients, :to => [ :index, :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
+    has_permission_on :dashboard_tools_clients, :to => [ :index ]
     has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
+  end
+
+  role :payops do
+    includes :account_mgr
+    has_permission_on :dashboard_tools_clients, :to => [ :show, :new, :create, :edit, :update, :add_partner, :remove_partner ]
+    has_permission_on :dashboard_tools_payouts, :to => [ :index, :export ]
+    has_permission_on :dashboard_tools_resellers_payouts, :to => [ :index ]
+    has_permission_on :dashboard_tools_orders, :to => [ :failed_invoices, :retry_invoicing, :mark_invoiced ]
+    has_permission_on :dashboard_tools_network_costs, :to => [ :index, :new, :create ]
+    has_permission_on :dashboard_tools_payout_freezes, :to => [ :index ]
+    has_permission_on :dashboard_tools, :to => [:monthly_rev_share_report, :download_monthly_rev_share_report]
   end
 
   role :games_editor do
@@ -202,6 +208,9 @@ authorization do
     includes :products
     includes :file_sharer
     includes :sales_rep_mgr
+    includes :partner_changer
+    includes :payout_manager
+    has_permission_on :dashboard_partners, :to => [ :new, :create ]
     has_permission_on :dashboard_pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
@@ -209,5 +218,11 @@ authorization do
     has_permission_on :dashboard_tools_jobs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
     has_permission_on :dashboard_tools_press_releases, :to => [ :index, :new, :create, :edit, :update ]
+    has_permission_on :dashboard_tools_coupons, :to => [ :index, :new, :create, :show, :edit, :update, :destroy, :toggle_enabled ]
+    has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
+  end
+
+  role :optimized_rank_booster do
+    has_permission_on :dashboard_tools_optimized_rank_boosts, :to => [ :index, :new, :create, :edit, :update, :deactivate ]
   end
 end

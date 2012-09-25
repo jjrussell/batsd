@@ -14,6 +14,13 @@ FactoryGirl.define do
     end
   end
 
+  factory :optimized_rank_booster, :parent => :user do
+    after_build do |optim|
+      role = UserRole.find_or_create_by_name('optimized_rank_booster', :employee => true)
+      optim.user_roles << role
+    end
+  end
+
   factory :account_mgr_user, :parent => :user do
     association :current_partner, :factory => :partner
     after_build do |account_mgr|
@@ -37,6 +44,12 @@ FactoryGirl.define do
   factory :customer_service_manager, :parent => :user do
     after_build do |cs_manager|
       cs_manager.user_roles << UserRole.find_or_create_by_name('customer_service_manager')
+    end
+  end
+
+  factory :payops_user, :parent => :user do
+     after_build do |payops_user|
+      payops_user.user_roles << UserRole.find_or_create_by_name('payops')
     end
   end
 
@@ -109,6 +122,7 @@ FactoryGirl.define do
     store_name 'iphone.AppStore'
     store_id   { FactoryGirl.generate(:name) }
     name       { FactoryGirl.generate(:name) }
+    developer  { FactoryGirl.generate(:name) }
   end
 
   factory :app_metadata_mapping do
@@ -118,7 +132,6 @@ FactoryGirl.define do
 
   factory :reengagement_offer do
     association :currency
-    Rails.logger.info "*" * 100
     app     { currency.app }
     partner { currency.partner }
     instructions 'Do some stuff.'
@@ -222,6 +235,19 @@ FactoryGirl.define do
     conversion_rate 100
   end
 
+  factory :currency_group do
+    id   CurrencyGroup::DEFAULT_ID
+    name "default"
+    normal_conversion_rate 3
+    normal_bid 1
+    normal_price -2
+    normal_avg_revenue 5
+    random 1
+    over_threshold 6
+    rank_boost 1
+    category_match 0
+  end
+
   factory :monthly_accounting do
     association :partner
     month                      { Time.zone.now.month }
@@ -252,6 +278,7 @@ FactoryGirl.define do
     start_time { Time.zone.now }
     end_time   { Time.zone.now + 1.hour }
     amount 1
+    optimized false
   end
 
   factory :action_offer do
@@ -300,8 +327,8 @@ FactoryGirl.define do
   end
 
   factory :survey_offer do
-    bid_price 0
-    name 'short survey 1'
+    bid  { rand(100) + 1 }
+    name { FactoryGirl.generate(:name) + ' Survey' }
   end
 
   factory :creative_approval_queue do
@@ -367,5 +394,39 @@ FactoryGirl.define do
 
   factory :client do
     name  { FactoryGirl.generate(:name) }
+  end
+
+  factory :coupon do
+    association :partner
+    provider_id                   { FactoryGirl.generate(:name) }
+    name                          'Amazon'
+    description                   'Amazing savings from Amazon'
+    fine_print                    'Buy all the things!'
+    illustration_url              'http://someillustration.com'
+    start_date                    { Date.today }
+    end_date                      { Date.today + 1.day }
+    discount_type                 'currency'
+    discount_value                '$30.00'
+    advertiser_id                 'amazon'
+    advertiser_name               'Amazon'
+    advertiser_url                'http://amazon.com'
+    vouchers_expire_type          'absolute'
+    vouchers_expire_date          { Time.zone.now + 1.day }
+    url                           'http://tapjoy.com/coupons/show'
+    instructions                  'do some stuff'
+    price                         1
+  end
+
+  factory :voucher do
+    association :coupon
+    id                   { FactoryGirl.generate(:name) }
+    click_key            { FactoryGirl.generate(:name) }
+    ref_id               { FactoryGirl.generate(:name) }
+    redemption_code      { FactoryGirl.generate(:name) }
+    acquired_at          { Date.today }
+    expires_at           { Date.today + 1.day }
+    barcode_url          'http://somebarcode.com'
+    completed            false
+    email_address        'tapjoy@tapjoy.com'
   end
 end
