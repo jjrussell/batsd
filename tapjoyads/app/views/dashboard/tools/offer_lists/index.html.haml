@@ -54,7 +54,7 @@
       - @offers.each_with_index do |offer, i|
         %tr
           %td= i + 1
-          %td= offer.precache_rank_score_for(params[:currency_group_id])
+          %td= numeric_display(offer.precache_rank_score_for(params[:currency_group_id]))
           %td= (permitted_to? :show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) : offer.name
           %td= offer.show_rate
           %td= offer.conversion_rate
@@ -78,9 +78,37 @@
         }
       });
 
+      $.tablesorter.addParser({
+        id: 'numunit-column',
+        is: function(s) { return false; },
+        type: 'string',
+        format: function(s) {
+          var num_regex = /^([\-0-9\.]+)\s*([KMBT])$/;
+          var m = s.match(num_regex);
+          if (m != null) {
+            // return a number based on the unit
+            var num = parseFloat(m[1]);
+            var unit = m[2];
+            switch(unit) {
+              case 'K':
+                return (num * 1.0e3);
+              case 'M':
+                return (num * 1.0e6);
+              case 'B':
+                return (num * 1.0e9);
+              case 'T':
+                return (num * 1.0e12);
+            }
+          } else {
+            return s;
+          }
+        }
+      });
+
       $('#offers').tablesorter({
         widgets: ['zebra'],
         headers: {
+          1: { sorter: 'numunit-column' },
           6: { sorter: 'float-column' }
         },
       });
