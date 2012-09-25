@@ -7,7 +7,7 @@
 
   %br
   #instructions
-    = t('text.age_gating.instructions')
+    = t('text.age_gating.instructions', :default => 'Enter your date of birth:')
   %br
   %span#error_message
   %br
@@ -22,11 +22,11 @@
   #continue
     %a{ :href => "javascript: void(0)", :onclick => "return checkAge(#{age_gating})" }
       %span.button
-        = t('text.age_gating.continue_link')
+        = t('text.age_gating.continue_link', :default => 'Submit')
   #close{ :style => "display:none" }
     %a{ :href => "#{@redirect_to_get_offers_url}" }
       %span.button
-        = t('text.age_gating.close_link')
+        = t('text.age_gating.close_link', :default => 'Back')
 
   .footer
     = image_tag("reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :class => "floatr")
@@ -46,7 +46,7 @@
       var today = new Date;
 
       if ((today.getTime() - gating_date.getTime()) <= 0) {
-        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.too_young')}";
+        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.too_young', :default => 'Sorry, you may not access this content.')}";
         document.getElementById('instructions').style.display = 'none';
         document.getElementById('inputs').style.display = 'none';
         document.getElementById('continue').style.display = 'none';
