@@ -29,7 +29,7 @@
         = t('text.age_gating.close_link')
 
   .footer
-    = image_tag("reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :id => "Insert Logo", :class => "floatr")
+    = image_tag("reengagement_rewards/logo-footer.png", :alt => "Tapjoy Logo", :name => "Tapjoy Logo", :height => "50", :class => "floatr")
 
 .clear
 
@@ -46,7 +46,7 @@
       var today = new Date;
 
       if ((today.getTime() - gating_date.getTime()) <= 0) {
-        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.too_yong')}";
+        document.getElementById('error_message').innerHTML = "#{t('text.age_gating.error_message.too_young')}";
         document.getElementById('instructions').style.display = 'none';
         document.getElementById('inputs').style.display = 'none';
         document.getElementById('continue').style.display = 'none';
