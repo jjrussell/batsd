@@ -1,23 +1,18 @@
 require 'spec_helper'
 
-class DummyClass
-end
-
 describe Offer::UrlGeneration do
   before :each do
-    @dummy_class = Object.new
-    @dummy_class.extend(Offer::UrlGeneration)
+    @dummy = Object.new
+    @dummy.extend(Offer::UrlGeneration)
 
     @app      = Factory :app
     @offer    = @app.primary_offer
     @currency = Factory :currency
-    @dummy_class = DummyClass.new
-    @dummy_class.extend(Offer::UrlGeneration)
     @app = FactoryGirl.create :app
     @offer = @app.primary_offer
     @params = { :udid => '123456',
                 :publisher_app_id => 'app_id',
-                :currency => 'gold' }
+                :currency => @currency }
     subject { Offer::UrlGeneration }
     ObjectEncryptor.stub(:encrypt).and_return('some_data')
   end
@@ -86,7 +81,7 @@ describe Offer::UrlGeneration do
         :eid       => 'TJM_EID',
         :data      => 'DATA'
       }
-      @dummy_class.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
+      @dummy.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
       @click_key = 'click.key'
       @udid = 'my_device_udid'
@@ -95,10 +90,10 @@ describe Offer::UrlGeneration do
       @currency = FactoryGirl.create(:currency)
 
       @source = 'source_token'
-      @dummy_class.stub(:source_token).and_return(@source)
+      @dummy.stub(:source_token).and_return(@source)
 
       partner_id = 'partner_id'
-      @dummy_class.stub(:partner_id).and_return(partner_id)
+      @dummy.stub(:partner_id).and_return(partner_id)
       @uid = Device.advertiser_device_id(@udid, partner_id)
 
       @itunes_affil = 'itunes_affil'
@@ -114,94 +109,94 @@ describe Offer::UrlGeneration do
         :display_multiplier    => @display_multiplier }
 
       # 'global' macros (with some exceptions, as specified in this file)
-      @complete_action_url = @dummy_class.url.gsub('TAPJOY_UDID', @udid)
+      @complete_action_url = @dummy.url.gsub('TAPJOY_UDID', @udid)
       @complete_action_url.gsub!('TAPJOY_GENERIC_SOURCE', @source)
       @complete_action_url.gsub!('TAPJOY_EXTERNAL_UID', @uid)
     end
 
     it "should replace 'global' macros" do
-      @dummy_class.stub(:item_type).and_return('')
-      @dummy_class.complete_action_url(@options).should == @complete_action_url
+      @dummy.stub(:item_type).and_return('')
+      @dummy.complete_action_url(@options).should == @complete_action_url
     end
 
     context 'for ActionOffers' do
       it 'should not replace any macros' do
-        @dummy_class.stub(:item_type).and_return('ActionOffer')
+        @dummy.stub(:item_type).and_return('ActionOffer')
         @complete_action_url.gsub!(@udid, 'TAPJOY_UDID') # reverse this... ActionOffers are special-cased
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
 
     context 'for App offers' do
       it 'should replace App-offer-specific macros' do
-        @dummy_class.stub(:item_type).and_return('App')
+        @dummy.stub(:item_type).and_return('App')
         Linkshare.should_receive(:add_params).with(@complete_action_url.clone, @itunes_affil).once.and_return(@complete_action_url.clone)
         @complete_action_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(@click_key))
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
 
     context 'for EmailOffers' do
       it 'should append parameters' do
-        @dummy_class.stub(:item_type).and_return('EmailOffer')
+        @dummy.stub(:item_type).and_return('EmailOffer')
         @complete_action_url << "&publisher_app_id=#{@publisher_app_id}"
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
 
     context 'for GenericOffers' do
       it 'should replace GenericOffer-specific macros' do
-        @dummy_class.stub(:item_type).and_return('GenericOffer')
-        @dummy_class.stub(:id).and_return('id')
-        @dummy_class.stub(:has_variable_payment?).and_return(false)
+        @dummy.stub(:item_type).and_return('GenericOffer')
+        @dummy.stub(:id).and_return('id')
+        @dummy.stub(:has_variable_payment?).and_return(false)
         @complete_action_url.gsub!('TAPJOY_GENERIC_INVITE', 'key')
         @complete_action_url.gsub!('TAPJOY_GENERIC', @click_key)
         @complete_action_url = "#{WEBSITE_URL}#{@complete_action_url}"
         @complete_action_url.gsub!('TJM_EID', ObjectEncryptor.encrypt(@publisher_app_id))
         data = {
-          :offer_id           => @dummy_class.id,
+          :offer_id           => @dummy.id,
           :currency_id        => @currency.id,
           :display_multiplier => @display_multiplier
         }
         @complete_action_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
 
     context 'for SurveyOffers' do
       it 'should replace SurveyOffer-specific macros, and encrypt the parameters' do
-        @dummy_class.stub(:item_type).and_return('SurveyOffer')
+        @dummy.stub(:item_type).and_return('SurveyOffer')
         @complete_action_url.gsub!('TAPJOY_SURVEY', @click_key)
-        @dummy_class.complete_action_url(@options).should == ObjectEncryptor.encrypt_url(@complete_action_url)
+        @dummy.complete_action_url(@options).should == ObjectEncryptor.encrypt_url(@complete_action_url)
       end
     end
 
     context 'for VideoOffers and TestVideoOffers' do
       it 'should not replace any macros, and should use a specific url' do
-        @dummy_class.stub(:id).and_return('id')
+        @dummy.stub(:id).and_return('id')
         params = {
-          :offer_id           => @dummy_class.id,
+          :offer_id           => @dummy.id,
           :app_id             => @publisher_app_id,
           :currency_id        => @currency.id,
           :udid               => @udid,
           :publisher_user_id  => @publisher_user_id
         }
-        @complete_action_url = "#{API_URL}/videos/#{@dummy_class.id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
+        @complete_action_url = "#{API_URL}/videos/#{@dummy.id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
 
-        @dummy_class.stub(:item_type).and_return('VideoOffer')
-        @dummy_class.complete_action_url(@options.clone).should == @complete_action_url
+        @dummy.stub(:item_type).and_return('VideoOffer')
+        @dummy.complete_action_url(@options.clone).should == @complete_action_url
 
-        @dummy_class.stub(:item_type).and_return('TestVideoOffer')
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.stub(:item_type).and_return('TestVideoOffer')
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
 
     context 'for DeeplinkOffers' do
       it 'should not replace any macros, and should use a specific url' do
-        @dummy_class.stub(:item_type).and_return('DeeplinkOffer')
+        @dummy.stub(:item_type).and_return('DeeplinkOffer')
         params = { :udid => @udid, :id => @currency.id, :click_key => @click_key }
         @complete_action_url = "#{WEBSITE_URL}/earn?data=#{ObjectEncryptor.encrypt(params)}"
-        @dummy_class.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should == @complete_action_url
       end
     end
   end
@@ -256,7 +251,7 @@ describe Offer::UrlGeneration do
 
   describe '#click_url' do
     before :each do
-      @click_params = { :publisher_app => 'pub_app', :publisher_user_id => '123',
+      @click_params = { :publisher_app => @app, :publisher_user_id => '123',
                         :udid => '123456', :currency_id => 'curr',
                         :source => 'phone', :viewed_at => Time.now }
 
