@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Coupon do
 
+  subject { FactoryGirl.create(:coupon) }
+
   it { should have_many(:vouchers) }
   it { should have_many(:offers) }
   it { should belong_to(:partner) }
@@ -34,6 +36,14 @@ describe Coupon do
     end
     it 'should save a new coupon to the db' do
       Coupon.create_new_coupon(@params, @partner_id, @coupon.price, @coupon.instructions).should == @coupon
+    end
+  end
+
+  describe '#get_icon_url' do
+    it 'calls Offer.get_icon_url and passes appropriate args' do
+      options = { :option1 => true, :option2 => false }
+      Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+      subject.get_icon_url(options)
     end
   end
 

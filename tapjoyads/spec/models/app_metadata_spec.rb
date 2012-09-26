@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe AppMetadata do
+
+  subject { FactoryGirl.create(:app_metadata) }
+
   # Check associations
   it { should have_many :apps }
   it { should have_many :app_reviews }
@@ -10,6 +13,14 @@ describe AppMetadata do
   it { should validate_presence_of :store_id }
   it { should validate_numericality_of :thumbs_up }
   it { should validate_numericality_of :thumbs_down }
+
+  describe '#get_icon_url' do
+    it 'calls Offer.get_icon_url and passes appropriate args' do
+      options = { :option1 => true, :option2 => false }
+      Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+      subject.get_icon_url(options)
+    end
+  end
 
   describe '#update_from_store' do
     context 'when AppStore returns no data' do

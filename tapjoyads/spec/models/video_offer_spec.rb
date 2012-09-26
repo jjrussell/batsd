@@ -1,6 +1,17 @@
 require 'spec_helper'
 
 describe VideoOffer do
+
+  subject { FactoryGirl.create(:video_offer) }
+
+  describe '#get_icon_url' do
+    it 'calls Offer.get_icon_url and passes appropriate args' do
+      options = { :option1 => true, :option2 => false }
+      Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+      subject.get_icon_url(options)
+    end
+  end
+
   context 'when associating' do
     it 'has many' do
       should have_many :offers
