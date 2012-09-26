@@ -12,6 +12,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   def on_message(message)
     params.delete(:callback_url)
     reward = Reward.find(message.body, :consistent => true)
+    attempts = reward.attempts || []
     raise "Reward not found: #{message.body}" if reward.nil?
     return if reward.sent_currency? && reward.send_currency_status?
 
@@ -60,7 +61,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     end
 
     reward.sent_currency = Time.zone.now
-
+    
     begin
       reward.save!(:expected_attr => {'sent_currency' => nil})
     rescue Simpledb::ExpectedAttributeError => e
@@ -87,6 +88,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           if Rails.env.production? || Rails.env.test?
             response = Downloader.get_strict(callback_url, { :timeout => 20 })
             status = response.status
+            attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
           else
             status = 'OK'
           end
@@ -114,6 +116,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       raise e
     end
 
+    reward.attempts = attempts
     reward.save
   end
 

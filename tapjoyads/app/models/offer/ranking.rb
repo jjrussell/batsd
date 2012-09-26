@@ -81,7 +81,7 @@ module Offer::Ranking
 
   def override_rank_score(base_rank_score=0)
     if (rank_boost > 0 && publisher_app_whitelist.present? && is_reasonable_rank_boost?) || rank_boost < 0
-      self.rank_score = (rank_boost + base_rank_score).floor
+      self.rank_score = rank_boost + base_rank_score.to_f
       return true
     end
     return false
