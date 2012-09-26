@@ -8,6 +8,26 @@
     %td
       - if @offer.item.get_countries_blacklist.present?
         = @offer.item.countries_blacklist
+- omit_prereqs ||= false
+- unless omit_prereqs
+  %tr.admin
+    %th
+      = f.label :name, 'Prerequisite'
+      #help_prerequisite.help ?
+    %td
+      - offer_options = options_for_prerequisites(@offer)
+      - prerequisites_options = offer_options
+      - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || @offer.prerequisite_offer_id.blank?))
+      = f.select :prerequisite_offer_id, prerequisites_options
+      = error_message_on @offer, :prerequisite_offer_id
+  %tr.admin
+    %th
+      = f.label :name, 'Exclusion Prerequisites'
+      #help_exclusion_prerequisites.help ?
+    %td
+      = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+      = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+      = error_message_on @offer, :exclusion_prerequisite_offer_ids
 %tr.admin
   %th
     = f.label :x_partner_prerequisites, 'Cross Partner Prerequisites'
@@ -165,6 +185,11 @@
       = error_message_on @offer, :screen_layout_sizes
 
 .hidden
+  - unless omit_prereqs
+    #help_prerequisite_content{:name => 'Prerequisite Offer'}
+      This offer will only be shown to users who have already completed the prerequisite offer.
+    #help_exclusion_prerequisites_content{:name => 'Exclusion Prerequisites'}
+      This offer will only be shown to users who have NOT completed any of the exclusion prerequisite offers.
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.

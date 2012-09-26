@@ -20,4 +20,5 @@ class BucketNames
   UDID_REPORTS        = RUN_MODE_PREFIX + 'udid-reports'
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS        = RUN_MODE_PREFIX + 'web-requests'
+  APPLE_EPF           = RUN_MODE_PREFIX + 'apple-epf'
 end
