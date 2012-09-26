@@ -10,6 +10,26 @@ describe StatsAggregation do
   end
 
   describe '#populate_hourly_stats' do
+    context 'with generic offer' do
+      before :each do
+        @offer = FactoryGirl.create(:generic_offer).primary_offer
+        Offer.stub(:find).and_return([@offer])
+        @last_aggregation = @now - 1.day
+        @offer.stub(:last_stats_aggregation_time).and_return(@last_aggregation)
+        24.times.each do |i|
+          key = Stats.get_memcache_count_key('paid_clicks', @offer.id, @last_aggregation + i.hour)
+          Mc.increment_count(key, false, 1.day, 500 + i)
+        end
+      end
+
+      it 'populates hourly stats' do
+        StatsAggregation.new(['1234']).populate_hourly_stats
+        24.times.each do |i|
+          @stats.get_hourly_count('paid_clicks')[i].should == 500 + i
+        end
+      end
+    end
+
     context 'with iOS app' do
       before :each do
         @offer = FactoryGirl.create(:app).primary_offer
