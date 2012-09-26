@@ -39,7 +39,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       flash[:notice] = 'Successfully updated.'
       redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
     else
-      flash.now[:error] = 'Update unsuccessful'
+      flash.now[:error] = update_flash_error_message(@app.partner)
       render :action => :show and return
     end
   end

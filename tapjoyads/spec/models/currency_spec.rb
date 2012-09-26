@@ -41,6 +41,41 @@ describe Currency do
         @currency.errors[:test_devices].should be_present
       end
     end
+
+    context 'when the conversion_rate is about to be changed' do
+      before :each do
+        Currency.any_instance.stub(:approve!).and_return(true)
+        @app = FactoryGirl.create(:app)
+      end
+
+      context 'from nonzero to zero' do
+        before :each do
+          @currency = FactoryGirl.create(:currency)
+          @currency.should be_valid
+          @currency.conversion_rate = 0
+          @currency.save
+        end
+
+        it 'this validation fails' do
+          @currency.should_not be_valid
+          @currency.errors[:conversion_rate].should be_present
+        end
+      end
+
+      context 'from zero to nonzero' do
+        before :each do
+          @currency = FactoryGirl.create(:non_rewarded)
+          @currency.should be_valid
+          @currency.conversion_rate = FactoryGirl.generate(:integer) ** 2 + 1 #in case it generates a negative or 0
+          @currency.save
+        end
+
+        it 'this validation fails' do
+          @currency.should_not be_valid
+          @currency.errors[:conversion_rate].should be_present
+        end
+      end
+    end
   end
 
   describe '#has_invalid_test_devices?' do

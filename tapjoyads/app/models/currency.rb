@@ -52,6 +52,15 @@ class Currency < ActiveRecord::Base
       record.errors.add(attribute, "includes invalid device IDs")
     end
   end
+  validates_each :conversion_rate, :on => :update do |record, attribute, value|
+    if value != record.conversion_rate_was
+      if value == 0
+        record.errors.add(:conversion_rate, "cannot be set to 0")
+      elsif record.conversion_rate_was == 0
+        record.errors.add(:conversion_rate, "cannot change from 0")
+      end
+    end
+  end
 
   def has_invalid_test_devices?
     get_test_device_ids(:reload).any? do |device_id|
@@ -86,7 +95,7 @@ class Currency < ActiveRecord::Base
   before_validation :sanitize_attributes
   before_validation :assign_default_currency_group, :on => :create
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
-  after_create :create_deeplink_offer
+  before_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
   after_update  :approve_on_tapjoy_enabled
@@ -345,9 +354,7 @@ class Currency < ActiveRecord::Base
 
   def create_deeplink_offer
     self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
-    self.deeplink_offer.save!
     self.enabled_deeplink_offer_id = self.deeplink_offer.id
-    self.save!
   end
 
   def approve_on_tapjoy_enabled
