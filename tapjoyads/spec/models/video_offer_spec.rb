@@ -12,6 +12,14 @@ describe VideoOffer do
     end
   end
 
+  describe '#save_icon!' do
+    it 'calls Offer.upload_icon! and passes appropriate args' do
+      image_data = "img"
+      Offer.should_receive(:upload_icon!).with(image_data, subject.id, true)
+      subject.save_icon!(image_data)
+    end
+  end
+
   context 'when associating' do
     it 'has many' do
       should have_many :offers
