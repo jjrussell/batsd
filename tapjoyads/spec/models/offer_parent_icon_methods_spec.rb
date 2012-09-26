@@ -116,8 +116,8 @@ describe OfferParentIconMethods do
         Offer.stub(:upload_icon!).and_return(true)
 
         offers = [Offer.new(:auto_update_icon => true), Offer.new(:auto_update_icon => false)]
-        offers[0].should_receive(:remove_icon!).once
-        offers[1].should_not_receive(:remove_icon!)
+        offers[0].should_receive(:remove_overridden_icon!).once
+        offers[1].should_not_receive(:remove_overridden_icon!)
         subject.stub(:offers).and_return(offers)
       end
     end

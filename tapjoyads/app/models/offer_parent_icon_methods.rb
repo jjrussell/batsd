@@ -9,7 +9,9 @@ module OfferParentIconMethods
     return app_primary_app_metadata.save_icon!(icon_src_blob) if app_primary_app_metadata.present?
     return unless Offer.upload_icon!(icon_src_blob, id, self.class.name == 'VideoOffer')
     offers.each do |offer|
-      offer.remove_icon! if offer.auto_update_icon?
+      # removing the overridden icon will force the offer to use the newly-uploaded one
+      # (not applicable if auto_update_icon is false... in that case, it should continue to use its current icon)
+      offer.remove_overridden_icon! if offer.auto_update_icon?
     end
   end
 

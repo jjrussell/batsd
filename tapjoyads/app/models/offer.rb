@@ -561,11 +561,11 @@ class Offer < ActiveRecord::Base
     true
   end
 
-  def remove_icon!
+  def remove_overridden_icon!
     guid = icon_id
 
     # only allow removing of offer-specific, manually-uploaded icons
-    return if [item_id, app_metadata_id, app_id].include?(guid)
+    return if icon_id_override.nil? || [item_id, app_metadata_id, app_id].include?(guid)
 
     Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
 

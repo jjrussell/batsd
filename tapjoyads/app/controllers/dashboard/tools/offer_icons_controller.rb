@@ -24,7 +24,7 @@ class Dashboard::Tools::OfferIconsController < Dashboard::DashboardController
 
   def destroy
     begin
-      @offer.remove_icon!
+      @offer.remove_overridden_icon!
       @success_message = "Icon removed successfully."
     rescue
       @error_message = "Error removing icon, please try again."

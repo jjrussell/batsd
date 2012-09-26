@@ -131,7 +131,7 @@ describe Offer do
     end
   end
 
-  describe '.remove_icon!' do
+  describe '#remove_overridden_icon!' do
     before :each do
       @icon_id = 'icon_id'
 
@@ -144,7 +144,7 @@ describe Offer do
       context "without icon_id_override set" do
         it "does nothing" do
           @s3object.should_receive(:delete).never
-          @offer.remove_icon!
+          @offer.remove_overridden_icon!
         end
       end
 
@@ -159,7 +159,7 @@ describe Offer do
           it "removes image" do
             @s3object.write("pre-existing image data")
             @s3object.should_receive(:delete).once
-            @offer.remove_icon!
+            @offer.remove_overridden_icon!
 
             @offer.icon_id_override.should be_nil
             @offer.changed?.should be_false # offer was saved
@@ -169,7 +169,7 @@ describe Offer do
         context "without pre-existing image" do
           it "still unsets icon_id_override" do
             @s3object.should_receive(:delete).never
-            @offer.remove_icon!
+            @offer.remove_overridden_icon!
 
             @offer.icon_id_override.should be_nil
             @offer.changed?.should be_false # offer was saved
@@ -187,7 +187,7 @@ describe Offer do
       context "with icon_id_override_set to app_metadata_id" do
         it "does nothing" do
           @s3object.should_receive(:delete).never
-          @offer.remove_icon!
+          @offer.remove_overridden_icon!
 
           @action_offer.icon_id_override.should == @action_offer.app_metadata_id
         end
@@ -204,7 +204,7 @@ describe Offer do
           it "removes image" do
             @s3object.write("pre-existing image data")
             @s3object.should_receive(:delete).once
-            @action_offer.remove_icon!
+            @action_offer.remove_overridden_icon!
 
             @action_offer.icon_id_override.should == @action_offer.app_id
             @action_offer.changed?.should be_false # offer was saved
@@ -214,7 +214,7 @@ describe Offer do
         context "without pre-existing image" do
           it "still resets icon_id_override to app_id" do
             @s3object.should_receive(:delete).never
-            @action_offer.remove_icon!
+            @action_offer.remove_overridden_icon!
 
             @action_offer.icon_id_override.should == @action_offer.app_id
             @action_offer.changed?.should be_false # offer was saved
