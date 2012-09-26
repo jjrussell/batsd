@@ -16,7 +16,7 @@ elsif server_type == 'jobserver'
 elsif server_type == "dev"
   worker_processes 2
   timeout 90
-elsif server_type == 'webserver'
+elsif server_type == 'webserver' || server_type == 'connect'
   worker_processes 12
   timeout 90
 else
