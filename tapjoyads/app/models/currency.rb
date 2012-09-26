@@ -95,7 +95,7 @@ class Currency < ActiveRecord::Base
   before_validation :sanitize_attributes
   before_validation :assign_default_currency_group, :on => :create
   before_create :set_hide_rewarded_app_installs, :set_values_from_partner_and_reseller, :set_promoted_offers
-  after_create :create_deeplink_offer
+  before_create :create_deeplink_offer
   before_update :update_spend_share
   before_update :reset_to_pending_if_rejected
   after_update  :approve_on_tapjoy_enabled

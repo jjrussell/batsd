@@ -1,12 +1,13 @@
 class Dashboard::DashboardController < ApplicationController
   include SslRequirement
+  include FlashMessageHelper
 
   layout 'website'
 
   skip_before_filter :fix_params
   skip_before_filter :force_utc
 
-  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :current_partner_active_offers, :premier_enabled?
+  helper_method :current_user, :current_partner, :current_partner_apps, :current_partner_offers, :current_partner_app_offers, :current_partner_active_app_offers, :current_partner_active_offers, :premier_enabled?, :update_flash_error_message
 
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
