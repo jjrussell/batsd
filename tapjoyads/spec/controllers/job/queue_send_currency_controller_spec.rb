@@ -5,6 +5,7 @@ describe Job::QueueSendCurrencyController do
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
     @mock_response.stub(:status).and_return('OK')
+    @mock_response.stub(:body).and_return("mock response body")
 
     # prevents any callback_urls from actually getting called
     Downloader.stub(:get).and_return(@mock_response)
@@ -181,6 +182,13 @@ describe Job::QueueSendCurrencyController do
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
       reward.send_currency_status.should == 'OK'
+    end
+
+    it 'updates reward.attempts' do
+      get(:run_job, :message => @reward.id)
+      reward = Reward.new(:key => @reward.key, :consistent => true)
+      reward.attempts.last['status'].should == @mock_response.status
+      reward.attempts.last['body'].should == @mock_response.body
     end
 
     it 'should not reward twice' do
