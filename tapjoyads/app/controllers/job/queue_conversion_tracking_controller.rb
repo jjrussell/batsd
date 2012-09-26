@@ -36,6 +36,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.currency_reward        = click.currency_reward
     attempt.tapjoy_amount          = click.tapjoy_amount
     attempt.source                 = click.source
+    attempt.ip_address             = click.ip_address
     attempt.udid                   = click.udid
     attempt.country                = click.country
     attempt.viewed_at              = click.viewed_at
@@ -47,6 +48,8 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.advertiser_reseller_id = click.advertiser_reseller_id || offer.reseller_id
     attempt.spend_share            = click.spend_share || currency.get_spend_share(offer)
     attempt.mac_address            = click.mac_address
+    attempt.device_type            = click.device_type
+    attempt.geoip_country          = click.geoip_country
     attempt.store_name             = click.store_name
     attempt.created                = installed_at_epoch
     attempt.save
@@ -203,11 +206,16 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.tapjoy_amount          = attempt.tapjoy_amount
     web_request.currency_reward        = attempt.currency_reward
     web_request.source                 = attempt.source
+    web_request.ip_address             = attempt.ip_address
     web_request.udid                   = attempt.udid
     web_request.country                = attempt.country
     web_request.viewed_at              = attempt.viewed_at
+    web_request.clicked_at             = attempt.clicked_at
     web_request.store_name             = attempt.store_name
     web_request.click_key              = attempt.click_key
+    web_request.mac_address            = attempt.mac_address
+    web_request.device_type            = attempt.device_type
+    web_request.geoip_country          = attempt.geoip_country
     web_request.conversion_attempt_key = attempt.key
     web_request.resolution             = attempt.resolution
     web_request.block_reason           = attempt.block_reason

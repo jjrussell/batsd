@@ -75,6 +75,7 @@ class WebRequest < SyslogMessage
   self.define_attr :status_items
   self.define_attr :device_ip
   self.define_attr :viewed_at, :type => :time
+  self.define_attr :clicked_at, :type => :time
   self.define_attr :source
   self.define_attr :exp
   self.define_attr :country
