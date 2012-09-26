@@ -1,4 +1,5 @@
 class Job::MasterHealthzController < Job::JobController
+  newrelic_ignore
 
   def index
     File.open(MASTER_HEALTHZ_FILE, 'w') do |f|

@@ -1,4 +1,5 @@
 class HealthzController < ActionController::Base
+  newrelic_ignore
 
   def index
     # This should freeze the healthz app, removing it from the LB
