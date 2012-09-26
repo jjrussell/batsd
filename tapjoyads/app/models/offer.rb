@@ -90,8 +90,6 @@ class Offer < ActiveRecord::Base
     '3 days'   => 3.days.to_i,
   }
 
-  MC_KEY_AGE_GATING_PREFIX = 'offer.age_gating.device.offer'
-
   attr_reader :video_button_tracking_offers
   attr_accessor :cached_offer_list_id
 
@@ -950,10 +948,6 @@ class Offer < ActiveRecord::Base
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
-  end
-
-  def age_gate?
-    video_offer? && age_rating
   end
 
   def daily_cap_type

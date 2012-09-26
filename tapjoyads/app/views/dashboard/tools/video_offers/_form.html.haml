@@ -32,12 +32,6 @@
         = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @video_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @video_offer, :exclusion_prerequisite_offer_ids
     %tr
-      %th= f.label :name, 'Age Gating'
-      %td
-        = f.text_field :age_gating, :maxlength => 2, :size => 4
-        +
-        = error_message_on @video_offer, :age_gating
-    %tr
       %th
         = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
       %td

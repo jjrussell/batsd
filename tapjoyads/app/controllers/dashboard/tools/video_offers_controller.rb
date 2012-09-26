@@ -10,7 +10,6 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
 
   def edit
     @video_offer = VideoOffer.find(params[:id], :include => :partner)
-    @video_offer.age_gating = @video_offer.primary_offer.age_rating
   end
 
   def create
@@ -35,6 +34,7 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
   def update
     @video_offer = VideoOffer.find(params[:id], :include => :partner)
     log_activity(@video_offer)
+
     if @video_offer.update_attributes(params[:video_offer])
       @video_offer.primary_offer.save_video!(params[:video].read) if params[:video].present?
       @video_offer.save_icon!(params[:icon].read) if params[:icon].present?

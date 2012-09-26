@@ -134,7 +134,6 @@ class WebRequest < SyslogMessage
   self.define_attr :rule_message
   self.define_attr :store_name
   self.define_attr :connection_type
-  self.define_attr :date_of_birth
   self.define_attr :format
   self.define_attr :impression_id
   self.define_attr :raw_url
@@ -200,7 +199,6 @@ class WebRequest < SyslogMessage
     self.plugin               = params[:plugin]
     self.store_name           = params[:store_name]
     self.connection_type      = params[:connection_type]
-    self.date_of_birth        = params[:date_of_birth]
     self.format               = params[:format]
     self.impression_id        = params[:impression_id]
     self.raw_url              = params[:raw_url]

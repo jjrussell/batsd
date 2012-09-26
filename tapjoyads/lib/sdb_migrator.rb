@@ -1,4 +1,4 @@
-module SdbMigrator
+module SdbMigrator  
 
   def self.included(base)
     base.send :extend, ClassMethods
@@ -9,7 +9,7 @@ module SdbMigrator
   end
 
   #Unused at this point.  Can be used if we want to load with fault tolerance
-  # def load_with_mirror(load_from_memcache = true, consistent = false)
+  # def load_with_mirror(load_from_memcache = true, consistent = false)    
   #   result = nil
   #   #First try to load from the current sdb domain
   #   result = load_without_mirror(load_from_memcache, consistent)
@@ -21,13 +21,13 @@ module SdbMigrator
   #     @this_domain_name = current_name
   #     unless @attributes.empty?
   #       #We looked it up in the new cache and found it, so if we save it, we want to persist to
-  #       #the old cache with all the attribute, so we trick the simpledb_resource
+  #       #the old cache with all the attribute, so we trick the simpledb_resource 
   #       #class into saving all the attrs
   #       @attributes_to_add = @attributes.clone
   #     end
-  #   end
+  #   end    
   #   result
-  # end
+  # end  
 
   #Override the write to sdb process so that we actually write it to two different
   #places.  This will keep the two domains in sync as we migrate over.  When we run
@@ -38,9 +38,9 @@ module SdbMigrator
     #We'll just go ahead and pass that error back up the call chain
     result = write_to_sdb_without_mirror(expected_attr)
     #If we're here, we didn't error out, it's time to try to write to the new domain
-
+    
     retry_count = 0
-    begin
+    begin      
 
       #We're going to need to clone the attributes over to the mirror, so keep this for backup
       old_attributes_to_add = @attributes_to_add.clone
@@ -58,8 +58,8 @@ module SdbMigrator
         retry_count += 1
         retry
       end
-
-      #Failed mirror call... Let's keep track of all these failures,
+      
+      #Failed mirror call... Let's keep track of all these failures, 
       #and we'll go back and manually fix it
       uuid = UUIDTools::UUID.random_create.to_s
       bucket = S3.bucket(BucketNames::FAILED_SDB_SAVES)
@@ -87,5 +87,5 @@ module SdbMigrator
       domain_number = @key.matz_silly_hash % self.new_num_domains
       "#{self.new_domain_name}_#{domain_number}"
     end
-
+  
 end
