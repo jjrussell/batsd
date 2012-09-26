@@ -93,7 +93,7 @@ class StatsAggregation
       stat_rows  = {}
 
 
-      app = App.find(offer.app_id) if offer.app_offer?
+      app = App.find_by_id(offer.app_id) if offer.app_offer?
       while start_time < end_time
         date_str = start_time.strftime('%Y-%m-%d')
         stat_rows[date_str] ||= Stats.new(:key => "app.#{date_str}.#{offer.id}", :load_from_memcache => false)
