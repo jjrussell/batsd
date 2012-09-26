@@ -20,6 +20,8 @@ class Dashboard::Tools::OptimizedOfferListsController < Dashboard::DashboardCont
 
   private
 
+  # TODO: Don't use private methods here
+
   def processed_offers(params)
     params[:platform_name] = params[:platform]
     params[:primary_country] = params[:country]
@@ -40,7 +42,7 @@ class Dashboard::Tools::OptimizedOfferListsController < Dashboard::DashboardCont
   end
 
   def raw_offers(key)
-    OptimizedOfferList.send(:s3_json_offer_data, key)['offers'] rescue []
+    OptimizedOfferList.send(:s3_json_offer_data, key).first['offers'] rescue []
   end
 
   def all_available_keys
