@@ -57,6 +57,14 @@ describe UdidReports do
       @device.save
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
       buf = File.read(@report_filepath)
+      buf.scan(',').should have(3).items
+    end
+
+    it 'should generate UDID report even if the device has unparsable apps data' do
+      @device.save
+      Device.any_instance.stub(:fix_app_json) { raise }
+      expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
+      buf = File.read(@report_filepath)
       buf.length.should == 0
     end
   end
