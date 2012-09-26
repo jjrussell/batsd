@@ -26,10 +26,13 @@ class VideoOffer < ActiveRecord::Base
 
   set_callback :cache_associations, :before, :cache_video_buttons_and_tracking_offers
 
+  attr_accessor :age_gating
+
   validates_presence_of :partner, :name
   validates_presence_of :video_url, :unless => :new_record?
   validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
   validate :video_exists, :unless => :new_record?
+  validates_numericality_of :age_gating, :only_integer => true, :allow_blank => true, :message => "can only be whole number or empty."
   validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
@@ -110,6 +113,7 @@ class VideoOffer < ActiveRecord::Base
     offer.name_suffix  = 'Video'
     offer.prerequisite_offer_id = prerequisite_offer_id
     offer.exclusion_prerequisite_offer_ids = exclusion_prerequisite_offer_ids
+    offer.age_rating = age_gating
     offer.x_partner_prerequisites = x_partner_prerequisites
     offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites
     offer.save!
@@ -125,6 +129,7 @@ class VideoOffer < ActiveRecord::Base
       offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites if x_partner_exclusion_prerequisites_changed?
       offer.url = video_url if video_url_changed?
       offer.hidden = hidden if hidden_changed?
+      offer.age_rating = age_gating
       offer.save! if offer.changed?
     end
   end

@@ -166,6 +166,7 @@ module Offer::UrlGeneration
     offerwall_rank        = options.delete(:offerwall_rank)       { nil }
     view_id               = options.delete(:view_id)              { nil }
     store_name            = options.delete(:store_name)           { nil }
+    date_of_birth         = options.delete(:date_of_birth)        { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -211,6 +212,7 @@ module Offer::UrlGeneration
       :view_id              => view_id,
       :store_name           => store_name,
       :cached_offer_list_id => cached_offer_list_id,
+      :date_of_birth        => date_of_birth,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
