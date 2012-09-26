@@ -39,11 +39,12 @@ module Offer::Rejecting
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
       { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
+      { :method => :age_gating_reject?, :parameters => device, :reason => 'age_gating'},
       { :method => :has_coupon_already_pending?, :parameters => [device], :reason => 'coupon_already_requested'},
       { :method => :has_coupon_offer_expired?, :reason => 'coupon_expired'},
       { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'},
       { :method => :udid_required_reject?, :parameters => [device], :reason => 'udid_required'},
-      { :method => :mac_address_required_reject?, :parameters => [device], :reason => 'mac_address_required'}
+      { :method => :mac_address_required_reject?, :parameters => [device], :reason => 'mac_address_required'},
     ]
     reject_reasons(reject_functions)
   end
@@ -85,6 +86,7 @@ module Offer::Rejecting
     app_store_reject?(store_whitelist) ||
     distribution_reject?(store_name) ||
     miniscule_reward_reject?(currency) ||
+    age_gating_reject?(device) ||
     has_coupon_already_pending?(device) ||
     has_coupon_offer_not_started? ||
     has_coupon_offer_expired? ||
@@ -368,6 +370,10 @@ module Offer::Rejecting
       item_type != 'DeeplinkOffer' && !rate_filter_override
   end
 
+  def age_gating_reject?(device)
+    !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
+  end
+
   def udid_required_reject?(device)
     device && requires_udid? && !device.id.udid?
   end
@@ -375,5 +381,4 @@ module Offer::Rejecting
   def mac_address_required_reject?(device)
     device && requires_mac_address? && device.mac_address.blank?
   end
-
 end

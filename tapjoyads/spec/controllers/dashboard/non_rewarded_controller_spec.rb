@@ -7,7 +7,7 @@ describe Dashboard::NonRewardedController do
     login_as(@user)
     @app = FactoryGirl.create(:app)
     @partner = @app.partner
-    
+
     App.any_instance.stub(:build_non_rewarded) do
        FactoryGirl.create(:currency,
         :conversion_rate  => 0,
@@ -18,7 +18,7 @@ describe Dashboard::NonRewardedController do
         :partner          => @partner
       )
     end
-    
+
     App.any_instance.stub(:partner).and_return(@partner)
     App.stub(:find).and_return(@app)
     @params = { :app_id => @app.id }
@@ -63,7 +63,7 @@ describe Dashboard::NonRewardedController do
         @app.build_non_rewarded
         get(:new, @params)
       end
-      
+
       it 'redirects to the #edit action' do
         response.should redirect_to(edit_app_non_rewarded_path(:app_id => @app.id))
       end
@@ -86,7 +86,7 @@ describe Dashboard::NonRewardedController do
         @app.build_non_rewarded
         get(:edit, @params)
       end
-      
+
       it 'renders the #edit action' do
         response.should render_template(:edit)
       end

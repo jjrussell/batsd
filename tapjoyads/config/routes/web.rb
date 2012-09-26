@@ -44,6 +44,12 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
   resources :offer_instructions, :only => [:index]
+  resources :offer_age_gating, :only => [:index] do
+    collection do
+      get :redirect_to_click
+      get :redirect_to_get_offers
+    end
+  end
   resources :coupon_instructions, :only => [:new, :create]
 
   match 'offer_triggered_actions/fb_visit' => 'offer_triggered_actions#fb_visit'
