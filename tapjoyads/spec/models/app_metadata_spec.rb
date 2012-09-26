@@ -14,22 +14,6 @@ describe AppMetadata do
   it { should validate_numericality_of :thumbs_up }
   it { should validate_numericality_of :thumbs_down }
 
-  describe '#get_icon_url' do
-    it 'calls Offer.get_icon_url and passes appropriate args' do
-      options = { :option1 => true, :option2 => false }
-      Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
-      subject.get_icon_url(options)
-    end
-  end
-
-  describe '#save_icon!' do
-    it 'calls Offer.upload_icon! and passes appropriate args' do
-      image_data = 'img'
-      Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
-      subject.save_icon!(image_data)
-    end
-  end
-
   describe '#update_from_store' do
     context 'when AppStore returns no data' do
       it 'raises an error' do
