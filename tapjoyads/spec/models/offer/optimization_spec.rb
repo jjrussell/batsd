@@ -47,7 +47,7 @@ describe Offer::Optimization do
         @offer.save
 
         @offer.optimization_override(@offer_hash, false)
-        @offer.rank_score.should == (500 + 200.7).floor
+        @offer.rank_score.should == 500 + 200.7
       end
 
       it "should not override rank_score with rank_boost with addition of rank_boost and optimized rank_score if publisher_app_whitelist is present but rank boost > 1000" do
@@ -70,7 +70,7 @@ describe Offer::Optimization do
         @offer.save
 
         @offer.optimization_override(@offer_hash, false)
-        @offer.rank_score.should == (-800 + 200.7).floor
+        @offer.rank_score.should == -800 + 200.7
       end
 
     end

@@ -249,6 +249,14 @@ FactoryGirl.define do
     category_match 0
   end
 
+  factory :non_rewarded, :class => Currency do
+    association :app
+    association :partner
+    name Currency::NON_REWARDED_NAME
+    callback_url Currency::NO_CALLBACK_URL
+    conversion_rate 0
+  end
+
   factory :monthly_accounting do
     association :partner
     month                      { Time.zone.now.month }

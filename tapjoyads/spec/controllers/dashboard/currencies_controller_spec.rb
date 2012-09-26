@@ -73,7 +73,7 @@ describe Dashboard::CurrenciesController do
         put(:update, @params)
       end
       it 'has a flash error' do
-        flash.now[:error].should == 'Update unsuccessful'
+        flash.now[:error].should == 'Update unsuccessful.'
       end
       it 'renders show template' do
         response.should render_template('show')

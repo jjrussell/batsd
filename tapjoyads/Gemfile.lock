@@ -27,27 +27,6 @@ GIT
       activesupport
 
 GIT
-  remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: c5df8da52b477c13380510f6d472d6909d87e569
-  tag: v0.3.1
-  specs:
-    analytics_logger (0.3.1)
-      activesupport (~> 3.0)
-      bunny (~> 0.8.0)
-      json (~> 1.5)
-      redis (>= 2)
-      syslog-logger (= 1.6.4)
-      tzinfo (~> 0.3.0)
-      uuidtools (~> 2.1)
-
-GIT
-  remote: git@github.com:Tapjoy/bunny.git
-  revision: 03bbd47b08fa831ac381a1cbe95e7ca9f500a5b8
-  tag: v0.8.0.1
-  specs:
-    bunny (0.8.0.1)
-
-GIT
   remote: git@github.com:Tapjoy/signage.git
   revision: b7cb6eaca5e2148da550eba599c684ace2b68f09
   specs:
@@ -121,6 +100,7 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     builder (2.1.2)
+    bunny (0.8.0)
     bzip2-ruby (0.2.7)
     capybara (1.1.2)
       mime-types (>= 1.16)
@@ -470,14 +450,12 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.3.1)!
   annotate
   archive-tar-minitar
   asset_sync
   authlogic!
   awesome_print
   aws-sdk (= 1.3.9)
-  bunny (= 0.8.0.1)!
   bzip2-ruby
   capybara
   chef (= 0.10.8)
@@ -557,6 +535,7 @@ DEPENDENCIES
   spork
   sprockets_rails3_backport
   sqlite3 (= 1.3.3)
+  syslog-logger (= 1.6.4)
   test_after_commit
   thin
   tilt (= 1.3.3)
