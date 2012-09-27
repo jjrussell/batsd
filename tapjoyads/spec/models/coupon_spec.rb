@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Coupon do
 
+  subject { FactoryGirl.create(:coupon) }
+
   it { should have_many(:vouchers) }
   it { should have_many(:offers) }
   it { should belong_to(:partner) }
@@ -37,6 +39,14 @@ describe Coupon do
     end
   end
 
+  describe '#get_icon_url' do
+    it 'calls Offer.get_icon_url and passes appropriate args' do
+      options = { :option1 => true, :option2 => false }
+      Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+      subject.get_icon_url(options)
+    end
+  end
+
   describe '#hide!' do
     before :each do
       @coupon = FactoryGirl.create(:coupon, :hidden => false)
@@ -65,6 +75,14 @@ describe Coupon do
       it 'should return true' do
         @coupon.enabled?.should be_false
       end
+    end
+  end
+
+  describe '#save_icon!' do
+    it 'calls Offer.upload_icon! and passes appropriate args' do
+      image_data = "img"
+      Offer.should_receive(:upload_icon!).with(image_data, subject.id)
+      subject.save_icon!(image_data)
     end
   end
 end
