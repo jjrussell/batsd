@@ -32,6 +32,12 @@ class Dashboard::Tools::OfferIconsController < Dashboard::DashboardController
     render :edit
   end
 
+  def toggle_auto_update_icon
+    @offer.update_attributes!(:auto_update_icon => !@offer.auto_update_icon)
+    @success_message = "Updated"
+    render :edit
+  end
+
   private
 
   def find_offer
