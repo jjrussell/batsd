@@ -371,7 +371,7 @@ module Offer::Rejecting
   end
 
   def age_gating_reject?(device)
-    !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
+    device && !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
   end
 
   def udid_required_reject?(device)
