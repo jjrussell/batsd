@@ -1,0 +1,46 @@
+- @page_title = 'Cached Offer List'
+
+%h1= "#{@page_title} for #{@cached_offer_list.id}"
+
+= render('search')
+%p= link_to('[back]', tools_cached_offer_lists_path )
+%br
+%br
+%h2 Metadata
+%table#attributes.tablesorter
+  %thead
+    %tr
+      %th ID
+      %th Generated At
+      %th Cached At
+      %th Type
+      %th Source
+      %th Memcached Key
+  %tbody
+    %tr
+      %td= @cached_offer_list.key
+      %td= @cached_offer_list.generated_at
+      %td= @cached_offer_list.cached_at
+      %td= @cached_offer_list.cached_offer_type
+      %td= @cached_offer_list.source
+      %td= @cached_offer_list.memcached_key
+%br
+%h2 Details
+%table#offer_list.tablesorter
+  %thead
+    %tr
+      %th Offer ID
+      %th Rank
+  %tbody
+    - @cached_offer_list.offer_list.each do |i|
+      %tr
+        %td= link_to(i['offer_id'], statz_path(i['offer_id']))
+        %td= i['rank']
+
+
+- content_for :page_styles do
+  :plain
+    .filters {
+      padding-bottom: 20px;
+    }
+

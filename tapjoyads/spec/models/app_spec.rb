@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe App do
+
+  subject { FactoryGirl.create(:app) }
+
   # Check associations
   it { should have_many :currencies }
   it { should have_many :non_rewarded_featured_offers }
@@ -210,6 +213,27 @@ describe App do
       it 'adds mapping with existing matching metadata' do
         metadata = @app.add_app_metadata('android.GFan', 'some_app', false)
         metadata.should == @existing_metadata
+      end
+    end
+  end
+
+  describe '#get_icon_url' do
+    let(:options) { { :option1 => true, :option2 => false } }
+
+    context 'without a primary_app_metadata' do
+      it 'calls Offer.get_icon_url and passes appropriate args' do
+        subject.primary_app_metadata.destroy
+        subject.reload
+
+        Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+        subject.get_icon_url(options)
+      end
+    end
+
+    context 'with a primary_app_metadata' do
+      it 'calls primary_app_metadata.get_icon_url and passes appropriate args' do
+        subject.primary_app_metadata.should_receive(:get_icon_url).with(options).once
+        subject.get_icon_url(options)
       end
     end
   end

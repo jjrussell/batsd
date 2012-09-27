@@ -6,7 +6,7 @@ module ActsAsCacheable
 
   module ClassMethods
     def acts_as_cacheable
-      @acts_as_cacheable_columns = connection.columns(table_name).collect { |c| [c.name,c.type] }
+
       @acts_as_cacheable_memoized_methods = []
 
       extend ActiveSupport::Memoizable
@@ -20,7 +20,11 @@ module ActsAsCacheable
       after_commit :clear_cache, :on => :destroy
 
       class << self
-        attr_reader :acts_as_cacheable_columns, :acts_as_cacheable_memoized_methods
+        attr_reader :acts_as_cacheable_memoized_methods
+
+        def acts_as_cacheable_columns
+          @acts_as_cacheable_columns ||= connection.columns(table_name).collect { |c| [c.name,c.type] }
+        end
 
         def acts_as_cacheable_version
           @acts_as_cacheable_version ||= Digest::MD5.hexdigest((acts_as_cacheable_columns.sort.join + acts_as_cacheable_memoized_methods.sort.join))

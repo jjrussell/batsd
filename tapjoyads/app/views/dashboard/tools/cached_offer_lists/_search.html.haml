@@ -1,0 +1,27 @@
+#cached_offer_list_search
+  = label_tag 'search_box', 'Search Cached Offer Lists:'
+  = text_field_tag 'search_box', @cached_offer_list.present? ? @cached_offer_list.id : ''
+
+- content_for :page_styles do
+  :plain
+    #cached_offer_list_search {
+      float: left;
+      text-align: left;
+    }
+    #search_box {
+      display: block;
+    }
+    #search_box {
+      width: 300px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('#search_box').keypress(function(e)
+          {
+            if (e.which == 13) {
+              location.href = '#{tools_cached_offer_list_path('_REPLACE_ME_')}'.replace('_REPLACE_ME_', $(this).val()); 
+            }
+          });
+      });

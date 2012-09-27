@@ -5,7 +5,7 @@ class FakeResource < SimpledbShardedResource
   new_configuration :new_num_domains => 10, :new_domain_name => "new_fake_resource"
 
   self.num_domains = NUM_CLICK_DOMAINS
-  
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
@@ -17,7 +17,7 @@ describe SdbMigrator do
   describe 'when included in SimpledbShardedResource class' do
     describe 'the configuration' do
       it 'should specify the new number of domains' do
-        FakeResource.new_num_domains.should == 10        
+        FakeResource.new_num_domains.should == 10
       end
 
       it 'should specify the new domain name' do
@@ -39,14 +39,14 @@ describe SdbMigrator do
         @fake_resource.save
       end
 
-      it 'should save to the current domain and then the new domain' do        
-        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).once        
+      it 'should save to the current domain and then the new domain' do
+        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).once
         $fake_sdb.should_receive(:put_attributes).with("new_fake_resource_5", "123", anything(), anything(), anything()).once
         @fake_resource.save!
       end
 
       it 'should not save to the new domain if saving to the current domain fails' do
-        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).and_raise(RightAws::AwsError.new) 
+        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).and_raise(RightAws::AwsError.new)
         $fake_sdb.should_not_receive(:put_attributes).with("new_fake_resource_5", "123", anything(), anything(), anything())
         @fake_resource.save! rescue RightAws::AwsError
       end
