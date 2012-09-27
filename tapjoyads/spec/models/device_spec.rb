@@ -494,6 +494,16 @@ describe Device do
       @device = FactoryGirl.create :device, :apps => @correct_app_ids
     end
 
+    context 'with absolute garbage' do
+      it 'raises a parse error' do
+        @device.put('apps', '{d{}ds{[]}}}}ds[}}{"here":"is","some":"json"}{{more}[garbage[[}}')
+
+        expect {
+          @device.send(:parse_bad_json, 'apps')
+        }.to raise_exception(JSON::ParserError)
+      end
+    end
+
     context 'with extra chars at the end' do
       before :each do
         @device.put('apps', @correct_app_ids.to_json + "D")
