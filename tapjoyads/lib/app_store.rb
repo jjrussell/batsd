@@ -1,5 +1,5 @@
 class AppStore
-  attr_accessor :id, :name, :platform, :store_url, :info_url
+  attr_accessor :id, :name, :platform, :store_url, :info_url, :sdk_name
 
   ANDROID_APP_URL      = 'https://play.google.com/store/apps/details?id='
   ANDROID_SEARCH_URL   = 'https://play.google.com/store/search?c=apps&q='
@@ -33,6 +33,7 @@ class AppStore
     @store_url = options.delete(:store_url)
     @info_url  = options.delete(:info_url)
     @exclusive = options.delete(:exclusive)
+    @sdk_name  = options.delete(:sdk_name)
 
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
   end
@@ -55,7 +56,8 @@ class AppStore
       :platform  => 'android',
       :store_url => 'market://search?q=STORE_ID',
       :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID',
-      :exclusive => false
+      :exclusive => false,
+      :sdk_name  => 'google'
     }),
     'android.GFan' => AppStore.new({
       :id        => 'android.GFan',
@@ -63,7 +65,8 @@ class AppStore
       :platform  => 'android',
       :store_url => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
       :info_url  => 'http://3g.gfan.com/data/index.php?/detail/index/STORE_ID',
-      :exclusive => true
+      :exclusive => true,
+      :sdk_name  => 'gfan'
     }),
     'android.SKTStore' => AppStore.new({
       :id        => 'android.SKTStore',
@@ -71,7 +74,8 @@ class AppStore
       :platform  => 'android',
       :store_url => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
       :info_url  => 'http://m.tstore.co.kr/userpoc/mp.jsp?pid=STORE_ID',
-      :exclusive => true
+      :exclusive => true,
+      :sdk_name  => 'skt'
     }),
     'windows.Marketplace' => AppStore.new({
       :id        => 'windows.Marketplace',

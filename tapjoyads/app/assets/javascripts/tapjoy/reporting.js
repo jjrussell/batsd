@@ -107,7 +107,8 @@ $(function($) {
       date: $('#date').val(),
       end_date: $('#end_date').val(),
       granularity: $('#granularity').val(),
-      platform: $('#platform').val()
+      platform: $('#platform').val(),
+      store_name: $('#store_name').val()
     };
 
     if (rangeIsLast24Hours()) {
