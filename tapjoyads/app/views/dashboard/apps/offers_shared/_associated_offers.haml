@@ -75,39 +75,6 @@
         $(event.target).siblings().removeClass('loading')
       })
     })
-    $('#show_associated, #associated_offers .close_button').click(function() {
-      $('#associated_list').slideToggle();
-      return false;
-    });
-
-    $('#show_disabled, #disabled_offers .close_button').click(function() {
-      $('#disabled_list').slideToggle();
-      return false;
-    });
-
-    $('#associated_offers input').click( function(event) {
-      $(this).prop("disabled", true)
-      $(event.target).siblings().addClass('loading')
-
-      $.post($(this).attr('url'), {"user_enabled" : $(this).prop("checked")}, function(){
-        $("#offer_row_" + $(event.target).attr('offer_id')).toggleClass('disabled')
-      })
-      .fail (function() {
-        $(event.target).prop("checked", !$(event.target).prop("checked"))
-      })
-      .always (function () {
-        $(event.target).prop("disabled", false)
-        $(event.target).siblings().removeClass('loading')
-      })
-    })
-    .fail (function() {
-      $(event.target).prop("checked", !$(event.target).prop("checked"))
-    })
-    .always (function () {
-      $(event.target).prop("disabled", false)
-      $(event.target).siblings().removeClass('loading')
-    })
-  })
 
 - content_for :page_styles do
   :plain
