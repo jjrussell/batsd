@@ -22,8 +22,8 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def show
     session[:last_shown_app] = @offer.item_id if @offer.item_type == 'App'
-    app = App.find_by_id(@offer.app_id) if @offer.app_offer?
-    if app && @offer.id == app.id && app.platform == 'android' && app.app_metadatas.count > 1
+    app = App.find_by_id(@offer.app_id) if @offer.primary? && @offer.item_type == 'App'
+    if app && app.platform == 'android' && app.app_metadatas.count > 1
       @store_options = {}
       app.app_metadatas.each do |meta|
         @store_options[meta.store.name] = meta.store.sdk_name

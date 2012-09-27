@@ -93,7 +93,7 @@ class StatsAggregation
       stat_rows  = {}
 
 
-      app = App.find_by_id(offer.app_id) if offer.app_offer?
+      app = App.find_by_id(offer.app_id) if offer.primary? && offer.item_type == 'App'
       while start_time < end_time
         date_str = start_time.strftime('%Y-%m-%d')
         stat_rows[date_str] ||= Stats.new(:key => "app.#{date_str}.#{offer.id}", :load_from_memcache => false)
@@ -101,7 +101,7 @@ class StatsAggregation
         (Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS).each do |stat|
           value = Mc.get_count(Stats.get_memcache_count_key(stat, offer.id, start_time))
           stat_rows[date_str].update_stat_for_hour(stat, start_time.hour, value)
-          if app && offer.id == app.id && app.app_metadatas.count > 1 && Stats.segment_by_store?(stat)
+          if app && app.app_metadatas.count > 1 && Stats.segment_by_store?(stat)
             app.app_metadatas.each do |meta|
               segment_stat = Stats.get_segment_stat(stat, meta.store.sdk_name)
               value = Mc.get_count(Stats.get_memcache_count_key(segment_stat, offer.id, start_time))
