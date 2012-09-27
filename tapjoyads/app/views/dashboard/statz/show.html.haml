@@ -110,7 +110,8 @@
   %a#show_optimized_boosts{:href => '#'} [#{@optimized_boosts.size} active optimized rank boosts]
 - if permitted_to?(:new, :dashboard_tools_optimized_rank_boosts)
   = link_to('[Create optimized rank boost]', new_tools_optimized_rank_boost_path(:offer_id => @offer.id))
-= link_to('[View all optimized boosts]', tools_optimized_rank_boosts_path(:offer_id => @offer.id))
+- if permitted_to?(:index, :dashboard_tools_optimized_rank_boosts)
+  = link_to('[View all optimized boosts]', tools_optimized_rank_boosts_path(:offer_id => @offer.id))
 #boosts_list
   %h5 Total Active Boost: #{@total_boost}x
   %ul
