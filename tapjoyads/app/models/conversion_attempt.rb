@@ -14,6 +14,7 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :currency_reward,            :type => :int
   self.sdb_attr :spend_share,                :type => :float
   self.sdb_attr :source
+  self.sdb_attr :ip_address
   self.sdb_attr :reward_type
   self.sdb_attr :udid
   self.sdb_attr :country
@@ -28,6 +29,8 @@ class ConversionAttempt < SimpledbShardedResource
   self.sdb_attr :advertiser_reseller_id
   self.sdb_attr :click_key
   self.sdb_attr :mac_address
+  self.sdb_attr :device_type
+  self.sdb_attr :geoip_country
   self.sdb_attr :risk_profiles,              :type => :json,  :default_value => {}
   self.sdb_attr :rules_matched,              :type => :json,  :default_value => {}
   self.sdb_attr :system_entities_offset,     :type => :float
