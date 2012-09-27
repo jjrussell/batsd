@@ -16,6 +16,6 @@ private
   end
   
   def notifications_url_base
-    "http://localhost:5000"
+    Rails.application.config.notifications_url
   end
 end
