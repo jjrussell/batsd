@@ -1,0 +1,15 @@
+test:
+	gcm_secret: 'AIzaSyA-u99coDTfBKdMdZUEIz8JTQ-ThW5FdIg'
+	signage_secret: 'kHm0AdTlVVzmzTkLd'
+
+dev:
+	gcm_secret: 'AIzaSyA-u99coDTfBKdMdZUEIz8JTQ-ThW5FdIg'
+	signage_secret: 'kHm0AdTlVVzmzTkLd'
+
+staging:
+	gcm_secret: 'AIzaSyA-u99coDTfBKdMdZUEIz8JTQ-ThW5FdIg'
+	signage_secret: 'kHm0AdTlVVzmzTkLd'
+
+production:
+	gcm_secret: 'AIzaSyA-u99coDTfBKdMdZUEIz8JTQ-ThW5FdIg'
+	signage_secret: 'kHm0AdTlVVzmzTkLd'

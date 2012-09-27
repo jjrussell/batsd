@@ -103,6 +103,11 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['production']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
 
+# GCM and Signage for Notifications
+notifications = YAML::load_file("#{Rails.root}/config/notifications.yaml")
+ENV['GCM_KEY'] = notifications['production']['gcm_secret']
+ENV['SIGNAGE_SECRET'] = notifications['production']['signage_secret']
+
 NUM_POINT_PURCHASES_DOMAINS = 10
 NUM_CLICK_DOMAINS = 100
 NUM_REWARD_DOMAINS = 50

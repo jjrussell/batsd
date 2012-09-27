@@ -12,7 +12,7 @@ private
   end
   
   def signature
-    Signage::Signature.new('hmac_sha256', 'kHm0AdTlVVzmzTkLd').sign({:id => @app.id, :platform => @app.platform})
+    Signage::Signature.new('hmac_sha256', Rails.application.config.signage_secret).sign({:id => @app.id, :platform => @app.platform})
   end
   
   def notifications_url_base
