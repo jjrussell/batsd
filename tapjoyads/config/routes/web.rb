@@ -105,7 +105,7 @@ Tapjoyad::Application.routes.draw do
 
   namespace :api do
     namespace :data do
-      resources :devices, :only => [:show] do
+      resources :devices, :only => [:show, :update] do
         collection do
           post :set_last_run_time
         end
