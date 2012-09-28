@@ -42,8 +42,10 @@ elsif server_type == 'masterjobs'
 elsif server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
-elsif server_type == 'webserver' || server_type == 'connect'
+elsif server_type == 'webserver'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'connect'
+  `cp tapjoyads/config/newrelic-connect.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'dashboard'
