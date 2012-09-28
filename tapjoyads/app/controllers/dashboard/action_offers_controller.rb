@@ -43,6 +43,10 @@ class Dashboard::ActionOffersController < Dashboard::DashboardController
     else
       @enable_request = @offer.enable_offer_requests.build
     end
+
+    if @action_offer.platform == 'iphone' && @offer.prerequisite_offer_id.blank?
+      flash.now[:warning] = "This offer will not be shown on in-app Offerwall of an iOS device unless there's a prerequisite. It will still be shown on Tapjoy.com"
+    end
   end
 
   def preview

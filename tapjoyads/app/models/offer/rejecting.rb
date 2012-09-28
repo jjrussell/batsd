@@ -45,6 +45,7 @@ module Offer::Rejecting
       { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'},
       { :method => :udid_required_reject?, :parameters => [device], :reason => 'udid_required'},
       { :method => :mac_address_required_reject?, :parameters => [device], :reason => 'mac_address_required'},
+      { :method => :ppe_missing_prerequisite_for_ios_reject?, :parameters => [source, device_type], :reason => 'prerequisite_for_ios_required'},
     ]
     reject_reasons(reject_functions)
   end
@@ -91,7 +92,8 @@ module Offer::Rejecting
     has_coupon_offer_not_started? ||
     has_coupon_offer_expired? ||
     udid_required_reject?(device) ||
-    mac_address_required_reject?(device)
+    mac_address_required_reject?(device) ||
+    ppe_missing_prerequisite_for_ios_reject?(source, device_type)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -152,6 +154,11 @@ module Offer::Rejecting
 
   def has_coupon_offer_expired?
     has_valid_coupon? && self.coupon.end_date <= Date.today
+  end
+
+  def ppe_missing_prerequisite_for_ios_reject?(source, device_type)
+    source != 'tj_games' && Offer::APPLE_DEVICES.include?(device_type) &&
+      item_type == "ActionOffer" && prerequisite_offer_id.blank?
   end
 
   private
@@ -381,4 +388,5 @@ module Offer::Rejecting
   def mac_address_required_reject?(device)
     device && requires_mac_address? && device.mac_address.blank?
   end
+
 end
