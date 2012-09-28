@@ -42,6 +42,13 @@
           .tapjoy-enabled Enabled
         - else
           .tapjoy-disabled Disabled
+    %tr
+      %th
+        Non-Rewarded ID
+        #help_nonreward_currency_id.help ?
+      %td
+        = @currency.id
+
 
     - if permitted_to?(:edit, :dashboard_statz)
       = render :partial => 'dashboard/currencies/admin_fields', :locals => {:f => f}
@@ -97,6 +104,8 @@
   #help_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. Users will NOT be able to earn currency until this is enabled.
     Please email publishersupport@tapjoy.com to get approval.
+  #help_nonreward_currency_id_content{:name => 'Non-Rewarded ID'}
+    This is the currency ID for non-rewarded publishing.
 
 - content_for :page_javascript do
   :plain
