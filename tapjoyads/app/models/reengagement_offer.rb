@@ -117,7 +117,9 @@ class ReengagementOffer < ActiveRecord::Base
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     if do_lookup
-      App.find(app_id).try(:reengagement_campaign)
+      ActiveRecordDisabler.with_queries_enabled do
+        App.find(app_id).try(:reengagement_campaign)
+      end
     else
       Mc.distributed_get("mysql.reengagement_offers.#{app_id}.#{ReengagementOffer.acts_as_cacheable_version}")
     end
