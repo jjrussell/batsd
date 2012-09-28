@@ -23,11 +23,18 @@ describe Currency do
     it { should validate_numericality_of(:max_age_rating) }
 
     context 'when not tapjoy-managed' do
-      it 'validates callback url' do
+      it 'validates callback url syntax' do
         Resolv.stub(:getaddress).and_raise(URI::InvalidURIError)
         @currency.callback_url = 'http://tapjoy' # invalid url
         @currency.save
         @currency.errors[:callback_url].join.should == 'is not a valid url'
+      end
+
+      it 'validates DNS resolution of callback hostname' do
+        Resolv.stub(:getaddress).and_raise(Resolv::ResolvError)
+        @currency.callback_url = 'http://someundefinedsubdomain.tapjoy.com' # unresolvable url
+        @currency.save
+        @currency.errors[:callback_url].join.should == 'host cannot be resolved'
       end
     end
 
