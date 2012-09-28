@@ -105,7 +105,6 @@ AWS_ACCOUNT_ID = '266171351246'
 
 # GCM and Signage for Notifications
 notifications = YAML::load_file("#{Rails.root}/config/notifications.yaml")
-ENV['GCM_KEY'] = notifications['production']['gcm_secret']
 ENV['SIGNAGE_SECRET'] = notifications['production']['signage_secret']
 
 NUM_POINT_PURCHASES_DOMAINS = 10

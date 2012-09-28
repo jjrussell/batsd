@@ -70,7 +70,6 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['test']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
 notifications = YAML::load_file("#{Rails.root}/config/notifications.yaml")
-ENV['GCM_KEY'] = notifications['test']['gcm_secret']
 ENV['SIGNAGE_SECRET'] = notifications['test']['signage_secret']
 
 NUM_POINT_PURCHASES_DOMAINS = 2
