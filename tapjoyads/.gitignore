@@ -21,8 +21,10 @@ public/stylesheets/*/*.css
 public/assets/*
 **.orig
 .rspec
+.powrc
 public/translations
 db/schema-dev.rb
+db/schema-dev.sqlite
 db/webserver-dev.sqlite
 
 # Bundler
