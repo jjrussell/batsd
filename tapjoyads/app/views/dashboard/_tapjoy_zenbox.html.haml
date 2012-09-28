@@ -1,0 +1,16 @@
+- if current_user.employee?
+  = render('dashboard/zenbox')
+  %script{ :type => 'text/javascript', :charset => 'utf-8' }
+    = yield :page_javascript
+  :javascript
+      if (typeof(Zenbox) !== "undefined") {
+        Zenbox.init({
+          dropboxID:   "20101697",
+          url:         "https://tapjoydev.zendesk.com",
+          tabID:       "DevSupport",
+          tabColor:    "#B41317",
+          tabPosition: "Right",
+          requester_name:  "#{current_user.username.split('@')[0].split('.').map(&:capitalize).join(' ') if current_user}",
+          requester_email: "#{current_user.email if current_user}",
+        });
+      }
