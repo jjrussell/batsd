@@ -1,0 +1,6 @@
+test: &test
+  adapter: mysql
+  database: circle_test
+
+development: *test
+production_slave: *test
