@@ -51,7 +51,7 @@
         document.getElementById('inputs').style.display = 'none';
         document.getElementById('continue').style.display = 'none';
         document.getElementById('close').style.display = 'block';
-        setTimeout(location.href = "#{@redirect_to_get_offers_url}", 3000);
+        setTimeout(function() { location.href = "#{@redirect_to_get_offers_url}" }, 3000);
       } else {
         location.href = "#{@redirect_to_click_url}&date_of_birth="+yyyy+"/"+mm+"/"+dd;
       }
