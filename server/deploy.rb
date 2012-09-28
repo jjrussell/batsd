@@ -44,6 +44,8 @@ elsif server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
 elsif server_type == 'webserver'
   `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
+elsif server_type == 'connect'
+  `cp tapjoyads/config/newrelic-connect.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'website'
   `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'dashboard'
@@ -53,7 +55,7 @@ elsif server_type == 'util'
   `cp tapjoyads/config/local-util.yml tapjoyads/config/local.yml`
 end
 
-if server_type == 'webserver'
+if server_type == 'webserver' || server_type == 'connect'
   `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
   `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`

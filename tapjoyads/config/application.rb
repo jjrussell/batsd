@@ -54,6 +54,8 @@ module Tapjoyad
                         %w( dashboard api global )
                       when 'webserver'
                         %w( web legacy global )
+                      when 'connect'
+                        %w( web legacy global )
                       when 'jobserver'
                         %w( job global )
                       else
