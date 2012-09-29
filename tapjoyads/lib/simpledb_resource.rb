@@ -726,10 +726,10 @@ private
         # Attempt to reload?
         raise e
       else
-        if %( util jobserver masterjobs ).include?(MACHINE_TYPE)
+        if %w( util jobserver masterjobs ).include?(MACHINE_TYPE)
           Rails.logger.info "SimpleDB Error: #{@this_domain_name}, #{e.message}"
           unless (retries += 1) > 5
-            Airbrake.notify(e)
+            Airbrake.notify(e, { :error_message => "SDB_RETRIES_#{@this_domain_name}: #{e.message}" } )
             sleep retries * 0.1
             retry
           end
