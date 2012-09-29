@@ -714,6 +714,7 @@ private
 
   def load_from_sdb(consistent = false)
     attributes = {}
+    retries = 0
     begin
       response = @@sdb.get_attributes(@this_domain_name, @key, nil, consistent)
       attributes = response[:attributes]
@@ -725,6 +726,11 @@ private
         # Attempt to reload?
         raise e
       else
+        Rails.logger.info "SimpleDB Error: #{@this_domain_name}, #{e.message}"
+        unless (retries += 1) > 5
+          sleep retries * 0.1
+          retry
+        end
         raise e
       end
     end
