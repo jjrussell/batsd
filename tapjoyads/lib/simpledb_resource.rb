@@ -11,6 +11,8 @@ class SimpledbResource
   superclass_delegating_accessor :key_format
   class_inheritable_accessor :attribute_names
 
+  SAFE_RETRIES = %w( util jobserver masterjobs )
+
   def self.reset_connection
     @@sdb = RightAws::SdbInterface.new(nil, nil, { :multi_thread => true, :port => 80, :protocol => 'http' })
   end
@@ -714,6 +716,7 @@ private
 
   def load_from_sdb(consistent = false)
     attributes = {}
+    retries = 0
     begin
       response = @@sdb.get_attributes(@this_domain_name, @key, nil, consistent)
       attributes = response[:attributes]
@@ -725,6 +728,14 @@ private
         # Attempt to reload?
         raise e
       else
+        if SAFE_RETRIES.include?(MACHINE_TYPE)
+          Rails.logger.info "SimpleDB Error: #{@this_domain_name}, #{e.message}"
+          unless (retries += 1) > 5
+            Airbrake.notify(e, { :error_message => "SDB_RETRIES_#{@this_domain_name}: #{e.message}" } )
+            sleep retries * 0.1
+            retry
+          end
+        end
         raise e
       end
     end
