@@ -14,7 +14,7 @@ class Dashboard::Tools::OfferIconsController < Dashboard::DashboardController
   def update
     image_data = params[:offer][:upload_icon].try(:read)
     begin
-      @offer.save_icon!(image_data, true)
+      @offer.override_icon!(image_data)
       @success_message = "Icon uploaded successfully."
     rescue
       @error_message = "Error uploading icon, please try again."

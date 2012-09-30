@@ -297,7 +297,7 @@ class Offer < ActiveRecord::Base
 
     transaction do
       new_offer.save!
-      new_offer.save_icon!(icon_s3_object.read, true) if icon_id_override.present?
+      new_offer.override_icon!(icon_s3_object.read) if icon_id_override.present?
     end
 
     new_offer
@@ -573,7 +573,7 @@ class Offer < ActiveRecord::Base
     self.update_attributes!(:icon_id_override => icon_id_override)
   end
 
-  def save_icon!(icon_src_blob, override = false)
+  def override_icon!(icon_src_blob)
     # Here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
     # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
@@ -585,9 +585,10 @@ class Offer < ActiveRecord::Base
     # What this allows for is one icon file to be shared between offers with the same parent.
     #
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
-    guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
+    replacing = ![item_id, app_metadata_id, app_id].include?(icon_id_override) && icon_id_override.present?
+    guid = replacing ? icon_id_override : UUIDTools::UUID.random_create.to_s
     Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
-    unless [app_metadata_id, item_id].include?(guid)
+    unless replacing
       self.update_attributes!(:icon_id_override => guid, :auto_update_icon => default_auto_update_icon_value)
     end
   end
