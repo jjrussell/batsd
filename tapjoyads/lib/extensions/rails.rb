@@ -48,6 +48,19 @@ module ActiveSupport
 end
 
 module ActiveRecord
+
+  module Associations::ClassMethods
+    def has_many_with_offer_parent_methods(name, options = {}, &extension)
+      if name.to_sym == :offers && options[:as].try(:to_sym) == :item
+        include OfferParentIconMethods
+      end
+
+      has_many_without_offer_parent_methods(name, options, &extension)
+    end
+
+    alias_method_chain :has_many, :offer_parent_methods
+  end
+
   module ConnectionAdapters
 
     #

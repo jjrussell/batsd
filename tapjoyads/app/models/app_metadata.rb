@@ -24,6 +24,8 @@
 #
 
 class AppMetadata < ActiveRecord::Base
+  include OfferParentIconMethods
+
   def self.table_name
     "app_metadatas"
   end
@@ -63,7 +65,7 @@ class AppMetadata < ActiveRecord::Base
     raise "Fetching app store data failed for app: #{name} (#{id})." if data.nil?
 
     fill_app_store_data(data)
-    save_icon(data[:icon_url])
+    download_and_save_icon!(data[:icon_url])
     save_screenshots(data[:screenshot_urls])
     self.save!
 
@@ -126,10 +128,6 @@ class AppMetadata < ActiveRecord::Base
     categories.first.humanize if categories.present?
   end
 
-  def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
-  end
-
   def save_screenshots(screenshot_urls)
     return if screenshot_urls.nil? || screenshot_urls.empty?
     new_screenshots = []
@@ -149,10 +147,10 @@ class AppMetadata < ActiveRecord::Base
 
   private
 
-  def save_icon(url)
+  def download_and_save_icon!(url)
     return if url.blank? || offers.blank?
     icon_src_blob = download_blob(url)
-    Offer.upload_icon!(icon_src_blob, id) if icon_src_blob
+    save_icon!(icon_src_blob) if icon_src_blob
   end
 
   def download_blob(url)
