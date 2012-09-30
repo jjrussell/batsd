@@ -128,6 +128,7 @@ FactoryGirl.define do
   factory :app_metadata_mapping do
     association :app
     association :app_metadata
+    is_primary  { false }
   end
 
   factory :reengagement_offer do
