@@ -731,7 +731,6 @@ private
         if SAFE_RETRIES.include?(MACHINE_TYPE)
           Rails.logger.info "SimpleDB Error: #{@this_domain_name}, #{e.message}"
           unless (retries += 1) > 5
-            Airbrake.notify(e, { :error_message => "SDB_RETRIES_#{@this_domain_name}: #{e.message}" } )
             sleep retries * 0.1
             retry
           end
