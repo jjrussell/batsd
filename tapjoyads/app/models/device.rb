@@ -262,6 +262,9 @@ class Device < SimpledbShardedResource
       return
     end
 
+    # Temporary change volume tracking, tracking running until 2012-10-31
+    Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if self.is_jailbroken_changed?
+
     remove_old_skips
     return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
