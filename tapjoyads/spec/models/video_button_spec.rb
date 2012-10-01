@@ -15,7 +15,7 @@ describe VideoButton do
   subject { FactoryGirl.create(:video_button) }
 
   it "is by default enabled" do
-    subject.enabled.should == true
+    subject.read_attribute(:enabled).should == true
   end
 
   it "updates third party data on offer based on video button" do
