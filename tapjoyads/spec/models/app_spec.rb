@@ -218,23 +218,11 @@ describe App do
   end
 
   describe '#get_icon_url' do
-    let(:options) { { :option1 => true, :option2 => false } }
+    it 'calls primary_app_metadata.get_icon_url and passes appropriate args' do
+      options = { :option1 => true, :option2 => false }
 
-    context 'without a primary_app_metadata' do
-      it 'calls Offer.get_icon_url and passes appropriate args' do
-        subject.primary_app_metadata.destroy
-        subject.reload
-
-        Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
-        subject.get_icon_url(options)
-      end
-    end
-
-    context 'with a primary_app_metadata' do
-      it 'calls primary_app_metadata.get_icon_url and passes appropriate args' do
-        subject.primary_app_metadata.should_receive(:get_icon_url).with(options).once
-        subject.get_icon_url(options)
-      end
+      subject.primary_app_metadata.should_receive(:get_icon_url).with(options).once.and_return('image_url')
+      subject.get_icon_url(options).should == 'image_url'
     end
   end
 
