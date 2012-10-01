@@ -10,7 +10,7 @@
     #help_name.help ?
     = f.text_field :name
     = error_message_on(@survey_offer, :name)
-  %img{:src => @survey_offer.icon_url, :style => 'float:left;'}
+  %img{:src => (@survey_offer.new_record? ? SurveyOffer::DEFAULT_ICON_URL : @survey_offer.get_icon_url), :style => 'float:left;'}
   .field
     = f.label :icon
     #help_icon.help ?

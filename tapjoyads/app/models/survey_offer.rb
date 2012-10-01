@@ -17,10 +17,13 @@ class SurveyOffer < ActiveRecord::Base
   acts_as_cacheable
   acts_as_trackable
 
+  DEFAULT_ICON_PATH = 'icons/survey-blue.png' unless defined? DEFAULT_ICON_PATH
+  DEFAULT_ICON_URL  = 'https://s3.amazonaws.com/' + BucketNames::TAPJOY + '/' + DEFAULT_ICON_PATH
+
   has_many :questions, :class_name => "SurveyQuestion"
   alias_method :survey_questions, :questions
 
-  has_one :offer, :as => :item
+  has_many :offers, :as => :item
   has_one :primary_offer,
     :class_name => 'Offer',
     :as => :item,
@@ -60,10 +63,6 @@ class SurveyOffer < ActiveRecord::Base
 
   def icon=(io)
     @icon = io
-  end
-
-  def icon_url
-    @icon_url ||= primary_offer.try(:get_icon_url) || DEFAULT_ICON_URL
   end
 
   def hide!
@@ -136,9 +135,10 @@ private
     primary_offer.save!
 
     if @icon
-      self.primary_offer.save_icon!(@icon.read)
+      @icon.rewind
+      save_icon!(@icon.read)
     elsif !has_icon
-      self.primary_offer.save_icon!(default_icon)
+      save_icon!(default_icon)
     end
   end
 
@@ -150,9 +150,6 @@ private
     ]
     "#{API_URL}/survey_results/new?#{url_params.join('&')}"
   end
-
-  DEFAULT_ICON_PATH = 'icons/survey-blue.png' unless defined? DEFAULT_ICON_PATH
-  DEFAULT_ICON_URL  = 'https://s3.amazonaws.com/' + BucketNames::TAPJOY + '/' + DEFAULT_ICON_PATH
 
   def default_icon
     @default_icon ||= bucket.objects[DEFAULT_ICON_PATH].read
