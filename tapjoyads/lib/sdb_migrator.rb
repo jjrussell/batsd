@@ -48,9 +48,7 @@ module SdbMigrator
     begin
 
       #We're going to need to clone the attributes over to the mirror, so keep this for backup
-      @attributes_to_add = old_attributes.merge(old_attributes_to_add).merge(old_attributes_to_replace)
-      #Don't ever "replace"... We handle that in the line above
-      @attributes_to_replace = {}
+      @attributes_to_add = old_attributes.merge(old_attributes_to_add)
       @attributes_to_delete = old_attributes_to_delete
       #Keep track of the current domain
       current_name = @this_domain_name
