@@ -1,16 +1,19 @@
 - if current_user.employee?
-  = render('dashboard/zenbox')
-  %script{ :type => 'text/javascript', :charset => 'utf-8' }
-    = yield :page_javascript
-  :javascript
-      if (typeof(Zenbox) !== "undefined") {
-        Zenbox.init({
-          dropboxID:   "20101697",
-          url:         "https://tapjoydev.zendesk.com",
-          tabID:       "DevSupport",
-          tabColor:    "#B41317",
-          tabPosition: "Right",
-          requester_name:  "#{current_user.username.split('@')[0].split('.').map(&:capitalize).join(' ') if current_user}",
-          requester_email: "#{current_user.email if current_user}",
-        });
-      }
+  - content_for :included_javascripts, javascript_include_tag('//assets.zendesk.com/external/zenbox/v2.5/zenbox.js')
+  %style(type='text/css' media='screen,projection')
+    @import url(//assets.zendesk.com/external/zenbox/v2.5/zenbox.css);
+  - content_for :page_javascript do
+    :plain
+      $(function() {
+        if (typeof(Zenbox) !== "undefined") {
+          Zenbox.init({
+            dropboxID:   "20101697",
+            url:         "https://tapjoydev.zendesk.com",
+            tabID:       "DevSupport",
+            tabColor:    "#B41317",
+            tabPosition: "Right",
+            requester_name:  "#{current_user.username.split('@')[0].split('.').map(&:capitalize).join(' ') if current_user}",
+            requester_email: "#{current_user.email if current_user}",
+          });
+        }
+      });
