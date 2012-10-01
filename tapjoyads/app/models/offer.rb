@@ -410,6 +410,8 @@ class Offer < ActiveRecord::Base
   end
   alias_method :enabled?, :is_enabled?
 
+  def disabled?; !enabled?; end
+
   def can_be_promoted?
     primary? && rewarded? && is_enabled?
   end

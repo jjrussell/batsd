@@ -118,7 +118,11 @@ describe VideoOffer do
         types = [%w(iphone android), %w(iphone), %w(android)]
         buttons.each do |button|
           type = types.shift
-          button.tracking_offer.update_attribute(:device_types, type.to_json)
+          # ensure that tracking_offer.enabled? == true
+          button.tracking_offer.update_attributes(:device_types => type.to_json,
+                                                  :user_enabled => true,
+                                                  :payment      => 0,
+                                                  :reward_value => 1)
           button.tracking_offer.update_attribute(:rewarded, true) if type.size > 1
           @buttons[type.size > 1 ? 'rewarded' : type] = button
         end
@@ -145,7 +149,14 @@ describe VideoOffer do
         context 'and a rewarded non-PPI button' do
           let(:filtered_out) { @buttons['rewarded'] }
           before(:each) do
-            filtered_out.tracking_item = Factory(:generic_offer)
+            gen_offer = Factory(:generic_offer)
+            # ensure that tracking_offer.enabled? == true
+            gen_offer.primary_offer.update_attribute(:reward_value, 1)
+
+            filtered_out.tracking_item = gen_offer
+            # ensure that tracking_offer.enabled? == true
+            filtered_out.tracking_offer.update_attribute(:user_enabled, true)
+
             filtered_out.save!
           end
 
@@ -221,31 +232,31 @@ describe VideoOffer do
       end
     end
 
-    #   @video_offer = FactoryGirl.create(:video_offer)
-    #   @video_button_1 = @video_offer.video_buttons.build
-    #   @video_button_1.name = "button 1"
-    #   @video_button_1.url = "http://www.tapjoy.com"
-    #   @video_button_1.ordinal = 1
-    #   @video_button_1.save!
-    #   @video_button_2 = @video_offer.video_buttons.build
-    #   @video_button_2.name = "button 2"
-    #   @video_button_2.url = "http://www.tapjoy.com"
-    #   @video_button_2.ordinal = 2
-    #   @video_button_2.save!
-    #   @video_button_3 = @video_offer.video_buttons.build
-    #   @video_button_3.name = "button 3"
-    #   @video_button_3.url = "http://www.tapjoy.com"
-    #   @video_button_3.ordinal = 3
-    #   @video_button_3.save!
-    #   @video_offer.reload
+    # @video_offer = FactoryGirl.create(:video_offer)
+    # @video_button_1 = @video_offer.video_buttons.build
+    # @video_button_1.name = "button 1"
+    # @video_button_1.url = "http://www.tapjoy.com"
+    # @video_button_1.ordinal = 1
+    # @video_button_1.save!
+    # @video_button_2 = @video_offer.video_buttons.build
+    # @video_button_2.name = "button 2"
+    # @video_button_2.url = "http://www.tapjoy.com"
+    # @video_button_2.ordinal = 2
+    # @video_button_2.save!
+    # @video_button_3 = @video_offer.video_buttons.build
+    # @video_button_3.name = "button 3"
+    # @video_button_3.url = "http://www.tapjoy.com"
+    # @video_button_3.ordinal = 3
+    # @video_button_3.save!
+    # @video_offer.reload
 
     # it "has only 2 enabled buttons" do
     #   subject.video_buttons.enabled.size.should == 3
     #   subject.should_not be_valid_for_update_buttons
-
+    #
     #   button_3.enabled = false
     #   button_3.save!
-
+    #
     #   subject.reload
     #   subject.video_buttons_enabled.size.should == 2
     #   subject.should be_valid_for_update_buttons
