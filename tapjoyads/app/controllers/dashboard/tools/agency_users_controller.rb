@@ -9,10 +9,10 @@ class Dashboard::Tools::AgencyUsersController < Dashboard::DashboardController
   end
 
   def show
-    @agency_user = User.find(params[:id])
+    @agency_user = User.includes(:partners => [:offers, :users, :sales_rep]).find(params[:id])
   end
 
-private
+  private
   def get_account_managers
     @account_managers = User.account_managers.map{|u|[u.email, u.id]}.sort
     @account_managers.unshift(["All", "all"])
