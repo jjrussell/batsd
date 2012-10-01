@@ -13,6 +13,7 @@ class Appstats
     @include_labels = options.delete(:include_labels) { false }
     @stat_prefix = options.delete(:stat_prefix) { 'app' }
     @platform = @stat_prefix =~ /\w+-(\w+)/ ? $1 : 'all'
+    @store_name = options.delete(:store_name)
     cache_hours = options.delete(:cache_hours) { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
@@ -23,10 +24,11 @@ class Appstats
 
     @stat_types.each do |stat_type|
       next if stat_type == 'ranks'
+      key = Stats.get_segment_stat(stat_type, @store_name) || stat_type
       @stats[stat_type] = if @granularity == :hourly
-        get_hourly_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        get_hourly_stats(key, @start_time.utc, @end_time.utc, cache_hours)
       else
-        get_daily_stats(stat_type, @start_time.utc, @end_time.utc, cache_hours)
+        get_daily_stats(key, @start_time.utc, @end_time.utc, cache_hours)
       end
     end
     if @stat_types.include?('ranks')

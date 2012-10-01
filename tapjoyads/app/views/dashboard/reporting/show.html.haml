@@ -14,7 +14,7 @@
 %br/
 
 %form#change_date.tjform
-  = render :partial => 'date_range_fields'
+  = render :partial => 'date_range_fields', :locals => { :store_options => @store_options }
 
 %br
 %br

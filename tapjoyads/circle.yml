@@ -1,0 +1,10 @@
+machine:
+  ruby:
+      version: 1.8.7-p357
+database:
+  pre:
+    - '[ -f "./data/GeoIPCity.dat" ] || curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > ./data/GeoIPCity.dat'
+    - touch ./data/GeoIPCity.version
+  override:
+    - cp config/database-ci.yml config/database.yml
+    - rake db:schema:load

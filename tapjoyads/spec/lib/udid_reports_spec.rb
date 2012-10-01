@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe UdidReports do
-  let(:good_apps_data) { {"1" => 101, "2" => 202} }
-  let(:bad_apps_data) { "{just plain bad data}" }
-
   before :each do
     UdidReports.stub(:cache_available_months).and_return([1,2,3])
     bucket = FakeBucket.new
@@ -45,16 +42,16 @@ describe UdidReports do
 
   describe "#generate_report" do
     it "should generate UDID report" do
-      @device.apps = good_apps_data
+      @device.apps = {"1" => 101, "2" => 202}
       @device.save
       UdidReports.generate_report(@offer_id, @date_str)
       buf = File.read(@report_filepath)
       buf.match(/,/).should_not be_nil
     end
 
-    it "should generate UDID report even if device has bad data" do
-      @device.apps = bad_apps_data
+    it 'should generate UDID report even if the device has unparsable apps data' do
       @device.save
+      Device.any_instance.stub(:fix_app_json) { raise }
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
       buf = File.read(@report_filepath)
       buf.length.should == 0

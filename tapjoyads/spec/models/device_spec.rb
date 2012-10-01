@@ -488,40 +488,103 @@ describe Device do
     end
   end
 
-  describe '#fix_parser_error' do
+  describe '#parse_bad_json' do
     before :each do
       @correct_app_ids = {'1' => Time.zone.now.to_i, '2' => Time.zone.now.to_i}
       @device = FactoryGirl.create :device, :apps => @correct_app_ids
     end
 
+    context 'with absolute garbage' do
+      it 'raises a parse error' do
+        @device.put('apps', '{d{}ds{[]}}}}ds[}}{"here":"is","some":"json"}{{more}[garbage[[}}')
+
+        expect {
+          @device.send(:parse_bad_json, 'apps')
+        }.to raise_exception(JSON::ParserError)
+      end
+    end
+
     context 'with extra chars at the end' do
       before :each do
         @device.put('apps', @correct_app_ids.to_json + "D")
-        @fixed = @device.send(:fix_parser_error, 'apps')
       end
 
       it 'returns proper JSON' do
-        lambda {JSON.load(@fixed)}.should_not raise_exception
+        expect {
+          @device.send(:parse_bad_json, 'apps')
+        }.to_not raise_exception
       end
 
       it 'returns correct data' do
-        @fixed.should == @correct_app_ids.to_json
+        @device.send(:parse_bad_json, 'apps').should == @correct_app_ids
       end
     end
 
     context 'with missing end-bracket' do
       before :each do
         @device.put('apps', @correct_app_ids.to_json[0..-2])
-        @fixed = @device.send(:fix_parser_error, 'apps')
       end
 
       it 'returns properJSON' do
-        lambda {JSON.load(@fixed)}.should_not raise_exception
+        expect {
+          @device.send(:parse_bad_json, 'apps')
+        }.to_not raise_exception
       end
 
       it 'returns mostly correct data' do
-        @fixed.each do |key, value|
+        @device.send(:parse_bad_json, 'apps').each do |key, value|
           value.should == @correct_app_ids[key]
+        end
+      end
+    end
+
+    context 'with extra JSON after end-bracket (or an early end-bracket, depending on your point of view)' do
+      context 'containing a new key' do
+        before(:each) do
+          # the 'extra json' can/will be missing the open {
+          @device.put('apps', @correct_app_ids.to_json + '"extra_key":"extra_val"}')
+        end
+
+        it 'returns proper JSON' do
+          expect {
+            @device.send(:parse_bad_json, 'apps', :right)
+          }.to_not raise_exception
+        end
+
+        it 'includes the extra JSON in the parsed hash' do
+          @device.send(:parse_bad_json, 'apps', :right)['extra_key'].should == 'extra_val'
+        end
+      end
+
+      context 'containing a duplicate key' do
+        before(:each) do
+          @device.put('apps',
+            @correct_app_ids.to_json +
+            {@correct_app_ids.keys.first => 'bad'}.to_json
+          )
+        end
+
+        it 'will not overwrite values in the good JSON with values from the extra JSON' do
+          @device.send(:parse_bad_json, 'apps', :right).each do |key, value|
+            value.should == @correct_app_ids[key]
+          end
+        end
+      end
+
+      context 'containing invalid JSON' do
+        before(:each) do
+          # the 'extra json' is terribly malformed
+          @device.put('apps',
+            @correct_app_ids.to_json + '"extra_key":extra_val"}'
+          )
+        end
+
+        it 'will discard the extra, invalid JSON' do
+          expect {
+            @device.send(:parse_bad_json, 'apps', :right).each do |key, value|
+              value.should == @correct_app_ids[key]
+            end
+          }.to_not raise_exception
         end
       end
     end

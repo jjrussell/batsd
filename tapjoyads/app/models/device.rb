@@ -151,6 +151,8 @@ class Device < SimpledbShardedResource
     end
 
     if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
+      # Temporary change volume tracking, tracking running until 2012-10-31
+      Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
       save
     end
 
@@ -456,7 +458,7 @@ class Device < SimpledbShardedResource
     self.apps = @parsed_apps
   end
 
-  def fix_parser_error(attribute, search_from = :left)
+  def parse_bad_json(attribute, search_from = :left)
     str = get(attribute)
     if search_from == :right
       pos = str.rindex('}')
@@ -470,14 +472,34 @@ class Device < SimpledbShardedResource
     else
       removed = str.slice!(pos+1..-1)
     end
-    str
+
+    JSON.parse(str)
+  rescue JSON::ParserError => e
+    # Some possibly valid JSON may exist after the token that
+    # caused the parser error
+    raise unless badness = e.message.match(/unexpected token at '([^']+)/)[1]
+    raise unless last_good_curly_pos = str.index("}#{badness}")
+
+    # split at first '{' and try to parse
+    # the remaining json
+    before = str[0 .. last_good_curly_pos]
+    after  = str[last_good_curly_pos + 1 .. -1]
+
+    # we may be missing the open '{'
+    after = "{#{after}" unless after.starts_with?('{')
+
+    data_before_badness = JSON.parse(before)
+    data_after_badness  = JSON.parse(after) rescue {}
+
+    # let keys in data_before_badness take precedence
+    data_before_badness.reverse_merge!(data_after_badness)
   end
 
   def fix_app_json
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
-      self.apps = @parsed_apps = JSON.parse(fix_parser_error('apps'))
+      self.apps = @parsed_apps = parse_bad_json('apps')
     end
   end
 
@@ -485,7 +507,7 @@ class Device < SimpledbShardedResource
     begin
       publisher_user_ids
     rescue JSON::ParserError
-      self.publisher_user_ids = JSON.parse(fix_parser_error('publisher_user_ids', :right))
+      self.publisher_user_ids = parse_bad_json('publisher_user_ids', :right)
     end
   end
 
@@ -493,7 +515,7 @@ class Device < SimpledbShardedResource
     begin
       display_multipliers
     rescue JSON::ParserError
-      self.display_multipliers = JSON.parse(fix_parser_error('display_multipliers', :right))
+      self.display_multipliers = parse_bad_json('display_multipliers', :right)
     end
   end
 end

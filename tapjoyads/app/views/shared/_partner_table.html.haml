@@ -1,3 +1,6 @@
+- all_account_managers = User.account_managers
+- all_sales_reps = User.sales_reps
+
 %table#partners_table.tablesorter
   %thead
     %tr
@@ -18,9 +21,12 @@
   %tbody
     - partners.each do |partner|
       %tr{ :class => cycle('even', 'odd') }
+        - users = partner.users.group_by{|user| all_account_managers.include?(user)}
+        - account_managers = users[true] || []
+        - non_managers = users[false] || []
         %td.nowrap= link_to(partner.name || 'Unknown', partner_path(partner))
         %td
-          = partner.non_managers.map(&:email).join(', ')
+          = non_managers.map(&:email).join(', ')
           %br/
           = partner.contact_phone
           %br/
@@ -32,14 +38,14 @@
         - if current_user.is_one_of?([:admin, :account_mgr])
           %td.account_manager
             = form_for(partner) do |f|
-              - options = options_from_collection_for_select(User.account_managers, "id", "email", partner.account_managers.map(&:id))
+              - options = options_from_collection_for_select(all_account_managers, "id", "email", account_managers.map(&:id))
               = f.select :account_managers, options, {:include_blank => '(no one)'}
             = image_tag 'load-circle.gif', :class => 'hidden'
             .message.hidden
           %td.sales_rep
             = form_for(partner) do |f|
               - sales_rep_email = partner.sales_rep ? partner.sales_rep.email : ''
-              - options = options_from_collection_for_select(User.sales_reps, "email", "email", sales_rep_email)
+              - options = options_from_collection_for_select(all_sales_reps, "email", "email", sales_rep_email)
               = f.select :sales_rep, options, {:include_blank => '(no one)'}
             = image_tag 'load-circle.gif', :class => 'hidden'
             .message.hidden
