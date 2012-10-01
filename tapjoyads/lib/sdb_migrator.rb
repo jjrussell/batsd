@@ -36,6 +36,11 @@ module SdbMigrator
   def write_to_sdb_with_mirror(expected_attr = {})
     #Try to write to the current domain, note that this call will error out with some frequency
     #We'll just go ahead and pass that error back up the call chain
+    old_attributes = @attributes
+    old_attributes_to_add = @attributes_to_add.clone
+    old_attributes_to_replace = @attributes_to_replace.clone
+    old_attributes_to_delete = @attributes_to_delete.clone
+
     result = write_to_sdb_without_mirror(expected_attr)
     #If we're here, we didn't error out, it's time to try to write to the new domain
 
@@ -43,9 +48,10 @@ module SdbMigrator
     begin
 
       #We're going to need to clone the attributes over to the mirror, so keep this for backup
-      old_attributes_to_add = @attributes_to_add.clone
-      @attributes_to_add = @attributes.clone
-
+      @attributes_to_add = old_attributes.merge(old_attributes_to_add).merge(old_attributes_to_replace)
+      #Don't ever "replace"... We handle that in the line above
+      @attributes_to_replace = {}
+      @attributes_to_delete = old_attributes_to_delete
       #Keep track of the current domain
       current_name = @this_domain_name
 
@@ -68,6 +74,8 @@ module SdbMigrator
       #Switch back to the current name & old attributes to add
       @this_domain_name = current_name
       @attributes_to_add = old_attributes_to_add
+      @attributes_to_replace = old_attributes_to_replace
+      @attributes_to_delete = old_attributes_to_delete
     end
 
     #And now it's like we were never here...
