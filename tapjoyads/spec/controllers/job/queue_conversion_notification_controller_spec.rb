@@ -21,13 +21,17 @@ describe Job::QueueConversionNotificationsController do
       :udid                  => 'udid'
     )
 
-   @notification = NotificationsClient::Notification.new({
-    :app_id => @reward.publisher_app_id,
-    :title => "Reward Notification",
-    :message => "Your reward from #{@publisher_app.name} is available!",
-    :device_id => @reward.udid
-    })
+    @notification = NotificationsClient::Notification.new({
+      :app_id => @reward.publisher_app_id,
+      :title => "Reward Notification",
+      :message => "Your reward from #{@publisher_app.name} is available!",
+      :device_aliases => [{:identifier => @reward.udid, :namespace => 'default'}]
+      })
     
+    @device = Device.new(:key => 'udid')
+    @device.idfa = 'idfa'
+    @device.android_id = 'android_id'
+    @device.save
   end
 
   context "sending" do
@@ -45,7 +49,7 @@ describe Job::QueueConversionNotificationsController do
         :app_id => @reward.publisher_app_id,
         :title => "Reward Notification",
         :message => "Your reward from #{@publisher_app.name} is available!",
-        :device_id => @reward.udid
+        :device_aliases => [{:namespace => 'android_id', :identifier => 'android_id'}, {:namespace => 'idfa', :identifier => 'idfa'}]
       }).and_return(@notification)
 
       get(:run_job, :message => @reward.key)

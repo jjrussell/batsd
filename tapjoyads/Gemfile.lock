@@ -57,8 +57,8 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/notifications_client.git
-  revision: 9f5a4f5533149e56bcc18ec131498f091b682177
-  ref: 9f5a4f5533149e56bcc18ec131498f091b682177
+  revision: e81f225de08a649d1323f6f037fe5e0be77f645e
+  ref: e81f225
   specs:
     notifications_client (0.1.0)
       json
@@ -66,7 +66,7 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
-  revision: b7cb6eaca5e2148da550eba599c684ace2b68f09
+  revision: c1d3a53ffe30eed125d6de22c961bc1be385a7c2
   specs:
     signage (0.0.1)
 
