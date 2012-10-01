@@ -12,8 +12,8 @@ class Dashboard::DashboardController < ApplicationController
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
   before_filter :set_recent_partners
-  before_filter :inform_of_new_sdk
   before_filter :inform_of_new_insights
+  before_filter :inform_of_new_sdk
   around_filter :set_time_zone
 
   NEW_SDK_NOTICE = "Don't forget to update to Tapjoy SDK v8.3 in order to ensure effective monetization and distribution of your applications
@@ -21,7 +21,7 @@ class Dashboard::DashboardController < ApplicationController
                     Visit the knowledge center for the entire change log to this version.
                     (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
 
-  NEW_INSIGHTS_NOTICE = "<img src=\"http://assets.tapjoy.com/dashboard/insights_icon.png\"/> Check out the <a href=\"http://bit.ly/OHmf7S\" target=\"_blank\">newest version of Tapjoy Insights</a>"
+  NEW_INSIGHTS_NOTICE = "Checkout the latest version of <a href=\"http://bit.ly/Sa1Las\" target=\"_blank\">Tapjoy Insights</a>. This issue showcases the mobile app explosion in Asia. <a href=\"http://bit.ly/Sa1Las\" target=\"_blank\"><img src=\"http://assets.tapjoy.com/dashboard/insights_header_thumbnail.png\" style=\"padding-left: 5px; vertical-align: middle;\"/></a>"
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
