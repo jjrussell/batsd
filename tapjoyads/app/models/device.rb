@@ -499,7 +499,8 @@ class Device < SimpledbShardedResource
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
-      self.apps = @parsed_apps = parse_bad_json('apps')
+      @parsed_apps = parse_bad_json('apps')
+      self.put('apps', @parsed_apps, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 
@@ -507,7 +508,8 @@ class Device < SimpledbShardedResource
     begin
       publisher_user_ids
     rescue JSON::ParserError
-      self.publisher_user_ids = parse_bad_json('publisher_user_ids', :right)
+      good_data = parse_bad_json('publisher_user_ids', :right)
+      self.put('publisher_user_ids', good_data, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 
@@ -515,7 +517,8 @@ class Device < SimpledbShardedResource
     begin
       display_multipliers
     rescue JSON::ParserError
-      self.display_multipliers = parse_bad_json('display_multipliers', :right)
+      good_data = parse_bad_json('display_multipliers', :right)
+      self.put('display_multipliers', good_data, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 end

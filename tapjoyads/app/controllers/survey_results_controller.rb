@@ -24,7 +24,12 @@ class SurveyResultsController < ApplicationController
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
     return unless verify_records([ @survey_offer ])
 
+    Notifier.alert_new_relic(SurveyResultsController, "Params: #{params.inspect}")
+
     @survey_questions = @survey_offer.survey_questions
+
+    Notifier.alert_new_relic(SurveyResultsController, "Questions: #{@survey_questions.inspect}")
+
     @answers = {}
     @survey_questions.each do |question|
       if params[question.id].blank?
@@ -34,6 +39,8 @@ class SurveyResultsController < ApplicationController
       end
       @answers[question.text] = params[question.id]
     end
+
+    Notifier.alert_new_relic(SurveyResultsController, "Answers: #{@answers.inspect}")
 
     complete_survey
     render 'survey_complete'
@@ -92,6 +99,7 @@ private
     @survey_questions.each do |question|
       web_request.survey_question_id = question.id
       web_request.survey_answer      = @answers[question.text]
+      Notifier.alert_new_relic(SurveyResultsController, "WebRequest[#{question.id}]: #{web_request.inspect}")
       web_request.save
     end
   end
