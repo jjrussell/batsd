@@ -14,9 +14,10 @@ describe UdidReports do
     @offer_id = 0
     @date_str = "1999-03-01"
     @device = Device.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
-    reward = Reward.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
-    reward.udid = @device.id
-    UdidReports.const_set("REWARD", reward)
+    @reward = Reward.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
+    @reward.udid = @device.id
+    @reward.country = 'US'
+    UdidReports.const_set("REWARD", @reward)
     class Reward
       def self.test_select_all(options={})
         yield(UdidReports::REWARD)
@@ -43,18 +44,19 @@ describe UdidReports do
   describe "#generate_report" do
     it "should generate UDID report" do
       @device.apps = {"1" => 101, "2" => 202}
+      @device.mac_address = "1234"
       @device.save
       UdidReports.generate_report(@offer_id, @date_str)
-      buf = File.read(@report_filepath)
-      buf.match(/,/).should_not be_nil
+      buf = File.read(@report_filepath).chomp
+      buf.split(',').length.should == 4
     end
 
     it 'should generate UDID report even if the device has unparsable apps data' do
       @device.save
       Device.any_instance.stub(:fix_app_json) { raise }
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
-      buf = File.read(@report_filepath)
-      buf.length.should == 0
+      buf = File.read(@report_filepath).chomp
+      buf.split(',').length.should == 3
     end
   end
 end
