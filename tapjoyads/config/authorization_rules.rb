@@ -152,6 +152,7 @@ authorization do
     has_permission_on :dashboard_tools_partner_validations, :to => [ :index, :confirm_payouts]
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
+    has_permission_on :dashboard_tools_rejections, :to => [ :index ]
   end
 
   role :payops do

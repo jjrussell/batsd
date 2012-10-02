@@ -414,6 +414,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :cached_offer_lists, :only => [:index, :show]
+        resources :rejections, :only => [:index]
       end
       resources :ops, :only => :index do
         collection do
