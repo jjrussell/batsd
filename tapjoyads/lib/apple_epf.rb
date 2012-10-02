@@ -47,7 +47,7 @@ class AppleEPF
   end
 
   def self.download_file(url, credentials = true)
-    file = Tempfile.new("#{url.split('/').last}")
+    file = Tempfile.new("#{url.split('/').last}", "tmp/")
     uri = URI(url)
     Net::HTTP.start(uri.host) do |http|
       request = Net::HTTP::Get.new uri.request_uri
