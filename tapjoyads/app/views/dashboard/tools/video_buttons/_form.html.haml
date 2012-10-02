@@ -27,7 +27,7 @@
         = f.label :enabled
         #help_enabled.help ?
       %td
-        = f.check_box :enabled
+        = f.check_box :enabled, :checked => @video_button.read_attribute(:enabled)
         = error_message_on @video_button, :enabled
     %tr
       %td{ :colspan => 2 }= f.submit @video_button.new_record? ? 'Create Video Button' : 'Update Video Button'

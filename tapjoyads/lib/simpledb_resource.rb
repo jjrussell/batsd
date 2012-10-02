@@ -2,6 +2,7 @@ require 'logging'
 
 class SimpledbResource
 
+  include ActiveModel::Dirty
   include Simpledb
 
   cattr_reader :sdb
@@ -46,7 +47,9 @@ class SimpledbResource
     @attributes_to_delete      = options.delete(:attrs_to_delete)      { {} }
     @attribute_names_to_delete = options.delete(:attr_names_to_delete) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
+    #NOTE: need to define attribute methods here, since we have to have all attributes defined
+    # before we can call this method
+    self.class.define_attribute_methods(self.class.attribute_names.map(&:to_sym))
     @this_domain_name = get_real_domain_name(@this_domain_name)
     setup_key_hash
 
@@ -88,6 +91,7 @@ class SimpledbResource
 
     module_eval %Q{
       def #{name.to_s}=(value)
+        #{name.to_s}_will_change! unless #{name.to_s} == value
         put('#{attr_name}', value, #{put_options.inspect})
       end
     }
@@ -99,6 +103,7 @@ class SimpledbResource
     }
 
     self.attribute_names << attr_name.to_s unless attribute_names.include?(attr_name.to_s)
+    #TODO: when we upgrade rails version, we should define each attribute here `self.define_attribute_method(name)`
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
 
