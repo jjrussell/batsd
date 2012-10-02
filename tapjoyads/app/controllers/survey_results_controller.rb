@@ -1,3 +1,6 @@
+class SurveyResultsControllerException < Exception
+end
+
 class SurveyResultsController < ApplicationController
 
   layout 'mobile'
@@ -24,11 +27,11 @@ class SurveyResultsController < ApplicationController
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
     return unless verify_records([ @survey_offer ])
 
-    Notifier.alert_new_relic(SurveyResultsController, "Params: #{params.inspect}")
+    Notifier.alert_new_relic(SurveyResultsControllerException, "Params: #{params.inspect}")
 
     @survey_questions = @survey_offer.survey_questions
 
-    Notifier.alert_new_relic(SurveyResultsController, "Questions: #{@survey_questions.inspect}")
+    Notifier.alert_new_relic(SurveyResultsControllerException, "Questions: #{@survey_questions.inspect}")
 
     @answers = {}
     @survey_questions.each do |question|
@@ -40,7 +43,7 @@ class SurveyResultsController < ApplicationController
       @answers[question.text] = params[question.id]
     end
 
-    Notifier.alert_new_relic(SurveyResultsController, "Answers: #{@answers.inspect}")
+    Notifier.alert_new_relic(SurveyResultsControllerException, "Answers: #{@answers.inspect}")
 
     complete_survey
     render 'survey_complete'
@@ -99,7 +102,7 @@ private
     @survey_questions.each do |question|
       web_request.survey_question_id = question.id
       web_request.survey_answer      = @answers[question.text]
-      Notifier.alert_new_relic(SurveyResultsController, "WebRequest[#{question.id}]: #{web_request.inspect}")
+      Notifier.alert_new_relic(SurveyResultsControllerException, "WebRequest[#{question.id}]: #{web_request.inspect}")
       web_request.save
     end
   end
