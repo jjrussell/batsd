@@ -217,15 +217,6 @@ describe App do
     end
   end
 
-  describe '#get_icon_url' do
-    it 'calls primary_app_metadata.get_icon_url and passes appropriate args' do
-      options = { :option1 => true, :option2 => false }
-
-      subject.primary_app_metadata.should_receive(:get_icon_url).with(options).once.and_return('image_url')
-      subject.get_icon_url(options).should == 'image_url'
-    end
-  end
-
   describe '#update_app_metadata' do
     before :each do
       @app = FactoryGirl.create(:app)

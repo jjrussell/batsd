@@ -303,11 +303,6 @@ class App < ActiveRecord::Base
     self.name = data[:title]
   end
 
-  def get_icon_url(options = {})
-    return super unless primary_app_metadata.present?
-    primary_app_metadata.get_icon_url(options)
-  end
-
   def formatted_active_gamer_count(increment = 1000, max = 10000)
     return active_gamer_count if active_gamer_count <= increment
 
