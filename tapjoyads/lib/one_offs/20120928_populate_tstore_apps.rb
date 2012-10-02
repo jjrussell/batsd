@@ -343,7 +343,7 @@ class OneOffs
     app.name = data[:title] if is_primary
     app.save!
     app_metadata.send(:fill_app_store_data, data)
-    app_metadata.send(:save_icon, data[:icon_url])
+    app_metadata.send(:download_and_save_icon!, data[:icon_url])
     app_metadata.save!
 
     puts "Successfully added metadata #{app_metadata.id} to app #{app.id}."
