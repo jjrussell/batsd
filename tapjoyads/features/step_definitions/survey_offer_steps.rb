@@ -28,7 +28,7 @@ end
 
 Then /^I should be able to remove a question$/ do
   click_button "Add Question"
-  expect do 
+  expect do
     within(last_question) do
       click_button 'Remove'
     end
@@ -41,7 +41,7 @@ Then /^I should be able to save the survey$/ do
   page.body.should =~ /Survey offer created successfully/
   page.body.should =~ /#{SURVEY_FIELDS["Name"]}/
 
-  # OK, this part sucks. 
+  # OK, this part sucks.
   @survey = SurveyOffer.find_by_name("Bridge Survey")
   @survey.bid.should == 100
   @survey.questions.count.should == 3
@@ -74,7 +74,7 @@ Then /^the survey should use that icon$/ do
   # TODO: Make this real
   # @survey = SurveyOffer.find_by_name(@name)
   # survey_icon_bytes = Net::HTTP.get_response()
-  # #Net::HTTP.get_response(URI.parse(@survey.icon_url)) #== File.open(file_for("Icon")).read
+  # #Net::HTTP.get_response(URI.parse(@survey.get_icon_url)) #== File.open(file_for("Icon")).read
 end
 
 Given /^I have created a survey$/ do
@@ -139,7 +139,7 @@ end
 Then /^I should be able to remove the survey from the system$/ do
   click_link "Remove"
   page.driver.browser.switch_to.alert.accept
-  visit '/dashboard/tools/survey_offers' # 
+  visit '/dashboard/tools/survey_offers' #
   @survey.reload
   @survey.should be_hidden
 end
@@ -163,7 +163,7 @@ Then /^I should see a list of the survey's questions$/ do
 end
 
 When /^I attach an icon$/ do
-  attach_file("Icon", file_for("Icon"))  
+  attach_file("Icon", file_for("Icon"))
 end
 
 When /^I submit the new survey form$/ do
@@ -176,9 +176,9 @@ end
 
 Given /^I have created a survey with a "(.*?)" question$/ do |format|
   @survey   = FactoryGirl.create(:survey_offer, :partner => @partner)
-  @question = FactoryGirl.create(:survey_question, 
-    :survey_offer => @survey, 
-    :format       => internalize(format), 
+  @question = FactoryGirl.create(:survey_question,
+    :survey_offer => @survey,
+    :format       => internalize(format),
     :responses    => "answer1;answer2;answer3"
   )
   @survey.reload

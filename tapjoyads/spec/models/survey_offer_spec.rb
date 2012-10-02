@@ -6,7 +6,7 @@ describe SurveyOffer do
   let(:primary_offer) { subject.primary_offer }
 
   it { should have_many :questions }
-  it { should have_one :offer }
+  it { should have_many :offers }
   it { should have_one :primary_offer }
   it { should belong_to :partner }
 
@@ -203,10 +203,10 @@ describe SurveyOffer do
 
   describe '#icon=' do
     let(:data) { mock('Icon Data')}
-    let(:icon) { mock('Icon', :read => data) }
+    let(:icon) { mock('Icon', :rewind => nil, :read => data) }
 
-    it 'attaches a file to the primary offer on save' do
-      primary_offer.should_receive(:save_icon!).with(data)
+    it 'calls save_icon! on save' do
+      subject.should_receive(:save_icon!).with(data)
       subject.icon = icon
       subject.save
     end
