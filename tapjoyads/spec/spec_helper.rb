@@ -61,6 +61,7 @@ Spork.prefork do
     config.before(:suite) do
       DeferredGarbageCollection.start
     end
+
     config.before(:each) do
       Resolv.stub!(:getaddress=>'1.1.1.1')
       $fake_sdb = FakeSdb.new
@@ -71,7 +72,9 @@ Spork.prefork do
       Memcached.stub(:new) {|*args| FakeMemcached.new(*args)}
       Mc.reset_connection
       Mc.flush('totally_serious')
+      OfferCacher.stub(:get_offer_stats) { Hash.new(0) }
     end
+
     config.after(:suite) do
       DeferredGarbageCollection.stop
     end

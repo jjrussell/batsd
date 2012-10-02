@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120924053808) do
+ActiveRecord::Schema.define(:version => 20121002183705) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -797,6 +797,7 @@ ActiveRecord::Schema.define(:version => 20120924053808) do
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
     t.boolean  "auto_update_icon",                                                              :default => false
+    t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

@@ -454,7 +454,7 @@ describe Offer do
       click_tracking_urls conversion_tracking_urls creatives_dict prerequisite_offer_id
       exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
       optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
-      requires_udid requires_mac_address
+      requires_udid requires_mac_address native_rank_score
     }
 
     EXCLUDED_COLUMNS = %w{

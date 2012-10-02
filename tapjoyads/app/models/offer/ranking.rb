@@ -1,5 +1,4 @@
 module Offer::Ranking
-
   def self.included(base)
     base.class_eval do
       attr_writer :rank_score
@@ -8,7 +7,6 @@ module Offer::Ranking
   end
 
   def calculate_ranking_fields
-    return if Rails.env.test? # We need to be seeding the test environment with enabled offers for these calculations to work
     stats                       = OfferCacher.get_offer_stats
     self.normal_conversion_rate = (stats[:cvr_std_dev] == 0) ? 0 : (conversion_rate - stats[:cvr_mean]) / stats[:cvr_std_dev]
     self.normal_price           = (stats[:price_std_dev] == 0) ? 0 : (price - stats[:price_mean]) / stats[:price_std_dev]
@@ -17,6 +15,11 @@ module Offer::Ranking
     self.over_threshold         = bid >= 40 ? 1 : 0
     self.rank_boost             = rank_boosts.active.not_optimized.sum(:amount)
     self.optimized_rank_boost   = rank_boosts.active.optimized.sum(:amount)
+
+    self.native_rank_score = CurrencyGroup::DEFAULT_WEIGHTS.reduce(0) do |score, pair|
+      key, weight = pair
+      score + weight * send(key)
+    end
   end
 
   def calculate_ranking_fields!
@@ -24,21 +27,8 @@ module Offer::Ranking
     save!
   end
 
-  def precache_rank_scores
-    rank_scores = {}
-    CurrencyGroup.find_each do |currency_group|
-      score = currency_group.precache_weights.keys.inject(0) { |sum, key| sum + (currency_group.precache_weights[key] * send(key)) }
-      rank_scores[currency_group.id] = score
-    end
-    rank_scores
-  end
-
-  def precache_rank_score_for(currency_group_id)
-    precache_rank_scores[CurrencyGroup::DEFAULT_ID]
-  end
-
   def rank_score
-    @rank_score ||= (precache_rank_score_for(CurrencyGroup::DEFAULT_ID) || 0)
+    @rank_score ||= self.native_rank_score
   end
 
   def bid_for_ranks
@@ -54,7 +44,7 @@ module Offer::Ranking
     calculate_ranking_fields
     percentile_group_id = CurrencyGroup.find_by_name('percentile').id
     offers = OfferList.new(:type => percentile_type).offers.reject { |o| o.id == id }
-    100 * offers.select { |o| precache_rank_score_for(percentile_group_id) >= o.precache_rank_score_for(percentile_group_id) }.length / offers.length
+    100 * offers.select { |o| self.rank_score >= o.rank_score }.length / offers.length
   end
 
   def percentile_type
