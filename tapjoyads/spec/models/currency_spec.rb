@@ -22,6 +22,22 @@ describe Currency do
     it { should validate_numericality_of(:direct_pay_share) }
     it { should validate_numericality_of(:max_age_rating) }
 
+    context 'when the currency is non-rewarded' do
+      before :each do
+        @non_rewarded = Factory.create(:non_rewarded)
+        @non_rewarded.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+        @non_rewarded.save
+      end
+
+      it 'is false' do
+        @non_rewarded.should_not be_valid
+      end
+
+      it 'ensures that the callbacK_url cannot change from NO_CALLBACK' do
+        @non_rewarded.errors[:callback_url].join.should == "must be set to #{Currency::NO_CALLBACK_URL} for non-rewarded currencies"
+      end
+    end
+
     context 'when not tapjoy-managed' do
       it 'validates callback url syntax' do
         Resolv.stub(:getaddress).and_raise(URI::InvalidURIError)
