@@ -1,20 +1,18 @@
-#class Job::MasterTerminateSlowInstancesController < Job::JobController
-class Job::MasterTerminateSlowInstancesController < ApplicationController
+class Job::MasterTerminateSlowInstancesController < Job::JobController
 
-  def webserver
-    find_and_terminate_slow({'group-name' => 'webserver'})
+  # Search for slow instances for the specified group.
+  # Terminate one of the running slow ones.
+  # Space out calls to this controller as required.
+  def index
+    if params[:group_name]
+      instances = ec2_interface.describe_instances(:filters => {'group-name' => params[:group_name]})
+      terminate_slow find_slow(instances)
+    end
+
     render :text => 'ok'
   end
 
   private
-
-  # Load all instances, search for "slow" ones.
-  # Terminate one of them.
-  # Space out calls to this controller as required.
-  def find_and_terminate_slow(filters)
-    instances = ec2_interface.describe_instances :filters => filters
-    terminate_slow find_slow(instances)
-  end
 
   def find_slow(instances)
     slow_ones = instances.reject{|i| !i[:private_dns_name].start_with?('domU-') || i[:aws_state] != 'running'}

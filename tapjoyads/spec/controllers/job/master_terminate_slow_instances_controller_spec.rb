@@ -1,14 +1,13 @@
 require 'spec_helper'
 
 describe Job::Job::MasterTerminateSlowInstancesController do
-  describe '#webserver' do
+  describe '#index' do
     before :each do
       @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     end
 
-    it "runs without errors" do
-      @controller.stub(:find_and_terminate_slow)
-      get(:webserver)
+    it "does nothing with no params" do
+      get(:index)
     end
   end
 
