@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120921230523) do
+ActiveRecord::Schema.define(:version => 20120924053808) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -791,11 +791,12 @@ ActiveRecord::Schema.define(:version => 20120921230523) do
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
     t.boolean  "rate_filter_override",                                                          :default => false, :null => false
     t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
+    t.string   "daily_cap_type"
     t.text     "x_partner_prerequisites",                                                                          :null => false
     t.text     "x_partner_exclusion_prerequisites",                                                                :null => false
-    t.string   "daily_cap_type"
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
+    t.boolean  "auto_update_icon",                                                              :default => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
