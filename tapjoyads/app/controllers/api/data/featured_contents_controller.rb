@@ -4,6 +4,7 @@ class Api::Data::FeaturedContentsController < ApiController
   def load_featured_content
     begin
       device = Device.find(params[:device_id])
+      params[:geoip_data] = Hashie::Mash.new(JSON.parse(params[:geoip_data])) if params[:geoip_data].present?
       featured_contents = FeaturedContent.with_country_targeting(params[:geoip_data], device, params[:platform])
       @object = featured_contents.weighted_rand(featured_contents.map(&:weight))
       render_formatted_response(true, get_object(@object, SAFE_ATTRIBUTES))

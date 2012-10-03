@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   include Signage::Controller
   class << self; attr_accessor :is_simpledb, :object_class end
 
-  #verify_signature(:secret => Rails.configuration.tapjoy_api_key)
+  verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
     head :forbidden
@@ -52,15 +52,6 @@ class ApiController < ApplicationController
     output_json[:data] = data unless data.nil?
     output_json[:errors] = errors if errors.any?
     render(:json => output_json.to_json, :status => status)
-  end
-
-  def get_activerecord_object(obj, safe_attributes = [])
-    return nil if obj.nil? || obj.new_record?
-
-    obj_hash = { :id => obj.key, :attributes => {} }
-    safe_attributes.each do |attr|
-
-    end
   end
 
   def get_object(obj, safe_attributes = [])
