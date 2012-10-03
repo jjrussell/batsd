@@ -62,10 +62,6 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['staging']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['staging']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
-# GCM and Signage for Notifications
-notifications = YAML::load_file("#{Rails.root}/config/notifications.yaml")
-ENV['SIGNAGE_SECRET'] = notifications['staging']['signage_secret']
-
 NUM_POINT_PURCHASES_DOMAINS = 2
 NUM_CLICK_DOMAINS = 2
 NUM_REWARD_DOMAINS = 2

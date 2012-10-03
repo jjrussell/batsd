@@ -1,11 +1,15 @@
 test:
-	signage_secret: 'kHm0AdTlVVzmzTkLd'
+  notifications_secret: kHm0AdTlVVzmzTkLd
+  url: http://localhost:5000
 
-dev:
-	signage_secret: 'kHm0AdTlVVzmzTkLd'
+development:
+  notifications_secret: kHm0AdTlVVzmzTkLd
+  url: http://localhost:5000
 
 staging:
-	signage_secret: 'kHm0AdTlVVzmzTkLd'
+  notifications_secret: kHm0AdTlVVzmzTkLd
+  url: qa.notifications.tapjoy.com
 
 production:
-	signage_secret: 'kHm0AdTlVVzmzTkLd'
+  notifications_secret: kHm0AdTlVVzmzTkLd
+  url: notifications.tapjoy.com

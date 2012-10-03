@@ -44,10 +44,6 @@ DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
-notifications = YAML::load_file("#{Rails.root}/config/notifications.yaml")
-ENV['SIGNAGE_SECRET'] = notifications['dev']['signage_secret']
-
-
 SPROCKETS_CONFIG = {
   :compile => false,
   :combine => true,
