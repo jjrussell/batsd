@@ -178,11 +178,8 @@ class WebRequest < SyslogMessage
     self.device_name          = params[:device_name]
     self.library_version      = params[:library_version]
     self.offer_id             = params[:offer_id]
-    self.offer_is_paid        = params[:offer_is_paid]
-    self.offer_daily_budget   = params[:offer_daily_budget]
     self.publisher_app_id     = params[:publisher_app_id]
     self.advertiser_app_id    = params[:advertiser_app_id]
-    self.advertiser_balance   = params[:advertiser_balance]
     self.displayer_app_id     = params[:displayer_app_id]
     self.device_ip            = params[:device_ip]
     self.type                 = params[:type] if params[:type].present?
