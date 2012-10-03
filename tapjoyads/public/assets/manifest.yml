@@ -19,6 +19,7 @@ jquery-ui-1.8.5.css: jquery-ui-1.8.5-24acfd0d8dfcc8f4d4820261e3daf914.css
 jquery-ui-1.8.5.min.js: jquery-ui-1.8.5.min-27845ba508788900845a6c27277bae0c.js
 jquery-ui-timepicker-addon.min.js: jquery-ui-timepicker-addon.min-695051467288718933bacc85b49f69fa.js
 jquery.colorbox.min.js: jquery.colorbox.min-9f50dd8812063738b19b3a2e6fe816cc.js
+jquery.delayedobserver.js: jquery.delayedobserver-4bab1f0b3a8d708a3e7584f5be6d962b.js
 jquery.form.min.js: jquery.form.min-81c08b16fdf9fd579a559e0c8bf5eb0c.js
 jquery.tablesorter.js: jquery.tablesorter-c2136e84752d342c09d4e3b6f63b310a.js
 jquery_ujs.js: jquery_ujs-3a6f67d250bc6c428e011073c610469a.js
