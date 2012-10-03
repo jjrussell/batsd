@@ -97,7 +97,6 @@ after_fork do |server, worker|
   defined?(SimpledbCache) and SimpledbCache.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
-  defined?(AnalyticsLogger) and AnalyticsLogger.after_fork
   $redis.client.reconnect
   at_exit { defined?(NewRelic) and NewRelic::Agent.shutdown({:force_send=>true}) }
 end
