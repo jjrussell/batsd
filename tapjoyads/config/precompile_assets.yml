@@ -31,10 +31,11 @@
 - lib/screw-spinner.js
 - mobile/base.css
 - mobile/modernizr.js
+- mobile/respond.js
 - offerwall/offerwall.css
 - offerwall/offerwall.js
 - print.css
-- reengagement_offers/style.css
+- reengagement_rewards/style.css
 - reporting.css
 - rgraph/RGraph.common.core.js
 - rgraph/RGraph.common.tooltips.js
