@@ -1,4 +1,4 @@
-class WebRequest < AnalyticsLogger::Message
+class WebRequest < SyslogMessage
 
   PATH_TO_STAT_MAP = {
     'connect'                  => [ { :stat => 'logins',                    :attr => :app_id } ],
