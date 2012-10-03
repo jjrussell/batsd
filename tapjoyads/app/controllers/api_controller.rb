@@ -16,7 +16,6 @@ class ApiController < ApplicationController
     return unless params[:id].present? && !@object
     return if self.class.object_class.nil?
     @object = (self.class.is_simpledb ? self.class.object_class.new(:key => params[:id]) : self.class.object_class.find_or_initialize_by_id(params[:id]))
-    Rails.logger.info(@object.inspect)
   end
 
   def sync_object
@@ -65,7 +64,7 @@ class ApiController < ApplicationController
   end
 
   def get_object(obj, safe_attributes = [])
-    return nil if obj.nil? || obj.new_record?
+    return nil if obj.nil? || (obj.respond_to?(:new_record?) ? obj.new_record? : false)
     obj_hash = { :id => obj.id, :attributes => {} }
     safe_attributes.each do |attr|
       if obj.respond_to?(attr)

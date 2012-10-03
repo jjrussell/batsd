@@ -114,6 +114,12 @@ Tapjoyad::Application.routes.draw do
         end
       end
       resources :partners, :only => [:show]
+      resources :recommendation_lists, :only => [:new]
+      resources :featured_contents do
+        collection do
+          get :load_featured_content
+        end
+      end
     end
   end
 end

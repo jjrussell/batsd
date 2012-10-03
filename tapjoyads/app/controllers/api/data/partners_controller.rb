@@ -1,5 +1,4 @@
 class Api::Data::PartnersController < ApiController
-
   SAFE_ATTRIBUTES = [:name]
 
   @is_simpledb = false

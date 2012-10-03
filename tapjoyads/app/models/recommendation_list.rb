@@ -6,7 +6,7 @@ class RecommendationList
   MINIMUM = 7
 
   def initialize(options = {})
-    @device      = options[:device]
+    @device      = Device.find(options[:device_id])
     @device_type = options[:device_type]
     @geoip_data  = options[:geoip_data] || {}
     @os_version  = options[:os_version]
