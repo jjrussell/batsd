@@ -2,7 +2,9 @@ require 'signage/controller'
 
 class ApiController < ApplicationController
   include Signage::Controller
-  verify_signature(:secret => Rails.configuration.tapjoy_api_key)
+  class << self; attr_accessor :is_simpledb, :object_class end
+
+  #verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
     head :forbidden
@@ -10,15 +12,11 @@ class ApiController < ApplicationController
 
   private
 
-  def get_object_type
-    [nil, nil]
-  end
-
   def lookup_object
     return unless params[:id].present? && !@object
-    obj_class, is_simpledb = get_object_type
-    return if obj_class.nil?
-    @object = (is_simpledb ? obj_class.new(:key => params[:id]) : obj_class.new(params[:id]))
+    return if self.class.object_class.nil?
+    @object = (self.class.is_simpledb ? self.class.object_class.new(:key => params[:id]) : self.class.object_class.find_or_initialize_by_id(params[:id]))
+    Rails.logger.info(@object.inspect)
   end
 
   def sync_object
@@ -57,9 +55,18 @@ class ApiController < ApplicationController
     render(:json => output_json.to_json, :status => status)
   end
 
-  def get_simpledb_object(obj, safe_attributes = [])
+  def get_activerecord_object(obj, safe_attributes = [])
     return nil if obj.nil? || obj.new_record?
+
     obj_hash = { :id => obj.key, :attributes => {} }
+    safe_attributes.each do |attr|
+
+    end
+  end
+
+  def get_object(obj, safe_attributes = [])
+    return nil if obj.nil? || obj.new_record?
+    obj_hash = { :id => obj.id, :attributes => {} }
     safe_attributes.each do |attr|
       if obj.respond_to?(attr)
         attr_value = obj.send(attr)

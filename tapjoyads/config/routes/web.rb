@@ -113,6 +113,7 @@ Tapjoyad::Application.routes.draw do
           post :set_last_run_time
         end
       end
+      resources :partners, :only => [:show]
     end
   end
 end
