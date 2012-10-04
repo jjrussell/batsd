@@ -178,10 +178,12 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
 
   create_table "clients", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "name",                     :null => false
+    t.string   "id",                      :limit => 36, :null => false
+    t.string   "name",                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "payment_type"
+    t.datetime "payment_type_changed_at"
   end
 
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
