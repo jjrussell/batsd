@@ -604,33 +604,34 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     month = start_time.month
     start_time = start_time.to_f
 
-    where_clause = [
-      %Q(`updated-at` is not null),
-      %Q(`updated-at` >= '#{start_time}'),
-      %Q(`updated-at` <  '#{start_time + 1.month}'),
+    partner_conditions = [
       %Q(after_state     like '%"rev_share":%'),
       %Q(after_state not like '%"rev_share":null%'),
       %Q(after_state not like '%"rev_share":""%'),
     ].join(' and ')
 
-    data = ['time,partner_id,partner_name,user,old_rev_share,new_rev_share,notes']
+    currency_conditions = [
+      %Q(after_state     like '%"rev_share_override":%'),
+      %Q(after_state not like '%"rev_share_override":null%'),
+      %Q(after_state not like '%"rev_share_override":""%'),
+    ].join(' and ')
+
+    where_clause = [
+      %Q(`updated-at` is not null),
+      %Q(`updated-at` >= '#{start_time}'),
+      %Q(`updated-at` <  '#{start_time + 1.month}'),
+      "((#{partner_conditions}) or (#{currency_conditions}))",
+    ].join(' and ')
+
+    data = ['time,partner_id,partner_name,app_id,app_name,user,old_rev_share,new_rev_share,notes']
     next_token = nil
 
     begin
       response = ActivityLog.select(:where => where_clause, :order_by => '`updated-at` desc', :next_token => next_token)
       next_token = response[:next_token]
       response[:items].each do |item|
-        partner = Partner.find(item.partner_id)
-        row = [
-          item.updated_at,
-          partner.id,
-          partner.name,
-          item.user,
-          item.before_state['rev_share'],
-          item.after_state['rev_share'],
-          item.after_state['account_manager_notes'],
-        ]
-        data << row.map{|attr| attr.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')}.join(",")
+        row = parse_row(item)
+        data << row.map{|attr| sanitize_for_csv(attr) }.join(",") unless row.nil?
       end
     end until next_token.nil?
 
@@ -638,6 +639,42 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   private
+
+  def parse_row(activity_log)
+    case activity_log.object_type
+    when 'Currency'
+      app = Currency.find(activity_log.object_id).app
+      partner = app.partner
+      attribute = 'rev_share_override'
+    when 'Partner'
+      app = nil
+      partner = Partner.find(activity_log.object_id)
+      attribute = 'rev_share'
+    else
+      raise "Unexpected item type #{activity_log.object_type}"
+    end
+
+    before_value = activity_log.before_state[attribute]
+    after_value  = activity_log.after_state[attribute]
+
+    return nil if before_value.blank? && after_value.blank?
+
+    row = [
+      activity_log.updated_at,
+      partner.id,
+      partner.name,
+      app.try(:id),
+      app.try(:name),
+      activity_log.user,
+      before_value,
+      after_value,
+      activity_log.after_state['account_manager_notes'],
+    ]
+  end
+
+  def sanitize_for_csv(str)
+    str.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')
+  end
 
   def downcase_udid
     downcase_param(:udid)
