@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def should_show_push_nav?(app_id)
-    Dashboard::PushController::BETA_PUSH_NOTIFICATION_APPS.include?(app_id) || (Rails.env.development? || Rails.env.staging?)
+    Dashboard::PushController::BETA_PUSH_NOTIFICATION_APPS.include?(app_id)
   end
 
   def options_for_prerequisites(offer)
