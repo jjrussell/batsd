@@ -49,6 +49,7 @@ class AppleEPF
   def self.download_file(url, credentials = true)
     file = Tempfile.new("#{url.split('/').last}", "tmp/")
     uri = URI(url)
+    puts "Download start: #{url}"
     Net::HTTP.start(uri.host) do |http|
       request = Net::HTTP::Get.new uri.request_uri
       request.basic_auth *TAPJOY_EPF_CREDENTIALS if credentials
@@ -58,6 +59,7 @@ class AppleEPF
         end
       end
     end
+    puts "Download finish: #{url}"
     file.rewind
     file
   end
@@ -98,12 +100,16 @@ class AppleEPF
   end
 
   def self.upload_files_in_tmp_folder
+    puts "Upload tmp folder start"
     Dir.glob('tmp/epf/**/*').each do |file_name|
       next if File.directory? file_name
+      puts "Uploading #{file_name}"
       S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + file_name.sub('tmp/epf/', '')].write(:data => open(file_name), :acl => :public_read)
       File.delete(file_name)
+      puts "Finished uploading #{file_name}"
     end
     FileUtils.rm_rf('tmp/epf')
+    puts "Upload tmp folder finished"
   end
 
   def self.test
