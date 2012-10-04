@@ -8,6 +8,10 @@ module ApplicationHelper
     ObjectEncryptor.encrypt_url(url)
   end
 
+  def should_show_push_nav?(app_id)
+    Dashboard::PushController::BETA_PUSH_NOTIFICATION_APPS.include?(app_id) || (Rails.env.development? || Rails.env.staging?)
+  end
+
   def options_for_prerequisites(offer)
     offer.partner.offers.sort_by(&:name).reject { |o| o.id == offer.id }.collect { |o| [ "#{o.name} -#{o.get_platform}-#{o.name_suffix}-#{o.item_type}", o.id ] }
   end
