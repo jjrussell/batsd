@@ -18,7 +18,17 @@ class Client < ActiveRecord::Base
 
   scope :ordered_by_name, :order => :name
 
+  before_save :update_payment_type_changed_at
   before_destroy :remove_from_partners
+
+  def update_payment_type_changed_at
+    self.payment_type_changed_at = Time.zone.now if payment_type_changed?
+  end
+
+  def payment_type=(value)
+    value = nil if value.blank?
+    write_attribute(:payment_type, value)
+  end
 
   def remove_from_partners
     partners.each { |p| p.update_attributes!({ :client_id => nil }) }

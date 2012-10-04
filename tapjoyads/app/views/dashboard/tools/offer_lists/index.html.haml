@@ -54,7 +54,7 @@
       - @offers.each_with_index do |offer, i|
         %tr
           %td= i + 1
-          %td= numeric_display(offer.precache_rank_score_for(params[:currency_group_id]))
+          %td= numeric_display(offer.rank_score)
           %td= (permitted_to? :show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) : offer.name
           %td= offer.show_rate
           %td= offer.conversion_rate

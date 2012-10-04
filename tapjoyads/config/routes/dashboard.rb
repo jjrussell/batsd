@@ -300,7 +300,11 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
-        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ] do
+          member do
+            put :toggle_auto_update_icon
+          end
+        end
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export

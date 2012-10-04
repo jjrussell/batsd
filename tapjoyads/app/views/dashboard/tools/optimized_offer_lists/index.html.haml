@@ -60,7 +60,7 @@
         %tr
           %th Rank
           %th Algorithm Score
-          %th Pre Cache Score
+          %th Native Score
           %th Name
           %th Show Rate
           %th CVR
@@ -76,7 +76,7 @@
           %tr
             %td= i + 1
             %td= offer.rank_score
-            %td= offer.precache_rank_score_for(params[:currency_group_id])
+            %td= offer.native_rank_score
             %td= (permitted_to? :show, :dashboard_statz) ? link_to(offer.name, statz_path(offer)) : offer.name
             %td= offer.show_rate
             %td= offer.conversion_rate

@@ -1,5 +1,4 @@
 class Utils
-  require 'open-uri'
 
   def self.check_syntax
     # TODO: Find a rails 3 compatible way to do this

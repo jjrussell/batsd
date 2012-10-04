@@ -27,7 +27,9 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
-    if SPECIAL_CALLBACK_URLS.include?(value)
+    if record.conversion_rate == 0 && value != NO_CALLBACK_URL
+      record.errors.add(attribute, "must be set to #{NO_CALLBACK_URL} for non-rewarded currencies")
+    elsif SPECIAL_CALLBACK_URLS.include?(value)
       if record.conversion_rate > 0 && (record.app.currencies.size > 1 || record.new_record? && record.app.currencies.any?)
         record.errors.add(attribute, 'cannot be managed if the app has multiple currencies')
       end
