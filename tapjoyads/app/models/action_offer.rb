@@ -103,7 +103,6 @@ class ActionOffer < ActiveRecord::Base
     offer.partner                           = partner
     offer.name                              = name
     offer.instructions                      = instructions
-    offer.third_party_data                  = prerequisite_offer_id
     offer.prerequisite_offer_id             = prerequisite_offer_id
     offer.exclusion_prerequisite_offer_ids  = exclusion_prerequisite_offer_ids
     offer.x_partner_prerequisites           = x_partner_prerequisites
@@ -142,10 +141,7 @@ class ActionOffer < ActiveRecord::Base
       if offer.price_changed? && offer.bid < offer.min_bid
         offer.bid                   = offer.min_bid
       end
-      if prerequisite_offer_id_changed?
-        offer.third_party_data      = prerequisite_offer_id
-        offer.prerequisite_offer_id = prerequisite_offer_id
-      end
+      offer.prerequisite_offer_id             = prerequisite_offer_id             if prerequisite_offer_id_changed?
       offer.exclusion_prerequisite_offer_ids  = exclusion_prerequisite_offer_ids  if exclusion_prerequisite_offer_ids_changed?
       offer.x_partner_prerequisites           = x_partner_prerequisites           if x_partner_prerequisites_changed?
       offer.x_partner_exclusion_prerequisites = x_partner_exclusion_prerequisites if x_partner_exclusion_prerequisites_changed?

@@ -19,7 +19,6 @@ module Offer::Rejecting
       { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
       { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
       { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
-      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
       { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
@@ -61,7 +60,6 @@ module Offer::Rejecting
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
     direct_pay_reject?(direct_pay_providers) ||
-    action_app_reject?(device) ||
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
@@ -289,10 +287,6 @@ module Offer::Rejecting
 
   def direct_pay_reject?(direct_pay_providers)
     direct_pay? && !direct_pay_providers.include?(direct_pay)
-  end
-
-  def action_app_reject?(device)
-    item_type == "ActionOffer" && third_party_data.present? && device && !device.has_app?(third_party_data)
   end
 
   def min_os_version_reject?(os_version)
