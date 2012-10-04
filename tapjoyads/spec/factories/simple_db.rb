@@ -59,4 +59,11 @@ FactoryGirl.define do
     key               { FactoryGirl.generate(:udid) }
     publisher_user_id UUIDTools::UUID.random_create.to_s
   end
+
+  factory :support_request do
+    key               { FactoryGirl.generate(:guid) }
+    udid              { FactoryGirl.generate(:udid) }
+    click_id          { FactoryGirl.create(:click).id }
+    offer_value       10
+  end
 end
