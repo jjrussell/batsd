@@ -50,22 +50,15 @@ class OptimizedOfferList
 
     def cache_offer_list(key)
       # TODO: New relic alerts?
-      cache_key = cache_key_for_options(options_for_s3_key(key))
+      options = options_for_s3_key(key)
+      cache_key = cache_key_for_options(options)
       offers_json, last_modified_at = s3_json_offer_data(key)
       if offers_json['enabled'] == 'false'
         delete_cached_offer_list(cache_key)
         return
       end
 
-      offers = offers_json['offers'].collect do |offer_hash|
-        begin
-          next unless Offer.find(offer_hash['offer_id']).enabled?
-          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).optimization_override(offer_hash, false).for_caching
-        rescue
-          puts "Error with #{offer_hash.inspect}" and next
-        end
-      end.compact
-
+      offers = get_offers_for_cache(offers_json['offers'], options[:device_type], options[:platform])
       offers = offers.sort_by {|offer| -offer.rank_score.to_f }
       current_time = Time.now
       cached_offer_list = CachedOfferList.new
@@ -121,6 +114,20 @@ class OptimizedOfferList
     end
 
     private
+
+    def get_offers_for_cache(offers_json, device_type, platform)
+      offers_json.collect do |offer_hash|
+        begin
+          current_offer = Offer.find(offer_hash['offer_id'])
+          next if current_offer.disabled?
+          next if current_offer.device_platform_mismatch?(device_type)
+          next if current_offer.app_platform_mismatch?(platform)
+          Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).optimization_override(offer_hash, false).for_caching
+        rescue
+          puts "Error with #{offer_hash.inspect}" and next
+        end
+      end.compact
+    end
 
     def cache_key_for_options(options)
       options = options.clone

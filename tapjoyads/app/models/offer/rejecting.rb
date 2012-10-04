@@ -154,6 +154,19 @@ module Offer::Rejecting
     has_valid_coupon? && self.coupon.end_date <= Date.today
   end
 
+  def device_platform_mismatch?(normalized_device_type)
+    return false if normalized_device_type.blank?
+
+    !get_device_types.include?(normalized_device_type)
+  end
+
+  def app_platform_mismatch?(app_platform_name)
+    return false if app_platform_name.blank?
+
+    platform_name = get_platform
+    platform_name != 'All' && platform_name != app_platform_name
+  end
+
   private
 
   def has_valid_coupon?(device=true)
@@ -185,18 +198,6 @@ module Offer::Rejecting
     self_promote_only? && partner_id != publisher_app.partner_id
   end
 
-  def device_platform_mismatch?(normalized_device_type)
-    return false if normalized_device_type.blank?
-
-    !get_device_types.include?(normalized_device_type)
-  end
-
-  def app_platform_mismatch?(app_platform_name)
-    return false if app_platform_name.blank?
-
-    platform_name = get_platform
-    platform_name != 'All' && platform_name != app_platform_name
-  end
 
   def age_rating_reject?(max_age_rating)
     return false unless max_age_rating && age_rating
