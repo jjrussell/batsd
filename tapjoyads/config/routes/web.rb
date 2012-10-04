@@ -114,6 +114,8 @@ Tapjoyad::Application.routes.draw do
         end
       end
       resources :partners, :only => [:show]
+      resources :apps, :only => [:show]
+      resources :currencies, :only => [:show]
       resources :recommendation_lists, :only => [:new]
       resources :featured_contents do
         collection do

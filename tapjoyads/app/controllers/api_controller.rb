@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   include Signage::Controller
   class << self; attr_accessor :is_simpledb, :object_class end
 
-  verify_signature(:secret => Rails.configuration.tapjoy_api_key)
+  #verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
     head :forbidden
@@ -54,13 +54,23 @@ class ApiController < ApplicationController
     render(:json => output_json.to_json, :status => status)
   end
 
-  def get_object(obj, safe_attributes = [])
+  def get_object(obj, safe_attributes = [], safe_associations = {})
     return nil if obj.nil? || (obj.respond_to?(:new_record?) ? obj.new_record? : false)
     obj_hash = { :id => obj.id, :attributes => {} }
     safe_attributes.each do |attr|
       if obj.respond_to?(attr)
         attr_value = obj.send(attr)
         obj_hash[:attributes][attr] = attr_value unless attr_value.nil?
+      end
+    end
+
+    obj_hash["associations"] = {}
+    safe_associations.each do |association, association_safe_attributes|
+      if obj.respond_to?(association)
+        associated_objects = obj.send(association)
+        associated_objects = [associated_objects] unless associated_objects.class == Array
+        associated_objects.map! { |associated_object| get_object(associated_object, association_safe_attributes)}
+        obj_hash["associations"][association.to_s] = associated_objects
       end
     end
     obj_hash

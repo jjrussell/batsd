@@ -1,8 +1,8 @@
-class Api::Data::PartnersController < ApiController
+class Api::Data::CurrenciesController < ApiController
   SAFE_ATTRIBUTES = [:name]
 
   @is_simpledb = false
-  @object_class = Partner
+  @object_class = Currency
 
   before_filter :lookup_object, :sync_object, :only => [:show]
 
