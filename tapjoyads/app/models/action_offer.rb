@@ -19,7 +19,7 @@ class ActionOffer < ActiveRecord::Base
   include ActiveModel::Validations
   include UuidPrimaryKey
   extend ActiveSupport::Memoizable
-  acts_as_trackable :device_types => lambda { |ctx| app.primary_offer.device_types }, :third_party_data => :prerequisite_offer_id, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { |ctx| app.store_url }
+  acts_as_trackable :device_types => lambda { |ctx| app.primary_offer.device_types }, :icon_id_override => :app_id, :instructions => :instructions, :url => lambda { |ctx| app.store_url }
 
   has_many :offers, :as => :item
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
