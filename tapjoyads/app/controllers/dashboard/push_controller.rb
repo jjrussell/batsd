@@ -3,10 +3,12 @@ class Dashboard::PushController < Dashboard::DashboardController
   current_tab :apps
   before_filter :setup
   
-  BETA_PUSH_NOTIFICATION_APPS = []
+  #used to enable push admin option. Just TapDefense ios and android
+  BETA_PUSH_NOTIFICATION_APPS = ["30091aa4-9ff3-4717-a467-c83d83f98d6d", "2349536b-c810-47d7-836c-2cd47cd3a796"]
 
 private
   def setup
+    @whitelist = BETA_PUSH_NOTIFICATION_APPS
     @app = find_app(params[:app_id])
     @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?platform=#{@app.platform}&signature=#{signature}&signature_method=hmac_sha256"
   end
