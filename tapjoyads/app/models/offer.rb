@@ -11,7 +11,6 @@ class Offer < ActiveRecord::Base
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
-  memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
