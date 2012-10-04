@@ -791,9 +791,9 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
     t.boolean  "rate_filter_override",                                                          :default => false, :null => false
     t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
-    t.string   "daily_cap_type"
     t.text     "x_partner_prerequisites",                                                                          :null => false
     t.text     "x_partner_exclusion_prerequisites",                                                                :null => false
+    t.string   "daily_cap_type"
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
     t.boolean  "auto_update_icon",                                                              :default => false
