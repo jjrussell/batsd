@@ -1,3 +1,5 @@
+Dir[File.dirname(__FILE__) + '/utils/*.rb'].each { |file| require(file) }
+
 class Utils
 
   def self.check_syntax
