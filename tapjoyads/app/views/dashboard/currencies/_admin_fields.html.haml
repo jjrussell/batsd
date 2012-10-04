@@ -35,7 +35,7 @@
     = f.label :max_age_rating, 'Max age rating'
     #help_max_age_rating.help ?
   %td
-    = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s)
+    = f.select :max_age_rating, options_for_select(%w(17+ 12+ 9+ 4+).zip(%w(4 3 2 1)), :selected => @currency.max_age_rating.to_s), :include_blank => 'None'
 %tr.admin
   %th
     = f.label :only_free_offers, 'Only free offers'
@@ -109,7 +109,8 @@
   #help_max_age_rating_content{:name => 'Max age rating'}
     The maximum age-rating of offers to show.
     %ul
-      %li 17+: No age-rating restrictions
+      %li None: No age-rating restrictions
+      %li 17+: Only show offers rated 17 and below
       %li 12+: Only show offers rated 12 and below
       %li 9+: Only show offers rated 9 and below
       %li 4+: Only show offers rated 4 and below

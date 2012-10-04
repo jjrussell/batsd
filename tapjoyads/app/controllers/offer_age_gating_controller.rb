@@ -33,6 +33,8 @@ class OfferAgeGatingController < ApplicationController
 
     Mc.distributed_put("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{params[:udid]}.#{data[:offer_id]}", "gating", false, 2.hour)
 
+    data.delete(:offer_id) # remove :offer_id to show all offers in get_offers/webpage
+
     redirect_to("#{API_URL}/get_offers/webpage?#{data.to_query}")
   end
 

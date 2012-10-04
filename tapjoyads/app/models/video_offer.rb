@@ -17,6 +17,15 @@ class VideoOffer < ActiveRecord::Base
   acts_as_cacheable
   acts_as_trackable :url => lambda { |ctx| video_url.present? ? video_url : nil }
 
+  AGE_GATING_MAP = {
+    1 => 4,
+    2 => 9,
+    3 => 12,
+    4 => 17,
+    5 => 18,
+    6 => 21
+  }
+
   has_many :offers, :as => :item
   has_many :video_buttons
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
