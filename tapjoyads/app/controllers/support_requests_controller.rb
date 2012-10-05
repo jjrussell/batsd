@@ -13,6 +13,8 @@ class SupportRequestsController < ApplicationController
       render_new_with_error(I18n.t('text.support.missing_description'))
     elsif params[:email_address].blank? || params[:email_address] !~ Authlogic::Regex.email
       render_new_with_error(I18n.t('text.support.invalid_email'))
+    elsif duplicate_support_request?
+      render_new_with_error(I18n.t('test.support.duplicate_support_request', :default => "You've already submitted a support request for this offer."))
     else
       support_request = SupportRequest.new
       support_request.fill_from_params(params, @app, @currency, @offer, request.env["HTTP_USER_AGENT"])
@@ -56,5 +58,9 @@ private
     find_incomplete_offers
     flash.now[:error] = message
     render('new') and return
+  end
+
+  def duplicate_support_request?
+    SupportRequest.find_by_udid_and_offer_id(params[:udid], @offer.id).present?
   end
 end

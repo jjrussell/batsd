@@ -16,9 +16,12 @@ elsif server_type == 'jobserver'
 elsif server_type == "dev"
   worker_processes 2
   timeout 90
-elsif server_type == 'webserver' || server_type == 'connect'
+elsif server_type == 'webserver'
   worker_processes 12
   timeout 90
+elsif server_type == 'connect'
+  worker_processes 24
+  timeout 20
 else
   worker_processes 10
   timeout 90
@@ -97,7 +100,6 @@ after_fork do |server, worker|
   defined?(SimpledbCache) and SimpledbCache.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
-  defined?(AnalyticsLogger) and AnalyticsLogger.after_fork
   $redis.client.reconnect
   at_exit { defined?(NewRelic) and NewRelic::Agent.shutdown({:force_send=>true}) }
 end

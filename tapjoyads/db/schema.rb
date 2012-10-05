@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120924053808) do
+ActiveRecord::Schema.define(:version => 20121002183705) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -178,10 +178,12 @@ ActiveRecord::Schema.define(:version => 20120924053808) do
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
 
   create_table "clients", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "name",                     :null => false
+    t.string   "id",                      :limit => 36, :null => false
+    t.string   "name",                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "payment_type"
+    t.datetime "payment_type_changed_at"
   end
 
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
@@ -791,12 +793,13 @@ ActiveRecord::Schema.define(:version => 20120924053808) do
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
     t.boolean  "rate_filter_override",                                                          :default => false, :null => false
     t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
-    t.string   "daily_cap_type"
     t.text     "x_partner_prerequisites",                                                                          :null => false
     t.text     "x_partner_exclusion_prerequisites",                                                                :null => false
+    t.string   "daily_cap_type"
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
     t.boolean  "auto_update_icon",                                                              :default => false
+    t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

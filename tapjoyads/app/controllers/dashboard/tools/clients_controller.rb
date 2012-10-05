@@ -36,7 +36,7 @@ class Dashboard::Tools::ClientsController < Dashboard::DashboardController
 
   def update
     @client = Client.find(params[:id])
-    if @client.safe_update_attributes( params[:client], [ :name ] )
+    if @client.safe_update_attributes( params[:client], [ :name, :payment_type ] )
       flash[:notice] = 'Client saved'
       redirect_to tools_clients_path
     else

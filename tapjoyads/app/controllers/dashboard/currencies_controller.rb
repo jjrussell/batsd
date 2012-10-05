@@ -55,12 +55,14 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
     end
 
     if @app.currencies.empty?
-      @currency = Currency.new
-      @currency.id = @app.id
-      @currency.app = @app
-      @currency.partner = @app.partner
-      @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
-      @currency.ordinal = 1
+      options = {
+        :app          => @app,
+        :partner      => @app.partner,
+        :callback_url => Currency::TAPJOY_MANAGED_CALLBACK_URL,
+        :ordinal      => 1
+      }
+      options[:id] = @app.id unless @app.non_rewarded.try(:id) == @app.id
+      @currency = Currency.new(options)
     else
       @currency = @app.currencies.first.clone
       @currency.attributes = { :created_at => nil, :updated_at => nil, :ordinal => (@app.currencies.last.ordinal + 100) }
