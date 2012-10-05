@@ -241,6 +241,9 @@ Tapjoyad::Application.routes.draw do
       end
 
       namespace :tools do
+
+        match 'debug/:bucket' => 'admin_debug#show'
+
         resources :brands
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
