@@ -133,4 +133,47 @@ describe OptimizedOfferList do
     end
   end
 
+  describe '.get_offers_for_cache' do
+    before :each do
+      @offers_json = [ {'offer_id' => '1'} ]
+      @offer = double('Offer')
+      Offer.stub(:find).with('1').and_return(@offer)
+    end
+
+    context 'when offer is disabled' do
+      it 'will not cache the offer' do
+        @offer.stub(:disabled? => true)
+        OptimizedOfferList.send(:get_offers_for_cache, @offers_json, '','').should be_empty
+      end
+    end
+
+    context 'offer list device not for offer' do
+      it 'will not cache the offer' do
+        @offer.stub(:disabled? => false)
+        @offer.stub(:device_platform_mismatch? => true)
+        OptimizedOfferList.send(:get_offers_for_cache, @offers_json, 'android','').should be_empty
+      end
+    end
+
+    context 'offer list platform not for offer' do
+      it 'will not cache the offer' do
+        @offer.stub(:disabled? => false)
+        @offer.stub(:device_platform_mismatch? => false)
+        @offer.stub(:app_platform_mismatch? => true)
+        OptimizedOfferList.send(:get_offers_for_cache, @offers_json, 'android','Android').should be_empty
+      end
+    end
+
+    context 'offer list matches the offer' do
+      it 'will cache the offer' do
+        @offer.stub(:disabled? => false)
+        @offer.stub(:device_platform_mismatch? => false)
+        @offer.stub(:app_platform_mismatch? => false)
+        @offer.stub(:optimization_override).with(any_args()).and_return(@offer)
+        @offer.stub(:for_caching).with(any_args()).and_return(@offer)
+        Offer.stub(:find).with(any_args()).and_return(@offer)
+        OptimizedOfferList.send(:get_offers_for_cache, @offers_json, 'android','Android').should == [@offer]
+      end
+    end
+  end
 end

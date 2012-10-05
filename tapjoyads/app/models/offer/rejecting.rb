@@ -19,7 +19,6 @@ module Offer::Rejecting
       { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
       { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
       { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
-      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
       { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
@@ -62,7 +61,6 @@ module Offer::Rejecting
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
     direct_pay_reject?(direct_pay_providers) ||
-    action_app_reject?(device) ||
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
@@ -161,6 +159,19 @@ module Offer::Rejecting
       item_type == "ActionOffer" && prerequisite_offer_id.blank?
   end
 
+  def device_platform_mismatch?(normalized_device_type)
+    return false if normalized_device_type.blank?
+
+    !get_device_types.include?(normalized_device_type)
+  end
+
+  def app_platform_mismatch?(app_platform_name)
+    return false if app_platform_name.blank?
+
+    platform_name = get_platform
+    platform_name != 'All' && platform_name != app_platform_name
+  end
+
   private
 
   def has_valid_coupon?(device=true)
@@ -192,18 +203,6 @@ module Offer::Rejecting
     self_promote_only? && partner_id != publisher_app.partner_id
   end
 
-  def device_platform_mismatch?(normalized_device_type)
-    return false if normalized_device_type.blank?
-
-    !get_device_types.include?(normalized_device_type)
-  end
-
-  def app_platform_mismatch?(app_platform_name)
-    return false if app_platform_name.blank?
-
-    platform_name = get_platform
-    platform_name != 'All' && platform_name != app_platform_name
-  end
 
   def age_rating_reject?(max_age_rating)
     return false unless max_age_rating && age_rating
@@ -296,10 +295,6 @@ module Offer::Rejecting
 
   def direct_pay_reject?(direct_pay_providers)
     direct_pay? && !direct_pay_providers.include?(direct_pay)
-  end
-
-  def action_app_reject?(device)
-    item_type == "ActionOffer" && third_party_data.present? && device && !device.has_app?(third_party_data)
   end
 
   def min_os_version_reject?(os_version)
