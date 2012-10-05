@@ -1,4 +1,29 @@
 namespace :db do
+  # Display a message with updating dots while running a command. Useful for commands that take a while to run.
+  def runner(msg, cmd, env={})
+    dots = Thread.new do
+      (1..5).cycle do |count|
+        print "\r#{msg}"
+        print ('.' * count).ljust(5)
+        sleep 0.1
+      end
+    end
+
+    begin
+      dots.run
+      time = Benchmark.realtime do
+        fork {
+          env.each { |k,v| ENV[k] = v }
+          exec(cmd)
+        }
+        Process.wait
+      end
+    ensure
+      dots.kill
+    end
+
+    puts "\r#{msg}... finished in #{time} seconds."
+  end
 
   namespace :schema do
     desc "Create a db/schema.rb file from a specific database"
@@ -24,56 +49,49 @@ namespace :db do
   task :sync => [:fetch, :restore, :remove_tmp_files]
 
   task :fetch do
-
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
-    print("Backing up the production database... ")
+
     tables_to_ignore = %w( gamers gamer_profiles gamer_devices app_reviews conversions payout_infos favorite_apps invitations )
-    time = Benchmark.realtime do
 
-      options = [
-        "--user=#{SOURCE['username']}",
-        "--password=#{SOURCE['password']}",
-        "--host=#{SOURCE['host']}",
-        "--single-transaction",
-      ].join(' ')
+    options = [
+      "--user=#{SOURCE['username']}",
+      "--password=#{SOURCE['password']}",
+      "--host=#{SOURCE['host']}",
+      "--single-transaction",
+    ].join(' ')
 
-      ignore_options = tables_to_ignore.map do |table|
-        "--ignore-table=#{SOURCE['database']}.#{table}"
-      end.join(' ')
+    ignore_options = tables_to_ignore.map do |table|
+      "--ignore-table=#{SOURCE['database']}.#{table}"
+    end.join(' ')
 
-      nodata_options = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
+    nodata_options = [ "--no-data", tables_to_ignore.join(' ') ].join(' ')
 
-      system("mysqldump #{options} #{ignore_options} #{SOURCE['database']} > #{DUMP_FILE}")
-      system("mysqldump #{options} #{SOURCE['database']} #{nodata_options} > #{DUMP_FILE2}")
-    end
-    puts("finished in #{time} seconds.")
+    runner("Backing up the production database", "mysqldump #{options} #{ignore_options} #{SOURCE['database']} > #{DUMP_FILE}")
+    runner("Backing up non-data tables", "mysqldump #{options} #{SOURCE['database']} #{nodata_options} > #{DUMP_FILE2}")
   end
 
   task :restore do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
+    raise "You must run db:fetch before restoring" unless File.exist?(DUMP_FILE) && File.exist?(DUMP_FILE2)
 
     Rake.application.invoke_task('db:drop')
     Rake.application.invoke_task('db:create')
 
-    print("Restoring backup to the #{Rails.env} database... ")
-    time = Benchmark.realtime do
-      options = [
-        "--user=#{DEST['username']}",
-        "--password=#{DEST['password']}",
-        "--host=#{DEST['host']}",
-      ].join(' ')
-      [ DUMP_FILE, DUMP_FILE2 ].each do |file|
-        system("mysql #{options} #{DEST['database']} < #{file}")
-      end
-    end
-    puts("finished in #{time} seconds.")
+    options = [
+      "--user=#{DEST['username']}",
+      "--password=#{DEST['password']}",
+      "--host=#{DEST['host']}",
+    ].join(' ')
+
+    runner("Restoring data backup to the #{Rails.env} database", "mysql #{options} #{DEST['database']} < #{DUMP_FILE}")
+    runner("Restoring non-data backup to the #{Rails.env} database", "mysql #{options} #{DEST['database']} < #{DUMP_FILE2}")
   end
 
   task :remove_tmp_files do
     raise "Must be run from development or staging mode" unless Rails.env.development? || Rails.env.staging?
+    puts("removing #{DUMP_FILE} #{DUMP_FILE2}")
     system("rm -f #{DUMP_FILE}")
     system("rm -f #{DUMP_FILE2}")
-    puts("removing #{DUMP_FILE} #{DUMP_FILE2}")
   end
 
   namespace :schema do
@@ -81,26 +99,9 @@ namespace :db do
     task :sync do
       schema_file  = "db/schema-dev.rb"
 
-      print "Dumping mysql schema to #{schema_file}..."
-      time = Benchmark.realtime do
-        fork {
-          ENV['SCHEMA'] = schema_file
-          exec('bundle exec rake db:schema:dump')
-        }
-        Process.wait
-      end
-      puts "finished in #{time} seconds."
-
-      print "Loading schema file into sqlite..."
-      time = Benchmark.realtime do
-        fork {
-          ENV['SCHEMA'] = schema_file
-          ENV['MACHINE_TYPE'] = 'webserver'
-          exec('bundle exec rake db:schema:load')
-        }
-        Process.wait
-      end
-      puts "finished in #{time} seconds."
+      env = {'SCHEMA' => schema_file}
+      runner("Dumping mysql schema to #{schema_file}", "bundle exec rake db:schema:dump > dev/null", env)
+      runner("Loading schema file into sqlite", "bundle exec rake db:schema:load > /dev/null", env.merge('MACHINE_TYPE' => 'webserver'))
     end
   end
 end
