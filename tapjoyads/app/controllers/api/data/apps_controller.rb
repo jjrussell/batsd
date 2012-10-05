@@ -1,7 +1,9 @@
 class Api::Data::AppsController < ApiController
-  SAFE_ATTRIBUTES     = [:name]
+  SAFE_ATTRIBUTES     = [:name, :partner_name, :active_gamer_count, :udid_for_user_id, :primary_app_metadata_id,
+                         :active_gamer_count]
   SAFE_ASSOCIATIONS   = {
-    :currencies => Api::Data::CurrenciesController::SAFE_ATTRIBUTES
+    :currencies           => Api::Data::CurrenciesController::SAFE_ATTRIBUTES,
+    :app_metadatas        => Api::Data::AppMetadataController::SAFE_ATTRIBUTES
   }
 
   @is_simpledb = false

@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   include Signage::Controller
   class << self; attr_accessor :is_simpledb, :object_class end
 
-  #verify_signature(:secret => Rails.configuration.tapjoy_api_key)
+  verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
     head :forbidden
