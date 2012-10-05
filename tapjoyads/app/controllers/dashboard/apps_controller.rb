@@ -96,8 +96,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
   def update
     log_activity(@app)
 
-    @app.name = params[:app][:name] if params[:app].has_key?(:name)
-    @app.notifications_enabled = params[:app][:notifications_enabled] if params[:app].has_key?(:notifications_enabled)
+    @app.name = params[:app][:name]
     @app.protocol_handler = params[:app][:protocol_handler] if permitted_to? :edit, :dashboard_statz
 
     App.transaction do

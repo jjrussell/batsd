@@ -7,6 +7,16 @@ class Dashboard::PushController < Dashboard::DashboardController
   #TDOD - implement permanent solution
   BETA_PUSH_NOTIFICATION_APPS = ["30091aa4-9ff3-4717-a467-c83d83f98d6d", "2349536b-c810-47d7-836c-2cd47cd3a796"]
 
+  def update
+    if @app.update_attributes(:notifications_enabled => params[:app][:notifications_enabled])
+      flash[:notice] = "Push notifications have been #{@app.notifications_enabled? ? 'enabled' : 'disabled'}"
+      redirect_to :action => "index"
+    else
+      flash[:error] = "There was a problem updating this app"
+      redirect_to :action => "index"
+    end
+  end
+
 private
   def setup
     @app = find_app(params[:app_id])

@@ -3,11 +3,11 @@
 
 .button-container
   - if !@app.notifications_enabled?
-    = form_for(@app) do |f|
+    = form_for :push, :url => url_for(:action=>"update", :controller=>"dashboard/push") do |f|
       = hidden_field_tag 'app[notifications_enabled]', true
       = submit_tag 'Enable push notifications for this app'
   - else
-    = form_for(@app) do |f|
+    = form_for :push, :url => url_for(:action=>"update", :controller=>"dashboard/push") do |f|
       = hidden_field_tag 'app[notifications_enabled]', false
       = submit_tag 'Disable push notifications for this app' 
       - if @admin_url
