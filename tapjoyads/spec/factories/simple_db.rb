@@ -66,4 +66,15 @@ FactoryGirl.define do
     click_id          { FactoryGirl.create(:click).id }
     offer_value       10
   end
+
+  factory :voucher do
+    key                  { Factory.next(:guid) }
+    click_key            { FactoryGirl.generate(:name) }
+    redemption_code      { FactoryGirl.generate(:name) }
+    acquired_at          { Time.zone.now }
+    expires_at           { Time.zone.now + 1.day }
+    barcode_url          'http://somebarcode.com'
+    completed            false
+    email_address        'tapjoy@tapjoy.com'
+  end
 end
