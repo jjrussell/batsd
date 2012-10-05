@@ -104,6 +104,8 @@ group :test do
   gem 'spork'
   gem 'test_after_commit'
   gem 'timecop'
+  gem 'vcr'
+  gem 'fakeweb'
   gem "fakeredis", :require => "fakeredis/rspec"
   gem 'fakememcached', :git => 'git://github.com/Tapjoy/fakememcached.git', :ref => 'b722d'
 end
