@@ -84,6 +84,14 @@ class Device < SimpledbShardedResource
     "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
   end
 
+  def external_publishers
+    ExternalPublisher.load_all_for_device(self)
+  end
+
+  def first_rewardable_currency_id
+    ExternalPublisher.first_rewardable_currency_for_device(self).id
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
@@ -169,6 +177,10 @@ class Device < SimpledbShardedResource
   def set_last_run_time!(app_id)
     set_last_run_time(app_id)
     save
+  end
+
+  def last_run_app_ids
+    @parsed_apps.sort_by{|k,v| v }.map{|k,v| k }.reverse
   end
 
   def has_app?(app_id)

@@ -29,7 +29,7 @@ class ApiController < ApplicationController
   def merge_attributes(new_attributes)
     begin
       JSON.parse(new_attributes).each do |name, value|
-        @object.send("#{name.to_s}=", value)
+        @object.send("#{name.to_s}=", value) if @object.respond_to?("#{name.to_s}=")
       end
     end
   end

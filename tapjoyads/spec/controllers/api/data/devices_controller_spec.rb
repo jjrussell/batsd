@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Api::Data::DevicesController do
+  before :each do
+    Device.any_instance.stub(:external_publishers).and_return([])
+    Device.any_instance.stub(:first_rewardable_currency_id).and_return(nil)
+  end
 
   describe '#verify_auth_token' do
     before :each do

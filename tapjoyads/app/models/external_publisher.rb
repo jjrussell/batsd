@@ -70,6 +70,20 @@ class ExternalPublisher
     arr
   end
 
+  def self.first_rewardable_currency_for_device(device)
+    external_publishers = self.load_all
+    external_publishers.reject! do |app_id,external_publisher|
+      !device.has_app?( app_id )
+    end
+    ext_pub_app_ids = external_publishers.map(&:first)
+    device.last_run_app_ids.detect do |app_id|
+      ext_pub_app_ids.include?(app_id) and
+      c = App.find( app_id ) and
+      @first_rewardable = c.rewardable_currencies.first
+    end
+    Currency.find(@first_rewardable.id)
+  end
+
   def self.load_all_for_device(device)
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
