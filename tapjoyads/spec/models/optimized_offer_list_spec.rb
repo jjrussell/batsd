@@ -163,7 +163,7 @@ describe OptimizedOfferList do
         OptimizedOfferList.send(:get_offers_for_cache, @offers_json, 'android','Android').should be_empty
       end
     end
-    
+
     context 'offer list matches the offer' do
       it 'will cache the offer' do
         @offer.stub(:disabled? => false)

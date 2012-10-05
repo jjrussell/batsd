@@ -425,17 +425,4 @@ FactoryGirl.define do
     instructions                  'do some stuff'
     price                         1
   end
-
-  factory :voucher do
-    association :coupon
-    id                   { FactoryGirl.generate(:name) }
-    click_key            { FactoryGirl.generate(:name) }
-    ref_id               { FactoryGirl.generate(:name) }
-    redemption_code      { FactoryGirl.generate(:name) }
-    acquired_at          { Date.today }
-    expires_at           { Date.today + 1.day }
-    barcode_url          'http://somebarcode.com'
-    completed            false
-    email_address        'tapjoy@tapjoy.com'
-  end
 end
