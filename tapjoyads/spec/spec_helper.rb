@@ -48,6 +48,12 @@ Spork.prefork do
   require 'hpricot'
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  VCR.configure do |c|
+    c.cassette_library_dir     = 'spec/cassettes'
+    c.hook_into                  :fakeweb
+    c.default_cassette_options = { :record => :new_episodes }
+  end
+
   RSpec.configure do |config|
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
