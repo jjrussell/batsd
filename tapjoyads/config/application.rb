@@ -61,7 +61,7 @@ module Tapjoyad
                       when 'jobserver'
                         %w( job global )
                       else
-                        %w( api dashboard job website web legacy global )
+                        %w( api dashboard job website web legacy global client_api )
                       end
     route_filenames.each do |route|
       config.paths.config.routes << Rails.root.join("config/routes/#{route}.rb")
