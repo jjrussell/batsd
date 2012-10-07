@@ -36,8 +36,8 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: be20bbeb63fe0d9d08deef84ca4e3c5477fd2112
-  tag: v0.4.1
+  revision: e4e1f0fd9dc74a1eb57eefdf13a04148fbce91bf
+  branch: feature/increased_timeouts
   specs:
     analytics_logger (0.4.1)
       activesupport (~> 3.0)
