@@ -9,4 +9,4 @@ database:
     - touch ./data/GeoIPCity.version
   override:
     - cp config/database-ci.yml config/database.yml
-    - rake db:schema:load
+    - rake db:schema:load --trace
