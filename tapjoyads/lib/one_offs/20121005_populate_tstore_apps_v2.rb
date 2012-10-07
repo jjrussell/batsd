@@ -1,5 +1,5 @@
 class OneOffs
-  def self.populate_tstore_apps
+  def self.populate_tstore_apps_v2
     # Tree of abys free
     app = App.find('fff7f152-4e20-45b2-831a-d255b9d222d3')
     data = {
@@ -21,7 +21,7 @@ class OneOffs
     data = {
       :item_id         => '0000290423',
       :title           => '트리오브어비스',
-      :price           => 451, #5000 wan
+      :price           => 4.51, #5000 wan
       :description     => nil,
       :icon_url        => 'http://www.tstore.co.kr/android4/201208/06/IF1423000034820090903092538/0000290423/img/thumbnail/0000290423_180_180_0_68.PNG',
       :file_size_bytes => 22899 * 1024,
