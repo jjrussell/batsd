@@ -101,7 +101,7 @@ class Deploy
     end
     puts "Syntax Check: PASSED"
   end
-  
+
   def check_schema
     system("rake DATABASE=production_slave db:schema:dump_database")
     if `git status` =~ /db\/schema.rb/

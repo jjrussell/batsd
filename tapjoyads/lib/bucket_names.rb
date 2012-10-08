@@ -4,6 +4,7 @@ class BucketNames
   CONVERSION_ARCHIVES = RUN_MODE_PREFIX + 'conversion-archives'
   FAILED_SDB_SAVES    = RUN_MODE_PREFIX + 'failed-sdb-saves-generic'
   FAILED_SQS_WRITES   = RUN_MODE_PREFIX + 'failed-sqs-writes'
+  FINANCE_DATA        = RUN_MODE_PREFIX + 'tj-finance-data'
   OFFER_DATA          = RUN_MODE_PREFIX + 'offer-data'
   PUBLISHER_ADS       = RUN_MODE_PREFIX + 'publisher-ads'
   SDB_BACKUPS         = RUN_MODE_PREFIX + 'sdb-backups'
