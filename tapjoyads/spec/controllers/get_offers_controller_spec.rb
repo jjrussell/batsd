@@ -25,10 +25,12 @@ describe GetOffersController do
       @offer4.partner.balance = 10
       @offer4.save
 
+      @deeplink.cache
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
+      offers.each &:cache
       OfferCacher.stub(:get_offers_prerejected).and_return(offers)
       RailsCache.stub(:get).and_return(nil)
       controller.stub(:ip_address).and_return('208.90.212.38')
@@ -38,7 +40,6 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id,
       }
-
     end
 
     after :each do
@@ -136,6 +137,8 @@ describe GetOffersController do
         offer4.partner.balance = 10
         OfferCacher.stub(:get_offers_prerejected).and_return([ offer1, offer2, offer3, offer4 ])
 
+        [app, offer1, offer2, offer3, offer4].each &:cache
+
         get(:index, @params)
         assigns(:offer_list).include?([offer2, offer3, offer4]).should be_false
         assigns(:offer_list).include?(offer1).should be_true
@@ -159,6 +162,8 @@ describe GetOffersController do
         metadata = app.add_app_metadata('android.GFan', 'xyz123')
         @offer3 = app.offers.find_by_app_metadata_id(metadata.id)
         @offer3.partner.balance = 10
+
+        [@offer1, @offer2, @offer3, @currency, @currency.app].each &:cache
 
         OfferCacher.stub(:get_offers_prerejected).and_return([ @offer1, @offer2, @offer3 ])
         Currency.stub(:find_in_cache).and_return(@currency)
@@ -184,9 +189,9 @@ describe GetOffersController do
       end
 
       it 'returns targeted offers for currency store whitelist' do
-        Currency.any_instance.stub(:store_whitelist).and_return('android.GooglePlay')
+        AppStore.find('android.GooglePlay').stub(:exclusive?).and_return(true)
         get(:index, @params)
-        assigns(:offer_list).should == [@offer1, @offer2]
+        assigns(:offer_list).map(&:id).should == [@offer1, @offer2].map(&:id)
       end
     end
 
@@ -433,6 +438,9 @@ describe GetOffersController do
         :currency_id => @currency.id,
         :app_id => @currency.app.id
       }
+
+      [@offer, @currency].each &:cache
+
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
       get(:index, @params)
@@ -472,13 +480,17 @@ describe GetOffersController do
     end
 
     it 'unassigns currency' do
-      app = FactoryGirl.create(:app)
+      app = ActiveRecordDisabler.with_queries_enabled { FactoryGirl.create(:app) }
       get(:index, @params.merge(:app_id => app.id))
       assigns(:currency).should be_nil
     end
 
     it 'assigns currency based on app_id' do
-      FactoryGirl.create(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
+      ActiveRecordDisabler.with_queries_enabled do
+        currency = FactoryGirl.create(:currency, :id => @currency.app_id, :app_id => @currency.app_id, :callback_url => 'http://www.tapjoy.com')
+        currency.cache
+      end
+
       get(:index, @params.merge(:currency_id => nil, :debug => '1'))
       assigns(:currency).should_not be_nil
     end
@@ -526,14 +538,14 @@ describe GetOffersController do
       end
 
       it 'respects the apps streaming setting' do
-        app = App.find(@params[:app_id])
+        app = ActiveRecordDisabler.with_queries_enabled { App.find(@params[:app_id]) }
         App.stub(:find_in_cache => app)
-        app.update_attributes(:videos_stream_3g => true)
+        ActiveRecordDisabler.with_queries_enabled { app.update_attributes(:videos_stream_3g => true) }
 
         get(:index, @params.merge(:connection_type => 'mobile'))
         assigns(:all_videos).should be_true
 
-        app.update_attributes(:videos_stream_3g => false)
+        ActiveRecordDisabler.with_queries_enabled { app.update_attributes(:videos_stream_3g => false) }
         get(:index, @params.merge(:connection_type => 'mobile'))
         assigns(:all_videos).should be_false
       end

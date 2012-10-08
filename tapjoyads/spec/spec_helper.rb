@@ -65,6 +65,7 @@ Spork.prefork do
     config.include(SpecHelpers)
     config.include(DashboardHelpers)
     config.include(Authlogic::TestCase)
+
     config.before(:suite) do
       DeferredGarbageCollection.start
     end
@@ -81,6 +82,10 @@ Spork.prefork do
       Mc.reset_connection
       Mc.flush('totally_serious')
       OfferCacher.stub(:get_offer_stats) { Hash.new(0) }
+    end
+
+    config.after(:each) do
+      ActiveRecordDisabler.enable_queries!
     end
 
     config.after(:suite) do

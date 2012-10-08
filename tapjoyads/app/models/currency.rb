@@ -118,8 +118,10 @@ class Currency < ActiveRecord::Base
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
       if do_lookup
-        currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
-        Mc.distributed_put("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}", currencies, false, 1.day)
+        ActiveRecordDisabler.with_queries_enabled do
+          currencies = find_all_by_app_id(app_id, :order => 'ordinal ASC').each { |c| c }
+          Mc.distributed_put("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}", currencies, false, 1.day)
+        end
       else
         currencies = []
       end

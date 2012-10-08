@@ -17,6 +17,8 @@ describe OfferCompletedController do
     @offer.user_enabled = true
     @click.stub(:offer_id).and_return(@offer.id)
     @click.stub(:key).and_return(@click.id)
+
+    ActiveRecordDisabler.with_queries_enabled { @offer.cache }
   end
 
   describe "#index" do

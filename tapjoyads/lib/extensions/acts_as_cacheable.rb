@@ -65,8 +65,9 @@ module ActsAsCacheable
               Sqs.send_message(QueueNames::CACHE_RECORD_NOT_FOUND, message)
             end
             if do_lookup
-              object = find_by_id(id)
-              object.cache unless object.nil?
+              ActiveRecordDisabler.with_queries_enabled do
+                find_by_id(id).tap { |object| object.try(:cache) }
+              end
             end
           end
           object
