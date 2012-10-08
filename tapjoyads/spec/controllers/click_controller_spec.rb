@@ -180,7 +180,8 @@ describe ClickController do
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
         :currency_id => @currency.id,
-        :publisher_app_id => 'pub_app_id'
+        :publisher_app_id => 'pub_app_id',
+        :mac_address => 'device_mac_address'
       }
       controller.stub(:verify_params).and_return(true)
       Offer.stub(:find_in_cache).and_return(@offer)
@@ -205,6 +206,7 @@ describe ClickController do
       get(:app, @params)
     end
   end
+
   describe '#coupon' do
     before :each do
       @offer = FactoryGirl.create(:app).primary_offer

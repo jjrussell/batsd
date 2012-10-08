@@ -58,8 +58,9 @@ module Offer::UrlGeneration
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
-    options.delete(:language_code)
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
+    mac_address           = options.delete(:mac_address)           { nil }
+    options.delete(:language_code)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     # these item types don't replace any macros
@@ -97,7 +98,10 @@ module Offer::UrlGeneration
     case item_type
       when 'App'
         final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
+
         final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
+        final_url.gsub!('TAPJOY_HASHED_MAC', mac_address ? Digest::SHA1.hexdigest(mac_address) : '')
+
         if library_version.nil? || library_version.version_greater_than_or_equal_to?('8.1.1')
           subbed_string = (os_version.try :>=, '2.2') ? 'https://play.google.com/store/apps/details?id=' : 'http://market.android.com/details?id='
           final_url.sub!('market://search?q=', subbed_string)
