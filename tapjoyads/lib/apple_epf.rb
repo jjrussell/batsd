@@ -64,21 +64,14 @@ class AppleEPF
     file
   end
 
+
   def self.extract_from_archive(archive, list_of_files, full = false)
-    reader = Bzip2::Reader.new(archive)
-    #Minitar's unpack requires the object to respond to pos and rewind, but faking them don't seem to prevent it from working.
-    reader.instance_eval do
-      def pos
-        0
-      end
-      def rewind
-        nil
-      end
-    end
-    begin
-      Archive::Tar::Minitar.unpack(reader, "tmp/epf/#{full ? 'full' : 'incremental'}", list_of_files)
-    rescue => e
-      Rails.logger.error e.backtrace
+    tmp_path = "#{Rails.root}/tmp/epf/#{full ? 'full' : 'incremental'}"
+    FileUtils.mkpath tmp_path unless File.exists? tmp_path
+    system("tar xjvf #{archive.path} -C #{tmp_path}")
+    Dir.glob("#{tmp_path}/**/*").each do |file|
+      next if File.directory? file
+      File.delete(file) unless list_of_files.include? file.sub("#{tmp_path}/", '')
     end
     list_of_files
   end
@@ -87,7 +80,6 @@ class AppleEPF
     begin
       file = download_file(url, credentials)
       extract_from_archive(file, list_of_files, full)
-      list_of_files
     ensure
       file.close! if file
     end
