@@ -1,0 +1,46 @@
+- if @experiment.errors.any?
+  %h4 There were errors saving this record
+  %ul
+    - @experiment.errors.each do |error|
+      %li= error.join(' ')
+      - content_for :page_javascript do
+        :plain
+          $(function() {
+            $('#experiment_#{error[0]}').css('border-color', 'red');
+          });
+
+= form_for [ :tools, @experiment ], :html => { :class => 'tjform', :multipart => true } do |f|
+  %table
+    %tr
+      %td= f.label :name
+      %td= @experiment.editable_attrs.include?(:name) ? f.text_field(:name) : @experiment.name
+    %tr
+      %td= f.label :started_at, 'Start Date'
+      %td= @experiment.editable_attrs.include?(:started_at) ? f.text_field(:started_at, :id => 'experiment_started_at') : @experiment.started_at
+    %tr
+      %td= f.label :due_at, 'Due Date'
+      %td= @experiment.editable_attrs.include?(:due_at) ? f.text_field(:due_at, :id => 'experiment_due_at') : @experiment.due_at
+    %tr
+      %td= f.label :ratio, 'Test Group %'
+      %td= @experiment.editable_attrs.include?(:ratio) ? f.text_field(:ratio) : @experiment.ratio
+    %tr
+      %td= f.label :population_size, 'Required Population Size'
+      %td= @experiment.editable_attrs.include?(:population_size) ? f.text_field(:population_size) : @experiment.population_size
+    %tr
+      %td= f.label :app_ids, 'App IDs (must be left blank for a UI experiment)'
+      %td= @experiment.editable_attrs.include?(:app_ids) ? f.text_field(:app_ids) : @experiment.app_ids
+    %tr
+      %td= f.label :udid_whitelist, 'UDID Whitelist'
+      %td= f.text_field :udid_whitelist
+    %tr
+      %td= f.label :description
+      %td= f.text_area :description, :rows => 5, :cols => 25
+    %tr
+      %td{:colspan => 2}= f.submit 'Done'
+
+
+- content_for :page_javascript do
+  :plain
+    $(function() {
+      $('#experiment_started_at, #experiment_due_at').datepicker({ dateFormat: 'mm/dd/yy' });
+    });

@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
   has_many :admin_devices
   has_many :internal_devices
   has_many :partners_for_sales, :class_name => 'Partner', :foreign_key => 'sales_rep_id'
+  has_many :experiments
   belongs_to :current_partner, :class_name => 'Partner'
   belongs_to :reseller
 

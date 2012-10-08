@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Device do
+  before(:all) { ExperimentBucket.rehash_population(:buckets => 1, :limit => 0) }
+  after(:all) { ExperimentBucket.destroy_all }
+
   describe '.normalize_device_type' do
     context 'type is iPhone' do
       it 'returns iphone' do
@@ -592,18 +595,31 @@ describe Device do
 
   describe '#save' do
     context 'for a new device' do
-      before :each do
-        @device = Device.new(:key => 'test_udid')
-      end
+      let(:device) { Device.new(:key => FactoryGirl.generate(:guid)) }
 
       it 'creates the identifiers' do
-        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => @device.key}.to_json)
-        @device.save
+        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => device.key}.to_json)
+        device.save
       end
 
       it 'doesnt create the identifers if specified' do
         Sqs.should_not_receive(:send_message)
-        @device.save(:create_identifiers => false)
+        device.save(:create_identifiers => false)
+      end
+
+      it 'assigns an experiment bucket' do
+        device.experiment_bucket_id.should be_blank
+        device.save
+        device.experiment_bucket.id.should == ExperimentBucket.first.id
+      end
+    end
+
+    context 'for an existing device' do
+      let(:device) { Device.new(:key => FactoryGirl.generate(:guid)).tap(&:save) }
+
+      it 'does not assign an experiment bucket' do
+        device.should_not_receive(:assign_experiment_bucket)
+        device.save
       end
     end
 

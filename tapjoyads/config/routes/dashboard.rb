@@ -240,11 +240,19 @@ Tapjoyad::Application.routes.draw do
         end
       end
 
+
       namespace :tools do
 
         match 'debug/:bucket' => 'admin_debug#show'
 
         resources :brands
+        resources :experiments do
+          member do
+            post :conclude
+            post :start
+          end
+        end
+
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
             post :delete
