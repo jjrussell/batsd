@@ -347,7 +347,8 @@ class ClickController < ApplicationController
       :display_multiplier    => params[:display_multiplier],
       :library_version       => params[:library_version],
       :os_version            => params[:os_version],
-      :mac_address           => params[:mac_address]
+      :mac_address           => params[:mac_address],
+      :device_type           => params[:device_type]
     })
   end
 
