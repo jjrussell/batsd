@@ -14,8 +14,13 @@ class SurveyResultsController < ApplicationController
   end
 
   def create
+    @debugger ||= LiveDebugger.new('survey_results')
+    @debugger.log(params)
+
     return unless verify_records([ @click, @currency ])
+
     if @click.installed_at? || testing?
+      @debugger.log(@click, "Short circuited")
       render 'survey_complete'
       return
     end
@@ -24,8 +29,6 @@ class SurveyResultsController < ApplicationController
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
     return unless verify_records([ @survey_offer ])
 
-    @debugger = LiveDebugger.new('survey_results')
-    @debugger.log(params)
 
     @survey_questions = @survey_offer.survey_questions
 
@@ -34,6 +37,7 @@ class SurveyResultsController < ApplicationController
     @answers = {}
     @survey_questions.each do |question|
       if params[question.id].blank?
+        @debugger.log(question, "Blank Question")
         @missing_params = true
         render :new
         return
