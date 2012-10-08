@@ -8,11 +8,15 @@ describe Offer::UrlGeneration do
     @app      = Factory :app
     @offer    = @app.primary_offer
     @currency = Factory :currency
-    @app = FactoryGirl.create :app
-    @offer = @app.primary_offer
-    @params = { :udid => '123456',
-                :publisher_app_id => 'app_id',
-                :currency => @currency }
+    @app      = FactoryGirl.create :app
+    @offer    = @app.primary_offer
+
+    @params   = {
+      :udid => '123456',
+      :publisher_app_id => 'app_id',
+      :currency => @currency
+    }
+
     subject { Offer::UrlGeneration }
     ObjectEncryptor.stub(:encrypt).and_return('some_data')
   end
@@ -69,25 +73,27 @@ describe Offer::UrlGeneration do
   end
 
   describe '#complete_action_url' do
-
     before :each do
       params = {
-        :udid      => 'TAPJOY_UDID',
-        :source    => 'TAPJOY_GENERIC_SOURCE',
-        :uid       => 'TAPJOY_EXTERNAL_UID',
-        :click_key => 'TAPJOY_HASHED_KEY',
-        :invite    => 'TAPJOY_GENERIC_INVITE',
-        :survey    => 'TAPJOY_SURVEY',
-        :eid       => 'TJM_EID',
-        :data      => 'DATA'
+        :udid       => 'TAPJOY_UDID',
+        :source     => 'TAPJOY_GENERIC_SOURCE',
+        :uid        => 'TAPJOY_EXTERNAL_UID',
+        :click_key  => 'TAPJOY_HASHED_KEY',
+        :invite     => 'TAPJOY_GENERIC_INVITE',
+        :survey     => 'TAPJOY_SURVEY',
+        :eid        => 'TJM_EID',
+        :data       => 'DATA',
+        :hashed_mac => 'TAPJOY_HASHED_MAC'
       }
+
       @dummy.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
-      @click_key = 'click.key'
-      @udid = 'my_device_udid'
-      @publisher_app_id = 'publisher_app_id'
+      @click_key         = 'click.key'
+      @udid              = 'my_device_udid'
+      @mac               = 'my_device_mac'
+      @publisher_app_id  = 'publisher_app_id'
       @publisher_user_id = 'publisher_user_id'
-      @currency = FactoryGirl.create(:currency)
+      @currency          = FactoryGirl.create(:currency)
 
       @source = 'source_token'
       @dummy.stub(:source_token).and_return(@source)
@@ -99,6 +105,7 @@ describe Offer::UrlGeneration do
       @itunes_affil = 'itunes_affil'
       @display_multiplier = 'display_multiplier'
 
+
       @options = {
         :click_key             => @click_key,
         :udid                  => @udid,
@@ -106,7 +113,9 @@ describe Offer::UrlGeneration do
         :currency              => @currency,
         :itunes_link_affiliate => @itunes_affil,
         :publisher_user_id     => @publisher_user_id,
-        :display_multiplier    => @display_multiplier }
+        :display_multiplier    => @display_multiplier,
+        :mac_address           => @mac
+      }
 
       # 'global' macros (with some exceptions, as specified in this file)
       @complete_action_url = @dummy.url.gsub('TAPJOY_UDID', @udid)
@@ -128,11 +137,26 @@ describe Offer::UrlGeneration do
     end
 
     context 'for App offers' do
+      before(:each) do
+        @dummy.stub(:item_type) { 'App' }
+
+        @complete_action_url.clone.tap do |url_clone|
+          Linkshare.should_receive(:add_params).
+            with(url_clone, @itunes_affil).once.
+            and_return(url_clone)
+        end
+      end
+
       it 'should replace App-offer-specific macros' do
-        @dummy.stub(:item_type).and_return('App')
-        Linkshare.should_receive(:add_params).with(@complete_action_url.clone, @itunes_affil).once.and_return(@complete_action_url.clone)
-        @complete_action_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(@click_key))
-        @dummy.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options).should match(/click_key=#{Click.hashed_key(@click_key)}/)
+      end
+
+      it 'replaces TAPJOY_HASHED_MAC with an empty string if mac is not provided' do
+        @dummy.complete_action_url(@options.except(:mac_address)).should match(/hashed_mac=&/)
+      end
+
+      it 'replaces TAPJOY_HASHED_MAC with a SHA1 hash of the device MAC if provided' do
+        @dummy.complete_action_url(@options).should match(/hashed_mac=#{Digest::SHA1.hexdigest(@mac)}/)
       end
     end
 
