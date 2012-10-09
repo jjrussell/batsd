@@ -465,7 +465,7 @@ class Offer < ActiveRecord::Base
   memoize :video_icon_url
 
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :offer_updated_at => updated_at.to_i, :item_type => item_type}.merge(options))
   end
 
   def self.icon_cache_key(guid)
@@ -478,12 +478,19 @@ class Offer < ActiveRecord::Base
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
     bust_cache = options.delete(:bust_cache) { false }
+    update_ts  = options.delete(:offer_updated_at)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
     url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
-    url << "?ts=#{Time.now.to_i}" if bust_cache
+
+    if bust_cache
+      url << "?ts=#{Time.now.to_i}"
+    elsif source == :cloudfront and update_ts.present?
+      url << "?ts=#{update_ts}"
+    end
+    
     url
   end
 
