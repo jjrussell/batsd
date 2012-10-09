@@ -196,10 +196,10 @@ describe Experiment do
 
           Factory(:experiment,
             :population_size => 1000,
-            :started_at      => Date.today,
             :ratio           => 15
           ).tap do |e|
             e.reserve_devices!
+            e.start!
             e.running?.should   be_true
             e.scheduled?.should be_false
             e.concluded?.should be_false
@@ -220,10 +220,10 @@ describe Experiment do
 
           Factory(:experiment,
             :population_size => 100,
-            :started_at      => Date.today,
             :ratio           => 40
           ).tap do |e|
             e.reserve_devices!
+            e.start!
 
             runs = 5.times.collect {
               ExperimentBucket.first.devices.collect { |d| e.group_for(d) }
