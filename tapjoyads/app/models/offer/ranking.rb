@@ -28,7 +28,7 @@ module Offer::Ranking
   end
 
   def rank_score
-    @rank_score ||= self.native_rank_score
+    @rank_score ||= self.read_attribute(:native_rank_score) || 0.0
   end
 
   def bid_for_ranks
