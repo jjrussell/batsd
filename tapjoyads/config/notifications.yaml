@@ -8,8 +8,8 @@ development:
 
 staging:
   notifications_secret: kHm0AdTlVVzmzTkLd
-  url: qa.notifications.tapjoy.com
+  url: http://notifications.tapjoy.com
 
 production:
   notifications_secret: kHm0AdTlVVzmzTkLd
-  url: notifications.tapjoy.com
+  url: http://notifications.tapjoy.com
