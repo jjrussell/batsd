@@ -21,6 +21,7 @@ module Offer::UrlGeneration
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
+    options.delete(:mac_address)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
