@@ -149,6 +149,7 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "videos_cache_wifi",                           :default => false, :null => false
     t.boolean  "videos_cache_3g",                             :default => false, :null => false
     t.boolean  "videos_stream_3g",                            :default => false, :null => false
+    t.string   "experiment_id",                 :limit => 36
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -413,6 +414,37 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "experiment_buckets", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "experiment_id", :limit => 36
+    t.string   "bucket_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "experiment_buckets", ["experiment_id"], :name => "index_experiment_buckets_on_experiment_id"
+  add_index "experiment_buckets", ["id"], :name => "index_experiment_buckets_on_id", :unique => true
+
+  create_table "experiments", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36, :null => false
+    t.string   "owner_id",        :limit => 36, :null => false
+    t.string   "name",                          :null => false
+    t.text     "description",                   :null => false
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.datetime "due_at"
+    t.float    "ratio",                         :null => false
+    t.string   "udid_whitelist"
+    t.integer  "population_size",               :null => false
+    t.string   "bucket_type",                   :null => false
+    t.string   "randomizer",                    :null => false
+    t.text     "metadata"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "experiments", ["id"], :name => "index_experiments_on_id", :unique => true
 
   create_table "favorite_apps", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36, :null => false

@@ -17,6 +17,8 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
   before_filter :reject_banned_ips
 
+  before_filter { ActiveRecordDisabler.disable_queries! } unless Rails.env.production?
+
   # TODO: DO NOT LEAVE THIS ON IN PRODUCTION
   # after_filter :store_response
 
@@ -366,5 +368,4 @@ class ApplicationController < ActionController::Base
   def check_uri
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
   end
-
 end

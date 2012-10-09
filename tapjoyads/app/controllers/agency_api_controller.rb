@@ -3,6 +3,7 @@ class AgencyApiController < ApplicationController
 
   skip_before_filter :fix_params, :reject_banned_ips
   skip_before_filter :verify_authenticity_token
+  before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
 
 protected
 

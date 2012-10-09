@@ -3,6 +3,7 @@ class ReportingDataController < ApplicationController
 
   layout false
 
+  before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
   before_filter :lookup_user_and_authenticate
 
   rate_limit :index, :key => proc { |c| "#{c.params[:username]}.#{c.params[:partner_id]}.#{c.params[:page].to_i.to_s}" }, :max_calls => 6, :time_limit => 5.minutes, :wait_time => 1.minute, :status => 420, :unless => proc {|c| c.params[:cache] == '1'}

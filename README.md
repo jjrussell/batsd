@@ -16,7 +16,7 @@ Install necessary gems under ruby 1.8.7:
 
 ```
 cd /vagrant/tapjoyserver/tapjoyads
-rvm use 1.8.7-p357
+rvm use 1.8.7-p358
 bundle
 ```
 
