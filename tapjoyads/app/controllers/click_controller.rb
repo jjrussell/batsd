@@ -264,6 +264,8 @@ class ClickController < ApplicationController
     @web_request = WebRequest.new(:time => @now)
     @web_request.put_values(path, params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
+    @web_request.offer_is_paid = @offer.is_paid?
+    @web_request.offer_daily_budget = @offer.daily_budget
     update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 

@@ -59,6 +59,8 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :udid_is_temporary, :type => :bool
   self.define_attr :app_id
   self.define_attr :offer_id
+  self.define_attr :offer_is_paid, :type => :bool
+  self.define_attr :offer_daily_budget, :type => :int
   self.define_attr :advertiser_app_id
   self.define_attr :publisher_app_id
   self.define_attr :displayer_app_id
@@ -95,6 +97,7 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :tap_points
   self.define_attr :publisher_amount, :type => :int
   self.define_attr :advertiser_amount, :type => :int
+  self.define_attr :advertiser_balance, :type => :int
   self.define_attr :displayer_amount, :type => :int
   self.define_attr :tapjoy_amount, :type => :int
   self.define_attr :currency_reward, :type => :int

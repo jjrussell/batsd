@@ -1,6 +1,27 @@
 require 'spec_helper'
 
 describe WebRequest do
+  context 'attributes' do
+    before(:each) do
+      @web_request = WebRequest.new
+    end
+
+    it 'should have offer_is_paid' do
+      @web_request.offer_is_paid = 'true'
+      @web_request.offer_is_paid.should be_true
+    end
+
+    it 'should have offer_daily_budget' do
+      @web_request.offer_daily_budget = '5'
+      @web_request.offer_daily_budget.should == 5
+    end
+
+    it 'should have advertiser_balance' do
+      @web_request.advertiser_balance = '10'
+      @web_request.advertiser_balance.should == 10
+    end
+  end
+
   context "when saved" do
     before :each do
       @web_request = WebRequest.new(:time => Time.now)
