@@ -66,6 +66,7 @@ class OptimizedOfferList
 
       offers.each_with_index do |offer, i|
         offer.cached_offer_list_id = cached_offer_list.id
+        offer.cached_offer_list_type = 'optimized'
         post_processed_offer_with_rank << {'offer_id' => offer.id, 'rank' => (i + 1)}
       end
 
@@ -82,17 +83,6 @@ class OptimizedOfferList
       end
 
       # TODO: Cache stuff into S3
-      # group = 0
-      # puts "saving #{cache_key} to S3"
-      # begin
-      #   offers.each_slice(GROUP_SIZE) do |offer_group|
-      #     s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump(offer_group))
-      #     group += 1
-      #   end
-      #   puts "wrote #{cache_key} to S3"
-      # rescue
-      #   puts "saving #{cache_key} to S3 failed"
-      # end
 
       cached_offer_list.generated_at = last_modified_at
       cached_offer_list.cached_at = current_time
@@ -102,8 +92,16 @@ class OptimizedOfferList
       cached_offer_list.source = key
       cached_offer_list.save
 
+      web_request = WebRequest.new
+      web_request.path = 'cached_offer_list'
+      web_request.generated_at = cached_offer_list.generated_at
+      web_request.cached_at = cached_offer_list.cached_at
+      web_request.cached_offer_list_type = cached_offer_list.cached_offer_type
+      web_request.s3_offer_list_id = cached_offer_list.offer_list
+      web_request.cached_offer_list_id = cached_offer_list.id
+      web_request.save
+
       Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
-      # s3_cached_optimization_bucket.objects["#{cache_key}.#{group}"].write(:data => Marshal.dump([]))
     end
 
     def disable_all

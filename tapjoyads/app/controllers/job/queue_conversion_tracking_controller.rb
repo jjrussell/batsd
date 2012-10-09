@@ -117,6 +117,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.offerwall_rank         = click.offerwall_rank
       reward.store_name             = click.store_name
       reward.cached_offer_list_id   = click.cached_offer_list_id
+      reward.cached_offer_list_type = click.cached_offer_list_type
 
       begin
         reward.save!(:expected_attr => { 'type' => nil })
