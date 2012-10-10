@@ -42,7 +42,6 @@ module Offer::Ranking
   def percentile
     self.conversion_rate = is_paid? ? (0.05 / (0.01 * price)) : 0.50 if conversion_rate == 0
     calculate_ranking_fields
-    percentile_group_id = CurrencyGroup.find_by_name('percentile').id
     offers = OfferList.new(:type => percentile_type).offers.reject { |o| o.id == id }
     100 * offers.select { |o| self.rank_score >= o.rank_score }.length / offers.length
   end
