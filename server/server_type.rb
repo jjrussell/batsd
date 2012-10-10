@@ -8,4 +8,7 @@ unless hostname =~ /^ip-|^domU-/
   exit
 end
 
-print `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n").reject {|g| g == "tapbase"}.first
+excluded_roles = %w(tapbase qa production)
+
+roles = `curl -s http://169.254.169.254/latest/meta-data/security-groups`.split("\n")
+print (roles - excluded_roles).first
