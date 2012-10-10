@@ -33,6 +33,10 @@
     #more.button.orange.gradientfix
       = t('text.offerwall.load_more')
 
+  .container.nbb
+    #visit.button.gradientfix{:style => 'display:none'}
+      &nbsp;
+
     .center.links
       %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
         = t('text.offerwall.missing_currency', { :currency => @currency.name })
