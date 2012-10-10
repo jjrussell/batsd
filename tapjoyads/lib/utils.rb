@@ -223,6 +223,23 @@ class Utils
     end
   end
 
+  def self.ban_devices_from_clicks(click_ids, reason=nil)
+    ban_count = 0
+    click_ids.each do |c_id|
+      click = Click.find(c_id)
+      device = click.device if click.present?
+      if device.present?
+        device.banned = true
+        device.internal_notes << reason if reason.present?
+        device.save
+
+        ban_count += 1
+      end
+    end
+
+    ban_count
+  end
+
   class Memcache
     # Use these functions to facilitate switching memcache servers.
     #
