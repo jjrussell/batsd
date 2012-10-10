@@ -19,7 +19,7 @@ class Api::Data::AppMetadataController < ApiController
       @object.decrement!(params[:attribute_name].to_sym)
     end
 
-    render_formatted_response(true, get_object(SAFE_ATTRIBUTES))
+    render_formatted_response(true, get_object(@object, SAFE_ATTRIBUTES))
   end
 end
 
