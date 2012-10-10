@@ -150,7 +150,8 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    set_offerwall_experiment
+    # No experiment running currently
+    params[:exp] = 'control'
 
     if @save_web_requests
       @web_request = generate_web_request
