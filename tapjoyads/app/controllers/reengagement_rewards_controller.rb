@@ -5,6 +5,8 @@ class ReengagementRewardsController < ApplicationController
 
   OK_BUTTON_URL = "http://ok"
 
+  before_filter :lookup_udid
+
   def index
     verify_params([:udid, :publisher_user_id, :app_id])
     @app = App.find_in_cache(params[:app_id])
