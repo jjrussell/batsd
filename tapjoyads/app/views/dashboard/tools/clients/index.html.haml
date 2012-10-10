@@ -3,6 +3,11 @@
 - if permitted_to?(:new, :dashboard_tools_clients)
   %h4= link_to '[Add New Client]', new_tools_client_path
 
+= form_tag(request.path, :method => :get) do
+  = label_tag(:q, 'Name')
+  = text_field_tag(:q, params[:q], :size => '40')
+  = submit_tag('Search')
+
 %table#clients_table.tablesorter
   %thead
     %tr
@@ -18,11 +23,18 @@
         %td= client.name
         %td= client.payment_type || '(none)'
         %td
-          - client.partners.each do |partner|
+          - partner_count = 0
+          - client.partners.take(5).each do |partner|
             = link_to(partner.name||'(no name)', partner)
+            - partner_count += 1
+          - if partner_count == 5
+            - remaining_count = client.partners.count - 5
+            - if remaining_count > 0
+              = "(and #{remaining_count} more)"
         - if permitted_to?(:edit, :dashboard_tools_clients)
           %td= link_to '[Edit]', edit_tools_client_path(client)
           %td= link_to '[Manage partners]', tools_client_path(client.id)
+= will_paginate(@clients)
 
 - content_for :page_javascript do
   :plain
