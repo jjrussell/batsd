@@ -29,17 +29,9 @@
       #loader_center.loader
       #loader_right.loader
 
-  .container
+  .container.nbb
     #more.button.orange.gradientfix
       = t('text.offerwall.load_more')
-
-  .container.nbb
-    #visit.button.gradientfix{:class => params[:exp] == 'test' ? 'brand-gradient' : ''}
-      - if params[:exp] == 'test'
-        = t('text.offerwall.visit_test')
-      - else
-        = t('text.offerwall.visit')
-
 
     .center.links
       %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
