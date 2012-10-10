@@ -30,6 +30,7 @@ class SupportRequest < SimpledbResource
   self.sdb_attr :offer_value, :type => :int
   self.sdb_attr :lives_in
   self.sdb_attr :click_source
+  self.sdb_attr :mac_address
 
   def fill_from_params(params, app, currency, offer, user_agent)
     fill( :params     => params,
@@ -78,9 +79,11 @@ class SupportRequest < SimpledbResource
     self.publisher_partner_id   = click.present? ? click.publisher_partner_id : params[:publisher_partner_id]
     self.publisher_user_id      = click.present? ? click.publisher_user_id : params[:publisher_user_id]
     self.udid                   = device.present? ? device.device_id : params[:udid]
+    self.mac_address            = device.present? && device.is_a?(Device) ? device.mac_address : params[:mac_address]
     self.device_type            = device.present? ? device.device_type : params[:device_type]
     self.email_address          = gamer.present? ? gamer.email : params[:email_address]
     self.gamer_id               = gamer.present? ? gamer.id : nil
+
 
     unless currency.present?
       if click.present?
