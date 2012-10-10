@@ -357,10 +357,6 @@
         });
       }
 
-      $.on($.visit, 'click', function(){
-        window.location = page;
-      });
-
       $.on($.loadMore, 'click', function(){
         $.fetch();
       });
