@@ -45,9 +45,9 @@ class GetOffersController < ApplicationController
       if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
-      render :json => @final.to_json, :callback => params[:callback] and return
+      render :json => @final.to_json, :callback => params[:callback]
     else
-      render :template => 'get_offers/webpage_redesign' and return
+      render :template => 'get_offers/webpage_redesign'
     end
   end
 
