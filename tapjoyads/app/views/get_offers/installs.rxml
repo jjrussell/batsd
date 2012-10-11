@@ -11,7 +11,7 @@ xml.TapjoyConnectReturnObject do
         xml.Name offer.name
         xml.TimeDelay 'in seconds'
         xml.AdvertiserAppID Offer.hashed_icon_id(offer.icon_id)
-        xml.ActionURL get_click_url(offer, :offerwall_rank => (index + 1))
+        xml.ActionURL get_click_url(offer, :offerwall_rank => (@start_index + index + 1))
         xml.PublisherUserRecordID params[:publisher_user_id]
         xml.Type '1'
         xml.StoreID offer.store_id_for_feed
