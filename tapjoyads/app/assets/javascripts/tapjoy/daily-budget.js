@@ -11,8 +11,8 @@ $(function($) {
     $t.ro_installs = $('#offer_daily_budget_read_only');
     $t.ro_budget   = $('#estimated_budget_read_only');
 
-    $t.toggle_on  = $('#daily_budget_on');
-    $t.toggle_off = $('#daily_budget_off');
+    $t.toggle_on  = $('#daily_budget_toggle_on');
+    $t.toggle_off = $('#daily_budget_toggle_off');
 
     $t.cap_installs = $('#offer_daily_cap_type_installs');
     $t.cap_budget   = $('#offer_daily_cap_type_budget');

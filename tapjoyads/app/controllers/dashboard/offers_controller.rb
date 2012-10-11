@@ -64,7 +64,7 @@ class Dashboard::OffersController < Dashboard::DashboardController
     params[:offer].delete(:payment)
 
     params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
-    if params[:daily_budget] == 'off'
+    if params[:daily_budget_toggle] == 'off'
       params[:offer][:daily_budget] = 0
       params[:offer][:daily_cap_type] = nil
     end

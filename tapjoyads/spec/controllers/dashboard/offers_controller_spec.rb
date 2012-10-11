@@ -380,11 +380,11 @@ describe Dashboard::OffersController do
     context 'when unlimited daily conversion cap gets changed to a daily limited budget' do
       before :each do
         @offer = @app.primary_offer
-        @params = { :id           => @offer.id,
-                    :app_id       => @app.id,
-                    :daily_budget => 'on',
-                    :offer        => { :daily_cap_type  => 'budget',
-                                       :daily_budget    => '1,000' }}
+        @params = { :id                   => @offer.id,
+                    :app_id               => @app.id,
+                    :daily_budget_toggle  => 'on',
+                    :offer                => { :daily_cap_type  => 'budget',
+                                               :daily_budget    => '1,000' }}
       end
 
       it 'sets the daily cap type to :budget' do
@@ -401,10 +401,10 @@ describe Dashboard::OffersController do
         @offer.daily_cap_type = 'budget'
         @offer.save
         @controller.stub(:log_activity).with(@offer)
-        @params = { :id           => @offer.id,
-                    :app_id       => @app.id,
-                    :daily_budget => 'off',
-                    :offer        => {} }
+        @params = { :id                   => @offer.id,
+                    :app_id               => @app.id,
+                    :daily_budget_toggle  => 'off',
+                    :offer                => {} }
       end
 
       it 'clears its daily cap type' do
