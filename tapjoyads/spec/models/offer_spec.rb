@@ -1512,41 +1512,86 @@ describe Offer do
   end
 
   describe '#is_enabled?' do
-    context 'Not a deeplink offer' do
-      context 'the offer is enabled' do
-        it 'returns true' do
-          @offer.payment = 0
-          @offer.reward_value = 10
-          @offer.tapjoy_enabled = true
-          @offer.user_enabled = true
-          @offer.is_enabled?.should be_true
-        end
+    subject { @offer }
+    before(:each) {
+      subject.tapjoy_enabled = false
+      subject.user_enabled = false
+      subject.payment = 0
+      subject.reward_value = nil
+    }
+
+    context 'with a non-deeplink offer' do
+      context 'that is not enabled' do
+        it { should_not be_is_enabled }
       end
-      context 'the offer is disabled' do
-        it 'returns false' do
-          @offer.tapjoy_enabled = false
-          @offer.is_enabled?.should be_false
+
+      context 'that is enabled' do
+        before(:each) {
+          subject.tapjoy_enabled = true
+        }
+
+        context 'and is not user enabled' do
+          it { should_not be_is_enabled }
+        end
+        context 'and is user enabled' do
+          before(:each) {
+            subject.user_enabled = true
+          }
+
+          context 'and has a payment' do
+            before(:each) {
+              subject.payment = 100
+            }
+
+            context 'but no balance' do
+              it { should_not be_is_enabled }
+            end
+
+            context 'and with a balance' do
+              # Reload because partner_balance is memoized
+              subject { Offer.find(@offer) }
+              before(:each) {
+                subject.stub(:partner_balance).and_return(100)
+              }
+
+              it { should be_is_enabled }
+            end
+          end
+
+          context 'and has a reward' do
+            before(:each) {
+              subject.reward_value = 10
+            }
+
+            it { should be_is_enabled }
+          end
         end
       end
     end
-    context 'A deeplink offer' do
-      before :each do
-        @offer.item_type = 'DeeplinkOffer'
+
+    context 'with a deeplink offer' do
+      before(:each) {
+        subject.item_type = 'DeeplinkOffer'
+      }
+
+      context 'that is not enabled' do
+        it { should_not be_is_enabled }
       end
-      context 'the deeplink offer is enabled' do
-        it 'returns true' do
-          @offer.payment = 0
-          @offer.reward_value = 10
-          @offer.tapjoy_enabled = true
-          @offer.user_enabled = true
-          @offer.is_enabled?.should be_true
-          @offer.is_enabled?.should be_true
+
+      context 'that is enabled' do
+        before(:each) {
+          subject.tapjoy_enabled = true
+        }
+
+        context 'and is not user enabled' do
+          it { should_not be_is_enabled }
         end
-      end
-      context 'the deeplink offer is disabled' do
-        it 'returns false' do
-          @offer.tapjoy_enabled = false
-          @offer.is_enabled?.should be_false
+        context 'and is user enabled' do
+          before(:each) {
+            subject.user_enabled = true
+          }
+
+          it { should be_is_enabled }
         end
       end
     end
