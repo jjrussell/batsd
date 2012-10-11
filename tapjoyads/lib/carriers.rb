@@ -12,7 +12,6 @@ class Carriers
     '234.20'  => 'Three UK',
     '234.31'  => 'Virgin UK',
     '234.32'  => 'Virgin UK',
-    '234.20'  => 'Hutchison 3G (Three)',
     '214.01'  => 'Vodafone ES',
     '214.06'  => 'Vodafone ES',
     '214.07'  => 'Movistar ES',
@@ -343,7 +342,7 @@ class Carriers
   }
 
   COUNTRY_NAME_TO_CARRIER_NAME = {
-    'United Kingdom' => ['Vodafone UK', 'T-Mobile UK', 'Orange UK', 'O2 UK', 'Three UK', 'Hutchison 3G (Three)', 'Virgin UK'],
+    'United Kingdom' => ['Vodafone UK', 'T-Mobile UK', 'Orange UK', 'O2 UK', 'Three UK', 'Virgin UK'],
     'Spain'          => ['Vodafone ES', 'Movistar ES', 'Orange ES'],
     'Germany'        => ['Vodafone DE', 'T-Mobile DE', 'O2 DE'],
     'Greece'         => ['Vodafone GR'],
