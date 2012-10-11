@@ -405,8 +405,22 @@ class Offer < ActiveRecord::Base
     [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
   end
 
+  def system_enabled?
+    tapjoy_enabled? && user_enabled?
+  end
+
+  def payment_enabled?
+    payment > 0 && partner_balance > 0
+  end
+
+  def reward_enabled?
+    payment == 0 && reward_value.present? && reward_value > 0
+  end
+
   def is_enabled?
-    is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+    enabled = system_enabled?
+    enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
+    enabled
   end
   alias_method :enabled?, :is_enabled?
 
