@@ -1,18 +1,20 @@
 require 'spec_helper'
 
 describe VideoButton do
+  let(:video_button) { FactoryGirl.create(:video_button) }
+
+  subject { video_button }
+
   describe '.belongs_to' do
-    it { should belong_to :video_offer }
+    it { should belong_to(:video_offer) }
   end
 
   describe '#valid?' do
-    it { should_not validate_presence_of :url }
-    it { should validate_presence_of :name }
+    it { should_not validate_presence_of(:url) }
+    it { should validate_presence_of(:name) }
 
-    it { should validate_numericality_of :ordinal }
+    it { should validate_numericality_of(:ordinal) }
   end
-
-  subject { FactoryGirl.create(:video_button) }
 
   it "is by default enabled" do
     subject.read_attribute(:enabled).should == true
@@ -29,7 +31,18 @@ describe VideoButton do
     end
   end
 
+  describe '#tracking_item_options' do
+    let(:app) { video_button.tracking_item }
+    subject { video_button.tracking_item_options(app) }
+
+    it { should have_key(:payment) }
+    it { should have_key(:reward_value) }
+    it { should have_key(:rewarded) }
+  end
+
   describe '#update_tracking_offer' do
+    let(:offer) { subject.tracking_offer }
+
     it 'is called when a record is saved' do
       subject.should_receive(:update_tracking_offer)
       subject.save
@@ -37,7 +50,6 @@ describe VideoButton do
 
     it 'updates the tracking offer if #tracking_item_options is not nil' do
       subject.stub(:tracking_item_options => {})
-      offer = subject.tracking_offer
       offer.should_receive(:update_attributes)
       subject.stub(:tracking_offer => offer)
       subject.send(:update_tracking_offer)
@@ -45,7 +57,6 @@ describe VideoButton do
 
     it 'does not update the tracking offer if #tracking_item_options is nil' do
       subject.stub(:tracking_item_options => nil)
-      offer = subject.tracking_offer
       offer.should_not_receive(:update_attributes)
       subject.stub(:tracking_offer => offer)
       subject.send(:update_tracking_offer)

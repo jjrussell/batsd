@@ -57,8 +57,6 @@ class VideoButton < ActiveRecord::Base
     return {} unless offer.present? && offer.rewarded?
 
     {
-      :bid          => offer.bid,
-      :payment      => offer.payment,
       :reward_value => offer.reward_value,
       :rewarded     => true
     }
