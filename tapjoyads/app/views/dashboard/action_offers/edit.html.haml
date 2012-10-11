@@ -4,6 +4,8 @@
 
 %h3 Edit Action
 
+= render('dashboard/apps/offers_shared/associated_offers')
+
 = render 'instructions'
 
 = form_for [ @app, @action_offer ], :html => { :class => 'tjform' } do |f|
