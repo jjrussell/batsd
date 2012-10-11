@@ -487,7 +487,7 @@ class Offer < ActiveRecord::Base
 
     if bust_cache
       url << "?ts=#{Time.now.to_i}"
-    elsif source == :cloudfront and update_ts.present?
+    elsif source == :cloudfront && update_ts.present?
       url << "?ts=#{update_ts}"
     end
     
