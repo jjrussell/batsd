@@ -20,6 +20,7 @@ describe SupportRequest do
     @user_agent = "rspec"
     @params =  {  :language_code        => "en",
                   :udid                 => "test_udid",
+                  :mac_address          => "test_mac",
                   :publisher_app_id     => "test_publisher_app",
                   :publisher_partner_id => "test_publisher_partner",
                   :publisher_user_id    => "test_publisher_user",
@@ -97,6 +98,11 @@ describe SupportRequest do
     it "stores the UDID from the params array" do
       @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
       @support_request.udid.should == @params[:udid]
+    end
+
+    it "stores the mac_address from the params array" do
+      @support_request.fill_from_params(@params, @app, @currently, nil, @user_agent)
+      @support_request.mac_address.should == @params[:mac_address]
     end
 
     it "stores the email address from the params array" do
