@@ -98,11 +98,11 @@ class Dashboard::DashboardController < ApplicationController
   end
 
   def current_partner_active_app_offers
-    @current_partner_active_app_offers ||= current_partner_app_offers.select(&:is_enabled?)
+    @current_partner_active_app_offers ||= current_partner_app_offers.select(&:enabled?)
   end
 
   def current_partner_active_offers
-    @current_partner_active_offers ||= current_partner_offers.select(&:is_enabled?).select(&:show_in_active_campaigns?)
+    @current_partner_active_offers ||= current_partner_offers.select(&:enabled?).select(&:show_in_active_campaigns?)
   end
 
   def premier_enabled?

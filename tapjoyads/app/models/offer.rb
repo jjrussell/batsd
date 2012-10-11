@@ -417,17 +417,17 @@ class Offer < ActiveRecord::Base
     payment == 0 && reward_value.present? && reward_value > 0
   end
 
-  def is_enabled?
+  def enabled?
     enabled = system_enabled?
     enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
     enabled
   end
-  alias_method :enabled?, :is_enabled?
+  alias_method :is_enabled?, :enabled?
 
   def disabled?; !enabled?; end
 
   def can_be_promoted?
-    primary? && rewarded? && is_enabled?
+    primary? && rewarded? && enabled?
   end
 
   def accepting_clicks?

@@ -1511,7 +1511,7 @@ describe Offer do
     end
   end
 
-  describe '#is_enabled?' do
+  describe '#enabled?' do
     subject { @offer }
     before(:each) {
       subject.tapjoy_enabled = false
@@ -1522,7 +1522,7 @@ describe Offer do
 
     context 'with a non-deeplink offer' do
       context 'that is not enabled' do
-        it { should_not be_is_enabled }
+        it { should_not be_enabled }
       end
 
       context 'that is enabled' do
@@ -1531,7 +1531,7 @@ describe Offer do
         }
 
         context 'and is not user enabled' do
-          it { should_not be_is_enabled }
+          it { should_not be_enabled }
         end
         context 'and is user enabled' do
           before(:each) {
@@ -1544,7 +1544,7 @@ describe Offer do
             }
 
             context 'but no balance' do
-              it { should_not be_is_enabled }
+              it { should_not be_enabled }
             end
 
             context 'and with a balance' do
@@ -1554,7 +1554,7 @@ describe Offer do
                 subject.stub(:partner_balance).and_return(100)
               }
 
-              it { should be_is_enabled }
+              it { should be_enabled }
             end
           end
 
@@ -1563,7 +1563,7 @@ describe Offer do
               subject.reward_value = 10
             }
 
-            it { should be_is_enabled }
+            it { should be_enabled }
           end
         end
       end
@@ -1575,7 +1575,7 @@ describe Offer do
       }
 
       context 'that is not enabled' do
-        it { should_not be_is_enabled }
+        it { should_not be_enabled }
       end
 
       context 'that is enabled' do
@@ -1584,14 +1584,14 @@ describe Offer do
         }
 
         context 'and is not user enabled' do
-          it { should_not be_is_enabled }
+          it { should_not be_enabled }
         end
         context 'and is user enabled' do
           before(:each) {
             subject.user_enabled = true
           }
 
-          it { should be_is_enabled }
+          it { should be_enabled }
         end
       end
     end
