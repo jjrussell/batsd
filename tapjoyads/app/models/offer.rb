@@ -418,7 +418,7 @@ class Offer < ActiveRecord::Base
   end
 
   def tracking_enabled?
-    tapjoy_enabled? && (payment == 0 || payment_enabled?)
+    tapjoy_enabled?
   end
 
   def enabled?
