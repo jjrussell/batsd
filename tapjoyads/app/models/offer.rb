@@ -483,7 +483,7 @@ class Offer < ActiveRecord::Base
   memoize :video_icon_url
 
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :offer_updated_at => updated_at.to_i, :item_type => item_type}.merge(options))
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
   def self.icon_cache_key(guid)
@@ -508,7 +508,7 @@ class Offer < ActiveRecord::Base
     elsif source == :cloudfront && update_ts.present?
       url << "?ts=#{update_ts}"
     end
-    
+
     url
   end
 
