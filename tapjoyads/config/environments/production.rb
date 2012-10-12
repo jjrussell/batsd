@@ -151,6 +151,7 @@ TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'
 
 AMQP_URL = 'amqp://tapjoy:Tapjoy123!@rabbit.tapjoy.net'
+ANALYTICS_LOGGER_LEVEL = Logger::DEBUG
 
 Savon.configure do |config|
   ##
