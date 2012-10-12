@@ -54,18 +54,25 @@ module ToolsHelper
 
   def click_tr_class(click, reward)
     classes = []
+    # binding.pry
     if click.installed_at?
       if click.force_convert
         classes << 'forced'
       elsif (reward && reward.successful?)
         classes << 'rewarded'
-      elsif click.currency_reward == 0 && (click.installed_at? || click.type =~ /install_jailbroken/)    #if currency == and already awarded == true
-        classes << 'non-rewarded'                           #for creating new css class
+      elsif click.currency_reward == 0
+        classes << 'non-rewarded'                          
       else
         classes << 'rewarded-failed'
       end
     end
-    classes << 'jailbroken'      if click.type =~ /install_jailbroken/
+    if click.type =~ /install_jailbroken/ 
+      if click.currency_reward == 0
+        classes << 'non-rewarded'
+      else 
+        classes << 'jailbroken'
+      end
+    end
     classes << 'click-key-match' if click.key == params[:click_key]
     if click.block_reason =~ /TooManyUdidsForPublisherUserId|Banned/
       classes << 'blocked'
