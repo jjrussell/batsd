@@ -48,7 +48,7 @@ class Coupon < ActiveRecord::Base
   end
 
   def enabled?
-    primary_offer.is_enabled?
+    primary_offer.enabled?
   end
 
   def enabled=(value)
