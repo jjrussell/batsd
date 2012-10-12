@@ -4,9 +4,6 @@ class ServerWhitelist
     '38.104.183.198',                        # Tapjoy Atlanta added 2012.06.04
     '212.36.48.233',                         # Tapjoy London added 2012.06.06
     ['173.166.99.161', '173.166.99.177'],    # Tapjoy Boston added 2012.08.30
-    '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
-    '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
-    '23.22.177.185',                         # Tapjoy dashboard server added 2012.08.30
     '23.22.121.11',                          # Tapjoy dashboard server added 2012.10.12
     '54.242.78.135',                         # Tapjoy dashboard server added 2012.10.12
     '174.129.83.90',                         # Tapjoy dashboard server added 2012.10.12
