@@ -7,6 +7,10 @@ class ServerWhitelist
     '23.20.91.202',                          # Tapjoy dashboard server added 2012.07.18
     '174.129.105.84',                        # Tapjoy dashboard server added 2012.07.18
     '23.22.177.185',                         # Tapjoy dashboard server added 2012.08.30
+    '23.22.121.11',                          # Tapjoy dashboard server added 2012.10.12
+    '54.242.78.135',                         # Tapjoy dashboard server added 2012.10.12
+    '174.129.83.90',                         # Tapjoy dashboard server added 2012.10.12
+    '50.17.66.224',                          # Tapjoy dashboard server added 2012.10.12
     '184.170.255.101',                       # Tapjoy support server added 2012.08.01
     ['193.169.104.246', '193.169.104.248'],  # Adperio added 2012.05.22
     ['193.169.105.246', '193.169.105.248'],  # Adperio added 2012.05.22
