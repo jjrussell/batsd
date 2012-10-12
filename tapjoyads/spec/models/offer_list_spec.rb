@@ -129,82 +129,82 @@ describe OfferList do
 
     context 'first page' do
 
-      context 'with a deeplink offer' do
+      # context 'with a deeplink offer' do
 
-        context 'balance > 0' do
-          before :each do
-            @currency.update_attributes({:external_publisher => true})
-            @deeplink = @currency.deeplink_offer
-            @deeplink.partner.balance = 100
-            OptimizedOfferList.stub(:get_offer_list).and_return([])
-            Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
-          end
+      #   context 'balance > 0' do
+      #     before :each do
+      #       @currency.update_attributes({:external_publisher => true})
+      #       @deeplink = @currency.deeplink_offer
+      #       @deeplink.partner.balance = 100
+      #       OptimizedOfferList.stub(:get_offer_list).and_return([])
+      #       Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+      #     end
 
-          it 'returns the deeplink offer in the offerwall' do
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
-          end
+      #     it 'returns the deeplink offer in the offerwall' do
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
+      #     end
 
-          it 'inserts deeplink offers in small lists' do
-            RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0,5).should include [@deeplink.primary_offer]
-          end
+      #     it 'inserts deeplink offers in small lists' do
+      #       RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0,5).should include [@deeplink.primary_offer]
+      #     end
 
-          it 'skips the deeplink offer when not on the offerwall' do
-            list = OfferList.new({:source => 'featured'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..4]
-          end
+      #     it 'skips the deeplink offer when not on the offerwall' do
+      #       list = OfferList.new({:source => 'featured'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..4]
+      #     end
 
-          it 'skips the deeplink offer on android' do
-            list = OfferList.new({:device_type => 'android'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..4]
-          end
+      #     it 'skips the deeplink offer on android' do
+      #       list = OfferList.new({:device_type => 'android'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..4]
+      #     end
 
-          it 'skips deeplink offer if currency not marked as external publisher' do
-            @currency.update_attributes({:external_publisher => false})
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
-          end
-        end
+      #     it 'skips deeplink offer if currency not marked as external publisher' do
+      #       @currency.update_attributes({:external_publisher => false})
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
+      #     end
+      #   end
 
-        context 'balance = 0, deeplink offers are still displayed in the offerwall' do
-          before :each do
-            @currency.update_attributes({:external_publisher => true})
-            @deeplink = @currency.deeplink_offer
-            @deeplink.partner.balance = 0
-            OptimizedOfferList.stub(:get_offer_list).and_return([])
-            Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
-          end
+      #   context 'balance = 0, deeplink offers are still displayed in the offerwall' do
+      #     before :each do
+      #       @currency.update_attributes({:external_publisher => true})
+      #       @deeplink = @currency.deeplink_offer
+      #       @deeplink.partner.balance = 0
+      #       OptimizedOfferList.stub(:get_offer_list).and_return([])
+      #       Offer.stub(:find_in_cache).with(@deeplink.primary_offer.id).and_return(@deeplink.primary_offer)
+      #     end
 
-          it 'returns the deeplink offer in the offerwall' do
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
-          end
+      #     it 'returns the deeplink offer in the offerwall' do
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..2] + [@deeplink.primary_offer] + @offers[3..4]
+      #     end
 
-          it 'inserts deeplink offers in small lists' do
-            RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0,5).should include [@deeplink.primary_offer]
-          end
+      #     it 'inserts deeplink offers in small lists' do
+      #       RailsCache.stub(:get_and_put).and_return(RailsCacheValue.new([]))
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0,5).should include [@deeplink.primary_offer]
+      #     end
 
-          it 'skips the deeplink offer when not on the offerwall' do
-            list = OfferList.new({:source => 'featured'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..4]
-          end
+      #     it 'skips the deeplink offer when not on the offerwall' do
+      #       list = OfferList.new({:source => 'featured'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..4]
+      #     end
 
-          it 'skips the deeplink offer on android' do
-            list = OfferList.new({:device_type => 'android'}.merge(@base_params))
-            list.get_offers(0, 5).should include @offers[0..4]
-          end
+      #     it 'skips the deeplink offer on android' do
+      #       list = OfferList.new({:device_type => 'android'}.merge(@base_params))
+      #       list.get_offers(0, 5).should include @offers[0..4]
+      #     end
 
-          it 'skips deeplink offer if currency not marked as external publisher' do
-            @currency.update_attributes({:external_publisher => false})
-            list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
-            list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
-          end
-        end
-      end
+      #     it 'skips deeplink offer if currency not marked as external publisher' do
+      #       @currency.update_attributes({:external_publisher => false})
+      #       list = OfferList.new({:source => 'offerwall'}.merge(@base_params))
+      #       list.get_offers(0, 5).should_not include [@deeplink.primary_offer]
+      #     end
+      #   end
+      # end
 
       context 'with no special offers' do
         it 'returns the normal first page' do
