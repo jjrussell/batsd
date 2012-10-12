@@ -146,7 +146,7 @@ class Utils
       end
 
       s3_object = s3_object_for(klass.name.underscore, object_suffix)
-      write_to_s3_with_retries(s3_object, data)
+      write_to_s3_with_retries(s3_object, data.join("\n"))
     end
   end
 
