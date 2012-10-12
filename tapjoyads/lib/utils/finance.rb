@@ -120,6 +120,11 @@ class Utils
       where = ["created_at >= ? and created_at < ?", start_date, end_date]
       object_suffix = ".#{start_date}-#{end_date}"
     end
+    if klass == Offer
+      ignore_fields = %w(publisher_app_whitelist instructions screen_layout_sizes)
+    else
+      ignore_fields = []
+    end
 
     klass.using_slave_db do
       rows = klass.where(where)
@@ -130,7 +135,10 @@ class Utils
 
       data = [CSV.generate_line(fields)]
       rows.order(:created_at).find_each do |row|
-        data << CSV.generate_line(fields.map{|field| row.try(field)})
+        row_data = fields.map do |field|
+          ignore_fields.include?(field) ? '' : row.try(field)
+        end
+        data << CSV.generate_line(row_data)
         if Time.now - last_puts > 60.seconds
           puts_with_time("[#{klass.name}] #{data.count * 100 / row_count}% complete (#{data.count} rows)")
           last_puts = Time.now
