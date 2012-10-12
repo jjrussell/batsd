@@ -113,6 +113,7 @@ TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 
 AMQP_URL = 'amqp://guest:guest@localhost'
+ANALYTICS_LOGGER_LEVEL = Logger::FATAL
 
 Savon.configure do |config|
   ##

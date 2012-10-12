@@ -111,6 +111,7 @@ ENV['exclude_tests']       = "true"
 ENV['exclude_fixtures']    = "true"
 
 AMQP_URL = 'amqp://guest:guest@localhost'
+ANALYTICS_LOGGER_LEVEL = Logger::FATAL
 
 Savon.configure do |config|
   ##
