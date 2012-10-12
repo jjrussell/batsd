@@ -417,6 +417,10 @@ class Offer < ActiveRecord::Base
     payment == 0 && reward_value.present? && reward_value > 0
   end
 
+  def tracking_enabled?
+    tapjoy_enabled? && (payment == 0 || payment_enabled?)
+  end
+
   def enabled?
     enabled = system_enabled?
     enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
