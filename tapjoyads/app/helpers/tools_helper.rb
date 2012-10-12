@@ -59,6 +59,8 @@ module ToolsHelper
         classes << 'forced'
       elsif (reward && reward.successful?)
         classes << 'rewarded'
+      elsif click.currency_reward == 0 && (click.installed_at? || click.type =~ /install_jailbroken/)    #if currency == and already awarded == true
+        classes << 'non-rewarded'                           #for creating new css class
       else
         classes << 'rewarded-failed'
       end

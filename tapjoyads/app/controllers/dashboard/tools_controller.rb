@@ -254,6 +254,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @blocked_count = 0
       @rewarded_failed_clicks_count = 0
       @force_converted_count = 0
+      @non_rewarded_count = 0
       @rewards = {}
       @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = nil, []
@@ -263,6 +264,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
           @rewards[click.reward_key] = Reward.find(click.reward_key)
           if click.force_convert
             @force_converted_count += 1
+          elsif click.currency_reward == 0
+            @non_rewarded_count += 1
           elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
             @rewarded_clicks_count += 1
           else
