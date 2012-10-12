@@ -27,6 +27,10 @@ class GetOffersController < ApplicationController
   VIEW_MAP[:test] = VIEW_MAP[:control].dup # no changes for this experiment
 
   def webpage
+    if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
+      @ios_sdk9 = true
+    end
+
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
       if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
