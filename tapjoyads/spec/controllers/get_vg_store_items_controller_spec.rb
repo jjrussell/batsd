@@ -173,8 +173,9 @@ describe GetVgStoreItemsController do
     end
 
     context 'valid params' do
+      let(:app) { FactoryGirl.create(:app) }
+
       before :each do
-        app = FactoryGirl.create(:app)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -205,7 +206,7 @@ describe GetVgStoreItemsController do
 
       it 'will have an instance variable @currency.name set for use in view' do
         get(:user_account, @params)
-        controller.instance_eval{ @currency.name }.should == 'TAPJOY_BUCKS'
+        controller.instance_eval{ @currency.name }.should be_present
       end
 
       it 'will successfully get the #user_account action' do

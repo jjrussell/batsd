@@ -1,9 +1,15 @@
+DEFAULT_FACTORY_PASSWORD = 'password'
+
 FactoryGirl.define do
+  sequence(:url)              { |i| "http://example.com/#{i}" }
+  sequence(:callback_url)     { |i| "http://callbackurl.com/#{i}"}
+  sequence(:conversion_rate)  { |i| i }
+
   factory :user do
     email    { FactoryGirl.generate(:email) }
     username { |u| u.email }
-    password 'asdf'
-    password_confirmation 'asdf'
+    password DEFAULT_FACTORY_PASSWORD
+    password_confirmation DEFAULT_FACTORY_PASSWORD
     country  'earth'
   end
 
@@ -76,7 +82,7 @@ FactoryGirl.define do
   end
 
   factory :partner do
-    name { FactoryGirl.generate(:name) }
+    sequence(:name) { |i| "Partner #{i}" }
     approved_publisher true
     payout_threshold 50_000_00
   end
@@ -153,7 +159,7 @@ FactoryGirl.define do
 
   factory :app do
     association :partner
-    name { FactoryGirl.generate(:name) }
+    sequence(:name) { |i| "App #{i}" }
     platform 'iphone'
     after_build do |app|
       app.add_app_metadata(App::PLATFORM_DETAILS[app.platform][:default_store_name], FactoryGirl.generate(:name), true)
@@ -230,9 +236,13 @@ FactoryGirl.define do
   factory :currency do
     association :app
     association :partner
-    name 'TAPJOY_BUCKS'
+    sequence(:name) { |i| "Currency #{i}" }
     callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
     conversion_rate 100
+  end
+
+  factory :unmanaged_currency, :parent => :currency do
+    callback_url { FactoryGirl.generate :url }
   end
 
   factory :currency_group do
@@ -336,7 +346,7 @@ FactoryGirl.define do
 
   factory :survey_offer do
     bid  { rand(100) + 1 }
-    name { FactoryGirl.generate(:name) + ' Survey' }
+    sequence(:name) { |i| "Survey #{i}" }
   end
 
   factory :creative_approval_queue do

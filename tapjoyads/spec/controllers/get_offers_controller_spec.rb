@@ -218,8 +218,8 @@ describe GetOffersController do
       json_offer['IconURL'    ].should be_present
       json_offer['RedirectURL'].should be_present
 
-      json['CurrencyName'].should == 'TAPJOY_BUCKS'
-      json['Message'].should == 'Install one of the apps below to earn TAPJOY_BUCKS'
+      json['CurrencyName'].should == @currency.name
+      json['Message'].should == "Install one of the apps below to earn #{@currency.name}"
     end
 
     it 'returns FullScreenAdURL when rendering featured json' do

@@ -71,41 +71,28 @@ class Capybara::Selenium::Node < Capybara::Driver::Node
   end 
 end 
 
-
 Before('@tapjoy_marketer') do
   @partner ||= FactoryGirl.create(:partner,      :id => TAPJOY_PARTNER_ID, :balance => 10_000)
   @user    ||= FactoryGirl.create(:partner_user, :current_partner => @partner)
   @user.user_roles << UserRole.find_or_create_by_name('admin', :employee => true)
+  login!
+end
 
+Before('@partner') do
+  @partner ||= FactoryGirl.create(:partner)
+  @user    ||= FactoryGirl.create(:partner_user, :current_partner => @partner)
+  login!
+end
+
+Before('@stub_resolvable_host') do
+  Resolv.send(:define_method, :getaddress) { true }
+end
+
+def login!
   visit '/login'
   fill_in 'Email Address', :with => @user.email
-  fill_in 'Password', :with => 'asdf'
+  fill_in 'Password', :with => DEFAULT_FACTORY_PASSWORD
   click_button 'Log in'
-  # TODO: Figure out a better way to fake the password
-  # activate_authlogic
-  # UserSession.create!(@user)
-end
-AfterStep('@pause') do
-  sleep(1)
 end
 
-# You may also want to configure DatabaseCleaner to use different strategies for certain features and scenarios.
-# See the DatabaseCleaner documentation for details. Example:
-#
-#   Before('@no-txn,@selenium,@culerity,@celerity,@javascript') do
-#     # { :except => [:widgets] } may not do what you expect here
-#     # as tCucumber::Rails::Database.javascript_strategy overrides
-#     # this setting.
-#     DatabaseCleaner.strategy = :truncation
-#   end
-#
-#   Before('~@no-txn', '~@selenium', '~@culerity', '~@celerity', '~@javascript') do
-#     DatabaseCleaner.strategy = :transaction
-#   end
-#
-
-# Possible values are :truncation and :transaction
-# The :transaction strategy is faster, but might give you threading problems.
-# See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
 Cucumber::Rails::Database.javascript_strategy = :truncation
-

@@ -8,6 +8,9 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [ :update, :create ]
 
   def show
+    warn = params.delete(:warn) { false }
+    flash.now[:warning] = "You have made a change that could negatively impact users currently completing offers." if(warn == 'true' && @currency.tapjoy_enabled?)
+
     @udids_to_check = @currency.get_test_device_ids.map do |id|
       device = Device.new(:key => id)
       if device.has_app?(@app.id)
@@ -17,7 +20,9 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       end
       [id, last_run_time]
     end
-    unless @currency.tapjoy_enabled?
+    if @currency.tapjoy_enabled?
+      flash.now[:warning] ||= "Changing a currency's callback URL or conversion rate can negatively impact users who are currently completing offers."
+    else
       flash.now[:warning] = "This virtual currency is currently disabled. Please email <a href='mailto:support+enable@tapjoy.com?subject=reenable+currency+ID+#{@currency.id}'>support+enable@tapjoy.com</a> with your app ID to have it enabled. If your application is currently not live, please provide a brief explanation of how you intend to use virtual currency your app."
     end
   end
@@ -35,9 +40,13 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override, :send_offer_data]
     end
 
+    old_conversion  = @currency.conversion_rate
+    old_callback    = @currency.callback_url
+
     if @currency.safe_update_attributes(currency_params, safe_attributes)
       flash[:notice] = 'Successfully updated.'
-      redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id)
+      warn = !(@currency.conversion_rate == old_conversion && @currency.callback_url == old_callback)
+      redirect_to app_currency_path(:app_id => @app.id, :id => @currency.id, :warn => warn.to_s)
     else
       flash.now[:error] = update_flash_error_message(@app.partner)
       render :action => :show and return
