@@ -1,7 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
-  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
+  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => [:image, :cross_promo]
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
@@ -9,6 +9,13 @@ class DisplayAdController < ApplicationController
     if @publisher_app.present? && !@publisher_app.uses_non_html_responses?
       @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
     end
+  end
+
+  def cross_promo
+    return unless verify_params([:app_id])
+    currency = Currency.find_non_rewarded_currency_in_cache_by_app_id(params[:app_id])
+    return unless verify_records([currency])
+    redirect_to params.merge({:action => :index, :currency_id => currency.id})
   end
 
   def webview

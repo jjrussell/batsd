@@ -34,9 +34,10 @@
       = t('text.offerwall.load_more')
 
     .center.links
-      %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
-        = t('text.offerwall.missing_currency', { :currency => @currency.name })
-      &nbsp; | &nbsp;
+      - if @currency.rewarded?
+        %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
+          = t('text.offerwall.missing_currency', { :currency => @currency.name })
+        &nbsp; | &nbsp;
       %a{:id => "privacy", :href => "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}"}
         = t('text.offerwall.privacy')
 
