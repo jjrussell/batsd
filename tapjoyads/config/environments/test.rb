@@ -115,3 +115,8 @@ FLOWDOCK_API_KEY = '3f91ba6016a83d6d5ee4a6c16b484625'
 AMQP_URL = 'amqp://guest:guest@localhost'
 
 ANALYTICS_LOGGER_LEVEL = Logger::FATAL
+
+TIPALTI_PAYEE_API = 'http://int.payrad.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'http://api.payrad.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'TapJoyDemoKey'

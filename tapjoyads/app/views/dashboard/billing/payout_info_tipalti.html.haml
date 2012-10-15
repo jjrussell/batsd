@@ -1,0 +1,14 @@
+- @page_title = 'Payment Information'
+= render :partial => 'actions'
+
+.left-indented
+  %iframe.tipalti{ :src => current_partner.tipalti_payee_iframe_url.html_safe }
+
+- content_for :page_styles do
+  :plain
+    iframe.tipalti {
+      border: none;
+      margin-top: 15px;
+      min-height: 700px;
+      width: 100%;
+    }

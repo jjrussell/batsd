@@ -113,3 +113,8 @@ ENV['exclude_fixtures']    = "true"
 AMQP_URL = 'amqp://guest:guest@localhost'
 
 ANALYTICS_LOGGER_LEVEL = Logger::FATAL
+
+TIPALTI_PAYEE_API = 'http://int.payrad.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'http://api.payrad.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'TapJoyDemoKey'
