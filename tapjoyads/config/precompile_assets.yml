@@ -51,6 +51,7 @@
 - survey_results/style.css
 - tapjoy/approvals.js
 - tapjoy/apps.js
+- tapjoy/daily-budget.js
 - tapjoy/graph.js
 - tapjoy/payout_confirmations.js
 - tapjoy/payouts.js
