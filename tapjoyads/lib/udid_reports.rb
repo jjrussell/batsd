@@ -1,5 +1,8 @@
 class UdidReports
 
+  MAX_RETRIES = 3
+  S3_RETRY_PAUSE_PERIOD = 10
+
   def self.queue_daily_jobs(date_str=nil, offer_list=[])
     date_str ||= (Time.zone.now.beginning_of_day - 1.day).strftime('%Y-%m-%d')
     start_time = Time.zone.parse(date_str)
@@ -27,21 +30,32 @@ class UdidReports
 
     Reward.select_all(:conditions => conditions) do |reward|
       if reward.udid? || reward.mac_address?
+        line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},"
         begin
-          line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
-          outfile.puts(line)
-        rescue Exception => e
-          # There can be no comment lines in csv file. Do nothing
+          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
+        rescue
         end
+        outfile.puts(line)
       end
     end
 
     if outfile.pos > 0
       outfile.close
       path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
-      bucket = S3.bucket(BucketNames::UDID_REPORTS)
-      bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
-      cache_available_months(offer_id)
+      tries = 0
+      begin
+        bucket = S3.bucket(BucketNames::UDID_REPORTS)
+        bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
+        cache_available_months(offer_id)
+      rescue Exception => e
+        tries += 1
+        if tries < MAX_RETRIES
+          sleep S3_RETRY_PAUSE_PERIOD
+          retry
+        else
+          raise e
+        end
+      end
     end
 
   ensure
