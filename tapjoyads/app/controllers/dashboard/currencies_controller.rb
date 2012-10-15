@@ -40,8 +40,8 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override, :send_offer_data]
     end
 
-    old_conversion  = @currency.conversion_rate
-    old_callback    = @currency.callback_url
+    old_conversion = @currency.conversion_rate
+    old_callback   = @currency.callback_url
 
     if @currency.safe_update_attributes(currency_params, safe_attributes)
       flash[:notice] = 'Successfully updated.'

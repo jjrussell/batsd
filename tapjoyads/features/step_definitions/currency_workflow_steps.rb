@@ -3,6 +3,11 @@ Given /^I have an unmanaged currency$/ do
   @currency = FactoryGirl.create(:unmanaged_currency, :app => @app, :partner => @app.partner)
 end
 
+Given /^the currency is not tapjoy\-enabled$/ do
+  @currency.tapjoy_enabled = false
+  @currency.save!
+end
+
 When /^I change the (.*?)$/ do |field_name|
   field = find(selector_for "#{field_name} field")
   @original_value = field.value

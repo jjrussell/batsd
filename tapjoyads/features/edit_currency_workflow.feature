@@ -8,6 +8,16 @@ Feature: Warn of the impact of modifying a currency
 Background:
   Given I have an unmanaged currency
 
+Scenario: Modifying a Tapjoy-disabled currency
+  Given the currency is not tapjoy-enabled
+  When I visit the "edit currency" page
+  And I change the conversion rate
+  And I change the callback URL
+  And I press "Update Currency"
+  Then I should not see a confirmation of the change
+  And I should be on the "show currency" page
+  And I should not see a notice regarding the change
+
 Scenario: Changing the conversion rate
   When I visit the "edit currency" page
   And I change the conversion rate

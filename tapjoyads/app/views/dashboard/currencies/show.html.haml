@@ -190,12 +190,16 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+      var shouldWarnOnSubmit = #{!!@currency.tapjoy_enabled?};
+
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
       $('#currency_name').keyup(copyCurrencyName);
       $('#generate_link').click(generateSecretKey);
 
-      $('#currency_conversion_rate').change(warnOnSubmit);
-      $('#currency_callback_url').change(warnOnSubmit);
+      if(shouldWarnOnSubmit) {
+        $('#currency_conversion_rate').change(warnOnSubmit);
+        $('#currency_callback_url').change(warnOnSubmit);
+      }
 
       toggleManagedByTapjoy();
       copyCurrencyName();
