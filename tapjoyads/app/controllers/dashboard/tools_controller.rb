@@ -185,7 +185,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
       device = Device.new(:key => udid)
       NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicks_#{i}", :where => "itemName() like '#{udid}.%'") do |click|
+        Click.select(:domain_name => "clicksV3_#{i}", :where => "itemName() like '#{udid}.%'") do |click|
           click.delete_all
           clicks_deleted += 1
         end
@@ -241,7 +241,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         ].join(' and ')
         @clicks = []
         NUM_CLICK_DOMAINS.times do |i|
-          Click.select(:domain_name => "clicks_#{i}", :where => conditions) do |click|
+          Click.select(:domain_name => "clicksV3_#{i}", :where => conditions) do |click|
             @clicks << click unless click.tapjoy_games_invitation_primary_click?
           end
           @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
