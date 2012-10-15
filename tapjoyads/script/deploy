@@ -128,8 +128,8 @@ class Deploy
     system("git pull tapjoy master")
 
     unless @options[:version] == 'master'
-      precompile_assets unless @options[:skip_assets]
       system('git checkout deploy')
+      precompile_assets unless @options[:skip_assets]
       git_status = `git status`
       if git_status !~ /On branch deploy/
         puts "Couldn't checkout deploy!"
