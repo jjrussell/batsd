@@ -137,7 +137,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
   end
 
   def archive
-    if @app.offers.any?{|o| o.is_enabled?}
+    if @app.offers.any?{|o| o.enabled?}
       flash[:error] = "Apps cannot be deleted until all offers are disabled"
       redirect_to(@app)
       return

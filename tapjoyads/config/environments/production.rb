@@ -104,7 +104,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
 
 NUM_POINT_PURCHASES_DOMAINS = 10
-NUM_CLICK_DOMAINS = 50
+NUM_CLICK_DOMAINS = 100
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
 NUM_DEVICE_IDENTIFIER_DOMAINS = 100
@@ -152,13 +152,4 @@ FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'
 
 AMQP_URL = 'amqp://tapjoy:Tapjoy123!@rabbit.tapjoy.net'
 
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :error
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end
+ANALYTICS_LOGGER_LEVEL = Logger::DEBUG

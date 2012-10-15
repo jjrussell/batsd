@@ -1,0 +1,40 @@
+- @page_title = 'Experiments'
+
+%table.tablesorter
+  %thead
+    %tr
+      %th Name
+      %th Type
+      %th Test Group %
+      %th Started
+      %th Ended
+      %th Due
+  %tbody
+    - @experiments.each do |experiment|
+      %tr
+        %td= link_to experiment.name, [:tools, experiment]
+        %td= experiment.bucket_type
+        %td= experiment.ratio
+        %td= experiment.started_at || 'n/a'
+        %td= experiment.ended_at || 'n/a'
+        %td= experiment.due_at
+      
+
+.launch_button= link_to 'New Experiment', new_tools_experiment_path
+
+/ %h4 Experiments System Info
+/ - bucket_count = ExperimentBucket.count_from_cache
+/ - bucketed_devices_count = Device.count(:where => 'experiment_bucket_id is not null')
+/ - free_buckets = ExperimentBucket.where(:experiment_id => nil)
+
+
+/ .experiments_stats
+/   .total_buckets= "Total experiment buckets: #{bucket_count}"
+/   .free_buckets= "Total available buckets: #{free_buckets.count}"
+/   .free_ui_buckets= "Available UI buckets: #{free_buckets.where(:bucket_type => 'interface').count}"
+/   .free_opt_buckets= "Available optimization buckets: #{free_buckets.where(:bucket_type => 'optimization').count}"
+/   .avg_bucket_size= "Average bucket size: #{bucketed_devices_count.to_f / bucket_count} devices"
+/   .eligible_devices= "Total eligible devices: #{bucketed_devices_count} (of #{Device.count} total devices)"
+/   .free_devices= "Available devices: #{free_buckets.map(&:size).flatten.reduce(:+) || 0}"
+/   .free_ui_devices= "Available UI devices: #{free_buckets.where(:bucket_type => 'interface').map(&:size).reduce(:+) || 0}"
+/   .free_opt_devices= "Available optimization devices: #{free_buckets.where(:bucket_type => 'optimization').map(&:size).reduce(:+) || 0}"

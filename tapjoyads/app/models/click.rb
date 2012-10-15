@@ -63,7 +63,7 @@ class Click < SimpledbShardedResource
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
-    "clicks_#{domain_number}"
+    "clicksV3_#{domain_number}"
   end
 
   def self.hashed_key(key)

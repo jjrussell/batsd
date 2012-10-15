@@ -105,13 +105,4 @@ TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 
 AMQP_URL = 'amqp://guest:guest@localhost'
 
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :warn
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end
+ANALYTICS_LOGGER_LEVEL = Logger::DEBUG

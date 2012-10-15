@@ -1,4 +1,4 @@
-class Dashboard::ExperimentsController < Dashboard::DashboardController
+class Dashboard::Tools::ExperimentsController < Dashboard::DashboardController
   filter_resource_access
 
   before_filter(:except => [:index, :new, :create]) { @experiment = Experiment.find(params[:id]) }

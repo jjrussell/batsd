@@ -405,15 +405,33 @@ class Offer < ActiveRecord::Base
     [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
   end
 
-  def is_enabled?
-    is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+  def system_enabled?
+    tapjoy_enabled? && user_enabled?
   end
-  alias_method :enabled?, :is_enabled?
+
+  def payment_enabled?
+    payment > 0 && partner_balance > 0
+  end
+
+  def reward_enabled?
+    payment == 0 && reward_value.present? && reward_value > 0
+  end
+
+  def tracking_enabled?
+    tapjoy_enabled?
+  end
+
+  def enabled?
+    enabled = system_enabled?
+    enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
+    enabled
+  end
+  alias_method :is_enabled?, :enabled?
 
   def disabled?; !enabled?; end
 
   def can_be_promoted?
-    primary? && rewarded? && is_enabled?
+    primary? && rewarded? && enabled?
   end
 
   def accepting_clicks?
@@ -478,12 +496,19 @@ class Offer < ActiveRecord::Base
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
     bust_cache = options.delete(:bust_cache) { false }
+    update_ts  = options.delete(:offer_updated_at)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
     url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
-    url << "?ts=#{Time.now.to_i}" if bust_cache
+
+    if bust_cache
+      url << "?ts=#{Time.now.to_i}"
+    elsif source == :cloudfront && update_ts.present?
+      url << "?ts=#{update_ts}"
+    end
+
     url
   end
 

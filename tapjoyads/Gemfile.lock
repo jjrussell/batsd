@@ -36,10 +36,10 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: 0ce38614fa6a3f2b1854ecc52328080445cfd823
-  tag: v0.4.5
+  revision: a25f5c6159b09c57340d5e9fbd7bff3f25959d8e
+  tag: v0.4.8
   specs:
-    analytics_logger (0.4.5)
+    analytics_logger (0.4.8)
       activesupport (~> 3.0)
       bunny (~> 0.8.0)
       json (~> 1.5)
@@ -265,7 +265,7 @@ GEM
       json
       rest-client
       ya2yaml
-    locales (1.0.29)
+    locales (1.0.34)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -477,7 +477,7 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.4.5)!
+  analytics_logger (= 0.4.8)!
   annotate
   archive-tar-minitar
   asset_sync

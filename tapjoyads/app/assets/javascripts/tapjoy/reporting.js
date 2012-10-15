@@ -110,6 +110,9 @@ $(function($) {
       platform: $('#platform').val(),
       store_name: $('#store_name').val()
     };
+    if (params.store_name == 'all') {
+      params.store_name = '';
+    }
 
     if (rangeIsLast24Hours()) {
       params.date = '';
