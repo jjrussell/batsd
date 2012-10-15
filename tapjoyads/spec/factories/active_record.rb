@@ -429,7 +429,7 @@ FactoryGirl.define do
     name              { FactoryGirl.generate(:name) }
     owner             { Factory(:user) }
     description       'Experiment Description'
-    started_at        Date.tomorrow
+    started_at        Date.today.advance(:days => 2)
     due_at            Date.today.advance(:days => 10)
     ratio             50
     population_size   1
