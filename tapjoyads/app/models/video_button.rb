@@ -50,7 +50,7 @@ class VideoButton < ActiveRecord::Base
   end
 
   def enabled
-    read_attribute(:enabled) && tracking_offer.try(:tracking_enabled?)
+    read_attribute(:enabled) && tracking_offer.present? && tracking_offer.tracking_enabled?
   end
   alias_method :enabled?, :enabled
 
