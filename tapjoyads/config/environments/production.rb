@@ -153,3 +153,8 @@ FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'
 AMQP_URL = 'amqp://tapjoy:Tapjoy123!@rabbit.tapjoy.net'
 
 ANALYTICS_LOGGER_LEVEL = Logger::DEBUG
+
+TIPALTI_PAYEE_API = 'https://ui.tipalti.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'https://api.tipalti.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'spAtUbrarebaStuCebRek5febr9rega8pEnaSp968b29a3rUna7'
