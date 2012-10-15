@@ -25,7 +25,6 @@ class VideoButton < ActiveRecord::Base
   validate :require_tracking_item
 
   after_save :update_offer
-  after_save :update_tracking_offer
 
   scope :ordered, :order => "enabled DESC, ordinal"
   scope :enabled, :conditions => { :enabled => true }
@@ -52,16 +51,6 @@ class VideoButton < ActiveRecord::Base
     tracking_offer.rewarded? && tracking_item.is_a?(App)
   end
 
-  def tracking_item_options(item)
-    offer = item.is_a?(Offer) ? item : item.primary_offer
-    return {} unless offer.present? && offer.rewarded?
-
-    {
-      :reward_value => offer.reward_value,
-      :rewarded     => true
-    }
-  end
-
   def enabled
     read_attribute(:enabled) && tracking_offer.try(:tracking_enabled?)
   end
@@ -75,12 +64,6 @@ class VideoButton < ActiveRecord::Base
   def update_offer
     video_offer.update_buttons
     video_offer.cache
-  end
-
-  def update_tracking_offer
-    if options = tracking_item_options(tracking_item)
-      tracking_offer.update_attributes(options)
-    end
   end
 
   def require_tracking_item
