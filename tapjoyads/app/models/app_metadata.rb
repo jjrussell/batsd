@@ -41,6 +41,9 @@ class AppMetadata < ActiveRecord::Base
 
   validates_presence_of :store_name, :store_id
   validates_uniqueness_of :store_id, :scope => [ :store_name ]
+  validates_numericality_of :price, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
+  validates_numericality_of :file_size_bytes, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => true
+  validates_numericality_of :user_rating, :greater_than_or_equal_to => 0, :allow_nil => true
   validates_numericality_of :thumbs_up, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :thumbs_down, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_inclusion_of :store_name, :in => AppStore::SUPPORTED_STORES.keys
@@ -145,13 +148,14 @@ class AppMetadata < ActiveRecord::Base
     save! if changed?
   end
 
-  private
-
+  # TODO: Make this method private when TStore API is available
   def download_and_save_icon!(url)
     return if url.blank? || offers.blank?
     icon_src_blob = download_blob(url)
     save_icon!(icon_src_blob) if icon_src_blob
   end
+
+  private
 
   def download_blob(url)
     return nil if url.blank?
