@@ -28,7 +28,7 @@ class GetOffersController < ApplicationController
 
   def webpage
     if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
-      @ios_sdk9 = true
+      @fixed = true
     end
 
     if @currency.get_test_device_ids.include?(params[:udid])

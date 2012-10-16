@@ -1,13 +1,13 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 - @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn/#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
-
+- @class_fixed = @fixed? "fixed" : ""
 - content_for :page_styles do
   = render 'redesign.css'
 
 %body
-  #branding.clearfix
+  #branding.clearfix{ :class => @class_fixed }
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-    = render :partial => 'currency_selector'
+    = render 'currency_selector'
 
   - if @test_offers.present?
     #test_offers
@@ -21,7 +21,7 @@
             %br
             = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
-  %ul{:id => "offers"}
+  %ul#offers{ :class => @class_fixed }
 
   #loading
     #loader
@@ -56,4 +56,3 @@
 
 = javascript_include_tag 'shared/i18n'
 = javascript_include_tag "offerwall/offerwall"
-= render :partial => 'ios_sdk9'
