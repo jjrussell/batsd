@@ -30,7 +30,7 @@ class OfferCacher
         offer_list = Offer.enabled_offers.nonfeatured.rewarded.for_offer_list.to_a
         cache_offers_prerejected(offer_list, Offer::DEFAULT_OFFER_TYPE, save_to_s3)
 
-        offer_list = Offer.enabled_offers.featured.rewarded.non_video_offers.for_offer_list.to_a
+        offer_list = Offer.enabled_offers.featured.rewarded.for_offer_list.to_a
         cache_offers_prerejected(offer_list, Offer::FEATURED_OFFER_TYPE, save_to_s3)
 
         offer_list = Offer.enabled_offers.nonfeatured.free.apps.rewarded.non_video_offers.for_offer_list.to_a

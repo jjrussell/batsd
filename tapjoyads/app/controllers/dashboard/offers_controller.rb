@@ -8,7 +8,9 @@ class Dashboard::OffersController < Dashboard::DashboardController
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
                                :min_os_version, :screen_layout_sizes, :countries,
-                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids, :daily_cap_type ]
+                               :prerequisite_offer_id, :exclusion_prerequisite_offer_ids, :daily_cap_type,
+                               :featured_ad_action, :featured_ad_content, :featured_ad_color ]
+
   ELEVATED_SAFE_ATTRIBUTES = BASE_SAFE_ATTRIBUTES | [ :tapjoy_enabled, :allow_negative_balance, :pay_per_click,
                                :name, :name_suffix, :audition_factor, :show_rate, :min_conversion_rate,
                                :device_types, :publisher_app_whitelist, :overall_budget, :min_bid_override,

@@ -6,6 +6,7 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
 
   def new
     @video_offer = VideoOffer.new(:partner_id => params[:partner_id])
+    @video_offer.build_primary_offer
   end
 
   def edit
@@ -14,6 +15,10 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
   end
 
   def create
+    # due to the creation order of the primary_offer at the model level, we need to pull out nested 
+    # primary_offer_attributes upon creation
+    params[:video_offer][:primary_offer_creation_attributes] = params[:video_offer].delete(:primary_offer_attributes)
+
     @video_offer = VideoOffer.new(params[:video_offer])
     log_activity(@video_offer)
 
@@ -28,6 +33,7 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
       flash[:notice] = 'Successfully created Video Offer'
       redirect_to edit_tools_video_offer_path(@video_offer.id)
     else
+      @video_offer.build_primary_offer
       render :action => :new
     end
   end

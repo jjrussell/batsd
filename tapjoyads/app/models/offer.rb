@@ -45,6 +45,9 @@ class Offer < ActiveRecord::Base
     NON_REWARDED_BACKFILLED_OFFER_TYPE          => 'Non-Rewarded Offers (Backfilled)'
   }
 
+  FEATURED_AD_BACKGROUNDS = %w(bg-dark-purple bg-blue bg-green bg-dark bg-purple)
+  DEFAULT_FEATURED_AD_BACKGROUND = FEATURED_AD_BACKGROUNDS.first
+
   OFFER_LIST_EXCLUDED_COLUMNS = %w( account_manager_notes
                                     active
                                     allow_negative_balance
@@ -120,6 +123,9 @@ class Offer < ActiveRecord::Base
   validates_presence_of :reseller, :if => Proc.new { |offer| offer.reseller_id? }
   validates_presence_of :partner, :item, :name, :url, :rank_boost, :optimized_rank_boost
   validates_presence_of :prerequisite_offer, :if => Proc.new { |offer| offer.prerequisite_offer_id? }
+  validates_length_of :featured_ad_content, :maximum => 256, :allow_nil => true
+  validates_length_of :featured_ad_action, :maximum => 24, :allow_nil => true
+  validates_inclusion_of :featured_ad_color, :in => FEATURED_AD_BACKGROUNDS, :allow_blank => true
   validates_numericality_of :price, :interval, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :payment, :daily_budget, :overall_budget, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
   validates_numericality_of :bid, :only_integer => true, :greater_than_or_equal_to => 0, :allow_nil => false
@@ -981,6 +987,10 @@ class Offer < ActiveRecord::Base
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
     Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+  end
+
+  def featured_ad_color_in_css
+    featured_ad_color || DEFAULT_FEATURED_AD_BACKGROUND
   end
 
   def age_gate?

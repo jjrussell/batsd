@@ -21,6 +21,9 @@ class VideoOffer < ActiveRecord::Base
   has_many :video_buttons
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
+  accepts_nested_attributes_for :primary_offer
+  attr_accessor :primary_offer_creation_attributes
+
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
 
@@ -95,6 +98,7 @@ class VideoOffer < ActiveRecord::Base
 
   def create_primary_offer
     offer              = Offer.new(:item => self)
+    offer.attributes   = self.primary_offer_creation_attributes if self.primary_offer_creation_attributes
     offer.id           = id
     offer.partner      = partner
     offer.name         = name

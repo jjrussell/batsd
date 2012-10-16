@@ -1,0 +1,126 @@
+- if defined?(show_featured_checkbox) && show_featured_checkbox
+  %tr
+    %th
+      = f.label(:featured, 'Featured')
+      #help_featured.help ?
+    %td
+      = f.check_box(:featured, :class => 'offer_featured')
+      = error_message_on offer, :featured
+%tbody.featured-only{:style => "display: none; background-color: #f0f0f0"}
+  - unless offer.item_type == 'App'
+    %tr
+      %th
+        = f.label(:featured_ad_action, 'Featured Offer<br/>Action'.html_safe)
+        #help_featured_ad_action.help ?
+      %td
+        = f.text_field(:featured_ad_action, :maxlength => 32, :class => 'offer_featured_ad_action')
+        = error_message_on offer, :featured_ad_action
+  %tr
+    %th
+      = f.label(:featured_ad_content, 'Featured Offer<br/>Content'.html_safe)
+      #help_featured_ad_content.help ?
+    %td
+      = f.text_area(:featured_ad_content, :rows => 4, :cols => 30, :maxlength => 128, :class => 'offer_featured_ad_content')
+      = error_message_on offer, :featured_ad_content
+  %tr
+    %th
+      = f.label(:featured_ad_color, 'Featured Offer<br/>Background'.html_safe)
+      #help_featured_ad_color.help ?
+    %td
+      - Offer::FEATURED_AD_BACKGROUNDS.each do |color|
+        %li.feature-color-swatch{:pattern_value => color}
+          %img{:src => "/images/featured_ad_backgrounds/#{color}.jpg", 'max-width' => 64}
+      = f.hidden_field(:featured_ad_color, :class => 'offer_featured_ad_color')
+      %p.featured-note The selected background will be used when custom creative is not available for the offer size being rendered.
+      = error_message_on offer, :featured_ad_color
+  - if offer.id
+    %tr
+      %th
+        = f.label(:featured_ad_content, 'Preview Featured Offer')
+      %td
+        %span Simulated device size
+        = select('preview', 'size', offer.featured_ad_preview_sizes_with_labels.map{ |s| [s[:label], s[:size]] })
+        %button.preview Preview
+        %p.featured-note Tablet preview sizes use separate landscape or portrait creative asset sizes.  Phones and smaller devices use the same small format creative assets in both orientations.
+.hidden
+  #help_featured_content{ :name => 'Featured Offer' } Indicates whether or not this is a fullscreen featured offer.
+  #help_featured_ad_content_content{ :name => 'Featured Offer Content' } The text content of this featured offer. This is shown to end-users when displaying the offer.
+  #help_featured_ad_action_content{ :name => 'Featured Offer Action' } The action text rendered on the action button shown to end-users when displaying the offer.
+  #help_featured_ad_color_content{ :name => 'Featured Offer Color' } The background color rendered when displaying the offer.
+
+- content_for :included_javascripts, javascript_include_tag('facebox')
+- content_for :page_head, stylesheet_link_tag('facebox')
+
+- content_for :page_styles do
+  :plain
+    .feature-color-swatch {
+      float: left;
+      width: 64px;
+      height: 64px;
+      border: 3px solid #ccc;
+      list-style: none;
+      margin: 3px;
+    }
+
+    .feature-color-swatch.selected {
+      border: 3px solid #000;
+    }
+
+    .featured-note {
+      clear: both;
+      font-size: 80%;
+    }
+
+    .feature-color-swatch img {
+      width: 64px;
+      height: 64px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    var showFeaturedOptions = function() {
+      var isFeatured = $('.offer_featured').length == 0 || $('.offer_featured').prop('checked');
+
+      if(isFeatured) {
+        $('.featured-only').show();
+        $('.not-featured-only').hide();
+      } else {
+        $('.featured-only').hide();
+        $('.not-featured-only').show();
+      }
+    }
+
+    $('.featured_checkbox').change(showFeaturedOptions);
+    $('.offer_featured').change(showFeaturedOptions);
+    showFeaturedOptions();
+
+    // Preview functionality
+
+    $('button.preview').click(function(e) {
+      var baseURL = "/get_offers/featured.html?app_id=#{App::PREVIEW_PUBLISHER_APP_ID}&offer_id=#{offer.id}";
+      var dimensions = $('#preview_size').val().split('x');
+
+      var params = {
+        'height':      dimensions[1],
+        'offer_preview_attributes[featured]':              $('.offer_featured').prop('checked') || $('.offer_featured').length == 0,
+        'offer_preview_attributes[featured_ad_action]':    $('.offer_featured_ad_action').val(),
+        'offer_preview_attributes[featured_ad_content]':   $('.offer_featured_ad_content').val(),
+        'offer_preview_attributes[featured_ad_color]':     $('.offer_featured_ad_color').val()
+      };
+
+      baseURL += "&" + $.map(params, function(i, k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+
+      $.facebox($('<iframe />').css({width: parseInt(dimensions[0], 10) + 20, height: parseInt(dimensions[1], 10) + 20}).attr('src', baseURL));
+
+      e.preventDefault();
+    });
+
+    $('.feature-color-swatch').click(function() {
+      var value = $(this).attr('pattern_value')
+      $('.offer_featured_ad_color').val(value);
+
+      $('.feature-color-swatch').removeClass('selected')
+      $(this).addClass('selected');
+    });
+
+    $('.feature-color-swatch[pattern_value="#{offer.featured_ad_color}"]').click();

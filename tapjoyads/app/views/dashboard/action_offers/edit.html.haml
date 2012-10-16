@@ -38,6 +38,7 @@
           %td
             = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
             = error_message_on @action_offer, :primary_offer_payment
+        = render('dashboard/apps/offers_shared/featured_settings', :f => primary_offer_form, :show_featured_checkbox => true, :offer => @offer) 
       %tr
         %th
           = f.label :name, 'Action Name'
@@ -133,6 +134,18 @@
 
       %tr
         %td{ :colspan => 2 }= f.submit 'Save Action'
+
+      %tr
+        %td{ :colspan => 2 }= render('dashboard/offer_creatives/iframes', :offer => @action_offer.primary_offer, :app => @app, :show_featured_sizes_only => true)
+
+- content_for :page_styles do
+  :plain
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 35px;
+    }
+
 
 .hidden
   #help_name_content{ :name => 'Action Name' }

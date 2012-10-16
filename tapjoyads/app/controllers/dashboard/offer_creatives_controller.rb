@@ -46,6 +46,7 @@ class Dashboard::OfferCreativesController < Dashboard::DashboardController
   def setup
     @image_size = params[:image_size]
     @label = params[:label]
+    @desc = params[:desc]
     @offer = Offer.find(params[:id])
 
     # Okay this whole thing kind of hurts me, but we need this to work even when :app_id isn't a parameter.
@@ -77,7 +78,8 @@ class Dashboard::OfferCreativesController < Dashboard::DashboardController
       :action => :new,
       :id => @offer.id,
       :image_size => @image_size,
-      :label => @label
+      :label => @label,
+      :desc => @desc
     }
 
     # Strict type checks in case we haven't set @success (nil is falsy, we don't want to show an error when there isn't one)
