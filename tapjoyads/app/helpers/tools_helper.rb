@@ -65,13 +65,7 @@ module ToolsHelper
         classes << 'rewarded-failed'
       end
     end
-    if click.type =~ /install_jailbroken/ 
-      if click.currency_reward_zero?
-        classes << 'non-rewarded'
-      else 
-        classes << 'jailbroken'
-      end
-    end
+    classes << 'jailbroken'      if click.type =~ /install_jailbroken/
     classes << 'click-key-match' if click.key == params[:click_key]
     if click.block_reason =~ /TooManyUdidsForPublisherUserId|Banned/
       classes << 'blocked'
