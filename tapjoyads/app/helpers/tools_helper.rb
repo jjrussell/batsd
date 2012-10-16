@@ -54,20 +54,19 @@ module ToolsHelper
 
   def click_tr_class(click, reward)
     classes = []
-    # binding.pry
     if click.installed_at?
       if click.force_convert
         classes << 'forced'
       elsif (reward && reward.successful?)
         classes << 'rewarded'
-      elsif click.currency_reward == 0
+      elsif click.currency_reward_zero?
         classes << 'non-rewarded'                          
       else
         classes << 'rewarded-failed'
       end
     end
     if click.type =~ /install_jailbroken/ 
-      if click.currency_reward == 0
+      if click.currency_reward_zero?
         classes << 'non-rewarded'
       else 
         classes << 'jailbroken'

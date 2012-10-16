@@ -16,19 +16,19 @@ describe ToolsHelper do
 
     it 'checks rewarded click' do
       helper.click_tr_class(@click, @reward).should == 'rewarded'
-      @click.stub(:currency_reward).and_return(1)
+      @click.stub(:currency_reward_zero?).and_return(false)
       helper.click_tr_class(@click, nil).should == 'rewarded-failed'
-      @click.stub(:currency_reward).and_return(0)
+      @click.stub(:currency_reward_zero?).and_return(true)
       helper.click_tr_class(@click, nil).should == 'non-rewarded'
       @click.stub(:installed_at?).and_return(false)
       helper.click_tr_class(@click, nil).should == ''
     end
 
     it 'checks jailbroken' do
-      @click.stub(:currency_reward).and_return(1)
+      @click.stub(:currency_reward_zero?).and_return(false)
       @click.stub(:type).and_return('install_jailbroken')
       helper.click_tr_class(@click, @reward).should == 'rewarded jailbroken'
-      @click.stub(:currency_reward).and_return(0)
+      @click.stub(:currency_reward_zero?).and_return(true)
       helper.click_tr_class(@click, @reward).should == 'rewarded non-rewarded'
     end
 

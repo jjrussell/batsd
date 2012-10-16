@@ -264,7 +264,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
           @rewards[click.reward_key] = Reward.find(click.reward_key)
           if click.force_convert
             @force_converted_count += 1
-          elsif click.currency_reward == 0
+          elsif click.currency_reward_zero?
             @non_rewarded_count += 1
           elsif @rewards[click.reward_key] && @rewards[click.reward_key].successful?
             @rewarded_clicks_count += 1
