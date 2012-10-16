@@ -23,14 +23,8 @@
         %td= client.name
         %td= client.payment_type || '(none)'
         %td
-          - partner_count = 0
-          - client.partners.take(5).each do |partner|
+          - client.partners.each do |partner|
             = link_to(partner.name||'(no name)', partner)
-            - partner_count += 1
-          - if partner_count == 5
-            - remaining_count = client.partners.count - 5
-            - if remaining_count > 0
-              = "(and #{remaining_count} more)"
         - if permitted_to?(:edit, :dashboard_tools_clients)
           %td= link_to '[Edit]', edit_tools_client_path(client)
           %td= link_to '[Manage partners]', tools_client_path(client.id)
