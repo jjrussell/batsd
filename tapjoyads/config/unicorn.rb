@@ -19,6 +19,9 @@ elsif server_type == "dev"
 elsif server_type == 'webserver'
   worker_processes 12
   timeout 90
+elsif server_type == 'offers'
+  worker_processes 12
+  timeout 90
 elsif server_type == 'connect'
   worker_processes 24
   timeout 20
