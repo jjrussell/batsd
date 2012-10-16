@@ -56,6 +56,8 @@ module Tapjoyad
                         %w( web legacy global )
                       when 'connect'
                         %w( web legacy global )
+                      when 'offers'
+                        %w( web legacy global )
                       when 'jobserver'
                         %w( job global )
                       else
