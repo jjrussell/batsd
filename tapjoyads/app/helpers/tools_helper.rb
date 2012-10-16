@@ -59,6 +59,8 @@ module ToolsHelper
         classes << 'forced'
       elsif (reward && reward.successful?)
         classes << 'rewarded'
+      elsif click.currency_reward_zero?
+        classes << 'non-rewarded'                          
       else
         classes << 'rewarded-failed'
       end

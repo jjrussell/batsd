@@ -158,6 +158,10 @@ class Click < SimpledbShardedResource
     end
   end
 
+  def currency_reward_zero?
+    currency_reward == 0
+  end
+
   private
 
   def url_to_resolve
