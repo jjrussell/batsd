@@ -340,8 +340,8 @@ class Offer < ActiveRecord::Base
 
   #returns subset of attribute with entries matching all props
   def filter_attribute(attribute, props = {})
-    self.send(attribute).reject do |offer|
-      (props.present? && props.detect() { |prop,val| offer.send(prop) != val })
+    send(attribute).reject do |offer|
+      props.detect { |prop,val| offer.send(prop) != val }
     end
   end
 
