@@ -1,81 +1,49 @@
 require 'spec_helper'
 
 describe VideoOffer do
-
   subject { FactoryGirl.create(:video_offer) }
+  before(:each) do
+    subject.stub(:video_exists => true, :cache => true)
+  end
 
   context 'when associating' do
-    it 'has many' do
-      should have_many :offers
-      should have_many :video_buttons
-    end
-
-    it 'has one' do
-      should have_one :primary_offer
-    end
-
-    it 'belongs to' do
-      should belong_to :partner
-    end
+    it { should have_many :offers }
+    it { should have_many :video_buttons }
+    it { should have_one :primary_offer }
+    it { should belong_to :partner }
   end
 
   context 'when validating' do
-    it 'validates presence of' do
-      should validate_presence_of :partner
-      should validate_presence_of :name
-    end
+    it { should validate_presence_of :partner }
+    it { should validate_presence_of :name }
   end
 
-  context "A Video Offer" do
-    before :each do
-      @video_offer = FactoryGirl.create(:video_offer)
-    end
-
-    it "updates video_offer's name" do
-      @video_offer.update_attributes({:name => 'changed_offer_name_1'})
-      @video_offer.name.should == 'changed_offer_name_1'
-    end
-
-    it "updates video_offer's hidden field" do
-      @video_offer.update_attributes({:hidden => true})
-      @video_offer.should be_hidden
-    end
-  end
-
-  context "A Video Offer with a primary_offer" do
-    before :each do
-      @video_offer = FactoryGirl.create(:video_offer)
-      @offer = @video_offer.primary_offer
-    end
+  context "with a primary_offer" do
+    let(:offer) { subject.primary_offer }
+    let(:name) { 'changed_offer_name_2' }
 
     it "updates the primary_offer's name when video_offer's name is changed" do
-      @video_offer.update_attributes({:name => 'changed_offer_name_2'})
-      @offer.update_attributes({:name => 'changed_offer_name_2'})
-      @video_offer.reload
-      @offer.name.should == 'changed_offer_name_2'
+      subject.update_attributes!(:name => name)
+      offer.reload
+      offer.name.should == name
     end
 
     it "has value stored in url of the primary_offer after video_offer created" do
-      @offer.url.should == @video_offer.video_url
+      offer.url.should == subject.video_url
     end
   end
 
-  context "A Video Offer with multiple video_buttons" do
-    subject {FactoryGirl.create(:video_offer, :app_targeting => app_targeting)}
-    let(:app_targeting) {false}
+  context "with multiple video_buttons" do
+    subject { FactoryGirl.create(:video_offer, :app_targeting => app_targeting) }
+    let(:app_targeting) { false }
     let(:buttons) do
-      3.times do |i|
-        Factory(:video_button, :video_offer => subject, :ordinal => i)
-      end
-      subject.reload
-      subject.video_buttons
+      3.times.map do |i|
+        FactoryGirl.create(:video_button, :video_offer => subject, :ordinal => i)
+      end.tap { subject.reload }
     end
 
     context 'given three enabled buttons' do
-      before(:each) do
-        buttons
-        subject.reload
-      end
+      before(:each) { buttons } # Force create the buttons
 
       it 'makes buttons enabled by default' do
         subject.video_buttons.enabled.size.should == 3
@@ -83,7 +51,8 @@ describe VideoOffer do
     end
 
     context 'given two enabled buttons (one of which was formerly enabled)' do
-      let(:button) {buttons.last}
+      let(:button) { buttons.last }
+
       before(:each) do
         button.enabled = false
         button.save!
@@ -96,34 +65,31 @@ describe VideoOffer do
     end
 
     describe '#video_buttons_for_device_type' do
-      before(:each) do
-        @buttons = {}
-
+      let(:platform_buttons) do
         types = [%w(iphone android), %w(iphone), %w(android)]
-        buttons.each do |button|
+        platforms = Hash[buttons.map do |button|
           type = types.shift
           # ensure that tracking_offer.enabled? == true
-          button.tracking_offer.update_attributes(:device_types => type.to_json,
-                                                  :user_enabled => true,
-                                                  :payment      => 0,
-                                                  :reward_value => 1)
-          button.tracking_offer.update_attribute(:rewarded, true) if type.size > 1
-          @buttons[type.size > 1 ? 'rewarded' : type] = button
-        end
+          button.tracking_offer.update_attributes!(:device_types => type.to_json,
+                                                  :tapjoy_enabled => true)
+          button.tracking_offer.update_attributes!(:rewarded => true, :reward_value => 1) if type.size > 1
 
+          [(type.size > 1 ? 'rewarded' : type), button]
+        end]
         subject.reload
+        platforms
       end
 
       context 'with an iphone device' do
         let(:device) { 'iphone' }
-        let(:filtered_out) { @buttons['android'] }
+        let(:filtered_out) { platform_buttons['android'] }
 
         it 'filters out non-iphone offers' do
           subject.video_buttons_for_device_type(device).should_not include(filtered_out)
         end
 
         context 'and a rewarded PPI button' do
-          let(:filtered_out) { @buttons['rewarded'] }
+          let(:filtered_out) { platform_buttons['rewarded'] }
 
           it 'filters out the rewarded install offer' do
             subject.video_buttons_for_device_type(device).should_not include(filtered_out)
@@ -131,7 +97,7 @@ describe VideoOffer do
         end
 
         context 'and a rewarded non-PPI button' do
-          let(:filtered_out) { @buttons['rewarded'] }
+          let(:filtered_out) { platform_buttons['rewarded'] }
           before(:each) do
             gen_offer = Factory(:generic_offer)
             # ensure that tracking_offer.enabled? == true
@@ -152,7 +118,7 @@ describe VideoOffer do
 
       context 'with an itouch device and a rewarded install offer' do
         let(:device) { 'itouch' }
-        let(:filtered_out) { @buttons['rewarded'] }
+        let(:filtered_out) { platform_buttons['rewarded'] }
 
         it 'filters out the rewarded install offer' do
           subject.video_buttons_for_device_type(device).should_not include(filtered_out)
@@ -161,7 +127,7 @@ describe VideoOffer do
 
       context 'with an ipad device and a rewarded install offer' do
         let(:device) { 'ipad' }
-        let(:filtered_out) { @buttons['rewarded'] }
+        let(:filtered_out) { platform_buttons['rewarded'] }
 
         it 'filters out the rewarded install offer' do
           subject.video_buttons_for_device_type(device).should_not include(filtered_out)
@@ -170,7 +136,7 @@ describe VideoOffer do
 
       context 'with an android device' do
         let(:device) { 'android' }
-        let(:filtered_out) { @buttons['iphone'] }
+        let(:filtered_out) { platform_buttons['iphone'] }
 
         it 'filters out non-android offers' do
           subject.video_buttons_for_device_type(device).should_not include(filtered_out)
@@ -178,15 +144,17 @@ describe VideoOffer do
       end
 
       context 'with a non-mobile device' do
+        before(:each) { buttons } # Force creation of buttons
         it 'does not filter any buttons out' do
           subject.video_buttons_for_device_type(nil).length.should == 3
         end
       end
     end
 
-    describe '#distribution_rejeect?' do
+    describe '#distribution_reject?' do
       context "when not app_targeting" do
-        let(:app_targeting?) { false }
+        let(:app_targeting) { false }
+
         context "without video buttons for specified store" do
           it "should not reject" do
             subject.distribution_reject?('astore').should be_false
@@ -201,8 +169,9 @@ describe VideoOffer do
       end
 
       context "when app_targeting" do
-          let(:app_targeting) {true}
-          context "without video buttons for specified store" do
+        let(:app_targeting) { true }
+
+        context "without video buttons for specified store" do
           it "should reject" do
             subject.distribution_reject?('astore').should be_true
           end
@@ -215,35 +184,8 @@ describe VideoOffer do
         end
       end
     end
+  end
 
-    # @video_offer = FactoryGirl.create(:video_offer)
-    # @video_button_1 = @video_offer.video_buttons.build
-    # @video_button_1.name = "button 1"
-    # @video_button_1.url = "http://www.tapjoy.com"
-    # @video_button_1.ordinal = 1
-    # @video_button_1.save!
-    # @video_button_2 = @video_offer.video_buttons.build
-    # @video_button_2.name = "button 2"
-    # @video_button_2.url = "http://www.tapjoy.com"
-    # @video_button_2.ordinal = 2
-    # @video_button_2.save!
-    # @video_button_3 = @video_offer.video_buttons.build
-    # @video_button_3.name = "button 3"
-    # @video_button_3.url = "http://www.tapjoy.com"
-    # @video_button_3.ordinal = 3
-    # @video_button_3.save!
-    # @video_offer.reload
-
-    # it "has only 2 enabled buttons" do
-    #   subject.video_buttons.enabled.size.should == 3
-    #   subject.should_not be_valid_for_update_buttons
-    #
-    #   button_3.enabled = false
-    #   button_3.save!
-    #
-    #   subject.reload
-    #   subject.video_buttons_enabled.size.should == 2
-    #   subject.should be_valid_for_update_buttons
-    # end
+  describe '#available_trackable_offers' do
   end
 end
