@@ -9,7 +9,7 @@
 .clear
 
 %form#change_date.tjform
-  = render :partial => 'shared/date_range_and_platform'
+  = render :partial => 'shared/date_range_and_platform', :locals => { :store_options => @store_options }
 
 .clear
 

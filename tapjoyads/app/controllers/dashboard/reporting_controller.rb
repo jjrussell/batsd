@@ -67,12 +67,17 @@ class Dashboard::ReportingController < Dashboard::DashboardController
 
   def aggregate
     @partner = current_partner
+    @store_options = {}
+    AppStore::SDK_STORE_NAMES.each do |k, v|
+      @store_options[AppStore.find(v).name] = k
+    end
     respond_to do |format|
       format.html do
         render 'shared/aggregate'
       end
       format.json do
-        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner') }
+        store_name = params[:store_name] if params[:store_name].present?
+        options = { :start_time => @start_time, :end_time => @end_time, :granularity => @granularity, :include_labels => true, :stat_prefix => get_stat_prefix('partner'), :store_name => store_name }
         @appstats = Appstats.new(@partner.id, options)
         render :json => { :data => @appstats.graph_data }
       end

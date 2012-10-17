@@ -131,6 +131,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def global
+    @store_options = {}
+    AppStore::SDK_STORE_NAMES.each do |k, v|
+      @store_options[AppStore.find(v).name] = k
+    end
     respond_to do |format|
       format.html do
       end
