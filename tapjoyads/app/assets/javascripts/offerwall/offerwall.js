@@ -45,7 +45,7 @@
     },
     tpl: {
       banner: ['<div class="clearfix">'+
-                '<div class="left"><div class="left text mt8">{earn} {currency}</div></div>'+
+                '<div class="left"><div class="earn text mt8">{earn} {currency}</div></div>'+
                   '<div class="right"><div class="text">{offers}&nbsp;</div><div class="logo mr5"><img src="{blank}" /></div></div>'+
                 '</div>',
                 '<div class="text">{offers}&nbsp;</div><div class="logo"><img src="{blank}" /></div>'
