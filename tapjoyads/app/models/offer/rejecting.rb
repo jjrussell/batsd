@@ -80,7 +80,7 @@ module Offer::Rejecting
     age_rating_reject?(currency.max_age_rating) ||
     publisher_whitelist_reject?(publisher_app) ||
     currency_whitelist_reject?(currency) ||
-    video_offers_reject?(video_offer_ids, type, all_videos) ||
+    video_offers_reject?(video_offer_ids, type, all_videos, library_version) ||
     frequency_capping_reject?(device) ||
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
@@ -323,7 +323,10 @@ module Offer::Rejecting
     publisher_app && cookie_tracking? && source != 'tj_games' && publisher_app.platform == 'iphone' && !library_version.version_greater_than_or_equal_to?('8.0.3')
   end
 
-  def video_offers_reject?(video_offer_ids, type, all_videos)
+  def video_offers_reject?(video_offer_ids, type, all_videos, library_version)
+    # reject video featured ad in old SDK
+    return true if type == Offer::FEATURED_OFFER_TYPE && library_version.version_less_than?('9.0.0')
+
     return false if type == Offer::VIDEO_OFFER_TYPE || all_videos
 
     video_offer? && !video_offer_ids.include?(id)

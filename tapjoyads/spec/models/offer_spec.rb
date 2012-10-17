@@ -441,7 +441,6 @@ describe Offer do
     @offer.send(:miniscule_reward_reject?, currency).should be_false
   end
 
-
   describe '.for_offer_list' do
     INCLUDED_COLUMNS = %w{
       id item_id item_type partner_id name url price bid payment conversion_rate show_rate
@@ -455,6 +454,7 @@ describe Offer do
       exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
       optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
       requires_udid requires_mac_address native_rank_score
+      featured_ad_action featured_ad_color featured_ad_content
     }
 
     EXCLUDED_COLUMNS = %w{
@@ -484,7 +484,6 @@ describe Offer do
         columns.should_not include column
       end
     end
-
   end
 
   context "with min_bid_override set" do

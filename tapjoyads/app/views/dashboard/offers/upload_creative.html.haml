@@ -1,4 +1,4 @@
-- url = upload_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size, :label => @label)
+- url = upload_creative_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => @image_size, :label => @label, :desc => @desc)
 - pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists

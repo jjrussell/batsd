@@ -1,4 +1,4 @@
-- url = form_offer_creative_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app)
+- url = form_offer_creative_path(:id => @offer.id, :image_size => @image_size, :label => @label, :app_id => @app, :desc => @desc)
 - pending = @offer.has_banner_creative?(@image_size) && !@offer.banner_creative_approved?(@image_size)
 
 - if @creative_exists
@@ -10,6 +10,8 @@
       %tr
         %th
           = f.label("custom_creative_#{@image_size}", "#{@label} creative", :class => (pending ? 'pending' : ''))
+          %br
+          .description #{@desc}
         %td
           %table
             - unless @success_message.blank?
@@ -19,9 +21,8 @@
             %tr#controls
               %td
                 - if @creative_exists
-                  - if @app.present?
-                    = link_to("View existing file", '#', :class => 'view_link')
-                    |
+                  = link_to("View existing file", '#', :class => 'view_link')
+                  |
                   = link_to("Remove existing file", '#', :id => "remove_link")
                 - else
                   = f.file_field("custom_creative_#{@image_size}")
@@ -128,4 +129,8 @@
     }
     #success_message {
       color: green;
+    }
+    .description {
+      clear: both;
+      font-size: 80%;
     }

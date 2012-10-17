@@ -252,7 +252,8 @@ describe Dashboard::OffersController do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(false)
         @safe_attributes = [:daily_budget, :user_enabled, :bid, :self_promote_only,
           :min_os_version, :screen_layout_sizes, :countries, :prerequisite_offer_id,
-          :exclusion_prerequisite_offer_ids, :daily_cap_type]
+          :exclusion_prerequisite_offer_ids, :daily_cap_type,
+          :featured_ad_action, :featured_ad_content, :featured_ad_color]
 
         @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
         @offer = mock('offer')

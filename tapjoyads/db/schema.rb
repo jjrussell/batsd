@@ -73,9 +73,9 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.string   "categories"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "papaya_user_count"
     t.integer  "thumbs_up",                         :default => 0
     t.integer  "thumbs_down",                       :default => 0
+    t.integer  "papaya_user_count"
     t.text     "countries_blacklist"
     t.text     "languages"
     t.text     "screenshots"
@@ -291,8 +291,8 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
+    t.text     "promoted_offers",                                                                                           :null => false
     t.text     "store_whitelist",                                                                                           :null => false
   end
 
@@ -793,43 +793,46 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.float    "normal_avg_revenue",                                                            :default => 0.0,   :null => false
     t.float    "normal_bid",                                                                    :default => 0.0,   :null => false
     t.integer  "over_threshold",                                                                :default => 0,     :null => false
-    t.boolean  "rewarded",                                                                      :default => true
     t.string   "reseller_id",                       :limit => 36
+    t.boolean  "rewarded",                                                                      :default => true
     t.boolean  "cookie_tracking",                                                               :default => false, :null => false
     t.string   "min_os_version",                                                                :default => "",    :null => false
     t.text     "screen_layout_sizes",                                                                              :null => false
-    t.integer  "interval",                                                                      :default => 0,     :null => false
-    t.boolean  "url_overridden",                                                                :default => false, :null => false
-    t.text     "banner_creatives"
-    t.text     "dma_codes",                                                                                        :null => false
     t.text     "regions",                                                                                          :null => false
-    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
+    t.integer  "interval",                                                                      :default => 0,     :null => false
+    t.text     "banner_creatives"
+    t.boolean  "url_overridden",                                                                :default => false, :null => false
+    t.text     "dma_codes",                                                                                        :null => false
     t.boolean  "tapjoy_sponsored",                                                              :default => false, :null => false
-    t.boolean  "wifi_only",                                                                     :default => false, :null => false
-    t.text     "approved_banner_creatives"
+    t.boolean  "instructions_overridden",                                                       :default => false, :null => false
     t.text     "approved_sources",                                                                                 :null => false
+    t.text     "approved_banner_creatives"
+    t.boolean  "wifi_only",                                                                     :default => false, :null => false
     t.boolean  "sdkless",                                                                       :default => false
-    t.text     "carriers",                                                                                         :null => false
     t.string   "tracking_for_type"
     t.string   "tracking_for_id",                   :limit => 36
+    t.text     "carriers",                                                                                         :null => false
     t.text     "cities",                                                                                           :null => false
     t.text     "impression_tracking_urls"
     t.text     "click_tracking_urls"
     t.text     "conversion_tracking_urls"
+    t.string   "app_metadata_id",                   :limit => 36
     t.text     "account_manager_notes"
+    t.string   "source_offer_id",                   :limit => 36
     t.text     "creatives_dict"
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                                                 :null => false
-    t.string   "app_metadata_id",                   :limit => 36
-    t.string   "source_offer_id",                   :limit => 36
     t.integer  "audition_factor",                                                               :default => 3,     :null => false
     t.boolean  "rate_filter_override",                                                          :default => false, :null => false
     t.integer  "optimized_rank_boost",                                                          :default => 0,     :null => false
+    t.string   "daily_cap_type"
     t.text     "x_partner_prerequisites",                                                                          :null => false
     t.text     "x_partner_exclusion_prerequisites",                                                                :null => false
-    t.string   "daily_cap_type"
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
+    t.text     "featured_ad_content"
+    t.string   "featured_ad_action"
+    t.string   "featured_ad_color"
     t.boolean  "auto_update_icon",                                                              :default => false
     t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
   end
@@ -927,9 +930,9 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "approved_publisher",                                                        :default => false,     :null => false
     t.boolean  "apsalar_sharing_adv",                                                       :default => false,     :null => false
     t.boolean  "apsalar_sharing_pub",                                                       :default => false,     :null => false
-    t.string   "reseller_id",                   :limit => 36
     t.string   "billing_email"
     t.integer  "freshbooks_client_id"
+    t.string   "reseller_id",                   :limit => 36
     t.boolean  "accepted_publisher_tos"
     t.string   "sales_rep_id",                  :limit => 36
     t.decimal  "max_deduction_percentage",                    :precision => 8, :scale => 6, :default => 1.0,       :null => false
@@ -1227,9 +1230,9 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.string   "video_url"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "app_targeting",                                   :default => false, :null => false
     t.string   "prerequisite_offer_id",             :limit => 36
     t.text     "exclusion_prerequisite_offer_ids",                                   :null => false
-    t.boolean  "app_targeting",                                   :default => false, :null => false
     t.text     "x_partner_prerequisites",                                            :null => false
     t.text     "x_partner_exclusion_prerequisites",                                  :null => false
   end

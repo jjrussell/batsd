@@ -60,20 +60,66 @@
           Offer Name
           #help_offer_name.help ?
         %td= @offer.name
-      %tr{ :class => (@app.store_id? ? '' : 'hidden')}
+      %tr
         %th
-          = f.label "View Ads"
-          #help_view_ads.help ?
+          = f.label :name, 'Prerequisite'
+          #help_prerequisite.help ?
         %td
-          - if @offer.featured?
-            - @offer.banner_creative_sizes_with_labels.each do |size_hash|
-              = link_to("Preview #{size_hash[:label]} ads", offer_creative_path(:offer_creative_id => @offer.id, :image_size => size_hash[:size]), :rel => 'facebox', :id => 'preview_link')
-              %br
-          - else
-            = link_to("Preview ads", offer_creative_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
-
+          - offer_options = options_for_prerequisites(@offer)
+          - prerequisites_options = offer_options
+          - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || @offer.prerequisite_offer_id.blank?))
+          = f.select :prerequisite_offer_id, prerequisites_options
+          = error_message_on @offer, :prerequisite_offer_id
+      %tr
+        %th
+          = f.label :name, 'Exclusion Prerequisites'
+          #help_exclusion_prerequisites.help ?
+        %td
+          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+          = error_message_on @offer, :exclusion_prerequisite_offer_ids
+      - if !@offer.featured?
+        %tr{ :class => (@app.store_id? ? '' : 'hidden')}
+          %th
+            = f.label "View Ads"
+            #help_view_ads.help ?
+          %td
+            - if @offer.featured?
+              - @offer.banner_creative_sizes_with_labels.each do |size_hash|
+                = link_to("Preview #{size_hash[:label]} ads", offer_creative_path(:offer_creative_id => @offer.id, :image_size => size_hash[:size]), :rel => 'facebox', :id => 'preview_link')
+                %br
+            - else
+              = link_to("Preview ads", offer_creative_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
+      %tr
+        %th
+          = f.label :daily_budget, 'Conversions Cap'
+          #help_daily.help ?
+        %td.daily_budget
+          = label_tag :daily_budget_off, 'Unlimited'
+          = radio_button_tag('daily_budget', 'off', @offer.daily_budget <= 0, :class => 'togglable')
+          &nbsp;
+          = label_tag :daily_budget_on, 'Daily Limit'
+          = radio_button_tag('daily_budget', 'on', @offer.daily_budget > 0, :class => 'togglable')
+          - budget_fields_class = @offer.daily_budget > 0 ? '' : 'hidden'
+          #daily_budget_fields{ :class => budget_fields_class }
+            %table.daily_caps
+              %tr
+                %td
+                  = f.radio_button(:daily_cap_type, :installs, :class => 'cap_type togglable')
+                  = f.label(:daily_cap_type, 'Daily Installs:', :value => :installs, :class => 'installs daily_alloc_label')
+                %td
+                  = f.text_field(:daily_budget, :class => "togglable installs #{@offer.daily_cap_type == :installs ? '' : 'hidden'}")
+                  #offer_daily_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :installs ? 'hidden' : ''}"}
+                    = @offer.daily_budget
+              %tr
+                %td
+                  = f.radio_button(:daily_cap_type, :budget, :class => 'cap_type toggleable')
+                  = f.label(:daily_cap_type, 'Daily Budget:', :value => :budget, :class => 'budget daily_alloc_label')
+                %td
+                  = text_field_tag('estimated_budget', '', :class => "togglable estimated_budget #{@offer.daily_cap_type == :budget ? '' : 'hidden'}", :size => 20)
+                  #estimated_budget_read_only{ :class => "daily_alloc #{@offer.daily_cap_type == :budget ? 'hidden' : ''}"}
+            = error_message_on @offer, :daily_budget
       = render 'dashboard/apps/offers_shared/daily_budget', :f => f
-
       %tr
         %th
         %td.premier
@@ -123,6 +169,7 @@
           = f.select(:min_os_version, @app.os_versions, :include_blank => 'No Minimum')
           = error_message_on(@offer, :min_os_version)
       = render('dashboard/apps/offers_shared/countries', :f => f)
+      = render('dashboard/apps/offers_shared/featured_settings', :f => f, :offer => @offer) if @offer.featured
 
       - if permitted_to?(:edit, :dashboard_statz)
         = render('dashboard/apps/offers_shared/admin_fields', :f => f)
@@ -300,7 +347,6 @@
   - if params[:show_preview] == 'true'
     :plain
       $.facebox({ajax: "#{preview_app_offer_path(:id => @offer.id, :app_id => @app.id, :image_size => params[:preview_image_size], :preview => 'true')}"});
-
   :plain
     });
 

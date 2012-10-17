@@ -7,8 +7,17 @@ module Offer::BannerCreatives
       serialize :creatives_dict, Hash
 
       const_set(:DISPLAY_AD_SIZES, ['320x50', '640x100', '768x90']) # data stored as pngs
-      const_set(:FEATURED_AD_SIZES, ['960x640', '640x960', '480x320', '320x480']) # data stored as jpegs
-      const_set(:ALL_CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES)
+
+      const_set(:FEATURED_AD_LEGACY_SIZES, ['960x640', '640x960', '480x320', '320x480']) # data stored as jpegs
+      const_set(:FEATURED_AD_LANDSCAPE_SIZES, ['300x250', '1000x490'])
+      const_set(:FEATURED_AD_PORTRAIT_SIZES, ['300x250', '748x720'])
+      const_set(:FEATURED_AD_SIZES, (Offer::FEATURED_AD_PORTRAIT_SIZES + Offer::FEATURED_AD_LANDSCAPE_SIZES).uniq) # data stored as jpegs
+
+      const_set(:ALL_CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + Offer::FEATURED_AD_LEGACY_SIZES)
+
+      # To support legacy featured ad custom creatives, we need some additional categories to check
+      const_set(:FEATURED_AD_ALL_SIZES, Offer::FEATURED_AD_SIZES + Offer::FEATURED_AD_LEGACY_SIZES)
+      const_set(:FEATURED_AD_PREVIEW_SIZES, ['960x640', '640x960', '480x320', '320x480'])
 
       Offer::ALL_CUSTOM_AD_SIZES.each do |size|
         attr_accessor "banner_creative_#{size}_blob".to_sym
@@ -44,17 +53,38 @@ module Offer::BannerCreatives
   end
 
   def banner_creative_sizes_with_labels
-    banner_creative_sizes.collect do |size|
-      data = {:size => size, :label => size.dup}
+    @banner_creative_sizes_with_labels ||= begin
+      banner_creative_sizes(true).uniq.collect do |size|
+        next unless Offer::FEATURED_AD_SIZES.include?(size) || banner_creatives.include?(size)
 
-      if featured?
-        width, height = size.split('x').map(&:to_i)
-        orientation = (width > height) ? 'landscape' : 'portrait';
-        data[:label] << " #{orientation}"
+        data = {:size => size, :label => size.dup, :desc => ''}
+
+        if featured? && Offer::FEATURED_AD_SIZES.include?(size) # only apply for 2012 new featured ad
+          if (Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size) && Offer::FEATURED_AD_PORTRAIT_SIZES.include?(size))
+            orientation = 'landscape/portrait'
+          elsif Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size)
+            orientation = 'landscape'
+          else
+            orientation = 'portrait'
+          end
+
+          w,h = size.split('x')
+          device = w.to_i > 500 ? 'tablet' : 'phone'
+
+          data[:desc] << "#{device} #{orientation}"
+        end
+
+        data
       end
-
-      data
     end
+    @banner_creative_sizes_with_labels.compact!
+  end
+
+  def featured_ad_preview_sizes_with_labels
+    @featured_ad_preview_sizes_with_labels ||= Offer::FEATURED_AD_PREVIEW_SIZES.map{ |s|
+      w,h = s.split('x')
+      {:label => "#{s} #{w.to_i > 500 ? 'tablet' : 'phone'} #{w < h ? 'portrait' : 'landscape'}", :size => s}
+    }
   end
 
   def should_update_approved_banner_creatives?
@@ -100,7 +130,7 @@ module Offer::BannerCreatives
   end
 
   def banner_creative_format(size)
-    return 'jpeg' if Offer::FEATURED_AD_SIZES.include? size
+    return 'jpeg' if Offer::FEATURED_AD_ALL_SIZES.include? size
     'png'
   end
 
@@ -111,6 +141,7 @@ module Offer::BannerCreatives
 
   def banner_creative_url(options)
     use_cloudfront = options.fetch(:use_cloudfront, true)
+
     base = use_cloudfront ? CLOUDFRONT_URL : "https://s3.amazonaws.com/#{BucketNames::TAPJOY}"
 
     url = "#{base}/#{banner_creative_path(options[:size], options[:format])}"
@@ -140,7 +171,8 @@ module Offer::BannerCreatives
   end
 
   def featured_custom_creative?
-    banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+    # featured custom creatives are the "old" style legacy fullscreen custom creatives.
+    banner_creatives.any? { |size| Offer::ALL_CUSTOM_AD_SIZES.include?(size) }
   end
 
   private
