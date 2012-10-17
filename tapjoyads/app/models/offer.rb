@@ -262,8 +262,7 @@ class Offer < ActiveRecord::Base
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
-  scope :enabled, where(:user_enabled => true, :tapjoy_enabled => true)
-  scope :active, enabled.joins(:partner).where("item_type = 'deep_link' OR ((payment > 0 and partners.balance > 0) or (payment = 0 and reward_value > 0))")
+  scope :active, not_tracking.with_allowed_types.enabled_by_user.enabled_by_tapjoy.joins(:partner).where("item_type = 'deep_link' OR ((payment > 0 and partners.balance > 0) or (payment = 0 and reward_value > 0))")
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   scope :papaya_app_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
