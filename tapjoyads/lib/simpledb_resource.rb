@@ -181,7 +181,7 @@ class SimpledbResource
       @attributes_to_replace.clear
       @attributes_to_delete.clear
       @attribute_names_to_delete.clear
-      @changed_attributes.clear
+      self.changed_attributes.clear
     end
   rescue ExpectedAttributeError => e
     if save_to_memcache
