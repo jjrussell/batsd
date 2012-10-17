@@ -96,6 +96,7 @@ class Offer < ActiveRecord::Base
   attr_accessor :cached_offer_list_id
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
+  has_many :associated_offers, :class_name => 'Offer', :foreign_key => :item_id, :primary_key => 'item_id', :conditions => proc { ["id != ?",  id] }
   has_many :rank_boosts
   has_many :enable_offer_requests
   has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
@@ -335,6 +336,22 @@ class Offer < ActiveRecord::Base
   def all_blacklisted?
     whitelist = get_countries
     whitelist.present? && (whitelist - countries_blacklist).blank?
+  end
+
+  #returns subset of attribute with entries matching all props
+  def filter_attribute(attribute, props = {})
+    send(attribute).reject do |offer|
+      props.detect { |prop,val| offer.send(prop) != val }
+    end
+  end
+
+  def tapjoy_enabled_associated_offers
+    filter_attribute('associated_offers', :tapjoy_enabled? => true, :rewarded? => rewarded?, :featured? => featured?)
+  end
+
+
+  def tapjoy_disabled_associated_offers
+    filter_attribute('associated_offers', :tapjoy_enabled? => false, :rewarded? => rewarded?, :featured? => featured?)
   end
 
   def find_associated_offers
