@@ -62,13 +62,16 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def available_trackable_offers(selected_video_button)
-    ids_to_exclude = self.video_buttons.map { |r| [ r.item_id, r.tracking_offer.try(:app_metadata_id)] }.compact
-    ids_to_exclude -= [[selected_video_button.item_id, selected_video_button.tracking_offer.try(:app_metadata_id)]]
-    partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at).reject do |r|
-      ids_to_exclude.include?([r.item_id, r.app_metadata_id]) ||
-      r.item.hidden? ||
-      ( r.app_offer? && r.app_metadata_id.blank? ) ||
-      r.item_id == id
+    buttons   = video_buttons.reject { |vb| vb == selected_video_button }
+    excluding = buttons.map { |vb| [vb.item_id, vb.tracking_offer.app_metadata_id] }
+
+    offers = partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at)
+    offers.reject do |offer|
+      !offer.tapjoy_enabled? ||
+        excluding.include?([offer.item_id, offer.app_metadata_id]) ||
+        offer.item.hidden? ||
+        (offer.app_offer? && offer.app_metadata_id.blank?) ||
+        offer.item_id == self.id
     end
   end
 

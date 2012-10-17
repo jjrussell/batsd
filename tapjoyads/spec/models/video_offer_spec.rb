@@ -187,5 +187,48 @@ describe VideoOffer do
   end
 
   describe '#available_trackable_offers' do
+    let(:button) { FactoryGirl.build(:video_button, :video_offer => subject) }
+
+    context 'given an app' do
+      let(:app) { FactoryGirl.create(:app, :partner => subject.partner) }
+      let(:offer) { app.primary_offer }
+
+      context 'when the parter has a disabled app offer' do
+        before(:each) { offer.update_attributes!(:tapjoy_enabled => false) }
+
+        it 'does not include the disabled app' do
+          subject.available_trackable_offers(button).should_not include(offer)
+        end
+      end
+
+      context 'when the partner has an enabled app' do
+        before(:each) { offer.update_attributes!(:tapjoy_enabled => true) }
+
+        it 'includes the enabled app' do
+          subject.available_trackable_offers(button).should include(offer)
+        end
+
+        context 'and a button exists with the app' do
+          before(:each) do
+            button.tracking_source_offer = offer
+            button.save!
+          end
+
+          context 'given the same button' do
+            it 'includes the app' do
+              subject.available_trackable_offers(button).should include(offer)
+            end
+          end
+
+          context 'given a new button' do
+            let(:button2) { FactoryGirl.build(:video_button, :video_offer => subject) }
+
+            it 'does not include the app' do
+              subject.available_trackable_offers(button2).should_not include(offer)
+            end
+          end
+        end
+      end
+    end
   end
 end
