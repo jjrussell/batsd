@@ -1,0 +1,346 @@
+---
+recorded_with: VCR 2.2.5
+http_interactions:
+- request:
+    method: get
+    uri: http://api.payrad.com/PayerFunctions.asmx?WSDL
+    body:
+      string: ""
+    headers:
+      accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      date:
+      - Fri, 05 Oct 2012 20:35:24 GMT
+      p3p:
+      - CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"
+      content-type:
+      - text/xml; charset=utf-8
+      server:
+      - Microsoft-IIS/7.5
+      x-powered-by:
+      - ASP.NET
+      x-aspnet-version:
+      - 4.0.30319
+      cache-control:
+      - private, max-age=0
+      content-length:
+      - "14900"
+    body:
+      string: |-
+        <?xml version="1.0" encoding="utf-8"?>
+        <wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://Tipalti.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://Tipalti.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+          <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Payer functions.</wsdl:documentation>
+          <wsdl:types>
+            <s:schema elementFormDefault="qualified" targetNamespace="http://Tipalti.org/">
+              <s:element name="TestPaymentFile">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="payerName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="timestamp" type="s:double" />
+                    <s:element minOccurs="0" maxOccurs="1" name="key" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="totalAmount" type="s:double" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:element name="TestPaymentFileResponse">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="TestPaymentFileResult" type="tns:TipaltiProcessPaymentResponse" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:complexType name="TipaltiProcessPaymentResponse">
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="1" name="errorMessage" type="s:string" />
+                  <s:element minOccurs="1" maxOccurs="1" name="errorCode" type="tns:WSErrors" />
+                  <s:element minOccurs="0" maxOccurs="1" name="LineErrorsOrWarning" type="tns:ArrayOfLineErrorOrWarning" />
+                  <s:element minOccurs="0" maxOccurs="1" name="resultsFile" type="s:string" />
+                </s:sequence>
+              </s:complexType>
+              <s:simpleType name="WSErrors">
+                <s:restriction base="s:string">
+                  <s:enumeration value="UnknownError" />
+                  <s:enumeration value="OK" />
+                  <s:enumeration value="UnknownCountryCode" />
+                  <s:enumeration value="CountryNotSupported" />
+                  <s:enumeration value="UnknownState" />
+                  <s:enumeration value="PayerUnknown" />
+                  <s:enumeration value="PayeeUnknown" />
+                  <s:enumeration value="EncryptionKeyFailedValidation" />
+                  <s:enumeration value="ParameterError" />
+                  <s:enumeration value="FeeScheduleUnknown" />
+                  <s:enumeration value="StringContainsNonEBCDICCharacters" />
+                  <s:enumeration value="FileNotFound" />
+                  <s:enumeration value="CannotReadFile" />
+                  <s:enumeration value="CannotDeleteFile" />
+                  <s:enumeration value="CannotWriteFile" />
+                  <s:enumeration value="PaymentAmountTotalMismatch" />
+                  <s:enumeration value="InvalidPayerIpAddress" />
+                  <s:enumeration value="EnahncedSecurityNotConfigured" />
+                </s:restriction>
+              </s:simpleType>
+              <s:complexType name="ArrayOfLineErrorOrWarning">
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="unbounded" name="LineErrorOrWarning" type="tns:LineErrorOrWarning" />
+                </s:sequence>
+              </s:complexType>
+              <s:complexType name="LineErrorOrWarning">
+                <s:sequence>
+                  <s:element minOccurs="1" maxOccurs="1" name="lineNumber" type="s:int" />
+                  <s:element minOccurs="1" maxOccurs="1" name="isWarning" type="s:boolean" />
+                  <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+                </s:sequence>
+              </s:complexType>
+              <s:element name="ProcessPaymentFile">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="payerName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="timestamp" type="s:double" />
+                    <s:element minOccurs="0" maxOccurs="1" name="key" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="fileName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="totalAmount" type="s:double" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:element name="ProcessPaymentFileResponse">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="ProcessPaymentFileResult" type="tns:TipaltiProcessPaymentResponse" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:element name="CreatePayeeStatusFile">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="payerName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="timestamp" type="s:double" />
+                    <s:element minOccurs="0" maxOccurs="1" name="key" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="saveToFile" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="changesSinceDate" type="s:double" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:element name="CreatePayeeStatusFileResponse">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="CreatePayeeStatusFileResult" type="tns:TipaltiResponse" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:complexType name="TipaltiResponse">
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="1" name="errorMessage" type="s:string" />
+                  <s:element minOccurs="1" maxOccurs="1" name="errorCode" type="tns:WSErrors" />
+                  <s:element minOccurs="1" maxOccurs="1" name="b" nillable="true" type="s:boolean" />
+                  <s:element minOccurs="1" maxOccurs="1" name="i" nillable="true" type="s:int" />
+                  <s:element minOccurs="1" maxOccurs="1" name="d" nillable="true" type="s:double" />
+                  <s:element minOccurs="0" maxOccurs="1" name="s" type="s:string" />
+                </s:sequence>
+              </s:complexType>
+              <s:element name="GetDynamicKey">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="payerName" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="timestamp" type="s:double" />
+                    <s:element minOccurs="0" maxOccurs="1" name="key" type="s:string" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:element name="GetDynamicKeyResponse">
+                <s:complexType>
+                  <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="GetDynamicKeyResult" type="tns:SecurityToken" />
+                  </s:sequence>
+                </s:complexType>
+              </s:element>
+              <s:complexType name="SecurityToken">
+                <s:sequence>
+                  <s:element minOccurs="0" maxOccurs="1" name="errorMessage" type="s:string" />
+                  <s:element minOccurs="1" maxOccurs="1" name="errorCode" type="tns:WSErrors" />
+                  <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
+                  <s:element minOccurs="0" maxOccurs="1" name="Token" type="s:string" />
+                </s:sequence>
+              </s:complexType>
+            </s:schema>
+          </wsdl:types>
+          <wsdl:message name="TestPaymentFileSoapIn">
+            <wsdl:part name="parameters" element="tns:TestPaymentFile" />
+          </wsdl:message>
+          <wsdl:message name="TestPaymentFileSoapOut">
+            <wsdl:part name="parameters" element="tns:TestPaymentFileResponse" />
+          </wsdl:message>
+          <wsdl:message name="ProcessPaymentFileSoapIn">
+            <wsdl:part name="parameters" element="tns:ProcessPaymentFile" />
+          </wsdl:message>
+          <wsdl:message name="ProcessPaymentFileSoapOut">
+            <wsdl:part name="parameters" element="tns:ProcessPaymentFileResponse" />
+          </wsdl:message>
+          <wsdl:message name="CreatePayeeStatusFileSoapIn">
+            <wsdl:part name="parameters" element="tns:CreatePayeeStatusFile" />
+          </wsdl:message>
+          <wsdl:message name="CreatePayeeStatusFileSoapOut">
+            <wsdl:part name="parameters" element="tns:CreatePayeeStatusFileResponse" />
+          </wsdl:message>
+          <wsdl:message name="GetDynamicKeySoapIn">
+            <wsdl:part name="parameters" element="tns:GetDynamicKey" />
+          </wsdl:message>
+          <wsdl:message name="GetDynamicKeySoapOut">
+            <wsdl:part name="parameters" element="tns:GetDynamicKeyResponse" />
+          </wsdl:message>
+          <wsdl:portType name="TipaltiPayerSOAPSoap">
+            <wsdl:operation name="TestPaymentFile">
+              <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Test a payment file. File should be pre-loaded to the SFTP folder assigned by Tipalti.Return value includes warnings and errors, including line number in file. An 'OK' errorMessage means that the payment file can be submitted. NO PAYMENTS WILL BE EXECUTED.&lt;br/&gt;EAT - totalAmount </wsdl:documentation>
+              <wsdl:input message="tns:TestPaymentFileSoapIn" />
+              <wsdl:output message="tns:TestPaymentFileSoapOut" />
+            </wsdl:operation>
+            <wsdl:operation name="ProcessPaymentFile">
+              <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Submit file for payment. File should be pre-loaded to the SFTP folder assigned by Tipalti.Return value includes warnings and errors, including line number in file. An 'OK' errorMessage means that the payments were submitted.&lt;br/&gt;EAT - totalAmount</wsdl:documentation>
+              <wsdl:input message="tns:ProcessPaymentFileSoapIn" />
+              <wsdl:output message="tns:ProcessPaymentFileSoapOut" />
+            </wsdl:operation>
+            <wsdl:operation name="CreatePayeeStatusFile">
+              <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Create a file with the status of all payees in the system.&lt;br/&gt;changesSinceDate is an optional paramter to limit the report to the payees that changed their info since that date.&lt;br/&gt;The CSV file is placed in the payer's FTP folder and has the following format: payee ID, payment method, status, reason.&lt;br/&gt;If a file by this name already exists, it will be removed.&lt;br/&gt;&lt;br/&gt;EAT - saveToFile</wsdl:documentation>
+              <wsdl:input message="tns:CreatePayeeStatusFileSoapIn" />
+              <wsdl:output message="tns:CreatePayeeStatusFileSoapOut" />
+            </wsdl:operation>
+            <wsdl:operation name="GetDynamicKey">
+              <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns a dynamic security key that can be used to sign the content of the Tipalti iFrame Query String.&lt;br&gt;The SecurityToken object returns contains a key and a token. Use the key to sign the query string.&lt;br&gt;You must send the token within the query string of the iFrame. To do that, set its value to a Query String parameter named 'token'&lt;br&gt;The key is a temporary key and will expire within the time limit you have set in the administration console&lt;br&gt;&lt;b&gt;Do not send the key over the wire or include it in the query string. Store it in a secure location.&lt;/b&gt;</wsdl:documentation>
+              <wsdl:input message="tns:GetDynamicKeySoapIn" />
+              <wsdl:output message="tns:GetDynamicKeySoapOut" />
+            </wsdl:operation>
+          </wsdl:portType>
+          <wsdl:binding name="TipaltiPayerSOAPSoap" type="tns:TipaltiPayerSOAPSoap">
+            <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+            <wsdl:operation name="TestPaymentFile">
+              <soap:operation soapAction="http://Tipalti.org/TestPaymentFile" style="document" />
+              <wsdl:input>
+                <soap:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="ProcessPaymentFile">
+              <soap:operation soapAction="http://Tipalti.org/ProcessPaymentFile" style="document" />
+              <wsdl:input>
+                <soap:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="CreatePayeeStatusFile">
+              <soap:operation soapAction="http://Tipalti.org/CreatePayeeStatusFile" style="document" />
+              <wsdl:input>
+                <soap:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="GetDynamicKey">
+              <soap:operation soapAction="http://Tipalti.org/GetDynamicKey" style="document" />
+              <wsdl:input>
+                <soap:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+          </wsdl:binding>
+          <wsdl:binding name="TipaltiPayerSOAPSoap12" type="tns:TipaltiPayerSOAPSoap">
+            <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+            <wsdl:operation name="TestPaymentFile">
+              <soap12:operation soapAction="http://Tipalti.org/TestPaymentFile" style="document" />
+              <wsdl:input>
+                <soap12:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap12:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="ProcessPaymentFile">
+              <soap12:operation soapAction="http://Tipalti.org/ProcessPaymentFile" style="document" />
+              <wsdl:input>
+                <soap12:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap12:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="CreatePayeeStatusFile">
+              <soap12:operation soapAction="http://Tipalti.org/CreatePayeeStatusFile" style="document" />
+              <wsdl:input>
+                <soap12:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap12:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="GetDynamicKey">
+              <soap12:operation soapAction="http://Tipalti.org/GetDynamicKey" style="document" />
+              <wsdl:input>
+                <soap12:body use="literal" />
+              </wsdl:input>
+              <wsdl:output>
+                <soap12:body use="literal" />
+              </wsdl:output>
+            </wsdl:operation>
+          </wsdl:binding>
+          <wsdl:service name="TipaltiPayerSOAP">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Payer functions.</wsdl:documentation>
+            <wsdl:port name="TipaltiPayerSOAPSoap" binding="tns:TipaltiPayerSOAPSoap">
+              <soap:address location="http://api.payrad.com/PayerFunctions.asmx" />
+            </wsdl:port>
+            <wsdl:port name="TipaltiPayerSOAPSoap12" binding="tns:TipaltiPayerSOAPSoap12">
+              <soap12:address location="http://api.payrad.com/PayerFunctions.asmx" />
+            </wsdl:port>
+          </wsdl:service>
+        </wsdl:definitions>
+    http_version: "1.1"
+  recorded_at: Fri, 05 Oct 2012 20:35:18 GMT
+- request:
+    method: post
+    uri: http://api.payrad.com/PayerFunctions.asmx
+    body:
+      string: <?xml version="1.0" encoding="UTF-8"?><env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://Tipalti.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ins0="http://Tipalti.org/"><env:Body><ins0:GetDynamicKey><ins0:key>2253daa3b583b6812555200397fa3ff03544ed583566ae8173d162f1d32c273d</ins0:key><ins0:payerName>Tapjoy</ins0:payerName><ins0:timestamp>1349469318</ins0:timestamp></ins0:GetDynamicKey></env:Body></env:Envelope>
+    headers:
+      content-type:
+      - text/xml;charset=UTF-8
+      soapaction:
+      - "\"http://Tipalti.org/GetDynamicKey\""
+      accept:
+      - "*/*"
+      content-length:
+      - "514"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      date:
+      - Fri, 05 Oct 2012 20:35:24 GMT
+      p3p:
+      - CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"
+      content-type:
+      - text/xml; charset=utf-8
+      server:
+      - Microsoft-IIS/7.5
+      x-powered-by:
+      - ASP.NET
+      x-aspnet-version:
+      - 4.0.30319
+      cache-control:
+      - private, max-age=0
+      content-length:
+      - "526"
+    body:
+      string: <?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetDynamicKeyResponse xmlns="http://Tipalti.org/"><GetDynamicKeyResult><errorMessage>OK</errorMessage><errorCode>OK</errorCode><Key>6dk/oVaRRnP3xJs2J060mh1Knh2YDvqaP7pEtoUUk6I+wf1Ov3BeojEY9B057Fag</Key><Token>FxiaCXX3jht38KTv</Token></GetDynamicKeyResult></GetDynamicKeyResponse></soap:Body></soap:Envelope>
+    http_version: "1.1"
+  recorded_at: Fri, 05 Oct 2012 20:35:19 GMT

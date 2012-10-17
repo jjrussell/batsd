@@ -13,13 +13,13 @@ namespace :admin do
 
   desc "Force chef client run"
   task :run_chef_client, :servers do |task, args|
-    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver connect'
+    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver connect offers'
     system("script/cloudrun '#{servers}' 'rvmsudo /usr/local/rvm/gems/ruby-1.8.7-p358/bin/chef-client' 'ubuntu'")
   end
 
   desc "Update geoip databse"
   task :geoipupdate, :servers do |task, args|
-    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver connect'
+    servers = args[:servers] || 'masterjobs jobserver website dashboard webserver connect offers'
     system("script/cloudrun '#{servers}' 'tapjoyserver/server/update_geoip.rb' 'webuser'")
   end
 

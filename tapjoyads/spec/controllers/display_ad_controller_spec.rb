@@ -14,7 +14,7 @@ describe DisplayAdController do
       @bucket = FakeBucket.new
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
-      @currency = FactoryGirl.create(:currency, :conversion_rate => 0)
+      @currency = FactoryGirl.create(:currency)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',

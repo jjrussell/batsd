@@ -1,6 +1,5 @@
 class OfferList
   PROMOTED_INVENTORY_SIZE = 3
-  DEEPLINK_POSITION = 3  #zero-based index of where to include a Deeplink offer in the offer list
 
   def initialize(options = {})
     @publisher_app              = options.delete(:publisher_app)
@@ -133,14 +132,6 @@ class OfferList
         returned_offers << offer if found_offers >= start
         found_offer_item_ids << offer.item_id
         found_offers += 1
-      end
-    end
-
-    if DEEPLINK_POSITION >= start && @currency && @currency.rewarded? && @currency.external_publisher? && @currency.enabled_deeplink_offer_id.present? && @source == 'offerwall' && @normalized_device_type != 'android'
-      deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
-      if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer) && !found_offer_item_ids.include?(deeplink_offer.item_id)
-        position = [ DEEPLINK_POSITION, returned_offers.length ].min
-        returned_offers.insert(position, deeplink_offer)
       end
     end
 

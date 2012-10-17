@@ -49,9 +49,9 @@ class GetOffersController < ApplicationController
       if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
-      render :json => @final.to_json, :callback => params[:callback] and return
+      render :json => @final.to_json, :callback => params[:callback]
     else
-      render :template => 'get_offers/webpage_redesign' and return
+      render :template => 'get_offers/webpage_redesign'
     end
   end
 
@@ -154,7 +154,8 @@ class GetOffersController < ApplicationController
 
     params[:source] = 'offerwall' if params[:source].blank?
 
-    set_offerwall_experiment
+    # No experiment running currently
+    params[:exp] = 'control'
 
     if @save_web_requests
       @web_request = generate_web_request
@@ -280,7 +281,7 @@ class GetOffersController < ApplicationController
       hash[:cost]              = visual_cost(offer)
       hash[:iconURL]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
       hash[:payout]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-      hash[:redirectURL]       = offer.age_gate? ? get_age_gating_url({ :offerwall_rank => (index + 1), :view_id => view_id }) : get_click_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id })
+      hash[:redirectURL]       = offer.age_gate? ? get_age_gating_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id }) : get_click_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id })
       hash[:requiresWiFi]      = offer.wifi_only? if @show_wifi_only
       hash[:title]             = offer.name
       hash[:type]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type

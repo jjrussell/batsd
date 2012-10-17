@@ -73,6 +73,12 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   def update
     log_activity(@offer)
+
+    params[:offer][:daily_budget].gsub!(',', '') if params[:offer][:daily_budget].present?
+    if params[:daily_budget_toggle] == 'off'
+      params[:offer][:daily_budget] = 0
+      params[:offer][:daily_cap_type] = nil
+    end
     offer_params = sanitize_currency_params(params[:offer], [ :bid, :min_bid_override ])
 
     if @offer.update_attributes(offer_params)

@@ -19,12 +19,41 @@ GIT
     rollout (1.1.0)
 
 GIT
+  remote: git://github.com/dickeyxxx/sprockets_rails3_backport.git
+  revision: 3290b76f411ad5f06f0fcf4a0ac887a8caf061f0
+  specs:
+    sprockets_rails3_backport (0.0.4)
+      rails (~> 3.0.0)
+      sprockets (= 2.1.2)
+
+GIT
   remote: git://github.com/odorcicd/authlogic.git
   revision: a087ad0cba3c165ba22fcf176c28b6f7517931e8
   branch: rails3
   specs:
     authlogic (2.1.3)
       activesupport
+
+GIT
+  remote: git@github.com:Tapjoy/analytics_logger.git
+  revision: 25c3258335c0d391caeb2e8a4080cb92ad8d411b
+  tag: v0.5.1
+  specs:
+    analytics_logger (0.5.1)
+      activesupport (~> 3.0)
+      bunny (~> 0.8.0)
+      json (~> 1.5)
+      redis (>= 2)
+      syslog-logger (= 1.6.4)
+      tzinfo (~> 0.3.0)
+      uuidtools (~> 2.1)
+
+GIT
+  remote: git@github.com:Tapjoy/bunny.git
+  revision: 03bbd47b08fa831ac381a1cbe95e7ca9f500a5b8
+  tag: v0.8.0.1
+  specs:
+    bunny (0.8.0.1)
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
@@ -100,7 +129,6 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     builder (2.1.2)
-    bunny (0.8.0)
     bzip2-ruby (0.2.7)
     capybara (1.1.2)
       mime-types (>= 1.16)
@@ -157,6 +185,7 @@ GEM
       railties (>= 3.0.0)
     fakeredis (0.3.2)
       redis (~> 2.2.0)
+    fakeweb (1.3.0)
     faraday (0.7.4)
       addressable (~> 2.2.6)
       multipart-post (~> 1.1.0)
@@ -236,7 +265,7 @@ GEM
       json
       rest-client
       ya2yaml
-    locales (1.0.29)
+    locales (1.0.34)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -388,9 +417,6 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sprockets_rails3_backport (0.0.4)
-      rails (~> 3.0.0)
-      sprockets (= 2.1.2)
     sqlite3 (1.3.3)
     syslog-logger (1.6.4)
     systemu (2.5.2)
@@ -427,6 +453,7 @@ GEM
       rack
       raindrops (~> 0.7)
     uuidtools (2.1.2)
+    vcr (2.2.5)
     vertica (0.9.1)
       jeweler
       rake
@@ -450,12 +477,14 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
+  analytics_logger (= 0.5.1)!
   annotate
   archive-tar-minitar
   asset_sync
   authlogic!
   awesome_print
   aws-sdk (= 1.3.9)
+  bunny (= 0.8.0.1)!
   bzip2-ruby
   capybara
   chef (= 0.10.8)
@@ -471,6 +500,7 @@ DEPENDENCIES
   factory_girl_rails (= 1.2.0)
   fakememcached!
   fakeredis
+  fakeweb
   faraday (= 0.7.4)
   faraday_middleware (= 0.7.0)
   foreman (= 0.36.1)
@@ -533,9 +563,8 @@ DEPENDENCIES
   simple_oauth (= 0.1.5)
   simplecov
   spork
-  sprockets_rails3_backport
+  sprockets_rails3_backport!
   sqlite3 (= 1.3.3)
-  syslog-logger (= 1.6.4)
   test_after_commit
   thin
   tilt (= 1.3.3)
@@ -545,6 +574,7 @@ DEPENDENCIES
   typhoeus (= 0.2.4)
   unicorn (= 4.2.0)
   uuidtools (= 2.1.2)
+  vcr
   vertica (= 0.9.1)
   will_paginate (~> 3.0)
   xml-simple

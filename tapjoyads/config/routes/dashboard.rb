@@ -240,8 +240,19 @@ Tapjoyad::Application.routes.draw do
         end
       end
 
+
       namespace :tools do
+
+        match 'debug/:bucket' => 'admin_debug#show'
+
         resources :brands
+        resources :experiments do
+          member do
+            post :conclude
+            post :start
+          end
+        end
+
         resources :brand_offers, :only => [ :index, :create ] do
           collection do
             post :delete
@@ -300,7 +311,11 @@ Tapjoyad::Application.routes.draw do
             post :reject_creative
           end
         end
-        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ]
+        resources :offer_icons, :only => [ :edit, :create, :update, :destroy ] do
+          member do
+            put :toggle_auto_update_icon
+          end
+        end
         resources :payouts, :only => [:index, :create] do
           collection do
             get :export

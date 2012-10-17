@@ -5,7 +5,12 @@ class Dashboard::Tools::ClientsController < Dashboard::DashboardController
 
   def index
     @page_title = 'Clients'
-    @clients = Client.ordered_by_name
+    if params[:q].present?
+      @clients = Client.includes(:partners).search_by_name(params[:q])
+    else
+      @clients = Client.includes(:partners).ordered_by_name
+    end
+    @clients = @clients.paginate(:page => params[:page])
   end
 
   def new
@@ -36,7 +41,7 @@ class Dashboard::Tools::ClientsController < Dashboard::DashboardController
 
   def update
     @client = Client.find(params[:id])
-    if @client.safe_update_attributes( params[:client], [ :name ] )
+    if @client.safe_update_attributes( params[:client], [ :name, :payment_type ] )
       flash[:notice] = 'Client saved'
       redirect_to tools_clients_path
     else

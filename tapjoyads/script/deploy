@@ -18,7 +18,7 @@ class Deploy
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
           @options[:environment] = 'production'
-          @options[:server_groups] = 'masterjobs jobserver dashboard webserver connect'
+          @options[:server_groups] = 'masterjobs jobserver dashboard webserver connect offers'
         elsif environment == 'util'
           @options[:environment] = 'util'
           @options[:server_groups] = 'util'
@@ -68,7 +68,6 @@ class Deploy
       create_deploy_tag
     end
     check_schema if @options[:environment] == 'production' && !@options[:skip_schema_check]
-    system("bundle exec rake assets:precompile") unless @options[:skip_assets]
     if execute_cloudrun
       system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}")
     end
@@ -102,7 +101,7 @@ class Deploy
     end
     puts "Syntax Check: PASSED"
   end
-  
+
   def check_schema
     system("rake DATABASE=production_slave db:schema:dump_database")
     if `git status` =~ /db\/schema.rb/
@@ -130,6 +129,7 @@ class Deploy
 
     unless @options[:version] == 'master'
       system('git checkout deploy')
+      precompile_assets unless @options[:skip_assets]
       git_status = `git status`
       if git_status !~ /On branch deploy/
         puts "Couldn't checkout deploy!"
@@ -141,6 +141,13 @@ class Deploy
         system('git merge master')
       end
     end
+  end
+
+  def precompile_assets
+    system("bundle exec rake assets:precompile")
+    system("sort public/assets/manifest.yml -o public/assets/manifest.yml") # to keep the diff clean
+    system("git add public/assets/manifest.yml")
+    system("git commit -m 'Updated asset manifest'")
   end
 
   def create_deploy_tag

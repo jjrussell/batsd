@@ -50,7 +50,8 @@ class OfferCompletedController < ApplicationController
   end
 
   def adility
-    @voucher.update_attributes(:completed => true)
+    @voucher.completed = true
+    @voucher.save
     params[:click_key] = @voucher.click_key
     complete_conversion
   end
@@ -64,7 +65,7 @@ private
   def validate_adility_params
     if params[:voucher].present? && params[:voucher][:id].present? && params[:voucher][:status] == 'redeemed'
       @source = ADILITY_SOURCE
-      @voucher = Voucher.find(:all, :conditions => { :ref_id => params[:voucher][:id] })
+      @voucher = Voucher.find(params[:voucher][:id])
       unless @voucher.present? && !@voucher.completed?
         @error_message = "unexpected adility callback"
         notify_and_render_error(false)

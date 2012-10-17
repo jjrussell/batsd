@@ -274,7 +274,7 @@
 
           if(data.offers.length > 0){
             $.load(data.offers);
-            start = start + limit;
+            start = start + limit + 1;
 
             if(pagesFetched == autoLoadLimit){
               if($.loadMore){
@@ -356,10 +356,6 @@
           }
         });
       }
-
-      $.on($.visit, 'click', function(){
-        window.location = page;
-      });
 
       $.on($.loadMore, 'click', function(){
         $.fetch();

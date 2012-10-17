@@ -2,9 +2,6 @@ require 'spec_helper'
 
 describe Coupon do
 
-  subject { FactoryGirl.create(:coupon) }
-
-  it { should have_many(:vouchers) }
   it { should have_many(:offers) }
   it { should belong_to(:partner) }
   it { should belong_to(:prerequisite_offer) }
@@ -53,7 +50,7 @@ describe Coupon do
     context 'enabled' do
       before :each do
         @coupon = FactoryGirl.create(:coupon)
-        Offer.any_instance.stub(:is_enabled?).and_return(true)
+        Offer.any_instance.stub(:enabled?).and_return(true)
       end
       it 'should return true' do
         @coupon.enabled?.should be_true
@@ -62,7 +59,7 @@ describe Coupon do
     context 'disabled' do
       before :each do
         @coupon = FactoryGirl.create(:coupon)
-        Offer.any_instance.stub(:is_enabled?).and_return(false)
+        Offer.any_instance.stub(:enabled?).and_return(false)
       end
       it 'should return true' do
         @coupon.enabled?.should be_false

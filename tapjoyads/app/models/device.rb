@@ -30,6 +30,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
   self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
+  self.sdb_attr :experiment_bucket_id
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
@@ -264,6 +265,8 @@ class Device < SimpledbShardedResource
       return
     end
 
+    is_new and assign_experiment_bucket
+
     remove_old_skips
     return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
@@ -432,6 +435,25 @@ class Device < SimpledbShardedResource
     save
   end
 
+  def experiment_bucket
+    ExperimentBucket.find_in_cache(experiment_bucket_id)
+  end
+
+  def experiment_bucket=(bucket)
+    raise ArgumentError unless bucket.is_a?(ExperimentBucket)
+    self.experiment_bucket_id = bucket.id
+  end
+
+  def assign_experiment_bucket(hash_offset = nil)
+    return if ExperimentBucket.count_from_cache == 0
+    hash_offset ||= $redis.get('experiments:hash_offset').to_i || 0
+    
+    # digest the udid, slice the characters we are using, and get an integer
+    hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
+    index = hash % ExperimentBucket.count_from_cache
+    self.experiment_bucket_id = ExperimentBucket.id_for_index(index)
+  end
+
   private
 
   def merge_temporary_devices!(all_identifiers)
@@ -499,7 +521,8 @@ class Device < SimpledbShardedResource
     begin
       @parsed_apps = apps
     rescue JSON::ParserError
-      self.apps = @parsed_apps = parse_bad_json('apps')
+      @parsed_apps = parse_bad_json('apps')
+      self.put('apps', @parsed_apps, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 
@@ -507,7 +530,8 @@ class Device < SimpledbShardedResource
     begin
       publisher_user_ids
     rescue JSON::ParserError
-      self.publisher_user_ids = parse_bad_json('publisher_user_ids', :right)
+      good_data = parse_bad_json('publisher_user_ids', :right)
+      self.put('publisher_user_ids', good_data, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 
@@ -515,7 +539,8 @@ class Device < SimpledbShardedResource
     begin
       display_multipliers
     rescue JSON::ParserError
-      self.display_multipliers = parse_bad_json('display_multipliers', :right)
+      good_data = parse_bad_json('display_multipliers', :right)
+      self.put('display_multipliers', good_data, :type => :json, :cgi_escape => false, :replace => true)
     end
   end
 end

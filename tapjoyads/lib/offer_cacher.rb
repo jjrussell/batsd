@@ -8,7 +8,7 @@ class OfferCacher
                             Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
                           ]
   HIDE_REWARDED_OPTIONS = [ true, false ]
-  PLATFORM_AND_DEVICE_TYPES = {}
+  PLATFORM_AND_DEVICE_TYPES = { '' => [''] }
   App::PLATFORMS.values.each do |platform|
     case platform
       when 'Android'

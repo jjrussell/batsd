@@ -190,7 +190,7 @@ describe Dashboard::Tools::CouponsController do
   describe '#toggle_enabled' do
     context 'enable coupon' do
       before :each do
-        Offer.any_instance.stub(:is_enabled?).and_return(true)
+        Offer.any_instance.stub(:enabled?).and_return(true)
         @coupon = FactoryGirl.create(:coupon)
         @coupon.enabled = false
         put(:toggle_enabled, :id => @coupon.id)
@@ -210,7 +210,7 @@ describe Dashboard::Tools::CouponsController do
     end
     context 'disable coupon' do
       before :each do
-        Offer.any_instance.stub(:is_enabled?).and_return(false)
+        Offer.any_instance.stub(:enabled?).and_return(false)
         @coupon = FactoryGirl.create(:coupon)
         @coupon.enabled = true
         put(:toggle_enabled, :id => @coupon.id)

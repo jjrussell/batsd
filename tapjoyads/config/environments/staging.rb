@@ -103,13 +103,11 @@ Sass::Plugin.options[:style] = :compressed
 TAPJOY_GAMES_INVITATION_OFFER_ID = '3839e884-2310-4de4-873f-8b0ca44c1a1a'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :warn
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end
+AMQP_URL = 'amqp://guest:guest@localhost'
+
+ANALYTICS_LOGGER_LEVEL = Logger::DEBUG
+
+TIPALTI_PAYEE_API = 'http://int.payrad.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'http://api.payrad.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'TapJoyDemoKey'

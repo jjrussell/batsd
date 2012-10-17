@@ -460,6 +460,24 @@ class Partner < ActiveRecord::Base
         :year => Time.zone.now.year, :payment_method => 6 )
   end
 
+  def tipalti_payee_iframe_url
+    ts = Time.now.to_i
+
+    # Get encryption key from Tipalti Payer API
+    tipalti = TipaltiPayerApi.new
+    encryption_fields = tipalti.get_dynamic_key(ts)
+
+    # Generate secure URL
+    params = {  :idap  => id,
+                :payer => TIPALTI_PAYER_NAME,
+                :token => encryption_fields[:token],
+                :ts    => ts }
+    key = TipaltiPayerApi.generate_encryption_key(params, encryption_fields[:key])
+
+    # Yes, the 'key' param has to be on the end (Tipalti's issue)
+    "#{TIPALTI_PAYEE_API}?#{params.to_query}&key=#{key}"
+  end
+
   private
 
   def update_currencies

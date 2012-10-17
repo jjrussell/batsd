@@ -110,13 +110,11 @@ ENV['position_in_class']   = "before"
 ENV['exclude_tests']       = "true"
 ENV['exclude_fixtures']    = "true"
 
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :warn
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end
+AMQP_URL = 'amqp://guest:guest@localhost'
+
+ANALYTICS_LOGGER_LEVEL = Logger::FATAL
+
+TIPALTI_PAYEE_API = 'http://int.payrad.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'http://api.payrad.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'TapJoyDemoKey'

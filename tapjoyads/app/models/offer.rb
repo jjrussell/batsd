@@ -11,7 +11,6 @@ class Offer < ActiveRecord::Base
   acts_as_cacheable
   acts_as_tracking
   acts_as_trackable
-  memoize :precache_rank_scores
 
   APPLE_DEVICES = %w( iphone itouch ipad )
   IPAD_DEVICES = %w( ipad )
@@ -19,7 +18,7 @@ class Offer < ActiveRecord::Base
   WINDOWS_DEVICES = %w( windows )
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer Coupon)
-  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ActionOffer ReengagementOffer))
+  REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ReengagementOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 
   CLASSIC_OFFER_TYPE                          = '0'
@@ -50,6 +49,7 @@ class Offer < ActiveRecord::Base
                                     active
                                     allow_negative_balance
                                     audition_factor
+                                    auto_update_icon
                                     created_at
                                     daily_budget
                                     daily_cap_type
@@ -66,15 +66,15 @@ class Offer < ActiveRecord::Base
                                     next_stats_aggregation_time
                                     overall_budget
                                     pay_per_click
+                                    source_offer_id
                                     stats_aggregation_interval
                                     tapjoy_enabled
                                     tapjoy_sponsored
-                                    updated_at
-                                    url_overridden
-                                    user_enabled
                                     tracking_for_id
                                     tracking_for_type
-                                    source_offer_id )
+                                    updated_at
+                                    url_overridden
+                                    user_enabled )
 
   OFFER_LIST_REQUIRED_COLUMNS = (Offer.column_names - OFFER_LIST_EXCLUDED_COLUMNS).map { |c| "#{quoted_table_name}.#{c}" }.join(', ')
 
@@ -296,7 +296,7 @@ class Offer < ActiveRecord::Base
 
     transaction do
       new_offer.save!
-      new_offer.save_icon!(icon_s3_object.read, true) if icon_id_override.present?
+      new_offer.override_icon!(icon_s3_object.read) if icon_id_override.present?
     end
 
     new_offer
@@ -405,15 +405,33 @@ class Offer < ActiveRecord::Base
     [is_paid? ? 5 * price / 100.0 : 3, bid / 100.0].max
   end
 
-  def is_enabled?
-    is_deeplink? ? tapjoy_enabled? && user_enabled? : tapjoy_enabled? && user_enabled? && ((payment > 0 && partner_balance > 0) || (payment == 0 && reward_value.present? && reward_value > 0))
+  def system_enabled?
+    tapjoy_enabled? && user_enabled?
   end
-  alias_method :enabled?, :is_enabled?
+
+  def payment_enabled?
+    payment > 0 && partner_balance > 0
+  end
+
+  def reward_enabled?
+    payment == 0 && reward_value.present? && reward_value > 0
+  end
+
+  def tracking_enabled?
+    tapjoy_enabled?
+  end
+
+  def enabled?
+    enabled = system_enabled?
+    enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
+    enabled
+  end
+  alias_method :is_enabled?, :enabled?
 
   def disabled?; !enabled?; end
 
   def can_be_promoted?
-    primary? && rewarded? && is_enabled?
+    primary? && rewarded? && enabled?
   end
 
   def accepting_clicks?
@@ -478,12 +496,19 @@ class Offer < ActiveRecord::Base
     item_type  = options.delete(:item_type)
     size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
     bust_cache = options.delete(:bust_cache) { false }
+    update_ts  = options.delete(:offer_updated_at)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
 
     url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
-    url << "?ts=#{Time.now.to_i}" if bust_cache
+
+    if bust_cache
+      url << "?ts=#{Time.now.to_i}"
+    elsif source == :cloudfront && update_ts.present?
+      url << "?ts=#{update_ts}"
+    end
+
     url
   end
 
@@ -516,7 +541,7 @@ class Offer < ActiveRecord::Base
 
     existing_icon_blob = src_obj.exists? ? src_obj.read : ''
     if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
-      return
+      return false
     end
 
     if video_offer
@@ -557,13 +582,14 @@ class Offer < ActiveRecord::Base
 
     Mc.delete(icon_cache_key(guid))
     CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
+    true
   end
 
-  def remove_icon!
+  def remove_overridden_icon!
     guid = icon_id
 
     # only allow removing of offer-specific, manually-uploaded icons
-    return if [item_id, app_metadata_id, app_id].include?(guid)
+    return if icon_id_override.nil? || [item_id, app_metadata_id, app_id].include?(guid)
 
     Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
 
@@ -571,7 +597,7 @@ class Offer < ActiveRecord::Base
     self.update_attributes!(:icon_id_override => icon_id_override)
   end
 
-  def save_icon!(icon_src_blob, override = false)
+  def override_icon!(icon_src_blob)
     # Here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
     # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
@@ -583,9 +609,12 @@ class Offer < ActiveRecord::Base
     # What this allows for is one icon file to be shared between offers with the same parent.
     #
     # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
-    guid = override ? UUIDTools::UUID.random_create.to_s : icon_id
+    replacing = ![item_id, app_metadata_id, app_id].include?(icon_id_override) && icon_id_override.present?
+    guid = replacing ? icon_id_override : UUIDTools::UUID.random_create.to_s
     Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
-    self.update_attributes!(:icon_id_override => guid) unless [app_metadata_id, item_id].include?(guid)
+    unless replacing
+      self.update_attributes!(:icon_id_override => guid, :auto_update_icon => default_auto_update_icon_value)
+    end
   end
 
   def save(*)
@@ -985,6 +1014,10 @@ class Offer < ActiveRecord::Base
     else
       0
     end
+  end
+
+  def default_auto_update_icon_value
+    app_offer?(false) || item_type == 'DeeplinkOffer' # TODO: add DeeplinkOffer to app_offer? method
   end
 
   def is_test_device?(currency, device)

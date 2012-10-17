@@ -14,7 +14,7 @@ class Dashboard::Tools::OfferIconsController < Dashboard::DashboardController
   def update
     image_data = params[:offer][:upload_icon].try(:read)
     begin
-      @offer.save_icon!(image_data, true)
+      @offer.override_icon!(image_data)
       @success_message = "Icon uploaded successfully."
     rescue
       @error_message = "Error uploading icon, please try again."
@@ -24,11 +24,17 @@ class Dashboard::Tools::OfferIconsController < Dashboard::DashboardController
 
   def destroy
     begin
-      @offer.remove_icon!
+      @offer.remove_overridden_icon!
       @success_message = "Icon removed successfully."
     rescue
       @error_message = "Error removing icon, please try again."
     end
+    render :edit
+  end
+
+  def toggle_auto_update_icon
+    @offer.update_attributes!(:auto_update_icon => !@offer.auto_update_icon)
+    @success_message = "Updated"
     render :edit
   end
 

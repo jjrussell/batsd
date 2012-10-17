@@ -1,5 +1,6 @@
 class DisplayAdController < ApplicationController
 
+  before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
   before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => :image
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 

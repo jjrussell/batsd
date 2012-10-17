@@ -41,6 +41,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_run_offer_events(/index)' => 'master_run_offer_events#index'
     match 'master_select_vg_items(/index)' => 'master_select_vg_items#index'
     match 'master_set_exclusivity_and_premier_discounts(/index)' => 'master_set_exclusivity_and_premier_discounts#index'
+    match 'master_terminate_slow_instances(/index)' => 'master_terminate_slow_instances#index'
     match 'master_udid_reports(/index)' => 'master_udid_reports#index'
     match 'master_update_app_active_gamer_count(/index)' => 'master_update_app_active_gamer_count#index'
     match 'master_update_cloudwatch_as_stats(/index)' => 'master_update_cloudwatch_as_stats#index'

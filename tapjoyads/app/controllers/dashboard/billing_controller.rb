@@ -161,6 +161,14 @@ class Dashboard::BillingController < Dashboard::DashboardController
   end
 
   def payout_info
+    # Only expose Tipalti payout iframe to select partners
+    # Currently: %w(TAPJOY_PARTNER_ID)
+    tipalti_partners = %w(70f54c6d-f078-426c-8113-d6e43ac06c6d)
+    if tipalti_partners.include?(current_partner.id)
+      render 'payout_info_tipalti' and return
+    end
+
+    # Otherwise, show our home-rolled payouts screen
     if current_partner.payout_info
       @payout_info = current_partner.payout_info
       if @payout_info.valid?

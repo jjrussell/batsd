@@ -127,4 +127,50 @@ describe Offer::Rejecting do
       it { should_not have_coupon_offer_expired }
     end
   end
+
+  describe '#ppe_missing_prerequisite_for_ios_reject?' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    context "action offer" do
+      context "when source is tj_games" do
+        before :each do
+          action_offer = FactoryGirl.create(:action_offer)
+          @offer = action_offer.primary_offer
+          @source = "tj_games"
+        end
+
+        it "should not reject offer for android", :ppe do
+          @offer.ppe_missing_prerequisite_for_ios_reject?(@source, "android").should be_false
+        end
+
+        it "should not reject offer for iphone", :ppe do
+          @offer.ppe_missing_prerequisite_for_ios_reject?(@source, "iphone").should be_false
+        end
+      end
+
+      context "when source is not tj_games" do
+        before :each do
+          action_offer = FactoryGirl.create(:action_offer)
+          @offer = action_offer.primary_offer
+          @offer.prerequisite_offer_id = "00001"
+          @source = "offerwall"
+        end
+
+        it "should not reject offer for android", :ppe do
+          @offer.ppe_missing_prerequisite_for_ios_reject?(@source, "android").should be_false
+        end
+
+        it "should not reject offer for iphone when prerequisite is present", :ppe do
+          @offer.ppe_missing_prerequisite_for_ios_reject?(@source, "iphone").should be_false
+        end
+
+        it "should reject offer for iphone when prerequisite is not present", :ppe do
+          @offer.prerequisite_offer_id = ''
+          @offer.ppe_missing_prerequisite_for_ios_reject?(@source, "iphone").should be_true
+        end
+      end
+    end
+  end
 end

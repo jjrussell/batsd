@@ -68,16 +68,30 @@ describe ClickController do
         response.body.should include('missing parameters')
       end
 
-      it "creates the correct click_key and redirects" do
-        @params[:gamer_id] = UUIDTools::UUID.random_create.to_s
-        controller.stub(:verify_params).and_return(true)
-        controller.stub(:recently_clicked?).and_return(false)
-        Offer.stub(:find_in_cache).and_return(@offer)
-        Currency.stub(:find_in_cache).and_return(@currency)
-        get(:generic, @params)
-        assigns(:click_key).should_not be_nil
-        assigns(:click_key).should == "#{@params[:gamer_id]}.#{TAPJOY_GAMES_INVITATION_OFFER_ID}"
-        response.should be_redirect
+      context 'on success' do
+        before(:each) do
+          @params[:gamer_id] = UUIDTools::UUID.random_create.to_s
+          controller.stub(:verify_params).and_return(true)
+          controller.stub(:recently_clicked?).and_return(false)
+          Offer.stub(:find_in_cache).and_return(@offer)
+          Currency.stub(:find_in_cache).and_return(@currency)
+        end
+
+        it "creates the correct click_key and redirects" do
+          get(:generic, @params)
+          assigns(:click_key).should_not be_nil
+          assigns(:click_key).should == "#{@params[:gamer_id]}.#{TAPJOY_GAMES_INVITATION_OFFER_ID}"
+          response.should be_redirect
+        end
+
+        it 'should generate a web request' do
+          web_request = mock('web_request').as_null_object
+          web_request.should_receive(:offer_is_paid=).with(false)
+          web_request.should_receive(:offer_daily_budget=).with(0)
+          WebRequest.should_receive(:new).and_return(web_request)
+
+          get(:generic, @params)
+        end
       end
     end
 
@@ -180,7 +194,8 @@ describe ClickController do
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
         :currency_id => @currency.id,
-        :publisher_app_id => 'pub_app_id'
+        :publisher_app_id => 'pub_app_id',
+        :mac_address => 'device_mac_address'
       }
       controller.stub(:verify_params).and_return(true)
       Offer.stub(:find_in_cache).and_return(@offer)
@@ -205,6 +220,7 @@ describe ClickController do
       get(:app, @params)
     end
   end
+
   describe '#coupon' do
     before :each do
       @offer = FactoryGirl.create(:app).primary_offer

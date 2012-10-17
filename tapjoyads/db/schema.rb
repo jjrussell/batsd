@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120921230523) do
+ActiveRecord::Schema.define(:version => 20121002183705) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -149,6 +149,7 @@ ActiveRecord::Schema.define(:version => 20120921230523) do
     t.boolean  "videos_cache_wifi",                           :default => false, :null => false
     t.boolean  "videos_cache_3g",                             :default => false, :null => false
     t.boolean  "videos_stream_3g",                            :default => false, :null => false
+    t.string   "experiment_id",                 :limit => 36
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -178,10 +179,12 @@ ActiveRecord::Schema.define(:version => 20120921230523) do
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
 
   create_table "clients", :id => false, :force => true do |t|
-    t.string   "id",         :limit => 36, :null => false
-    t.string   "name",                     :null => false
+    t.string   "id",                      :limit => 36, :null => false
+    t.string   "name",                                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "payment_type"
+    t.datetime "payment_type_changed_at"
   end
 
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
@@ -411,6 +414,37 @@ ActiveRecord::Schema.define(:version => 20120921230523) do
   add_index "enable_offer_requests", ["id"], :name => "index_enable_offer_requests_on_id", :unique => true
   add_index "enable_offer_requests", ["offer_id"], :name => "index_enable_offer_requests_on_offer_id"
   add_index "enable_offer_requests", ["status"], :name => "index_enable_offer_requests_on_status"
+
+  create_table "experiment_buckets", :id => false, :force => true do |t|
+    t.string   "id",            :limit => 36, :null => false
+    t.string   "experiment_id", :limit => 36
+    t.string   "bucket_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "experiment_buckets", ["experiment_id"], :name => "index_experiment_buckets_on_experiment_id"
+  add_index "experiment_buckets", ["id"], :name => "index_experiment_buckets_on_id", :unique => true
+
+  create_table "experiments", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36, :null => false
+    t.string   "owner_id",        :limit => 36, :null => false
+    t.string   "name",                          :null => false
+    t.text     "description",                   :null => false
+    t.datetime "started_at"
+    t.datetime "ended_at"
+    t.datetime "due_at"
+    t.float    "ratio",                         :null => false
+    t.string   "udid_whitelist"
+    t.integer  "population_size",               :null => false
+    t.string   "bucket_type",                   :null => false
+    t.string   "randomizer",                    :null => false
+    t.text     "metadata"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "experiments", ["id"], :name => "index_experiments_on_id", :unique => true
 
   create_table "favorite_apps", :id => false, :force => true do |t|
     t.string   "id",              :limit => 36, :null => false
@@ -796,6 +830,11 @@ ActiveRecord::Schema.define(:version => 20120921230523) do
     t.string   "daily_cap_type"
     t.boolean  "requires_udid",                                                                 :default => false, :null => false
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
+    t.text     "featured_ad_content"
+    t.string   "featured_ad_action"
+    t.string   "featured_ad_color"
+    t.boolean  "auto_update_icon",                                                              :default => false
+    t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

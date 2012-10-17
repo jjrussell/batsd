@@ -48,6 +48,13 @@ Spork.prefork do
   require 'hpricot'
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
+  VCR.configure do |c|
+    c.cassette_library_dir     = 'spec/cassettes'
+    c.hook_into                  :fakeweb
+    c.default_cassette_options = { :record => :new_episodes }
+    c.allow_http_connections_when_no_cassette = true
+  end
+
   RSpec.configure do |config|
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = true
@@ -58,10 +65,13 @@ Spork.prefork do
     config.include(SpecHelpers)
     config.include(DashboardHelpers)
     config.include(Authlogic::TestCase)
+
     config.before(:suite) do
       DeferredGarbageCollection.start
     end
+
     config.before(:each) do
+      AnalyticsLogger.stub(:publish => true)
       Resolv.stub!(:getaddress=>'1.1.1.1')
       $fake_sdb = FakeSdb.new
       RightAws::SdbInterface.stub!(:new => $fake_sdb)
@@ -71,7 +81,13 @@ Spork.prefork do
       Memcached.stub(:new) {|*args| FakeMemcached.new(*args)}
       Mc.reset_connection
       Mc.flush('totally_serious')
+      OfferCacher.stub(:get_offer_stats) { Hash.new(0) }
     end
+
+    config.after(:each) do
+      ActiveRecordDisabler.enable_queries!
+    end
+
     config.after(:suite) do
       DeferredGarbageCollection.stop
     end

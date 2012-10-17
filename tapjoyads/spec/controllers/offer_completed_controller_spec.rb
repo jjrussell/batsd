@@ -17,6 +17,8 @@ describe OfferCompletedController do
     @offer.user_enabled = true
     @click.stub(:offer_id).and_return(@offer.id)
     @click.stub(:key).and_return(@click.id)
+
+    ActiveRecordDisabler.with_queries_enabled { @offer.cache }
   end
 
   describe "#index" do
@@ -75,7 +77,7 @@ describe OfferCompletedController do
   describe '#adility' do
     before :each do
       @voucher = FactoryGirl.create(:voucher)
-      Click.stub(:new).with(:key => @voucher[:click_key]).and_return(@click)
+      Click.stub(:new).with(:key => @voucher.click_key).and_return(@click)
       Offer.stub(:find_in_cache).and_return(@offer)
       Device.stub(:new).with(:key => @click.udid).and_return(@device)
       @device.stub(:has_app?).with(@click.advertiser_app_id).and_return(false)

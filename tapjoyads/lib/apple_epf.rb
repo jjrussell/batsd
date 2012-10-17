@@ -1,7 +1,7 @@
 class AppleEPF
   TAPJOY_EPF_CREDENTIALS = [ENV['TAPJOY_EPF_USERNAME'],ENV['TAPJOY_EPF_KEY']]
   APPLE_EPF_BASE_URL = 'http://feeds.itunes.apple.com/feeds/epf/v3/'
-  EPF_FILES = ['itunes#/application', 'itunes#/application_detail', 'itunes#/genre', 'itunes#/genre_application', 'itunes#/storefront', 'popularity#/application_popularity_per_genre' ]
+  EPF_FILES = ['itunes#/application', 'itunes#/application_detail', 'itunes#/genre', 'itunes#/genre_application', 'itunes#/storefront', 'itunes#/device_type', 'itunes#/application_device_type', 'popularity#/application_popularity_per_genre', 'pricing#/application_price']
   S3_EPF_BASE = 'epf/'
 
   def self.process_full

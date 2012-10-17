@@ -2,7 +2,6 @@ class Coupon < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
 
-  has_many :vouchers
   has_many :offers, :as => :item, :dependent => :destroy
   has_one :primary_offer, :class_name => 'Offer', :as => :item, :conditions => 'id = item_id'
 
@@ -31,13 +30,25 @@ class Coupon < ActiveRecord::Base
     coups
   end
 
+  def vouchers
+    Voucher.select(:where => "coupon_id = '#{id}'")[:items]
+  end
+
+  def get_icon_url(options = {})
+    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(id)}.merge(options))
+  end
+
+  def save_icon!(icon_src_blob)
+    Offer.upload_icon!(icon_src_blob, id)
+  end
+
   def hide!
     self.hidden = true
     self.save!
   end
 
   def enabled?
-    primary_offer.is_enabled?
+    primary_offer.enabled?
   end
 
   def enabled=(value)

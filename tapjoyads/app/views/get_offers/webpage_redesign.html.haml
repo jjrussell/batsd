@@ -5,7 +5,7 @@
   = render 'redesign.css'
 
 %body
-  #branding.clearfix{ :class => @class_fixed }
+  #branding.brand-gradient.clearfix{ :class => @class_fixed }
   - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
     = render 'currency_selector'
 
@@ -29,13 +29,9 @@
       #loader_center.loader
       #loader_right.loader
 
-  .container
+  .container.nbb
     #more.button.orange.gradientfix
       = t('text.offerwall.load_more')
-
-  .container.nbb
-    #visit.button.gradientfix
-      = t('text.offerwall.visit')
 
     .center.links
       %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}

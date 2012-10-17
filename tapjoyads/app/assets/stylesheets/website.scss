@@ -405,3 +405,24 @@ select.chosen {
   font-weight: bold;
   display: block;
 }
+
+#experiments {
+  width: 900px;
+  .running {
+    .status { color: red; }
+
+    .true { color: green; }
+  }
+
+  .label {
+    clear: left;
+    float: left;
+    width: 200px;
+  }
+  .time, .value, .status {
+    float: left;
+    margin-left: 40px;
+  }
+
+
+}

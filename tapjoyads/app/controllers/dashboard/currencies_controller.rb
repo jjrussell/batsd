@@ -56,7 +56,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
 
     if @app.currencies.empty?
       @currency = Currency.new
-      @currency.id = @app.id
+      @currency.id = @app.id unless @app.non_rewarded.try(:id) == @app.id
       @currency.app = @app
       @currency.partner = @app.partner
       @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL

@@ -91,6 +91,7 @@ class App < ActiveRecord::Base
   has_one :non_rewarded, :class_name => 'Currency', :conditions => {:conversion_rate => 0}
 
   belongs_to :partner
+  belongs_to :experiment
 
   set_callback :cache_associations, :before, :primary_app_metadata
   set_callback :cache_associations, :before, :app_metadatas

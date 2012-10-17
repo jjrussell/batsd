@@ -1,22 +1,21 @@
 require 'spec_helper'
 
 describe Offer::Ranking do
-  describe "#precache_rank_score" do
+  describe "#calculate_ranking_fields" do
     before :each do
       generic_offer = FactoryGirl.create(:generic_offer)
       @offer = generic_offer.primary_offer
       @currency_group = FactoryGirl.create(:currency_group, :random => 0)
     end
 
-    it "should make use of rank boost to calculate rank scores", :precache_rank_scores do
+    it "should make use of rank boost to calculate rank scores" do
       @rank_boost = RankBoost.create(:offer_id => @offer.id,
                                   :start_time => Time.now - 1.hour,
                                   :end_time => Time.now + 1.hour,
                                   :amount => 300)
       @offer.calculate_rank_boost!
       @offer.save
-      rank_scores = @offer.precache_rank_scores
-      rank_scores[@currency_group.id].should == @rank_boost.amount
+      @offer.rank_score.should == @rank_boost.amount
     end
   end
 

@@ -34,9 +34,7 @@
     %tr
       %th= f.label :name, 'Age Gating'
       %td
-        = f.text_field :age_gating, :maxlength => 2, :size => 4
-        +
-        = error_message_on @video_offer, :age_gating
+        = f.select :age_gating, options_for_age_rating, :include_blank => 'None'
     %tr
       %th
         = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')

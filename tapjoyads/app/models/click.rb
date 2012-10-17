@@ -1,8 +1,6 @@
 class Click < SimpledbShardedResource
 
   MAX_HISTORY = 20
-  include SdbMigrator
-  new_configuration :new_num_domains => 100, :new_domain_name => "clicksV3"
 
   belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'
@@ -60,10 +58,15 @@ class Click < SimpledbShardedResource
   self.sdb_attr :store_name
   self.sdb_attr :cached_offer_list_id
 
+  #Special case for new domain
+  def self.all_domain_names
+    (0...num_domains).collect { |num| "clicksV3_#{num}" }
+  end
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_CLICK_DOMAINS
 
-    "clicks_#{domain_number}"
+    "clicksV3_#{domain_number}"
   end
 
   def self.hashed_key(key)
@@ -153,6 +156,10 @@ class Click < SimpledbShardedResource
         partner.update_attributes!(:live_date => clicked_at) unless partner.live_date.present?
       end
     end
+  end
+
+  def currency_reward_zero?
+    currency_reward == 0
   end
 
   private

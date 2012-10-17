@@ -5,9 +5,14 @@ def click_message(click_key)
 end
 
 def expect_request_completes
-  request = WebRequest.new(:time => Time.zone.now)
-  WebRequest.should_receive(:new).twice.and_return(request)
-  request.should_receive(:save).twice
+  reward_request = WebRequest.new(:time => Time.zone.now)
+  reward_request.should_receive(:save)
+  reward_request.should_receive(:advertiser_balance=).with(0)
+  
+  conversion_attempt_request = WebRequest.new(:time => Time.zone.now)
+  conversion_attempt_request.should_receive(:save)
+  
+  WebRequest.should_receive(:new).and_return(reward_request, conversion_attempt_request)
 end
 
 def expect_request_does_not_complete

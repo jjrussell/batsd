@@ -61,7 +61,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     end
 
     reward.sent_currency = Time.zone.now
-    
+
     begin
       reward.save!(:expected_attr => {'sent_currency' => nil})
     rescue Simpledb::ExpectedAttributeError => e
@@ -100,6 +100,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       end
       params.delete(:callback_url)
     rescue Exception => e
+      attempts << { :status => status, :body => e.message, :timestamp => Time.zone.now }
+      reward.attempts = attempts
       reward.delete('sent_currency')
       reward.save
 

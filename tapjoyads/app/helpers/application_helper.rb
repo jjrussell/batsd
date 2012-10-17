@@ -16,6 +16,11 @@ module ApplicationHelper
     ([ app.primary_offer ] + app.partner.offers.sort_by(&:name).reject { |o| o.id == offer.primary_offer.id || o.id == app.primary_offer.id }).collect { |o| [ "#{o.name} -#{o.name_suffix}-#{o.item_type}", o.id ] }
   end
 
+  def options_for_age_rating
+    options = VideoOffer::AGE_GATING_MAP.map {|key, age| ["#{age}+", key]}
+    options.sort_by(&:last)
+  end
+
   def list_of_countries
     [
       'United States of America',

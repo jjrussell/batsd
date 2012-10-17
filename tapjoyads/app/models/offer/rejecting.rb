@@ -1,6 +1,14 @@
 module Offer::Rejecting
 
-  NON_LIMITED_CURRENCY_IDS = Set.new(['127095d1-42fc-480c-a65d-b5724003daf0', '91631942-cfb8-477a-aed8-48d6ece4a23f', 'e3d2d144-917e-4c5b-b64f-0ad73e7882e7', 'b9cdd8aa-632d-4633-866a-0b10d55828c0'])
+  NON_LIMITED_CURRENCY_IDS = Set.new([
+    '127095d1-42fc-480c-a65d-b5724003daf0',
+    '91631942-cfb8-477a-aed8-48d6ece4a23f',
+    'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',
+    'b9cdd8aa-632d-4633-866a-0b10d55828c0',
+    'cc660353-0c63-4c27-891c-bffa0de3c42e',
+    '84c7718d-ed28-4848-8532-09302ac85940',
+    '59d168fa-a9fe-4883-a582-1cc842668a36',
+    '40f9ee86-5759-4655-96dd-3cd4bbab1853',])
 
   TAPJOY_GAMES_RETARGETED_OFFERS = ['2107dd6a-a8b7-4e31-a52b-57a1a74ddbc1', '12b7ea33-8fde-4297-bae9-b7cb444897dc', '8183ce57-8ee4-46c0-ab50-4b10862e2a27']
   TAPJOY_GAMES_OFFERS = [ TAPJOY_GAMES_REGISTRATION_OFFER_ID, LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID]
@@ -19,7 +27,6 @@ module Offer::Rejecting
       { :method => :minimum_bid_reject?, :parameters => [currency, type], :reason => 'minimum_bid' },
       { :method => :jailbroken_reject?, :parameters => [device], :reason => 'jailbroken' },
       { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
-      { :method => :action_app_reject?, :parameters => [device], :reason => 'action_app' },
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
       { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
@@ -45,6 +52,7 @@ module Offer::Rejecting
       { :method => :has_coupon_offer_not_started?, :reason => 'coupon_not_started'},
       { :method => :udid_required_reject?, :parameters => [device], :reason => 'udid_required'},
       { :method => :mac_address_required_reject?, :parameters => [device], :reason => 'mac_address_required'},
+      { :method => :ppe_missing_prerequisite_for_ios_reject?, :parameters => [source, device_type], :reason => 'prerequisite_for_ios_required'},
     ]
     reject_reasons(reject_functions)
   end
@@ -61,7 +69,6 @@ module Offer::Rejecting
     minimum_bid_reject?(currency, type) ||
     jailbroken_reject?(device) ||
     direct_pay_reject?(direct_pay_providers) ||
-    action_app_reject?(device) ||
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
     screen_layout_sizes_reject?(screen_layout_size) ||
@@ -91,7 +98,8 @@ module Offer::Rejecting
     has_coupon_offer_not_started? ||
     has_coupon_offer_expired? ||
     udid_required_reject?(device) ||
-    mac_address_required_reject?(device)
+    mac_address_required_reject?(device) ||
+    ppe_missing_prerequisite_for_ios_reject?(source, device_type)
   end
 
   def precache_reject?(platform_name, hide_rewarded_app_installs, normalized_device_type)
@@ -154,6 +162,24 @@ module Offer::Rejecting
     has_valid_coupon? && self.coupon.end_date <= Date.today
   end
 
+  def ppe_missing_prerequisite_for_ios_reject?(source, device_type)
+    source != 'tj_games' && Offer::APPLE_DEVICES.include?(device_type) &&
+      item_type == "ActionOffer" && prerequisite_offer_id.blank?
+  end
+
+  def device_platform_mismatch?(normalized_device_type)
+    return false if normalized_device_type.blank?
+
+    !get_device_types.include?(normalized_device_type)
+  end
+
+  def app_platform_mismatch?(app_platform_name)
+    return false if app_platform_name.blank?
+
+    platform_name = get_platform
+    platform_name != 'All' && platform_name != app_platform_name
+  end
+
   private
 
   def has_valid_coupon?(device=true)
@@ -185,18 +211,6 @@ module Offer::Rejecting
     self_promote_only? && partner_id != publisher_app.partner_id
   end
 
-  def device_platform_mismatch?(normalized_device_type)
-    return false if normalized_device_type.blank?
-
-    !get_device_types.include?(normalized_device_type)
-  end
-
-  def app_platform_mismatch?(app_platform_name)
-    return false if app_platform_name.blank?
-
-    platform_name = get_platform
-    platform_name != 'All' && platform_name != app_platform_name
-  end
 
   def age_rating_reject?(max_age_rating)
     return false unless max_age_rating && age_rating
@@ -291,10 +305,6 @@ module Offer::Rejecting
     direct_pay? && !direct_pay_providers.include?(direct_pay)
   end
 
-  def action_app_reject?(device)
-    item_type == "ActionOffer" && third_party_data.present? && device && !device.has_app?(third_party_data)
-  end
-
   def min_os_version_reject?(os_version)
     return false if min_os_version.blank?
     return true if os_version.blank?
@@ -371,7 +381,7 @@ module Offer::Rejecting
   end
 
   def age_gating_reject?(device)
-    device && !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
+    device && age_gate? && !Mc.distributed_get("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{device.key}.#{id}").nil?
   end
 
   def udid_required_reject?(device)
@@ -381,4 +391,5 @@ module Offer::Rejecting
   def mac_address_required_reject?(device)
     device && requires_mac_address? && device.mac_address.blank?
   end
+
 end

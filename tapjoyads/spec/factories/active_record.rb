@@ -425,16 +425,18 @@ FactoryGirl.define do
     price                         1
   end
 
-  factory :voucher do
-    association :coupon
-    id                   { FactoryGirl.generate(:name) }
-    click_key            { FactoryGirl.generate(:name) }
-    ref_id               { FactoryGirl.generate(:name) }
-    redemption_code      { FactoryGirl.generate(:name) }
-    acquired_at          { Date.today }
-    expires_at           { Date.today + 1.day }
-    barcode_url          'http://somebarcode.com'
-    completed            false
-    email_address        'tapjoy@tapjoy.com'
+  factory :experiment do
+    name              { FactoryGirl.generate(:name) }
+    owner             { Factory(:user) }
+    description       'Experiment Description'
+    started_at        Date.today.advance(:days => 2)
+    due_at            Date.today.advance(:days => 10)
+    ratio             50
+    population_size   1
+    bucket_type       'optimization'
+  end
+
+  factory :experiment_bucket do
+    bucket_type 'optimization'
   end
 end

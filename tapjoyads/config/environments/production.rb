@@ -32,7 +32,7 @@ Tapjoyad::Application.configure do
   config.serve_static_assets = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
-  #config.action_controller.asset_host = "//d2p49qm25dcs4t.cloudfront.net"
+  config.action_controller.asset_host = "//d2p49qm25dcs4t.cloudfront.net"
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
@@ -104,7 +104,7 @@ ENV['AWS_SECRET_ACCESS_KEY'] = amazon['production']['secret_access_key']
 AWS_ACCOUNT_ID = '266171351246'
 
 NUM_POINT_PURCHASES_DOMAINS = 10
-NUM_CLICK_DOMAINS = 50
+NUM_CLICK_DOMAINS = 100
 NUM_REWARD_DOMAINS = 50
 NUM_DEVICES_DOMAINS = 300
 NUM_DEVICE_IDENTIFIER_DOMAINS = 100
@@ -150,13 +150,11 @@ TAPJOY_GAMES_INVITATION_OFFER_ID = '114d3e0c-c8f3-4f42-b016-2b2f81723cd8'
 TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 FLOWDOCK_API_KEY = 'b052631b6c90acb40c45cb0076eb8afe'
 
-Savon.configure do |config|
-  ##
-  ## TODO: Figure out why the hell this thing still logs to STDOUT instead of to Rails.logger
-  ##
-  config.log = true
-  config.log_level = :error
-  config.logger = Rails.logger
-  config.pretty_print_xml = true
-  config.raise_errors = true
-end
+AMQP_URL = 'amqp://tapjoy:Tapjoy123!@rabbit.tapjoy.net'
+
+ANALYTICS_LOGGER_LEVEL = Logger::DEBUG
+
+TIPALTI_PAYEE_API = 'https://ui.tipalti.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'https://api.tipalti.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'spAtUbrarebaStuCebRek5febr9rega8pEnaSp968b29a3rUna7'
