@@ -66,7 +66,7 @@ class Dashboard::DashboardController < ApplicationController
     cookies["#{current_user.email}-device"] = options
   end
 
-  protected
+ protected
 
   def permission_denied
     flash[:error] = "Sorry, you are not allowed to access that page."
