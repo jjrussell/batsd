@@ -1,10 +1,6 @@
 module Offer::Rejecting
 
   NON_LIMITED_CURRENCY_IDS = Set.new([
-    '127095d1-42fc-480c-a65d-b5724003daf0',
-    '91631942-cfb8-477a-aed8-48d6ece4a23f',
-    'e3d2d144-917e-4c5b-b64f-0ad73e7882e7',
-    'b9cdd8aa-632d-4633-866a-0b10d55828c0',
     'cc660353-0c63-4c27-891c-bffa0de3c42e',
     '84c7718d-ed28-4848-8532-09302ac85940',
     '59d168fa-a9fe-4883-a582-1cc842668a36',
