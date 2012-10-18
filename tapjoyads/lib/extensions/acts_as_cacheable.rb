@@ -120,6 +120,48 @@ module ActsAsCacheable
     end
   end
 
+  module DevelopmentMethods
+    def self.included(base)
+      base.extend ClassMethods
+      base.send(:include, InstanceMethods)
+      base.send(:after_initialize, :cache_record_for_development)
+    end
+
+    module ClassMethods
+      def auto_cache_enabled?
+        AUTO_CACHE_MODELS == true ||
+          (AUTO_CACHE_MODELS.is_a?(Array) && AUTO_CACHE_MODELS.include?(self.name))
+      end
+    end
+
+    module InstanceMethods
+      def cache_record_for_development
+        if self.class.auto_cache_enabled?
+          if self.respond_to?(:cache)
+            if self.persisted?
+              Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is getting cached"
+              self.cache
+            else
+              Rails.logger.debug "AUTO_CACHE #{self.class.name} is not persisted"
+            end
+          else
+            Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is not cacheable"
+          end
+        else
+          Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is being skipped"
+        end
+      end
+    end
+  end
 end
 
 ActiveRecord::Base.send(:include, ActsAsCacheable)
+
+if Rails.env.development?
+  if defined?(AUTO_CACHE_MODELS)
+    Rails.logger.debug "AUTO_CACHE is enabled: #{AUTO_CACHE_MODELS.inspect}"
+    ActiveRecord::Base.send(:include, ActsAsCacheable::DevelopmentMethods)
+  else
+    Rails.logger.debug "AUTO_CACHE is not enabled"
+  end
+end
