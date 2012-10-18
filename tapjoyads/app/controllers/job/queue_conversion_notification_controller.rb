@@ -21,7 +21,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
         {:namespace => 'idfa',       :identifier => @device.idfa}
       ].reject{ |a| a[:identifier].nil?  }
 
-      @publisher_app = App.find_by_id(@reward.publisher_app_id)
+      @publisher_app = App.find_in_cache(@reward.publisher_app_id)
 
       @notification = NotificationsClient::Notification.new({
         :app_id => @reward.publisher_app_id, 
