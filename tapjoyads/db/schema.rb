@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "videos_cache_3g",                             :default => false, :null => false
     t.boolean  "videos_stream_3g",                            :default => false, :null => false
     t.string   "experiment_id",                 :limit => 36
+    t.boolean  "notifications_enabled",                       :default => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true

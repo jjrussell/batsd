@@ -32,6 +32,21 @@ describe Job::QueueCreateConversionsController do
     end
   end
 
+  context 'with notifications enabled' do
+    it 'enqueues a conversion-notification message' do
+      @publisher_app.update_attributes('notifications_enabled' => true)
+      Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
+      get(:run_job, :message => 'reward_key')
+    end
+  end
+
+  context 'without notifications enabled' do
+    it 'will not enqueue a conversion-notification message' do
+      Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
+      get(:run_job, :message => 'reward_key')
+    end
+  end
+
   context 'with conversion tracking urls' do
     before :each do
       @offer.update_attributes!(:conversion_tracking_urls => 'http://www.example.com')
