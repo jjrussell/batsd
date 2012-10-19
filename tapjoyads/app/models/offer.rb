@@ -708,6 +708,10 @@ class Offer < ActiveRecord::Base
   end
   memoize :categories
 
+  def name
+    is_deeplink? ? DeeplinkOffer.default_name : super
+  end
+
   def name_with_suffix
     name_suffix.blank? ? name : "#{name} -- #{name_suffix}"
   end
