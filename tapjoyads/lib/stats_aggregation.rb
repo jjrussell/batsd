@@ -75,7 +75,7 @@ class StatsAggregation
   end
 
   def self.path_condition(paths, use_like)
-    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
+    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]' OR path = '#{p}'" }.join(' OR ')
     "(#{condition})"
   end
 
