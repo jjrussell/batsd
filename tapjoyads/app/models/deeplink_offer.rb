@@ -30,7 +30,7 @@ class DeeplinkOffer < ActiveRecord::Base
   private
 
   def set_name_from_currency
-    self.name = "Earn #{currency.name} in #{app.name}"
+    self.name = "Check out more ways to enjoy the apps you love at Tapjoy.com!"
   end
 
   def create_primary_offer

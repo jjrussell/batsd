@@ -8,6 +8,7 @@ describe GetOffersController do
       Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
       @currency.update_attributes({:external_publisher => true})
+      @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       @offer.save
@@ -24,6 +25,7 @@ describe GetOffersController do
       @offer4.partner.balance = 10
       @offer4.save
 
+      @deeplink.cache
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
 
@@ -113,10 +115,10 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer3]
+      assigns(:offer_list).should == [@offer, @offer3, @deeplink]
       controller.stub(:geoip_data).and_return({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer2]
+      assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
     context 'when the same app has multiple offers' do
@@ -196,9 +198,9 @@ describe GetOffersController do
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
     end
 
     it 'renders json with correct fields' do
