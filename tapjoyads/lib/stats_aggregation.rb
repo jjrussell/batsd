@@ -41,7 +41,7 @@ class StatsAggregation
     raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
 
     stats                     = {}
-    stat_map                  = WebRequest::STAT_TO_PATH_MAP
+    stat_map                  = WebRequest::STAT_TO_PATH_MAP.clone
     stat_map['virtual_goods'] = { :paths => [ 'purchased_vg' ], :attr_name => 'virtual_good_id', :use_like => false }
 
     stat_map.each do |stat_name, path_definition|
