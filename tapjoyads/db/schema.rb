@@ -192,6 +192,18 @@ ActiveRecord::Schema.define(:version => 20121106024714) do
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
   add_index "clients", ["name"], :name => "index_clients_on_name"
 
+  create_table "conversion_rates", :id => false, :force => true do |t|
+    t.string  "id",                    :limit => 36, :null => false
+    t.integer "rate",                                :null => false
+    t.integer "minimum_offerwall_bid",               :null => false
+    t.string  "currency_id",           :limit => 36, :null => false
+  end
+
+  add_index "conversion_rates", ["currency_id", "minimum_offerwall_bid"], :name => "index_conversion_rates_on_currency_id_and_minimum_offerwall_bid", :unique => true
+  add_index "conversion_rates", ["currency_id", "rate"], :name => "index_conversion_rates_on_currency_id_and_rate", :unique => true
+  add_index "conversion_rates", ["currency_id"], :name => "index_conversion_rates_on_currency_id"
+  add_index "conversion_rates", ["id"], :name => "index_conversion_rates_on_id", :unique => true
+
   create_table "conversions", :id => false, :force => true do |t|
     t.string   "id",                     :limit => 36, :null => false
     t.string   "reward_id",              :limit => 36
@@ -297,6 +309,7 @@ ActiveRecord::Schema.define(:version => 20121106024714) do
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "store_whitelist",                                                                                           :null => false
     t.string   "offer_filter"
+    t.boolean  "conversion_rate_enabled",                                                                :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"

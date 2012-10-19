@@ -57,6 +57,11 @@ Tapjoyad::Application.routes.draw do
           resources :offer_events, :only => [:index, :new, :create, :edit, :update, :destroy]
         end
         resources :currencies, :only => [:show, :update, :new, :create] do
+          resources :conversion_rates, :except => [:show] do
+            collection do
+              get :example
+            end
+          end
           member do
             post :reset_test_device
           end

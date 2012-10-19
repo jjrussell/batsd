@@ -1,0 +1,117 @@
+%h2= @page_title
+
+%table
+  %tr
+    %th &nbsp;
+    %th= I18n.t('text.conversion_rate.conversion_rate')
+    %th= I18n.t('text.conversion_rate.minimum_offer_bid')
+    %th &nbsp;
+    %th &nbsp;
+  %tr
+    %td $1=
+    %td
+      = number_to_human(@currency.conversion_rate)
+      = @currency.name
+    %td $0.00
+    %td &nbsp;
+    %td &nbsp;
+  - if @conversion_rates.present?
+    - for conversion_rate in @conversion_rates
+      - unless @conversion_rate.present? && @conversion_rate.persisted? && conversion_rate.id == @conversion_rate.id
+        %tr
+          %td $1=
+          %td
+            = number_to_human(conversion_rate.rate)
+            = @currency.name
+          %td= number_to_currency conversion_rate.bid_number_to_currency
+          - if permitted_to?(:edit, :dashboard_conversion_rates)
+            %td= link_to(I18n.t('text.shared.edit'), edit_app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id))
+            %td= link_to(I18n.t('text.shared.delete'), app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id), :method => :delete, :confirm => 'Are you sure?')
+  = form_for([@app, @currency, @conversion_rate]) do |f|
+    %tr
+      %td $1=
+      %td
+        = f.text_field :rate
+        = error_message_on(@conversion_rate, :rate)
+      %td
+        = f.currency_field :minimum_offerwall_bid
+        = error_message_on(@conversion_rate, :minimum_offerwall_bid)
+      %td &nbsp;
+      %td= f.submit
+
+- content_for :page_styles do
+  :plain
+    table {
+      width: 90%;
+      text-align: center;
+    }
+    td {
+      padding:8px;
+    }
+    #conversion_rate_submit {
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid blue;
+      color: blue;
+      cursor: pointer;
+      margin: 0;
+      padding: 0;
+    }
+    form {
+      display: inline-block;
+    }
+     th {
+      text-align: center;
+      vertical-align: top;
+      padding-top: 6px;
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+    textarea,
+    input[type=text],
+    input[type=email],
+    input[type=password],
+    input[type=file] {
+      padding: 2px;
+      border: 2px solid #bec5cb;
+      font-size: 16px;
+      align: center;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      &.monospace {
+        font-family: monospace;
+      }
+    }
+    .fieldWithErrors textarea,
+    .fieldWithErrors input[type=text],
+    .fieldWithErrors input[type=email],
+    .fieldWithErrors input[type=password] {
+      border: 2px solid #af1515;
+    }
+    textarea:hover,
+    textarea:focus,
+    input[type=text]:hover,
+    input[type=text]:focus,
+    input[type=email]:hover,
+    input[type=email]:focus,
+    input[type=password]:hover,
+    input[type=password]:focus {
+      background-color: #fffff0;
+    }
+    .fieldWithErrors {
+      display: inline-block;
+    }
+    .formError {
+      color: #af1515;
+    }
+    .ui-dialog .ui-dialog-titlebar {
+      height: 5px;
+    }
+    .ui-dialog .ui-dialog-title {
+      font-size: 14px;
+      margin-top: -8px;
+    }
+    .ui-dialog .ui-dialog-content {
+      overflow: visible;
+      font-size: 12px;
+    }
