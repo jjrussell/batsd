@@ -104,7 +104,8 @@ group :test do
   gem 'capybara'
   gem 'cucumber'
   gem 'database_cleaner'
-  gem 'factory_girl_rails', '1.2.0'
+  gem 'factory_girl', '~>2.6'
+  gem 'factory_girl_rails'
   gem 'launchy'
   gem 'spork'
   gem 'test_after_commit'
@@ -116,11 +117,11 @@ group :test do
 end
 
 group :development, :test do
-  gem 'rspec', '~> 2.10.0'
-  gem 'rspec-rails', '~> 2.10.0'
+  gem 'rspec'
+  gem 'rspec-rails'
   gem 'cucumber-rails', :require => false
   gem 'localeapp'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '1.2.0'
 end
 
 group :ops do
