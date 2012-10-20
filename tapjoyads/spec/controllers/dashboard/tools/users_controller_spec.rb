@@ -51,7 +51,7 @@ describe Dashboard::Tools::UsersController do
 
     context 'when role manager' do
       before :each do
-        user = FactoryGirl.create :role_mgr_user
+        user = FactoryGirl.create :role_manager
         user.current_partner = FactoryGirl.create :partner
         login_as user
         get(:show, :id => user.id)

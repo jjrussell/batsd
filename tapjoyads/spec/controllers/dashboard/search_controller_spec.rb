@@ -15,7 +15,7 @@ describe Dashboard::SearchController do
 
     context 'with an unauthorized user' do
       before :each do
-        @user = FactoryGirl.create(:agency_user)
+        @user = FactoryGirl.create(:agency)
         login_as(@user)
       end
 

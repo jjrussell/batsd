@@ -16,7 +16,7 @@ describe Dashboard::Tools::GenericOffersController do
 
   context "with an unauthorized user" do
     before :each do
-      @user = FactoryGirl.create(:agency_user)
+      @user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner, :users => [@user])
       login_as(@user)
     end
@@ -58,20 +58,20 @@ describe Dashboard::Tools::GenericOffersController do
       @generic_offer.reload
       GenericOffer::CATEGORIES.first.should == @generic_offer.category
     end
-    
+
     describe 'create' do
       before(:each) do
         @params = {:generic_offer => { :category => GenericOffer::CATEGORIES.first, :partner_id => @partner.id, :name => 'SomeOffer', :url => 'http://www.example.com' }}
       end
-      
+
       it "can create generic offers" do
-        lambda{ post(:create, @params) }.should change(GenericOffer, :count).by(1)        
+        lambda{ post(:create, @params) }.should change(GenericOffer, :count).by(1)
       end
-    
+
       it "can set primary_offer_attributes on creation" do
         @params[:generic_offer].merge!(:primary_offer_attributes => {:featured_ad_content => 'Featured Ad Content'})
         post(:create, @params)
-      
+
         assigns[:generic_offer].primary_offer.featured_ad_content.should == 'Featured Ad Content'
       end
 

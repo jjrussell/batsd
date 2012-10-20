@@ -1,86 +1,4 @@
-DEFAULT_FACTORY_PASSWORD = 'password'
-
 FactoryGirl.define do
-  sequence(:url)              { |i| "http://example.com/#{i}" }
-  sequence(:callback_url)     { |i| "http://callbackurl.com/#{i}"}
-  sequence(:conversion_rate)  { |i| i }
-
-  factory :user do
-    email    { FactoryGirl.generate(:email) }
-    username { |u| u.email }
-    password DEFAULT_FACTORY_PASSWORD
-    password_confirmation DEFAULT_FACTORY_PASSWORD
-    country  'earth'
-  end
-
-  factory :admin, :parent => :user do
-    after_build do |admin|
-      role = UserRole.find_or_create_by_name('admin', :employee => true)
-      admin.user_roles << role
-    end
-  end
-
-  factory :optimized_rank_booster, :parent => :user do
-    after_build do |optim|
-      role = UserRole.find_or_create_by_name('optimized_rank_booster', :employee => true)
-      optim.user_roles << role
-    end
-  end
-
-  factory :account_mgr_user, :parent => :user do
-    association :current_partner, :factory => :partner
-    after_build do |account_mgr|
-      role = UserRole.find_or_create_by_name('account_mgr', :employee => true)
-      account_mgr.user_roles << role
-    end
-  end
-
-  factory :agency_user, :parent => :user do
-    after_build do |agency|
-      agency.user_roles << UserRole.find_or_create_by_name('agency')
-    end
-  end
-
-  factory :customer_service_user, :parent => :user do
-    after_build do |customer_service|
-      customer_service.user_roles << UserRole.find_or_create_by_name('customer_service')
-    end
-  end
-
-  factory :customer_service_manager, :parent => :user do
-    after_build do |cs_manager|
-      cs_manager.user_roles << UserRole.find_or_create_by_name('customer_service_manager')
-    end
-  end
-
-  factory :payops_user, :parent => :user do
-     after_build do |payops_user|
-      payops_user.user_roles << UserRole.find_or_create_by_name('payops')
-    end
-  end
-
-  factory :payout_manager_user, :parent => :user do
-     after_build do |payout_manager|
-      payout_manager.user_roles << UserRole.find_or_create_by_name('payout_manager')
-    end
-  end
-
-  factory :partner_user, :parent => :user do
-    association :current_partner, :factory => :partner
-    factory :premier_partner_user, :parent => :user do
-      after_build do |user|
-        OfferDiscount.create! :partner => user.current_partner, :source => 'Exclusivity', :amount => 1, :expires_on => Time.now + 8 * 60 * 60 * 24
-      end
-    end
-  end
-
-  factory :role_mgr_user, :parent => :user do
-    after_build do |mgr|
-      role = UserRole.find_or_create_by_name('role_mgr', :employee => true)
-      mgr.user_roles << role
-    end
-  end
-
   factory :partner do
     sequence(:name) { |i| "Partner #{i}" }
     approved_publisher true
@@ -370,7 +288,7 @@ FactoryGirl.define do
     first_name    { FactoryGirl.generate(:name) }
     last_name     { FactoryGirl.generate(:name) }
     email         { FactoryGirl.generate(:email) }
-    title         'title'
+    title
     superpower    'superpower'
     current_games 'current_games'
     weapon        'weapon'
@@ -391,7 +309,7 @@ FactoryGirl.define do
     featured_type         FeaturedContent::STAFFPICK
     platforms             %w( iphone itouch ).to_json
     subtitle              'Subtitle'
-    title                 'Title'
+    title                 { generate(:name) }
     description           'Description'
     start_date            { Time.zone.now }
     end_date              { Time.zone.now + 1.day }

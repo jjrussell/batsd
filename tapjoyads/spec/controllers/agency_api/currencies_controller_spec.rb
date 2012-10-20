@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AgencyApi::CurrenciesController do
   before :each do
-    @agency_user = FactoryGirl.create(:agency_user)
+    @agency_user = FactoryGirl.create(:agency)
     @partner = FactoryGirl.create(:partner)
     @agency_user.partners << @partner
     @app = FactoryGirl.create(:app, :partner => @partner)

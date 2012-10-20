@@ -8,7 +8,7 @@ describe Dashboard::Tools::GamersController do
   describe "#index" do
     context "when logged in as customer service" do
       before :each do
-        user = FactoryGirl.create :customer_service_user
+        user = FactoryGirl.create(:user, :with_customer_service_role)
         login_as user
 
         get(:index)
@@ -21,7 +21,7 @@ describe Dashboard::Tools::GamersController do
 
     context "when logged in as an account manager" do
       before :each do
-        user = FactoryGirl.create :account_mgr_user
+        user = FactoryGirl.create(:account_manager)
         login_as user
 
         get(:index)
@@ -34,7 +34,7 @@ describe Dashboard::Tools::GamersController do
 
     context "when logged in as a partner" do
       before :each do
-        user = FactoryGirl.create :partner_user
+        user = FactoryGirl.create(:user, :with_partner)
         login_as user
 
         get(:index)

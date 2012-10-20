@@ -14,7 +14,7 @@ describe Dashboard::ToolsController do
 
   context 'with an unauthorized user' do
     before :each do
-      @user = FactoryGirl.create(:agency_user)
+      @user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       login_as(@user)
     end

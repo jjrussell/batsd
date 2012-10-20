@@ -61,7 +61,7 @@ describe Dashboard::PartnersController do
 
   context "when agencies act as partners" do
     before :each do
-      @user = FactoryGirl.create(:agency_user)
+      @user = FactoryGirl.create(:agency)
       @partner1 = @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
       @partner2 = @partner = FactoryGirl.create(:partner, :pending_earnings => 10000, :balance => 10000, :users => [@user])
 
@@ -78,7 +78,7 @@ describe Dashboard::PartnersController do
   end
 
   context "when searching" do
-    let(:user)    { FactoryGirl.create(:account_mgr_user) }
+    let(:user)    { FactoryGirl.create(:account_manager) }
 
     before :each do
       login_as(user)
@@ -124,7 +124,7 @@ describe Dashboard::PartnersController do
     end
 
     context 'by manager' do
-      let(:manager) { FactoryGirl.create(:account_mgr_user) }
+      let(:manager) { FactoryGirl.create(:account_manager) }
       let(:partner) { FactoryGirl.create(:partner, :account_managers => [manager]) }
 
       before :each do
@@ -136,7 +136,7 @@ describe Dashboard::PartnersController do
       end
 
       it 'responds only with partners managed by indicated manager' do
-        assigns(:partners).all? { |p| p.account_managers.include(manager) }.should be_true
+        assigns(:partners).all? { |p| p.account_managers.include?(manager) }.should be_true
       end
     end
   end

@@ -384,7 +384,7 @@ describe Partner do
 
       context 'when user does not have proper role' do
         before :each do
-          @user = FactoryGirl.create(:agency_user)
+          @user = FactoryGirl.create(:agency)
         end
 
         it 'does not confirm the partner' do
