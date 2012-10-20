@@ -65,7 +65,11 @@ class StatsAggregation
 
   def self.cached_vertica_stats(s3_path)
     bucket = S3.bucket(BucketNames::WEB_REQUESTS)
-    Marshal.load(bucket.objects[s3_path].read)
+    begin
+      Marshal.load(bucket.objects[s3_path].read)
+    rescue AWS::S3::Errors::NoSuchKey
+      nil
+    end
   end
 
   def self.cached_stats_s3_path(start_time, end_time)
