@@ -24,19 +24,20 @@ class DeeplinkOffer < ActiveRecord::Base
   delegate :tapjoy_enabled, :user_enabled, :to => :primary_offer
 
   validates_presence_of :partner, :app, :currency, :name
+  after_initialize :set_name
   after_create :create_primary_offer
 
-  private
-
-  def self.default_name
-    "Check out more ways to enjoy the apps you love at Tapjoy.com!"
+  def set_name
+    self.name ||= "Check out more ways to enjoy the apps you love at Tapjoy.com!"
   end
+
+  private
 
   def create_primary_offer
     offer = Offer.new(:item => self)
     offer.id = id
     offer.partner = partner
-    offer.name = DeeplinkOffer.default_name
+    offer.name = name
     offer.url = "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
     offer.price = 0
     offer.bid = 1
