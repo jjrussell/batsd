@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe TransactionalMailer do
+  before :each do
+    @mailer = TransactionalMailer.new
+  end
+
   ##
   ## TODO: Spec out setup_for_tjm_welcome_email
   ##
@@ -74,6 +78,11 @@ describe TransactionalMailer do
         VCR.use_cassette('exact_target/send_triggered_email/valid_email') do
           example.run
         end
+      end
+
+      it "doesn't set the email_invalid flag on gamer" do
+        @mailer.welcome_email(@gamer)
+        @gamer.email_invalid.should_not be_true
       end
     end
   end
