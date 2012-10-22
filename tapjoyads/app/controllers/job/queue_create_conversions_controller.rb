@@ -20,7 +20,7 @@ class Job::QueueCreateConversionsController < Job::SqsReaderController
     end
 
     if unprocessed
-      publisher_app = App.find_by_id(reward.publisher_app_id)
+      publisher_app = App.find_in_cache(reward.publisher_app_id)
       Sqs.send_message(QueueNames::CONVERSION_NOTIFICATIONS, reward.key) if publisher_app && publisher_app.notifications_enabled?
     end
    
