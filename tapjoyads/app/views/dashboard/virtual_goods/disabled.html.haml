@@ -7,4 +7,8 @@
   Your
   = link_to 'virtual currency must be managed by Tapjoy', app_currency_path({:app_id => @app.id, :id => @app.primary_currency.id})
 in order to use Tapjoy virtual goods.
-.clear
+
+%p
+  PLEASE NOTE: <b> At this time we're no longer offering our Virtual Goods SDK for download and will no longer on-board new publishers utilizing this functionality. </b> Publishers who have previously set up virtual goods will still be able to interact with them as we will retain our infrastructure to support these partners. If you have questions please contact
+  = succeed '.' do
+    = mail_to 'support@tapjoy.com'
