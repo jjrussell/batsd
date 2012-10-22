@@ -1023,6 +1023,10 @@ class Offer < ActiveRecord::Base
     write_attribute(:daily_cap_type, value.blank? ? nil : value.to_sym)
   end
 
+  def should_notify_on_conversion?
+    !(video_offer? || survey_offer?)
+  end
+
   private
 
   def calculated_min_bid
