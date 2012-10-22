@@ -57,6 +57,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :force_converted_by
   self.sdb_attr :store_name
   self.sdb_attr :cached_offer_list_id
+  self.sdb_attr :previous_publisher_ids, :type => :json, :default_value => []
 
   #Special case for new domain
   def self.all_domain_names
@@ -152,14 +153,25 @@ class Click < SimpledbShardedResource
       [publisher_partner,  publisher_amount],
       [advertiser_partner, advertiser_amount]
     ].each do |partner, amount|
-      if partner.present? && amount > 0
-        partner.update_attributes!(:live_date => clicked_at) unless partner.live_date.present?
+      if partner.present? && amount > 0 && partner.live_date.blank?
+        partner.update_attributes!(:live_date => clicked_at)
       end
     end
   end
 
   def currency_reward_zero?
     currency_reward == 0
+  end
+
+  def save(options = {})
+    if self.publisher_app_id_changed? && self.publisher_app_id_was.present?
+      prev_publisher_data = { 'publisher_app_id' => self.publisher_app_id_was,
+                              'updated_at' => self.updated_at.to_f,
+                              'publisher_user_id' => self.publisher_user_id_was,
+                            }
+      self.previous_publisher_ids = (self.previous_publisher_ids << prev_publisher_data)
+    end
+    super(options)
   end
 
   private

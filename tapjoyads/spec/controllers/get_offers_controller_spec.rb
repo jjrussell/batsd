@@ -8,6 +8,7 @@ describe GetOffersController do
       Timecop.freeze(Time.parse('2012-08-01')) # forcing new spend share algorithm
       @currency = FactoryGirl.create(:currency)
       @currency.update_attributes({:external_publisher => true})
+      @deeplink = @currency.deeplink_offer.primary_offer
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
       @offer.save
@@ -24,6 +25,7 @@ describe GetOffersController do
       @offer4.partner.balance = 10
       @offer4.save
 
+      @deeplink.cache
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
 
@@ -113,10 +115,10 @@ describe GetOffersController do
 
     it 'returns offers targeted to country' do
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer3]
+      assigns(:offer_list).should == [@offer, @offer3, @deeplink]
       controller.stub(:geoip_data).and_return({ :primary_country => 'GB' })
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer2]
+      assigns(:offer_list).should == [@offer, @offer2, @deeplink]
     end
 
     context 'when the same app has multiple offers' do
@@ -196,9 +198,9 @@ describe GetOffersController do
     it 'ignores country_code if IP is in China' do
       controller.stub(:ip_address).and_return('60.0.0.1')
       get(:index, @params)
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
       get(:index, @params.merge(:country_code => 'GB'))
-      assigns(:offer_list).should == [@offer, @offer4]
+      assigns(:offer_list).should == [@offer, @offer4, @deeplink]
     end
 
     it 'renders json with correct fields' do
@@ -216,8 +218,8 @@ describe GetOffersController do
       json_offer['IconURL'    ].should be_present
       json_offer['RedirectURL'].should be_present
 
-      json['CurrencyName'].should == 'TAPJOY_BUCKS'
-      json['Message'].should == 'Install one of the apps below to earn TAPJOY_BUCKS'
+      json['CurrencyName'].should == @currency.name
+      json['Message'].should == "Install one of the apps below to earn #{@currency.name}"
     end
 
     it 'returns FullScreenAdURL when rendering featured json' do
@@ -275,6 +277,11 @@ describe GetOffersController do
       end
     end
 
+    it 'should set for_preview if an offer_id is provided' do
+      get(:webpage, @params.merge(:offer_id => @offer.id))
+      assigns[:for_preview].should == true
+    end
+
     it 'should queue up tracking url calls' do
       OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
@@ -327,6 +334,49 @@ describe GetOffersController do
       Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
 
       get(:index, @params)
+    end
+
+    context 'previewing featured ads' do
+      it 'should set for_preview if an offer_id is provided' do
+        get(:featured, @params.merge(:offer_id => @offer.id, :format => 'html'))
+        assigns[:for_preview].should == true
+      end
+
+      it 'should merge in offer overrides for preview' do
+        get(:featured, @params.merge(
+          :format => 'html',
+          :offer_id => @offer.id,
+          :offer_preview_attributes => {
+            :featured => 'true',
+            :featured_ad_action => 'My Action',
+            :featured_ad_content => 'My Content',
+            :featured_ad_color => 'my_color'
+          }))
+
+        assigns[:offer].featured_ad_content.should == 'My Content'
+        assigns[:offer].featured_ad_action.should == 'My Action'
+        assigns[:offer].featured_ad_color.should == 'my_color'
+        assigns[:offer].featured.should == true
+      end
+
+      it 'should not save offer overrides for preview' do
+        get(:featured, @params.merge(
+          :format => 'html',
+          :offer_id => @offer.id,
+          :offer_preview_attributes => {
+            :featured => 'true',
+            :featured_ad_action => 'My Action',
+            :featured_ad_content => 'My Content',
+            :featured_ad_color => 'my_color'
+          }))
+
+        ActiveRecordDisabler.with_queries_enabled { @offer.reload }
+
+        @offer.featured_ad_content.should_not == 'My Content'
+        @offer.featured_ad_action.should_not == 'My Action'
+        @offer.featured_ad_color.should_not == 'my_color'
+        @offer.featured.should_not == true
+      end
     end
 
     context 'with a featured offer' do

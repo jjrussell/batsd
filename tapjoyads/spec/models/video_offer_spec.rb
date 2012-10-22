@@ -19,6 +19,17 @@ describe VideoOffer do
     end
   end
 
+  context 'creation' do
+    it 'should allow setting of primary_offer_creation_attributes' do
+      @offer = FactoryGirl.build(:video_offer)
+      @offer.primary_offer_creation_attributes = {:featured_ad_content => 'Some Content'}
+
+      @offer.save!
+      @offer.primary_offer.featured_ad_content.should == 'Some Content'
+    end
+  end
+
+
   context 'when validating' do
     it 'validates presence of' do
       should validate_presence_of :partner

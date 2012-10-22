@@ -58,6 +58,9 @@ class GetOffersController < ApplicationController
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
       @offer_list = [ @publisher_app.test_offer ]
+    elsif @for_preview
+      offer = merge_preview_attributes(Offer.find_in_cache(params[:offer_id]))
+      @offer_list = [ offer ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?
@@ -66,7 +69,7 @@ class GetOffersController < ApplicationController
     end
     @more_data_available = 0
 
-    if @offer_list.any?
+    if @offer_list.any? && @web_request
       @web_request.offer_id = @offer_list.first.id
       @web_request.path = 'featured_offer_shown'
     end
@@ -77,9 +80,17 @@ class GetOffersController < ApplicationController
 
     if params[:format] == 'html'
       @offer = @offer_list.first
+
+      # for pixel tracking
       params[:offer_id] = @offer.id
       @encrypted_params = ObjectEncryptor.encrypt(params)
-      render :layout => "iphone"
+
+      if @offer.banner_creatives.present? && !@offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+        # use legacy layout if offer ONLY has FEATURED_AD_LEGACY_SIZES
+        render :layout => "iphone", :template => 'get_offers/featured_legacy'
+      else # new layout
+        render :template => 'get_offers/featured'
+      end
     elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
@@ -117,8 +128,18 @@ class GetOffersController < ApplicationController
     params[:format] = 'xml' unless params[:format] == 'html'
   end
 
+  def merge_preview_attributes(offer)
+    # for the benefit of previewing ads in the admin, we can override offer fields here -- this affects
+    # preview rendering only, as the override attributes are not saved
+    offer_preview_attributes = (params.delete(:offer_preview_attributes) || {}).slice(:featured_ad_content, :featured, :featured_ad_color, :featured_ad_action)
+    offer_preview_attributes[:featured]              = (offer_preview_attributes[:featured] == "true")
+    offer.attributes = offer_preview_attributes
+
+    offer
+  end
+
   def setup
-    @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
+    @for_preview = (['webpage', 'featured'].include?(params[:action]) && params[:offer_id].present?)
     @save_web_requests = !@for_preview && params[:no_log] != '1'
     @server_to_server = server_to_server?
 

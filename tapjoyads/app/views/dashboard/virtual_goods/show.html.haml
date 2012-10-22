@@ -1,5 +1,10 @@
 %h2= @page_title
 
+%p
+  PLEASE NOTE: <b> At this time we're no longer offering our Virtual Goods SDK for download and will no longer on-board new publishers utilizing this functionality. </b> Publishers who have previously set up virtual goods will still be able to interact with them as we will retain our infrastructure to support these partners. If you have questions please contact
+  = succeed '.' do
+    = mail_to 'support@tapjoy.com'
+
 - if @virtual_good.has_icon
   .icon= image_tag(@virtual_good.icon_url('https://'), :size => '57x57')
 

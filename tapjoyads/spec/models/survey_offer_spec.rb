@@ -31,6 +31,10 @@ describe SurveyOffer do
     it 'creates a primary Offer' do
       subject.primary_offer.should be_present
     end
+
+    it 'is not pay-per-click' do
+      subject.primary_offer.should_not be_pay_per_click
+    end
   end
 
   context '(on update)' do

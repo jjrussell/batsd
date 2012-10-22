@@ -329,7 +329,6 @@ def money_options(start_time, end_time)
       'analytics.apps_partners on ' +
       'actions.publisher_app_id = apps_partners.app_id',
     :conditions =>
-      "path = '[reward]' and " +
       "time >= '#{start_time.to_s(:db)}' AND " +
       "time < '#{end_time.to_s(:db)}'",
     :group => 'source, app_platform',

@@ -45,7 +45,7 @@
 
       - virtual_goods_path = app.has_virtual_goods? ?  app_virtual_goods_path({:app_id => app.id}) : new_app_virtual_good_path({:app_id => app.id})
       %li= link_to 'Virtual Goods', virtual_goods_path, :class => (controller.controller_name == 'virtual_goods' ? 'selected' : '')
-
+      %li= link_to 'Push Notifications', app_push_index_path(@app), :class => (controller.controller_name == 'push' && controller.action_name == 'index') ? 'selected' : '' if should_show_push_nav?(@app.id)
 
     - else
       %li.disabled Details

@@ -1,21 +1,18 @@
-- if @app.associated_offers.count == 0
+- if @offer.tapjoy_enabled_associated_offers.count == 0
   %p#show_associated [0 Associated Offers]
 - else
   #associated_offers.offer_list
-    %a#show_associated{:href=>'#'} [#{@app.tapjoy_enabled_associated_offers.count} Associated Offers]
+    %a#show_associated{:href=>'#'} [#{@offer.tapjoy_enabled_associated_offers.count} Associated Offers]
     #associated_list
       %a.close_button{:href=>'#'} x
       %h3 Associated Offers
-      .primary_offer
-        Main:
-        = link_to(@app.primary_offer.name_with_suffix)
       %table
         %tbody
           %tr
             %th Name
             %th Suffix
             %th Active
-          - @app.tapjoy_enabled_associated_offers.each do |offer|
+          - @offer.tapjoy_enabled_associated_offers.each do |offer|
             %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
               %td= offer.name_suffix
@@ -25,24 +22,22 @@
                   %label.on On
                   %label.off Off
                   %span.switch
+
 - if @current_user.is_admin?
-  - if @app.tapjoy_disabled_associated_offers.count == 0
-    %p#show_disabled [0 Disabled Offers]
+  - if @offer.tapjoy_disabled_associated_offers.count == 0
+    %p#show_disabled [0 Tapjoy Disabled Offers]
   - else
     #disabled_offers.offer_list
-      %a#show_disabled{:href=>'#'} [#{@app.tapjoy_disabled_associated_offers.count} Disabled Offers]
+      %a#show_disabled{:href=>'#'} [#{@offer.tapjoy_disabled_associated_offers.count} Tapjoy Disabled Offers]
       #disabled_list
         %a.close_button{:href=>'#'} x
-        %h3 Disabled Offers
-        .primary_offer
-          Main:
-          = link_to(@app.primary_offer.name_with_suffix, edit_statz_path(:id => @app.primary_offer.id))
+        %h3 Tapjoy Disabled Offers
         %table
           %tbody
             %tr
               %th Name
               %th Suffix
-            - @app.tapjoy_disabled_associated_offers.each do |offer|
+            - @offer.tapjoy_disabled_associated_offers.each do |offer|
               %tr{:class => [cycle('odd','even')], :id => "offer_row_#{offer.id}" }
                 %td= offer.name
                 %td
