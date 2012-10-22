@@ -1,6 +1,6 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 - @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn/#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
-- @class_fixed = @fixed? "fixed" : ""
+- @class_fixed = @fixed ? "fixed" : ""
 - content_for :page_styles do
   = render 'redesign.css'
 
@@ -49,6 +49,12 @@
     var page = #{@webpage_link.to_json},
         fetchURL = #{get_next_link_json_redesign.to_json},
         data = #{@final.to_json};
+
+-# faking initial scroll in sdk9+ to make sure top bar position registers as fixed in ios
+- if @fixed
+  %script{ :type => 'text/javascript'} 
+    :plain
+      window.scrollTo(0, 1);
 
 = javascript_include_tag 'shared/i18n'
 = javascript_include_tag "offerwall/offerwall"

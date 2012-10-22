@@ -151,7 +151,8 @@ body {
 }
 
 #branding.fixed .right{
-  margin: 7px 200px 0 0;
+  float: left;
+  margin: 7px 0 0 5px;
 }
 
 #branding.fixed .earn.text {
