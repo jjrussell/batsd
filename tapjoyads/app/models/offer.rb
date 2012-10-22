@@ -214,8 +214,8 @@ class Offer < ActiveRecord::Base
   before_save :sync_creative_approval # Must be before_save so auto-approval can happen
   before_save :nullify_banner_creatives
   after_update :lock_survey_offer
+  after_update :update_enabled_deeplink_offer_id
   after_save :update_enabled_rating_offer_id
-  after_save :update_enabled_deeplink_offer_id
   after_save :update_pending_enable_requests
   after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain

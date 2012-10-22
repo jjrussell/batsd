@@ -24,7 +24,7 @@ class DeeplinkOffer < ActiveRecord::Base
   delegate :tapjoy_enabled, :user_enabled, :to => :primary_offer
 
   validates_presence_of :partner, :app, :currency, :name
-  after_initialize :set_name
+  after_initialize :set_name, :set_primary_key
   after_create :create_primary_offer
 
   def set_name

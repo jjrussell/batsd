@@ -563,6 +563,11 @@ describe Currency do
       dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
       dl.currency.should == @currency
     end
+
+    it 'should cause saving to fail if DeeplinkOffer saving fails' do
+      @currency.stub(:deeplink_offer).and_return(DeeplinkOffer.new)
+      lambda { @currency.save! }.should raise_error(ActiveRecord::RecordNotSaved, 'Unable to save deeplink_offer association')
+    end
   end
 
   describe '#approve_on_tapjoy_enabled' do
@@ -591,15 +596,6 @@ describe Currency do
       mock_approval.should_receive(:approve!).with(true).once
       @currency.stub(:approval).and_return(mock_approval)
       @currency.approve!
-    end
-  end
-
-  describe '#create_deeplink_offer' do
-    it 'should create a corresponding DeeplinkOffer' do
-      @currency.save!
-      @currency.enabled_deeplink_offer_id.should_not be_nil
-      dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
-      dl.currency.should == @currency
     end
   end
 

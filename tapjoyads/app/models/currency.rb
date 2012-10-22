@@ -368,12 +368,22 @@ class Currency < ActiveRecord::Base
   end
 
   def create_deeplink_offer
-    self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
-    self.enabled_deeplink_offer_id = self.deeplink_offer.id
+    build_deeplink_offer(:partner => partner, :app => app)
+    self.enabled_deeplink_offer_id = deeplink_offer.id
+    true
   end
 
+  def autosave_associated_records_for_deeplink_offer_with_persistence_check
+    autosave_associated_records_for_deeplink_offer_without_persistence_check
+    if (association = association_instance_get('deeplink_offer')) && !association.target.nil? &&
+      !deeplink_offer.persisted?
+        raise ActiveRecord::RecordNotSaved, "Unable to save deeplink_offer association"
+    end
+  end
+  alias_method_chain :autosave_associated_records_for_deeplink_offer, :persistence_check
+
   def approve_on_tapjoy_enabled
-    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled?
       self.approve!
     end
   end
