@@ -1627,7 +1627,7 @@ describe Offer do
 
     context 'valid type to notify' do
       it 'returns true' do
-        @offer.item_type = 'AppOffer'
+        @offer.item_type = 'App'
         @offer.should_notify_on_conversion?.should be_true
       end
     end
