@@ -49,7 +49,23 @@ end
 
 module ActiveRecord
 
+  module AutosaveAssociation
+
+    def save_has_one_association_with_required_check(reflection)
+      save_has_one_association_without_required_check(reflection).tap do
+        if reflection.options[:required] && (association = association_instance_get(reflection.name)) &&
+          !association.target.nil? && !association.persisted?
+            raise ActiveRecord::RecordNotSaved, "Unable to save #{reflection.name} association"
+        end
+      end
+    end
+
+    alias_method_chain :save_has_one_association, :required_check
+  end
+
   module Associations::ClassMethods
+    @@valid_keys_for_has_one_association << :required
+
     def has_many_with_offer_parent_methods(name, options = {}, &extension)
       if name.to_sym == :offers && options[:as].try(:to_sym) == :item
         include OfferParentIconMethods

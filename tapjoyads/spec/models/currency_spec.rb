@@ -565,7 +565,9 @@ describe Currency do
     end
 
     it 'should cause saving to fail if DeeplinkOffer saving fails' do
-      @currency.stub(:deeplink_offer).and_return(DeeplinkOffer.new)
+      @currency.stub(:create_deeplink_offer).and_return(true)
+      # providing a blank name will cause DeeplinkOffer validation to fail
+      @currency.build_deeplink_offer(:partner => @currency.partner, :app => @currency.app, :name => "")
       lambda { @currency.save! }.should raise_error(ActiveRecord::RecordNotSaved, 'Unable to save deeplink_offer association')
     end
   end

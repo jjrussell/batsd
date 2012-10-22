@@ -17,7 +17,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
-  has_one :deeplink_offer
+  has_one :deeplink_offer, :required => true
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -372,15 +372,6 @@ class Currency < ActiveRecord::Base
     self.enabled_deeplink_offer_id = deeplink_offer.id
     true
   end
-
-  def autosave_associated_records_for_deeplink_offer_with_persistence_check
-    autosave_associated_records_for_deeplink_offer_without_persistence_check
-    if (association = association_instance_get('deeplink_offer')) && !association.target.nil? &&
-      !deeplink_offer.persisted?
-        raise ActiveRecord::RecordNotSaved, "Unable to save deeplink_offer association"
-    end
-  end
-  alias_method_chain :autosave_associated_records_for_deeplink_offer, :persistence_check
 
   def approve_on_tapjoy_enabled
     if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled?
