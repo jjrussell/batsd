@@ -38,6 +38,24 @@ describe Job::QueueCreateConversionsController do
       Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
       get(:run_job, :message => 'reward_key')
     end
+
+    describe 'video offer' do
+      it "should not enqueue" do 
+        @offer.item_type = "VideoOffer"
+        @offer.save
+        Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
+        get(:run_job, :message => 'reward_key')
+      end
+    end
+
+    describe 'video survey' do
+      it "should not enqueue" do 
+        @offer.item_type = "SurveyOffer"
+        @offer.save
+        Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
+        get(:run_job, :message => 'reward_key')
+      end
+    end
   end
 
   context 'without notifications enabled' do
