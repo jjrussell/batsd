@@ -313,6 +313,10 @@ module Offer::UrlGeneration
     url
   end
 
+  def get_offers_featured_html_preview_url
+    "#{API_URL}/get_offers/featured.html?app_id=#{App::PREVIEW_PUBLISHER_APP_ID}&offer_id=#{id}"
+  end
+
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
   def dashboard_statz_url
     uri = URI.parse(DASHBOARD_URL)
