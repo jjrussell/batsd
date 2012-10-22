@@ -57,6 +57,8 @@ Tapjoyad::Application.routes.draw do
     match 'queue_conversion_tracking/run_job' => 'queue_conversion_tracking#run_job'
     match 'queue_create_conversions(/index)' => 'queue_create_conversions#index'
     match 'queue_create_conversions/run_job' => 'queue_create_conversions#run_job'
+    match 'queue_conversion_notifications(/index)' => 'queue_conversion_notifications#index'
+    match 'queue_conversion_notifications/run_job' => 'queue_conversion_notifications#run_job'
     match 'queue_create_device_identifiers(/index)' => 'queue_create_device_identifiers#index'
     match 'queue_create_invoices(/index)' => 'queue_create_invoices#index'
     match 'queue_daily_app_stats(/index)' => 'queue_daily_app_stats#index'

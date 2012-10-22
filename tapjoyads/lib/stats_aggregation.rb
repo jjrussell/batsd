@@ -41,7 +41,7 @@ class StatsAggregation
     raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
 
     stats                     = {}
-    stat_map                  = WebRequest::STAT_TO_PATH_MAP
+    stat_map                  = WebRequest::STAT_TO_PATH_MAP.clone
     stat_map['virtual_goods'] = { :paths => [ 'purchased_vg' ], :attr_name => 'virtual_good_id', :use_like => false }
 
     stat_map.each do |stat_name, path_definition|
@@ -65,7 +65,11 @@ class StatsAggregation
 
   def self.cached_vertica_stats(s3_path)
     bucket = S3.bucket(BucketNames::WEB_REQUESTS)
-    Marshal.load(bucket.objects[s3_path].read)
+    begin
+      Marshal.load(bucket.objects[s3_path].read)
+    rescue AWS::S3::Errors::NoSuchKey
+      nil
+    end
   end
 
   def self.cached_stats_s3_path(start_time, end_time)
@@ -75,7 +79,7 @@ class StatsAggregation
   end
 
   def self.path_condition(paths, use_like)
-    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]'" }.join(' OR ')
+    condition = paths.map { |p| use_like ? "path LIKE '%#{p}%'" : "path = '[#{p}]' OR path = '#{p}'" }.join(' OR ')
     "(#{condition})"
   end
 

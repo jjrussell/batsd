@@ -239,6 +239,40 @@ class Utils
 
     ban_count
   end
+  
+  def self.aggregate_all_stats
+    cutoff = Time.now.utc.beginning_of_hour
+    Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE, :conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offers|
+      message = offers.map(&:id).to_json
+      Sqs.send_message(QueueNames::APP_STATS_HOURLY, message)
+    end
+  end
+
+  def self.all_stats_aggregated?
+    cutoff = Time.now.utc.beginning_of_hour
+    Offer.count(:conditions => ["last_stats_aggregation_time < ?", cutoff]) == 0
+  end
+
+  def self.advance_last_stats_aggregation_times
+    last_aggregation_time = Time.now.utc.beginning_of_hour + 1.hour
+    Offer.find_in_batches(:batch_size => 1000, :conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offers|
+      offer_ids = offers.map(&:id)
+      Offer.connection.execute("UPDATE offers SET last_stats_aggregation_time = '#{last_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
+    end
+  end
+
+  def self.queue_recount_stats_jobs(options = {})
+    end_time     = options[:end_time] || Time.now.utc.beginning_of_hour
+    start_time   = options[:start_time] || end_time - 1.hour
+    update_daily = options[:update_daily] || false
+    existing_stats = StatsAggregation.cached_vertica_stats(StatsAggregation.cached_stats_s3_path(start_time, end_time))
+    StatsAggregation.cache_vertica_stats(start_time, end_time) unless existing_stats.present?
+
+    Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
+      message = { :offer_ids => offers.map(&:id), :start_time => start_time.to_i, :end_time => end_time.to_i, :update_daily => update_daily }.to_json
+      Sqs.send_message(QueueNames::RECOUNT_STATS, message)
+    end
+  end
 
   class Memcache
     # Use these functions to facilitate switching memcache servers.
@@ -399,39 +433,6 @@ class Utils
       SpendShare.current_ratio
       Mc.cache_all
       true
-    end
-
-    def self.aggregate_all_stats
-      cutoff = Time.now.utc.beginning_of_hour
-      Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE, :conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offers|
-        message = offers.map(&:id).to_json
-        Sqs.send_message(QueueNames::APP_STATS_HOURLY, message)
-      end
-    end
-
-    def self.all_stats_aggregated?
-      cutoff = Time.now.utc.beginning_of_hour
-      Offer.count(:conditions => ["last_stats_aggregation_time < ?", cutoff]) == 0
-    end
-
-    def self.advance_last_stats_aggregation_times
-      last_aggregation_time = Time.now.utc.beginning_of_hour + 1.hour
-      Offer.find_in_batches(:batch_size => 1000, :conditions => ["last_stats_aggregation_time < ?", last_aggregation_time]) do |offers|
-        offer_ids = offers.map(&:id)
-        Offer.connection.execute("UPDATE offers SET last_stats_aggregation_time = '#{last_aggregation_time.to_s(:db)}' WHERE id IN ('#{offer_ids.join("','")}')")
-      end
-    end
-
-    def self.queue_recount_stats_jobs
-      end_time   = Time.now.utc.beginning_of_hour
-      start_time = end_time - 1.hour
-
-      StatsAggregation.cache_vertica_stats(start_time, end_time)
-
-      Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
-        message = { :offer_ids => offers.map(&:id), :start_time => start_time.to_i, :end_time => end_time.to_i }.to_json
-        Sqs.send_message(QueueNames::RECOUNT_STATS, message)
-      end
     end
   end
 

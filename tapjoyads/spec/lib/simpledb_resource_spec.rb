@@ -282,4 +282,13 @@ describe SimpledbResource do
       Testing.attribute_names.length.should == Testing.attribute_names.uniq.length
     end
   end
+
+  describe '#save' do
+    before :each do
+      load_model
+    end
+    it 'clears changed_attributes' do
+      @model.changed_attributes.stub(:clear).once
+    end
+  end
 end

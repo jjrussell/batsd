@@ -2,6 +2,7 @@ class Job::QueueHourlyAppStatsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::APP_STATS_HOURLY
+    @num_reads = 5
   end
 
   private

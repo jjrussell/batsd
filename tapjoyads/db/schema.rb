@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "videos_cache_3g",                             :default => false, :null => false
     t.boolean  "videos_stream_3g",                            :default => false, :null => false
     t.string   "experiment_id",                 :limit => 36
+    t.boolean  "notifications_enabled",                       :default => false
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -832,6 +833,9 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "requires_mac_address",                                                          :default => false, :null => false
     t.boolean  "auto_update_icon",                                                              :default => false
     t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
+    t.text     "featured_ad_content"
+    t.string   "featured_ad_action"
+    t.string   "featured_ad_color"
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

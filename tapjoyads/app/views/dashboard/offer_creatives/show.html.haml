@@ -1,13 +1,18 @@
 #previews
+  - icon_url = @offer.item_type == 'App' ? @offer.get_icon_url(:source => :cloudfront, :size => '256') : @offer.get_icon_url
+  - banner_creative_url = @offer.banner_creative_url(:size => params[:image_size], :format => 'jpeg', :bust_cache => true)
   - publisher_app_id = App::PREVIEW_PUBLISHER_APP_ID
   - unable_to_show = []
   - if @offer.featured?
     - if !@offer.banner_creatives.empty? || @show_generated_ads
       - width, height = params[:image_size].split("x").collect{|x|x.to_i}
-      - label = "Featured ad preview: (#{width}x#{height})"
+      - label = "(#{width}x#{height})"
       - label << " <em>(Pending approval)</em>" if @offer.has_banner_creative?(params[:image_size]) and !@offer.banner_creative_approved?(params[:image_size])
-      %span.label! #{label}:
-      %iframe.preview{ :src => @offer.fullscreen_ad_url(:publisher_app_id => publisher_app_id, :width => width, :height => height, :preview => true), :width => width, :height => height }
+      %div.label! #{label}:
+      %image{ :src => "#{@offer.featured_custom_creative? ? banner_creative_url : icon_url}" }
+
+
+
     - else
       - unable_to_show << "Featured"
   - else

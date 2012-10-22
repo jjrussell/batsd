@@ -18,7 +18,6 @@
 
 = form_for(@app, :html => { :class => 'tjform' }) do |f|
   = hidden_field_tag :store_name, @app.store_name
-  = hidden_field_tag :store_id, @app.store_id, :id => 'app_store_id'
   %table
     %tbody
       %tr
@@ -82,6 +81,10 @@
       %tr.app_data.hidden
         %th Store ID
         %td
+          - if permitted_to?(:edit, :dashboard_statz)
+            = text_field_tag :store_id, @app.store_id, { :placeholder => 'INTERNAL: Manual override', :id => 'app_store_id' }
+          - else
+            = hidden_field_tag :store_id, @app.store_id, :id => 'app_store_id'
           - if @app.store_id?
             = link_to(@app.store_id, @app.info_url, :target => '_blank', :id => 'app_store_link')
           - else

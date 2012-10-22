@@ -1,2 +1,10 @@
-- @offer.banner_creative_sizes_with_labels.each do |size_hash|
-  %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => @offer.id, :image_size => size_hash[:size], :label => size_hash[:label])}
+- if !offer.id.nil?
+  - if defined?(show_featured_sizes_only) && show_featured_sizes_only
+    .featured-only{:style => "background-color: #f0f0f0; display: none;"}
+      %h3 Featured Ad Custom Creatives
+      - Offer::FEATURED_AD_SIZES.each do |size|
+        %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size, :label => size, :desc => @desc)}
+
+  - else
+    - offer.banner_creative_sizes_with_labels.each do |size_hash|
+      %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}

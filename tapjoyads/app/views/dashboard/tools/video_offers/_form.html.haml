@@ -31,12 +31,12 @@
         = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'video_offer[exclusion_prerequisite_offer_ids][]')
         = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @video_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @video_offer, :exclusion_prerequisite_offer_ids
+    = f.fields_for :primary_offer do |primary_offer_form|
+      = render :partial => 'dashboard/apps/offers_shared/featured_settings', :locals => {:f => primary_offer_form, :show_featured_checkbox => true, :offer => @video_offer.primary_offer}
     %tr
       %th= f.label :name, 'Age Gating'
       %td
-        = f.text_field :age_gating, :maxlength => 2, :size => 4
-        +
-        = error_message_on @video_offer, :age_gating
+        = f.select :age_gating, options_for_age_rating, :include_blank => 'None'
     %tr
       %th
         = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
@@ -64,3 +64,13 @@
         %td{ :colspan => 2 }= link_to("View/Edit Video Button", tools_video_offer_video_buttons_path(@video_offer.id))
     %tr
       %td{ :colspan => 2 }= f.submit @video_offer.new_record? ? 'Create Video Offer' : 'Update Video Offer'
+    %tr
+      %td{ :colspan => 2 }= render('dashboard/offer_creatives/iframes', :offer => @video_offer.primary_offer, :app => @app, :show_featured_sizes_only => true)
+
+- content_for :page_styles do
+  :plain
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 35px;
+    }

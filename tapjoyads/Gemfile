@@ -6,7 +6,7 @@ gem 'acts-as-approvable', '0.6.9'
 gem 'adapter-redis', '0.5'
 gem 'addressable', '2.2.6', :require => 'addressable/uri'
 gem 'airbrake', '3.0.5'
-gem 'analytics_logger', '0.4.8', :git => 'git@github.com:Tapjoy/analytics_logger.git', :tag => 'v0.4.8'
+gem 'analytics_logger', '0.5.1', :git => 'git@github.com:Tapjoy/analytics_logger.git', :tag => 'v0.5.1'
 gem 'archive-tar-minitar'
 gem 'asset_sync'
 gem 'authlogic', :github => 'odorcicd/authlogic', :branch => 'rails3'
@@ -71,6 +71,8 @@ gem 'uuidtools', '2.1.2'
 gem 'vertica', '0.9.1'
 gem 'will_paginate', '~> 3.0'
 gem 'xml-simple', :require => 'xmlsimple'
+
+gem 'notifications_client', :git => 'git@github.com:Tapjoy/notifications_client.git', :ref => '2f9b480b9d34542f3569438be4b9a17aec784b83'
 
 # This needs to be down here to get sdb stuff
 gem 'newrelic_rpm', '3.3.0'

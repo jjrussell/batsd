@@ -190,9 +190,16 @@
 - content_for :page_javascript do
   :plain
     $(function($){
+      var shouldWarnOnSubmit = #{!!@currency.tapjoy_enabled?};
+
       $('#managed_by_tapjoy').change(toggleManagedByTapjoy);
       $('#currency_name').keyup(copyCurrencyName);
       $('#generate_link').click(generateSecretKey);
+
+      if(shouldWarnOnSubmit) {
+        $('#currency_conversion_rate').change(warnOnSubmit);
+        $('#currency_callback_url').change(warnOnSubmit);
+      }
 
       toggleManagedByTapjoy();
       copyCurrencyName();
@@ -228,10 +235,19 @@
 
       key = [];
       for (var i = 0; i < 20; i++) {
-        key.push(values[Math.floor(Math.random() * values.length)])
+        key.push(values[Math.floor(Math.random() * values.length)]);
       }
 
       $('#currency_secret_key').val(key.join(''));
+    }
+    function warnOnSubmit() {
+      $('form.tjform').unbind('submit');
+      $('form.tjform').submit(warnOfDangerousChanges);
+    }
+
+    function warnOfDangerousChanges() {
+      var submitForm = confirm("Changing a currency's callback URL or conversion rate can negatively impact users who are currently completing offers. Are you sure you want to continue?");
+      return submitForm;
     }
 
 - content_for :page_styles do

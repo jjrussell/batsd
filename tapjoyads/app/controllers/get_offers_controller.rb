@@ -27,6 +27,10 @@ class GetOffersController < ApplicationController
   VIEW_MAP[:test] = VIEW_MAP[:control].dup # no changes for this experiment
 
   def webpage
+    if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
+      @fixed = true
+    end
+
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
       if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
@@ -54,6 +58,9 @@ class GetOffersController < ApplicationController
   def featured
     if @currency.get_test_device_ids.include?(params[:udid])
       @offer_list = [ @publisher_app.test_offer ]
+    elsif @for_preview
+      offer = merge_preview_attributes(Offer.find_in_cache(params[:offer_id]))
+      @offer_list = [ offer ]
     else
       @offer_list = [ get_offer_list.weighted_rand ].compact
       if @offer_list.empty?
@@ -62,7 +69,7 @@ class GetOffersController < ApplicationController
     end
     @more_data_available = 0
 
-    if @offer_list.any?
+    if @offer_list.any? && @web_request
       @web_request.offer_id = @offer_list.first.id
       @web_request.path = 'featured_offer_shown'
     end
@@ -73,9 +80,17 @@ class GetOffersController < ApplicationController
 
     if params[:format] == 'html'
       @offer = @offer_list.first
+
+      # for pixel tracking
       params[:offer_id] = @offer.id
       @encrypted_params = ObjectEncryptor.encrypt(params)
-      render :layout => "iphone"
+
+      if @offer.banner_creatives.present? && !@offer.banner_creatives.any? { |size| Offer::FEATURED_AD_SIZES.include?(size) }
+        # use legacy layout if offer ONLY has FEATURED_AD_LEGACY_SIZES
+        render :layout => "iphone", :template => 'get_offers/featured_legacy'
+      else # new layout
+        render :template => 'get_offers/featured'
+      end
     elsif params[:json] == '1'
       render :template => 'get_offers/installs_json', :content_type => 'application/json'
     else
@@ -113,8 +128,18 @@ class GetOffersController < ApplicationController
     params[:format] = 'xml' unless params[:format] == 'html'
   end
 
+  def merge_preview_attributes(offer)
+    # for the benefit of previewing ads in the admin, we can override offer fields here -- this affects
+    # preview rendering only, as the override attributes are not saved
+    offer_preview_attributes = (params.delete(:offer_preview_attributes) || {}).slice(:featured_ad_content, :featured, :featured_ad_color, :featured_ad_action)
+    offer_preview_attributes[:featured]              = (offer_preview_attributes[:featured] == "true")
+    offer.attributes = offer_preview_attributes
+
+    offer
+  end
+
   def setup
-    @for_preview = (params[:action] == 'webpage' && params[:offer_id].present?)
+    @for_preview = (['webpage', 'featured'].include?(params[:action]) && params[:offer_id].present?)
     @save_web_requests = !@for_preview && params[:no_log] != '1'
     @server_to_server = server_to_server?
 
@@ -277,7 +302,7 @@ class GetOffersController < ApplicationController
       hash[:cost]              = visual_cost(offer)
       hash[:iconURL]           = offer.item_type == 'VideoOffer' ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
       hash[:payout]            = @currency.get_visual_reward_amount(offer, params[:display_multiplier])
-      hash[:redirectURL]       = offer.age_gate? ? get_age_gating_url({ :offerwall_rank => (index + 1), :view_id => view_id }) : get_click_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id })
+      hash[:redirectURL]       = offer.age_gate? ? get_age_gating_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id }) : get_click_url(offer, { :offerwall_rank => (index + 1), :view_id => view_id })
       hash[:requiresWiFi]      = offer.wifi_only? if @show_wifi_only
       hash[:title]             = offer.name
       hash[:type]              = offer.item_type == 'VideoOffer' ? 'video' : offer.item_type == 'ActionOffer' || offer.item_type == 'GenericOffer' ? 'series' : offer.item_type == 'App' ? 'download' : offer.item_type

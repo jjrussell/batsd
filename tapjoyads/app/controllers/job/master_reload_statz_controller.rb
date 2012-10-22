@@ -53,7 +53,7 @@ class Job::MasterReloadStatzController < Job::JobController
     VerticaCluster.query('analytics.actions', {
         :select     => 'source, app_platform, count(path), -sum(advertiser_amount) as adv_amount, sum(publisher_amount) as pub_amount',
         :join       => 'analytics.apps_partners on actions.publisher_app_id = apps_partners.app_id',
-        :conditions => "path = '[reward]' and #{time_conditions}",
+        :conditions => time_conditions,
         :group      => 'source, app_platform' }).each do |result|
       cached_money[:total][:count] += result[:count]
       cached_money[:total][:adv_amount] += result[:adv_amount]

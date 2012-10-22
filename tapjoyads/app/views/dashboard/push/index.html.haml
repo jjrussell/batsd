@@ -1,0 +1,27 @@
+
+%p Push notifications can be used to notify your users when offers are completed and bring them back into your app.
+
+.button-container
+  - if !@app.notifications_enabled?
+    = form_for :push, :url => url_for(:action=>"update", :controller=>"dashboard/push") do |f|
+      = hidden_field_tag 'app[notifications_enabled]', true
+      = submit_tag 'Enable push notifications for this app'
+  - else
+    = form_for :push, :url => url_for(:action=>"update", :controller=>"dashboard/push") do |f|
+      = hidden_field_tag 'app[notifications_enabled]', false
+      = submit_tag 'Disable push notifications for this app' 
+      - if @admin_url
+        .frame-container
+        %iframe{:src => @admin_url, :style => "width: 100%; height: 650px; border: 0px;"}
+
+- content_for :page_styles do
+  :plain
+    .button-container {
+      text-align: center;
+    }
+    
+    .frame-container iframe {
+      width: 100%; 
+      height: 650px; 
+      border: 0px;
+    }

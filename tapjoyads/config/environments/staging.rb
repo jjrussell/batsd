@@ -106,3 +106,8 @@ TRACKING_OFFER_CURRENCY_ID = '2fa3e3cc-9376-470b-b3f1-b6f5a6369d70'
 AMQP_URL = 'amqp://guest:guest@localhost'
 
 ANALYTICS_LOGGER_LEVEL = Logger::DEBUG
+
+TIPALTI_PAYEE_API = 'http://int.payrad.com/Payees/PayeeDashboard.aspx'
+TIPALTI_PAYER_API_WSDL = 'http://api.payrad.com/PayerFunctions.asmx?WSDL'
+TIPALTI_PAYER_NAME = 'Tapjoy'
+TIPALTI_ENCRYPTION_SALT = 'TapJoyDemoKey'

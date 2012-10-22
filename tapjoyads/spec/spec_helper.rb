@@ -82,6 +82,7 @@ Spork.prefork do
       Mc.reset_connection
       Mc.flush('totally_serious')
       OfferCacher.stub(:get_offer_stats) { Hash.new(0) }
+      I18n.locale = :en
     end
 
     config.after(:each) do

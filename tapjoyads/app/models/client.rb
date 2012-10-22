@@ -17,6 +17,9 @@ class Client < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false
 
   scope :ordered_by_name, :order => :name
+  scope :search_by_name, lambda { |name|
+    { :order => :name, :conditions => [ "name LIKE ?", "%#{name}%"] }
+  }
 
   before_save :update_payment_type_changed_at
   before_destroy :remove_from_partners

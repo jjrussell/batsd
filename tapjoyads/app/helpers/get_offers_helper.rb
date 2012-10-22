@@ -22,8 +22,8 @@ module GetOffersHelper
     link_to(currency.name, url)
   end
 
-  def get_age_gating_url(options = {})
-    data = params.merge({ :options => options })
+  def get_age_gating_url(offer, options = {})
+    data = params.merge({ :offer_id => offer.id, :options => options })
     "#{API_URL}/offer_age_gating?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
@@ -122,8 +122,21 @@ module GetOffersHelper
   end
 
   def featured_offer_text(offer, currency)
+    return offer.featured_ad_content if offer.featured_ad_content.present? && offer.featured_ad_content != 'undefined'
     return '' unless offer.item_type == 'App'
     (offer.rewarded? && currency.rewarded?) ? t('text.featured.download_and_run') : t('text.featured.try_out')
+  end
+
+  # for 2012 new featured offer
+  def featured_offer_desc(offer)
+    return offer.featured_ad_content if offer.featured_ad_content.present? && offer.featured_ad_content != 'undefined'
+    if @offer.video_offer?
+      t('text.featured.video.desc', :default => 'Watch this exciting video!')
+    elsif offer.item_type == 'App'
+      t('text.featured.ppi.desc', :default => 'Download this great app now!')
+    else
+      t('text.featured.generic.desc', :default => 'Take advantage of this exclusive offer!')
+    end
   end
 
   def featured_offer_earn_currency_text(offer, currency, display_multiplier)
@@ -134,6 +147,10 @@ module GetOffersHelper
   end
 
   def featured_offer_action_text(offer)
-    offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now')
+    if offer.featured_ad_action.present? && offer.featured_ad_action != 'undefined'
+      return offer.featured_ad_action
+    else
+      return offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now')
+    end
   end
 end

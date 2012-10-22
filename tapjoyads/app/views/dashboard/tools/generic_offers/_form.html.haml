@@ -26,6 +26,8 @@
         = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'generic_offer[exclusion_prerequisite_offer_ids][]')
         = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @generic_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
         = error_message_on @generic_offer, :exclusion_prerequisite_offer_ids
+    = f.fields_for :primary_offer do |primary_offer_form|
+      = render :partial => 'dashboard/apps/offers_shared/featured_settings', :locals => {:f => primary_offer_form, :show_featured_checkbox => true, :offer => @generic_offer.primary_offer}
     %tr
       %th
         = f.label(:x_partner_prerequisites, 'Cross Partner Prerequisites')
@@ -77,3 +79,15 @@
         = error_message_on @generic_offer, :protocol_handler
     %tr
       %td{ :colspan => 2 }= f.submit @generic_offer.new_record? ? 'Create Generic Offer' : 'Update Generic Offer'
+    %tr
+      %td{ :colspan => 2 }= render('dashboard/offer_creatives/iframes', :offer => @generic_offer.primary_offer, :app => @app, :show_featured_sizes_only => true)
+
+
+- content_for :page_styles do
+  :plain
+    .creative_upload {
+      width: 100%;
+      border: none;
+      height: 35px;
+    }
+  

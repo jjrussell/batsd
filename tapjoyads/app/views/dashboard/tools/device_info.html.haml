@@ -163,6 +163,8 @@
     %span.blocked Blocked (#{@blocked_count})
     +
     %span.forced Forced (#{@force_converted_count})
+    +
+    %span.non-rewarded Non Rewarded (#{@non_rewarded_count})
   - now = Time.zone.now
   - if params[:use_recent_clicks].present?
     - text = "Show Recent Clicks: #{(now - Device::RECENT_CLICKS_RANGE).to_s(:pub)} - #{now.to_s(:pub)}"

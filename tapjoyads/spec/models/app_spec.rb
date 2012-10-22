@@ -63,6 +63,16 @@ describe App do
     end
   end
 
+  describe 'notifications' do
+    before :each do
+      @app = FactoryGirl.create(:app)
+    end
+
+    it 'should not be enabled' do
+      @app.notifications_enabled?.should == false
+    end
+  end
+
   describe '#launch_url' do
     before :each do
       @app = FactoryGirl.create(:app)

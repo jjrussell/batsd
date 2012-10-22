@@ -63,4 +63,39 @@ describe Click do
       @advertiser.live_date.to_s.should == @stamp.to_s
     end
   end
+
+  describe '#save' do
+    context 'when publisher_app_id changes' do
+     context 'publisher_app_id not initially set' do
+        it 'will do nothing extra' do
+          @click.stub(:publisher_app_id_was).and_return(nil)
+          @click.publisher_app_id = 'test'
+          @click.save
+          @click.previous_publisher_ids.should be_empty
+        end
+      end
+      context 'publisher_app_id set initially' do
+        it 'will save the previous id' do
+          @click.save
+          expected_array = []
+          expected_array << { 'publisher_app_id' => @click.publisher_app_id,
+                              'updated_at' => @click.updated_at.to_f,
+                              'publisher_user_id' => @click.publisher_user_id
+                            }
+          @click.publisher_app_id = 'new1'
+          @click.save
+          @click.previous_publisher_ids.should == expected_array
+        end
+      end
+    end
+
+    context 'when publisher_app_id does not change' do
+      it 'will do nothing extra' do
+        @click.save
+        @click.advertiser_amount = 20
+        @click.save
+        @click.previous_publisher_ids.should be_empty
+      end
+    end
+  end
 end

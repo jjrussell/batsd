@@ -36,10 +36,10 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: a25f5c6159b09c57340d5e9fbd7bff3f25959d8e
-  tag: v0.4.8
+  revision: 25c3258335c0d391caeb2e8a4080cb92ad8d411b
+  tag: v0.5.1
   specs:
-    analytics_logger (0.4.8)
+    analytics_logger (0.5.1)
       activesupport (~> 3.0)
       bunny (~> 0.8.0)
       json (~> 1.5)
@@ -56,8 +56,17 @@ GIT
     bunny (0.8.0.1)
 
 GIT
+  remote: git@github.com:Tapjoy/notifications_client.git
+  revision: 2f9b480b9d34542f3569438be4b9a17aec784b83
+  ref: 2f9b480b9d34542f3569438be4b9a17aec784b83
+  specs:
+    notifications_client (0.1.0)
+      json
+      rest-client
+
+GIT
   remote: git@github.com:Tapjoy/signage.git
-  revision: b7cb6eaca5e2148da550eba599c684ace2b68f09
+  revision: c1d3a53ffe30eed125d6de22c961bc1be385a7c2
   specs:
     signage (0.0.1)
 
@@ -265,7 +274,7 @@ GEM
       json
       rest-client
       ya2yaml
-    locales (1.0.34)
+    locales (1.0.41)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -477,7 +486,7 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.4.8)!
+  analytics_logger (= 0.5.1)!
   annotate
   archive-tar-minitar
   asset_sync
@@ -532,6 +541,7 @@ DEPENDENCIES
   mysql (= 2.8.1)
   newrelic_rpm (= 3.3.0)
   nokogiri (= 1.5.5)
+  notifications_client!
   oauth (= 0.4.5)
   parallel_tests
   patron (= 0.4.4)
