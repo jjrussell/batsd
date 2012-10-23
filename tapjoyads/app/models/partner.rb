@@ -143,7 +143,7 @@ class Partner < ActiveRecord::Base
   scope :to_payout, :conditions => 'pending_earnings != 0',
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
-  scope :search, lambda { |name_or_email| { :joins => :users,
+  scope :find_by_name_or_email, lambda { |name_or_email| { :joins => :users,
       :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
     }
 
@@ -152,6 +152,49 @@ class Partner < ActiveRecord::Base
     :conditions => [ "#{PayoutInfo.quoted_table_name}.updated_at >= ? and #{PayoutInfo.quoted_table_name}.updated_at < ? ", start_date, end_date ]
   } }
   scope :with_next_payout, where('next_payout_amount > 0')
+
+  # Searches for partners which have an associated user managing them.
+  #
+  # @manager_id [Integer, Symbol] filter by the manager's id. Use :none to
+  #   find partners without a manager.
+  def self.by_manager_id(manager_id)
+    if manager_id == :none
+      # Find all partners that don't have any admin/account_mgr users associated with them.
+      account_mgr = UserRole.find_by_name('account_mgr').id
+      admin = UserRole.find_by_name('admin').id
+      Partner.joins('join partner_assignments pa on partners.id = pa.partner_id').
+              where("pa.partner_id not in (
+                      select pa2.partner_id
+                      from partner_assignments pa2
+                      where pa2.user_id in (
+                        select distinct ra4.user_id
+                        from role_assignments ra4
+                        where ra4.user_role_id in (?, ?)
+                      )
+                    )", account_mgr, admin)
+    else
+      Partner.joins(:users).where('users.id = ?', manager_id)
+    end
+  end
+
+  # Searches partners
+  #
+  # @user_id [Integer, nil] filter by user id.
+  # @manager [Integer, Symbol, nil] filter by the manager's id. Use :none to
+  #   find partners without a manager.
+  # @country [String, nil] filter by the name of a country.
+  # @query [String, nil] filter by part (or all) of a name or email.
+  def self.search(user_id, manager_id, country, query)
+    if manager_id
+      result = Partner.by_manager_id(manager_id)
+    else
+      result = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ])
+    end
+    result = result.joins(:users).where('users.id = ?', user_id) if user_id
+    result = result.scoped_by_country(country) if country
+    result = result.find_by_name_or_email(query) if query
+    result
+  end
 
   def applied_offer_discounts
     offer_discounts.select { |discount| discount.active? && discount.amount == premier_discount }
