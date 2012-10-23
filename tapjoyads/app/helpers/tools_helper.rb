@@ -125,6 +125,17 @@ module ToolsHelper
     end
   end
 
+  def award_dropdown_options(click)
+    award_options = []
+    award_options << [click.publisher_app.name, click.publisher_app_id]
+    click.previous_publisher_ids.each do |item|
+      pub_app = App.find_by_id(item['publisher_app_id'])
+      award_options << [ pub_app.name, pub_app.id ]
+    end
+    award_options.uniq!
+    options_for_select(award_options)
+  end
+
   private
 
   def concat_li(name, value)

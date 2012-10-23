@@ -356,11 +356,27 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       redirect_to device_info_tools_path and return
     end
 
-    log_activity(click)
-    begin
-      click.resolve!
-    rescue Exception => e
-      flash[:error] = "#{e}"
+    if params[:publisher_app_id].blank?
+      flash[:error] = 'publisher_app_id not passed in'
+    elsif params[:publisher_app_id] == click.publisher_app_id
+      log_activity(click)
+      begin
+        click.resolve!
+      rescue Exception => e
+        flash[:error] = "#{e}"
+      end
+    else
+      matched_pub_ids = click.previous_publisher_ids.reject { |i| i['publisher_app_id'] != params[:publisher_app_id] }
+      unless matched_pub_ids.empty?
+        most_recent = matched_pub_ids.sort { |a, b| a['updated_at'] <=> b['updated_at'] }.last
+        redirect_to award_currencies_tools_path(:publisher_app_id => most_recent['publisher_app_id'],
+                                                :udid => click.udid,
+                                                :currency_id => (most_recent['currency_id'] || App.find(params[:publisher_app_id]).primary_currency.id),
+                                                :click_id => click.id,
+                                                :currency_reward => most_recent['currency_reward'])
+        return
+      end
+      flash[:error] = "Publisher ID #{publisher_id} not found for Click #{click.id}"
     end
     redirect_to device_info_tools_path(:udid => click.udid)
   end
@@ -440,14 +456,17 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
-    if params[:udid]
+    if params[:udid].present?
       device = Device.new(:key => params[:udid])
       @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
     end
 
+    @amount = params[:currency_reward] if params[:currency_reward].present?
+
     support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
-      click = Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
+      click = Click.find(params[:click_id]) if params[:click_id].present?
+      click ||= Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
       if click.nil?
         flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
         redirect_to :action => :device_info, :udid => params[:udid] and return
@@ -462,11 +481,15 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   def update_award_currencies
     if params[:amount].nil? || params[:amount].empty?
       flash[:error] = "Must provide an amount."
-      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid =>params[:udid]
+      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid => params[:udid]
       return
     end
-
-    customer_support_reward = Reward.new
+    reward_key = nil
+    if params[:click_id].present?
+      click = Click.new(:key => params[:click_id])
+      reward_key = click.reward_key unless click.new_record?
+    end
+    customer_support_reward = Reward.new(:key => reward_key)
     customer_support_reward.type                       =  'customer support'
     customer_support_reward.udid                       =  params[:udid]
     customer_support_reward.publisher_user_id          =  params[:publisher_user_id]
@@ -479,6 +502,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     customer_support_reward.advertiser_amount          =  0
     customer_support_reward.tapjoy_amount              =  0
     customer_support_reward.customer_support_username  =  current_user.username
+    customer_support_reward.click_key                  =  params[:click_id]
     customer_support_reward.save
 
     Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)

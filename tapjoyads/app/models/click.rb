@@ -175,6 +175,8 @@ class Click < SimpledbShardedResource
       prev_publisher_data = { 'publisher_app_id' => self.publisher_app_id_was,
                               'updated_at' => self.updated_at.to_f,
                               'publisher_user_id' => self.publisher_user_id_was,
+                              'currency_id' => self.currency_id_was,
+                              'currency_reward' => self.currency_reward_was,
                             }
       self.previous_publisher_ids = (self.previous_publisher_ids << prev_publisher_data)
     end

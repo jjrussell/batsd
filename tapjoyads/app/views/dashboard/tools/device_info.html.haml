@@ -164,7 +164,7 @@
           - if permitted_to? :award_currencies, :dashboard_tools
             %td
               - if app.is_publisher_offer?
-                - app.item.currencies .each do |currency|
+                - app.item.currencies.each do |currency|
                   = link_to "Award #{currency.name}", award_currencies_tools_path(:publisher_app_id => app.item, :currency_id => currency.id, :udid => params[:udid])
 
   - if @apps.length > 5
@@ -232,6 +232,11 @@
                   = submit_tag 'Force'
             - else
               = form_tag resolve_clicks_tools_path(:click_id => click.id) do
+                - if click.previous_publisher_ids.present?
+                  = select_tag 'publisher_app_id', award_dropdown_options(click)
+                  %br
+                - else
+                  = hidden_field_tag 'publisher_app_id', click.publisher_app_id
                 = submit_tag 'Award'
           %td.small
             %ul.nobr
