@@ -22,4 +22,5 @@ class BucketNames
   VIRTUAL_GOODS       = RUN_MODE_PREFIX + 'virtual_goods'
   WEB_REQUESTS        = RUN_MODE_PREFIX + 'web-requests'
   APPLE_EPF           = RUN_MODE_PREFIX + 'apple-epf'
+  CACHED_OFFER_LIST   = RUN_MODE_PREFIX + 'cached_offer_list'
 end

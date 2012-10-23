@@ -84,6 +84,7 @@ class OfferCacher
       post_processed_offer_with_rank = []
       compacted_offers = offers.compact.each_with_index do |offer, i|
         offer.cached_offer_list_id = cached_offer_list.id
+        offer.cached_offer_list_type = 'native'
         post_processed_offer_with_rank << {'offer_id' => offer.id, 'rank' => (i + 1)}
       end
 
@@ -100,9 +101,19 @@ class OfferCacher
       cached_offer_list.generated_at = current_time
       cached_offer_list.cached_at = current_time
       cached_offer_list.memcached_key = mc_key
+
       cached_offer_list.offer_list = post_processed_offer_with_rank
       cached_offer_list.cached_offer_type = 'native'
       cached_offer_list.save
+
+      web_request = WebRequest.new
+      web_request.path = 'cached_offer_list'
+      web_request.generated_at = cached_offer_list.generated_at
+      web_request.cached_at = cached_offer_list.cached_at
+      web_request.cached_offer_list_type = cached_offer_list.cached_offer_type
+      web_request.s3_offer_list_id = cached_offer_list.id
+      web_request.cached_offer_list_id = cached_offer_list.id
+      web_request.save
 
       if save_to_s3
         while bucket.objects["#{s3_key}.#{group}"].exists?

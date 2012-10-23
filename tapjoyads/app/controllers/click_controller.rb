@@ -313,6 +313,7 @@ class ClickController < ApplicationController
     click.geoip_country          = geoip_data[:country]
     click.store_name             = params[:store_name].blank? && @web_request ? @web_request.store_name : params[:store_name]
     click.cached_offer_list_id   = params[:cached_offer_list_id]
+    click.cached_offer_list_type = params[:cached_offer_list_type]
 
     click.save
 

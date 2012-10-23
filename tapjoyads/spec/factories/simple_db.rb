@@ -77,4 +77,13 @@ FactoryGirl.define do
     completed            false
     email_address        'tapjoy@tapjoy.com'
   end
+
+  factory :cached_offer_list do
+    key  { FactoryGirl.generate(:guid) }
+    generated_at { Time.zone.now }
+    cached_at { Time.zone.now }
+    cached_offer_type 'native'
+    source 's3'
+    memcached_key 's3.yo'
+  end
 end
