@@ -130,6 +130,7 @@ class Gamer < ActiveRecord::Base
   serialized_extra_attributes_accessor :been_buried_count
   serialized_extra_attributes_accessor :been_helpful_count
   serialized_extra_attributes_accessor :account_type
+  serialized_extra_attributes_accessor :email_invalid
 
   def before_connect(facebook_session, options = {})
     account_type = options.delete(:account_type) { ACCOUNT_TYPE[:facebook_signup] }
