@@ -26,8 +26,8 @@
       - if @gamer.email_invalid
         %tr
           %th Notices
-            %td.warning
-              Email address is invalid
+          %td.warning
+            Email address is invalid
       %tr
         %th Name
         %td{ :class => @gamer.get_gamer_name.blank? ? 'blank' : '' }
