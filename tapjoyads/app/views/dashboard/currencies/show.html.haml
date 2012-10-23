@@ -95,7 +95,9 @@
         Currency ID
         #help_currency.help ?
       %td
-        = @currency.id
+        = @currency.id.truncate(30)
+        = clippy(@currency.id)
+
     - if permitted_to?(:edit, :dashboard_statz)
       = render :partial => 'admin_fields', :locals => {:f => f}
     %tr
