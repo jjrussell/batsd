@@ -72,7 +72,7 @@ gem 'vertica', '0.9.1'
 gem 'will_paginate', '~> 3.0'
 gem 'xml-simple', :require => 'xmlsimple'
 
-gem 'notifications_client', :git => 'git@github.com:Tapjoy/notifications_client.git', :ref => '75a66a1ba884ad6e743021bc73e181ce61e08fbd'
+gem 'notifications_client', :git => 'git@github.com:Tapjoy/notifications_client.git', :ref => '080ae0719dcce5b7853052c32f31d22445917bfc'
 
 # This needs to be down here to get sdb stuff
 gem 'newrelic_rpm', '3.3.0'
