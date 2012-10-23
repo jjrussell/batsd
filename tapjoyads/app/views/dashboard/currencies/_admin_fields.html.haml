@@ -86,9 +86,10 @@
   %th
     Show Deeplink on Offerwall?
     #help_show_deeplink.help ?
-  %td
-    %input{:type => "checkbox", :disabled => 'disabled', :checked => @currency.deeplink_offer.present? && @currency.deeplink_offer.user_enabled && @currency.deeplink_offer.tapjoy_enabled }
-    = link_to('Edit deeplink offer', statz_path(@currency.deeplink_offer))
+  -if @currency.deeplink_offer.present?
+    %td
+      %input{:type => "checkbox", :disabled => 'disabled', :checked => @currency.deeplink_offer.present? && @currency.deeplink_offer.user_enabled && @currency.deeplink_offer.tapjoy_enabled }
+      = link_to('Edit deeplink offer', statz_path(@currency.deeplink_offer))
 %tr.admin
   %th
     Encrypted ID
