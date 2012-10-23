@@ -90,6 +90,12 @@
           .tapjoy-enabled Enabled
         - else
           .tapjoy-disabled Disabled
+    %tr
+      %th
+        Currency ID
+        #help_currency.help ?
+      %td
+        = @currency.id
     - if permitted_to?(:edit, :dashboard_statz)
       = render :partial => 'admin_fields', :locals => {:f => f}
     %tr
@@ -186,6 +192,8 @@
   #help_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. Users will NOT be able to earn currency until this is enabled.
     Please email support+enable@tapjoy.com to get approval.
+  #help_currency_content{:name => 'Currency ID'}
+    This is the currency ID for rewarded publishing.
 
 - content_for :page_javascript do
   :plain
