@@ -76,12 +76,13 @@ class ExternalPublisher
       !device.has_app?( app_id )
     end
     ext_pub_app_ids = external_publishers.map(&:first)
+    first_rewardable = nil
     device.last_run_app_ids.detect do |app_id|
       ext_pub_app_ids.include?(app_id) and
       c = App.find( app_id ) and
-      @first_rewardable = c.rewardable_currencies.first
+      first_rewardable = c.rewardable_currencies.first
     end
-    Currency.find(@first_rewardable.id)
+    Currency.find(first_rewardable.id)
   end
 
   def self.load_all_for_device(device)

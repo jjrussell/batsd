@@ -445,4 +445,28 @@ Tapjoyad::Application.routes.draw do
       end
     end
   end
+
+  namespace :api do
+    namespace :data do
+      resources :devices, :only => [:show, :update] do
+        collection do
+          post :set_last_run_time
+        end
+      end
+      resources :partners, :only => [:show]
+      resources :apps, :only => [:show]
+      resources :app_metadata, :only => [:show] do
+        collection do
+          post :increment_or_decrement
+        end
+      end
+      resources :currencies, :only => [:show]
+      resources :recommendation_lists, :only => [:new]
+      resources :featured_contents do
+        collection do
+          get :load_featured_content
+        end
+      end
+    end
+  end
 end

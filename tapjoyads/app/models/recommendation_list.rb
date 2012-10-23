@@ -21,6 +21,10 @@ class RecommendationList
     @offers[0...MINIMUM].collect { |rec_hash| CachedApp.new(rec_hash[:offer], :explanation => explanation_string(rec_hash)) }
   end
 
+  def recommended_apps
+    apps
+  end
+
   class << self
 
     def cache_all

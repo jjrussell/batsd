@@ -2,8 +2,9 @@ require 'signage/controller'
 
 class ApiController < ApplicationController
   include Signage::Controller
-  class << self; attr_accessor :is_simpledb, :object_class end
+  class << self; attr_accessor :object_class end
 
+  before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
   verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
@@ -15,7 +16,11 @@ class ApiController < ApplicationController
   def lookup_object
     return unless params[:id].present? && !@object
     return if self.class.object_class.nil?
-    @object = (self.class.is_simpledb ? self.class.object_class.new(:key => params[:id]) : self.class.object_class.find_or_initialize_by_id(params[:id]))
+    begin
+      @object = self.class.object_class.find(params[:id])
+    rescue
+    end
+    @object ||= self.class.object_class.new
   end
 
   def sync_object
