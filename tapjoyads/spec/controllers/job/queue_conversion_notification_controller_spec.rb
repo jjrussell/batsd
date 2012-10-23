@@ -28,16 +28,16 @@ describe Job::QueueConversionNotificationsController do
       :message => "Your reward from #{@publisher_app.name} is available!",
       :device_aliases => [{:identifier => @reward.udid, :namespace => 'default'}]
       })
-    
-    @device = Device.new(:key => 'udid')
-    @device.idfa = 'idfa'
-    @device.android_id = 'android_id'
-    @device.save
   end
 
   context "sending" do
     before(:each) do
       NotificationsClient::Notification.any_instance.stub(:deliver)
+    
+      @device = Device.new(:key => 'udid')
+      @device.idfa = 'idfa'
+      @device.android_id = 'android_id'
+      @device.save
     end
 
     it "should find reward" do
@@ -51,6 +51,20 @@ describe Job::QueueConversionNotificationsController do
         :title => "Reward Notification",
         :message => "You earned #{@currency.name} by downloading #{@advertiser_app.name}",
         :device_aliases => [{:namespace => 'android_id', :identifier => 'android_id'}, {:namespace => 'idfa', :identifier => 'idfa'}]
+      }).and_return(@notification)
+
+      get(:run_job, :message => @reward.key)
+    end
+
+    it "should upcase and perform SHA1 hexdigest of mac_address" do
+      @device.mac_address = 'd023dbb1e858'
+      @device.save
+
+      NotificationsClient::Notification.should_receive(:new).with({
+        :app_id => @reward.publisher_app_id,
+        :title => "Reward Notification",
+        :message => "You earned #{@currency.name} by downloading #{@advertiser_app.name}",
+        :device_aliases => [{:namespace => 'android_id', :identifier => 'android_id'}, {:namespace => 'mac_sha1', :identifier => '1f22542dc51c54db355649323bc7792fbcea94a9'}, {:namespace => 'idfa', :identifier => 'idfa'}]
       }).and_return(@notification)
 
       get(:run_job, :message => @reward.key)

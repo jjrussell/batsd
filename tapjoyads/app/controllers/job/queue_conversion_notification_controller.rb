@@ -17,7 +17,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
 
       device_aliases = [
         {:namespace => 'android_id', :identifier => @device.android_id},
-        {:namespace => 'mac_sha1',   :identifier => @device.mac_address && Digest::SHA1.hexdigest(@device.mac_address)},
+        {:namespace => 'mac_sha1',   :identifier => @device.mac_address && Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))},
         {:namespace => 'idfa',       :identifier => @device.idfa}
       ].reject{ |a| a[:identifier].nil?  }
 
