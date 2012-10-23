@@ -55,5 +55,10 @@ describe Job::QueueConversionNotificationsController do
 
       get(:run_job, :message => @reward.key)
     end
+
+    it "should deliver a notification" do
+      NotificationsClient::Notification.any_instance.should_receive(:deliver)
+      get(:run_job, :message => @reward.key)
+    end
   end
 end

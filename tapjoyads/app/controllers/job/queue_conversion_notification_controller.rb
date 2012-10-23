@@ -37,6 +37,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
 
 private
   def message_text
+    #add custom message text where appropriate 
     case @reward.offer.item_type
     when "App"
       #PPI
