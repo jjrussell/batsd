@@ -348,6 +348,7 @@ class ClickController < ApplicationController
       :library_version       => params[:library_version],
       :os_version            => params[:os_version],
       :mac_address           => params[:mac_address],
+      :device_click_ip       => ip_address,
       :device_type           => params[:device_type]
     })
   end
