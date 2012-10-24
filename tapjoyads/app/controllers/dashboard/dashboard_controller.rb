@@ -27,7 +27,7 @@ class Dashboard::DashboardController < ApplicationController
   "as well as timely payments, please confirm payout information is accurate and complete new tax forms here: " +
   "<a href='https://dashboard.tapjoy.com/billing/payment-info'>https://dashboard.tapjoy.com/billing/payment-info</a>. " +
   "Further details on the payout process can be found here: " +
-  "<a href='https://dashboard.tapjoy.com/billing/payment-info'>https://kc.tapjoy.com/en/publisher-db/payout-information-steps</a>. " +
+  "<a href='https://kc.tapjoy.com/en/publisher-db/payout-information-steps'>https://kc.tapjoy.com/en/publisher-db/payout-information-steps</a>. " +
   "If you have any further questions please write in to <a mailto='support@tapjoy.com'>support@tapjoy.com</a>. Please " +
   "update all details by 10/24/12."
 
