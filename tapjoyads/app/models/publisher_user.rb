@@ -1,4 +1,7 @@
 class PublisherUser < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "publisher_users"
+
   MAX_UDIDS = 5
 
   self.num_domains = NUM_PUBLISHER_USER_DOMAINS

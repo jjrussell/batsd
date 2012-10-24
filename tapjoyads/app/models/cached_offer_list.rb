@@ -1,4 +1,7 @@
 class CachedOfferList < SimpledbResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "cached_offer_list"
+
   TYPES = %w(native optimized native-fallback)
 
   self.domain_name = 'cached_offer_lists'

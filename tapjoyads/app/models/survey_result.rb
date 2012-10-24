@@ -1,4 +1,6 @@
 class SurveyResult < SimpledbResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "survey_results"
 
   self.domain_name = 'survey_results'
 
