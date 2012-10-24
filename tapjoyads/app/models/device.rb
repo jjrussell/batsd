@@ -252,7 +252,7 @@ class Device < SimpledbShardedResource
   end
 
   def recommendations(options = {})
-    RecommendationList.new(options.merge(:device => self)).apps
+    RecommendationList.new(options.merge(:device_id => key)).apps
   end
 
   def gamers
@@ -459,7 +459,7 @@ class Device < SimpledbShardedResource
   def assign_experiment_bucket(hash_offset = nil)
     return if ExperimentBucket.count_from_cache == 0
     hash_offset ||= $redis.get('experiments:hash_offset').to_i || 0
-    
+
     # digest the udid, slice the characters we are using, and get an integer
     hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
     index = hash % ExperimentBucket.count_from_cache
