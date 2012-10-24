@@ -75,6 +75,22 @@ module ActiveRecord
     end
 
     alias_method_chain :has_many, :offer_parent_methods
+
+    def has_one_with_required_option(association_id, options = {})
+      has_one_without_required_option(association_id, options.clone).tap do
+        if options[:required]
+          create_method = :"require_associated_records_for_#{association_id}"
+          define_method(create_method) do
+            if (association = association_instance_get(association_id.to_s)).nil? || association.target.nil?
+              raise ActiveRecord::RecordNotSaved, "Required association: #{association_id} not present"
+            end
+          end
+          after_create create_method
+        end
+      end
+    end
+
+    alias_method_chain :has_one, :required_option
   end
 
   module ConnectionAdapters

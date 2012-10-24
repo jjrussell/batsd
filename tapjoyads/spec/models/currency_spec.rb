@@ -11,6 +11,15 @@ describe Currency do
     it { should belong_to(:partner) }
   end
 
+  describe '.has_one' do
+    it do
+      # TODO: add a required() method to Shoulda::Matchers::ActiveRecord::AssociationMatcher
+      matcher = have_one(:deeplink_offer)
+      should matcher
+      matcher.send(:reflection).options[:required].should be_true
+    end
+  end
+
   describe '#valid?' do
     it { should validate_presence_of(:app) }
     it { should validate_presence_of(:partner) }
@@ -562,13 +571,6 @@ describe Currency do
       @currency.enabled_deeplink_offer_id.should_not be_nil
       dl = DeeplinkOffer.find_by_id(@currency.enabled_deeplink_offer_id)
       dl.currency.should == @currency
-    end
-
-    it 'should cause saving to fail if DeeplinkOffer saving fails' do
-      @currency.stub(:create_deeplink_offer).and_return(true)
-      # providing a blank name will cause DeeplinkOffer validation to fail
-      @currency.build_deeplink_offer(:partner => @currency.partner, :app => @currency.app, :name => "")
-      lambda { @currency.save! }.should raise_error(ActiveRecord::RecordNotSaved, 'Unable to save deeplink_offer association')
     end
   end
 
