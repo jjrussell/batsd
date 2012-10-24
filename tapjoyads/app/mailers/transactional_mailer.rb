@@ -135,23 +135,62 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   ##
   def setup_for_tjm_welcome_email(gamer, device_info = {})
     @offer_data = {}
-    device, @gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
-    if external_publisher
-      currency = external_publisher.currencies.first
-      offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
-      response = Downloader.get(offerwall_url, :return_response => true)
-      raise "Error getting offerwall data HTTP code: #{ response.status }" unless response.status == 200
-      @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
-    end
+    setup_for_tjm_welcome_email_without_using_tjm_tables(gamer,device_info) and return if gamer.class==Hash
 
-    @gamer_device ||= gamer.gamer_devices.first
+    device, gamer_device, external_publisher = ExternalPublisher.most_recently_run_for_gamer(gamer)
+    get_offerwall(device, device_info, external_publisher) if external_publisher
+    gamer_device ||= gamer.gamer_devices.first
     selected_devices = device_info[:selected_devices] || []
-    @linked = @gamer_device.present?
-    @android_device = @linked ? (@gamer_device.device_type == 'android') : !selected_devices.include?('ios')
-
-    device = Device.new(:key => @linked ? @gamer_device.device_id : nil)
+    @linked = gamer_device.present?
+    @android_device = @linked ? (gamer_device.device_type == 'android') : !selected_devices.include?('ios')
+    device_key = @linked ? gamer_device.device_id : nil
+    device = get_device(device_key )
     @recommendations = device.new_record? ? [] : device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
     @facebook_signup = gamer.facebook_id.present?
     @gamer_email = gamer.email if @facebook_signup
+
+  end
+
+  def get_device(key)
+    Device.new(:key => key)
+  end
+
+  def get_offerwall(device, device_info, external_publisher)
+    currency = external_publisher.currencies.first
+    offerwall_url = external_publisher.get_offerwall_url(device, currency, device_info[:accept_language_str], device_info[:user_agent_str], nil, true)
+    response = Downloader.get(offerwall_url, :return_response => true)
+    raise "Error getting offerwall data HTTP code: #{ response.status }" unless response.status == 200
+    @offer_data[currency[:id]] = JSON.parse(response.body).merge(:external_publisher => external_publisher)
+  end
+
+  def setup_for_tjm_welcome_email_without_using_tjm_tables(gamer, device_info = {})
+    arr = [nil, nil, nil]
+    latest_run_time = 0
+    gamer_devices = gamer[:gamer_devices]  # [{:id=>..., :type=>...},...,...]
+
+    gamer_devices.each do |device_hash|    #{:id=> Device#key, :type=>GamerDevice#device_type}
+      device = Device.new(:key => device_hash[:id])
+      external_publisher = ExternalPublisher.load_all_for_device(device).first
+      next unless external_publisher.present?
+      latest_run_time = [latest_run_time, external_publisher.last_run_time].max
+      if latest_run_time == external_publisher.last_run_time
+        arr = [device, device_hash, external_publisher]
+      end
+    end
+    device, gamer_device, external_publisher = arr
+
+    get_offerwall(device, device_info, external_publisher) if external_publisher
+
+    gamer_device ||= gamer_devices.first
+    selected_devices = device_info[:selected_devices] || []
+    @linked = gamer_device.present?
+    @android_device = @linked ? (gamer_device[:type] == 'android') : !selected_devices.include?('ios')
+    device_key = @linked ? gamer_device[:id] : nil
+
+    device = get_device( device_key)
+    @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+    @facebook_signup = gamer[:facebook_id].present?
+    @gamer_email = gamer[:email] if @facebook_signup
+    true
   end
 end
