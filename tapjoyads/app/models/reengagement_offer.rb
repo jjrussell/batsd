@@ -52,7 +52,7 @@ class ReengagementOffer < ActiveRecord::Base
   after_save :cache_by_app_id
 
   delegate :instructions_overridden, :to => :primary_offer
-  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :get_icon_url, :to => :app
+  delegate :get_offer_device_types, :store_id, :store_url, :large_download?, :supported_devices, :platform, :get_countries_blacklist, :countries_blacklist, :primary_category, :user_rating, :info_url, :to => :app
 
   scope :visible, :conditions => { :hidden => false }
   scope :for_app, lambda { |app_id| {:conditions => [ "app_id = ?", app_id ] } }

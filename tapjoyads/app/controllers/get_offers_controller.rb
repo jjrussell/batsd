@@ -313,7 +313,7 @@ class GetOffersController < ApplicationController
              :currentAppName => @publisher_app.name
            }
 
-    @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
+    @obj[:currentIconURL]      = IconHandler.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => IconHandler.hashed_icon_id(@publisher_app.id))
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
     @obj[:rewarded]            = @supports_rewarded
