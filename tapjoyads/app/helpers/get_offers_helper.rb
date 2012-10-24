@@ -35,7 +35,7 @@ module GetOffersHelper
       :currency_id        => @currency.id,
       :source             => options.delete(:source) { params[:source] },
       :app_version        => params[:app_version],
-      :viewed_at          => @now,
+      :viewed_at          => @now || Time.zone.now,
       :exp                => params[:exp],
       :primary_country    => geoip_data[:primary_country],
       :language_code      => params[:language_code],
