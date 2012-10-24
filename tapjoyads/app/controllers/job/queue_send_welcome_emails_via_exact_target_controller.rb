@@ -22,6 +22,11 @@ class Job::QueueSendWelcomeEmailsViaExactTargetController < Job::SqsReaderContro
       gamer[:facebook_id]  = device_info.delete(:facebook_id)
       gamer[:email]        = device_info.delete(:email)
       gamer[:gamer_devices]= device_info.delete(:gamer_devices)
+      gamer.instance_eval do
+        def email
+          self.fetch(:email)
+        end
+      end
     end
 
     email_type = device_info.delete(:email_type) || 'welcome'
