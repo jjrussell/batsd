@@ -129,7 +129,7 @@ class App < ActiveRecord::Base
   end
 
   def primary_app_metadata_id
-    self.primary_app_metadata ? self.primary_app_metadata.id : nil
+    self.primary_app_metadata.try(:id)
   end
 
   def tapjoy_enabled_associated_offers()
