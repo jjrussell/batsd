@@ -5,7 +5,7 @@ class ReengagementRewardsController < ApplicationController
 
   OK_BUTTON_URL = "http://ok"
 
-  before_filter :lookup_udid
+  before_filter :lookup_udid, :set_publisher_user_id
 
   def index
     return unless verify_params([:udid, :publisher_user_id, :app_id])
