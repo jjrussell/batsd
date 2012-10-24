@@ -23,6 +23,7 @@ Tapjoyad::Application.routes.draw do
   end
   # TODO: make display_ad routes better
   match 'display_ad(/index)' => 'display_ad#index', :defaults => { :format => 'xml'}
+  match 'display_ad/cross_promo' => 'display_ad#cross_promo', :defaults => { :format => 'xml'}
   match 'display_ad/webview' => 'display_ad#webview'
   match 'display_ad/image'   => 'display_ad#image'
   match 'impression'         => 'impression#index'
@@ -35,9 +36,11 @@ Tapjoyad::Application.routes.draw do
     end
   end
   resources :get_offers, :only => [:index] do
-    collection do
-      match :webpage
-      match :featured
+    ['', '_cross_promo'].each do |s|
+      collection do
+        match "webpage#{s}".to_sym
+        match "featured#{s}".to_sym
+      end
     end
   end
   match 'get_vg_store_items/all' => 'get_vg_store_items#all'
