@@ -104,4 +104,10 @@ namespace :db do
       runner("Loading schema file into sqlite", "bundle exec rake db:schema:load > /dev/null", env.merge('MACHINE_TYPE' => 'webserver'))
     end
   end
+
+  task :truncate => :environment do
+    conn = ActiveRecord::Base.connection
+    tables = conn.tables
+    tables.each { |t| conn.execute("TRUNCATE #{t}") }
+  end
 end
