@@ -1517,9 +1517,44 @@ describe Offer do
     before(:each) {
       subject.tapjoy_enabled = false
       subject.user_enabled = false
+      subject.self_promote_only = false
       subject.payment = 0
       subject.reward_value = nil
     }
+
+    context 'with a self promote only enabled' do
+      before(:each) {
+          subject.self_promote_only = true
+      }
+
+      context 'that is enabled' do
+        before(:each) {
+          subject.tapjoy_enabled = true
+        }
+
+        context 'and is not user enabled' do
+          it { should_not be_enabled }
+        end
+
+        context 'and is user enabled' do
+          before(:each) {
+            subject.user_enabled = true
+          }
+
+          it { should be_enabled }
+        end
+      end
+
+      context 'that is not enabled' do
+        context 'and is user enabled' do
+          before(:each) {
+            subject.user_enabled = true
+          }
+
+          it { should_not be_enabled }
+        end
+      end
+    end
 
     context 'with a non-deeplink offer' do
       context 'that is not enabled' do
