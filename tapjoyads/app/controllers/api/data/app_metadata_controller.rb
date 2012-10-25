@@ -2,7 +2,6 @@ class Api::Data::AppMetadataController < ApiController
   SAFE_ATTRIBUTES = [:name, :developer, :thumbs_up, :thumbs_down, :categories, :user_rating, :store_name,
                      :store_id, :file_size_bytes]
 
-  @is_simpledb = false
   @object_class = AppMetadata
 
   before_filter :lookup_object, :sync_object, :only => [:show, :increment_or_decrement]

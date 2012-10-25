@@ -1,7 +1,6 @@
 class Api::Data::PartnersController < ApiController
   SAFE_ATTRIBUTES = [:name]
 
-  @is_simpledb = false
   @object_class = Partner
 
   before_filter :lookup_object, :sync_object, :only => [:show]

@@ -5,7 +5,6 @@ class Api::Data::DevicesController < ApiController
                      :display_multipliers, :bookmark_tutorial_shown, :suspension_expires_at, :opted_out,
                      :external_publishers, :first_rewardable_currency_id]
 
-  @is_simpledb = true
   @object_class = Device
 
   before_filter :lookup_object, :sync_object, :only => [:show, :set_last_run_time, :update]

@@ -6,7 +6,6 @@ class Api::Data::AppsController < ApiController
     :app_metadatas        => Api::Data::AppMetadataController::SAFE_ATTRIBUTES
   }
 
-  @is_simpledb = false
   @object_class = App
 
   before_filter :lookup_object, :sync_object, :only => [:show]
