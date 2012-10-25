@@ -20,10 +20,12 @@ class ServerWhitelist
     '67.21.0.30',                            # Commission Junction added 2012.05.22
     ['67.21.4.132', '67.21.4.134'],          # Commission Junction added 2012.05.22
     '97.107.138.75',                         # Commission Junction added 2012.05.22
-    '63.215.202.74',                         # Commission Junction added 2012.05.22
+    ['63.215.202.0', '63.215.202.255'],      # Commission Junction added 2012.05.22, updated 2012.10.24
     '209.234.184.1',                         # Commission Junction added 2012.05.22
-    '216.34.207.225',                        # Commission Junction added 2012.05.22
-    '64.70.54.15',                           # Commission Junction added 2012.08.13
+    ['216.34.207.0', '216.34.207.255'],      # Commission Junction added 2012.05.22, updated 2012.10.24
+    ['64.70.54.0', '64.70.54.255'],          # Commission Junction added 2012.08.13, updated 2012.10.24
+    ['64.70.58.0', '64.70.58.255'],          # Commission Junction added 2012.10.24
+    ['8.18.45.0', '8.18.45.255'],            # Commission Junction added 2012.10.24
     '174.129.30.101',                        # HasOffers US East added 2012.05.22
     '50.16.235.30',                          # HasOffers US East added 2012.05.22
     '75.101.156.191',                        # HasOffers US East added 2012.05.22
