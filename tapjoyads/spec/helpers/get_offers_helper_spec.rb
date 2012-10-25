@@ -40,4 +40,107 @@ describe GetOffersHelper do
       helper.featured_offer_action_text(@action_offer).should == helper.t('text.featured.earn_now')
     end
   end
+
+  context "get links" do
+    class TestClass
+      include GetOffersHelper
+
+      def initialize(more_data=1)
+        @more_data_available = more_data
+      end
+    end
+
+    before :each do
+      @currency = FactoryGirl.create(:currency)
+      @params = {'controller' => 'some_controller', 'action' => 'some_action',
+                'currency_id' => 'some_currency', 'data' => 'some_data' }
+      helper.stub(:params).and_return(@params)
+      @test_instance = TestClass.new
+      @test_instance.stub(:params).and_return(@params)
+    end
+
+    describe "#get_next_link_json" do
+      before :each do
+        url = @test_instance.get_next_link_json
+        datastr = url.match(/data=([^"]+)/)[1]
+        @data_params = ObjectEncryptor.decrypt(datastr)
+      end
+
+      it "should have currency_id in new data params", :links do
+        @data_params['currency_id'].should == 'some_currency'
+      end
+
+      it "should have json in new data params", :links do
+        @data_params['json'].should == '1'
+      end
+
+      it "should not have controller in new data params", :links do
+        @data_params['controller'].should be_nil
+      end
+
+      it "should not have action in new data params", :links do
+        @data_params['action'].should be_nil
+      end
+
+      it "should not have data in new data params", :links do
+        @data_params['data'].should be_nil
+      end
+    end
+
+    describe "#get_next_link_json_redesign" do
+      before :each do
+        url = @test_instance.get_next_link_json_redesign
+        datastr = url.match(/data=([^"]+)/)[1]
+        @data_params = ObjectEncryptor.decrypt(datastr)
+      end
+
+      it "should have currency_id in new data params", :links do
+        @data_params['currency_id'].should == 'some_currency'
+      end
+
+      it "should have json in new data params", :links do
+        @data_params['json'].should == '1'
+      end
+
+      it "should have redesign in new data params", :links do
+        @data_params['json'].should == '1'
+      end
+
+      it "should not have controller in new data params", :links do
+        @data_params['controller'].should be_nil
+      end
+
+      it "should not have action in new data params", :links do
+        @data_params['action'].should be_nil
+      end
+
+      it "should not have data in new data params", :links do
+        @data_params['data'].should be_nil
+      end
+    end
+
+    describe "#get_currency_link" do
+      before :each do
+        url = helper.get_currency_link(@currency)
+        datastr = url.match(/data=([^"]+)/)[1]
+        @data_params = ObjectEncryptor.decrypt(datastr)
+      end
+
+      it "should have currency_id in new data params", :links do
+        @data_params['currency_id'].should == @currency.id
+      end
+
+      it "should not have controller in new data params", :links do
+        @data_params['controller'].should be_nil
+      end
+
+      it "should not have action in new data params", :links do
+        @data_params['action'].should be_nil
+      end
+
+      it "should not have data in new data params", :links do
+        @data_params['data'].should be_nil
+      end
+    end
+  end
 end
