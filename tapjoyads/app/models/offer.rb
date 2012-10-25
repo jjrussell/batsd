@@ -376,7 +376,7 @@ class Offer < ActiveRecord::Base
   end
 
   def is_publisher_offer?
-    item_type == 'App' && item.primary_currency.present?
+    item_type == 'App' && (item.primary_currency.present? || item.non_rewarded.present?)
   end
 
   def primary_offer_enabled?
