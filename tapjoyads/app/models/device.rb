@@ -252,7 +252,7 @@ class Device < SimpledbShardedResource
   end
 
   def recommendations(options = {})
-    RecommendationList.new(options.merge(:device_id => self.id)).apps
+    RecommendationList.new(options.merge(:device_id => key)).apps
   end
 
   def gamers

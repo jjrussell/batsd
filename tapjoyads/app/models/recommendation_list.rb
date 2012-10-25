@@ -6,6 +6,8 @@ class RecommendationList
   MINIMUM = 7
 
   def initialize(options = {})
+    @device      = options[:device] if options.include?(:device)
+    @device      = Device.find(options[:device_id]) if (!@device && options.include?(:device_id))
     @device      = (options[:device_id].present? ? Device.find(options[:device_id]) : options[:device])
     @device_type = options[:device_type]
     @geoip_data  = options[:geoip_data] || {}
