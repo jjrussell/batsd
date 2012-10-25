@@ -23,18 +23,42 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     ##
 
     # Make ExactTarget do the rest of the work
+    send_using_exact_target(gamer)
+  end
+
+  def send_using_exact_target(gamer)
     et = ExactTargetApi.new
     response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, @data, @options)
     unless response[:status_code] == 'OK'
       # They gave us a bogus email address
       if response[:error_code].to_i == 180008
-        gamer.update_attributes!(:email_invalid => true)
+        record_invalid_email(gamer)
       else
         # Something unexpected happened
         raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
       end
     end
     response
+  end
+
+  def record_invalid_email(gamer)
+    if gamer.class==Hash
+      params = {:email => gamer.email}
+      post_to_tjm(sign!(params))
+    else
+      gamer.update_attributes!(:email_invalid => true)
+    end
+  end
+
+  def post_to_tjm(signed_params)
+    url = "#{WEBSITE_URL}/api/data/invalid_emails"
+    download_options = {:timeout => 2.seconds}
+    Downloader.post(url, signed_params, download_options)
+  end
+
+
+  def sign!(params)
+    Signage::ExpiringSignature.new('hmac_sha256', Rails.configuration.tapjoy_api_key).sign_hash!(params)
   end
 
   def post_confirm_email(gamer, device_info = {})
@@ -53,21 +77,12 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     ##
 
     # Make ExactTarget do the rest of the work
-    et = ExactTargetApi.new
-    response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, @data, @options)
-    unless response[:status_code] == 'OK'
-      # They gave us a bogus email address
-      if response[:error_code].to_i == 180008
-        gamer.update_attributes!(:email_invalid => true)
-      else
-        # Something unexpected happened
-        raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
-      end
-    end
-    response
+    send_using_exact_target(gamer)
   end
 
   private
+
+
 
   ##
   ## TODO: Refactor this to make more sense for ExactTarget integration

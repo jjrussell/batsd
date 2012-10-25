@@ -119,4 +119,14 @@ describe TransactionalMailer do
       subject.instance_variable_get(:@offer_data).should_not be_nil
     end
   end
+  context '#record_invalid_email without using tjm_tables' do
+    it 'should result in a Downloader post with proper params' do
+      gamer  = {:email => 'blah@tapjoyed.com'}
+      signed_hash = {'test_signed'=> 'wakka wakka'}
+      gamer.stub(:email => gamer[:email])
+      subject.stub(:sign! => signed_hash)
+      subject.should_receive(:post_to_tjm).with(signed_hash)
+      subject.record_invalid_email(gamer)
+    end
+  end
 end
