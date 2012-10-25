@@ -1,0 +1,5 @@
+if Rails.env.production?
+  $riak = Riak::Client.new(:nodes => RIAK_NODES)
+else
+  $riak = Riak::Client.new
+end
