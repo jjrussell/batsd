@@ -223,10 +223,10 @@ class Offer < ActiveRecord::Base
   set_callback :cache, :before, :update_video_button_tracking_offers
   set_callback :cache_associations, :before, :app_metadata
 
-  ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
+  EXCLUDED_ENABLED_OFFER_TYPES = %w(RatingOffer DeeplinkOffer ReengagementOffer)
   scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
   scope :enabled_by_user, :conditions => { :user_enabled => true }
-  scope :with_allowed_types, :conditions => [ 'item_type not in (?)', ENABLED_OFFER_TYPES ]
+  scope :with_allowed_types, :conditions => [ 'item_type not in (?)', EXCLUDED_ENABLED_OFFER_TYPES ]
   scope :with_fund, {
     :joins => :partner,
     :conditions => '(payment > 0 AND partners.balance > payment) OR (payment = 0 AND reward_value > 0)'
@@ -262,7 +262,7 @@ class Offer < ActiveRecord::Base
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
-  scope :active, not_tracking.with_allowed_types.enabled_by_user.enabled_by_tapjoy.joins(:partner).where("item_type = 'deep_link' OR ((payment > 0 and partners.balance > 0) or (payment = 0 and reward_value > 0))")
+  scope :active, not_tracking.with_allowed_types.enabled_by_user.enabled_by_tapjoy.with_fund
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   scope :papaya_app_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
