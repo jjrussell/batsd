@@ -23,6 +23,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
 
       @notification = NotificationsClient::Notification.new({
         :app_id => @reward.publisher_app_id, 
+        :app_secret_key => publisher_app.secret_key,
         :title => I18n.t('queue_conversion_notifications_controller.notification.title', :default => "Reward Notification"),
         :message => message_text,
         :device_aliases => device_aliases
@@ -52,14 +53,14 @@ private
   end
 
   def publisher_app
-    App.find_in_cache(@reward.publisher_app_id)
+    @publisher_app ||= App.find_in_cache(@reward.publisher_app_id)
   end
 
   def advertiser_app
-    App.find_in_cache(@reward.advertiser_app_id)
+    @advertiser_app ||= App.find_in_cache(@reward.advertiser_app_id)
   end
 
   def currency
-    Currency.find_in_cache(@reward.currency_id)
+    @currency ||= Currency.find_in_cache(@reward.currency_id)
   end
 end
