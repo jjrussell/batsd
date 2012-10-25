@@ -1,22 +1,24 @@
 module GetOffersHelper
 
+  REJECTION_KEYS = /^(controller|action|data)$/
+
   def get_next_link_json
     return nil if @more_data_available < 1
-    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params = params.reject { |k, v| k.match(REJECTION_KEYS) }
     tmp_params['json'] = "1"
     "/get_offers?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
   def get_next_link_json_redesign
     return nil if @more_data_available < 1
-    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params = params.reject { |k, v| k.match(REJECTION_KEYS) }
     tmp_params['json'] = "1"
     tmp_params['redesign'] = 'true'
     "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
   end
 
   def get_currency_link(currency)
-    tmp_params = params.reject { |k, v| k == 'controller' || k == 'action' }
+    tmp_params = params.reject { |k, v| k.match(REJECTION_KEYS) }
     tmp_params['currency_id'] = currency.id
     url = "/get_offers/webpage?data=#{ObjectEncryptor.encrypt(tmp_params)}"
     link_to(currency.name, url)
