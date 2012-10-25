@@ -8,7 +8,7 @@
     hash["IconURL"]         = offer.video_offer? ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '57')
     hash["IconURLMedium"]   = offer.video_offer? ? offer.video_icon_url : offer.get_icon_url(:source => :cloudfront, :size => '114')
     hash["Name"]            = offer.name
-    hash["RedirectURL"]     = get_click_url(offer, :offerwall_rank => (index + 1))
+    hash["RedirectURL"]     = get_click_url(offer, :offerwall_rank => (@start_index + index + 1))
     hash["StoreID"]         = offer.store_id_for_feed
     hash["Payout"]          = @currency.get_publisher_amount(offer)
     hash["Type"]            = offer.item_type
