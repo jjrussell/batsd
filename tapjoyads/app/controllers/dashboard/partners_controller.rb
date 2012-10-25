@@ -14,35 +14,28 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
   def index
     if current_user.role_symbols.include?(:agency)
-      @partners = current_user.partners.order('created_at DESC').includes([ :offers, :users ]).paginate(:page => params[:page])
-    elsif params[:q]
-      query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).includes(:offers).paginate(:page => params[:page]).uniq
-    else
-      @partners = Partner.includes([ :offers, :users ]).order('created_at DESC').paginate(:page => params[:page])
+      @partners = current_user.partners.order('created_at DESC').
+                              includes([ :offers, :users ]).
+                              paginate(:page => params[:page])
+      render 'index'
+      return
     end
-  end
 
-  def by_country
-    if params[:country] == 'all'
-      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page])
-    else
-      @partners = Partner.scoped_by_country(params[:country]).paginate(:page => params[:page])
-      @country = params[:country]
-    end
-    render 'index'
-  end
+    user_id = params.fetch(:agency_user, nil)
+    manager_id = params.fetch(:managed_by, nil)
+    manager_id = nil if manager_id == 'all'
+    manager_id = :none if manager_id == 'none'
 
-  def managed_by
-    if params[:id] == 'none'
-      @partners = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ]).paginate(:page => params[:page]).reject do |partner|
-        partner.account_managers.present?
-      end
-    else
-      user = User.find_by_id(params[:id], :include => [ :partners ])
-      @partners = user.partners.paginate(:page => params[:page])
+    @country = params.fetch(:country, nil)
+    @country = nil if @country && @country.empty?
+    query = params.fetch(:q, nil)
+    if query
+      query = query.gsub("'", '')
+      query = nil if query.empty?
     end
-    render 'index'
+
+    @partners = Partner.search(nil, manager_id, @country, query).
+                        paginate(:page => params[:page])
   end
 
   def mail_chimp_info

@@ -59,7 +59,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @partners = Partner.find_all_by_id(params[:partner_id])
     elsif params[:q].present?
       query = params[:q].gsub("'", '')
-      @partners = Partner.search(query).uniq
+      @partners = Partner.find_by_name_or_email(query).uniq
     else
       return
     end

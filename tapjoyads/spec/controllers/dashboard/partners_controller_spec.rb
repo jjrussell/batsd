@@ -89,7 +89,7 @@ describe Dashboard::PartnersController do
       let(:partner) { FactoryGirl.create(:partner, :country => country) }
 
       before :each do
-        get :by_country, :country => country
+        get :index, :country => country
       end
 
       it 'responds with the indicated country' do
@@ -110,7 +110,7 @@ describe Dashboard::PartnersController do
       let(:partner) { FactoryGirl.create(:partner, :account_managers => [manager]) }
 
       before :each do
-        get :managed_by, :id => manager.id
+        get :index, :managed_by => manager.id
       end
 
       it 'responds with partners known to be managed by indicated manager' do
