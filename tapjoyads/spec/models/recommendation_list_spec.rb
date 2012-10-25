@@ -4,8 +4,10 @@ describe RecommendationList do
   context '#recommendation_reject' do
 
     before :each do
+      @device = FactoryGirl.create(:device)
+      Device.stub(:find).and_return(@device)
       @options = {
-        :device_id => FactoryGirl.create(:device).id,
+        :device_id => @device.id,
         :device_type => 'iphone',
       }
       RecommendationList.stub(:for_device).and_return([])
