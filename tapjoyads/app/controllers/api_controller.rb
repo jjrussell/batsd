@@ -2,6 +2,9 @@ require 'signage/controller'
 
 class ApiController < ApplicationController
   include Signage::Controller
+  class << self; attr_accessor :object_class end
+
+  before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
   verify_signature(:secret => Rails.configuration.tapjoy_api_key)
 
   rescue_from Signage::Error::InvalidSignature do |exception|
@@ -10,15 +13,14 @@ class ApiController < ApplicationController
 
   private
 
-  def get_object_type
-    [nil, nil]
-  end
-
   def lookup_object
     return unless params[:id].present? && !@object
-    obj_class, is_simpledb = get_object_type
-    return if obj_class.nil?
-    @object = (is_simpledb ? obj_class.new(:key => params[:id]) : obj_class.new(params[:id]))
+    return if self.class.object_class.nil?
+    begin
+      @object = self.class.object_class.find(params[:id])
+    rescue
+    end
+    @object ||= self.class.object_class.new
   end
 
   def sync_object
@@ -32,7 +34,7 @@ class ApiController < ApplicationController
   def merge_attributes(new_attributes)
     begin
       JSON.parse(new_attributes).each do |name, value|
-        @object.send("#{name.to_s}=", value)
+        @object.send("#{name.to_s}=", value) if @object.respond_to?("#{name.to_s}=")
       end
     end
   end
@@ -57,13 +59,23 @@ class ApiController < ApplicationController
     render(:json => output_json.to_json, :status => status)
   end
 
-  def get_simpledb_object(obj, safe_attributes = [])
-    return nil if obj.nil? || obj.new_record?
-    obj_hash = { :id => obj.key, :attributes => {} }
+  def get_object(obj, safe_attributes = [], safe_associations = {})
+    return nil if obj.nil? || (obj.respond_to?(:new_record?) ? obj.new_record? : false)
+    obj_hash = { :id => obj.id, :attributes => {} }
     safe_attributes.each do |attr|
       if obj.respond_to?(attr)
         attr_value = obj.send(attr)
         obj_hash[:attributes][attr] = attr_value unless attr_value.nil?
+      end
+    end
+
+    obj_hash["associations"] = {}
+    safe_associations.each do |association, association_safe_attributes|
+      if obj.respond_to?(association)
+        associated_objects = obj.send(association)
+        associated_objects = [associated_objects] unless associated_objects.class == Array
+        associated_objects.map! { |associated_object| get_object(associated_object, association_safe_attributes)}
+        obj_hash["associations"][association.to_s] = associated_objects
       end
     end
     obj_hash

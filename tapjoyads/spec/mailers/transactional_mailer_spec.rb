@@ -3,6 +3,8 @@ require 'spec_helper'
 describe TransactionalMailer do
   before :each do
     @mailer = TransactionalMailer.new
+    device = FactoryGirl.create(:device)
+    Device.stub(:find).and_return(device)
   end
 
   ##

@@ -128,6 +128,10 @@ class App < ActiveRecord::Base
     end
   end
 
+  def primary_app_metadata_id
+    self.primary_app_metadata.try(:id)
+  end
+
   def tapjoy_enabled_associated_offers()
     associated_offers(:tapjoy_enabled => true)
   end
