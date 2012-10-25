@@ -1194,16 +1194,18 @@ describe Offer do
       end
 
       it "copies s3 assets over when cloned" do
+        offer.banner_creatives = %w(960x640 640x100)
+
         s3object = FakeObject.new("")
         s3object.write("image_data")
 
-        offer.stub(:banner_creative_s3_object).with("320x50").and_return(s3object)
+        offer.stub(:banner_creative_s3_object).with("960x640").and_return(s3object)
         offer.stub(:banner_creative_s3_object).with("640x100").and_return(s3object)
 
         clone = offer.clone
         clone.instance_variable_set('@mock_proxy', nil) # reset rspec magic-ness, since we called .clone
 
-        clone.should_receive(:upload_banner_creative!).with("image_data", "320x50")
+        clone.should_receive(:upload_banner_creative!).with("image_data", "960x640")
         clone.should_receive(:upload_banner_creative!).with("image_data", "640x100")
 
         clone.bid = clone.min_bid
