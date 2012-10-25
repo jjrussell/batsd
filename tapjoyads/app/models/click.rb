@@ -57,6 +57,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :force_converted_by
   self.sdb_attr :store_name
   self.sdb_attr :cached_offer_list_id
+  self.sdb_attr :cached_offer_list_type
   self.sdb_attr :previous_publisher_ids, :type => :json, :default_value => []
 
   #Special case for new domain

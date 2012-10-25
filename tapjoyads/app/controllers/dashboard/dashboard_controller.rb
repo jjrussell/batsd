@@ -22,7 +22,14 @@ class Dashboard::DashboardController < ApplicationController
                     Visit the knowledge center for the entire change log to this version.
                     (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
 
-  NEW_INSIGHTS_NOTICE = "Checkout the latest version of <a href=\"http://bit.ly/Sa1Las\" target=\"_blank\">Tapjoy Insights</a>. This issue showcases the mobile app explosion in Asia. <a href=\"http://bit.ly/Sa1Las\" target=\"_blank\"><img src=\"/images/insights_header_thumbnail.png\" style=\"padding-left: 5px; vertical-align: middle;\"/></a>"
+
+  BILLING_INFO_NOTICE = "We've adopted a new payout system starting 10/19/12. In order to receive future payouts, " +
+  "as well as timely payments, please confirm payout information is accurate and complete new tax forms here: " +
+  "<a href='https://dashboard.tapjoy.com/billing/payment-info'>https://dashboard.tapjoy.com/billing/payment-info</a>. " +
+  "Further details on the payout process can be found here: " +
+  "<a href='https://kc.tapjoy.com/en/publisher-db/payout-information-steps'>https://kc.tapjoy.com/en/publisher-db/payout-information-steps</a>. " +
+  "If you have any further questions please write in to <a mailto='support@tapjoy.com'>support@tapjoy.com</a>. Please " +
+  "update all details by 10/24/12."
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -136,7 +143,7 @@ class Dashboard::DashboardController < ApplicationController
   end
 
   def inform_of_new_insights
-    flash[:notice] = NEW_INSIGHTS_NOTICE if current_user && flash[:notice].blank?
+    flash[:notice] = BILLING_INFO_NOTICE if current_user && flash[:notice].blank?
   end
 
   def nag_user_about_payout_info

@@ -28,9 +28,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     unless response[:status_code] == 'OK'
       # They gave us a bogus email address
       if response[:error_code].to_i == 180008
-        ##
-        ## TODO: Record somewhere in the gamer's record that their email address is bogus
-        ##
+        gamer.update_attributes!(:email_invalid => true)
       else
         # Something unexpected happened
         raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'
@@ -60,9 +58,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     unless response[:status_code] == 'OK'
       # They gave us a bogus email address
       if response[:error_code].to_i == 180008
-        ##
-        ## TODO: Record somewhere in the gamer's record that their email address is bogus
-        ##
+        gamer.update_attributes!(:email_invalid => true)
       else
         # Something unexpected happened
         raise "Error sending triggered email; Details: #{ response.inspect }" unless response[:status_code] == 'OK'

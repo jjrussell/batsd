@@ -6,14 +6,20 @@ class AppleEPF
 
   def self.process_full
     begin
+      log_to_file(true, "start", "Successfully started full job on #{DateTime.now.to_s} for date #{inc_date}")
+
       full_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
       full_current_files = extract_files_from_apache_directory_listing(full_current)
       full_date = date_from_file(full_current_files.first)
+
       Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', full_date)}).each do |archive|
         download_and_extract("#{APPLE_EPF_BASE_URL}full/current/#{archive}.tbz", generate_file_urls(full_date), true, true)
         upload_files_in_tmp_folder
       end
+
       S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'full_date'].write(:data => full_date, :acl => :public_read)
+      
+      log_to_file(true, "end", "Successfully completed full job on #{DateTime.now.to_s} for date #{inc_date}")
     ensure
       FileUtils.rm_rf('tmp/epf')
     end
@@ -21,17 +27,28 @@ class AppleEPF
 
   def self.process_incremental
     begin
+      log_to_file(false, "start", "Successfully started incremental job on #{DateTime.now.to_s} for date #{inc_date}")
+
       inc_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/incremental/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
       inc_current_files = extract_files_from_apache_directory_listing(inc_current)
       inc_date = date_from_file(inc_current_files.first)
+
       Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', inc_date)}).each do |archive|
         download_and_extract("#{APPLE_EPF_BASE_URL}full/current/incremental/current/#{archive}.tbz", generate_file_urls(inc_date), true, false)
         upload_files_in_tmp_folder
       end
+
+      S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'inc_#{Date.today.wday}'].write(:data => inc_date, :acl => :public_read)
       S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'incremental_date'].write(:data => inc_date, :acl => :public_read)
+
+      log_to_file(false, "end", "Successfully completed incremental job on #{DateTime.now.to_s} for date #{inc_date}")
     ensure
       FileUtils.rm_rf('tmp/epf')
     end
+  end
+
+  def self.log_to_file(is_full, file_name, message)
+    S3.bucket(BucketNames::APPLE_EPF).objects["log/#{is_full ? 'full' : 'incremental'}/#{file_name}_#{DateTime.now.to_s}"].write(:data => message, :acl => :public_read)
   end
 
   def self.extract_files_from_apache_directory_listing(html_data)
@@ -47,8 +64,9 @@ class AppleEPF
   end
 
   def self.download_file(url, credentials = true)
-    file = Tempfile.new("#{url.split('/').last}")
+    file = Tempfile.new("#{url.split('/').last}", "tmp/")
     uri = URI(url)
+
     Net::HTTP.start(uri.host) do |http|
       request = Net::HTTP::Get.new uri.request_uri
       request.basic_auth *TAPJOY_EPF_CREDENTIALS if credentials
@@ -58,25 +76,18 @@ class AppleEPF
         end
       end
     end
+
     file.rewind
     file
   end
 
   def self.extract_from_archive(archive, list_of_files, full = false)
-    reader = Bzip2::Reader.new(archive)
-    #Minitar's unpack requires the object to respond to pos and rewind, but faking them don't seem to prevent it from working.
-    reader.instance_eval do
-      def pos
-        0
-      end
-      def rewind
-        nil
-      end
-    end
-    begin
-      Archive::Tar::Minitar.unpack(reader, "tmp/epf/#{full ? 'full' : 'incremental'}", list_of_files)
-    rescue => e
-      Rails.logger.error e.backtrace
+    tmp_path = "#{Rails.root}/tmp/epf/#{full ? 'full' : 'incremental'}"
+    FileUtils.mkpath tmp_path unless File.exists? tmp_path
+    system("tar xjvf #{archive.path} -C #{tmp_path}")
+    Dir.glob("#{tmp_path}/**/*").each do |file|
+      next if File.directory? file
+      File.delete(file) unless list_of_files.include? file.sub("#{tmp_path}/", '')
     end
     list_of_files
   end
@@ -85,7 +96,6 @@ class AppleEPF
     begin
       file = download_file(url, credentials)
       extract_from_archive(file, list_of_files, full)
-      list_of_files
     ensure
       file.close! if file
     end

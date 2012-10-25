@@ -37,6 +37,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :offerwall_rank
   self.sdb_attr :store_name
   self.sdb_attr :cached_offer_list_id
+  self.sdb_attr :cached_offer_list_type
 
   belongs_to :offer
 

@@ -159,10 +159,10 @@ resize_ad = function(){
 document.addEventListener('DOMContentLoaded', function(){
   setTimeout(function(){
     resize_ad();
-  }, 100);
+  }, 400);
   setTimeout(function(){
     ad.style.opacity = 1;
-  }, 250);
+  }, 550);
 });
 
 window.onresize = window.onorientationchange = resize_ad;

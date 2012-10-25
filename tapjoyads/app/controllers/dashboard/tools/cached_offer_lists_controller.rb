@@ -7,7 +7,7 @@ class Dashboard::Tools::CachedOfferListsController < Dashboard::DashboardControl
   end
 
   def show
-    @cached_offer_list = CachedOfferList.find(params[:id])
+    @cached_offer_list = CachedOfferList::S3CachedOfferList.find_by_id(params[:id])
     unless @cached_offer_list.present?
       flash[:error] = "Could not find a Cached Offer List with ID = #{params[:id]}"
       redirect_to :action => :index and return

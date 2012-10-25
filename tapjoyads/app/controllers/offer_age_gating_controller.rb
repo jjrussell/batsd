@@ -8,6 +8,8 @@ class OfferAgeGatingController < ApplicationController
     data = ObjectEncryptor.decrypt(params[:data])
     @offer = Offer.find_in_cache(data[:offer_id])
 
+    params.delete(:data)
+
     @redirect_to_click_url = "#{API_URL}/offer_age_gating/redirect_to_click?data=#{ObjectEncryptor.encrypt(params)}"
     @redirect_to_get_offers_url = "#{API_URL}/offer_age_gating/redirect_to_get_offers?data=#{ObjectEncryptor.encrypt(params)}"
   end
@@ -29,13 +31,12 @@ class OfferAgeGatingController < ApplicationController
 
   # put gating to memcached then reload offer wall
   def redirect_to_get_offers
-    data = ObjectEncryptor.decrypt(params[:data])
+    Mc.distributed_put("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{params[:udid]}.#{params[:offer_id]}", "gating", false, 2.hour)
 
-    Mc.distributed_put("#{Offer::MC_KEY_AGE_GATING_PREFIX}.#{params[:udid]}.#{data[:offer_id]}", "gating", false, 2.hour)
+    params.delete(:offer_id) # remove :offer_id to show all offers in get_offers/webpage
+    params.delete(:data)
 
-    data.delete(:offer_id) # remove :offer_id to show all offers in get_offers/webpage
-
-    redirect_to("#{API_URL}/get_offers/webpage?#{data.to_query}")
+    redirect_to("#{API_URL}/get_offers/webpage?#{params.to_query}")
   end
 
 end

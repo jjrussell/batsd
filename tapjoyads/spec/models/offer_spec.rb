@@ -1610,6 +1610,29 @@ describe Offer do
     end
   end
 
+  describe '#should_notify_on_conversion?' do
+    context 'VideoOffer' do
+      it 'returns false' do
+        @offer.item_type = 'VideoOffer'
+        @offer.should_notify_on_conversion?.should be_false
+      end
+    end
+
+    context 'SurveyOffer' do
+      it 'returns false' do
+        @offer.item_type = 'SurveyOffer'
+        @offer.should_notify_on_conversion?.should be_false
+      end
+    end
+
+    context 'valid type to notify' do
+      it 'returns true' do
+        @offer.item_type = 'App'
+        @offer.should_notify_on_conversion?.should be_true
+      end
+    end
+  end
+
   describe '#get_disabled_reasons' do
     before :each do
         @offer.tapjoy_enabled = true

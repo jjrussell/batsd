@@ -36,10 +36,10 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: 25c3258335c0d391caeb2e8a4080cb92ad8d411b
-  tag: v0.5.1
+  revision: a50d3587e76e5da89c6a20bb45d4167e8863021b
+  tag: v0.6.0
   specs:
-    analytics_logger (0.5.1)
+    analytics_logger (0.6.0)
       activesupport (~> 3.0)
       bunny (~> 0.8.0)
       json (~> 1.5)
@@ -57,8 +57,8 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/notifications_client.git
-  revision: 2f9b480b9d34542f3569438be4b9a17aec784b83
-  ref: 2f9b480b9d34542f3569438be4b9a17aec784b83
+  revision: 080ae0719dcce5b7853052c32f31d22445917bfc
+  ref: 080ae0719dcce5b7853052c32f31d22445917bfc
   specs:
     notifications_client (0.1.0)
       json
@@ -66,7 +66,7 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
-  revision: c1d3a53ffe30eed125d6de22c961bc1be385a7c2
+  revision: 561205273e808992b0e80d6f77be243766101729
   specs:
     signage (0.0.1)
 
@@ -274,7 +274,7 @@ GEM
       json
       rest-client
       ya2yaml
-    locales (1.0.41)
+    locales (1.0.43)
     mail (2.2.19)
       activesupport (>= 2.3.6)
       i18n (>= 0.4.0)
@@ -486,7 +486,7 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.5.1)!
+  analytics_logger (= 0.6.0)!
   annotate
   archive-tar-minitar
   asset_sync

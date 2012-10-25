@@ -129,6 +129,11 @@ class Currency < ActiveRecord::Base
     currencies
   end
 
+  def self.find_non_rewarded_currency_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
+    currencies = self.find_all_in_cache_by_app_id(app_id, do_lookup)
+    currencies.detect { |c| c.non_rewarded? } if currencies.present?
+  end
+
   def has_special_callback?
     SPECIAL_CALLBACK_URLS.include?(callback_url)
   end
@@ -293,6 +298,10 @@ class Currency < ActiveRecord::Base
 
   def rewarded?
     conversion_rate > 0
+  end
+
+  def non_rewarded?
+    !self.rewarded?
   end
 
   def approve!

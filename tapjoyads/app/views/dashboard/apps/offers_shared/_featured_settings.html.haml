@@ -97,7 +97,7 @@
     // Preview functionality
 
     $('button.preview').click(function(e) {
-      var baseURL = "/get_offers/featured.html?app_id=#{App::PREVIEW_PUBLISHER_APP_ID}&offer_id=#{offer.id}";
+      var baseURL = "#{offer.get_offers_featured_html_preview_url}";
       var dimensions = $('#preview_size').val().split('x');
 
       var params = {

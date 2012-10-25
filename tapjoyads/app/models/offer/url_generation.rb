@@ -193,31 +193,32 @@ module Offer::UrlGeneration
     end
 
     data = {
-      :advertiser_app_id    => item_id,
-      :publisher_app_id     => publisher_app.id,
-      :publisher_user_id    => publisher_user_id,
-      :udid                 => udid,
-      :source               => source,
-      :offer_id             => id,
-      :app_version          => app_version,
-      :viewed_at            => viewed_at.to_f,
-      :currency_id          => currency_id,
-      :primary_country      => primary_country,
-      :displayer_app_id     => displayer_app_id,
-      :exp                  => exp,
-      :language_code        => language_code,
-      :display_multiplier   => display_multiplier,
-      :device_name          => device_name,
-      :library_version      => library_version,
-      :gamer_id             => gamer_id,
-      :mac_address          => mac_address,
-      :os_version           => os_version,
-      :device_type          => device_type,
-      :offerwall_rank       => offerwall_rank,
-      :view_id              => view_id,
-      :store_name           => store_name,
-      :cached_offer_list_id => cached_offer_list_id,
-      :date_of_birth        => date_of_birth,
+      :advertiser_app_id      => item_id,
+      :publisher_app_id       => publisher_app.id,
+      :publisher_user_id      => publisher_user_id,
+      :udid                   => udid,
+      :source                 => source,
+      :offer_id               => id,
+      :app_version            => app_version,
+      :viewed_at              => viewed_at.to_f,
+      :currency_id            => currency_id,
+      :primary_country        => primary_country,
+      :displayer_app_id       => displayer_app_id,
+      :exp                    => exp,
+      :language_code          => language_code,
+      :display_multiplier     => display_multiplier,
+      :device_name            => device_name,
+      :library_version        => library_version,
+      :gamer_id               => gamer_id,
+      :mac_address            => mac_address,
+      :os_version             => os_version,
+      :device_type            => device_type,
+      :offerwall_rank         => offerwall_rank,
+      :view_id                => view_id,
+      :store_name             => store_name,
+      :cached_offer_list_id   => cached_offer_list_id,
+      :cached_offer_list_type => cached_offer_list_type,
+      :date_of_birth          => date_of_birth,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"
@@ -311,6 +312,10 @@ module Offer::UrlGeneration
     url = "#{API_URL}/get_offers/webpage?app_id=#{publisher_app_id}&offer_id=#{id}"
     url << "&ts=#{Time.now.to_i}" if bust_cache
     url
+  end
+
+  def get_offers_featured_html_preview_url
+    "#{API_URL}/get_offers/featured.html?app_id=#{App::PREVIEW_PUBLISHER_APP_ID}&offer_id=#{id}"
   end
 
   # For use within TJM (since dashboard URL helpers aren't available within TJM)

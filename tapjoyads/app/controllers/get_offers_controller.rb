@@ -2,11 +2,11 @@ class GetOffersController < ApplicationController
   include GetOffersHelper
   include AdminDeviceLastRun::ControllerExtensions
 
-  layout 'offerwall', :only => :webpage
+  layout 'offerwall', :only => [:webpage, :webpage_cross_promo]
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
   # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   tracks_admin_devices(:only => [:webpage, :index])
@@ -25,6 +25,13 @@ class GetOffersController < ApplicationController
   }
 
   VIEW_MAP[:test] = VIEW_MAP[:control].dup # no changes for this experiment
+
+  def webpage_cross_promo
+    return unless verify_params([:app_id])
+    currency = Currency.find_non_rewarded_currency_in_cache_by_app_id(params[:app_id])
+    return unless verify_records([currency])
+    redirect_to params.merge({:action => :webpage, :currency_id => currency.id})
+  end
 
   def webpage
     if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
@@ -53,6 +60,13 @@ class GetOffersController < ApplicationController
     else
       render :template => 'get_offers/webpage_redesign'
     end
+  end
+
+  def featured_cross_promo
+    return unless verify_params([:app_id])
+    currency = Currency.find_non_rewarded_currency_in_cache_by_app_id(params[:app_id])
+    return unless verify_records([currency])
+    redirect_to params.merge({:action => :featured, :currency_id => currency.id})
   end
 
   def featured
@@ -155,11 +169,11 @@ class GetOffersController < ApplicationController
     if params[:currency_selector] == '1'
       @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id])
       @currency = @currencies.select { |c| c.id == params[:currency_id] }.first
-      @supports_rewarded = @currencies.any?{ |c| c.conversion_rate > 0 }
+      @supports_rewarded = @currencies.any? { |c| c.rewarded? }
     else
       @currency = Currency.find_in_cache(params[:currency_id], :queue => true)
       if @currency.present?
-        @supports_rewarded = @currency.conversion_rate > 0
+        @supports_rewarded = @currency.rewarded?
         @currency = nil if @currency.app_id != params[:app_id]
       end
     end
@@ -243,6 +257,7 @@ class GetOffersController < ApplicationController
         web_request.offerwall_rank = i + @start_index + 1
         web_request.offerwall_rank_score = offer.rank_score
         web_request.cached_offer_list_id = offer.cached_offer_list_id
+        web_request.cached_offer_list_type = offer.cached_offer_list_type
         web_request.save
 
         # for third party tracking vendors
