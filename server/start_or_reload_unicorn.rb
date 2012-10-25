@@ -25,6 +25,7 @@ else
   else
     free_mem = `free -m`.split("\n")[2].split[3].to_i
   end
+  count = 0
   while free_mem < min_mem && count < workers_to_kill
     puts "dropping worker count (##{count}) for memory issue (#{hostname})"
     `kill -TTOU #{pid}`
