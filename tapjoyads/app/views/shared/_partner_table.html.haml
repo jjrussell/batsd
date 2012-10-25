@@ -1,6 +1,27 @@
 - all_account_managers = User.account_managers
 - all_sales_reps = User.sales_reps
 
+%br
+- unless current_user.role_symbols.include?(:agency)
+  = form_tag(search_path, :method => :get, :class => 'tjform') do
+    = hidden_field_tag(:agency_user, agency_user)
+    %table
+      %tbody
+        %tr
+          %td= label_tag(:q, "Name or Email:")
+          %td= label_tag(:country, 'Managed by:')
+          %td= label_tag(:country, 'Country:')
+          %td
+        %tr
+          %td= text_field_tag(:q, params[:q], :size => '40')
+          %td
+            - managers = options_for_select(@account_managers, params[:managed_by])
+            = select_tag('managed_by', managers)
+          %td
+            - countries = options_for_select(list_of_countries, @country || nil)
+            = select_tag('country', countries, :include_blank => true)
+          %td= submit_tag('Search')
+
 %table#partners_table.tablesorter
   %thead
     %tr
@@ -19,6 +40,19 @@
       %th Offers
       %th Country
   %tbody
+    - if partners.empty?
+      %tr
+        %td No partners found
+        %td -
+        %td -
+        %td -
+        %td -
+        %td -
+        %td -
+        %td -
+        %td -
+        %td -
+
     - partners.each do |partner|
       %tr{ :class => cycle('even', 'odd') }
         - users = partner.users.group_by{|user| all_account_managers.include?(user)}
@@ -97,3 +131,45 @@
     .agency {
       color: red;
     }
+    label {
+      padding-top: 10px;
+      padding-left: 3px;
+    }
+
+- content_for :page_javascript do
+  :plain
+    $(function($){
+      $('td.account_manager select,td.sales_rep select, td.country select').change(function(){
+        var form = $(this).parent('form');
+        var url = form.attr('action');
+        var key = $(this).attr('name');
+        var data = {};
+        data[key] = [$(this).val()];
+        form.siblings('img').show();
+
+        $.ajax({
+          data: data,
+          type: 'put',
+          url: url
+        });
+
+        $(form).ajaxComplete(function(e,xhr,settings) {
+          $(this).siblings('img').hide();
+
+          var rsp = xhr.getResponseHeader('X-Message');
+          $(this).siblings('.message').show().text(rsp);
+          $(this).siblings('.message').fadeOut(8000);
+
+        });
+      });
+
+      $('#q').autocomplete({
+        source: '#{search_partners_path}',
+        delay: 250,
+        minLength: 2,
+        select: function(event, ui) {
+          location.href = '#{partners_path}/' + ui.item.partner_id;
+        },
+      });
+    });
+

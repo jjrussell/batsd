@@ -84,6 +84,14 @@ class Device < SimpledbShardedResource
     "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
   end
 
+  def external_publishers
+    ExternalPublisher.load_all_for_device(self)
+  end
+
+  def first_rewardable_currency_id
+    ExternalPublisher.first_rewardable_currency_for_device(self).id
+  end
+
   def after_initialize
     @create_device_identifiers = is_new
     @retry_save_on_fail = is_new
@@ -171,6 +179,10 @@ class Device < SimpledbShardedResource
     save
   end
 
+  def last_run_app_ids
+    @parsed_apps.sort_by{|k,v| v }.map{|k,v| k }.reverse
+  end
+
   def has_app?(app_id)
     @parsed_apps[app_id].present?
   end
@@ -240,7 +252,7 @@ class Device < SimpledbShardedResource
   end
 
   def recommendations(options = {})
-    RecommendationList.new(options.merge(:device => self)).apps
+    RecommendationList.new(options.merge(:device_id => self.id)).apps
   end
 
   def gamers
@@ -447,7 +459,7 @@ class Device < SimpledbShardedResource
   def assign_experiment_bucket(hash_offset = nil)
     return if ExperimentBucket.count_from_cache == 0
     hash_offset ||= $redis.get('experiments:hash_offset').to_i || 0
-    
+
     # digest the udid, slice the characters we are using, and get an integer
     hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
     index = hash % ExperimentBucket.count_from_cache

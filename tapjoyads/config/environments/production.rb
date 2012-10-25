@@ -158,10 +158,3 @@ TIPALTI_PAYEE_API = 'https://ui.tipalti.com/Payees/PayeeDashboard.aspx'
 TIPALTI_PAYER_API_WSDL = 'https://api.tipalti.com/PayerFunctions.asmx?WSDL'
 TIPALTI_PAYER_NAME = 'Tapjoy'
 TIPALTI_ENCRYPTION_SALT = 'spAtUbrarebaStuCebRek5febr9rega8pEnaSp968b29a3rUna7'
-
-RIAK_NODES = [{:host => 'ec2-23-23-36-236.compute-1.amazonaws.com'},
-              {:host => 'ec2-107-20-98-103.compute-1.amazonaws.com'},
-              {:host => 'ec2-23-20-201-218.compute-1.amazonaws.com'},
-              {:host => 'ec2-23-20-70-147.compute-1.amazonaws.com'},
-              {:host => 'ec2-23-21-22-157.compute-1.amazonaws.com'},
-              {:host => 'ec2-23-22-115-244.compute-1.amazonaws.com'}]

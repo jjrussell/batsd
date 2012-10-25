@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe Api::Data::DevicesController do
+  before :each do
+    Device.any_instance.stub(:external_publishers).and_return([])
+    Device.any_instance.stub(:first_rewardable_currency_id).and_return(nil)
+  end
 
   describe '#verify_auth_token' do
     before :each do
@@ -43,8 +47,8 @@ describe Api::Data::DevicesController do
     end
 
     it 'looks up the object' do
+      Device.should_receive(:find).with(@device.id).and_return(@device)
       get(:show, :id => @device.id)
-      assigns(:object).id.should == @device.id
     end
 
     context 'when changes are present' do
@@ -55,7 +59,7 @@ describe Api::Data::DevicesController do
           :sync_changes => { :banned => false }.to_json,
           :create_new   => true
         }
-        Device.should_receive(:new).with(:key => @device.id).and_return(@device)
+        Device.should_receive(:find).with(@device.id).and_return(@device)
       end
 
       it 'merges the device attributes and saves it' do

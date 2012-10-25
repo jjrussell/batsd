@@ -9,7 +9,25 @@ class Dashboard::Tools::AgencyUsersController < Dashboard::DashboardController
   end
 
   def show
-    @agency_user = User.includes(:partners => [:offers, :users, :sales_rep]).find(params[:id])
+    @account_managers = get_account_managers
+    @agency_user = User.includes(:partners => [:offers, :users, :sales_rep]).
+                        find(params[:id])
+    @partners = @agency_user.partners.paginate(:page => params[:page])
+
+    manager_id = params.fetch(:managed_by, nil)
+    manager_id = nil if manager_id == 'all'
+    manager_id = :none if manager_id == 'none'
+
+    @country = params.fetch(:country, nil)
+    @country = nil if @country && @country.empty?
+    query = params.fetch(:q, nil)
+    if query
+      query = query.gsub("'", '')
+      query = nil if query.empty?
+    end
+
+    @partners = Partner.search(@agency_user[:id], manager_id, @country, query).
+                        paginate(:page => params[:page])
   end
 
   private
