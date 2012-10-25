@@ -1,0 +1,21 @@
+- @page_title = 'Payment History'
+= render :partial => 'actions'
+
+.left-indented
+  %h2 Payment History
+  %p.description
+    Recent payouts to your account are shown below. If you experience errors with this page, please proceed to the "Payout Info" page and ensure that your payment information is up to date.
+
+  %iframe.tipalti{ :src => current_partner.tipalti_payee_iframe_url('PaymentList.aspx').html_safe }
+
+- content_for :page_styles do
+  :plain
+    iframe.tipalti {
+      border: none;
+      margin-top: 15px;
+      min-height: 700px;
+      width: 100%;
+    }
+    .left-indented h2 {
+      margin-bottom: 0;
+    }
