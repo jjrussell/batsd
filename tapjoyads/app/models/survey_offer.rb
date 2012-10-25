@@ -107,14 +107,14 @@ class SurveyOffer < ActiveRecord::Base
 private
 
   def set_default_partner
-    self.partner_id ||= TAPJOY_PARTNER_ID
+    self.partner_id ||= TAPJOY_SURVEY_PARTNER_ID
   end
 
   def save_primary_offer
     has_icon                        = !primary_offer.new_record?
 
     primary_offer.id                = self.id
-    primary_offer.partner_id        = partner_id || TAPJOY_PARTNER_ID
+    primary_offer.partner_id        = partner_id || TAPJOY_SURVEY_PARTNER_ID
     primary_offer.name              = name
     primary_offer.hidden            = hidden
     primary_offer.price             = 0

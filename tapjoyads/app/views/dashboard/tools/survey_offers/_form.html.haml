@@ -22,7 +22,7 @@
   / .field
   /   = f.label :name, 'Prerequisite'
   /   #help_prerequisite.help ?
-  /   - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_PARTNER_ID).offers.first)
+  /   - offer_options = options_for_prerequisites(Partner.find_by_id(TAPJOY_SURVEY_PARTNER_ID).offers.first)
   /   - prerequisites_options = offer_options
   /   - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || prerequisite_offer_id.blank?))
   /   = f.select :prerequisite_offer_id, prerequisites_options
