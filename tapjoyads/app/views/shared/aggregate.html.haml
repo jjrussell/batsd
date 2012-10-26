@@ -5,7 +5,7 @@
 .clear
 
 %form#change_date.tjform
-  = render 'shared/date_range_and_platform'
+  = render :partial => 'shared/date_range_and_platform', :locals => { :store_options => @store_options }
 
 %br
 = render :partial => 'dashboard/reporting/export_form', :locals => { :export_link => export_aggregate_reporting_index_path }

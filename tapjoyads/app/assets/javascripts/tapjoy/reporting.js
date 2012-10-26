@@ -90,6 +90,17 @@ $(function($) {
   $('#date').datepicker();
   $('#end_date').datepicker();
 
+  var togglePlatform = function() {
+    if ($('select#platform').val() == 'android') {
+      $('span#android_app_store').show();
+    } else {
+      $('span#android_app_store').hide();
+      $('#store_name').val('all');
+    }
+  };
+  $('select#platform').change(togglePlatform);
+  togglePlatform();
+
   var ajaxCall = function(){
     $('#flash_warning span.message').text('');
     $('#flash_warning').fadeOut();

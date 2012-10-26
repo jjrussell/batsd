@@ -185,4 +185,12 @@ class Dashboard::DashboardController < ApplicationController
     flash[:error] = "Couldn't find app with ID #{app_id}"
     redirect_to path
   end
+
+  def all_android_store_options
+    options = {}
+    AppStore::SDK_STORE_NAMES.each do |k, v|
+      options[AppStore.find(v).name] = k
+    end
+    options
+  end
 end
