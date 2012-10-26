@@ -26,6 +26,28 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     send_using_exact_target(gamer)
   end
 
+  def post_confirm_email(gamer, device_info = {})
+    setup_for_tjm_welcome_email(gamer, device_info)
+
+    @detailed_email = true
+
+    build_data_for_tjm_welcome_email
+
+    ##
+    ## TODO: Move mail triggering logic and response to ExactTargetMailer class
+    ##
+
+    ##
+    ## TODO: Add mail_safe style checks to keep dev emails from escaping into the wild
+    ##
+
+    # Make ExactTarget do the rest of the work
+    send_using_exact_target(gamer)
+  end
+
+  private
+
+
   def send_using_exact_target(gamer)
     et = ExactTargetApi.new
     response = et.send_triggered_email(gamer.email, ET_TJM_WELCOME_EMAIL_ID, @data, @options)
@@ -60,28 +82,6 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   def sign!(params)
     Signage::ExpiringSignature.new('hmac_sha256', Rails.configuration.tapjoy_api_key).sign_hash!(params)
   end
-
-  def post_confirm_email(gamer, device_info = {})
-    setup_for_tjm_welcome_email(gamer, device_info)
-
-    @detailed_email = true
-
-    build_data_for_tjm_welcome_email
-
-    ##
-    ## TODO: Move mail triggering logic and response to ExactTargetMailer class
-    ##
-
-    ##
-    ## TODO: Add mail_safe style checks to keep dev emails from escaping into the wild
-    ##
-
-    # Make ExactTarget do the rest of the work
-    send_using_exact_target(gamer)
-  end
-
-  private
-
 
 
   ##
