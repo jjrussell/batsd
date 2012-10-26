@@ -131,6 +131,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def global
+    @store_options = all_android_store_options
     respond_to do |format|
       format.html do
       end

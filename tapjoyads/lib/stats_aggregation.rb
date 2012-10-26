@@ -105,7 +105,7 @@ class StatsAggregation
         (Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS).each do |stat|
           value = Mc.get_count(Stats.get_memcache_count_key(stat, offer.id, start_time))
           stat_rows[date_str].update_stat_for_hour(stat, start_time.hour, value)
-          if app && app.app_metadatas.count > 1 && Stats.segment_by_store?(stat)
+          if app && Stats.segment_by_store?(stat)
             app.app_metadatas.each do |meta|
               segment_stat = Stats.get_segment_stat(stat, meta.store.sdk_name)
               value = Mc.get_count(Stats.get_memcache_count_key(segment_stat, offer.id, start_time))
