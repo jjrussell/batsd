@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SurveyQuestion do
   subject { FactoryGirl.create(:survey_question) }
-  let!(:partner) {FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)}
+  let!(:partner) {FactoryGirl.create(:partner, :id => TAPJOY_SURVEY_PARTNER_ID)}
 
   it { should belong_to :survey_offer }
   it { should validate_presence_of :text }
