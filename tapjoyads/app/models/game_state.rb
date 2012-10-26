@@ -1,4 +1,7 @@
 class GameState < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "game_states"
+
   # key format: app_id.publisher_user_id
 
   self.num_domains = NUM_GAME_STATE_DOMAINS

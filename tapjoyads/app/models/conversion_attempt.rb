@@ -1,4 +1,7 @@
 class ConversionAttempt < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "conversion_attempts"
+
   self.num_domains = NUM_CONVERSION_ATTEMPT_DOMAINS
 
   self.sdb_attr :publisher_app_id

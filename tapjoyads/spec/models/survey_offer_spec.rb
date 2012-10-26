@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SurveyOffer do
-  let(:partner) { FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID) }
+  let(:partner) { FactoryGirl.create(:partner, :id => TAPJOY_SURVEY_PARTNER_ID) }
   subject { partner; FactoryGirl.create(:survey_offer, :partner => partner) }
   let(:primary_offer) { subject.primary_offer }
 

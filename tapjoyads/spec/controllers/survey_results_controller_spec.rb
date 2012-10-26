@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe SurveyResultsController do
   let(:admin)           { FactoryGirl.create(:admin) }
-  let(:partner)         { FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID, :users => [admin]) }
+  let(:partner)         { FactoryGirl.create(:partner, :id => TAPJOY_SURVEY_PARTNER_ID, :users => [admin]) }
   let(:survey_offer)    { FactoryGirl.create(:survey_offer, :partner => partner) }
   let!(:survey_question) do
     q = FactoryGirl.create(:survey_question, :survey_offer => survey_offer)

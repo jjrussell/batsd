@@ -1,4 +1,7 @@
 class Voucher < SimpledbResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "vouchers"
+
   belongs_to :coupon, :foreign_key => :coupon_id
 
   self.domain_name = 'vouchers'

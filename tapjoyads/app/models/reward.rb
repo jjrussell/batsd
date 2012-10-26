@@ -1,4 +1,7 @@
 class Reward < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "rewards"
+
   self.num_domains = NUM_REWARD_DOMAINS
 
   self.sdb_attr :publisher_app_id
