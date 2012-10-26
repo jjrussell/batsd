@@ -49,10 +49,23 @@ describe 'dashboard/apps/show.html.haml' do
       end
     end
 
-    context 'for a non-iOS app' do
+    context 'for an android app' do
       before :each do
         @app = FactoryGirl.create(:app)
         @app.platform = 'android'
+        assigns[:app] = @app
+        render
+      end
+
+      it 'shows the protocol handler admin field' do
+        rendered.should have_selector 'input[id=app_protocol_handler]'
+      end
+    end
+
+    context 'for a non-iOS/non-android app' do
+      before :each do
+        @app = FactoryGirl.create(:app)
+        @app.platform = 'windows'
         assigns[:app] = @app
         render
       end

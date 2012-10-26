@@ -21,6 +21,7 @@ module Offer::UrlGeneration
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
+    device_type           = options.delete(:device_type)           { nil }
     options.delete(:mac_address)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
@@ -46,7 +47,7 @@ module Offer::UrlGeneration
     elsif is_coupon?
       "#{API_URL}/coupon_instructions/new?data=#{ObjectEncryptor.encrypt(data)}"
     else
-      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data.merge({:device_type => device_type}))}"
     end
   end
 
@@ -61,6 +62,7 @@ module Offer::UrlGeneration
     os_version            = options.delete(:os_version)            { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
     mac_address           = options.delete(:mac_address)           { nil }
+    options.delete(:device_type)
     options.delete(:language_code)
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
