@@ -1,4 +1,7 @@
 class Friendship < SimpledbResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "friendships"
+
   self.key_format  = 'gamer_id.following_id'
   self.domain_name = 'friendships'
 

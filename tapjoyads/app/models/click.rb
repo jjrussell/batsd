@@ -1,4 +1,7 @@
 class Click < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "clicks"
+
 
   MAX_HISTORY = 20
 

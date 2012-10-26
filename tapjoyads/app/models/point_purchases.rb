@@ -2,6 +2,9 @@
 # Store information about a single udid's currency, virtual good purchases, and challenges
 # for a single app.
 class PointPurchases < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "point_purchases"
+
   self.key_format = "udid.app_id"
   self.num_domains = NUM_POINT_PURCHASES_DOMAINS
 

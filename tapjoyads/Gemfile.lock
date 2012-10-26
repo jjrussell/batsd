@@ -6,6 +6,13 @@ GIT
     fakememcached (0.1.0)
 
 GIT
+  remote: git://github.com/Tapjoy/newrelic-riak.git
+  revision: b22cf5ffcce77c522d34c81193652a4560f8a5a8
+  specs:
+    newrelic_riak (0.1.0)
+      newrelic_rpm (~> 3.0)
+
+GIT
   remote: git://github.com/Tapjoy/right_aws.git
   revision: be26b4ab97c49adf3e34feedb322bf10e4dce5d1
   specs:
@@ -137,6 +144,7 @@ GEM
       json (~> 1.4)
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
+    beefcake (0.3.7)
     builder (2.1.2)
     bzip2-ruby (0.2.7)
     capybara (1.1.2)
@@ -376,6 +384,11 @@ GEM
     redis (2.2.2)
     rest-client (1.6.7)
       mime-types (>= 1.16)
+    riak-client (1.0.5)
+      beefcake (~> 0.3.7)
+      builder (>= 2.1.2)
+      i18n (>= 0.4.0)
+      multi_json (~> 1.0)
     right_http_connection (1.3.0)
     rmagick (2.12.2)
     rspec (2.10.0)
@@ -539,6 +552,7 @@ DEPENDENCIES
   multi_xml (= 0.4.0)
   multipart-post (= 1.1.0)
   mysql (= 2.8.1)
+  newrelic_riak!
   newrelic_rpm (= 3.3.0)
   nokogiri (= 1.5.5)
   notifications_client!
@@ -557,6 +571,7 @@ DEPENDENCIES
   rdoc (= 3.12)
   read_from_slave (= 0.4.0)
   redis (= 2.2.2)
+  riak-client (= 1.0.5)
   right_aws!
   rmagick (= 2.12.2)
   rollout!

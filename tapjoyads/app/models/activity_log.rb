@@ -1,5 +1,8 @@
 class ActivityLog < SimpledbResource
-  self.domain_name = 'activity_logs'
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "activity_logs"
+
+  self.domain_name = 'activity_logs'  
 
   self.sdb_attr :user
   self.sdb_attr :user_id

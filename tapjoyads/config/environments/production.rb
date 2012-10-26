@@ -158,3 +158,10 @@ TIPALTI_PAYEE_API = 'https://ui.tipalti.com/Payees/PayeeDashboard.aspx'
 TIPALTI_PAYER_API_WSDL = 'https://api.tipalti.com/PayerFunctions.asmx?WSDL'
 TIPALTI_PAYER_NAME = 'Tapjoy'
 TIPALTI_ENCRYPTION_SALT = 'spAtUbrarebaStuCebRek5febr9rega8pEnaSp968b29a3rUna7'
+
+RIAK_NODES = [{:host => 'general-1.us-east.riak.tapjoy.net'},
+              {:host => 'general-2.us-east.riak.tapjoy.net'},
+              {:host => 'general-3.us-east.riak.tapjoy.net'},
+              {:host => 'general-4.us-east.riak.tapjoy.net'},
+              {:host => 'general-5.us-east.riak.tapjoy.net'},
+              {:host => 'general-6.us-east.riak.tapjoy.net'}]

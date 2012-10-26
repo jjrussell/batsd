@@ -1,4 +1,7 @@
 class RiskProfile < SimpledbShardedResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "risk_profiles"
+
   self.num_domains = NUM_RISK_PROFILE_DOMAINS
 
   ENTITY_TO_CATEGORY_MAP = {

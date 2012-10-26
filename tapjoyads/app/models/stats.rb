@@ -1,4 +1,6 @@
 class Stats < SimpledbResource
+  include RiakMirror
+  mirror_configuration :riak_bucket_name => "stats"
 
   self.domain_name = 'stats'
 
