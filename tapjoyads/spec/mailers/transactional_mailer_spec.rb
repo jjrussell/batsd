@@ -120,13 +120,27 @@ describe TransactionalMailer do
     end
   end
   context '#record_invalid_email without using tjm_tables' do
-    it 'should result in a Downloader post with proper params' do
-      gamer  = {:email => 'blah@tapjoyed.com'}
-      signed_hash = {'test_signed'=> 'wakka wakka'}
-      gamer.stub(:email => gamer[:email])
-      subject.stub(:sign! => signed_hash)
-      subject.should_receive(:post_to_tjm).with(signed_hash)
-      subject.send :record_invalid_email, gamer
+    context 'should result in a Downloader post with proper params' do
+      let(:gamer){
+        {:email => 'blah@tapjoyed.com'}.tap{|g| g.stub(:email => g[:email])}
+      }
+      let(:signed_hash){{'test_signed'=> 'wakka wakka'}}
+      before :each do
+        subject.stub(:sign! => signed_hash)
+      end
+      it 'should call post_invalid_email_to_tjm with proper params' do
+        subject.should_receive(:post_invalid_email_to_tjm).with(signed_hash)
+        subject.send :record_invalid_email, gamer
+      end
+      it 'should result in a Downloader post with proper params' do
+        Downloader.should_receive(:post).and_return(double('response',:status=>202))
+        subject.send :record_invalid_email, gamer
+      end
+      it 'should queue into SQS if Downloader fails' do
+        Downloader.should_receive(:post).and_return(double('response',:status=>500))
+        Downloader.should_receive(:queue_with_retry_until_successful)
+        subject.send :record_invalid_email, gamer
+      end
     end
   end
 end

@@ -11,8 +11,12 @@ class Job::QueueDownloadsController < Job::SqsReaderController
 
   def on_message(message)
     message = JSON.parse(message.body).symbolize_keys
+    if(message[:method]==:post)
+      Downloader.post_strict(message[:url], message[:data], message[:download_options].symbolize_keys)
+    else
+      Downloader.get_strict(message[:url], message[:download_options].symbolize_keys)
+    end
 
-    Downloader.get_strict(message[:url], message[:download_options].symbolize_keys)
   end
 
 end

@@ -1,4 +1,5 @@
 class TransactionalMailer  ## Soon to extend ExactTargetMailer
+  class ShouldRetryError < StandardError; end;
 
   ET_TJM_WELCOME_EMAIL_ID = 'tjm_welcome_en'
 
@@ -66,16 +67,21 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   def record_invalid_email(gamer)
     if gamer.class==Hash
       params = {:email => gamer.email}
-      post_to_tjm(sign!(params))
+      post_invalid_email_to_tjm(sign!(params))
     else
       gamer.update_attributes!(:email_invalid => true)
     end
   end
 
-  def post_to_tjm(signed_params)
+  def post_invalid_email_to_tjm(signed_params)
     url = "#{WEBSITE_URL}/api/data/invalid_emails"
-    download_options = {:timeout => 2.seconds}
-    Downloader.post(url, signed_params, download_options)
+    download_options = {:timeout => 5.seconds, :return_response => true}
+    begin
+      response = Downloader.post(url, signed_params, download_options)
+      raise ShouldRetryError if response.status.to_i >= 500
+    rescue Patron::TimeoutError, ShouldRetryError
+      Downloader.queue_with_retry_until_successful(url, :post, signed_params, download_options)
+    end
   end
 
 
