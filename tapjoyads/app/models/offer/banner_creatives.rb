@@ -13,11 +13,11 @@ module Offer::BannerCreatives
       const_set(:FEATURED_AD_PORTRAIT_SIZES, ['300x250', '748x720'])
       const_set(:FEATURED_AD_SIZES, (Offer::FEATURED_AD_PORTRAIT_SIZES + Offer::FEATURED_AD_LANDSCAPE_SIZES).uniq) # data stored as jpegs
 
-      const_set(:ALL_CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_SIZES + Offer::FEATURED_AD_LEGACY_SIZES)
-
       # To support legacy featured ad custom creatives, we need some additional categories to check
       const_set(:FEATURED_AD_ALL_SIZES, Offer::FEATURED_AD_SIZES + Offer::FEATURED_AD_LEGACY_SIZES)
       const_set(:FEATURED_AD_PREVIEW_SIZES, ['960x640', '640x960', '480x320', '320x480'])
+
+      const_set(:ALL_CUSTOM_AD_SIZES, Offer::DISPLAY_AD_SIZES + Offer::FEATURED_AD_ALL_SIZES)
 
       Offer::ALL_CUSTOM_AD_SIZES.each do |size|
         attr_accessor "banner_creative_#{size}_blob".to_sym
@@ -111,7 +111,7 @@ module Offer::BannerCreatives
   end
 
   def add_banner_creative(image_data, size)
-    return unless banner_creative_sizes.include?(size)
+    return unless banner_creative_sizes(true).include?(size)
     self.banner_creatives += [size] unless has_banner_creative?(size)
     send("banner_creative_#{size}_blob=", image_data)
     set_primary_key if new_record? # we use "id" below, so we need to be sure it's set

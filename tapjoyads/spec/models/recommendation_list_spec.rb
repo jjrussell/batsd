@@ -5,7 +5,7 @@ describe RecommendationList do
 
     before :each do
       @device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(@device)
+      Device.stub(:new).and_return(@device)
       @options = {
         :device_id => @device.id,
         :device_type => 'iphone',
