@@ -15,7 +15,7 @@
       %td= text_field_tag :currency_id, params[:currency_id], :size => '55'
     %tr
       %td= label_tag :device_type, 'User Device Type'
-      %td= select_tag :device_type, options_for_select(OfferCacher::PLATFORM_AND_DEVICE_TYPES.values.flatten, 'iphone'), :include_blank => true
+      %td= select_tag :device_type, options_for_select(OfferCacher::PLATFORM_AND_DEVICE_TYPES.values.flatten, params[:device_type]), :include_blank => true
     %tr
       %td= label_tag :primary_country, 'Country'
       %td= text_field_tag :primary_country, params[:primary_country]
@@ -27,10 +27,10 @@
       %td= text_field_tag :direct_pay_providers, params[:direct_pay_providers]
     %tr
       %td= label_tag :offer_type, 'Offer Type'
-      %td= select_tag :offer_type, options_for_select(OfferCacher::OFFER_TYPES.collect { |type| [ Offer::OFFER_TYPE_NAMES[type], type ] }), :include_blank => true
+      %td= select_tag :offer_type, options_for_select(OfferCacher::OFFER_TYPES.collect { |type| [ Offer::OFFER_TYPE_NAMES[type], type ] }, params[:offer_type]), :include_blank => true
     %tr
       %td= label_tag :hide_rewarded_app_installs, "Hide Rewarded App Installs?"
-      %td= select_tag :hide_rewarded_app_installs, options_for_select({'No' => false, 'Yes' => true}, false)
+      %td= select_tag :hide_rewarded_app_installs, options_for_select({'No' => false, 'Yes' => true}, params[:hide_rewarded_app_installs])
     %tr
       %td= label_tag :library_version, 'Library Version'
       %td= text_field_tag :library_version, params[:library_version]
@@ -39,16 +39,16 @@
       %td= text_field_tag :os_version, params[:os_version]
     %tr
       %td= label_tag :screen_layout_size, 'Screen Layout Size'
-      %td= select_tag :screen_layout_size, options_for_select({'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3'}), :include_blank => true
+      %td= select_tag :screen_layout_size, options_for_select({'small (320x426)' => '1', 'medium (320x470)' => '2', 'large (480x640)' => '3'}, params[:screen_layout_size]), :include_blank => true
     %tr
       %td= label_tag :video_offer_ids, 'Video Offer IDs'
       %td= text_field_tag :video_offer_ids, params[:video_offer_ids]
     %tr
       %td= label_tag :source, 'Offer Source'
-      %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }), :include_blank => true
+      %td= select_tag :source, options_for_select(Offer::ALL_SOURCES.collect { |source| [source, source] }, params[:source]), :include_blank => true
     %tr
       %td= label_tag :all_videos, "All Videos?"
-      %td= select_tag :all_videos, options_for_select({'No' => false, 'Yes' => true}, false)
+      %td= select_tag :all_videos, options_for_select({'No' => false, 'Yes' => true}, params[:all_videos])
     %tr
       %td= label_tag :mobile_carrier_code, 'Mobile Carrier Code'
       %td= select_tag :mobile_carrier_code, options_for_select(get_carriers, params[:mobile_carrier_code]), :include_blank => true
@@ -57,7 +57,7 @@
       %td= text_field_tag :store_whitelist, params[:store_whitelist]
     %tr
       %td= label_tag :store_name, 'App Store Name'
-      %td= select_tag :store_name, options_for_select(AppStore::SDK_STORE_NAMES.keys), :include_blank => true
+      %td= select_tag :store_name, options_for_select(AppStore::SDK_STORE_NAMES.keys, params[:store_name]), :include_blank => true
     %tr
       %td{ :colspan => 2 }= submit_tag('Submit')
 - if @offer
