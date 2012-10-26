@@ -7,9 +7,10 @@ GIT
 
 GIT
   remote: git://github.com/Tapjoy/newrelic-riak.git
-  revision: b22cf5ffcce77c522d34c81193652a4560f8a5a8
+  revision: 9ce7cf9cf7d82877eb9a5e703eed9da6588e27ab
+  tag: v0.1.1
   specs:
-    newrelic_riak (0.1.0)
+    newrelic_riak (0.1.1)
       newrelic_rpm (~> 3.0)
 
 GIT
@@ -552,7 +553,7 @@ DEPENDENCIES
   multi_xml (= 0.4.0)
   multipart-post (= 1.1.0)
   mysql (= 2.8.1)
-  newrelic_riak!
+  newrelic_riak (= 0.1.1)!
   newrelic_rpm (= 3.3.0)
   nokogiri (= 1.5.5)
   notifications_client!
