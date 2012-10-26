@@ -136,7 +136,9 @@ class User < ActiveRecord::Base
     if partners.blank?
       partners << Partner.new(:name => email, :contact_name => email)
       save
-    elsif current_partner_id == old_partner.id
+    end
+
+    if current_partner_id == old_partner.id
       self.current_partner = partners.first
       save
     else
