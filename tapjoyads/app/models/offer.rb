@@ -275,7 +275,8 @@ class Offer < ActiveRecord::Base
   delegate :name, :id, :formatted_active_gamer_count, :protocol_handler, :to => :app, :prefix => true, :allow_nil => true
   delegate :trigger_action, :protocol_handler, :to => :generic_offer, :prefix => true, :allow_nil => true
   delegate :store_name, :to => :app_metadata, :prefix => true, :allow_nil => true
-  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :generic_offer_protocol_handler, :app_metadata_store_name
+  delegate :app_id, :to => :action_offer, :prefix => true, :allow_nil => true
+  memoize :partner_balance, :partner_use_server_whitelist?, :app_formatted_active_gamer_count, :app_protocol_handler, :app_name, :generic_offer_trigger_action, :generic_offer_protocol_handler, :app_metadata_store_name, :action_offer_app_id
 
   alias_method :events, :offer_events
   alias_method :random, :rand

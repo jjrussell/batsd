@@ -132,7 +132,7 @@ describe Offer::UrlGeneration do
       it 'should not replace any macros' do
         @dummy.stub(:item_type).and_return('ActionOffer')
         @complete_action_url.gsub!(@udid, 'TAPJOY_UDID') # reverse this... ActionOffers are special-cased
-        @dummy.complete_action_url(@options).should == @complete_action_url
+        @dummy.complete_action_url(@options.merge(:device_type => nil)).should == @complete_action_url
       end
     end
 

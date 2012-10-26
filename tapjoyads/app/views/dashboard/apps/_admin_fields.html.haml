@@ -1,6 +1,6 @@
 %tr.admin
   %td{:colspan => 2} Admin-only fields:
-  - if @app.platform_name == 'iOS'
+  - if @app.platform_name == 'iOS' || @app.platform_name == 'Android'
     %tr.admin
       %th
         = f.label(:protocol_handler, 'Protocol Handler Name')
