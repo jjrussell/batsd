@@ -23,4 +23,5 @@ class BucketNames
   WEB_REQUESTS        = RUN_MODE_PREFIX + 'web-requests'
   APPLE_EPF           = RUN_MODE_PREFIX + 'apple-epf'
   CACHED_OFFER_LIST   = RUN_MODE_PREFIX + 'cached_offer_list'
+  DEVICE_BAN_LIST     = RUN_MODE_PREFIX + 'device_ban_list'
 end

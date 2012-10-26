@@ -223,23 +223,6 @@ class Utils
     end
   end
 
-  def self.ban_devices_from_clicks(click_ids, reason=nil)
-    ban_count = 0
-    click_ids.each do |c_id|
-      click = Click.find(c_id)
-      device = click.device if click.present?
-      if device.present?
-        device.banned = true
-        device.internal_notes << reason if reason.present?
-        device.save
-
-        ban_count += 1
-      end
-    end
-
-    ban_count
-  end
-  
   def self.aggregate_all_stats
     cutoff = Time.now.utc.beginning_of_hour
     Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE, :conditions => ["last_stats_aggregation_time < ?", cutoff]) do |offers|
@@ -271,6 +254,40 @@ class Utils
     Offer.find_in_batches(:batch_size => StatsAggregation::OFFERS_PER_MESSAGE) do |offers|
       message = { :offer_ids => offers.map(&:id), :start_time => start_time.to_i, :end_time => end_time.to_i, :update_daily => update_daily }.to_json
       Sqs.send_message(QueueNames::RECOUNT_STATS, message)
+    end
+  end
+
+  def self.create_id_hash(file, default_reason)
+    id_hash = {}
+    lines = file.read.split
+    lines.slice!(0)
+    lines.each do |line|
+      cells = line.split(',')
+      id = cells[0]
+      reason = cells[1].nil? ? default_reason : cells[1]
+      id_hash[id] = {:date => Time.now.strftime("%m/%d/%y"), :reason => reason}
+    end
+    id_hash
+  end
+
+  def self.ban_devices(id_hash)
+    banned = Set.new
+    id_hash.each_pair do |id, notes|
+      device = (click = Click.find(id)) ? click.device : Device.find(id)
+      unless device.nil? || device.banned? || banned.include?(device.id)
+        ban(device, notes)
+        banned << device.id
+      end
+    end
+    banned.length
+  end
+
+  def self.ban(device, notes)
+    if device.present?
+      device.banned = true
+      ban_notes = device.ban_notes
+      device.ban_notes = ban_notes << notes
+      device.save
     end
   end
 

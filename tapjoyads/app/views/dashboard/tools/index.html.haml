@@ -120,6 +120,8 @@
   %ul
     - if permitted_to? :device_info, :dashboard_tools                   # customer_service, account_mgr
       %li= link_to 'Device Info & Unresolved clicks', device_info_tools_path
+    - if permitted_to? :index, :dashboard_tools_device_ban_lists        # customer_service_mgr
+      %li= link_to 'Ban Devices/Clicks', tools_device_ban_lists_path
     - if permitted_to? :reset_device, :dashboard_tools                  # admin
       %li= link_to 'Reset Device', reset_device_tools_path
     - if permitted_to? :index, :dashboard_tools_admin_devices           # account_mgr
