@@ -214,9 +214,6 @@ describe StatsAggregation do
   end
 
   describe '.aggregate_hourly_group_stats' do
-    before :each do
-    end
-
     context 'with generic offer' do
       before :each do
         @partner_daily_count = 0
