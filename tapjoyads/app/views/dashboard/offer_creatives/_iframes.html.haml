@@ -2,9 +2,18 @@
   - if defined?(show_featured_sizes_only) && show_featured_sizes_only
     .featured-only{:style => "background-color: #f0f0f0; display: none;"}
       %h3 Featured Ad Custom Creatives
-      - Offer::FEATURED_AD_SIZES.each do |size|
+      - Offer::FEATURED_AD_ALL_SIZES.each do |size|
         %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size, :label => size, :desc => @desc)}
 
   - else
-    - offer.banner_creative_sizes_with_labels.each do |size_hash|
-      %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}
+    - offer.banner_creative_sizes_with_labels.each_with_index do |size_hash, index|
+      - if index == 0
+        %div.featured-note.new_featured_ad= "The following creative sizes only apply to the new Featured Ad Unit."
+      - if index == 3
+        %div.featured-note= "The following creative sizes only apply to the old featured Ad Unit. We will show creatives based on what SDK the publisher has. Eventually, we plan to deprecate the old Featured ad unit."
+
+
+      - if Offer::FEATURED_AD_SIZES.include?(size_hash[:size])
+        %iframe.creative_upload.new_featured_ad{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}
+      - else
+        %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}

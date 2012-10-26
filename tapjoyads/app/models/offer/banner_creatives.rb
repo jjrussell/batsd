@@ -54,8 +54,7 @@ module Offer::BannerCreatives
 
   def banner_creative_sizes_with_labels
     @banner_creative_sizes_with_labels ||= begin
-      banner_creative_sizes(true).uniq.collect do |size|
-        next unless Offer::FEATURED_AD_SIZES.include?(size) || banner_creatives.include?(size)
+      Offer::FEATURED_AD_ALL_SIZES.collect do |size|
 
         data = {:size => size, :label => size.dup, :desc => ''}
 
@@ -77,7 +76,6 @@ module Offer::BannerCreatives
         data
       end
     end
-    @banner_creative_sizes_with_labels.compact!
   end
 
   def featured_ad_preview_sizes_with_labels
