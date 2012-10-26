@@ -126,7 +126,7 @@ describe TransactionalMailer do
       gamer.stub(:email => gamer[:email])
       subject.stub(:sign! => signed_hash)
       subject.should_receive(:post_to_tjm).with(signed_hash)
-      subject.record_invalid_email(gamer)
+      subject.send :record_invalid_email, gamer
     end
   end
 end
