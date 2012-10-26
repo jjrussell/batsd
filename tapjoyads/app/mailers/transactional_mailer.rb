@@ -203,7 +203,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     device_key = @linked ? gamer_device[:id] : nil
 
     device = get_device( device_key)
-    @recommendations = device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
+    @recommendations = device.new_record? ? [] : device.recommendations(device_info.slice(:device_type, :geoip_data, :os_version))
     @facebook_signup = gamer[:facebook_id].present?
     @gamer_email = gamer[:email] if @facebook_signup
     true
