@@ -219,10 +219,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
 
   def reporting
     @start_time, @end_time, @granularity = Appstats.parse_dates(params[:date], params[:end_date], params[:granularity])
-    @store_options = {}
-    AppStore::SDK_STORE_NAMES.each do |k, v|
-      @store_options[AppStore.find(v).name] = k
-    end
+    @store_options = all_android_store_options
     respond_to do |format|
       format.html do
         render 'shared/aggregate'
