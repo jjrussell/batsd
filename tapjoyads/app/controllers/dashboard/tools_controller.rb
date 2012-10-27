@@ -28,7 +28,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
   def monthly_data
     @period, @period_str = get_period_str(params[:period])
-    conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
+    conditions = ["month = ? AND year = ? AND partner_id not in (?)",
+                  @period.month, @period.year, TAPJOY_ACCOUNTING_PARTNER_IDS]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
       actual      = MonthlyAccounting.count(:conditions => [ "month = ? AND year = ?", @period.month, @period.year ])
