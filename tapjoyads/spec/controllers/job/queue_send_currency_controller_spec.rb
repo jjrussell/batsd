@@ -181,7 +181,7 @@ describe Job::QueueSendCurrencyController do
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
-      reward.send_currency_status.should == 'OK'
+      reward.send_currency_status.should == "OK"
     end
 
     it 'updates reward.attempts' do
@@ -191,6 +191,21 @@ describe Job::QueueSendCurrencyController do
       reward.attempts.last['body'].should == @mock_response.body
     end
 
+    it 'will create a web request' do
+      @mock_response.stub(:status).and_return(20)
+      @web_request = WebRequest.new
+      WebRequest.stub(:new).and_return(@web_request)
+      get(:run_job, :message => @reward.id)
+
+      @web_request.path.should == ['send_currency_attempt']
+      @web_request.http_status_code.should == 20
+      @web_request.callback_url.should == 'http://www.whatwhat.com?snuid=bill&currency=100&mac_address='
+      @web_request.reward_id.should == @reward.id
+      @web_request.publisher_app_id.should == @reward.publisher_app_id
+      @web_request.currency_id.should == @reward.currency_id
+      @web_request.amount.should == @reward.currency_reward
+    end
+    
     it 'should not reward twice' do
       get(:run_job, :message => @reward.id)
 
