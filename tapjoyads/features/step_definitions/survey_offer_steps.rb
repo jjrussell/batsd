@@ -49,16 +49,13 @@ end
 
 Given /^I have created a survey with a bid of "(.*?)"$/ do |amount|
   @survey = FactoryGirl.create(:survey_offer, :bid => amount.gsub(/[^\d]+/, '').to_i, :partner => @partner)
+  @offer = @survey.primary_offer
 end
 
 Given /^I have created a survey with (\d+) questions$/ do |n|
   @survey = FactoryGirl.create(:survey_offer, :partner => @partner)
   n.to_i.times { FactoryGirl.create(:survey_question, :survey_offer => @survey) }
   @survey.save!
-end
-
-When /^I visit the "(.*?)" page$/ do |page|
-  visit path_for(page)
 end
 
 When /^I fill in "(.*?)" with "(.*?)"$/ do |field, value|
@@ -79,6 +76,7 @@ end
 
 Given /^I have created a survey$/ do
   @survey = FactoryGirl.create(:survey_offer, :partner => @partner)
+  @offer = @survey.primary_offer
 end
 
 When /^I view the list of surveys$/ do

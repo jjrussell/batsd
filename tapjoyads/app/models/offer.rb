@@ -316,9 +316,9 @@ class Offer < ActiveRecord::Base
     new_offer
   end
 
-  def icon_s3_object
+  def icon_s3_object(size = nil)
     bucket = S3.bucket(BucketNames::TAPJOY)
-    bucket.objects["icons/src/#{IconHandler.hashed_icon_id(icon_id)}.jpg"]
+    bucket.objects["icons/#{size.present? ? size : 'src'}/#{IconHandler.hashed_icon_id(icon_id)}.jpg"]
   end
 
   def app_offer?(only_client_facing = true)
