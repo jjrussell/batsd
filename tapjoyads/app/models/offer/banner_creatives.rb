@@ -53,28 +53,26 @@ module Offer::BannerCreatives
   end
 
   def banner_creative_sizes_with_labels
-    @banner_creative_sizes_with_labels ||= begin
-      Offer::FEATURED_AD_ALL_SIZES.collect do |size|
+    Offer::FEATURED_AD_ALL_SIZES.collect do |size|
 
-        data = {:size => size, :label => size.dup, :desc => ''}
+      data = {:size => size, :label => size.dup, :desc => ''}
 
-        if featured? && Offer::FEATURED_AD_SIZES.include?(size) # only apply for 2012 new featured ad
-          if (Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size) && Offer::FEATURED_AD_PORTRAIT_SIZES.include?(size))
-            orientation = 'landscape/portrait'
-          elsif Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size)
-            orientation = 'landscape'
-          else
-            orientation = 'portrait'
-          end
-
-          w,h = size.split('x')
-          device = w.to_i > 500 ? 'tablet' : 'phone'
-
-          data[:desc] << "#{device} #{orientation}"
+      if featured? && Offer::FEATURED_AD_SIZES.include?(size) # only apply for 2012 new featured ad
+        if (Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size) && Offer::FEATURED_AD_PORTRAIT_SIZES.include?(size))
+          orientation = 'landscape/portrait'
+        elsif Offer::FEATURED_AD_LANDSCAPE_SIZES.include?(size)
+          orientation = 'landscape'
+        else
+          orientation = 'portrait'
         end
 
-        data
+        w,h = size.split('x')
+        device = w.to_i > 500 ? 'tablet' : 'phone'
+
+        data[:desc] << "#{device} #{orientation}"
       end
+
+      data
     end
   end
 
