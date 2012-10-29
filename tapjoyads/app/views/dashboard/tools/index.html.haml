@@ -111,6 +111,8 @@
       %li= link_to 'Partner Changes', tools_partner_changes_path
     - if permitted_to? :index, :dashboard_tools_partner_validations
       %li= link_to 'Publisher Payout Confirmations', tools_partner_validations_path
+    - if permitted_to? :index, :dashboard_tools_rejections                  # account_mgr
+      %li= link_to 'Offer Rejection Search', tools_rejections_path
 
 - if has_permissions_for_one_of? :account_mgr, :customer_service, :admin
   .page-header
