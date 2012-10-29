@@ -22,8 +22,14 @@ class StatsAggregation
     vertica_total  = vertica_counts.values.sum
     percentage     = vertica_total / appstats_total.to_f
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
+    stop_check     = percentage < 0.9 || percentage > 1.1
     message        = ''
 
+    if stop_check
+      message << "EMERGENCY! VERTICA ACCURACY IS BELOW 99%! SOMEONE YELL AT NOC TO FIX IT!\n"
+    elsif inaccurate
+      message << "The vertica stats are within 1% margin of error.  You have until 10AM UTC to fix or ignore this issue.\n"
+    end
     message << "Appstats total: #{appstats_total}\n"
     message << "Vertica total: #{vertica_total}\n"
     message << "Difference: #{appstats_total - vertica_total}\n\n"
@@ -34,7 +40,7 @@ class StatsAggregation
       message << "#{i}, #{appstats_val}, #{vertica_val}, #{appstats_val - vertica_val}\n"
     end
 
-    [ !inaccurate, message ]
+    { :inaccurate => inaccurate, :stop_check => stop_check, :message => message }
   end
 
   def self.cache_vertica_stats(start_time, end_time)
