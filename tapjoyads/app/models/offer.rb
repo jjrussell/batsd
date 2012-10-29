@@ -448,7 +448,7 @@ class Offer < ActiveRecord::Base
 
   def enabled?
     enabled = system_enabled?
-    enabled = (payment_enabled? || reward_enabled?) if enabled && !is_deeplink?
+    enabled = (payment_enabled? || reward_enabled? || self_promote_only?) if enabled && !is_deeplink? 
     enabled
   end
   alias_method :is_enabled?, :enabled?
@@ -984,7 +984,7 @@ class Offer < ActiveRecord::Base
     reasons = []
     reasons << 'Tapjoy Disabled' unless self.tapjoy_enabled
     reasons << 'User Disabled' unless self.user_enabled
-    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink?
+    reasons << 'Payment below balance' if self.payment > 0 && partner.balance <= self.payment && !self.is_deeplink? && !self_promote_only?
     reasons << 'Tracking for' unless self.tracking_for.nil?
 
     reasons

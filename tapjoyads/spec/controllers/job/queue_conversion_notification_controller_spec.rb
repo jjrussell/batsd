@@ -48,6 +48,7 @@ describe Job::QueueConversionNotificationsController do
     it "should create a Notification object" do
       NotificationsClient::Notification.should_receive(:new).with({
         :app_id => @reward.publisher_app_id,
+        :app_secret_key => @publisher_app.secret_key,
         :title => "Reward Notification",
         :message => "You earned #{@currency.name} by downloading #{@advertiser_app.name}",
         :device_aliases => [{:namespace => 'android_id', :identifier => 'android_id'}, {:namespace => 'idfa', :identifier => 'idfa'}]
@@ -62,6 +63,7 @@ describe Job::QueueConversionNotificationsController do
 
       NotificationsClient::Notification.should_receive(:new).with({
         :app_id => @reward.publisher_app_id,
+        :app_secret_key => @publisher_app.secret_key,
         :title => "Reward Notification",
         :message => "You earned #{@currency.name} by downloading #{@advertiser_app.name}",
         :device_aliases => [{:namespace => 'android_id', :identifier => 'android_id'}, {:namespace => 'mac_sha1', :identifier => '1f22542dc51c54db355649323bc7792fbcea94a9'}, {:namespace => 'idfa', :identifier => 'idfa'}]
