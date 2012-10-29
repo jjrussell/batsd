@@ -65,8 +65,8 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/notifications_client.git
-  revision: 080ae0719dcce5b7853052c32f31d22445917bfc
-  ref: 080ae0719dcce5b7853052c32f31d22445917bfc
+  revision: 9490875b82fab2f8977bcafa8e4ef76cecd2b386
+  ref: 9490875b82fab2f8977bcafa8e4ef76cecd2b386
   specs:
     notifications_client (0.1.0)
       json
