@@ -55,8 +55,12 @@ class ReportingDataController < ApplicationController
       return
     end
 
+    # Support weird UTC edge case when timezone param is 0
     Time.zone = @user.time_zone
-    Time.zone = params[:timezone].to_i if params[:timezone].present?
+    if params[:timezone].present?
+      tz = params[:timezone].to_i
+      Time.zone = (tz == 0) ? 'UTC' : tz
+    end
   end
 
   def lookup_stats
@@ -93,7 +97,7 @@ class ReportingDataController < ApplicationController
       appstats = maybe_cache("reporting_data.#{offer.id}.#{start_time.to_i}") do
         Appstats.new(offer.id, {
           :start_time => start_time,
-          :end_time   => start_time + 24.hours,
+          :end_time   => start_time.end_of_day,
           :stat_types => (Stats::STAT_TYPES - ['ranks']),
         })
       end
