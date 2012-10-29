@@ -4,7 +4,7 @@ Tapjoyad::Application.routes.draw do
     namespace :client do
       resources :partners, :only => [] do
         resources :ads, :only => [:index]
-        resources :campaigns, :only => [:index]
+        resources :campaigns, :only => [:index, :show]
       end
     end
   end
