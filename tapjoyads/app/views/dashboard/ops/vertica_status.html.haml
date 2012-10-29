@@ -11,12 +11,14 @@
       %tr
         %td{ :colspan => 2 }= submit_tag('Submit')
 
-- if @message.present?
+- if @check[:message].present?
   %h3
     Data is:
-    %span{ :class => @accurate ? 'accurate' : 'inaccurate' }= @accurate ? 'Accurate' : 'Inaccurate'
+    %span{ :class => @check[:inaccurate] ? 'inaccurate' : 'accurate' }= @check[:inaccurate] ? 'Inaccurate' : 'Accurate'
+  - if @check[:stop_check]
+    %h4 Data is over 1% inaccurate, there are possible data issues.
 
-  %pre= @message
+  %pre= @check[:message]
 
   %p{ :class => 'small' }
     * Note that this tool only looks at the number of featured ads requested as a generalization for all vertica data.

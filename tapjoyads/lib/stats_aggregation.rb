@@ -22,7 +22,7 @@ class StatsAggregation
     vertica_total  = vertica_counts.values.sum
     percentage     = vertica_total / appstats_total.to_f
     inaccurate     = percentage < 0.99999 || percentage > 1.00001
-    stop_check     = percentage < 0.9 || percentage > 1.1
+    stop_check     = percentage < 0.99 || percentage > 1.01
     message        = ''
 
     if stop_check
