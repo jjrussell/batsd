@@ -2,7 +2,8 @@ class Api::Client::AdsController < Api::ClientController
   before_filter :set_scope, :only => :index
 
   def index
-    render({ :json => { :count => @offers.length, :offers => @offers } })
+    @ads = @offers.map { |offer| offer.attributes }
+    render({ :json => { :count => @offers.length, :ads => @ads } })
   end
 
   private

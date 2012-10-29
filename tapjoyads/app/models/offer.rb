@@ -227,13 +227,17 @@ class Offer < ActiveRecord::Base
   scope :enabled_by_tapjoy, :conditions => { :tapjoy_enabled => true }
   scope :enabled_by_user, :conditions => { :user_enabled => true }
   scope :with_allowed_types, :conditions => [ 'item_type not in (?)', EXCLUDED_ENABLED_OFFER_TYPES ]
-  scope :with_fund, {
+  scope :funded, {
     :joins => :partner,
     :conditions => '(payment > 0 AND partners.balance > payment) OR (payment = 0 AND reward_value > 0)'
   }
   scope :not_tracking, :conditions => { :tracking_for_id => nil }
   def self.enabled_offers
-    not_tracking.with_fund.with_allowed_types.enabled_by_user.enabled_by_tapjoy.scoped(:readonly => false)
+    not_tracking.funded.with_allowed_types.enabled_by_user.enabled_by_tapjoy.scoped(:readonly => false)
+  end
+
+  class << self
+    alias_method :active, :enabled_offers
   end
 
   scope :by_name, lambda { |offer_name| { :conditions => ["offers.name LIKE ?", "%#{offer_name}%" ] } }
@@ -262,7 +266,6 @@ class Offer < ActiveRecord::Base
   scope :non_video_offers, :conditions => ["item_type != ?", 'VideoOffer']
   scope :tapjoy_sponsored_offer_ids, :conditions => "tapjoy_sponsored = true", :select => "#{Offer.quoted_table_name}.id"
   scope :creative_approval_needed, :conditions => 'banner_creatives != approved_banner_creatives OR (banner_creatives IS NOT NULL AND approved_banner_creatives IS NULL)'
-  scope :active, not_tracking.with_allowed_types.enabled_by_user.enabled_by_tapjoy.with_fund
   PAPAYA_OFFER_COLUMNS = "#{Offer.quoted_table_name}.id, #{AppMetadata.quoted_table_name}.papaya_user_count"
   scope :papaya_app_offers, :joins => :app_metadata,
     :conditions => "#{Offer.quoted_table_name}.item_type = 'App' AND #{AppMetadata.quoted_table_name}.papaya_user_count > 0",
