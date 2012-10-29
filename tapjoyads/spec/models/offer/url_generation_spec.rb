@@ -75,20 +75,22 @@ describe Offer::UrlGeneration do
   describe '#complete_action_url' do
     before :each do
       params = {
-        :udid       => 'TAPJOY_UDID',
-        :source     => 'TAPJOY_GENERIC_SOURCE',
-        :uid        => 'TAPJOY_EXTERNAL_UID',
-        :click_key  => 'TAPJOY_HASHED_KEY',
-        :invite     => 'TAPJOY_GENERIC_INVITE',
-        :survey     => 'TAPJOY_SURVEY',
-        :eid        => 'TJM_EID',
-        :data       => 'DATA',
-        :hashed_mac => 'TAPJOY_HASHED_MAC'
+        :udid               => 'TAPJOY_UDID',
+        :source             => 'TAPJOY_GENERIC_SOURCE',
+        :uid                => 'TAPJOY_EXTERNAL_UID',
+        :click_key          => 'TAPJOY_HASHED_KEY',
+        :invite             => 'TAPJOY_GENERIC_INVITE',
+        :survey             => 'TAPJOY_SURVEY',
+        :device_click_ip    => 'TAPJOY_DEVICE_CLICK_IP',
+        :eid                => 'TJM_EID',
+        :data               => 'DATA',
+        :hashed_mac         => 'TAPJOY_HASHED_MAC'
       }
 
       @dummy.stub(:url).and_return("https://example.com/complete/TAPJOY_GENERIC?#{params.to_query}")
 
       @click_key         = 'click.key'
+      @device_click_ip   = 'click.ip'
       @udid              = 'my_device_udid'
       @mac               = 'my_device_mac'
       @publisher_app_id  = 'publisher_app_id'
@@ -108,6 +110,7 @@ describe Offer::UrlGeneration do
 
       @options = {
         :click_key             => @click_key,
+        :device_click_ip       => @device_click_ip,
         :udid                  => @udid,
         :publisher_app_id      => @publisher_app_id,
         :currency              => @currency,
@@ -121,6 +124,7 @@ describe Offer::UrlGeneration do
       @complete_action_url = @dummy.url.gsub('TAPJOY_UDID', @udid)
       @complete_action_url.gsub!('TAPJOY_GENERIC_SOURCE', @source)
       @complete_action_url.gsub!('TAPJOY_EXTERNAL_UID', @uid)
+      @complete_action_url.gsub!('TAPJOY_DEVICE_CLICK_IP', @device_click_ip)
     end
 
     it "should replace 'global' macros" do

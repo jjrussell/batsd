@@ -16,6 +16,7 @@ module Offer::UrlGeneration
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     click_key             = options.delete(:click_key)             { nil }
+    device_click_ip       = options.delete(:device_click_ip)       { nil }
     language_code         = options.delete(:language_code)         { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     display_multiplier    = options.delete(:display_multiplier)    { 1 }
@@ -30,6 +31,7 @@ module Offer::UrlGeneration
       :udid                  => udid,
       :publisher_app_id      => publisher_app_id,
       :click_key             => click_key,
+      :device_click_ip       => device_click_ip,
       :itunes_link_affiliate => itunes_link_affiliate,
       :currency_id           => currency.id,
       :language_code         => language_code,
@@ -57,6 +59,7 @@ module Offer::UrlGeneration
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
     publisher_user_id     = options.delete(:publisher_user_id)     { nil }
     click_key             = options.delete(:click_key)             { nil }
+    device_click_ip       = options.delete(:device_click_ip)       { nil }
     itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
     library_version       = options.delete(:library_version)       { nil }
     os_version            = options.delete(:os_version)            { nil }
@@ -91,8 +94,16 @@ module Offer::UrlGeneration
     end
 
     # deal with non-item_type-specific macros
-    final_url.gsub!('TAPJOY_GENERIC_SOURCE', source_token(publisher_app_id))
-    final_url.gsub!('TAPJOY_EXTERNAL_UID', Device.advertiser_device_id(udid, partner_id))
+    final_url.gsub!(/TAPJOY_(GENERIC_SOURCE|EXTERNAL_UID|DEVICE_CLICK_IP)/) do |tj_macro|
+      case tj_macro
+        when 'TAPJOY_GENERIC_SOURCE'
+          source_token(publisher_app_id)
+        when 'TAPJOY_EXTERNAL_UID'
+          Device.advertiser_device_id(udid, partner_id)
+        when 'TAPJOY_DEVICE_CLICK_IP'
+          device_click_ip
+      end
+    end
 
     # Not sure why ActionOffers don't respect this macro, but not going to mess with it, without a full understanding
     final_url.gsub!('TAPJOY_UDID', udid.to_s) unless item_type == 'ActionOffer'

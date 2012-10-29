@@ -34,6 +34,7 @@ class OfferTriggeredActionsController < ApplicationController
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,
       :click_key             => params[:click_key],
+      :device_click_ip       => params[:device_click_ip],
       :itunes_link_affiliate => params[:itunes_link_affiliate],
       :library_version       => params[:library_version],
       :os_version            => params[:os_version]
