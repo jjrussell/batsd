@@ -188,7 +188,7 @@ class Partner < ActiveRecord::Base
     if manager_id
       result = Partner.by_manager_id(manager_id)
     else
-      result = Partner.scoped(:order => 'created_at DESC', :include => [ :offers, :users ])
+      result = Partner.scoped(:order => 'partners.created_at DESC', :include => [ :offers, :users ])
     end
     result = result.joins(:users).where('users.id = ?', user_id) if user_id
     result = result.scoped_by_country(country) if country
