@@ -83,13 +83,7 @@
           %th
             = f.label "View Ads"
             #help_view_ads.help ?
-          %td
-            - if @offer.featured?
-              - @offer.banner_creative_sizes_with_labels.each do |size_hash|
-                = link_to("Preview #{size_hash[:label]} ads", offer_creative_path(:offer_creative_id => @offer.id, :image_size => size_hash[:size]), :rel => 'facebox', :id => 'preview_link')
-                %br
-            - else
-              = link_to("Preview ads", offer_creative_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
+          %td= link_to("Preview ads", offer_creative_path(:offer_creative_id => @offer.id), :rel => 'facebox', :id => 'preview_link')
       = render 'dashboard/apps/offers_shared/daily_budget', :f => f
       %tr
         %th
