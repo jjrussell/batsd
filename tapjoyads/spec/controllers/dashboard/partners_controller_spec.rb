@@ -84,6 +84,24 @@ describe Dashboard::PartnersController do
       login_as(user)
     end
 
+    context 'by email' do
+      let(:q) { 'daniel.lim@gmail.com' }
+      let(:a_user)  { FactoryGirl.create(:user, :email => q) }
+      let(:partner) { FactoryGirl.create(:partner, :users => [a_user]) }
+
+      before :each do
+        get :index, :q => q
+      end
+
+      it 'responds with partners known to include the user' do
+        assigns(:partners).should include partner
+      end
+
+      it 'responds only with partners which include the email' do
+        assigns(:partners).all? {|p| p.users.include(a_user) }.should be_true
+      end
+    end
+
     context 'by country' do
       let(:country) { 'United States of America' }
       let(:partner) { FactoryGirl.create(:partner, :country => country) }
