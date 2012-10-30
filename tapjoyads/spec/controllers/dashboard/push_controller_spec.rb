@@ -37,7 +37,7 @@ describe Dashboard::PushController do
     end
 
     it 'should create a notification app' do
-      NotificationsClient::App.should_receive(:new).with(hash_including(:app_id => @app.id, :app => {:app_secret_key => @app.secret_key}))
+      NotificationsClient::App.should_receive(:new).with(hash_including(:app_id => @app.id, :app => {:secret_key => @app.secret_key}))
       do_request
     end
 
