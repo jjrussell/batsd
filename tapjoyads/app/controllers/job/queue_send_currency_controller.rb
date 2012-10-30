@@ -60,7 +60,8 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       callback_url += url_params.join('&')
     end
 
-    reward.sent_currency = Time.zone.now
+    @now = Time.zone.now
+    reward.sent_currency = @now
 
     begin
       reward.save!(:expected_attr => {'sent_currency' => nil})
@@ -86,8 +87,22 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         params[:callback_url] = callback_url
         begin
           if Rails.env.production? || Rails.env.test?
-            response = Downloader.get_strict(callback_url, { :timeout => 20 })
+            start_time = Time.now                                                 #TODO Need to use Benchmark.realtime for this,
+            response = Downloader.get_strict(callback_url, { :timeout => 20 })    #but putting Downloader.get in a block breaks the scope for tests.
+            http_response_time  = Time.now - start_time                           #This code is the exact same thing Benchmark.realtime does.
             status = response.status
+
+            web_request = WebRequest.new(:time => @now)
+            web_request.path                = 'send_currency_attempt'
+            web_request.callback_url        = callback_url
+            web_request.http_status_code    = status
+            web_request.http_response_time  = http_response_time
+            web_request.reward_id           = reward.id
+            web_request.publisher_app_id    = reward.publisher_app_id
+            web_request.currency_id         = reward.currency_id
+            web_request.amount              = reward.currency_reward       
+            web_request.save
+
             attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
           else
             status = 'OK'
