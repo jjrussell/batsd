@@ -7,16 +7,31 @@ class Dashboard::PushController < Dashboard::DashboardController
   BETA_PUSH_NOTIFICATION_APPS = ["30091aa4-9ff3-4717-a467-c83d83f98d6d", "2349536b-c810-47d7-836c-2cd47cd3a796"]
 
   def update
-    if @app.update_attributes(:notifications_enabled => params[:app][:notifications_enabled])
+    @app.notifications_enabled = params[:app][:notifications_enabled]
+
+    begin
+      @app.transaction do
+        @app.save!
+        notification_app.update if @app.notifications_enabled?
+      end
       flash[:notice] = "Push notifications have been #{@app.notifications_enabled? ? 'enabled' : 'disabled'}"
       redirect_to :action => "index"
-    else
+    rescue Exception => e
+      logger.info e.message
+      logger.info e.backtrace.join("\n")
       flash[:error] = "There was a problem updating this app"
       redirect_to :action => "index"
     end
   end
 
 private
+  def notification_app
+    NotificationsClient::App.new({
+      :app_id => @app.id,
+      :app => {:app_secret_key => @app.secret_key}
+    })
+  end
+
   def setup
     @app = find_app(params[:app_id])
     @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?platform=#{@app.platform}&signature=#{signature}&signature_method=hmac_sha256"
