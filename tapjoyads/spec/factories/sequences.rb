@@ -32,8 +32,6 @@ class TitleGenerator
   def self.duty(i);       DUTIES.     mod(i); end
 end
 
-
-require 'earth' unless defined? Country
 COUNTRIES = Country::ALL
 
 FactoryGirl.define do

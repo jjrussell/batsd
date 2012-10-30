@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'earth' unless defined? Continent
 
 describe Continent do
   describe '.continent_code_to_country_codes' do
