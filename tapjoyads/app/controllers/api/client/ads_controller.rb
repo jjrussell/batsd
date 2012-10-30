@@ -2,7 +2,7 @@ class Api::Client::AdsController < Api::ClientController
   before_filter :set_scope, :only => :index
 
   def index
-    @ads = @offers.map { |offer| offer.attributes }
+    @ads = @offers.map { |offer| { :ad => offer.attributes } }
     render({ :json => { :count => @offers.length, :ads => @ads } })
   end
 
