@@ -432,6 +432,15 @@ class Device < SimpledbShardedResource
     ExperimentBucket.id_for_index(hash % ExperimentBucket.count_from_cache)
   end
 
+  def in_network_apps
+    in_network_apps = []
+    apps = App.where("id IN ('#{self.apps.keys.join("','")}')")
+    apps.each do |app|
+      in_network_apps << InNetworkApp.new(app, last_run_time(app.id))
+    end
+    in_network_apps
+  end
+
   private
 
   def merge_temporary_devices!(all_identifiers)
