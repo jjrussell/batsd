@@ -35,5 +35,21 @@ describe Dashboard::PushController do
       do_request
       @app.reload.notifications_enabled.should == false
     end
+
+    it 'should create a notification app' do
+      NotificationsClient::App.should_receive(:new).with(hash_including(:app_id => @app.id, :app => {:app_secret_key => @app.secret_key}))
+      do_request
+    end
+
+    it 'should update a notification app when notifications are enabled' do
+      NotificationsClient::App.any_instance.should_receive(:update)
+      do_request
+    end
+
+    it 'should not update a notification app when notifications are disabled' do
+      NotificationsClient::App.any_instance.should_not_receive(:update)
+      do_request(:app => {:notifications_enabled => false})
+    end
   end
 end
+ 
