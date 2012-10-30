@@ -1,21 +1,20 @@
 require 'spec_helper'
+require 'earth' unless defined? Continent
 
-describe Countries do
+describe Continent do
   describe '.continent_code_to_country_codes' do
-    before :each do
-      @countries = Countries.continent_code_to_country_codes
-    end
+    let(:continents) { described_class.continent_code_to_country_codes }
 
     it 'does not include North Korea' do
-      @countries.values.flatten.should_not include('KP')
+      continents.values.flatten.should_not include('KP')
     end
 
     it 'does not include Metropolitan France' do
-      @countries.values.flatten.should_not include('FX')
+      continents.values.flatten.should_not include('FX')
     end
 
     it 'lists Cyprus under Europe' do
-      @countries['EU'].should include('CY')
+      continents['EU'].should include('CY')
     end
   end
 end

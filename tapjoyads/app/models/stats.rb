@@ -1,3 +1,5 @@
+require 'earth' unless defined? Country
+
 class Stats < SimpledbResource
   include RiakMirror
   mirror_configuration :riak_bucket_name => "stats"
@@ -15,74 +17,7 @@ class Stats < SimpledbResource
   SPECIAL_STATS     = [ 'virtual_goods', 'countries', 'ranks' ]
   STAT_TYPES        = CONVERSION_STATS + WEB_REQUEST_STATS + SPECIAL_STATS
 
-  COUNTRY_CODES = {
-      'US' => 'United States',
-      'AR' => 'Argentina',
-      'AU' => 'Australia',
-      'BY' => 'Belarus',
-      'BE' => 'Belgium',
-      'BR' => 'Brazil',
-      'BG' => 'Bulgaria',
-      'CA' => 'Canada',
-      'CL' => 'Chile',
-      'CN' => 'China',
-      'CO' => 'Columbia',
-      'CR' => 'Costa Rica',
-      'HR' => 'Croatia (Hrvatska)',
-      'CZ' => 'Czech Republic',
-      'DK' => 'Denmark',
-      'DE' => 'Germany',
-      'SV' => 'El Salvador',
-      'ES' => 'Spain',
-      'FI' => 'Finland',
-      'FR' => 'France',
-      'GR' => 'Greece',
-      'GT' => 'Guatemala',
-      'HK' => 'Hong Kong',
-      'HU' => 'Hungary',
-      'IN' => 'India',
-      'ID' => 'Indonesia',
-      'IE' => 'Ireland',
-      'IL' => 'Israel',
-      'IT' => 'Italy',
-      'JP' => 'Japan',
-      'KR' => 'South Korea',
-      'KW' => 'Kuwait',
-      'LB' => 'Lebanon',
-      'LU' => 'Luxembourg',
-      'MY' => 'Malaysia',
-      'MX' => 'Mexico',
-      'NL' => 'Netherlands',
-      'NZ' => 'New Zealand',
-      'NO' => 'Norway',
-      'AT' => 'Austria',
-      'PK' => 'Pakistan',
-      'PA' => 'Panama',
-      'PE' => 'Peru',
-      'PH' => 'Philippines',
-      'PL' => 'Poland',
-      'PT' => 'Portugal',
-      'QA' => 'Qatar',
-      'RO' => 'Romania',
-      'RU' => 'Russia',
-      'SA' => 'Saudi Arabia',
-      'RS' => 'Serbia',
-      'CH' => 'Switzerland',
-      'SG' => 'Singapore',
-      'SK' => 'Slovak Republic',
-      'SI' => 'Slovenia',
-      'ZA' => 'South Africa',
-      'LK' => 'Sri Lanka',
-      'SE' => 'Sweden',
-      'TW' => 'Taiwan',
-      'TH' => 'Thailand',
-      'TR' => 'Turkey',
-      'UA' => 'Ukraine',
-      'AE' => 'United Arab Emirates',
-      'GB' => 'United Kingdom',
-      'VE' => 'Venezuela',
-      'VN' => 'Vietnam',
-  }
+  COUNTRY_CODES = Country::CODE_TO_NAME
 
   def initialize(options = {})
     super({ :load_from_memcache => true }.merge(options))
