@@ -160,9 +160,6 @@ class Dashboard::BillingController < Dashboard::DashboardController
     redirect_to transfer_funds_billing_path
   end
 
-  def payout_info
-  end
-
   def update_payout_info
     @payout_info = current_partner.payout_info || current_partner.build_payout_info
     log_activity(@payout_info)
@@ -261,6 +258,8 @@ private
       @selected_state[:transfer_funds] = 'selected'
     when 'payout_info'
       @selected_state[:payout_info] = 'selected'
+    when 'payment_history'
+      @selected_state[:payment_history] = 'selected'
     end
   end
 end
