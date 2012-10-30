@@ -65,21 +65,18 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/notifications_client.git
-  revision: 9490875b82fab2f8977bcafa8e4ef76cecd2b386
+  revision: 2f18fb396d794a6b21e563a347ee426b75f23d5a
+  ref: 2f18fb396d794a6b21e563a347ee426b75f23d5a
   specs:
+    notifications_client (0.1.0)
+      json
+      rest-client
 
 GIT
   remote: git@github.com:Tapjoy/signage.git
   revision: 561205273e808992b0e80d6f77be243766101729
   specs:
     signage (0.0.1)
-
-PATH
-  remote: ../../tapjoy/notifications_client
-  specs:
-    notifications_client (0.1.0)
-      json
-      rest-client
 
 GEM
   remote: http://rubygems.org/
