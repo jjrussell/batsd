@@ -17,7 +17,4 @@
         %div.featured-note= "The following creative sizes only apply to the old featured Ad Unit. We will show creatives based on what SDK the publisher has. Eventually, we plan to deprecate the old Featured ad unit."
 
       - arr.each do |size_hash|
-        - if Offer::FEATURED_AD_SIZES.include?(size_hash[:size])
-          %iframe.creative_upload.new_featured_ad{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}
-        - else
-          %iframe.creative_upload{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc])}
+        %iframe{:src => form_offer_creative_path(:offer_creative_id => offer.id, :image_size => size_hash[:size], :label => size_hash[:label], :desc => size_hash[:desc]), :class => "creative_upload#{index == 0 ? ' new_featured_ad' : ''}"}
