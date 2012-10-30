@@ -38,7 +38,7 @@ class Seeder::UserRoles < Seeder
   def self.run!
     ROLES_WITH_EMPLOYEE_FLAG.each_pair do |name, e|
       UserRole.find_or_create_by_name(name, :employee => e)
-      Rails.logger.debug "Added #{e ? 'employee' : ''} role #{name}"
+      Rails.logger.debug "Added #{e ? 'employee ' : ''}role #{name}"
     end
     roles = ::UserRole.all.map(&:name)
     Authorization::Engine.instance.roles.each do |role|

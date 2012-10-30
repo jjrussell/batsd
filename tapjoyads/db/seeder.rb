@@ -12,5 +12,5 @@ class Seeder
   end
 end
 
-Dir["#{Rails.root}/lib/seeder/*.rb"].each {|f| require f}
+Dir["#{Rails.root}/db/seeder/*.rb"].each {|f| require f}
 
