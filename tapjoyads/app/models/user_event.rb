@@ -1,7 +1,7 @@
 class UserEvent < WebRequest
   include TypeConverters
 
-  EVENT_PATH = "event"
+  EVENT_PATH = "user_event"
 
   EVENT_TYPE_KEYS = [
     :invalid, :iap, :shutdown
