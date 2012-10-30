@@ -84,6 +84,15 @@
         %th Updated
         %td{ :class => @gamer.updated_at? ? '' : 'blank' }
           = @gamer.updated_at? ? @gamer.updated_at.to_s(:pub_full_ampm_sec_zone) : 'Never'
+      %tr
+        %th Password reset link
+        - if @gamer.token_valid?
+          %td
+            = link_to("#{WEBSITE_URL}/password_resets/#{@gamer.perishable_token}/edit")
+        - else
+          %td.blank
+            Token expired.
+            = button_to('Reset token', reset_perishable_token_tools_gamer_path(@gamer))
 
   %h3 Linked Devices
   = link_to 'Link new device', new_tools_gamer_device_path(:gamer_id => @gamer.id)
