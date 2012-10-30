@@ -16,7 +16,7 @@ describe 'device_info' do
     @click.save
     @device.add_click(@click)
 
-    @account_manager = FactoryGirl.create(:account_mgr_user)
+    @account_manager = FactoryGirl.create(:account_manager)
     visit tools_path
     click_link "Device Info & Unresolved clicks"
   end

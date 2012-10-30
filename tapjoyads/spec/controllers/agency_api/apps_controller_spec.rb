@@ -4,7 +4,7 @@ describe AgencyApi::AppsController do
 
   describe '#index' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
       @app = FactoryGirl.create(:app, :partner => @partner)
@@ -61,7 +61,7 @@ describe AgencyApi::AppsController do
 
   describe '#show' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => partner)
       @app = FactoryGirl.create(:app, :partner => partner)
@@ -123,7 +123,7 @@ describe AgencyApi::AppsController do
 
   describe '#create' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
       @valid_params = {
@@ -207,7 +207,7 @@ describe AgencyApi::AppsController do
 
   describe '#update' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner)
       PartnerAssignment.create!(:user => agency_user, :partner => @partner)
       @app = FactoryGirl.create(:app, :partner => @partner)

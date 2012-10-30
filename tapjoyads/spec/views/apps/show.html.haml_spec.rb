@@ -18,7 +18,7 @@ describe 'dashboard/apps/show.html.haml' do
   context 'with a non-admin user' do
     before :each do
       @app = assigns[:app] = FactoryGirl.create(:app)
-      user = FactoryGirl.create :partner_user
+      user = FactoryGirl.create(:user, :with_partner)
       controller.stub(:current_user).and_return(user)
       view.stub(:current_user).and_return(user)
       render

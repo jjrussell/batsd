@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Job::Job::MasterTerminateSlowInstancesController do
+describe Job::MasterTerminateSlowInstancesController do
   describe '#index' do
     before :each do
       @controller.should_receive(:authenticate).at_least(:once).and_return(true)

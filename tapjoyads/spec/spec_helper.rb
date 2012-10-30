@@ -43,6 +43,7 @@ Spork.prefork do
   require 'rspec/rails'
   require 'rspec/autorun'
   require 'capybara/rspec'
+  require 'db/seeds'
   require 'factory_girl'
   require 'authlogic/test_case'
   require 'hpricot'
@@ -98,6 +99,4 @@ Spork.prefork do
 end
 
 Spork.each_run do
-  UserRole.find_or_create_by_name('admin', :employee => true)
-  UserRole.find_or_create_by_name('account_mgr', :employee => true)
 end

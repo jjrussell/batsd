@@ -4,7 +4,7 @@ describe 'dashboard/tools/users/index.html.haml' do
 
   context 'with a role manager user' do
     before :each do
-      @user = FactoryGirl.create :role_mgr_user
+      @user = FactoryGirl.create :role_manager
       @tapjoy_users = [@user]
       render
     end

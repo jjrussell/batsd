@@ -4,7 +4,7 @@ describe AgencyApi::PartnersController do
 
   describe '#index' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner,
         :balance => 10,
         :pending_earnings => 11,
@@ -45,7 +45,7 @@ describe AgencyApi::PartnersController do
 
   describe '#show' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner,
         :balance => 10,
         :pending_earnings => 11,
@@ -91,7 +91,7 @@ describe AgencyApi::PartnersController do
   describe '#create' do
     before :each do
       @reseller = FactoryGirl.create(:reseller)
-      agency_user = FactoryGirl.create(:agency_user, :reseller => @reseller)
+      agency_user = FactoryGirl.create(:agency, :reseller => @reseller)
       @valid_params = {
         :agency_id => agency_user.id,
         :api_key => agency_user.api_key,
@@ -132,7 +132,7 @@ describe AgencyApi::PartnersController do
 
   describe '#link' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @user = FactoryGirl.create(:user)
       @partner = FactoryGirl.create(:partner)
       @partner.users << @user
@@ -181,7 +181,7 @@ describe AgencyApi::PartnersController do
 
   describe '#update' do
     before :each do
-      agency_user = FactoryGirl.create(:agency_user)
+      agency_user = FactoryGirl.create(:agency)
       @partner = FactoryGirl.create(:partner)
       @partner.users << agency_user
       @valid_params = {

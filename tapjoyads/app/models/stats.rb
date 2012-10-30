@@ -1,4 +1,4 @@
-require 'earth' unless defined? Country
+require 'earth'
 
 class Stats < SimpledbResource
   include RiakMirror

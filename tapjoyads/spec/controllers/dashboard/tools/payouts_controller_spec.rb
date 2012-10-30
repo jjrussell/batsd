@@ -36,7 +36,7 @@ describe Dashboard::Tools::PayoutsController do
 
     context 'when payout manager' do
       before :each do
-        @user = FactoryGirl.create(:payout_manager_user)
+        @user = FactoryGirl.create(:payout_manager)
         @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
         Partner.stub(:find).with(@partner.id).and_return(@partner)
@@ -60,7 +60,7 @@ describe Dashboard::Tools::PayoutsController do
   describe '#create' do
     context 'when a payout manager' do
       before :each do
-        @user = FactoryGirl.create(:payout_manager_user)
+        @user = FactoryGirl.create(:payout_manager)
         @partner = FactoryGirl.create(:partner, :users => [@user])
         login_as(@user)
       end
