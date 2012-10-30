@@ -1,3 +1,6 @@
+# This job is responsible for populating the various summaries in statz with data.
+# It stores this data in Memcache.
+
 class Job::MasterReloadStatzController < Job::JobController
 
   def index

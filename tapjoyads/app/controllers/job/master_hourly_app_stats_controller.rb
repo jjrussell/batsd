@@ -1,3 +1,6 @@
+# This job will queue up every offer with `next_stats_aggregation_time` before
+# now to have its hourly stats aggregated.
+
 class Job::MasterHourlyAppStatsController < Job::JobController
 
   def index

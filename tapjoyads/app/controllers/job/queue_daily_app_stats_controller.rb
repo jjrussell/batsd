@@ -1,3 +1,9 @@
+# This job populates SimpleDB with daily stats sourced from cached Vertica stats
+# in S3. If it detects a mismatch between the realtime daily stat and the
+# cached Vertica stat, it will overwrite the realtime value with the value in
+# Vertica. This will process stats for a single day, starting at
+# `last_daily_stats_aggregation_time`.
+
 class Job::QueueDailyAppStatsController < Job::SqsReaderController
 
   def initialize
