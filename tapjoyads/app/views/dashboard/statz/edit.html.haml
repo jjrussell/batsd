@@ -611,6 +611,10 @@
 
   :plain
 
+      $('form#offer_edit').submit(function() {
+        checkMinimumPrice();
+        return dailyBudget.check() && checkMaximumBid(true);
+      });
     });
 
 - content_for :page_styles do
