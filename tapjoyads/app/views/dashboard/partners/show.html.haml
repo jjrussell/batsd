@@ -60,7 +60,7 @@
           - partner_assignment = user.partner_assignments.find_by_partner_id(@partner.id)
           - if @partner.users.length > 1
             - path = tools_user_partner_assignment_path(:user_id => user.id, :id => partner_assignment.id)
-            = button_to('Remove', path, :method => 'delete', :confirm => 'Are you sure?')
+            = button_to('Remove', path, :method => 'delete', :confirm => 'Warning: Removing this user from the partner account is permanent. Are you sure?')
           - else
             = submit_tag 'Cannot remove last user', :disabled => 'disabled'
       - if permitted_to?(:show, :dashboard_tools_users)
