@@ -51,14 +51,14 @@ class GetOffersController < ApplicationController
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    set_redesign_parameters
+    set_webpage_parameters
     if params[:json] == '1'
       if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'
         @publisher_app.queue_update_attributes(:uses_non_html_responses => true)
       end
       render :json => @final.to_json, :callback => params[:callback]
     else
-      render :template => 'get_offers/webpage_redesign'
+      render :template => 'get_offers/webpage'
     end
   end
 
@@ -306,7 +306,7 @@ class GetOffersController < ApplicationController
     params[:library_version] == 'server'
   end
 
-  def set_redesign_parameters
+  def set_webpage_parameters
     # manual override > result of choose_experiment > :control
     view_id = params[:viewID] || params[:exp] || :control
     view = VIEW_MAP.fetch(view_id.to_sym) { {} }
