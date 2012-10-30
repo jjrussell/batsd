@@ -7,6 +7,9 @@
       = f.check_box(:featured, :class => 'offer_featured')
       = error_message_on offer, :featured
 %tbody.featured-only{:style => "display: none; background-color: #f0f0f0"}
+  %tr
+    %td.featured-note{ :colspan => 2 }= "The following fields only apply to the new Featured Ad Unit."
+
   - unless offer.item_type == 'App'
     %tr
       %th
