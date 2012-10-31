@@ -434,9 +434,18 @@ class Device < SimpledbShardedResource
 
   def in_network_apps
     in_network_apps = []
-    apps = App.where("id IN ('#{self.apps.keys.join("','")}')")
-    apps.each do |app|
-      in_network_apps << InNetworkApp.new(app, last_run_time(app.id))
+
+    external_publishers = ExternalPublisher.load_all_for_device(self)
+
+    app_metadatas = {}
+    AppMetadata.where("id IN ('#{external_publishers.map(&:app_metadata_id).join("','")}')").each do |app_metadata|
+      app_metadatas[app_metadata.id] = app_metadata
+    end
+
+    external_publishers.each do |external_publisher|
+      in_network_apps << InNetworkApp.new(external_publisher,
+                                          app_metadatas[external_publisher.app_metadata_id],
+                                          last_run_time(external_publisher.app_id))
     end
     in_network_apps
   end

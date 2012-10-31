@@ -150,4 +150,7 @@ class ExternalPublisher
     end
   end
 
+  def self.find_by_app_id(app_id)
+    self.load_all[app_id]
+  end
 end

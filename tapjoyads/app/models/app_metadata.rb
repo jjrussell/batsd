@@ -155,19 +155,12 @@ class AppMetadata < ActiveRecord::Base
     save_icon!(icon_src_blob) if icon_src_blob
   end
 
-  def in_network_app_metadata(country = nil)
-    begin
-      data = AppStore.fetch_app_by_id(store_id, store.platform, store.id, country)
-      # TODO: fix this: if data.nil? # might not be available in the US market
-      # TODO: fix this: data = AppStore.fetch_app_by_id(store_id, platform, primary_country)
-    rescue Patron::HostResolutionError, RuntimeError
-    end
-
+  def in_network_app_metadata(options = {})
     {
       :name => name,
       :description => description,
-      :screenshots => data && data[:screenshot_urls],
-      :icon_url => data && data[:icon_url],
+      :screenshots => get_screenshots_urls,
+      :icon_url => Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(id))),
       :developer => developer,
       :price => price,
       :age_rating => age_rating,
@@ -177,6 +170,14 @@ class AppMetadata < ActiveRecord::Base
   end
 
   private
+
+  def get_screenshots_urls
+    screenshots_urls = []
+    JSON::parse(self.screenshots).each do |screenshot_name|
+      screenshots_urls << "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/#{screenshot_name}"
+    end
+    screenshots_urls
+  end
 
   def download_blob(url)
     return nil if url.blank?
