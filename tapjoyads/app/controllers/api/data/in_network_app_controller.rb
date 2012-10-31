@@ -3,8 +3,8 @@ class Api::Data::InNetworkAppController < ApiController
                      :app_name, :currencies, :last_run_time]
 
   def search
-    @object = InNetworkApp.find_by_store_name_and_store_id(params[:store_name], params[:store_key])
-    render_formatted_response(!@object.new_record?, get_object(@object, SAFE_ATTRIBUTES))
+    @object = InNetworkApp.find_by_store_name_and_store_id(params[:store_name], params[:store_id])
+    render_formatted_response(true, get_object(@object, SAFE_ATTRIBUTES))
   end
 
 end
