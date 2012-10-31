@@ -1,0 +1,17 @@
+- @page_title = 'Ban Devices from Click IDs or Device IDs'
+
+%h1= @page_title
+
+= form_tag('', :method => :post, :multipart => true, :class => 'tjform') do
+  %table
+    %tr
+      %td= label_tag :ban_reason, 'Ban Reason:'
+      %td= text_field_tag :ban_reason, params[:ban_reason]
+    %tr
+      %td= label_tag :target_id, 'Device ID or Click ID:'
+      %td= text_field_tag :target_id, params[:target_id]
+    %tr
+      %th= label_tag(:file_content, 'Upload a File:')
+      %td= file_field_tag(:file_content)
+    %tr
+      %td{ :colspan => 2 }= submit_tag('Submit')

@@ -421,6 +421,7 @@ Tapjoyad::Application.routes.draw do
         end
         resources :cached_offer_lists, :only => [:index, :show]
         resources :rejections, :only => [:index]
+        resources :device_ban_lists, :only => [:index, :create]
       end
       resources :ops, :only => :index do
         collection do
