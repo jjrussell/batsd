@@ -1,3 +1,9 @@
+# This job verifies that the stats from processed records in Vertica matches
+# stats from realtime stats saved in SimpleDB. Once the stats have been
+# verified, the day's Vertica stats will be cached to S3. This job will then
+# queue up every offer with `next_daily_stats_aggregation_time` before now to
+# have its daily stats aggregated.
+
 class Job::MasterDailyAppStatsController < Job::JobController
 
   def index

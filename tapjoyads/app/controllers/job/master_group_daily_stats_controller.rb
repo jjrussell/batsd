@@ -1,3 +1,8 @@
+# This job will group daily stats into aggregate totals by partner/platform and
+# global/platform. It will not run until every offer has had its daily stats
+# aggregated for the previous UTC day, after which it will process that entire
+# day's stats.
+
 class Job::MasterGroupDailyStatsController < Job::JobController
 
   def index
