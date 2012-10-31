@@ -151,6 +151,8 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "videos_stream_3g",                            :default => false, :null => false
     t.string   "experiment_id",                 :limit => 36
     t.boolean  "notifications_enabled",                       :default => false
+    t.boolean  "kontagent_enabled"
+    t.string   "kontagent_api_key"
   end
 
   add_index "apps", ["id"], :name => "index_apps_on_id", :unique => true
@@ -642,6 +644,16 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
 
+  create_table "kontagent_integration_requests", :force => true do |t|
+    t.string   "subdomain"
+    t.boolean  "successful"
+    t.string   "rejection_reason"
+    t.string   "partner_id",       :limit => 36, :null => false
+    t.string   "user_id",          :limit => 36, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "monthly_accountings", :id => false, :force => true do |t|
     t.string   "id",                           :limit => 36,                :null => false
     t.string   "partner_id",                   :limit => 36,                :null => false
@@ -950,6 +962,8 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.boolean  "use_server_whitelist",                                                      :default => false,     :null => false
     t.boolean  "enable_risk_management",                                                    :default => false,     :null => false
     t.string   "country"
+    t.boolean  "kontagent_enabled"
+    t.string   "kontagent_subdomain"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true
@@ -1198,6 +1212,7 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.string   "state"
     t.string   "country"
     t.string   "account_type"
+    t.boolean  "kontagent_enabled"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
