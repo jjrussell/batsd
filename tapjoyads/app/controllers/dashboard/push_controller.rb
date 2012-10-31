@@ -17,8 +17,7 @@ class Dashboard::PushController < Dashboard::DashboardController
       flash[:notice] = "Push notifications have been #{@app.notifications_enabled? ? 'enabled' : 'disabled'}"
       redirect_to :action => "index"
     rescue Exception => e
-      logger.info e.message
-      logger.info e.backtrace.join("\n")
+      Airbrake.notify(e)
       flash[:error] = "There was a problem updating this app"
       redirect_to :action => "index"
     end
