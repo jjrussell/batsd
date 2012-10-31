@@ -14,20 +14,10 @@ class CreateKontagentIntegrationRequests < ActiveRecord::Migration
       t.timestamps
     end
 
-    # N.B., despite the spec it appears they're not actually exposing a unique
-    #       identifier for us to use.
-    #
-    #add_column :partners, :kontagent_id, :string
-    #add_column :users, :kontagent_id, :string
-    #add_column :apps, :kontagent_id, :string
-
-    # that said, we do need some way to know if a record
-    # has been integrated. so:
     add_column :partners, :kontagent_enabled, :boolean
     add_column :users, :kontagent_enabled, :boolean
     add_column :apps, :kontagent_enabled, :boolean
 
-    # hmm...?
     add_column :apps, :kontagent_api_key, :string
     add_column :partners, :kontagent_subdomain, :string
   end
