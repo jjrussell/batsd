@@ -14,7 +14,6 @@ describe 'device_info' do
     @click.offer_id = App.find(advertiser_app_id).offers.first.id,
     @click.clicked_at = Time.now - 1.day
     @click.save
-    @device.add_click(@click)
 
     @account_manager = FactoryGirl.create(:account_manager)
     visit tools_path
@@ -30,5 +29,4 @@ describe 'device_info' do
     #page.should have_content "Click ID: #{@click.id}"
   end
 
-  # add more tests for recent_clicks, recent_clicks with cutoff date, etc. upon switching to use device.recent_clicks
 end

@@ -318,8 +318,6 @@ class ClickController < ApplicationController
 
     click.save
 
-    @device.add_click(click)
-
     # for third party tracking vendors
     @offer.queue_click_tracking_requests(params.slice(:udid, :publisher_app_id).merge(:ip_address => ip_address))
   end
