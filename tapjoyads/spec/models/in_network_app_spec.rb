@@ -7,7 +7,7 @@ describe InNetworkApp do
     @store_name = 'android.GooglePlay'
     @store_id = 'xyz123'
     @metadata = FactoryGirl.create(:app_metadata,
-                                  :store_name => @store_name ,
+                                  :store_name => @store_name,
                                   :store_id => @store_id,
                                   :name => 'SomeCoolApp',
                                   :price => 499)

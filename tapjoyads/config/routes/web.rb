@@ -131,7 +131,7 @@ Tapjoyad::Application.routes.draw do
           get :load_featured_content
         end
       end
-      resources :in_network_app do
+      resources :in_network_apps do
         collection do
           get :search
         end
