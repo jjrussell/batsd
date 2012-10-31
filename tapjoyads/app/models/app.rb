@@ -185,7 +185,7 @@ class App < ActiveRecord::Base
   end
 
   def launch_url
-    custom_url_scheme.present? ? custom_url_scheme : default_url_scheme
+    protocol_handler.present? ? protocol_handler : default_url_scheme
   end
 
   def primary_country

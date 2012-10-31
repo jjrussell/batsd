@@ -8,6 +8,9 @@
       %td
         = f.text_field(:protocol_handler)
         = error_message_on @app, :protocol_handler
+        - if @app.protocol_handler.blank?
+          .details
+            = "Current value: #{@app.launch_url} (default)"
 - if @app.deeplink_offers.present?
   %tr.admin
     %th Copy Promo Link URLs
@@ -21,4 +24,14 @@
             =clippy(offer.url)
 
 .hidden
-  #help_admin_protocol_handler_name_content{ :name => 'Protocol Handler' } Protocol handler names are used to track SDK-less offers on iOS devices. The associated offer must be set to 'SDK-less' in order for this to have any effect.  If this field is left blank, a default protocol handler will be used. <br><br> Default protocol handler: <code>tjc&lt;store_id&gt;</code>
+  #help_admin_protocol_handler_name_content{ :name => 'Protocol Handler' }
+    Protocol handler names are used to track SDK-less offers on iOS devices. The associated offer
+    must be set to 'SDK-less' in order for this to have any effect.  If this field is left blank,
+    a default protocol handler will be used.
+    <br><br>
+    Protocol handler names can also store a URL that allows users to launch your app from other
+    Tapjoy enabled mobile/web apps and sites. For iOS apps, register this URL in your
+    <code>Info.plist</code> file. For Android apps, register this URL in your <code>manifest</code>
+    file.  Visit our Knowledge Center for more info.
+    <br><br>
+    Default protocol handler: <code>tjc&lt;store_id&gt;</code>
