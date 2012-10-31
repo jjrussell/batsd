@@ -87,18 +87,34 @@ class SimpledbResource
       def #{name.to_s}()
         get('#{attr_name}', #{get_options.inspect})
       end
-    }
 
-    module_eval %Q{
       def #{name.to_s}=(value)
         #{name.to_s}_will_change! unless #{name.to_s} == value
         put('#{attr_name}', value, #{put_options.inspect})
       end
-    }
 
-    module_eval %Q{
       def #{name.to_s}?
         !get('#{attr_name}', #{get_options.inspect}).blank?
+      end
+
+      def #{name.to_s}_changed?
+        attribute_changed?(:#{name.to_s})
+      end
+
+      def #{name.to_s}_change
+        attribute_change(:#{name.to_s})
+      end
+
+      def #{name.to_s}_was
+        attribute_was(:#{name.to_s})
+      end
+
+      def #{name.to_s}_will_change!
+        attribute_will_change!(:#{name.to_s})
+      end
+
+      def reset_#{name.to_s}!
+        reset_attribute!(:#{name.to_s})
       end
     }
 
