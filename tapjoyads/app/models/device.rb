@@ -112,9 +112,8 @@ class Device < SimpledbShardedResource
     self.idfa = params[:idfa] if params[:idfa].present?
 
     if params[:open_udid].present?
-      open_udid_was = self.open_udid
       self.open_udid = params[:open_udid]
-      path_list << 'open_udid_change' if open_udid_was.present? && open_udid_was != open_udid
+      path_list << 'open_udid_change' if self.open_udid_changed? && self.open_udid_was.present?
     end
 
     is_jailbroken_was = is_jailbroken
@@ -159,9 +158,9 @@ class Device < SimpledbShardedResource
       self.country = params[:country]
     end
 
-    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
+    if (last_run_time_tester? || self.is_jailbroken_changed? || self.country_changed? || path_list.include?('daily_user') || @create_device_identifiers)
       # Temporary change volume tracking, tracking running until 2012-10-31
-      Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
+      Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if self.is_jailbroken_changed?
       save
     end
 
