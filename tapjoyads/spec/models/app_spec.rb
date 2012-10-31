@@ -86,10 +86,10 @@ describe App do
       end
     end
 
-    context 'with a custom_url_scheme' do
-      it 'returns the custom url' do
+    context 'with a protocol_handler' do
+      it 'returns the protocol handler URL' do
         url = 'app_url://some/data'
-        @app.custom_url_scheme = url
+        @app.protocol_handler = url
         @app.launch_url.should == url
       end
     end

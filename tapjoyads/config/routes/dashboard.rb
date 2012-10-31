@@ -36,7 +36,6 @@ Tapjoyad::Application.routes.draw do
         resource :non_rewarded, :only => [:new, :edit, :create, :update, :show ], :controller => :non_rewarded
         collection do
           get :search
-          post :set_custom_url_scheme
         end
         member do
           get :publisher_integrate
