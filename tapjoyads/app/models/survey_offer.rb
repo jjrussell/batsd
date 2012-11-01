@@ -66,6 +66,7 @@ class SurveyOffer < ActiveRecord::Base
   end
 
   def hide!
+    offers.each(&:tapjoy_disable!)
     self.hidden = true
     save
   end

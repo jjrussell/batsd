@@ -193,6 +193,18 @@ describe SurveyOffer do
     end
   end
 
+  describe '#hide!' do
+    it 'sets #hidden? to true' do
+      subject.hide!
+      subject.should be_hidden
+    end
+
+    it 'sets #tapjoy_enabled? to false on the primary offer' do
+      subject.hide!
+      subject.primary_offer.should_not be_tapjoy_enabled
+    end
+  end
+
   describe '.visible' do
     it 'is a scope' do
       described_class.should respond_to :visible
