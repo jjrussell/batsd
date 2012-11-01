@@ -1670,6 +1670,18 @@ describe Offer do
     end
   end
 
+  describe '#tapjoy_disable!' do
+    let(:offer) do
+      @offer.tapjoy_enabled = true
+      @offer.save
+    end
+    it 'sets #tapjoy_enabled? to false' do
+      @offer.tapjoy_disable!
+      @offer.reload
+      @offer.should_not be_tapjoy_enabled
+    end
+  end
+
   describe '#get_disabled_reasons' do
     before :each do
         @offer.tapjoy_enabled = true
