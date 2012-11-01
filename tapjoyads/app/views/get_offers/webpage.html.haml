@@ -8,7 +8,7 @@
   #branding.brand-gradient.clearfix{ :class => @class_fixed }
   #wrapper{ :class => @class_fixed }
     - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-      = render 'currency_selector_test'
+      = render 'currency_selector'
 
     - if @test_offers.present?
       #test_offers
@@ -22,7 +22,7 @@
               %br
               = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
-    %ul#offers{ :class => @class_fixed }
+    %ul#offers
 
     #loading
       #loader
