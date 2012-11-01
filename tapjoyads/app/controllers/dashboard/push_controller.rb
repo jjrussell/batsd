@@ -21,11 +21,11 @@ private
     @app = find_app(params[:app_id])
     @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?platform=#{@app.platform}&signature=#{signature}&signature_method=hmac_sha256"
   end
-  
+
   def signature
     Signage::Signature.new('hmac_sha256', Rails.application.config.notifications_secret).sign({:id => @app.id, :platform => @app.platform})
   end
-  
+
   def notifications_url_base
     Rails.application.config.notifications_url
   end

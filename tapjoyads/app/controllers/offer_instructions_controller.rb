@@ -17,7 +17,7 @@ class OfferInstructionsController < ApplicationController
       params[:data] = ObjectEncryptor.encrypt(params)
     end
 
-    @complete_action_url = @offer.complete_action_url({
+    complete_action_data = {
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,
@@ -26,7 +26,13 @@ class OfferInstructionsController < ApplicationController
       :itunes_link_affiliate => params[:itunes_link_affiliate],
       :library_version       => params[:library_version],
       :os_version            => params[:os_version]
-    })
+    }
+
+    if @offer.pay_per_click?(:ppc_on_instruction)
+      @complete_instruction_url = @offer.instruction_action_url(complete_action_data.merge(:viewed_at => Time.zone.now.to_f))
+    else
+      @complete_instruction_url = @offer.complete_action_url(complete_action_data)
+    end
   end
 
   def app_not_installed

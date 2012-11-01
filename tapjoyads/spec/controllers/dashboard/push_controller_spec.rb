@@ -12,9 +12,9 @@ describe Dashboard::PushController do
     @app = FactoryGirl.create(:app, :partner => @partner, :notifications_enabled => false)
     login_as(@user)
   end
- 
+
   describe 'update' do
-    def do_request(opts={}) 
+    def do_request(opts={})
       post :update, opts.reverse_merge(:app_id => @app.id, :app => {:notifications_enabled => true})
     end
 

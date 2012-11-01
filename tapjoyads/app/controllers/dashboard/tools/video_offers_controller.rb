@@ -15,7 +15,7 @@ class Dashboard::Tools::VideoOffersController < Dashboard::DashboardController
   end
 
   def create
-    # due to the creation order of the primary_offer at the model level, we need to pull out nested 
+    # due to the creation order of the primary_offer at the model level, we need to pull out nested
     # primary_offer_attributes upon creation
     params[:video_offer][:primary_offer_creation_attributes] = params[:video_offer].delete(:primary_offer_attributes)
 

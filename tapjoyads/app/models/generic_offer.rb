@@ -43,7 +43,7 @@ class GenericOffer < ActiveRecord::Base
 
   after_create :create_primary_offer
   after_update :update_offers
-  
+
   accepts_nested_attributes_for :primary_offer
   attr_accessor :primary_offer_creation_attributes
 
