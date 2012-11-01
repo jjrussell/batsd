@@ -15,7 +15,7 @@ class Stats < SimpledbResource
   SPECIAL_STATS     = [ 'virtual_goods', 'countries', 'ranks' ]
   STAT_TYPES        = CONVERSION_STATS + WEB_REQUEST_STATS + SPECIAL_STATS
 
-  COUNTRY_CODES = Country::CODE_TO_NAME
+  COUNTRY_CODES = Earth::Country::CODE_TO_NAME
 
   def initialize(options = {})
     super({ :load_from_memcache => true }.merge(options))
