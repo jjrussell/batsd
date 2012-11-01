@@ -63,7 +63,7 @@ class VideoOffer < ActiveRecord::Base
 
   def available_trackable_offers(selected_video_button)
     buttons   = video_buttons.reject { |vb| vb == selected_video_button }
-    excluding = buttons.map { |vb| [vb.item_id, vb.tracking_offer.app_metadata_id] }
+    excluding = buttons.map { |vb| [vb.item_id, vb.app_metadata_id] }
 
     offers = partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at)
     offers.reject do |offer|
