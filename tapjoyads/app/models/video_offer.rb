@@ -67,11 +67,11 @@ class VideoOffer < ActiveRecord::Base
 
     offers = partner.offers.not_tracking.nonfeatured.visible.trackable.order(:item_type, :name, :created_at)
     offers.reject do |offer|
-      !offer.tapjoy_enabled? ||
-        excluding.include?([offer.item_id, offer.app_metadata_id]) ||
-        offer.item.hidden? ||
-        (offer.app_offer? && offer.app_metadata_id.blank?) ||
-        offer.item_id == self.id
+      !offer.tapjoy_enabled? ||                                       # We can't show disabled offers
+        excluding.include?([offer.item_id, offer.app_metadata_id]) || # Or offers already assigned to video buttons on this video offer
+        offer.item.hidden? ||                                         # Hidden items should also not be shown
+        (offer.app_offer? && offer.app_metadata_id.blank?) ||         # And if the app doesn't have a store assigned, hide it
+        offer.item_id == self.id                                      # And finally, if the offer is this video offer we don't want to show it
     end
   end
 
