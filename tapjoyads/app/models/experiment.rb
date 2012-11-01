@@ -46,9 +46,7 @@ class Experiment < ActiveRecord::Base
 
     # Are there enough free devices to create this experiment?
     if population_size && self.metadata[:bucket_ids].empty?
-      self.available_buckets.inject(0) { |devices, bucket| devices += bucket.size }.tap do |free_devices|
-        free_devices >= population_size or errors.add(:population_size, 'insufficient available devices')
-      end
+      self.available_buckets.map(&:size).reduce(:+) >= population_size or errors.add(:population_size, 'insufficient available devices')
     end
 
     if bucket_type == 'interface' && apps.any?

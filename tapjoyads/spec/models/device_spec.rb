@@ -606,12 +606,6 @@ describe Device do
         Sqs.should_not_receive(:send_message)
         device.save(:create_identifiers => false)
       end
-
-      it 'assigns an experiment bucket' do
-        device.experiment_bucket_id.should be_blank
-        device.save
-        device.experiment_bucket.id.should == ExperimentBucket.first.id
-      end
     end
 
     context 'for an existing device' do

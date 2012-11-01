@@ -10,7 +10,6 @@ class ExperimentBucket < ActiveRecord::Base
   # (so go change it there too and leave this comment)
   REDIS_HASH_KEY = 'experiments:buckets_by_index'
 
-
   # We need to be able to access buckets by their index (creation order)
   # because I *still* can't get modulo division to return a UDID
   def self.id_for_index(i)
@@ -27,10 +26,9 @@ class ExperimentBucket < ActiveRecord::Base
 
   # Assign experiment buckets to each device
   def self.rehash_population(opts = {}, &block)
-    buckets    = opts.delete(:buckets) { 1000 } # number of buckets to hash into
+    buckets    = opts.delete(:buckets) { 10_000 } # number of buckets to hash into
     offset     = opts.delete(:offset) { 0 } # we use a subset of the UDID digest to hash
     limit      = opts.delete(:limit) { nil }
-    chunk_size = opts.delete(:chunk_size) { 10000 }
     alternate  = opts.delete(:alternate) { true }
 
     # offset can be <= 58, else grabbing 6 chars runs past the end of our 64-char SHA1 hashes
@@ -51,30 +49,20 @@ class ExperimentBucket < ActiveRecord::Base
       $redis.hset(REDIS_HASH_KEY, i, bucket.id)
     end
 
-    return if limit == 0 # if maybe you just wanted to create some buckets
-
-    # Assign a bucket to each device
-    total = 0
-    Device.select_all do |device|
-      device.assign_experiment_bucket(offset)
-      device.save
-      (total += 1) == limit and break
-      block.call(total) if block.is_a?(Proc) && total % chunk_size == 0
-    end
+    # Recalculate average bucket size on the offchance someone is using us from the console (or RSpec)
+    average_size!
   end
 
-  # Array of devices assigned to this bucket
-  def devices
-    Device.select_all(condition)
-  end
-
-  # Count of the devices assigned to this bucket
+  # Approximate count of the devices assigned to this bucket
   def size
-    Device.count(condition)
+    ExperimentBucket.average_size
   end
 
-private
-  def condition
-    {:where => %{experiment_bucket_id = "#{self.id}"} }
+  def self.average_size
+    @average_size ||= average_size!
+  end
+
+  def self.average_size!
+    @average_size = (Device.cached_count / count_from_cache) rescue 0
   end
 end
