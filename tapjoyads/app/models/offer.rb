@@ -105,7 +105,6 @@ class Offer < ActiveRecord::Base
   attr_accessor :auditioning
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
-  has_many :associated_offers, :class_name => 'Offer', :foreign_key => :item_id, :primary_key => 'item_id', :conditions => proc { ["id != ?",  id] }
   has_many :rank_boosts
   has_many :enable_offer_requests
   has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
@@ -225,7 +224,7 @@ class Offer < ActiveRecord::Base
   after_update :update_enabled_deeplink_offer_id
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
-  after_save :update_tapjoy_sponsored_associated_offers
+  after_save :update_tapjoy_sponsored_related_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
@@ -377,16 +376,36 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  # ActiveRecord::Relation for all Offers (including this one) with this offer's item ID
+  def related_offers
+    Offer.where(:item_id => item_id)
+  end
+
+  # ActiveRecord::Relation for related offers, minus the "main" offer
+  def non_main_related_offers
+    o = Offer.scoped.table
+    related_offers.where(o[:id].not_eq(item_id))
+  end
+
+  # ActiveRecord::Relation for secondary offers
+  def secondary_offers
+    o = Offer.scoped.table
+    related_offers.where(o[:id].not_eq(id))
+  end
+
+  # ActiveRecord::Relation for related non-main offers that share the same "featured" and "rewarded" status as this one
+  def associated_offers
+    non_main_related_offers.where(:featured => featured?, :rewarded => rewarded?)
+  end
+
+  # ActiveRecord::Relation for associated offers that are tapjoy enabled.
   def tapjoy_enabled_associated_offers
-    filter_attribute('associated_offers', :tapjoy_enabled? => true, :rewarded? => rewarded?, :featured? => featured?)
+    associated_offers.where(:tapjoy_enabled => true)
   end
 
+  # ActiveRecord::Relation for associated offers thet are tapjoy disabled ("Deleted").
   def tapjoy_disabled_associated_offers
-    filter_attribute('associated_offers', :tapjoy_enabled? => false, :rewarded? => rewarded?, :featured? => featured?)
-  end
-
-  def find_associated_offers
-    Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
+    associated_offers.where(:tapjoy_enabled => false)
   end
 
   def integrated?
@@ -410,6 +429,7 @@ class Offer < ActiveRecord::Base
   def primary?
     item_id == id
   end
+  alias_method :main?, :primary?
 
   def is_coupon?
     item_type == 'Coupon'
@@ -1051,9 +1071,9 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def update_tapjoy_sponsored_associated_offers
+  def update_tapjoy_sponsored_related_offers
     if tapjoy_sponsored_changed?
-      find_associated_offers.each do |o|
+      related_offers.each do |o|
         o.tapjoy_sponsored = tapjoy_sponsored
         o.save! if o.changed?
       end

@@ -47,7 +47,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
     respond_to do |format|
       format.html do
-        @associated_offers = @offer.find_associated_offers
+        @secondary_offers = @offer.secondary_offers.all
         @active_boosts = @offer.rank_boosts.active.not_optimized
         @total_boost = @active_boosts.map(&:amount).sum
         @optimized_boosts = @offer.rank_boosts.active.optimized
@@ -94,7 +94,10 @@ class Dashboard::StatzController < Dashboard::DashboardController
   end
 
   def create
-    new_offer = @offer.clone_and_save! { |new_offer| new_offer.name_suffix = params[:suffix] }
+    new_offer = @offer.clone_and_save! do |new_offer|
+      new_offer.tapjoy_enabled = @offer.tapjoy_enabled?
+      new_offer.name_suffix = params[:suffix]
+    end
     flash[:notice] = "Successfully created offer"
     redirect_to statz_path(new_offer)
   end

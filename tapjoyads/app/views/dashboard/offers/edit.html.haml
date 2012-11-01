@@ -1,5 +1,7 @@
 - @page_title = 'Edit Offer'
 
+%h2= "#{@offer.name} (#{(@offer.main? ? 'Main' : @offer.name_suffix)})"
+
 = render('dashboard/apps/offers_shared/descriptions')
 
 %p.description
@@ -15,4 +17,5 @@
     Please note, due to our scale, we can deliver hundreds of conversions in a short period of time. Tapjoy recommends a budget of $500 - $1,000 per day to prevent your campaign from going over budget.
 
 = render('dashboard/apps/offers_shared/scheduling') if @offer.tapjoy_enabled?
+= render('dashboard/apps/offers_shared/associated_offers')
 = render('dashboard/apps/offers_shared/form')

@@ -1971,4 +1971,22 @@ describe Offer do
       end
     end
   end
+
+  describe '#main?' do
+    let(:primary_offer) {FactoryGirl.create(:app).primary_offer}
+    it 'is true for an offer on an ad with no associated offers' do
+      primary_offer.should be_main
+    end
+
+    it 'is true for the original offer on an ad with associated offers' do
+      primary_offer.create_rewarded_featured_clone
+      primary_offer.reload
+      primary_offer.should be_main
+    end
+
+    it 'is false for an associated offer' do
+      offer = primary_offer.create_rewarded_featured_clone
+      offer.should_not be_main
+    end
+  end
 end
