@@ -26,4 +26,44 @@ describe String do
     end
   end
 
+  context 'check version methods' do
+    before :each do
+      @version = "1.2.3"
+      @later_version = "1.5.1"
+      @earlier_version = "1.1.2"
+      @equal_version = "1.2.3"
+    end
+
+    it 'creates an array from a string version number' do
+      @version.to_version_array.should == [1,2,3]
+    end
+
+    it 'checks if version is greater than another version' do
+      @version.version_greater_than?(@later_version).should be_false
+      @version.version_greater_than?(@earlier_version).should be_true
+    end
+
+    it 'checks if version is greater then or equal to another version' do
+      @version.version_greater_than_or_equal_to?(@equal_version).should be_true
+      @version.version_greater_than_or_equal_to?(@earlier_version).should be_true
+      @version.version_greater_than_or_equal_to?(@later_version).should be_false
+    end
+
+    it 'checks if version is less than another version' do
+      @version.version_less_than?(@later_version).should be_true
+      @version.version_less_than?(@earlier_version).should be_false
+    end
+
+    it 'checks if version is less then or equal to another version' do
+      @version.version_less_than_or_equal_to?(@equal_version).should be_true
+      @version.version_less_than_or_equal_to?(@earlier_version).should be_false
+      @version.version_less_than_or_equal_to?(@later_version).should be_true
+    end
+
+    it 'checks if version is equal to another version' do
+      @version.version_equal_to?(@equal_version).should be_true
+      @version.version_equal_to?(@earlier_version).should be_false
+      @version.version_equal_to?(@later_version).should be_false
+    end
+  end
 end
