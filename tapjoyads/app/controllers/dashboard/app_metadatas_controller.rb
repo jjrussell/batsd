@@ -51,7 +51,7 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
   rescue => e
     logger.info e.message
     logger.info e.backtrace.join("\n")
-    flash.now[:error] = @error_message if @error_message
+    flash.now[:error] = @error_message ? @error_message : e.message
     @app_metadata = @orig_app_metadata
     render :action => "show" and return
   end
@@ -97,7 +97,7 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
   rescue => e
     logger.info e.message
     logger.info e.backtrace.join("\n")
-    flash.now[:error] = @error_message if @error_message
+    flash.now[:error] = @error_message ? @error_message : e.message
     render_new_on_error and return
   end
 
