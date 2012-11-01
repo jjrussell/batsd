@@ -1,7 +1,7 @@
 module Offer::Optimization
 
   AUDITION_FACTORS = {
-    :low =>1,
+    :low => 1,
     :medium_low => 2,
     :medium => 3,
     :medium_high => 4,
@@ -23,6 +23,7 @@ module Offer::Optimization
     optimization_override_show_rate(optimized_info, offer_hash, log_info)
     optimization_override_rank_score(optimized_info, offer_hash)
 
+    optimized_info[:auditioning] = offer_hash['auditioning'].present? ? offer_hash['auditioning'] : false
     optimized_info.each do |key, value|
       self.send("#{key}=", value)
     end

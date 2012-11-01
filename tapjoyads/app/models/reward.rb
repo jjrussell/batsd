@@ -41,6 +41,7 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :store_name
   self.sdb_attr :cached_offer_list_id
   self.sdb_attr :cached_offer_list_type
+  self.sdb_attr :auditioning, :type => :bool
 
   belongs_to :offer
 

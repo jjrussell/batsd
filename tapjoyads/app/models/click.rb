@@ -62,6 +62,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :cached_offer_list_id
   self.sdb_attr :cached_offer_list_type
   self.sdb_attr :previous_publisher_ids, :type => :json, :default_value => []
+  self.sdb_attr :auditioning, :type => :bool
 
   #Special case for new domain
   def self.all_domain_names
