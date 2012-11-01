@@ -11,7 +11,7 @@ module Earth
       "AS" => "Asia",
       "EU" => "Europe",
       "NA" => "North America",
-      "OC" => "Oceana",
+      "OC" => "Oceania",
       "SA" => "South America"
     }
     NAME_TO_CODE = CODE_TO_NAME.invert
