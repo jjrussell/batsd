@@ -100,7 +100,7 @@ class OptimizedOfferList
       web_request.s3_offer_list_id = cached_offer_list.id
       web_request.cached_offer_list_id = cached_offer_list.id
       web_request.source = cached_offer_list.source
-      web_request.mecached_key = cached_offer_list.memcached_key
+      web_request.memcached_key = cached_offer_list.memcached_key
       web_request.save
 
       Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
