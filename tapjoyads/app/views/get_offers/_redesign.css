@@ -129,6 +129,9 @@ body {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e82c2c', endColorstr='#b41317',GradientType=0 );
 }
 
+#wrapper.fixed {
+  margin-top: 40px;
+}
 
 #branding {
   border-bottom: 1px solid #720101;
@@ -190,12 +193,6 @@ body {
  */
 ul#offers {
   margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-ul#offers.fixed {
-  margin-top: 40px;
   padding: 0;
   list-style: none;
 }
