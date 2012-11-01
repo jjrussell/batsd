@@ -88,7 +88,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
   rescue => e
     logger.info e.message
     logger.info e.backtrace.join("\n")
-    flash.now[:error] = @error_message if @error_message
+    flash.now[:error] = @error_message ? @error_message : e.message
     initialize_store_options
     render :action => "new"
   end
@@ -97,12 +97,14 @@ class Dashboard::AppsController < Dashboard::DashboardController
     log_activity(@app)
 
     @app.name = params[:app][:name]
-    protocol_handler = params[:app][:protocol_handler].rstrip
-    if permitted_to?(:edit, :dashboard_statz) && ((protocol_handler =~ /\A[^;\/?:@&=+,$-_.!~*'()]\S+:\/\/\S*\z/i).present? || protocol_handler.empty?)
-      @app.protocol_handler = protocol_handler.empty? ? nil : protocol_handler
-    else
-      flash.now[:error] = t('text.protocol_handler.invalid', :default => 'You inputted an invalid protocol handler. Please try again.')
-      render :action => "show" and return
+    protocol_handler = params[:app][:protocol_handler].rstrip if params[:app][:protocol_handler]
+    if permitted_to?(:edit, :dashboard_statz)
+      if ((protocol_handler =~ /\A[^;\/?:@&=+,$-_.!~*'()]\S+:\/\/\S*\z/i).present? || protocol_handler.empty?)
+        @app.protocol_handler = protocol_handler.empty? ? nil : protocol_handler
+      else
+        flash.now[:error] = t('text.protocol_handler.invalid', :default => 'You inputted an invalid protocol handler. Please try again.')
+        render :action => "show" and return
+      end
     end
 
     App.transaction do
@@ -143,7 +145,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
   rescue => e
     logger.info e.message
     logger.info e.backtrace.join("\n")
-    flash.now[:error] = @error_message if @error_message
+    flash.now[:error] = @error_message ? @error_message : e.message
     initialize_store_options
     render :action => "show"
   end
