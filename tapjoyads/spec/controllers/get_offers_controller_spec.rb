@@ -548,6 +548,7 @@ describe GetOffersController do
     end
 
     it 'assigns currencies' do
+      Currency.any_instance.stub(:active_currency_sale).and_return(nil)
       get(:index, @params.merge(:currency_selector => '1'))
       assigns(:currency).should == @currency
       assigns(:currencies).should_not be_nil

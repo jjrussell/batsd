@@ -37,6 +37,7 @@ describe OfferInstructionsController do
         @offer = @app.primary_offer
         Offer.stub(:find_in_cache).and_return(@offer)
         @currency = FactoryGirl.create(:currency)
+        @currency.stub(:active_currency_sale).and_return(nil)
         Currency.stub(:find_in_cache).and_return(@currency)
         ApplicationController.stub(:verify_records).and_return(true)
         @offer.stub(:complete_action_url).and_return('some_website_url')
@@ -159,7 +160,7 @@ describe OfferInstructionsController do
       end
     end
   end
-  
+
   describe '#app_not_installed' do
       before :each do
         ApplicationController.stub(:verify_params).and_return(true)

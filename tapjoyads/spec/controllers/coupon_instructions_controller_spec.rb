@@ -10,6 +10,7 @@ describe CouponInstructionsController do
       @offer.reward_value = 10
       Offer.stub(:find_in_cache).and_return(@offer)
       @currency = FactoryGirl.create(:currency)
+      @currency.stub(:active_currency_sale).and_return(nil)
       Currency.stub(:find_in_cache).and_return(@currency)
       params = { :udid => '123', :publisher_app_id => @app.id,
                  :click_key => 'click', :currency_id => @currency.id,
@@ -120,6 +121,7 @@ describe CouponInstructionsController do
       @offer = @app.primary_offer
       Offer.stub(:find_in_cache).and_return(@offer)
       @currency = FactoryGirl.create(:currency)
+      @currency.stub(:active_currency_sale).and_return([])
       Currency.stub(:find_in_cache).and_return(@currency)
       params = { :udid => '123', :publisher_app_id => @app.id,
                  :click_key => 'click', :currency_id => @currency.id,
