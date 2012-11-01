@@ -32,7 +32,7 @@ class TitleGenerator
   def self.duty(i);       DUTIES.     mod(i); end
 end
 
-COUNTRIES = Country::ALL
+COUNTRIES = Earth::Country::ALL
 
 FactoryGirl.define do
   sequence(:callback_url)     { |n| "http://callbackurl.com/#{n}"}

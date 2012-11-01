@@ -26,10 +26,10 @@ module ApplicationHelper
   end
 
   def list_of_countries
-    Country::ALL
+    Earth::Country::ALL
   end
 
   def list_of_states
-    State::PAIRS
+    Earth::State::PAIRS
   end
 end
