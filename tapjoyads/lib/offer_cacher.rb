@@ -201,16 +201,5 @@ class OfferCacher
       end
     end
 
-    def populate_rails_cache
-      OFFER_TYPES.each do |type|
-        PLATFORM_AND_DEVICE_TYPES.each do |platform, device_types|
-          HIDE_REWARDED_OPTIONS.each do |hide_rewarded_app_installs|
-            device_types.each do |device_type|
-              RailsCache.put("#{type}.#{platform}.#{hide_rewarded_app_installs}.#{device_type}", get_offers_prerejected(type, platform, hide_rewarded_app_installs, device_type))
-            end
-          end
-        end
-      end
-    end
   end
 end
