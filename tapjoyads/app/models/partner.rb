@@ -144,8 +144,11 @@ class Partner < ActiveRecord::Base
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
   scope :find_by_name_or_email, lambda { |name_or_email| { :joins => :users,
-      :conditions => [ "#{Partner.quoted_table_name}.name LIKE ? OR #{User.quoted_table_name}.email LIKE ?", "%#{name_or_email}%", "%#{name_or_email}%" ] }
+      :conditions => [ "#{Partner.quoted_table_name}.name LIKE :query OR #{User.quoted_table_name}.email LIKE :query",
+        { :query => "%#{name_or_email}%" } ],
+      :group => "#{Partner.quoted_table_name}.id"
     }
+  }
 
   scope :premier, :conditions => 'premier_discount > 0'
   scope :payout_info_changed, lambda { |start_date, end_date| { :joins => :payout_info,
@@ -193,6 +196,7 @@ class Partner < ActiveRecord::Base
     result = result.joins(:users).where('users.id = ?', user_id) if user_id
     result = result.scoped_by_country(country) if country
     result = result.find_by_name_or_email(query) if query
+    result = result.group('partners.id')
     result
   end
 
