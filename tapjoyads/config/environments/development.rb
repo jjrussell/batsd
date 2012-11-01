@@ -44,6 +44,11 @@ DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 
+if ENV['AUTO_CACHE_MODELS'].present?
+  models = ENV['AUTO_CACHE_MODELS']
+  AUTO_CACHE_MODELS = (models =~ /^true$/i ? true : models.split(/,\s?/))
+end
+
 SPROCKETS_CONFIG = {
   :compile => false,
   :combine => true,
