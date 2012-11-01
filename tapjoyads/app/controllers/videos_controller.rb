@@ -27,7 +27,7 @@ class VideosController < ApplicationController
   end
 
   def complete
-    return unless verify_params([ :id, :offer_id ])
+    return unless verify_params(:id, :offer_id)
 
     # Set params[:exp] to :control or :test
     choose_experiment(:offerwall_redesign)
@@ -40,7 +40,7 @@ class VideosController < ApplicationController
       @offer       = Offer.find_in_cache(params[:offer_id])
     end
 
-    return unless verify_records([ @video_offer, @offer ])
+    return unless verify_records(@video_offer, @offer)
 
     @video_buttons = @video_offer.video_buttons_for_device_type(device_type)[0..1]
   end
@@ -49,13 +49,13 @@ class VideosController < ApplicationController
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([ :app_id, :udid, :currency_id, :publisher_user_id ])
+    return unless verify_params(:app_id, :udid, :currency_id, :publisher_user_id)
 
     @device = Device.new(:key => params[:udid])
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-    return unless verify_records([ @publisher_app, @currency ])
+    return unless verify_records(@publisher_app, @currency)
 
     if library_version.control_video_caching?
       @hide_videos = params[:hide_videos] =~ /^1|true$/
