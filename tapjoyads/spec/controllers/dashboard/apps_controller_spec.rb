@@ -138,4 +138,38 @@ describe Dashboard::AppsController do
       end
     end
   end
+
+  describe '#update' do
+    before :each do
+      @app = FactoryGirl.create(:app, :partner => @partner)
+      @params = { :id => @app.id, :app => { :name => @app.name }, :state => 'live', :store_id => @app.store_id }
+      App.any_instance.stub(:update_app_metadata).and_return(@app.primary_app_metadata)
+      @app.primary_app_metadata.stub(:update_from_store).and_return(nil)
+    end
+
+    context 'successful update' do
+      before :each do
+        @app.primary_app_metadata.stub(:update_from_store).and_return(nil)
+        put(:update, @params)
+      end
+
+      it 'has a flash notice' do
+        flash[:notice].should == 'App was successfully updated.'
+      end
+    end
+
+    context 'unsuccessful update' do
+      before :each do
+        @app.primary_app_metadata.stub(:update_from_store).and_raise('failed to update from store')
+        put(:update, @params)
+      end
+
+      it 'has a flash error' do
+        flash.now[:error].should == 'Grabbing app data from app store failed. Please try again.'
+      end
+      it 'renders show template' do
+        response.should render_template('show')
+      end
+    end
+  end
 end
