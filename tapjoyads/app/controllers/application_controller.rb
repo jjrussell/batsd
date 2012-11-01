@@ -62,7 +62,9 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def verify_params(required_params, options = { })
+  def verify_params(*args)
+    options = args.extract_options!
+    required_params = args.flatten
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     missing_params = required_params.select{ |param| params[param].blank? } || params[:udid] == 'null'
@@ -70,7 +72,9 @@ class ApplicationController < ActionController::Base
     !missing_params.any?
   end
 
-  def verify_records(required_records, options = { })
+  def verify_records(*args)
+    options = args.extract_options!
+    required_records = args.flatten
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     record_missing = required_records.any?( &:nil? )
