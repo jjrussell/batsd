@@ -207,12 +207,13 @@ class App < ActiveRecord::Base
 
   def build_non_rewarded
     options = {
-      :conversion_rate  => 0,
-      :callback_url     => Currency::NO_CALLBACK_URL,
-      :name             => Currency::NON_REWARDED_NAME,
-      :app_id           => self.id,
-      :tapjoy_enabled   => false,
-      :partner          => self.partner,
+      :conversion_rate    => 0,
+      :callback_url       => Currency::NO_CALLBACK_URL,
+      :name               => Currency::NON_REWARDED_NAME,
+      :app_id             => self.id,
+      :tapjoy_enabled     => false,
+      :partner            => self.partner,
+      :rev_share_override => 0.7
     }
     Currency.new(options)
   end
