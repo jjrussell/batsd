@@ -30,6 +30,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_partner_notifications(/index)' => 'master_partner_notifications#index'
     match 'master_payout_info_reminders(/index)' => 'master_payout_info_reminders#index'
     match 'master_payout_info_reminders(/index)' => 'master_payout_info_reminders#index'
+    match 'master_recreate_actions_from_rewards(/index)' => 'master_recreate_actions_from_rewards#index'
     match 'master_refresh_memcached(/index)' => 'master_refresh_memcached#index'
     match 'master_reload_money(/index)' => 'master_reload_money#index'
     match 'master_reload_statz(/index)' => 'master_reload_statz#index'

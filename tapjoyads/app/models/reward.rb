@@ -130,4 +130,78 @@ class Reward < SimpledbShardedResource
     Click.new(:key => click_key)
   end
 
+  def self.verify_actions_from_rewards(date)
+    # find bad records
+    time = Time.zone.parse(date)
+    bad_actions = []
+    24.times do
+      v_count = VerticaCluster.count 'analytics.actions', "time >= '#{time.to_s(:db)}' and time < '#{(time + 1.hour).to_s(:db)}'"
+      r_count = Reward.count(:where => "created >= '#{time.to_i}' and created < '#{(time + 1.hour).to_i}' and type != 'award_currency' and type != 'customer support' and type != 'reengagement' and type != 'test_offer' and type != 'test_video_offer'")
+      Rails.logger.info "#{time} : #{r_count} - #{v_count} = #{r_count - v_count}"
+      if r_count - v_count > 10
+        bad_actions << time.hour
+      end
+      time += 1.hour
+    end
+
+    bad_actions
+  end
+
+  def self.recreate_actions_from_rewards(date)
+    to_do = Reward.verify_actions_from_rewards(date)
+    Rails.logger.info "running on hours: #{to_do.join(', ')}"
+
+    rewards = {}
+    count = 0
+    to_do.each do |hour|
+      Rails.logger.info "processing #{hour}, current count #{count}"
+      start_time = hour
+      end_time = start_time + 1
+
+      VerticaCluster.query('analytics.actions', :select => 'udid, time, offer_id', :conditions => "time >= '#{date} #{start_time}:00:00' and time < '#{date} #{end_time}:00:00'").each do |r|
+        rewards[r[:udid]] ||= {}
+        rewards[r[:udid]][r[:offer_id]] ||= Set.new
+        rewards[r[:udid]][r[:offer_id]] << r[:time].to_s(:db)
+      end
+
+      conditions = [
+        "created >= '#{Time.zone.parse("#{date}  #{start_time}:00:00").to_i}'",
+        "created < '#{Time.zone.parse("#{date} #{end_time}:00:00").to_i}'",
+        "type != 'award_currency'",
+        "type != 'customer support'",
+        "type != 'reengagement'",
+        "type != 'test_offer'",
+        "type != 'test_video_offer'",
+      ].join(' and ')
+
+      Reward.select_all(:conditions => conditions) do |reward|
+        unless rewards[reward.udid].present? && rewards[reward.udid][reward.offer_id].present? && rewards[reward.udid][reward.offer_id].include?(reward.created.to_s(:db))
+          count += 1
+          web_request = WebRequest.new(:time => reward.created)
+          web_request.path              = 'reward'
+          web_request.type              = reward.type
+          web_request.publisher_app_id  = reward.publisher_app_id
+          web_request.advertiser_app_id = reward.advertiser_app_id
+          web_request.displayer_app_id  = reward.displayer_app_id
+          web_request.offer_id          = reward.offer_id
+          web_request.currency_id       = reward.currency_id
+          web_request.publisher_user_id = reward.publisher_user_id
+          web_request.advertiser_amount = reward.advertiser_amount
+          web_request.publisher_amount  = reward.publisher_amount
+          web_request.displayer_amount  = reward.displayer_amount
+          web_request.tapjoy_amount     = reward.tapjoy_amount
+          web_request.currency_reward   = reward.currency_reward
+          web_request.source            = reward.source
+          web_request.udid              = reward.udid
+          web_request.country           = reward.country
+          web_request.exp               = reward.exp
+          web_request.viewed_at         = reward.viewed_at
+          web_request.click_key         = reward.click_key
+          web_request.save
+        end
+      end
+    end
+    Rails.logger.info "completed with #{count} fixes"
+  end
+
 end
