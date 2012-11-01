@@ -17,7 +17,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
-  has_one :deeplink_offer
+  has_one :deeplink_offer, :required => true
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -368,12 +368,13 @@ class Currency < ActiveRecord::Base
   end
 
   def create_deeplink_offer
-    self.deeplink_offer = DeeplinkOffer.new(:partner => self.partner, :app => self.app, :currency => self)
-    self.enabled_deeplink_offer_id = self.deeplink_offer.id
+    build_deeplink_offer(:partner => partner, :app => app)
+    self.enabled_deeplink_offer_id = deeplink_offer.id
+    true
   end
 
   def approve_on_tapjoy_enabled
-    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled_change
+    if self.pending? && self.tapjoy_enabled_changed? && self.tapjoy_enabled?
       self.approve!
     end
   end

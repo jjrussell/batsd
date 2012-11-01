@@ -49,7 +49,23 @@ end
 
 module ActiveRecord
 
+  module AutosaveAssociation
+
+    def save_has_one_association_with_required_check(reflection)
+      save_has_one_association_without_required_check(reflection).tap do
+        if reflection.options[:required] && (association = association_instance_get(reflection.name)) &&
+          !association.target.nil? && !association.persisted?
+            raise ActiveRecord::RecordNotSaved, "Unable to save #{reflection.name} association"
+        end
+      end
+    end
+
+    alias_method_chain :save_has_one_association, :required_check
+  end
+
   module Associations::ClassMethods
+    @@valid_keys_for_has_one_association << :required
+
     def has_many_with_offer_parent_methods(name, options = {}, &extension)
       if name.to_sym == :offers && options[:as].try(:to_sym) == :item
         include OfferParentIconMethods
@@ -59,6 +75,22 @@ module ActiveRecord
     end
 
     alias_method_chain :has_many, :offer_parent_methods
+
+    def has_one_with_required_option(association_id, options = {})
+      has_one_without_required_option(association_id, options.clone).tap do
+        if options[:required]
+          create_method = :"require_associated_records_for_#{association_id}"
+          define_method(create_method) do
+            if (association = association_instance_get(association_id.to_s)).nil? || association.target.nil?
+              raise ActiveRecord::RecordNotSaved, "Required association: #{association_id} not present"
+            end
+          end
+          after_create create_method
+        end
+      end
+    end
+
+    alias_method_chain :has_one, :required_option
   end
 
   module ConnectionAdapters
