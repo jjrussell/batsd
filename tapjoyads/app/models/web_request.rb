@@ -154,6 +154,7 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :callback_url
   self.define_attr :http_status_code, :type => :int
   self.define_attr :http_response_time, :type => :float
+  self.define_attr :memcached_key
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
