@@ -3,6 +3,13 @@
 %h3
   = @page_title
 
+- if @currency.errors.any?
+  .errors
+    %span There were errors making your changes
+    %ul
+      - @currency.errors.each do |error|
+        %li= error.join(": ")
+
 = form_for [@app, @currency], :url => { :action => 'update' }, :html => {:class => 'tjform'} do |f|
   %table.currency_form
     %tr

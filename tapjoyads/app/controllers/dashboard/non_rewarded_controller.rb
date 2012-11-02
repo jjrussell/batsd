@@ -43,13 +43,25 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
     if permitted_to?(:edit, :dashboard_statz)
       allowed_attr_names += [ :tapjoy_enabled, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override ]
     end
+
+    record_was_valid = true
+
     begin
-      @currency.safe_update_attributes(params[:currency], allowed_attr_names)
-      flash[:notice] = "Non-rewarded has been updated." # TODO i18n
+      record_was_valid = @currency.safe_update_attributes(params[:currency], allowed_attr_names)
     rescue
+      # Exception will have been raised due to insufficient permission
       flash.now[:error] = "Could not update non-rewarded."  # TODO i18n
     end
-    redirect_to app_non_rewarded_path(:app_id => @app.id)
+
+    if !record_was_valid
+      flash.now[:error] = "There were errors saving your record" # TODO i18n
+      render :edit and return
+    else
+      # The save may have still failed here, but it's not a validation fail
+      # so let original (lack of) error handling happen
+      flash[:notice] = "Non-rewarded has been updated." unless flash.now[:error] # TODO i18n
+      redirect_to app_non_rewarded_path(:app_id => @app.id)
+    end
   end
 
   private
