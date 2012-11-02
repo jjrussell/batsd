@@ -379,7 +379,11 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :recommenders, :only => [:index, :create]
-        resources :gamers, :only => [:index, :show]
+        resources :gamers, :only => [:index, :show] do
+          member do
+            post :reset_perishable_token
+          end
+        end
         resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
         resources :network_costs, :only => [:index]
         resources :partner_program_statz, :only => [:index] do

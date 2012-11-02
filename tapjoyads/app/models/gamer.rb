@@ -336,6 +336,11 @@ class Gamer < ActiveRecord::Base
     Friendship.connected?(self, gamer)
   end
 
+  def token_valid?
+    return @token_valid if (instance_variable_defined?("@token_valid"))
+    @token_valid = Gamer.find_using_perishable_token(perishable_token)
+  end
+
   private
 
   def generate_gravatar_hash
