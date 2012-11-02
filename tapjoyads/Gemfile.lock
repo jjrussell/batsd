@@ -266,6 +266,7 @@ GEM
       multipart-post
     httparty (0.7.8)
       crack (= 0.1.8)
+    httpauth (0.2.0)
     httpi (1.1.1)
       rack
     i18n (0.5.0)
@@ -339,6 +340,10 @@ GEM
     nokogiri (1.5.5)
     nori (1.1.2)
     oauth (0.4.5)
+    oauth2 (0.6.0)
+      faraday (~> 0.7)
+      httpauth (~> 0.1)
+      multi_json (~> 1.0)
     ohai (6.14.0)
       ipaddress
       mixlib-cli
@@ -346,6 +351,15 @@ GEM
       mixlib-log
       systemu
       yajl-ruby
+    omniauth (1.1.1)
+      hashie (~> 1.2)
+      rack
+    omniauth-oauth2 (1.0.2)
+      oauth2 (~> 0.6.0)
+      omniauth (~> 1.0)
+    omniauth-tapjoy (1.4.2)
+      omniauth (~> 1.0)
+      omniauth-oauth2
     options (2.3.0)
       fattr
     parallel (0.5.17)
@@ -583,6 +597,7 @@ DEPENDENCIES
   nokogiri (= 1.5.5)
   notifications_client!
   oauth (= 0.4.5)
+  omniauth-tapjoy
   parallel_tests
   patron (= 0.4.4)
   plist (= 3.1.0)

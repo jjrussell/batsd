@@ -192,6 +192,82 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
   add_index "clients", ["name"], :name => "index_clients_on_name"
 
+  create_table "console_authentications", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "provider",                 :null => false
+    t.string   "uid",                      :null => false
+    t.string   "user_id",    :limit => 36, :null => false
+    t.text     "info"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "console_authentications", ["id"], :name => "index_console_authentications_on_id", :unique => true
+
+  create_table "console_permissions", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "group_id",    :limit => 36, :null => false
+    t.string   "action",                    :null => false
+    t.string   "target",                    :null => false
+    t.string   "application",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "console_permissions", ["application"], :name => "index_console_permissions_on_application"
+  add_index "console_permissions", ["group_id"], :name => "index_console_permissions_on_group_id"
+  add_index "console_permissions", ["id"], :name => "index_console_permissions_on_id", :unique => true
+
+  create_table "console_roles", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "name",                      :null => false
+    t.boolean  "publicly_visible"
+    t.string   "application",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "console_roles", ["application"], :name => "index_console_roles_on_application"
+  add_index "console_roles", ["id"], :name => "index_console_roles_on_id", :unique => true
+
+  create_table "console_roles_console_security_permits", :id => false, :force => true do |t|
+    t.string "console_security_permit_id", :limit => 36, :null => false
+    t.string "console_role_id",            :limit => 36, :null => false
+  end
+
+  add_index "console_roles_console_security_permits", ["console_role_id"], :name => "index_console_roles_console_security_permits_on_role_id"
+  add_index "console_roles_console_security_permits", ["console_security_permit_id"], :name => "index_console_roles_console_security_permits_on_permit_id"
+
+  create_table "console_roles_console_security_restrictions", :id => false, :force => true do |t|
+    t.string "console_security_restriction_id", :limit => 36, :null => false
+    t.string "console_role_id",                 :limit => 36, :null => false
+  end
+
+  add_index "console_roles_console_security_restrictions", ["console_role_id"], :name => "index_console_roles_console_security_restrictions_on_role_id"
+  add_index "console_roles_console_security_restrictions", ["console_security_restriction_id"], :name => "index_console_roles_console_security_restrictions_on_restr_id"
+
+  create_table "console_security_permits", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "name",                      :null => false
+    t.string   "application",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "console_security_permits", ["application"], :name => "index_console_security_permits_on_application"
+  add_index "console_security_permits", ["id"], :name => "index_console_security_permits_on_id", :unique => true
+
+  create_table "console_security_restrictions", :id => false, :force => true do |t|
+    t.string   "id",          :limit => 36, :null => false
+    t.string   "name",                      :null => false
+    t.string   "application",               :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "console_security_restrictions", ["application"], :name => "index_console_security_restrictions_on_application"
+  add_index "console_security_restrictions", ["id"], :name => "index_console_security_restrictions_on_id", :unique => true
+
   create_table "conversion_rates", :id => false, :force => true do |t|
     t.string  "id",                    :limit => 36, :null => false
     t.integer "rate",                                :null => false
