@@ -1,0 +1,14 @@
+= stylesheet_link_tag 'top_bar'
+.brand-gradient.clearfix#topbar
+  .clearfix
+    #back-btn
+  .right
+    .logo.mr5
+      %img{:src => 'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='}
+
+:javascript
+  var back = document.getElementById('back-btn');
+  back.addEventListener('click', function(){
+    window.history.back()
+    }
+  );
