@@ -6,43 +6,44 @@
 
 %body
   #branding.brand-gradient.clearfix{ :class => @class_fixed }
-  - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
-    = render 'currency_selector'
+  #wrapper{ :class => @class_fixed }
+    - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
+      = render 'currency_selector'
 
-  - if @test_offers.present?
-    #test_offers
-      - unless @currency.tapjoy_enabled?
-        .explanation
-          You must email #{mail_to("support+enable@tapjoy.com")} before users will be able to view offers.
-      %ul
-        - @test_offers.each do |test_offer|
-          %li
-            = test_offer.name
-            %br
-            = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
+    - if @test_offers.present?
+      #test_offers
+        - unless @currency.tapjoy_enabled?
+          .explanation
+            You must email #{mail_to("support+enable@tapjoy.com")} before users will be able to view offers.
+        %ul
+          - @test_offers.each do |test_offer|
+            %li
+              = test_offer.name
+              %br
+              = link_to("Click to receive #{@currency.get_visual_reward_amount(test_offer, params[:display_multiplier])} #{@currency.name}", get_click_url(test_offer))
 
-  %ul#offers{ :class => @class_fixed }
+    %ul#offers
 
-  #loading
-    #loader
-      #loader_left.loader
-      #loader_center.loader
-      #loader_right.loader
+    #loading
+      #loader
+        #loader_left.loader
+        #loader_center.loader
+        #loader_right.loader
 
-  .container.nbb
-    #more.button.orange.gradientfix
-      = t('text.offerwall.load_more')
+    .container.nbb
+      #more.button.orange.gradientfix
+        = t('text.offerwall.load_more')
 
-    .center.links
-      - if @currency.rewarded?
-        %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
-          = t('text.offerwall.missing_currency', { :currency => @currency.name })
-        &nbsp; | &nbsp;
-      %a{:id => "privacy", :href => "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}"}
-        = t('text.offerwall.privacy')
+      .center.links
+        - if @currency.rewarded?
+          %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
+            = t('text.offerwall.missing_currency', { :currency => @currency.name })
+          &nbsp; | &nbsp;
+        %a{:id => "privacy", :href => "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}"}
+          = t('text.offerwall.privacy')
 
-    #poweredby.center.poweredby
-      = t('text.offerwall.powered')
+      #poweredby.center.poweredby
+        = t('text.offerwall.powered')
 
 :javascript
   #{render 'shared/translations.js',  :filter => 'offerwall'}
