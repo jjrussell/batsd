@@ -34,10 +34,7 @@ class GetOffersController < ApplicationController
   end
 
   def webpage
-    if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
-      @fixed = true
-    end
-
+    @sdk9plus = library_version >= '9'
     if @currency.get_test_device_ids.include?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
       if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
