@@ -47,6 +47,7 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
     record_was_valid = true
 
     begin
+      params[:currency] = sanitize_currency_params(params[:currency], [ :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid ])
       record_was_valid = @currency.safe_update_attributes(params[:currency], allowed_attr_names)
     rescue
       # Exception will have been raised due to insufficient permission
