@@ -85,20 +85,25 @@ describe Dashboard::PartnersController do
     end
 
     context 'by email' do
-      let(:q) { 'daniel.lim@gmail.com' }
-      let(:a_user)  { FactoryGirl.create(:user, :email => q) }
-      let(:partner) { FactoryGirl.create(:partner, :users => [a_user]) }
-
-      before :each do
-        get :index, :q => q
-      end
+      let(:q) { 'foo@example.com' }
+      let(:test_user1) { FactoryGirl.create(:user, :email => q) }
+      let(:test_user2) { FactoryGirl.create(:user, :email => 'bar@example.com') }
+      let(:partner) { FactoryGirl.create(:partner, :users => [test_user1, test_user2]) }
 
       it 'responds with partners known to include the user' do
+        get :index, :q => q
         assigns(:partners).should include partner
       end
 
       it 'responds only with partners which include the email' do
-        assigns(:partners).all? {|p| p.users.include(a_user) }.should be_true
+        get :index, :q => q
+        assigns(:partners).all? {|p| p.users.include(test_user1) }.should be_true
+      end
+
+      it 'does not respond with duplicate results' do
+        partner.id #lazy load partner
+        get :index, :q => 'example.com'
+        assigns(:partners).where('partners.id = ?', partner.id).length.should == 1
       end
     end
 
@@ -137,6 +142,17 @@ describe Dashboard::PartnersController do
 
       it 'responds only with partners managed by indicated manager' do
         assigns(:partners).all? { |p| p.account_managers.include?(manager) }.should be_true
+      end
+    end
+
+    context 'by unmanaged' do
+      let(:test_user1) { FactoryGirl.create(:user, :email => 'foo@example.com') }
+      let(:test_user2) { FactoryGirl.create(:user, :email => 'bar@example.com') }
+      let!(:partner) { FactoryGirl.create(:partner, :users => [test_user1, test_user2]) }
+
+      it 'does not respond with duplicate results' do
+        get :index, :managed_by => :none
+        assigns(:partners).where('partners.id = ?', partner.id).length.should == 1
       end
     end
   end
