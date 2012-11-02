@@ -325,7 +325,18 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     opted_out_types.each { |type| device.opt_out_offer_types = type }
     opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
+    current_ban_status = device.banned
     device.banned = params[:banned] == '1'
+    if device.banned != current_ban_status
+      unless params[:ban_reason].empty?
+        device.ban_notes = device.ban_notes << {:date => Time.now.strftime("%m/%d/%y"),
+                                                :reason => params[:ban_reason],
+                                                :action => device.banned ? 'Banned' : 'Unbanned'}
+      else
+        flash[:error] = "Ban Reason cannot be blank."
+        return redirect_to :back
+      end
+    end
     device.save
     device.unsuspend! if params[:unsuspend] == '1'
     flash[:notice] = 'Device successfully updated.'
