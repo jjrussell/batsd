@@ -7,7 +7,6 @@ class GetOffersController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
   before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
-  # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   tracks_admin_devices(:only => [:webpage, :index])
 
@@ -187,7 +186,7 @@ class GetOffersController < ApplicationController
     params[:source] = 'offerwall' if params[:source].blank?
 
     # No experiment running currently
-    params[:exp] = 'control'
+    choose_experiment(:auditioning_test)
 
     if @save_web_requests
       @web_request = generate_web_request
@@ -267,15 +266,6 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def set_offerwall_experiment
-    experiment = if params[:source] == 'offerwall' && params[:action] == 'webpage'
-      :offerwall_redesign
-    end
-
-    # This method is oddly named; we are choosing a group (control/test)
-    choose_experiment(experiment)
-  end
-
   def set_algorithm
     if params[:source] == 'offerwall'
       @algorithm = '101'
@@ -284,16 +274,7 @@ class GetOffersController < ApplicationController
       @algorithm = '237'
       @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
-  end
-
-  def choose_papaya_experiment
-    if !@for_preview && @device.is_papayan?
-      choose_experiment
-      if params[:exp] == '1'
-        @show_papaya = true
-        @papaya_offers = OfferCacher.get_papaya_offers || {}
-      end
-    end
+    @algorithm = '280' if params[:exp] == 'auditioning_test'
   end
 
   def server_to_server?
