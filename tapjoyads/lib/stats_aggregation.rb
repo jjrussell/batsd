@@ -308,7 +308,9 @@ class StatsAggregation
       stat.parsed_countries.clear
     end
 
+    partner_counter = 1
     Partner.find_each do |partner|
+      puts "#{Time.zone.now}: [#{partner_counter}] Processing partner- #{partner.name} (#{partner.id})..."
       partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_ios_stat = Stats.new(:key => "partner-ios.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
       partner_android_stat = Stats.new(:key => "partner-android.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
@@ -323,6 +325,7 @@ class StatsAggregation
       end
 
       partner.offers.find_each do |offer|
+        puts "#{Time.zone.now}: Processing offer- #{offer.name} (#{offer.id})..."
         case offer.get_platform
         when 'Android'
           global_platform_stat = global_android_stat
@@ -340,6 +343,7 @@ class StatsAggregation
 
         this_stat = Stats.new(:key => "app.#{date.strftime('%Y-%m-%d')}.#{offer.id}")
 
+        puts "#{Time.zone.now}: Summing stats..."
         this_stat.parsed_values.each do |stat, values|
           global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
           partner_stat.parsed_values[stat] = sum_arrays(partner_stat.get_hourly_count(stat), values)
@@ -347,6 +351,7 @@ class StatsAggregation
           partner_platform_stat.parsed_values[stat] = sum_arrays(partner_platform_stat.get_hourly_count(stat), values)
         end
 
+        puts "#{Time.zone.now}: Summing country stats..."
         this_stat.parsed_countries.each do |stat, values|
           global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
           partner_stat.parsed_countries[stat] = sum_arrays(partner_stat.get_hourly_count(['countries', stat]), values)
@@ -355,12 +360,29 @@ class StatsAggregation
         end
       end
 
-      partner_stats.each { |stat| stat.save }
-      partner_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
+      partner_stats.each do |stat|
+        puts "#{Time.zone.now}: Saving partner stat key = #{stat.key}..."
+        stat.save
+      end
+      if aggregate_daily
+        partner_stats.each do |stat|
+          puts "#{Time.zone.now}: Updating partner daily stats for stat key = #{stat.key}..."
+          stat.update_daily_stat
+        end
+      end
+      partner_counter += 1
     end
 
-    global_stats.each { |stat| stat.save }
-    global_stats.each { |stat| stat.update_daily_stat } if aggregate_daily
+    global_stats.each do |stat|
+      puts "#{Time.zone.now}: Saving global stat key = #{stat.key}..."
+      stat.save
+    end
+    if aggregate_daily
+      global_stats.each do |stat|
+        puts "#{Time.zone.now}: Updating global daily stats for stat key = #{stat.key}..."
+        stat.update_daily_stat
+      end
+    end
   end
 
   def self.aggregate_daily_group_stats
