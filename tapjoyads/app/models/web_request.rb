@@ -156,6 +156,14 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :http_response_time, :type => :float
   self.define_attr :memcached_key
   self.define_attr :auditioning, :type => :bool
+  self.define_attr :geoip_continent
+  self.define_attr :geoip_region
+  self.define_attr :geoip_city
+  self.define_attr :geoip_postal_code
+  self.define_attr :geoip_latitude, :type => :float
+  self.define_attr :geoip_longitude, :type => :float
+  self.define_attr :geoip_area_code, :type => :int
+  self.define_attr :geoip_dma_code, :type => :int
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -211,6 +219,14 @@ class WebRequest < AnalyticsLogger::Message
     self.country_code         = params[:country_code]
     self.country              = geoip_data[:primary_country]
     self.geoip_country        = geoip_data[:country]
+    self.geoip_continent      = geoip_data[:continent]
+    self.geoip_region         = geoip_data[:region]
+    self.geoip_city           = geoip_data[:city]
+    self.geoip_postal_code    = geoip_data[:postal_code]
+    self.geoip_latitude       = geoip_data[:lat]
+    self.geoip_longitude      = geoip_data[:long]
+    self.geoip_area_code      = geoip_data[:area_code]
+    self.geoip_dma_code       = geoip_data[:dma_code]
     self.sdk_type             = params[:sdk_type]
     self.plugin               = params[:plugin]
     self.store_name           = params[:store_name]
