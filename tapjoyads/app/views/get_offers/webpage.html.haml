@@ -1,6 +1,6 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 - @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn/#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
-- @class_fixed = @fixed ? "fixed" : ""
+- @class_fixed = @sdk9plus ? "fixed" : ""
 - content_for :page_styles do
   = render 'redesign.css'
 
