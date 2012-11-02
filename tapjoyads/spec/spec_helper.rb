@@ -6,17 +6,17 @@ unless defined?(DeferredGarbageCollection)
     GC_THRESHOLD = 5.0
 
     def self.start
-      # GC.disable
-      # @@thread = Thread.new do
-      #   loop do
-      #     sleep GC_THRESHOLD
-      #     GC.enable; GC.start; GC.disable
-      #   end
-      # end
+      GC.disable
+      @@thread = Thread.new do
+        loop do
+          sleep GC_THRESHOLD
+          GC.enable; GC.start; GC.disable
+        end
+      end
     end
 
     def self.stop
-      # Thread.kill(@@thread)
+      Thread.kill(@@thread)
     end
   end
 end
