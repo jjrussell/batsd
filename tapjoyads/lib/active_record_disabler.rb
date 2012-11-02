@@ -12,7 +12,11 @@ module ActiveRecordDisabler
         alias_method :"__orig_#{m}", m
 
         # Define the method to raise a RuntimeError
-        define_method(m) { raise ActiveRecordDisabler::QueriesDisabled }
+        define_method(m) do
+          raise ActiveRecordDisabler::QueriesDisabled.new(
+            "Queries Disabled to simulate production.  See https://github.com/Tapjoy/tapjoyserver/wiki/ActiveRecordDisabler"
+          )
+        end
       end
     end
 
