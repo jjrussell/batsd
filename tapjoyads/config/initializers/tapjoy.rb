@@ -29,8 +29,10 @@ ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityP
 ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.3.1.zip'
 ANDROID_MARMALADE_EXTENSION = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyMarmaladePlugin_Android_v8.2.2.zip'
 
-IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.3.2.zip'
-IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.3.2.zip'
+IPHONE_CONNECT_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_iOS_v9.0.0.zip'
+IPHONE_CONNECT_SDK_UDID_OPT_OUT = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_iOS_v9.0.0_UDIDOptOut.zip'
+IPHONE_OFFERS_SDK               = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0.zip'
+IPHONE_OFFERS_SDK_UDID_OPT_OUT  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0_UDIDOptOut.zip'
 IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.3.2.zip'
 IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.3.1.zip'
 IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.3.2.zip'
