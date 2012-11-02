@@ -78,14 +78,6 @@ describe App do
       @app = FactoryGirl.create(:app)
     end
 
-    context 'with no custom_url_scheme' do
-      it 'returns the store url' do
-        @app.launch_url.should == @app.default_url_scheme
-        # @app.custom_url_scheme = ''
-        # @app.launch_url.should == @app.default_url_scheme
-      end
-    end
-
     context 'with a protocol_handler' do
       it 'returns the protocol handler URL' do
         url = 'app_url://some/data'
