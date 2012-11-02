@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Continent do
+describe Earth::Continent do
   describe '.continent_code_to_country_codes' do
     let(:continents) { described_class.continent_code_to_country_codes }
 
