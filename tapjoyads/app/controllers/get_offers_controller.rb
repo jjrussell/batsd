@@ -258,6 +258,7 @@ class GetOffersController < ApplicationController
         web_request.offerwall_rank_score = offer.rank_score
         web_request.cached_offer_list_id = offer.cached_offer_list_id
         web_request.cached_offer_list_type = offer.cached_offer_list_type
+        web_request.auditioning = offer.auditioning
         web_request.save
 
         # for third party tracking vendors
