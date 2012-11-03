@@ -2,7 +2,7 @@ class Experiments
 
   # Hash of arrays like :experiment_name => [control, test1, test2, ...]
   EXPERIMENTS = {
-    :offerwall_redesign => %w{control test}
+    :offerwall_redesign => %w{control test},
   }
 
   RANDOMIZER = 'b1396e852a6e87c659967574602b2985'
@@ -122,4 +122,13 @@ Control,#{control[:offerwall_views]},#{control[:clicks]},#{control[:conversions]
       Avg Rev Change:   #{experiment[:avg_rev_change] || 0}%
     END
   end
+
+  def self.get_audition_exp_hash
+    exp = Hash.new
+    (0...5).each  { |i| exp[i] = 'auditioning_control'}
+    (5...10).each { |i| exp[i] = 'auditioning_test' }
+    class << exp; def length; 100; end; end;
+    exp
+  end
+  EXPERIMENTS[:auditioning_test] = self.get_audition_exp_hash
 end
