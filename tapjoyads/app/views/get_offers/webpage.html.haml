@@ -52,7 +52,7 @@
       data = #{@final.to_json};
 
 -# faking initial scroll in sdk9+ to make sure top bar position registers as fixed in ios
-- if @fixed
+- if @sdk9plus
   :javascript
     window.scrollTo(0, 1);
 
