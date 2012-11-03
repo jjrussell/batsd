@@ -115,11 +115,24 @@ class Stats < SimpledbResource
     strip_defaults(@parsed_virtual_goods)
     strip_defaults(@parsed_countries)
 
-    self.values = @parsed_values if self.values != @parsed_values
-    self.virtual_goods = @parsed_virtual_goods if self.virtual_goods != @parsed_virtual_goods
-    self.countries = @parsed_countries if self.countries != @parsed_countries
+    changed = false
 
-    super({ :write_to_memcache => true }.merge(options)) if changed?
+    if self.values != @parsed_values
+      changed = true
+      self.values = @parsed_values
+    end
+
+    if self.virtual_goods != @parsed_virtual_goods
+      changed = true
+      self.virtual_goods = @parsed_virtual_goods
+    end
+    
+    if self.countries != @parsed_countries
+      changed = true
+      self.countries = @parsed_countries
+    end
+
+    super({ :write_to_memcache => true }.merge(options)) if changed
   end
 
   def hourly?
