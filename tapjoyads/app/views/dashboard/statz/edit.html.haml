@@ -180,7 +180,7 @@
         = f.label(:min_conversion_rate, 'Min CVR')
         #help_min_conversion_rate.help ?
       %td
-        = f.text_field(:min_conversion_rate)
+        = f.text_field(:min_conversion_rate, :placeholder => @offer.calculate_min_conversion_rate)
         = error_message_on @offer, :min_conversion_rate
     = render('dashboard/apps/offers_shared/countries', :f => f)
     %tr
