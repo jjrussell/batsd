@@ -230,13 +230,14 @@ describe Dashboard::NonRewardedController do
           @app.build_non_rewarded.save
           @app.save
           @before = @app.non_rewarded
+          @before_test_devices = @before.test_devices.clone
           post(:update, @params)
           @after = @app.non_rewarded
         end
 
         it 'updates the non-rewarded' do
           @before.id.should == @after.id
-          @before.test_devices.should != @after.test_devices
+          @before_test_devices.should_not == @after.test_devices
         end
 
         it 'flashes a success message' do

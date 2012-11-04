@@ -26,6 +26,7 @@ describe Job::QueueSendCurrencyController do
       :publisher_app_id => @currency.id,
       :created => Time.zone.parse('2011-02-15')
     )
+    Currency.stub(:find_in_cache).with(@reward.currency_id, :do_lookup => true).and_return(Currency.find(@reward.currency_id))
     @reward.save
   end
 
@@ -74,7 +75,7 @@ describe Job::QueueSendCurrencyController do
       end
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
-      failures[@currency.id].should == Set.new(@reward.key)
+      failures[@currency.id].should == Set.new.add(@reward.key)
     end
 
     it 'should throw SkippedSendCurrency if callback is bad' do
@@ -100,6 +101,7 @@ describe Job::QueueSendCurrencyController do
        end
 
       currency = FactoryGirl.create(:currency, :callback_url => 'https://www.whatnot.com')
+      Currency.stub(:find_in_cache).with(currency.id, :do_lookup => true).and_return(currency)
       reward = FactoryGirl.create(:reward, :currency_id => currency.id)
 
       Downloader.stub(:get).and_raise(TestingError)
@@ -111,8 +113,8 @@ describe Job::QueueSendCurrencyController do
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
 
-      failures[@currency.id].should == Set.new(@reward.key)
-      failures[currency.id].should == Set.new(reward.key)
+      failures[@currency.id].should == Set.new.add(@reward.key)
+      failures[currency.id].should == Set.new.add(reward.key)
     end
 
     it 'should not record more than 5000 errors' do
@@ -130,7 +132,7 @@ describe Job::QueueSendCurrencyController do
       end
 
       failures = Mc.get("send_currency_failures.#{@mc_time}")
-      failures[@currency.id].should == Set.new(@reward.key)
+      failures[@currency.id].should == (Set.new.add(@reward.key))
     end
 
     it 'should count errors in memcache' do
@@ -245,6 +247,7 @@ describe Job::QueueSendCurrencyController do
     before :each do
       @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
       @currency.save!
+      Currency.stub(:find_in_cache).and_return(@currency)
     end
 
     it 'should add up point purchases' do
@@ -300,6 +303,7 @@ describe Job::QueueSendCurrencyController do
   describe 'with callback url' do
     it 'should have verifier if currency has a secret key' do
       @currency.update_attribute(:secret_key, 'top secret')
+      Currency.stub(:find_in_cache).and_return(@currency)
 
       verifier_params = [
         @reward.key,

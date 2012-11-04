@@ -95,7 +95,7 @@ class Downloader
     response = Downloader.get(url, download_options.merge({:return_response => true}))
     if response.status == 403
       Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
-    elsif response.status < 200 or response.status > 399
+    elsif response.status.to_i < 200 or response.status.to_i > 399
       raise "#{response.status} error from #{url}"
     end
 

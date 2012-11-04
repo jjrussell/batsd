@@ -36,4 +36,12 @@ class String
   def ip_to_i
     split(".").inject(0) { |s, p| (s << 8) + p.to_i }
   end
+
+  def to_a
+    [self]
+  end
+
+  def id
+    self.object_id
+  end
 end

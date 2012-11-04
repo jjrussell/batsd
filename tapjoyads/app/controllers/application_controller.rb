@@ -79,7 +79,7 @@ class ApplicationController < ActionController::Base
     required_records = args.flatten
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    record_missing = required_records.any?( &:nil? )
+    record_missing = required_records.any?(&:nil?)
     render :text => 'record not found', :status => 400 if render_missing_text && record_missing
     !record_missing
   end

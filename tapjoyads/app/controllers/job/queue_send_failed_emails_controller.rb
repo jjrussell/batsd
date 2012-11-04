@@ -7,7 +7,7 @@ class Job::QueueSendFailedEmailsController < Job::SqsReaderController
   private
 
   def on_message(message)
-    message = Marshal.restore(Base64::decode64(message.body))
+    message = Marshal.restore_with_ensure_utf8(Base64::decode64(message.body))
 
     mailer = message[:mailer_name].constantize
     mail = Mail::Message.from_yaml(message[:mail_yaml])

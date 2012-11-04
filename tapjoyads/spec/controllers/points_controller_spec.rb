@@ -5,6 +5,7 @@ describe PointsController do
     before :each do
       @app = FactoryGirl.create(:app)
       @currency = FactoryGirl.create(:currency, :id => @app.id)
+      Currency.stub(:find_in_cache).with(@currency.id).and_return(@currency)
       @params = {
         :app_id => @app.id,
         :udid => 'stuff',
@@ -66,6 +67,7 @@ describe PointsController do
     before :each do
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
+      Currency.stub(:find_in_cache).with(currency.id).and_return(currency)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
@@ -104,6 +106,7 @@ describe PointsController do
     before :each do
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
+      Currency.stub(:find_in_cache).with(currency.id).and_return(currency)
       @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,
@@ -146,6 +149,7 @@ describe PointsController do
     before :each do
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
+      Currency.stub(:find_in_cache).with(currency.id).and_return(currency)
       @vg = FactoryGirl.create(:virtual_good)
       @params = {
         :app_id => app.id,

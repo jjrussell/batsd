@@ -50,6 +50,7 @@ describe Job::QueueConversionTrackingController do
   context 'missing a reward key' do
     before :each do
       @click = FactoryGirl.create(:click, :reward_key => nil, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID')
+      Currency.stub(:find_in_cache).with(@click.currency_id, :do_lookup => true).and_return(Currency.find(@click.currency_id))
       Click.should_receive(:find).and_return(@click)
     end
 
@@ -64,6 +65,7 @@ describe Job::QueueConversionTrackingController do
     before :each do
       @reward_uuid = UUIDTools::UUID.random_create.to_s
       @click = FactoryGirl.create(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install')
+      Currency.stub(:find_in_cache).with(@click.currency_id, :do_lookup => true).and_return(Currency.find(@click.currency_id))
       Click.should_receive(:find).and_return(@click)
       Reward.any_instance.stub(:update_realtime_stats)
       Reward.any_instance.stub(:advertiser_amount).and_return(-50)
@@ -125,7 +127,7 @@ describe Job::QueueConversionTrackingController do
     context 'a paid app install on a jailbroken device' do
       before :each do
         @click.advertiser_amount = 20
-        @click.tapjoy_amount = 30
+        @click.tapjoy_amount = 30        
         @offer = Offer.find_in_cache(@click.offer_id, :do_lookup => true)
         @offer.stub(:is_paid?).and_return(true)
         Offer.stub(:find_in_cache).and_return(@offer)

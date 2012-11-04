@@ -1,3 +1,4 @@
+#encoding: utf-8
 require 'spec_helper'
 
 describe SimpledbResource do
@@ -84,6 +85,7 @@ describe SimpledbResource do
       @model.save!
 
       load_model
+      puts "ENCODING::: #{cgi_escape_val.encoding}"
       @model.get('escaped').should == cgi_escape_val
     end
 

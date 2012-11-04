@@ -35,12 +35,12 @@ FactoryGirl.define do
   end
 
   factory :device_identifier do
-    key { Factory.next(:guid) }
+    key { FactoryGirl.generate(:guid) }
     udid ''
   end
 
   factory :temporary_device do
-    key     { Factory.next(:guid) }
+    key     { FactoryGirl.generate(:guid) }
     apps    {}
   end
 
@@ -69,7 +69,7 @@ FactoryGirl.define do
   end
 
   factory :voucher do
-    key                  { Factory.next(:guid) }
+    key                  { FactoryGirl.generate(:guid) }
     click_key            { FactoryGirl.generate(:name) }
     redemption_code      { FactoryGirl.generate(:name) }
     acquired_at          { Time.zone.now }

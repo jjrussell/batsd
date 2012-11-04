@@ -86,5 +86,9 @@ FactoryGirl.define do
     factory :optimized_rank_booster,   :traits => [:with_optimized_rank_booster_role]
     factory :payout_manager,           :traits => [:with_payout_manager_role]
     factory :role_manager,             :traits => [:with_role_mgr_role]
+
+    after_create do |user|
+      User.stub(:find_in_cache).with(user.id).and_return(user)
+    end
   end
 end

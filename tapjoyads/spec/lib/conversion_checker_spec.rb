@@ -4,6 +4,9 @@ describe ConversionChecker do
   before :each do
     @reward_uuid = UUIDTools::UUID.random_create.to_s
     @click = FactoryGirl.create(:click, :reward_key => @reward_uuid, :clicked_at => Time.zone.now, :publisher_user_id => 'PUID', :type => 'install', :advertiser_amount => -50)
+    Click.stub(:find_in_cache).with(@click.id).and_return(@click)
+    Offer.stub(:find_in_cache).with(@click.offer_id, :do_lookup => true).and_return(Offer.find(@click.offer_id))
+    Currency.stub(:find_in_cache).with(@click.currency_id, :do_lookup => true).and_return(Currency.find(@click.currency_id))
   end
 
   describe '#acceptable_risk?' do

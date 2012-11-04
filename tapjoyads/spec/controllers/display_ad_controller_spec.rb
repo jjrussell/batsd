@@ -15,6 +15,7 @@ describe DisplayAdController do
       S3.stub(:bucket).with(BucketNames::TAPJOY).and_return(@bucket)
 
       @currency = FactoryGirl.create(:currency)
+      Currency.stub(:find_in_cache).with(@currency.id).and_return(@currency)
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',

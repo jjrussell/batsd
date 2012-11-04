@@ -80,9 +80,11 @@ class Mc
       begin
         #Grab a cache to try
         cache = available_caches.shift
+        #"Key: #{cache_key(key)} ::: Value #{cache.get(cache_key(key))}"
         unless cache.nil?
           cache = cache.clone if clone
           value = cache.get(cache_key(key))
+          value.ensure_utf8_encoding! if value.respond_to? :ensure_utf8_encoding!
           Rails.logger.info("Memcache key found: #{key}")
         end
       rescue Memcached::NotFound
@@ -142,7 +144,7 @@ class Mc
 
     if value.is_a? String
       begin
-        Marshal.restore(value)
+        Marshal.restore_with_ensure_utf8(value)
       rescue TypeError
         value
       end

@@ -20,7 +20,7 @@
 
 shared_examples "a controller with permissions" do |permissions_map|
   permissions_map ||= {}
-  public_actions = described_class.public_instance_methods(false).reject{|method_name| method_name.first == '_'}.map(&:to_sym)
+  public_actions = described_class.public_instance_methods(false).reject { |method_name| method_name.to_s.first == '_' }.map(&:to_sym)
   available_roles = Authorization::Engine.instance.roles
 
   context "and" do   # This context just makes the rspec comments read better

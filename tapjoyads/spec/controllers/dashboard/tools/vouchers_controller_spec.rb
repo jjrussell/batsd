@@ -4,6 +4,7 @@ describe Dashboard::Tools::VouchersController do
   describe '#show' do
     before :each do
       @coupon = FactoryGirl.create(:coupon)
+      @coupon.cache
       @voucher = FactoryGirl.create(:voucher, :coupon_id => @coupon.id)
       @voucher2 = FactoryGirl.create(:voucher, :coupon_id => @coupon.id)
       get(:show, :id => @coupon.id)

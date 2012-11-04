@@ -39,7 +39,6 @@ class DisplayAdController < ApplicationController
 
     # always be up to date for previews
     Mc.distributed_delete(keys.first) if params[:publisher_app_id] == App::PREVIEW_PUBLISHER_APP_ID
-
     # if not found in cache, pass data required to generate
     image_data = image_from_cache(keys) do
       publisher = App.find_in_cache(params[:publisher_app_id])
