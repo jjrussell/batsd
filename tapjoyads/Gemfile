@@ -23,7 +23,11 @@ gem 'dalli'
 gem 'declarative_authorization'
 gem 'differ'
 gem 'dynamic_form'
+gem 'em-http-request', :require => 'em-http'
+gem 'em-synchrony', :require => ['em-synchrony',
+                                 'em-synchrony/em-http']
 gem 'escape_utils', '0.2.4'
+gem 'eventmachine', '0.12.10'
 gem 'faraday', '0.7.4'
 gem 'faraday_middleware', '0.7.0'
 gem 'foreman', '0.36.1'
@@ -57,6 +61,7 @@ gem 'patron', '0.4.4'
 gem 'plist', '3.1.0'
 gem 'progress_bar'
 gem 'rack-cors', '0.2.7'
+gem 'rack-fiber_pool',  :require => 'rack/fiber_pool'
 gem 'rails', '~>3.0.12'
 gem 'rake'
 gem 'rabl', '0.7.6'
@@ -87,7 +92,8 @@ gem 'xml-simple', :require => 'xmlsimple'
 gem 'notifications_client', :git => 'git@github.com:Tapjoy/notifications_client.git', :ref => '6594294b8570b63e318a9326f43dd7e427224d1d'
 
 # This needs to be down here to get sdb stuff
-gem 'newrelic_rpm', '3.5.3.25'
+#gem 'newrelic_rpm', '3.5.3.25'
+gem 'newrelic_rpm', '3.5.3.rainbows', :git => 'git@github.com:joe1chen/rpm.git'
 gem 'newrelic_riak', '0.1.1', :github => 'Tapjoy/newrelic-riak', :tag => 'v0.1.2'
 
 group :development, :staging do
@@ -139,7 +145,8 @@ end
 
 group :ops do
   gem 'pry'
-  gem 'unicorn', '4.2.0'
+  #gem 'unicorn', '4.2.0'
+  gem 'rainbows', '4.3.1'
 end
 
 platforms :ruby_18 do

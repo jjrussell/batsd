@@ -98,6 +98,12 @@ GIT
   specs:
     signage (0.0.1)
 
+GIT
+  remote: git@github.com:joe1chen/rpm.git
+  revision: fa54f4b4e31cf67d79ad525c037cab5853463ec8
+  specs:
+    newrelic_rpm (3.5.3.rainbows)
+
 GEM
   remote: http://rubygems.org/
   remote: https://gems.gemfury.com/NpbzcqYHo5hzMWudyHNj/
@@ -216,6 +222,12 @@ GEM
     differ (0.1.2)
     dotenv (0.3.0)
     dynamic_form (1.1.4)
+    em-http-request (0.3.0)
+      addressable (>= 2.0.0)
+      escape_utils
+      eventmachine (>= 0.12.9)
+    em-synchrony (0.2.0)
+      eventmachine (>= 0.12.9)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     escape_utils (0.2.4)
@@ -350,7 +362,6 @@ GEM
     net-ssh-multi (1.1)
       net-ssh (>= 2.1.4)
       net-ssh-gateway (>= 0.99.0)
-    newrelic_rpm (3.5.3.25)
     nokogiri (1.5.5)
     nori (1.1.2)
     oauth (0.4.5)
@@ -402,6 +413,7 @@ GEM
     rack (1.2.6)
     rack-cors (0.2.7)
       rack
+    rack-fiber_pool (0.9.2)
     rack-mount (0.6.14)
       rack (>= 1.0.0)
     rack-test (0.5.7)
@@ -420,6 +432,10 @@ GEM
       rake (>= 0.8.7)
       rdoc (~> 3.4)
       thor (~> 0.14.4)
+    rainbows (4.3.1)
+      kgio (~> 2.5)
+      rack (~> 1.1)
+      unicorn (~> 4.1)
     raindrops (0.10.0)
     rake (10.0.3)
     rb-fchange (0.0.5)
@@ -525,7 +541,7 @@ GEM
       mime-types
       mime-types
     tzinfo (0.3.35)
-    unicorn (4.2.0)
+    unicorn (4.4.0)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
@@ -578,7 +594,10 @@ DEPENDENCIES
   differ
   dotenv
   dynamic_form
+  em-http-request
+  em-synchrony
   escape_utils (= 0.2.4)
+  eventmachine (= 0.12.10)
   factory_girl (~> 2.6)
   factory_girl_rails
   fakememcached!
@@ -617,7 +636,7 @@ DEPENDENCIES
   mysql (= 2.8.1)
   mysql2
   newrelic_riak (= 0.1.1)!
-  newrelic_rpm (= 3.5.3.25)
+  newrelic_rpm (= 3.5.3.rainbows)!
   nokogiri (= 1.5.5)
   notifications_client!
   oauth (= 0.4.5)
@@ -633,7 +652,9 @@ DEPENDENCIES
   rabl (= 0.7.6)
   rack-bug!
   rack-cors (= 0.2.7)
+  rack-fiber_pool
   rails (~> 3.0.12)
+  rainbows (= 4.3.1)
   rake
   rcov
   rdoc (= 3.12)
@@ -666,7 +687,6 @@ DEPENDENCIES
   toystore (= 0.10.2)
   twitter (~> 2.0.0)
   typhoeus (= 0.2.4)
-  unicorn (= 4.2.0)
   uuidtools (= 2.1.2)
   vcr
   vertica (= 0.9.1)
