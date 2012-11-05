@@ -59,7 +59,7 @@
         .label Bucekts used
         .value= @experiment.buckets.count
       .devices
-        .label Actual population size
+        .label Approximate actual population size
         .value= @experiment.buckets.map(&:size).reduce(:+)
     .desc
       .label Description
