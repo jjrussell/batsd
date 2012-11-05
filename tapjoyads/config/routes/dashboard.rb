@@ -198,8 +198,6 @@ Tapjoyad::Application.routes.draw do
 
       end
 
-      resources :kontagent, :only => [:index, :new, :create, :show, :update]
-
       match 'partners/managed_by/:id' => 'partners#managed_by'
       match 'partners/by_country/:country' => 'partners#by_country'
 
@@ -275,17 +273,6 @@ Tapjoyad::Application.routes.draw do
             post :approve, :reject, :assign
           end
         end
-
-        resources :kontagent_approvals, :controller => :approvals, :defaults => { :type => 'KontagentIntegrationRequest' }, :only => [:index] do
-          collection do
-            get :history
-            get :mine
-          end
-          member do
-            post :approve, :reject, :assign
-          end
-        end
-
         resources :approvals, :as => :acceptance, :path => 'acceptance', :only => [:index] do
           collection do
             get :history

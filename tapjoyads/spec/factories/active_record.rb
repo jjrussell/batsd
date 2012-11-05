@@ -375,11 +375,4 @@ FactoryGirl.define do
   factory :experiment_bucket do
     bucket_type 'optimization'
   end
-
-  factory :kontagent_integration_request do
-    association   :partner
-    id            { FactoryGirl.generate(:integer) }
-    successful    false
-    subdomain     { FactoryGirl.generate(:name).downcase.gsub(' ','') }
-  end
 end

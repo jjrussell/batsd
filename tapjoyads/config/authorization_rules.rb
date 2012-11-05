@@ -19,7 +19,6 @@ authorization do
     has_permission_on :dashboard_account_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_videos, :to => [:index, :options, :update_options]
     has_permission_on :dashboard_non_rewarded, :to => [ :show, :new, :create, :edit, :update ]
-    has_permission_on :dashboard_kontagent, :to => [ :index, :show, :new, :create ]
   end
 
   role :agency do
@@ -155,7 +154,6 @@ authorization do
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
     has_permission_on :dashboard_tools_rejections, :to => [ :index ]
-    has_permission_on :dashboard_kontagent, :to => [ :index, :show, :new, :create ]
   end
 
   role :payops do
