@@ -8,12 +8,13 @@ class ExperimentBucket < ActiveRecord::Base
   # NOTE: Changing the value of this constant will break
   # the down method of the CreateExperiments migration
   # (so go change it there too and leave this comment)
-  REDIS_HASH_KEY = 'experiments:buckets_by_index'
+  LOOKUP_KEY = 'experiments:buckets_by_index'
+  OFFSET_KEY = 'experiments:hash_offset'
 
   # We need to be able to access buckets by their index (creation order)
   # because I *still* can't get modulo division to return a UDID
   def self.id_for_index(i)
-    $redis.hget(REDIS_HASH_KEY, i)
+    $redis.hget(LOOKUP_KEY, i)
   end
 
   def self.for_index(i)
@@ -21,7 +22,11 @@ class ExperimentBucket < ActiveRecord::Base
   end
 
   def self.count_from_cache
-    $redis.hlen(REDIS_HASH_KEY)
+    $redis.hlen(LOOKUP_KEY)
+  end
+
+  def self.hash_offset
+    $redis.get(OFFSET_KEY)
   end
 
   # Assign experiment buckets to each device
@@ -34,11 +39,11 @@ class ExperimentBucket < ActiveRecord::Base
     # offset can be <= 58, else grabbing 6 chars runs past the end of our 64-char SHA1 hashes
     # if we need more, we can add some (constant) garbage to the end of udids pre-hashing
     raise ArgumentError.new("Offset too large") if offset > 58
-    $redis.set('experiments:hash_offset', offset)
+    $redis.set(OFFSET_KEY, offset)
 
     # Wipe all existing buckets and create new ones
     self.destroy_all
-    $redis.del(REDIS_HASH_KEY)
+    $redis.del(LOOKUP_KEY)
     bucket_type = 'optimization'
     buckets = buckets.times.collect do |index|
       self.create(:bucket_type => bucket_type)
@@ -46,7 +51,7 @@ class ExperimentBucket < ActiveRecord::Base
     end
 
     ExperimentBucket.order('id asc').all.each_with_index do |bucket, i|
-      $redis.hset(REDIS_HASH_KEY, i, bucket.id)
+      $redis.hset(LOOKUP_KEY, i, bucket.id)
     end
 
     # Recalculate average bucket size on the offchance someone is using us from the console (or RSpec)
