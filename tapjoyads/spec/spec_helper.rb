@@ -102,6 +102,4 @@ Spork.prefork do
 end
 
 Spork.each_run do
-  UserRole.find_or_create_by_name('admin', :employee => true)
-  UserRole.find_or_create_by_name('account_mgr', :employee => true)
 end
