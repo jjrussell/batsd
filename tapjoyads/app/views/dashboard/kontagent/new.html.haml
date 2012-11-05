@@ -1,0 +1,41 @@
+%h2 Get Deeper Insights with Kontagent Premium (Free from TapJoy!)
+%p
+  As a valued Tapjoy customer, you're invited to sign up for Kontagent Premium now, and
+  start measuring meaningful app engagement and monetization metrics more closely. Use
+  Kontagent's industry-leading customer analytics platform to answer questions like:
+
+%ul
+  %li "Is my tutorial achieving my objective?"
+  %li "Am I getting as much usage as possible?"
+  %li "What are my users doing on their first session?"
+
+And,
+
+%ul
+  %li
+    %i "Is my app stable and functional?"
+
+%h4
+  To obtain access to Kontagent Premium, please submit your interest below
+  and your account manager will follow up with you on next steps.
+
+
+= form_for(@kontagent_integration_request, :url => {:action => :create}) do |f|
+  %div.field
+    = f.label "Please provide your desired Kontagent subdomain: " #:subdomain
+    = f.text_field :subdomain, :value => current_partner.name.gsub(/[^0-9a-z]/i, '').downcase[0..4]
+  %small Notes: the subdomain must be lowercase and alpanumeric.
+  %br
+  %br
+  = f.submit "Request Kontagent integration"
+
+%h3 Notes
+%ul
+  %li= "Partner #{current_partner.name} will be provisioned with a Kontagent account (exists remotely? #{KontagentHelpers.exists?(current_partner)})"
+  %li= "User #{current_user.email} will be provisioned with a Kontagent user (exists remotely? #{KontagentHelpers.exists?(current_user)})"
+  %li= "#{current_partner.apps.count} apps will be provisioned with a Kontagent application"
+  - if current_partner.apps.count > 0
+    %li
+      %ol
+        - current_partner.apps.each do |app|
+          %li= "Application '#{app.name}' (exists remotely? #{KontagentHelpers.exists?(app)})"

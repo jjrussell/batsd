@@ -106,6 +106,9 @@ class App < ActiveRecord::Base
   after_update :update_all_offers
   after_update :update_currencies
 
+  before_save :update_kontagent
+  before_destroy :delete_kontagent
+
   scope :visible, :conditions => { :hidden => false }
   scope :by_platform, lambda { |platform| { :conditions => ["platform = ?", platform] } }
   scope :by_partner_id, lambda { |partner_id| { :conditions => ["partner_id = ?", partner_id] } }
@@ -207,13 +210,12 @@ class App < ActiveRecord::Base
 
   def build_non_rewarded
     options = {
-      :conversion_rate    => 0,
-      :callback_url       => Currency::NO_CALLBACK_URL,
-      :name               => Currency::NON_REWARDED_NAME,
-      :app_id             => self.id,
-      :tapjoy_enabled     => false,
-      :partner            => self.partner,
-      :rev_share_override => 0.7
+      :conversion_rate  => 0,
+      :callback_url     => Currency::NO_CALLBACK_URL,
+      :name             => Currency::NON_REWARDED_NAME,
+      :app_id           => self.id,
+      :tapjoy_enabled   => false,
+      :partner          => self.partner,
     }
     Currency.new(options)
   end
@@ -519,5 +521,21 @@ class App < ActiveRecord::Base
         currency.save!
       end
     end
+  end
+
+  def update_kontagent
+    if partner and partner.kontagent_enabled
+      if KontagentHelpers.exists?(self)
+        KontagentHelpers.update!(self) if kontagent_enabled and name_changed?
+      else
+        creation_response = KontagentHelpers.build!(self)
+        self.kontagent_enabled = true
+        self.kontagent_api_key = creation_response['api_key']
+      end
+    end
+  end
+
+  def delete_kontagent
+    KontagentHelpers.delete!(self) if kontagent_enabled
   end
 end

@@ -244,13 +244,6 @@ FactoryGirl.define do
     birthdate { 13.years.ago - 1.day }
   end
 
-  factory :gamer_device do
-    name        { 'my iphone' }
-    device_id   { 'test_id' }
-    device_type { 'iphone' }
-    gamer       { FactoryGirl.generate(:gamer) }
-  end
-
   factory :invitation do
     gamer         { FactoryGirl.create(:gamer) }
     channel       { 0 }
@@ -374,5 +367,12 @@ FactoryGirl.define do
 
   factory :experiment_bucket do
     bucket_type 'optimization'
+  end
+
+  factory :kontagent_integration_request do
+    association   :partner
+    id            { FactoryGirl.generate(:integer) }
+    successful    false
+    subdomain     { FactoryGirl.generate(:name).downcase.gsub(' ','') }
   end
 end

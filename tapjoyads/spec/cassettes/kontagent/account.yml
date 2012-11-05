@@ -1,0 +1,40 @@
+--- 
+recorded_with: VCR 2.2.5
+http_interactions: 
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: subdomain=xjust&name=xJustTestAccount&account_id=352523423442
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      connection: 
+      - close
+      content-type: 
+      - application/json; charset=utf-8
+      transfer-encoding: 
+      - chunked
+      date: 
+      - Fri, 26 Oct 2012 21:23:51 GMT
+      set-cookie: 
+      - sessionid=4668090735b693cc13e96651d39056d5; Domain=.platform.stg.kontagent.com; Path=/
+      server: 
+      - nginx/0.7.64
+      vary: 
+      - Authorization, Cookie
+    body: 
+      string: |-
+        {
+            "subdomain": "xjust.partner",
+            "type": "enterprise",
+            "name": "xJustTestAccount",
+            "account_id": "352523423442"
+        }
+    http_version: "1.1"
+  recorded_at: Fri, 26 Oct 2012 21:23:51 GMT
