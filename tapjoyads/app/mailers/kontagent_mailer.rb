@@ -7,10 +7,4 @@ class KontagentMailer < ActionMailer::Base
     @username         = user.username
     mail :to => user.email, :subject => "Kontagent approval - Tapjoy"
   end
-
-  def rejection(user, rejection_reason)
-    @username         = user.username
-    @rejection_reason = rejection_reason
-    mail :to => user.email, :subject => "Kontagent rejection - Tapjoy"
-  end
 end
