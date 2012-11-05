@@ -1,6 +1,6 @@
 namespace :experiments do
-  desc 'Randomly assign all Devices into BUCKETS buckets with HASH_OFFSET hash offset'
-  task :rehash_population => [:'experiments:clean'] do
+  desc 'Create new experiment buckets and reset hashing parameters'
+  task :rehash => [:'experiments:clean'] do
     raise 'Please set BUCKETS env var to the number of buckets you would like' unless ENV['BUCKETS']
     buckets = ENV['BUCKETS'].to_i
     raise 'BUCKETS must be an integer greater than zero' unless buckets > 0
@@ -9,46 +9,24 @@ namespace :experiments do
 
     rehash_opts = {
       :buckets => buckets,
-      :offset => offset,
-      :chunk_size => 100
+      :offset => offset
     }
-    Rails.env.development? and rehash_opts.merge!(:limit => 1000)
 
-    total_devices = rehash_opts[:limit] || Device.count
+    ExperimentBucket.rehash_population(rehash_opts)
 
-    puts "Hashing #{total_devices} devices into #{buckets} buckets"
-
-    ExperimentBucket.rehash_population(rehash_opts) do |count|
-      puts "#{count}/#{total_devices} devices assigned"
-    end
-
-    bucketed_devices = Device.count(:where => 'experiment_bucket_id is not null')
-
-    puts "Hashed #{bucketed_devices} devices into #{ExperimentBucket.count} buckets"
-    puts "Average bucket size is #{bucketed_devices.to_f / ExperimentBucket.count} devices"
-  end
-
-  if Rails.env.development?
-    desc 'Destroy all experiments (freeing all devices)'
-    task :reset => [:environment] do
-      Experiment.destroy_all
-    end
+    puts "Average bucket size is #{ExperimentBucket.average_size} devices"
   end
 
   desc 'Destroy all experiments and buckets, clear bucket assignment from all Devices'
   task :clean => [:environment] do
-    $redis.del('experiment_buckets')
+    $redis.del(ExperimentBucket::LOOKUP_KEY, ExperimentBucket::OFFSET_KEY)
     ExperimentBucket.destroy_all
-    Experiment.destroy_all
+  end
 
-    devices_to_clear = Device.count(:where => 'experiment_bucket_id is not null')
-    puts "Un-bucketing #{devices_to_clear} devices"
-    cleared = 0
-    Device.select_all(:where => 'experiment_bucket_id is not null').each do |device|
-      device.delete('experiment_bucket_id')
-      device.save
-      cleared += 1
-      puts "Cleared #{cleared}" if cleared % 100 == 0
+  if Rails.env.development?
+    desc 'Destroy all experiments and buckets'
+    task :reset => [:'experiments:clean'] do
+      Experiment.destroy_all
     end
   end
 end
