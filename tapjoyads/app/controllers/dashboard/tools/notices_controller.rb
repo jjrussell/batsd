@@ -3,7 +3,9 @@ class Dashboard::Tools::NoticesController < Dashboard::DashboardController
 
   before_filter :load_notice
 
-  def index; end
+  def index
+    flash.now[:warn] = "BE CAREFUL. This is real HTML. If you forget to close a tag, you can wreck the dashboard and RUIN CHRISTMAS for EVERYONE."
+  end
 
   def update
     @notice.message = params[:message]

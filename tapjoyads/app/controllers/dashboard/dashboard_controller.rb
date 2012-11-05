@@ -135,7 +135,7 @@ class Dashboard::DashboardController < ApplicationController
 
   def set_default_notice
     notice = ProductNotice.instance
-    flash[:notice] = notice.message if(notice.present? && current_user && flash[:notice].blank?)
+    flash.now[:notice] = notice.message if (notice.present? && current_user && flash.now[:notice].blank?)
   end
 
   def nag_user_about_payout_info

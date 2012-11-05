@@ -50,7 +50,7 @@
     %li= link_to 'Fix stuck rewards', fix_rewards_tools_path
     %li= link_to 'Cached Offer Lists', tools_cached_offer_lists_path
     %li= link_to 'Experiments', tools_experiments_path
-    - if permitted_to? :update, :dashboard_tools_notice
+    - if permitted_to? :update, :dashboard_tools_notices
       %li= link_to 'Update dashboard notice', '/dashboard/tools/notices'
 
 - if has_permissions_for_one_of? :games_editor
