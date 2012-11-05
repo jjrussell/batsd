@@ -24,7 +24,7 @@ And,
   %div.field
     = f.label "Please provide your desired Kontagent subdomain: " #:subdomain
     = f.text_field :subdomain, :value => current_partner.name.gsub(/[^0-9a-z]/i, '').downcase[0..4]
-  %small Notes: the subdomain must be lowercase and alpanumeric.
+  %small Notes: the subdomain must be lowercase and alphanumeric.
   %br
   %br
   = f.submit "Request Kontagent integration"
