@@ -187,6 +187,7 @@ authorization do
     includes :tools
     has_permission_on :dashboard_tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_employees, :to => [ :wfhs ]
+    has_permission_on :dashboard_tools_notices, :to => [:edit, :update]
   end
 
   role :partner_changer do
