@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(:version => 20121002183705) do
     t.string   "protocol_handler"
     t.boolean  "reengagement_campaign_enabled",               :default => false
     t.boolean  "uses_non_html_responses",                     :default => false, :null => false
+    t.string   "custom_url_scheme"
     t.boolean  "videos_enabled",                              :default => true,  :null => false
     t.boolean  "videos_cache_auto",                           :default => false, :null => false
     t.boolean  "videos_cache_wifi",                           :default => false, :null => false
