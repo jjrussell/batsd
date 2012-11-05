@@ -1,5 +1,5 @@
 - @page_title = 'Unavailable Offer'
-
+- special_device = params[:udid] == 'statz_test_udid' || @currency.get_test_device_ids.include?(params[:udid])
 
 .pillow.big-msg.m20
   = t('text.unavailable_offer.message', :offer => @offer.name)
@@ -8,6 +8,17 @@
 
   - if @offer.item_type == 'App'
     .primary{ :onclick => @destination_url }= t('text.unavailable_offer.optional_message', :offer => @offer.name)
+  - if special_device
+    %h3 Reason(s)
+    %ul
+      - if @unavailable_reasons.include?(:expired_click)
+        %li Too much time has elapsed since the offer was viewed.
+      - if @unavailable_reasons.include?(:disabled_currency)
+        %li Currency is disabled.
+      - if @unavailable_reasons.include?(:completed_offer)
+        %li Offer was already completed by this device.
+      - if @unavailable_reasons.include?(:disabled_offer)
+        %li Offer is no longer available.
 
 - content_for :page_styles do
   :plain
@@ -64,7 +75,6 @@
       border-radius: 4px;
       color: #fff;
       text-shadow: 0 -1px 0 rgba(0,0,0, .3);
-
     }
 
     .primary:active {
