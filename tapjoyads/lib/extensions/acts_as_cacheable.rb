@@ -136,19 +136,23 @@ module ActsAsCacheable
 
     module InstanceMethods
       def cache_record_for_development
-        if self.class.auto_cache_enabled?
-          if self.respond_to?(:cache)
-            if self.persisted?
-              Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is getting cached"
-              self.cache
+        begin
+          if self.class.auto_cache_enabled?
+            if self.respond_to?(:cache)
+              if self.persisted?
+                Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is getting cached"
+                self.cache
+              else
+                Rails.logger.debug "AUTO_CACHE #{self.class.name} is not persisted"
+              end
             else
-              Rails.logger.debug "AUTO_CACHE #{self.class.name} is not persisted"
+              Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is not cacheable"
             end
           else
-            Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is not cacheable"
+            Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is being skipped"
           end
-        else
-          Rails.logger.debug "AUTO_CACHE #{self.class.name}:#{self.id} is being skipped"
+        rescue => e
+          Rails.logger.debug "AUTO_CACHE #{self.class.name} skipped due to fatal error: #{e.message}"
         end
       end
     end
