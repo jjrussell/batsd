@@ -46,14 +46,15 @@ module Offer::BannerCreatives
     !rewarded? || featured?
   end
 
-  def banner_creative_sizes(return_all = false)
+  def banner_creative_sizes(return_all = false, return_depricated = false)
     return Offer::ALL_CUSTOM_AD_SIZES if return_all
-    return Offer::DISPLAY_AD_SIZES if !featured?
-    return Offer::FEATURED_AD_SIZES
+    return Offer::DISPLAY_AD_SIZES unless featured?
+    return Offer::FEATURED_AD_SIZES unless return_depricated
+    return Offer::FEATURED_AD_ALL_SIZES
   end
 
   def banner_creative_sizes_with_labels
-    Offer::FEATURED_AD_ALL_SIZES.collect do |size|
+    banner_creative_sizes(false, true).collect do |size|
 
       data = {:size => size, :label => size.dup, :desc => ''}
 
