@@ -76,7 +76,7 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
     @conditions ||= {}
 
     @conditions[:owner_id] = params[:owner_id] if params[:owner_id].present?
-    @conditions[:item_type] = params[:type].to_s if params[:type].present?
+    @conditions[:item_type] = params[:type].to_s.capitalize if params[:type].present?
     @conditions[:item_type] ||= params[:item_type] if params[:item_type].present?
 
     @hide_type = params[:type].present?
@@ -84,7 +84,7 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
 
   # Check for the selected models partial, use the generic one if it doesn't exist
   def setup_partial
-    @table_partial = @conditions.fetch(:item_type) { 'table' }.camelize.downcase
+    @table_partial = @conditions.fetch(:item_type) { 'table' }.downcase
     if @table_partial != 'table'
       view_path = self.class.to_s.underscore.gsub(/_controller$/, '')
       partial_path = Rails.root.join('app/views', view_path, "_#{@table_partial}.html.#{view_language}")
