@@ -1,0 +1,1277 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: subdomain=thison&name=thisOneCoolAccount&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=fea2df3c944033aa0d07cf82842fc231; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:39 GMT
+    body: 
+      string: |-
+        {
+            "subdomain": "thison.partner",
+            "type": "enterprise",
+            "name": "thisOneCoolAccount",
+            "account_id": "35242"
+        }
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:38 GMT
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/users/
+    body: 
+      string: first_name=--&last_name=--&user_id=34254&username=some.one%40any.net&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=675d76e4d041e2f41d4f6ea2ccf2c63d; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:39 GMT
+    body: 
+      string: |-
+        {
+            "username": "some.one@any.net",
+            "first_name": "--",
+            "last_name": "--",
+            "user_id": "34254",
+            "account_id": "35242",
+            "phone": "",
+            "job_title": ""
+        }
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:39 GMT
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/applications/
+    body: 
+      string: application_id=43221&platform_name=iOS&platform_type=mobile&name=thisOneCoolApp&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=60723ecd42480169634d6ae5241aa23a; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:40 GMT
+    body: 
+      string: |-
+        {
+            "application_id": "43221",
+            "name": "thisOneCoolApp",
+            "platform_name": "iOS",
+            "platform_type": "mobile",
+            "api_key": "9c92a82e65d3429b8803be2728986c24",
+            "account_id": "35242"
+        }
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:40 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=4a3f505f6cc9c53365bb0993aeb8d441; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:42 GMT
+    body: 
+      string: |-
+        [
+            {
+                "subdomain": "thison.partner",
+                "type": "enterprise",
+                "name": "thisOneCoolAccount",
+                "account_id": "35242"
+            },
+            {
+                "subdomain": "thisco.partner",
+                "type": "enterprise",
+                "name": "thisCoolAccount",
+                "account_id": "0"
+            },
+            {
+                "subdomain": "thatco.partner",
+                "type": "enterprise",
+                "name": "thatCoolAccount",
+                "account_id": "116650755213"
+            },
+            {
+                "subdomain": "mycool.partner",
+                "type": "enterprise",
+                "name": "myCoolAccount",
+                "account_id": "157781908177"
+            },
+            {
+                "subdomain": "oneawe.partner",
+                "type": "enterprise",
+                "name": "oneAwesomeAccount",
+                "account_id": "65670158232"
+            },
+            {
+                "subdomain": "thissu.partner",
+                "type": "enterprise",
+                "name": "thisSuperbAccount",
+                "account_id": "175180521720"
+            },
+            {
+                "subdomain": "asuper.partner",
+                "type": "enterprise",
+                "name": "aSuperbAccount",
+                "account_id": "89116535805"
+            },
+            {
+                "subdomain": "superb.partner",
+                "type": "enterprise",
+                "name": "superbAccount",
+                "account_id": "29428329014"
+            },
+            {
+                "subdomain": "great.partner",
+                "type": "enterprise",
+                "name": "greatAccount",
+                "account_id": "47609491507"
+            },
+            {
+                "subdomain": "someco.partner",
+                "type": "enterprise",
+                "name": "someCoolAccount",
+                "account_id": "246671953470"
+            },
+            {
+                "subdomain": "thatgr.partner",
+                "type": "enterprise",
+                "name": "thatGreatAccount",
+                "account_id": "336833695237"
+            },
+            {
+                "subdomain": "onegre.partner",
+                "type": "enterprise",
+                "name": "Name 1",
+                "account_id": "245284235224"
+            },
+            {
+                "subdomain": "somegr.partner",
+                "type": "enterprise",
+                "name": "SomeGreatTestCom",
+                "account_id": "111910009540"
+            },
+            {
+                "subdomain": "tst.partner",
+                "type": "enterprise",
+                "name": "SomeTestCo",
+                "account_id": "68555271154"
+            },
+            {
+                "subdomain": "bar3.partner",
+                "type": "enterprise",
+                "name": "Bar3",
+                "account_id": "b333"
+            },
+            {
+                "subdomain": "aaa21.partner",
+                "type": "enterprise",
+                "name": "awefa12",
+                "account_id": "c"
+            },
+            {
+                "subdomain": "aaa.partner",
+                "type": "enterprise",
+                "name": "awefa",
+                "account_id": "a12"
+            },
+            {
+                "subdomain": "bar.partner",
+                "type": "enterprise",
+                "name": "Bar 2",
+                "account_id": "b1"
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:41 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/applications/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=abe1ad70d0124c0e13a6cd8b59bc23ed; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:44 GMT
+    body: 
+      string: |-
+        [
+            {
+                "application_id": "306305741945",
+                "name": "thisSuperbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "9c61e1f030bf4ade862e6e74218bcab3",
+                "account_id": "175180521720"
+            },
+            {
+                "application_id": "140100845413",
+                "name": "aSuperbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "fc1d902f6850447f8c363390c9d0a540",
+                "account_id": "89116535805"
+            },
+            {
+                "application_id": "66439637100",
+                "name": "superbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "39961c2dcb974d769ea337b5f1d78698",
+                "account_id": "29428329014"
+            },
+            {
+                "application_id": "186068612941",
+                "name": "greatApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "7d19fbd0636f4cb680875cf4dc5456f1",
+                "account_id": "47609491507"
+            },
+            {
+                "application_id": "50449394196",
+                "name": "someCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "7d7bc7802b884d36bc8628b48f7d5298",
+                "account_id": "246671953470"
+            },
+            {
+                "application_id": "218921219552",
+                "name": "thatGreatApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "73b833fd614f4fbc8d1d86d256e12586",
+                "account_id": "336833695237"
+            },
+            {
+                "application_id": "1077652304",
+                "name": "Name 2",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "b4d0789c3f68445ca0a8b074fb1b122c",
+                "account_id": "245284235224"
+            },
+            {
+                "application_id": "164079301864",
+                "name": "SomeTestGame",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "daa711d389eb46ef84a9531120c4251c",
+                "account_id": "68555271154"
+            },
+            {
+                "application_id": "bar3app",
+                "name": "bar3",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "62957cb8f227413aa4887d0095db6c68",
+                "account_id": "b333"
+            },
+            {
+                "application_id": "au1",
+                "name": "a",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "a0c140399fbf4686a1ba41b0ae0444b6",
+                "account_id": "c"
+            },
+            {
+                "application_id": "ba1",
+                "name": "aa1",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "98c49d0952064cb5a87e070d018f3750",
+                "account_id": "b1"
+            },
+            {
+                "application_id": "26353513872",
+                "name": "oneAwesomeApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "2e48acd59c3e40bc9b46ae3f265ac621",
+                "account_id": "65670158232"
+            },
+            {
+                "application_id": "307273689245",
+                "name": "myCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "1bfd9ad24ecb45d8bcc46baf8147bb03",
+                "account_id": "157781908177"
+            },
+            {
+                "application_id": "74708143413",
+                "name": "thatCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "86114c8762a14dc38ec86ccf92660bd3",
+                "account_id": "116650755213"
+            },
+            {
+                "application_id": "0",
+                "name": "thisCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "c8345b24550e4d27afa5872b8710219e",
+                "account_id": "0"
+            },
+            {
+                "application_id": "43221",
+                "name": "thisOneCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "9c92a82e65d3429b8803be2728986c24",
+                "account_id": "35242"
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:44 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/users/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=5df200cdcd3ba358e40723481dd36403; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Wed, 17 Oct 2012 23:57:47 GMT
+    body: 
+      string: |-
+        [
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "88464240370",
+                "account_id": "175180521720",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "291065599114",
+                "account_id": "89116535805",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "186096776865",
+                "account_id": "29428329014",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "75313398969",
+                "account_id": "47609491507",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some1@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "267547249329",
+                "account_id": "246671953470",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some1@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "204228601514",
+                "account_id": "336833695237",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.tester@tj.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "116893621144",
+                "account_id": "245284235224",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.tester@tj.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "175963973705",
+                "account_id": "68555271154",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "bar3@user.com",
+                "first_name": "bab",
+                "last_name": "baba",
+                "user_id": "bar3user",
+                "account_id": "b333",
+                "phone": "dd",
+                "job_title": "dd"
+            },
+            {
+                "username": "a@a2.com",
+                "first_name": "",
+                "last_name": "",
+                "user_id": "bu2",
+                "account_id": "c",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "156765893529",
+                "account_id": "65670158232",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "9776794814",
+                "account_id": "157781908177",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "178653606306",
+                "account_id": "116650755213",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "0",
+                "account_id": "0",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "34254",
+                "account_id": "35242",
+                "phone": "",
+                "job_title": ""
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Wed, 17 Oct 2012 23:57:46 GMT
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: subdomain=thison&name=thisOneCoolAccount&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 409
+      message: CONFLICT
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - text/plain
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=b729aafeb2461f7450b9c77f6db8e0d1; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Thu, 18 Oct 2012 00:00:10 GMT
+    body: 
+      string: Invalid Account Name "thisOneCoolAccount". Account Name has already been taken.
+    http_version: "1.1"
+  recorded_at: Thu, 18 Oct 2012 00:00:09 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=a9bb1c5372d7fb0c9f02d4c44d32880b; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Thu, 18 Oct 2012 00:46:29 GMT
+    body: 
+      string: |-
+        [
+            {
+                "subdomain": "thison.partner",
+                "type": "enterprise",
+                "name": "thisOneCoolAccount",
+                "account_id": "35242"
+            },
+            {
+                "subdomain": "thisco.partner",
+                "type": "enterprise",
+                "name": "thisCoolAccount",
+                "account_id": "0"
+            },
+            {
+                "subdomain": "thatco.partner",
+                "type": "enterprise",
+                "name": "thatCoolAccount",
+                "account_id": "116650755213"
+            },
+            {
+                "subdomain": "mycool.partner",
+                "type": "enterprise",
+                "name": "myCoolAccount",
+                "account_id": "157781908177"
+            },
+            {
+                "subdomain": "oneawe.partner",
+                "type": "enterprise",
+                "name": "oneAwesomeAccount",
+                "account_id": "65670158232"
+            },
+            {
+                "subdomain": "thissu.partner",
+                "type": "enterprise",
+                "name": "thisSuperbAccount",
+                "account_id": "175180521720"
+            },
+            {
+                "subdomain": "asuper.partner",
+                "type": "enterprise",
+                "name": "aSuperbAccount",
+                "account_id": "89116535805"
+            },
+            {
+                "subdomain": "superb.partner",
+                "type": "enterprise",
+                "name": "superbAccount",
+                "account_id": "29428329014"
+            },
+            {
+                "subdomain": "great.partner",
+                "type": "enterprise",
+                "name": "greatAccount",
+                "account_id": "47609491507"
+            },
+            {
+                "subdomain": "someco.partner",
+                "type": "enterprise",
+                "name": "someCoolAccount",
+                "account_id": "246671953470"
+            },
+            {
+                "subdomain": "thatgr.partner",
+                "type": "enterprise",
+                "name": "thatGreatAccount",
+                "account_id": "336833695237"
+            },
+            {
+                "subdomain": "onegre.partner",
+                "type": "enterprise",
+                "name": "Name 1",
+                "account_id": "245284235224"
+            },
+            {
+                "subdomain": "somegr.partner",
+                "type": "enterprise",
+                "name": "SomeGreatTestCom",
+                "account_id": "111910009540"
+            },
+            {
+                "subdomain": "tst.partner",
+                "type": "enterprise",
+                "name": "SomeTestCo",
+                "account_id": "68555271154"
+            },
+            {
+                "subdomain": "bar3.partner",
+                "type": "enterprise",
+                "name": "Bar3",
+                "account_id": "b333"
+            },
+            {
+                "subdomain": "aaa21.partner",
+                "type": "enterprise",
+                "name": "awefa12",
+                "account_id": "c"
+            },
+            {
+                "subdomain": "aaa.partner",
+                "type": "enterprise",
+                "name": "awefa",
+                "account_id": "a12"
+            },
+            {
+                "subdomain": "bar.partner",
+                "type": "enterprise",
+                "name": "Bar 2",
+                "account_id": "b1"
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Thu, 18 Oct 2012 00:46:29 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/applications/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=d9752adb2e02cc43682ad54270305e0d; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Thu, 18 Oct 2012 01:04:45 GMT
+    body: 
+      string: |-
+        [
+            {
+                "application_id": "306305741945",
+                "name": "thisSuperbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "9c61e1f030bf4ade862e6e74218bcab3",
+                "account_id": "175180521720"
+            },
+            {
+                "application_id": "140100845413",
+                "name": "aSuperbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "fc1d902f6850447f8c363390c9d0a540",
+                "account_id": "89116535805"
+            },
+            {
+                "application_id": "66439637100",
+                "name": "superbApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "39961c2dcb974d769ea337b5f1d78698",
+                "account_id": "29428329014"
+            },
+            {
+                "application_id": "186068612941",
+                "name": "greatApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "7d19fbd0636f4cb680875cf4dc5456f1",
+                "account_id": "47609491507"
+            },
+            {
+                "application_id": "50449394196",
+                "name": "someCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "7d7bc7802b884d36bc8628b48f7d5298",
+                "account_id": "246671953470"
+            },
+            {
+                "application_id": "218921219552",
+                "name": "thatGreatApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "73b833fd614f4fbc8d1d86d256e12586",
+                "account_id": "336833695237"
+            },
+            {
+                "application_id": "1077652304",
+                "name": "Name 2",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "b4d0789c3f68445ca0a8b074fb1b122c",
+                "account_id": "245284235224"
+            },
+            {
+                "application_id": "164079301864",
+                "name": "SomeTestGame",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "daa711d389eb46ef84a9531120c4251c",
+                "account_id": "68555271154"
+            },
+            {
+                "application_id": "bar3app",
+                "name": "bar3",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "62957cb8f227413aa4887d0095db6c68",
+                "account_id": "b333"
+            },
+            {
+                "application_id": "au1",
+                "name": "a",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "a0c140399fbf4686a1ba41b0ae0444b6",
+                "account_id": "c"
+            },
+            {
+                "application_id": "ba1",
+                "name": "aa1",
+                "platform_name": "android",
+                "platform_type": "mobile",
+                "api_key": "98c49d0952064cb5a87e070d018f3750",
+                "account_id": "b1"
+            },
+            {
+                "application_id": "26353513872",
+                "name": "oneAwesomeApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "2e48acd59c3e40bc9b46ae3f265ac621",
+                "account_id": "65670158232"
+            },
+            {
+                "application_id": "307273689245",
+                "name": "myCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "1bfd9ad24ecb45d8bcc46baf8147bb03",
+                "account_id": "157781908177"
+            },
+            {
+                "application_id": "74708143413",
+                "name": "thatCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "86114c8762a14dc38ec86ccf92660bd3",
+                "account_id": "116650755213"
+            },
+            {
+                "application_id": "0",
+                "name": "thisCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "c8345b24550e4d27afa5872b8710219e",
+                "account_id": "0"
+            },
+            {
+                "application_id": "43221",
+                "name": "thisOneCoolApp",
+                "platform_name": "iOS",
+                "platform_type": "mobile",
+                "api_key": "9c92a82e65d3429b8803be2728986c24",
+                "account_id": "35242"
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Thu, 18 Oct 2012 01:04:45 GMT
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/users/
+    body: 
+      string: first_name=--&last_name=--&user_id=34255&username=another.one%40any.net&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=38ced3cfc4ca14d340a3987a057aae3e; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Thu, 18 Oct 2012 01:07:25 GMT
+    body: 
+      string: |-
+        {
+            "username": "another.one@any.net",
+            "first_name": "--",
+            "last_name": "--",
+            "user_id": "34255",
+            "account_id": "35242",
+            "phone": "",
+            "job_title": ""
+        }
+    http_version: "1.1"
+  recorded_at: Thu, 18 Oct 2012 01:07:24 GMT
+- request: 
+    method: get
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/users/
+    body: 
+      string: ""
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      content-type: 
+      - application/json; charset=utf-8
+      connection: 
+      - close
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=99f1970198d5bf1ef65da0a12e8af8c8; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Tue, 30 Oct 2012 15:31:01 GMT
+    body: 
+      string: |-
+        [
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "88464240370",
+                "account_id": "175180521720",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "291065599114",
+                "account_id": "89116535805",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "186096776865",
+                "account_id": "29428329014",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "75313398969",
+                "account_id": "47609491507",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some1@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "267547249329",
+                "account_id": "246671953470",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some1@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "204228601514",
+                "account_id": "336833695237",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.tester@tj.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "116893621144",
+                "account_id": "245284235224",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.tester@tj.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "175963973705",
+                "account_id": "68555271154",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "bar3@user.com",
+                "first_name": "bab",
+                "last_name": "baba",
+                "user_id": "bar3user",
+                "account_id": "b333",
+                "phone": "dd",
+                "job_title": "dd"
+            },
+            {
+                "username": "a@a2.com",
+                "first_name": "",
+                "last_name": "",
+                "user_id": "bu2",
+                "account_id": "c",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "156765893529",
+                "account_id": "65670158232",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "9776794814",
+                "account_id": "157781908177",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "178653606306",
+                "account_id": "116650755213",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "0",
+                "account_id": "0",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "some.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "34254",
+                "account_id": "35242",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "another.one@any.net",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "34255",
+                "account_id": "35242",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "service.account@mowbol.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "806836548814158464533525409584911954",
+                "account_id": "3275742034055071097047958475257999",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "joseph.weissman@tapjoy.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "205671544730267724070440851198658692450",
+                "account_id": "250599148594032813347358985001821808306",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "joseph.weissman+dev@tapjoy.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "87720450397513007870509502258364351384",
+                "account_id": "290865123236928350132585577833448273503",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "xyzaTestCase.tester@this.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "5125393",
+                "account_id": "3525271",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "dave.chang+tj1@kontagent.com",
+                "first_name": "Dave1",
+                "last_name": "Chang1",
+                "user_id": "dc123",
+                "account_id": "208234291169469499158760640436382717804",
+                "phone": "5103299680",
+                "job_title": "Guy"
+            },
+            {
+                "username": "dave.chang+tj2@kontagent.com",
+                "first_name": "Dave2",
+                "last_name": "Chang2",
+                "user_id": "email2",
+                "account_id": "208234291169469499158760640436382717804",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "dave.chang+tj3@kontagent.com",
+                "first_name": "Hello",
+                "last_name": "World",
+                "user_id": "dc1123",
+                "account_id": "217250511840442845511300541806496619097",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "dave.chang+tj4@kontagent.com",
+                "first_name": "Hello",
+                "last_name": "World",
+                "user_id": "asdf12343215",
+                "account_id": "208234291169469499158760640436382717804",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "joseph.weissman+qa@tapjoy.com",
+                "first_name": "--",
+                "last_name": "--",
+                "user_id": "243914237624290432125856772658422508716",
+                "account_id": "206933649364697915789288793580831761815",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "dave.chang+asdf@kontagent.com",
+                "first_name": "Hello",
+                "last_name": "World",
+                "user_id": "asdfnawe12356",
+                "account_id": "208234291169469499158760640436382717804",
+                "phone": "",
+                "job_title": ""
+            },
+            {
+                "username": "dave.chang+tj5@kontagent.com",
+                "first_name": "Hello",
+                "last_name": "World",
+                "user_id": "sadjflkasglahljkhlkj",
+                "account_id": "217250511840442845511300541806496619097",
+                "phone": "",
+                "job_title": ""
+            }
+        ]
+    http_version: "1.1"
+  recorded_at: Tue, 30 Oct 2012 15:31:01 GMT
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/applications/
+    body: 
+      string: application_id=515398043&platform_name=iOS&name=thisOneCoolApp&platform_type=mobile&account_id=35242
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      transfer-encoding: 
+      - chunked
+      server: 
+      - nginx/0.7.64
+      connection: 
+      - close
+      content-type: 
+      - application/json; charset=utf-8
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=1a196860d6ca705c9d118d006cb6e6c1; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Tue, 30 Oct 2012 15:37:31 GMT
+    body: 
+      string: |-
+        {
+            "application_id": "515398043",
+            "name": "thisOneCoolApp",
+            "platform_name": "iOS",
+            "platform_type": "mobile",
+            "api_key": "a1e7d9c0f7d44208b313481566efb402",
+            "account_id": "35242"
+        }
+    http_version: "1.1"
+  recorded_at: Tue, 30 Oct 2012 15:37:31 GMT
+recorded_with: VCR 2.2.5
