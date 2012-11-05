@@ -13,26 +13,24 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
 
   def show
     verify_params([:id])
-    @reengagement_offers = @app.reengagement_campaign if @app
-    @currencies = @app.currencies if @reengagement_offers.present?
   end
 
   def index
-    if @app.currencies.present? && @app.currencies.any?(&:tapjoy_enabled?)
-        @campaign = @app.reengagement_campaign
-      redirect_to(new_app_reengagement_offer_path(@app)) if @campaign.empty?
-    end
+    redirect_to(new_app_reengagement_offer_path(@app)) if @campaign.empty?
   end
 
   def new
-    campaign_length = @app.reengagement_campaign.length
-    if campaign_length > 5
+    if @campaign.length > 5
       flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
       redirect_to(app_reengagement_offers_path(@app))
-    elsif campaign_length == 0
+    elsif @campaign.length == 0
+      currency = @app.primary_currency
+      unless currency.try(:rewarded?) && currency.try(:tapjoy_enabled?)
+        currency = @currencies.first
+      end
       @app.build_reengagement_offer(
         :reward_value => 0,
-        :currency     => @app.primary_currency,
+        :currency     => currency,
         :instructions => DAY_0_INSTRUCTIONS
       ).save
     end
@@ -51,10 +49,9 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   end
 
   def destroy
-    if @reengagement_offer == @app.reengagement_campaign.last
+    if @reengagement_offer == @campaign.last
       @reengagement_offer.hide!
-      reengagement_offers = @app.reengagement_campaign
-      reengagement_offers.first.hide! if reengagement_offers.length == 1 && reengagement_offers.first.day_number == 0
+      @campaign.first.hide! if @campaign.length == 1 && @campaign.first.day_number == 0
       flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
     end
     redirect_to(app_reengagement_offers_path(@app))
@@ -87,19 +84,19 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   end
 
   def setup
-    if  params[:app_id].present?
+    if params[:app_id].present?
       if permitted_to?(:edit, :dashboard_statz)
         @app = App.find(params[:app_id])
       else
         @app = current_partner.apps.find(params[:app_id])
       end
-      unless @app.primary_currency.try(:tapjoy_enabled?)
-        render :action => :index and return
-      end
+      @currencies = @app.currencies.select { |c| c.tapjoy_enabled? && c.rewarded?}
+      render :action => :index and return false if @currencies.empty?
+      @campaign = @app.reengagement_campaign
     end
 
     if params[:id]
-      @reengagement_offer = @app.reengagement_campaign.find(params[:id])
+      @reengagement_offer = @campaign.find(params[:id])
       @offer = @reengagement_offer.primary_offer
     end
   end
