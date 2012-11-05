@@ -1,5 +1,6 @@
 require 'spec_helper'
 
+
 describe UdidReports do
   before :each do
     UdidReports.stub(:cache_available_months).and_return([1,2,3])
@@ -15,7 +16,11 @@ describe UdidReports do
     @date_str = "1999-03-01"
     @device = Device.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
     @reward = Reward.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
+    @click  = Click.new(:key => UUIDTools::UUID.random_create.to_s, :consistent => true)
+    @click.clicked_at = "2012-11-02 18:46:39"
+    @click.save
     @reward.udid = @device.id
+    @reward.click_key = @click.key
     @reward.country = 'US'
     UdidReports.const_set("REWARD", @reward)
     class Reward
@@ -48,7 +53,7 @@ describe UdidReports do
       @device.save
       UdidReports.generate_report(@offer_id, @date_str)
       buf = File.read(@report_filepath).chomp
-      buf.split(',').length.should == 4
+      buf.split(',').length.should == 5
     end
 
     it 'should generate UDID report even if the device has unparsable apps data' do
@@ -56,7 +61,7 @@ describe UdidReports do
       Device.any_instance.stub(:fix_app_json) { raise }
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
       buf = File.read(@report_filepath).chomp
-      buf.split(',').length.should == 3
+      [3,4].should include(buf.split(',').length)
     end
   end
 end
