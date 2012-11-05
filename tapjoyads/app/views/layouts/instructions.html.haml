@@ -16,32 +16,14 @@
           font-weight: normal;
         }
 
-        a, a:visited {
-          text-decoration: none;
-          color: #576B95;
-          }
-
-        .container {
-          border-bottom: 1px solid #888;
-          box-shadow: inset 0 1px 0 #fff;
-          padding: 10px;
-        }
-
-        span.small {
-          color: #999;
-          display: block;
-          font-size: 85%;
-          margin-top: 5px;
-        }
-
         .ui-joy-mask {
           position: absolute;
-          top: 0;
+          top: 40px;
           right: 0;
           bottom: 0;
           min-height: 100%;
           left: 0;
-          z-index: 1040;
+          z-index: 10;
           background-color: #333;
         }
 
@@ -50,7 +32,7 @@
           border-radius: 8px;
           box-shadow: 0 0 4px rgba(0,0,0, .5);
           font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
-          margin: 15px 10px 15px 10px;
+          margin: 20px 10px;
           position: relative;
           min-width: 300px;
           z-index: 100;
@@ -65,83 +47,9 @@
           background: -ms-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
           background: linear-gradient(top, rgba(240,240,240,1) 0%,rgba(233,233,233,1) 37%,rgba(227,227,227,1) 74%,rgba(222,222,222,1) 100%);
           filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#dedede',GradientType=0 );
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-          box-shadow: inset 0 -1px 0 #bbb;
-        }
-
-        .ui-joy-panel .earn-block {
-          background: -moz-linear-gradient(top, rgba(255,192,0,1) 0%, rgba(255,183,0,1) 36%, rgba(255,156,0,1) 71%, rgba(255,141,0,1) 100%);
-          background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,192,0,1)), color-stop(36%,rgba(255,183,0,1)), color-stop(71%,rgba(255,156,0,1)), color-stop(100%,rgba(255,141,0,1)));
-          background: -webkit-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
-          background: -o-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
-          background: -ms-linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
-          background: linear-gradient(top, rgba(255,192,0,1) 0%,rgba(255,183,0,1) 36%,rgba(255,156,0,1) 71%,rgba(255,141,0,1) 100%);
-
-          -webkit-appearance: none;
-          -webkit-box-sizing: border-box;
-          -moz-box-sizing: border-box;
-
-          filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#dedede',GradientType=0 );
           border-top-left-radius: 8px;
           border-top-right-radius: 8px;
           box-shadow: inset 0 -1px 0 #bbb;
-          padding: 3px;
-        }
-
-
-
-        .ui-joy-panel .earn-block a {
-          text-decoration: none;
-        }
-
-        .ui-joy-panel .earn-block span {
-          color: #fff;
-          display: block;
-          text-align: center;
-          text-shadow: 0 1px 1px rgba(0,0,0, .55);
-          text-transform: lowercase;
-          line-height: 0.5;
-        }
-
-        .ui-joy-panel .earn-block span.earn,
-        .ui-joy-panel .earn-block span.points {
-          font-size: 90%;
-        }
-
-        .ui-joy-panel .earn-block span.earn {
-          margin-top: 3px;
-        }
-
-        .ui-joy-panel .earn-block span.points {
-          margin-bottom: 5px;
-        }
-
-        .ui-joy-panel .earn-block span.big {
-          font-size: 160%;
-          font-weight: bold;
-          line-height: 115%;
-          margin-top: 1px;
-          text-shadow: 0 -1px 0 #cc7f26, 0 1px 2px rgba(0,0,0,.6);
-        }
-
-        .ui-joy-panel .earn-block .free {
-          display: none;
-          background: #5c5c5c;
-          border-bottom-left-radius: 2px;
-          border-bottom-right-radius: 2px;
-          bottom: 0;
-          box-shadow: 0 -1px 0 #727272;
-          color: #d8d8d8;
-          font-size: 50%;
-          font-weight: bold;
-          left: 0;
-          padding: 1px 0 2px;
-          position: absolute;
-          text-align: center;
-          text-shadow: 0 1px 1px rgba(0,0,0,.55);
-          text-transform: uppercase;
-          width: 100%;
         }
 
         .ui-joy-panel .instructions {
@@ -296,17 +204,13 @@
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ 'name' => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
   %body
+    = render 'shared/top_bar'
     - if @load_facebook == true
       #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
 
     = yield
-
-    = javascript_include_tag 'jquery-1.4.2.min'
-
     = yield :included_javascripts
-
-    %script{ :type => 'text/javascript', :charset => 'utf-8' }
-      = yield :page_javascript
+    = yield :page_javascript
 
     - if @load_facebook_sdk == true
       = render 'shared/fb_sdk'
