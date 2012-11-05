@@ -18,7 +18,7 @@ class VideosController < ApplicationController
     if @show_cached_videos
       @offer_list = offer_list.get_offers(0, 100).first
 
-      if @currency.get_test_device_ids.include?(params[:udid])
+      if @currency.has_test_device?(params[:udid])
         @offer_list.unshift(@publisher_app.test_video_offer.primary_offer)
       end
     else
