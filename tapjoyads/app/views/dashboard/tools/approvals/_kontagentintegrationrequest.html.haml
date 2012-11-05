@@ -11,7 +11,7 @@
     %tr
       %td= approval.item.nil? ? "--" : approval.item.try(:to_s) || approval.item.id
       %td= render :partial => 'owner_select', :locals => {:approval => approval}
-      %td= approval.state.gsub(/^approved$/, 'accepted')
+      %td= approval.state
       %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
       %td.actions
         - if approval.pending?
