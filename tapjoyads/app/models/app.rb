@@ -216,6 +216,7 @@ class App < ActiveRecord::Base
       :app_id           => self.id,
       :tapjoy_enabled   => false,
       :partner          => self.partner,
+      :rev_share_override => 0.7
     }
     Currency.new(options)
   end
