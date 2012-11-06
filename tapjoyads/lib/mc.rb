@@ -11,7 +11,7 @@ class Mc
     }
 
     @cache              = Memcached.new(MEMCACHE_SERVERS, options)
-    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
+    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Dalli::Client.new(server, options.merge!({:async => true})) }
   end
 
   class << self
