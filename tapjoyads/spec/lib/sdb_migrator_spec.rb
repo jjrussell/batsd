@@ -40,13 +40,13 @@ describe SdbMigrator do
       end
 
       it 'should save to the current domain and then the new domain' do
-        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).once
+        $fake_sdb.should_receive(:put_attributes).with("#{RUN_MODE_PREFIX}fake_resource_1", "123", anything(), anything(), anything()).once
         $fake_sdb.should_receive(:put_attributes).with("new_fake_resource_5", "123", anything(), anything(), anything()).once
         @fake_resource.save!
       end
 
       it 'should not save to the new domain if saving to the current domain fails' do
-        $fake_sdb.should_receive(:put_attributes).with("test_fake_resource_1", "123", anything(), anything(), anything()).and_raise(RightAws::AwsError.new)
+        $fake_sdb.should_receive(:put_attributes).with("#{RUN_MODE_PREFIX}fake_resource_1", "123", anything(), anything(), anything()).and_raise(RightAws::AwsError.new)
         $fake_sdb.should_not_receive(:put_attributes).with("new_fake_resource_5", "123", anything(), anything(), anything())
         @fake_resource.save! rescue RightAws::AwsError
       end

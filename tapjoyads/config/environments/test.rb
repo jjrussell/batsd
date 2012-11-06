@@ -58,13 +58,18 @@ SPROCKETS_CONFIG = {
   :host => local_config['asset_host'] || local_config['website_url'] || 'http://localhost:3000'
 }
 
-RUN_MODE_PREFIX = 'test_'
+if ENV['CUCUMBER']
+  RUN_MODE_PREFIX = "test_"
+else
+  RUN_MODE_PREFIX = "test_#{Time.now.to_i}_"
+end
+
 API_URL = local_config['api_url'] || 'http://localhost:3000'
 API_URL_EXT = local_config['api_url_ext'] || 'http://localhost:3000'
 DASHBOARD_URL = local_config['dashboard_url'] || 'http://localhost:3000'
 WEBSITE_URL = local_config['website_url'] || 'http://localhost:3000'
 MASTERJOBS_URL = local_config['masterjobs_url'] || 'http://localhost:3000'
-CLOUDFRONT_URL = 'https://s3.amazonaws.com/test_tapjoy'
+CLOUDFRONT_URL = "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
 XMAN = false
 
 amazon = YAML::load_file("#{Rails.root}/config/amazon.yaml")

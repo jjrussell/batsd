@@ -71,15 +71,13 @@ class OptimizedOfferList
       end
 
       group = 0
-      puts "saving #{cache_key} to Memcache"
       begin
         offers.each_slice(GROUP_SIZE) do |offer_group|
           Mc.distributed_put("#{cache_key}.#{group}", offer_group, false, 1.day)
           group += 1
         end
-        puts "wrote #{cache_key} to Memcache"
       rescue
-        puts "saving #{cache_key} to Memcache failed"
+        Rails.logger.warn "saving #{cache_key} to Memcache failed"
       end
 
       # TODO: Cache stuff into S3
@@ -114,7 +112,7 @@ class OptimizedOfferList
           next if current_offer.app_platform_mismatch?(platform)
           Offer.find(offer_hash['offer_id'], :select => Offer::OFFER_LIST_REQUIRED_COLUMNS).optimization_override(offer_hash, false).for_caching
         rescue
-          puts "Error with #{offer_hash.inspect}" and next
+          Rails.logger.warn "Error with #{offer_hash.inspect}" and next
         end
       end.compact
     end

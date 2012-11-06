@@ -39,7 +39,8 @@ describe SimpledbResource do
 
   describe 'A SimpledbResource object' do
     before :each do
-      enable_sdb
+      RightAws::SdbInterface.unstub!(:new)
+      SimpledbResource.reset_connection
       load_model
     end
 
@@ -190,7 +191,8 @@ describe SimpledbResource do
 
   describe 'Many Simpledb rows' do
     before :each do
-      enable_sdb
+      RightAws::SdbInterface.unstub!(:new)
+      SimpledbResource.reset_connection
       @rows = []
       10.times do |i|
         m = Testing.new(:key => "select-#{i}")

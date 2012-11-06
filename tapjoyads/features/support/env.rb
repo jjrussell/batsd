@@ -1,3 +1,5 @@
+ENV['CUCUMBER'] = 'true'
+
 require 'cucumber/rails'
 require 'factory_girl'
 
