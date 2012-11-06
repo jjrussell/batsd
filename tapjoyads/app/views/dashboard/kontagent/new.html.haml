@@ -25,17 +25,20 @@ And,
     = f.label "Please provide your desired Kontagent subdomain: " #:subdomain
     = f.text_field :subdomain, :value => current_partner.name.gsub(/[^0-9a-z]/i, '').downcase[0..4]
   %small Notes: the subdomain must be lowercase and alphanumeric.
+  %div.field
+    = f.label "I agree to the terms and conditions of service"
+    = check_box_tag :terms_and_conditions
   %br
   %br
   = f.submit "Request Kontagent integration"
 
-%h3 Notes
-%ul
-  %li= "Partner #{current_partner.name} will be provisioned with a Kontagent account (exists remotely? #{KontagentHelpers.exists?(current_partner)})"
-  %li= "User #{current_user.email} will be provisioned with a Kontagent user (exists remotely? #{KontagentHelpers.exists?(current_user)})"
-  %li= "#{current_partner.apps.count} apps will be provisioned with a Kontagent application"
-  - if current_partner.apps.count > 0
-    %li
-      %ol
-        - current_partner.apps.each do |app|
-          %li= "Application '#{app.name}' (exists remotely? #{KontagentHelpers.exists?(app)})"
+-#%h3 Notes
+-#%ul
+-#  %li= "Partner #{current_partner.name} will be provisioned with a Kontagent account (exists remotely? #{KontagentHelpers.exists?(current_partner)})"
+-#  %li= "User #{current_user.email} will be provisioned with a Kontagent user (exists remotely? #{KontagentHelpers.exists?(current_user)})"
+-#  %li= "#{current_partner.apps.count} apps will be provisioned with a Kontagent application"
+-#  - if current_partner.apps.count > 0
+-#    %li
+-#      %ol
+-#        - current_partner.apps.each do |app|
+-#          %li= "Application '#{app.name}' (exists remotely? #{KontagentHelpers.exists?(app)})"
