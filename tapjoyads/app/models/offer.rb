@@ -1063,10 +1063,6 @@ class Offer < ActiveRecord::Base
     app_offer?(false) || item_type == 'DeeplinkOffer' # TODO: add DeeplinkOffer to app_offer? method
   end
 
-  def is_test_device?(currency, device)
-    currency.get_test_device_ids.include?(device.id)
-  end
-
   def cleanup_url
     if (url_overridden_changed? || url_changed?) && !url_overridden?
       if %w(App ActionOffer).include?(item_type) && app_metadata

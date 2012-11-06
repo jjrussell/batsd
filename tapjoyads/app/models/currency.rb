@@ -114,6 +114,11 @@ class Currency < ActiveRecord::Base
 
   delimited_field :test_devices
 
+  def has_test_device?(udid)
+    udid = udid.id if udid.is_a?(Device)
+    get_test_device_ids.include?(udid)
+  end
+
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
     currencies = Mc.distributed_get("mysql.app_currencies.#{app_id}.#{acts_as_cacheable_version}")
     if currencies.nil?
