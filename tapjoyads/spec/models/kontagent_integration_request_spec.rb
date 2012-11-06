@@ -7,10 +7,10 @@ describe KontagentIntegrationRequest do
     end
   end
 
-  let(:title)   { 'thisOneCool'}
-  let(:app_id)     { 43221 }
-  let(:user_id)    { 34254 }
-  let(:partner_id) { 35242 }
+  let(:title)      { 'abcSomeCool'}
+  let(:app_id)     { 432216 }
+  let(:user_id)    { 342547 }
+  let(:partner_id) { 352428 }
 
   let(:app)     { FactoryGirl.create(:app,
                                      :name => "#{title}App",
@@ -47,7 +47,7 @@ describe KontagentIntegrationRequest do
           partner.kontagent_subdomain.should_not be_nil
         end
         context "and matching remote Account resource" do
-          subject { KontagentHelpers.find!(partner) } #Kontagent::Account.find(Kontagent.id_for(partner).to_s) }
+          subject { KontagentHelpers.find!(partner) }
           it "should be unique" do
             should have(1).item
           end
@@ -56,9 +56,6 @@ describe KontagentIntegrationRequest do
           end
           it "should have Partner ID" do
             subject.first['account_id'].should == KontagentHelpers.id_for(partner).to_s
-          end
-          it "should provision a unique identifier" do
-            subject.first['account_id'].should == partner_id.to_s
           end
         end
       end
@@ -75,7 +72,7 @@ describe KontagentIntegrationRequest do
         end
 
         context "and matching remote Application resource" do
-          subject { KontagentHelpers.find!(app) } #Kontagent::Application.find(Kontagent.id_for(app).to_s) }
+          subject { KontagentHelpers.find!(app) }
           it "should be unique" do
             should have(1).item
           end
@@ -88,9 +85,6 @@ describe KontagentIntegrationRequest do
           it "should have Partner ID" do
             subject.first['account_id'].should == KontagentHelpers.id_for(partner).to_s
           end
-          it "should provision a unique identifier" do
-            subject.first['application_id'].should == app_id.to_s
-          end
         end
       end
 
@@ -100,7 +94,7 @@ describe KontagentIntegrationRequest do
           user.should be_kontagent_enabled
         end
         context "and matching remote User resource" do
-          subject { KontagentHelpers.find!(user) }  # Kontagent::User.find(Kontagent.id_for(user).to_s) }
+          subject { KontagentHelpers.find!(user) }
           it "should be unique" do
             should have(1).item
           end
@@ -112,9 +106,6 @@ describe KontagentIntegrationRequest do
           end
           it "should have Account ID" do
             subject.first['account_id'].should == KontagentHelpers.id_for(partner).to_s
-          end
-          it "should provision a unique identifier" do
-            subject.first['user_id'].should == user_id.to_s
           end
         end
       end

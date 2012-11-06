@@ -19,12 +19,24 @@ And,
   To obtain access to Kontagent Premium, please submit your interest below
   and your account manager will follow up with you on next steps.
 
+%br
 
 = form_for(@kontagent_integration_request, :url => {:action => :create}) do |f|
   %div.field
     = f.label "Please provide your desired Kontagent subdomain: " #:subdomain
     = f.text_field :subdomain, :value => current_partner.name.gsub(/[^0-9a-z]/i, '').downcase[0..4]
   %small Notes: the subdomain must be lowercase and alphanumeric.
+  %br
+  %br
+  %div.field
+    %strong In order to continue, please agree to the terms and conditions of service.
+    %br
+    = check_box_tag :terms_and_conditions
+    %small
+      By checking this box above I agree to the
+      = link_to 'terms and conditions', terms_kontagent_index_url, :target => '_blank'
+      of service
+
   %br
   %br
   = f.submit "Request Kontagent integration"

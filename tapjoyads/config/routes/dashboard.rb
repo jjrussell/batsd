@@ -198,7 +198,11 @@ Tapjoyad::Application.routes.draw do
 
       end
 
-      resources :kontagent, :only => [:index, :new, :create, :show, :update]
+      resources :kontagent, :only => [:index, :new, :create, :show, :update] do
+        collection do
+          get :terms
+        end
+      end
 
       match 'partners/managed_by/:id' => 'partners#managed_by'
       match 'partners/by_country/:country' => 'partners#by_country'

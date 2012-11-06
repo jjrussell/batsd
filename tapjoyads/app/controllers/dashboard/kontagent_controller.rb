@@ -23,11 +23,23 @@ class Dashboard::KontagentController < Dashboard::DashboardController
     @kontagent_integration_request.partner_id  = current_partner.id
     @kontagent_integration_request.user        = current_user
 
-    if @kontagent_integration_request.no_conflicts? and @kontagent_integration_request.save!
+    @accepted_terms = params[:terms_and_conditions]
+
+    if @accepted_terms and @kontagent_integration_request.no_conflicts? and @kontagent_integration_request.save!
       @last_approval = @kontagent_integration_request.approvals.order("created_at desc").limit(1).first
+      flash[:notice] = "Thank you! We have successfully created your integration request."
       render :show
     else
-      redirect_to :action => :new, :error => "Sorry, but we could not create a Kontagent integration request at this time."
+      if @accepted_terms
+        if @kontagent_integration_request.no_conflicts?
+          flash[:error] = "We're sorry, but something went wrong attempting to register your request at this time."
+        else
+          flash[:error] = "That domain name is already taken."
+        end
+      else
+        flash[:error] = "You must accept Kontagent terms and conditions to register for integration."
+      end
+      redirect_to :action => :new
     end
   end
 
@@ -46,12 +58,15 @@ class Dashboard::KontagentController < Dashboard::DashboardController
     redirect_to :action => :index
   end
 
+  # action to show terms and conditions
+  def terms; end
+
   private
   def get_last_integration_request
-    @kontagent_integration_request = current_partner.kontagent_integration_requests.order("created_at desc").limit(1).first
+    @kontagent_integration_request = current_partner.try(:kontagent_integration_requests).order("created_at desc").limit(1).first
   end
 
   def get_last_approval
-    @last_approval = get_last_integration_request.approvals.order("created_at desc").limit(1).first #last #current_partner.kontagent_integration_requests.last.approvals.last
+    @last_approval = get_last_integration_request.try(:approvals).order("created_at desc").limit(1).first
   end
 end
