@@ -58,12 +58,15 @@ class Dashboard::KontagentController < Dashboard::DashboardController
     redirect_to :action => :index
   end
 
+  # action to show terms and conditions
+  def terms; end
+
   private
   def get_last_integration_request
-    @kontagent_integration_request = current_partner.kontagent_integration_requests.order("created_at desc").limit(1).first
+    @kontagent_integration_request = current_partner.try(:kontagent_integration_requests).order("created_at desc").limit(1).first
   end
 
   def get_last_approval
-    @last_approval = get_last_integration_request.approvals.order("created_at desc").limit(1).first #last #current_partner.kontagent_integration_requests.last.approvals.last
+    @last_approval = get_last_integration_request.try(:approvals).order("created_at desc").limit(1).first
   end
 end
