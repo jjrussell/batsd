@@ -1,4 +1,4 @@
 - form_tag('/dashboard/tools/notices/update', :method => :put) do
-  = text_area_tag :message, @notice.try(:message), :size => '60x10'
+  = text_area_tag :message, @product_notice.try(:message), :size => '60x10'
   %br
   = submit_tag 'Submit'

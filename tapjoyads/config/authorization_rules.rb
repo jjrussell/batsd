@@ -185,7 +185,7 @@ authorization do
     includes :tools
     has_permission_on :dashboard_tools_wfhs, :to => [ :index, :new, :create, :edit, :update, :destroy ]
     has_permission_on :dashboard_tools_employees, :to => [ :wfhs ]
-    has_permission_on :dashboard_tools_notices, :to => [:edit, :update]
+    has_permission_on :dashboard_tools_notices, :to => [:index, :update]
   end
 
   role :partner_changer do
@@ -225,6 +225,7 @@ authorization do
     has_permission_on :dashboard_tools_vouchers, :to => [ :show ]
     has_permission_on :dashboard_tools_cached_offer_lists, :to => [ :index, :show ]
     has_permission_on :dashboard_tools_experiments, :to => [ :index, :new, :create, :show, :edit, :update, :destroy, :start, :conclude]
+    has_permission_on :dashboard_tools_notices, :to => [:index, :update]
   end
 
   role :optimized_rank_booster do

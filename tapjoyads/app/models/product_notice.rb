@@ -5,19 +5,35 @@ class ProductNotice
     REDIS_KEY_FOR_MESSAGE
   end
 
-  def self.message=(m)
-    $redis.set(REDIS_KEY_FOR_MESSAGE, m)
+  def self.most_recent
+    new.force_update!
   end
 
-  def self.message
-    $redis.get(REDIS_KEY_FOR_MESSAGE) || ''
+  def message=(m)
+    @message = set_message(m)
   end
 
-  def self.empty?
-    message.empty?
+  def message
+    @message ||= read_message
+  end
+  alias_method :to_s, :message
+
+  def empty?
+    self.message.empty?
+  end
+
+  def force_update!
+    self.message = read_message
+    self
   end
 
   private
-  def initialize; end
+  def read_message
+    $redis.get(self.class.key) || ''
+  end
 
+  def set_message(m)
+    $redis.set(self.class.key, m)
+    m
+  end
 end

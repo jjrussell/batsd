@@ -121,8 +121,12 @@ class Dashboard::DashboardController < ApplicationController
     Time.zone = old_time_zone
   end
 
+  def product_notice
+    @product_notice ||= ProductNotice.most_recent
+  end
+
   def set_default_notice
-    flash.now[:notice] = ProductNotice.message if (ProductNotice.present? && current_user && flash.now[:notice].blank?)
+    flash.now[:notice] = product_notice.to_s if (current_user && flash.now[:notice].blank? && product_notice.present?)
   end
 
   def nag_user_about_payout_info
