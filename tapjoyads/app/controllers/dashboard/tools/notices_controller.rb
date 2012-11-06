@@ -8,12 +8,12 @@ class Dashboard::Tools::NoticesController < Dashboard::DashboardController
   end
 
   def update
-    @notice.message = params[:message]
+    ProductNotice.message = params[:message]
     redirect_to :action => :index
   end
 
   private
   def load_notice
-    @notice ||= ProductNotice.instance
+    @notice = ProductNotice
   end
 end
