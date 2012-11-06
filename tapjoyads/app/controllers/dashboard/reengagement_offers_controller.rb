@@ -21,7 +21,7 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
 
   def new
     if @campaign.length > 5
-      flash[:info] = "Re-engagement campaigns cannot currently be longer than 5 days."
+      flash[:info] = "Daily Reward campaigns cannot currently be longer than 5 days."
       redirect_to(app_reengagement_offers_path(@app))
     elsif @campaign.length == 0
       currency = @app.primary_currency
@@ -52,7 +52,7 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
     if @reengagement_offer == @campaign.last
       @reengagement_offer.hide!
       @campaign.first.hide! if @campaign.length == 1 && @campaign.first.day_number == 0
-      flash[:notice] = "Removed day #{@reengagement_offer.day_number} re-engagement offer."
+      flash[:notice] = "Removed day #{@reengagement_offer.day_number} Daily Reward."
     end
     redirect_to(app_reengagement_offers_path(@app))
   end
@@ -68,7 +68,7 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
     safe_attributes = [ :currency_id, :reward_value, :instructions ]
     @reengagement_offer.safe_update_attributes(params[:reengagement_offer], safe_attributes)
     @reengagement_offer.save!
-    flash[:notice] = "Updated day #{@reengagement_offer.day_number} re-engagement offer."
+    flash[:notice] = "Updated day #{@reengagement_offer.day_number} Daily Reward."
     redirect_to(app_reengagement_offers_path(@app))
   end
 
