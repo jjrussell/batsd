@@ -30,7 +30,7 @@ module Offer::ThirdPartyTracking
       macros = args.extract_options!
       replace_macros = args.first
 
-      self.send("#{method_name}=", []) if super().nil?
+      self.#{method_name} = [] unless super()
       urls = super().sort
 
       if replace_macros
@@ -57,7 +57,7 @@ module Offer::ThirdPartyTracking
       macros[:user_agent] = source_token(macros.delete(:publisher_app_id))
 
       send("#{method_name}", true, macros).each do |url|
-        Downloader.queue_get_with_retry(url)
+        Downloader.queue_get_with_retry(url, :offer_id => self.id, :url_type => "#{method_name}")
       end
     end
 EOS
