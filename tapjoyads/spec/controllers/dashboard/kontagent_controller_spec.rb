@@ -94,7 +94,7 @@ describe Dashboard::KontagentController do
       before(:each) do
         controller.stub(:current_partner) { partner }
         controller.stub(:current_user)    { user }
-        kt_params = { :kontagent_integration_request => { :subdomain => subdomain }}
+        kt_params = { :kontagent_integration_request => { :subdomain => subdomain }, :terms_and_conditions => true }
         post :create, kt_params
       end
 
