@@ -173,4 +173,43 @@ describe Offer::Rejecting do
       end
     end
   end
+
+  describe '#admin_device_required_reject?' do
+    before :each do
+      @offer = FactoryGirl.create(:app).primary_offer
+      @device = FactoryGirl.create(:device)
+      @offer.extend(Offer::Rejecting)
+    end
+    context 'offer requires admin device' do
+      before :each do
+        @offer.requires_admin_device = true     
+      end
+      
+      it "should reject the offer when the device is not an admin device" do
+        @device.last_run_time_tester = false
+        @offer.admin_device_required_reject?(@device).should be_true
+      end
+
+      it "should not reject the offer when the device is an admin device" do
+        @device.last_run_time_tester = true
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+    end
+
+    context 'offer does not require admin device' do
+      before :each do
+        @offer.requires_admin_device = false     
+      end
+      
+      it "should not reject the offer when the device is not an admin device" do
+        @device.last_run_time_tester = false
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+
+      it "should not reject the offer when the device is an admin device" do
+        @device.last_run_time_tester = true
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+    end    
+  end
 end
