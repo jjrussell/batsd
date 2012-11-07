@@ -81,7 +81,7 @@ class ClickController < ApplicationController
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
 
-    unless @currency.has_test_device?(params[:udid])
+    unless @currency.has_test_device?(params[:udid] || params[:mac_address])
       raise "not a test device"
     end
 
@@ -108,7 +108,7 @@ class ClickController < ApplicationController
   def test_video_offer
     return unless verify_records([ @currency ])
 
-    raise "not a test device" unless @currency.has_test_device?(params[:udid])
+    raise "not a test device" unless @currency.has_test_device?(params[:udid] || params[:mac_address])
 
     test_reward = Reward.new
     test_reward.type              = 'test_video_offer'
