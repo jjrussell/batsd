@@ -377,35 +377,28 @@ class Offer < ActiveRecord::Base
   end
 
   # ActiveRecord::Relation for all Offers (including this one) with this offer's item ID
-  def related_offers
-    Offer.where(:item_id => item_id)
+  def associated_offers
+    o = Offer.scoped.table
+    Offer.where(:item_id => item_id).where(o[:id].not_eq(id))
   end
 
-  # ActiveRecord::Relation for related offers, minus the "main" offer
-  def non_main_related_offers
-    o = Offer.scoped.table
-    related_offers.where(o[:id].not_eq(item_id))
-  end
-
-  # ActiveRecord::Relation for secondary offers
-  def secondary_offers
-    o = Offer.scoped.table
-    related_offers.where(o[:id].not_eq(id))
+  def main?
+    @main.nil? ? @main = self == Offer.where(:item_id => item_id).order(:created_at => :asc).first : @main
   end
 
   # ActiveRecord::Relation for related non-main offers that share the same "featured" and "rewarded" status as this one
-  def associated_offers
-    non_main_related_offers.where(:featured => featured?, :rewarded => rewarded?)
+  def filtered_associated_offers
+    associated_offers.where(:featured => featured?, :rewarded => rewarded?)
   end
 
-  # ActiveRecord::Relation for associated offers that are tapjoy enabled.
-  def tapjoy_enabled_associated_offers
-    associated_offers.where(:tapjoy_enabled => true)
+  # ActiveRecord::Relation for filtered associated offers that are tapjoy enabled.
+  def tapjoy_enabled_filtered_associated_offers
+    filtered_associated_offers.where(:tapjoy_enabled => true)
   end
 
-  # ActiveRecord::Relation for associated offers thet are tapjoy disabled ("Deleted").
-  def tapjoy_disabled_associated_offers
-    associated_offers.where(:tapjoy_enabled => false)
+  # ActiveRecord::Relation for filtered associated offers thet are tapjoy disabled ("Deleted").
+  def tapjoy_disabled_filtered_associated_offers
+    filtered_associated_offers.where(:tapjoy_enabled => false)
   end
 
   def integrated?
@@ -429,7 +422,6 @@ class Offer < ActiveRecord::Base
   def primary?
     item_id == id
   end
-  alias_method :main?, :primary?
 
   def is_coupon?
     item_type == 'Coupon'

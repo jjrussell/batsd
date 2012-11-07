@@ -1,13 +1,14 @@
+- description = "#{@offer.rewarded? ? 'Rewarded' : 'Non-rewarded'} #{@offer.featured? ? 'Featured' : 'Non-featured'} Associated Offers"
 - if current_user.can_manage_account?
   = link_to('[Create associated offer]', new_statz_path(:id => @offer.id))
 
-- dataset     = @offer.tapjoy_enabled_associated_offers.all
+- dataset     = @offer.tapjoy_enabled_filtered_associated_offers.all
 - offer_count = dataset.count
 - if offer_count == 0
-  %p#show_associated [0 Associated Offers]
+  %p#show_associated [0 #{description}]
 - else
   #associated_offers.offer_list
-    %a#show_associated{:href=>'#'} [#{offer_count} Associated Offers]
+    %a#show_associated{:href=>'#'} [#{offer_count} #{description}]
     #associated_list
       %a.close_button{:href=>'#'} x
       %h3 Associated Offers
@@ -20,7 +21,7 @@
           - dataset.each do |offer|
             %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
-              %td= link_to(offer.name_suffix, edit_app_offer_path(@app, offer))
+              %td= link_to(offer.name_suffix.present? ? offer.name_suffix : 'Main', edit_app_offer_path(@app, offer))
               %td
                 .toggle-bg
                   %input{:type => "checkbox", :checked => offer.user_enabled?, :offer_id => offer.id, :url => toggle_app_offer_path(:id => offer.id, :app_id => @app .id) }
@@ -29,13 +30,13 @@
                   %span.switch
 
 - if current_user.can_manage_account?
-  - dataset     = @offer.tapjoy_disabled_associated_offers.all
+  - dataset     = @offer.tapjoy_disabled_filtered_associated_offers.all
   - offer_count = dataset.count
   - if offer_count == 0
-    %p#show_disabled [0 Tapjoy Disabled Offers]
+    %p#show_disabled [0 Tapjoy Disabled #{description}]
   - else
     #disabled_offers.offer_list
-      %a#show_disabled{:href=>'#'} [#{offer_count} Tapjoy Disabled Offers]
+      %a#show_disabled{:href=>'#'} [#{offer_count} Tapjoy Disabled #{description}]
       #disabled_list
         %a.close_button{:href=>'#'} x
         %h3 Tapjoy Disabled Offers
