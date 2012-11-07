@@ -1,6 +1,18 @@
 #
 #   Encapsulates a partner's request for integration with Kontagent.
 #
+# == Schema Information
+#
+#  table name: kontagent_integration_requests
+#
+#    t.string   "subdomain"
+#    t.boolean  "successful"
+#    t.string   "partner_id", :limit => 36, :null => false
+#    t.string   "user_id",    :limit => 36, :null => false
+#    t.datetime "created_at"
+#    t.datetime "updated_at"
+#
+
 class KontagentIntegrationRequest < ActiveRecord::Base
   include Rails.application.routes.url_helpers
 
@@ -46,9 +58,6 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   #
   #   Note the process could conceivably fail, so just make sure to check request.successful? afterwards to ensure
   #   KT responded appropriately to the provisioning requests.
-  #
-  #   TODO: don't raise errors on everything. Issues should probably just be logged somewhere sane for later review.
-  #    (Make a point of logging specific error responses/codes. N.b., this should be done in KT API itself.)
   #
   #   Further, note that there is going to be an API made per associated application.
   #
