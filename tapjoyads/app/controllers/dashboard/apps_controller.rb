@@ -99,7 +99,7 @@ class Dashboard::AppsController < Dashboard::DashboardController
     @app.name = params[:app][:name]
     protocol_handler = params[:app][:protocol_handler].rstrip if params[:app][:protocol_handler]
     if permitted_to?(:edit, :dashboard_statz)
-      if ((protocol_handler =~ /\A[^;\/?:@&=+,$-_.!~*'()]\S+:\/\/\S*\z/i).present? || protocol_handler.blank?)
+      if ((protocol_handler =~ /\A[^;><\^\/?:@&=+,$-.!~*'"()\_\\|]\S*:\/\/\S*\z/i).present? || protocol_handler.blank?)
         @app.protocol_handler = protocol_handler.blank? ? nil : protocol_handler
       else
         flash.now[:error] = t('text.protocol_handler.invalid', :default => 'You inputted an invalid protocol handler. Please try again.')
