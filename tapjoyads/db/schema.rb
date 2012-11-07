@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121031200401) do
+ActiveRecord::Schema.define(:version => 20121107140500) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -962,6 +962,7 @@ ActiveRecord::Schema.define(:version => 20121031200401) do
     t.string   "country"
     t.boolean  "kontagent_enabled",                                                         :default => false,     :null => false
     t.string   "kontagent_subdomain"
+    t.string   "developer_name"
   end
 
   add_index "partners", ["id"], :name => "index_partners_on_id", :unique => true

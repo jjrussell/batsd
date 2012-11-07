@@ -51,6 +51,7 @@
 #  use_server_whitelist          :boolean(1)      default(FALSE), not null
 #  enable_risk_management        :boolean(1)      default(FALSE), not null
 #  country                       :string(255)
+#  developer_name                :string(255)
 #
 
 class Partner < ActiveRecord::Base

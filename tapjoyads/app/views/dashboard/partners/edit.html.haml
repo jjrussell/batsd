@@ -10,6 +10,11 @@
     = f.text_field :name, :disabled => disabled
     = error_message_on(@partner, :name)
   .field
+    = f.label :developer_name
+    #help_developer_name.help ?
+    = f.text_field :developer_name
+    = error_message_on(@partner, :developer_name)
+  .field
     = f.label :approved_publisher
     #help_approved_publisher.help ?
     = f.check_box(:approved_publisher)
@@ -107,6 +112,8 @@
 .hidden
   #help_name_content{:name => 'Name'}
     The partner's name. Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
+  #help_developer_name_content{:name => 'Developer Name'}
+    The name in external stores. (ex: App Store, Google Play, ...)
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
     Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.

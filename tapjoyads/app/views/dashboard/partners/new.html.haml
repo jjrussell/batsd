@@ -13,6 +13,13 @@
         = error_message_on @partner, :name
     %tr
       %th
+        = f.label :developer_name, 'Developer Name'
+        #help_developer_name.help ?
+      %td
+        = f.text_field :developer_name, :size => 50
+        = error_message_on @partner, :developer_name
+    %tr
+      %th
         = f.label :contact_name, 'Contact Name'
         #help_contact_name.help ?
       %td
@@ -37,6 +44,7 @@
 
 .hidden
   #help_name_content{ :name => 'Company Name' } The name of the partner's company.
+  #help_developer_name_content{:name => 'Developer Name'} The name in external stores. (ex: App Store, Google Play, ...)
   #help_contact_name_content{ :name => 'Contact Name' } The name of the primary contact person for the partner. (optional)
   #help_contact_phone_content{ :name => 'Contact Phone' } A phone number where the partner's contact person can be reached. (optional)
   #help_country_content{ :name => 'Country' } The primary country
