@@ -24,30 +24,48 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     flash[:notice] = "Your file has been uploaded. You'll receive an email after your file has been processed."
   end
 
+  # @return [Hash]
+  # @option return [App, Offer, nil] :object
+  # @option return [Integer] :count
   def index
-    @end_time   = params[:end_time] || Time.zone.now
     @start_time = params[:start_time] || 1.day.ago
-
-    offer_ids         = Hash.new(0)
-    publisher_app_ids = Hash.new(0)
-    @udids            = Hash.new(0)
-    @offers           = Hash.new(0)
-    @publisher_apps   = Hash.new(0)
-    @total            = 0
+    @end_time   = params[:end_time] || Time.zone.now
+    offer_id_count         = Hash.new(0)
+    publisher_app_id_count = Hash.new(0)
+    udid_count             = Hash.new(0)
+    @total                 = 0
 
     SupportRequest.select(:where => "`updated-at` >= '#{@start_time.to_f}' AND `updated-at` < '#{@end_time.to_f}'") do |sr|
-      offer_ids[sr.offer_id] += 1
-      publisher_app_ids[sr.app_id] += 1
-      @udids[sr.udid] += 1
+      offer_id_count[sr.offer_id] += 1
+      publisher_app_id_count[sr.app_id] += 1
+      udid_count[sr.udid] += 1
       @total += 1
     end
 
-    offer_ids.each do |k,v|
-      @offers[Offer.find(k)] = v unless k.nil?
+    @offers = ActiveSupport::OrderedHash.new
+    # Generate a hash ordered by the most frequently counted id
+    # Slower equivalent: offer_id_count.sort_by( |k,v| v}[0...25]
+    top_offer_ids = offer_id_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
+    top_offer_ids.each do |id, count|
+      @offers[id] = { :count => count, :object => nil }
+    end
+    Offer.find(@offers.keys).each do |o|
+      @offers[o.id][:object] = o
     end
 
-    publisher_app_ids.each do |k,v|
-      @publisher_apps[App.find(k)] = v unless k.nil?
+    @publisher_apps = ActiveSupport::OrderedHash.new
+    top_publisher_app_ids = publisher_app_id_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
+    top_publisher_app_ids.each do |id, count|
+      @publisher_apps[id] = { :count => count, :object => nil }
+    end
+    App.find(@publisher_apps.keys).each do |pa|
+      @publisher_apps[pa.id][:object] = pa
+    end
+
+    @udids = ActiveSupport::OrderedHash.new
+    top_udids = udid_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
+    top_udids.each do |id, count|
+      @udids[id] = { :count => count, :object => id }
     end
   end
 end
