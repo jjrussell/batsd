@@ -529,6 +529,13 @@ class Partner < ActiveRecord::Base
     "#{TIPALTI_PAYEE_API}#{action}?#{params.to_query}&key=#{key}"
   end
 
+  def kontagent_dashboard_url
+    subdomain = kontagent_subdomain
+    partner = KontagentConfig.partner
+    domain = KontagentConfig.domain
+    "http://#{subdomain}-#{partner}.#{domain}"
+  end
+
   private
 
   def update_currencies

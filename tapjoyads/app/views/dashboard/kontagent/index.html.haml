@@ -1,7 +1,7 @@
 %h1 Kontagent
 
 %h3 Actions
-= link_to "Your KT Dashboard", "http://#{current_partner.kontagent_subdomain}-tapjoy.platform.stg.kontagent.com"
+= link_to "Your KT Dashboard", @kontagent_integration_request.partner.kontagent_dashboard_url
 |
 = link_to 'Attempt to Resync', kontagent_path(@kontagent_integration_request), :method => :put
 
