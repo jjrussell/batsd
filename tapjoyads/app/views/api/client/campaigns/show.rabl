@@ -1,2 +1,3 @@
 object @campaign => :campaign
-attributes :id, :name
+attributes :id, :name, :bid
+attributes :active? => :active
