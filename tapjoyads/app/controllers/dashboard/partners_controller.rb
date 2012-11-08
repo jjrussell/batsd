@@ -57,7 +57,6 @@ class Dashboard::PartnersController < Dashboard::DashboardController
   def create
     @partner = Partner.new
     @partner.name = params[:partner][:name]
-    @partner.developer_name = params[:partner][:developer_name]
     @partner.contact_name = params[:partner][:contact_name]
     @partner.contact_phone = params[:partner][:contact_phone]
     @partner.country = params[:partner][:country]
