@@ -1382,7 +1382,7 @@ describe Offer do
           uid = Device.advertiser_device_id(nil, @offer.partner_id)
           result = url.sub('[timestamp]', "#{now.to_i}.#{now.usec}").sub('[ip_address]', '').sub('[uid]', uid)
           result.sub!('[user_agent]', user_agent)
-          Downloader.should_receive(:queue_get_with_retry).with(result).once
+          Downloader.should_receive(:queue_get_with_retry).with(result, anything).once
         end
       end
 
@@ -1418,7 +1418,7 @@ describe Offer do
           uid = Device.advertiser_device_id(@udid, @offer.partner_id)
           result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
           result.sub!('[user_agent]', user_agent)
-          Downloader.should_receive(:queue_get_with_retry).with(result).once
+          Downloader.should_receive(:queue_get_with_retry).with(result, anything).once
         end
       end
 

@@ -3,8 +3,11 @@ class Downloader
   # Make a GET request to the specified url and return the contents of the response.
   #
   def self.get(url, options = {})
-    headers = options.delete(:headers) { {} }
-    timeout = options.delete(:timeout) { 2 }
+    headers  = options.delete(:headers) { {} }
+    timeout  = options.delete(:timeout) { 2 }
+    offer_id = options.delete(:offer_id) { nil }
+    url_type = options.delete(:url_type) { nil }
+
     internal_authenticate = options.delete(:internal_authenticate) { false }
     return_response = options.delete(:return_response) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -26,6 +29,17 @@ class Downloader
     response = sess.get(url, headers)
 
     Rails.logger.info "Download complete (#{Time.zone.now - start_time}s)"
+
+    # REMOVEME -KB
+    if offer_id == '2fb7a07a-3878-42c3-b672-03ab39f5b918'
+      WebRequest.new(:time => Time.zone.now).tap do |wr|
+        wr.path             = "#{url_type}_attempt"
+        wr.offer_id         = offer_id
+        wr.callback_url     = url
+        wr.http_status_code = response.status
+        wr.save
+      end
+    end
 
     return return_response ? response : response.body
   end
