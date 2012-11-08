@@ -137,5 +137,4 @@ class KontagentIntegrationRequest < ActiveRecord::Base
     self.partner.apps.each { |app| created_apps << provision_app!(app) }
     created_apps
   end
-
 end
