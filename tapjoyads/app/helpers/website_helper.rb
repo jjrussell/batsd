@@ -1,4 +1,6 @@
 module WebsiteHelper
+  STEP_NUMBERING_REGEX = /^\d+\.\s|^\d+\./
+
   def include_tapjoy_graph
     content_for :page_head, stylesheet_link_tag('tapjoy_graph', 'reporting')
     # TODO: try putting the following javascripts in included_javascripts instead of page_head
@@ -185,9 +187,9 @@ EOJS
     instructions = sanitize(text.to_s).gsub(/\r/, '').split(/\n+/)
     result = ""
     instructions.each_with_index do |instruction, index|
-      if /^\d+\.\s|^\d+\./.match(instruction)
+      if STEP_NUMBERING_REGEX.match(instruction)
         count = instruction.match(/^\d+/)
-        instruction_text = instruction.gsub(/^\d+\.\s|^\d+\./, '')
+        instruction_text = instruction.gsub(STEP_NUMBERING_REGEX, '')
         li = content_tag(:li) do
           concat content_tag(:div, count, :class => 'count')
           concat content_tag(:div, instruction_text, :class => 'step')
