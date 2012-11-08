@@ -5,6 +5,13 @@ rescue Errno::ENOENT
 end
 
 Tapjoyad::Application.configure do
+
+  config.middleware.use Rack::Cors do
+    allow do
+      origins '*'
+      resource '*', :headers => :any, :methods => :any
+    end
+  end
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
