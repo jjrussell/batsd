@@ -15,11 +15,12 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
     begin
       @device = Device.new(:key => @reward.udid)
 
-      device_aliases = [
-        {:namespace => 'android_id', :identifier => @device.android_id},
-        {:namespace => 'mac_sha1',   :identifier => @device.mac_address && Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))},
-        {:namespace => 'idfa',       :identifier => @device.idfa}
-      ].reject{ |a| a[:identifier].nil?  }
+      device_aliases = [{ 
+        :device_key => @device.key, 
+        :android_id => @device.android_id, 
+        :mac_sha1   => @device.mac_address && Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address)),
+        :idfa       => @device.idfa
+      }.reject{ |k,v| v.nil? }]
 
       @notification = NotificationsClient::Notification.new({
         :app_id => @reward.publisher_app_id, 
