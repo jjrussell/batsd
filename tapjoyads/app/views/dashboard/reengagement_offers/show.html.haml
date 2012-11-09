@@ -7,7 +7,7 @@
   .instructions
     %ul.days.clearfix
       - todays_day_number = @reengagement_offer.day_number
-      - @reengagement_offers.each do |r|
+      - @campaign.each do |r|
         - day_number = r.day_number
         - if day_number > 0
           - currency = @currencies.detect { |c| c.id == r.currency_id }

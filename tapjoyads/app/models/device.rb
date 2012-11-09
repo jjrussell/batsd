@@ -30,12 +30,15 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
-  self.sdb_attr :experiment_bucket_id
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
   MAX_OVERWRITES_TRACKED = 100000
+
+  def self.cached_count
+    Mc.get('statz.devices_count') || 0
+  end
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -277,8 +280,6 @@ class Device < SimpledbShardedResource
       return
     end
 
-    is_new and assign_experiment_bucket
-
     remove_old_skips
     delete_extra_attributes('recent_click_hashes')    # remove obsolete sdb_attr
     return_value = super({ :write_to_memcache => true }.merge(options))
@@ -422,19 +423,13 @@ class Device < SimpledbShardedResource
     ExperimentBucket.find_in_cache(experiment_bucket_id)
   end
 
-  def experiment_bucket=(bucket)
-    raise ArgumentError unless bucket.is_a?(ExperimentBucket)
-    self.experiment_bucket_id = bucket.id
-  end
-
-  def assign_experiment_bucket(hash_offset = nil)
+  def experiment_bucket_id(hash_offset = nil)
     return if ExperimentBucket.count_from_cache == 0
-    hash_offset ||= $redis.get('experiments:hash_offset').to_i || 0
+    hash_offset ||= ExperimentBucket.hash_offset
 
     # digest the udid, slice the characters we are using, and get an integer
     hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
-    index = hash % ExperimentBucket.count_from_cache
-    self.experiment_bucket_id = ExperimentBucket.id_for_index(index)
+    ExperimentBucket.id_for_index(hash % ExperimentBucket.count_from_cache)
   end
 
   private

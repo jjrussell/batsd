@@ -10,7 +10,7 @@
         %th
           = f.label :currency_id, 'Currency'
         %td
-          = f.select :currency_id, options_from_collection_for_select(@app.currencies, :id, :name)
+          = f.select :currency_id, options_from_collection_for_select(@currencies, :id, :name)
           = error_message_on @reengagement_offer, :currency_id
       %tr
         %th
