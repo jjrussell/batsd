@@ -29,6 +29,7 @@
       %li= link_to 'Pay-Per-Action', @app.action_offers.present? ? app_action_offers_path(@app) : new_app_action_offer_path(@app), :class => (controller.controller_name == 'action_offers') ? 'selected' : ''
 
       %li.title Publish
+      %li= link_to 'Daily Rewards', app_reengagement_offers_path(@app), :class => (controller.controller_name == 'reengagement_offers') ? 'selected' : ''
       %li= link_to 'Non-Rewarded', app_non_rewarded_path(@app), :class => (controller.controller_name == 'non_rewarded') ? 'selected' : ''
       - currency_selected = controller.controller_name == 'currencies'
       - if permitted_to?(:options, :dashboard_videos)

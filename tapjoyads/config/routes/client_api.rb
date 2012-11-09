@@ -1,7 +1,7 @@
 Tapjoyad::Application.routes.draw do
   # TODO:  non namespaced routing
   namespace :api do
-    namespace :client do
+    namespace :client, :defaults => { :format => 'json' } do
       resources :ads do
         resource :reports do
           get :sessions

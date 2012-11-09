@@ -16,6 +16,9 @@ class StoreRank
     known_store_ids = all_known_store_ids_for('iphone')
     log_progress "Finished loading known_store_ids."
 
+    request_count = ITUNES_CATEGORY_IDS.count * ITUNES_POP_IDS.count * ITUNES_COUNTRY_IDS.count
+    bar = ProgressBar.new(request_count)
+
     ITUNES_CATEGORY_IDS.each do |category_key, category_id|
       ITUNES_POP_IDS.each do |pop_key, pop_id|
         ITUNES_COUNTRY_IDS.each do |country_key, country_id|
@@ -24,7 +27,7 @@ class StoreRank
           headers = { 'X-Apple-Store-Front' => "#{country_id}-1,12", 'Host' => 'ax.itunes.apple.com' }
           user_agent = 'iTunes/10.1 (Macintosh; Intel Mac OS X 10.6.5) AppleWebKit/533.18.1'
 
-          request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent)
+          request = Typhoeus::Request.new(url, :headers => headers, :user_agent => user_agent, :follow_location => true)
           request.on_complete do |response|
             if response.code != 200
               error_count += 1
@@ -62,13 +65,15 @@ class StoreRank
               end
 
               ranks_file.puts( {"itunes.#{ranks_key}" => ranks_hash}.to_json )
+              bar.increment!
             end
           end
           hydra.queue(request)
         end
       end
     end
-    log_progress "Finished queuing requests."
+
+    log_progress "Finished queuing requests. Making requests to iOS App Store..."
 
     hydra.run
     log_progress "Finished making requests."
@@ -80,10 +85,12 @@ class StoreRank
     `gzip -f 'tmp/#{ranks_file_name}'`
 
     save_to_bucket(ranks_file_name)
-    log_progress "Finished saving iTunes AppStore rankings."
+    log_progress "Finished saving iTunes AppStore rankings.  Writing ranks_rows to S3..."
 
+    bar = ProgressBar.new(s3_rows.count)
     s3_rows.each do |offer_id, ranks_row|
       ranks_row.save || log_progress("S3 save failed for iTunes: #{ranks_row.id}")
+      bar.increment!
     end
 
     log_progress "Finished saving ranks_rows."
@@ -235,8 +242,10 @@ class StoreRank
 
   def self.log_progress(message)
     now = Time.zone.now
-    Rails.logger.info "#{now} (#{now.to_i}): #{message}"
+    message = "#{now} (#{now.to_i}): #{message}"
+    Rails.logger.info message
     Rails.logger.flush
+    puts message
   end
 
   def self.google_rank_url(type, category, language, offset)

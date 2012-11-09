@@ -181,10 +181,12 @@ describe Experiment do
             e.concluded?.should be_false
 
             e.buckets.each do |bucket|
-              bucket.devices.all? { |d| e.group_for(d) == 'control' }.should be_true
+              Device.select_all.each { |d| e.group_for(d) == 'control' }.should be_true
             end
 
-            e.group_for(Device.new).should == nil # sanity
+            excluded_device = double('device')
+            excluded_device.stub(:experiment_bucket_id) { 'fake' }
+            e.group_for(excluded_device).should == nil # sanity
           end
         end
       end
@@ -204,18 +206,17 @@ describe Experiment do
             e.scheduled?.should be_false
             e.concluded?.should be_false
 
-            group_counts = {'control' => 0, 'test' => 0}
-            e.buckets.each do |bucket|
-              bucket.devices.each { |d| group_counts[e.group_for(d)] += 1 }
+            {'control' => 0, 'test' => 0}.tap do |group_counts|
+              Device.select_all.each { |d| group_counts[e.group_for(d)] += 1 }
+              ratio = group_counts['test'] / group_counts.values.reduce(:+).to_f
+              (ratio * 100).should be_within(5).of(e.ratio)
             end
-            ratio = group_counts['test'] / group_counts.values.reduce(:+).to_f
-
-            (ratio * 100).should be_within(5).of(e.ratio)
           end
         end
 
         it 'always places a device in the same group (per experiment)' do
-          100.times { Factory(:device) }
+          99.times { Factory(:device) }
+          device   = Factory(:device)
           ExperimentBucket.rehash_population(:buckets => 1, :alternate => false)
 
           Factory(:experiment,
@@ -225,8 +226,8 @@ describe Experiment do
             e.reserve_devices!
             e.start!
 
-            runs = 5.times.collect {
-              ExperimentBucket.first.devices.collect { |d| e.group_for(d) }
+            runs = 20.times.collect {
+              e.group_for(device)
             }
 
             runs.each_cons(2) { |a, b| a.should == b }
@@ -238,8 +239,9 @@ describe Experiment do
 
   describe '#start!' do
     it 'starts the experiment immediately' do
-      ExperimentBucket.rehash_population(:buckets => 1)
       Factory(:device)
+      ExperimentBucket.rehash_population(:buckets => 1)
+
       Factory(:experiment,
         :started_at      => Date.today.advance(:days => 3),
         :due_at          => Date.today.advance(:days => 5),
@@ -256,8 +258,8 @@ describe Experiment do
 
   describe '#conclude!' do
     before(:each) {
-      ExperimentBucket.rehash_population(:buckets => 5, :alternate => false)
       10.times { Factory(:device) }
+      ExperimentBucket.rehash_population(:buckets => 5, :alternate => false)
     }
 
     it 'can end the experiment early' do
@@ -296,8 +298,8 @@ describe Experiment do
 
   describe '.[]' do
     it 'looks up experiments by name from cache' do
-      ExperimentBucket.rehash_population(:buckets => 2, :alternate => false)
       20.times { Factory(:device) } # TODO this test will fail with probability 0.5**20
+      ExperimentBucket.rehash_population(:buckets => 2, :alternate => false)
 
       e1 = Factory(:experiment, :name => 'one')
       e2 = Factory(:experiment, :name => 'two')

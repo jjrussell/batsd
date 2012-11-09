@@ -5,6 +5,13 @@ rescue Errno::ENOENT
 end
 
 Tapjoyad::Application.configure do
+
+  config.middleware.use Rack::Cors do
+    allow do
+      origins '*'
+      resource '*', :headers => :any, :methods => :any
+    end
+  end
   # Settings specified here will take precedence over those in config/application.rb
 
   # In the development environment your application's code is reloaded on
@@ -38,9 +45,11 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
-MEMCACHE_SERVERS             = ['127.0.0.1']
-SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
-DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
+CACHE_SERVERS                    = {}
+CACHE_SERVERS[:analytics_logger] = ['127.0.0.1']
+MEMCACHE_SERVERS                 = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS     = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = []
 

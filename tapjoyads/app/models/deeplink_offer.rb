@@ -45,7 +45,7 @@ class DeeplinkOffer < ActiveRecord::Base
     offer.publisher_app_whitelist = self.app_id
     offer.approved_sources = %w(offerwall)
     offer.tapjoy_enabled = true
-    offer.user_enabled = true
+    offer.user_enabled = currency.rewarded?
     offer.pay_per_click = true
     offer.multi_complete = true
     offer.interval = 1.hour.to_i

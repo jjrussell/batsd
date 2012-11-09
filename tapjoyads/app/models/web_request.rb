@@ -61,6 +61,7 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :offer_id
   self.define_attr :offer_is_paid, :type => :bool
   self.define_attr :offer_daily_budget, :type => :int
+  self.define_attr :offer_overall_budget, :type => :int
   self.define_attr :advertiser_app_id
   self.define_attr :publisher_app_id
   self.define_attr :displayer_app_id

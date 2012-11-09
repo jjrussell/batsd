@@ -22,19 +22,17 @@
 
 .launch_button= link_to 'New Experiment', new_tools_experiment_path
 
-/ %h4 Experiments System Info
-/ - bucket_count = ExperimentBucket.count_from_cache
-/ - bucketed_devices_count = Device.count(:where => 'experiment_bucket_id is not null')
-/ - free_buckets = ExperimentBucket.where(:experiment_id => nil)
+%h4 Experiments System Info
+- bucket_count = ExperimentBucket.count_from_cache
+- bucketed_devices_count = Device.count(:where => 'experiment_bucket_id is not null')
+- free_buckets = ExperimentBucket.where(:experiment_id => nil)
 
 
-/ .experiments_stats
-/   .total_buckets= "Total experiment buckets: #{bucket_count}"
-/   .free_buckets= "Total available buckets: #{free_buckets.count}"
-/   .free_ui_buckets= "Available UI buckets: #{free_buckets.where(:bucket_type => 'interface').count}"
-/   .free_opt_buckets= "Available optimization buckets: #{free_buckets.where(:bucket_type => 'optimization').count}"
-/   .avg_bucket_size= "Average bucket size: #{bucketed_devices_count.to_f / bucket_count} devices"
-/   .eligible_devices= "Total eligible devices: #{bucketed_devices_count} (of #{Device.count} total devices)"
-/   .free_devices= "Available devices: #{free_buckets.map(&:size).flatten.reduce(:+) || 0}"
-/   .free_ui_devices= "Available UI devices: #{free_buckets.where(:bucket_type => 'interface').map(&:size).reduce(:+) || 0}"
-/   .free_opt_devices= "Available optimization devices: #{free_buckets.where(:bucket_type => 'optimization').map(&:size).reduce(:+) || 0}"
+.experiments_stats
+  .total_buckets= "Total experiment buckets: #{bucket_count}"
+  .free_buckets= "Total available buckets: #{free_buckets.count}"
+  .free_ui_buckets= "Available UI buckets: #{free_buckets.where(:bucket_type => 'interface').count}"
+  .free_opt_buckets= "Available optimization buckets: #{free_buckets.where(:bucket_type => 'optimization').count}"
+  .avg_bucket_size= "Approximate average bucket size: #{ExperimentBucket.average_size} devices"
+  .eligible_devices= "Approximate total devices: #{Device.cached_count}"
+  .free_devices= "Approximate available devices: #{free_buckets.count * ExperimentBucket.average_size}"

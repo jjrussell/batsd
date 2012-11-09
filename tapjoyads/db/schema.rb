@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121031200401) do
+ActiveRecord::Schema.define(:version => 20121106024714) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -846,6 +846,7 @@ ActiveRecord::Schema.define(:version => 20121031200401) do
     t.text     "featured_ad_content"
     t.string   "featured_ad_action"
     t.string   "featured_ad_color"
+    t.boolean  "requires_admin_device",                                                         :default => false, :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

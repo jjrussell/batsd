@@ -42,7 +42,7 @@ Scenario: Modifying the bid from the survey edit page
 
 Scenario: Modifying the bid from the offer edit page
   Given I have created a survey with a bid of "$1.00"
-  When I visit the "edit offer" page
+  When I visit the "statz edit offer" page
   And I fill in "Bid" with "$3.00"
   And I press "Save Changes"
   Then the bid should be "$3.00"

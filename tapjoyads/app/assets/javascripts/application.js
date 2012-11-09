@@ -68,10 +68,15 @@ $(function($){
     if (box.is(':hidden')) {
       var top = link.attr('offsetTop') + link.height();
       var left = link.attr('offsetLeft');
+      box.removeClass('hidden')
       box.show();
       var width = box.width();
       if (width > 280) {
         left -= (width - 270);
+      }
+      if (link.hasClass('bootstrap')) {
+        left = - width;
+        box.css({height: 400, 'overflow-y': 'scroll'});
       }
       box.css({left: left, top: top});
     } else {

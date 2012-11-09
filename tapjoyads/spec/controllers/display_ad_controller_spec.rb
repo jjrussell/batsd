@@ -62,7 +62,7 @@ describe DisplayAdController do
           round_mask  = read_asset('round_mask.png',        'display')
           icon_shadow = read_asset('icon_shadow.png',       'display')
 
-          offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
+          offer_icon_id = IconHandler.hashed_icon_id(@offer.icon_id)
 
           obj_ad_bg       = @bucket.objects["display/self_ad_bg_320x50.png"]
           obj_td_icon     = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
@@ -154,7 +154,7 @@ describe DisplayAdController do
         round_mask  = read_asset('round_mask.png',  'display')
         icon_shadow = read_asset('icon_shadow.png', 'display')
 
-        offer_icon_id = Offer.hashed_icon_id(@offer.icon_id)
+        offer_icon_id = IconHandler.hashed_icon_id(@offer.icon_id)
 
         obj_td_icon = @bucket.objects["icons/src/#{offer_icon_id}.jpg"]
         obj_round_mask = @bucket.objects["display/round_mask.png"]

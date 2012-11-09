@@ -87,6 +87,7 @@ Spork.prefork do
       Mc.flush('totally_serious')
       OfferCacher.stub(:get_offer_stats) { Hash.new(0) }
       I18n.locale = :en
+      Device.stub(:cached_count) { Device.count }
     end
 
     config.after(:each) do
