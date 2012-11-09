@@ -26,7 +26,7 @@ class ExperimentBucket < ActiveRecord::Base
   end
 
   def self.hash_offset
-    $redis.get(OFFSET_KEY)
+    $redis.get(OFFSET_KEY).to_i # nil.to_i => 0
   end
 
   # Assign experiment buckets to each device

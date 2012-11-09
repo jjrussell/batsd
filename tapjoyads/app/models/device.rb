@@ -455,7 +455,7 @@ class Device < SimpledbShardedResource
 
   def experiment_bucket_id(hash_offset = nil)
     return if ExperimentBucket.count_from_cache == 0
-    hash_offset ||= $redis.get(ExperimentBucket.hash_offset).to_i || 0
+    hash_offset ||= ExperimentBucket.hash_offset
 
     # digest the udid, slice the characters we are using, and get an integer
     hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
