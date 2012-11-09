@@ -259,7 +259,7 @@ class Utils
 
   def self.create_id_hash(file, default_reason)
     id_hash = {}
-    lines = file.read.split
+    lines = file.read.split(/\r/)
     lines.slice!(0)
     lines.each do |line|
       cells = line.split(',')
