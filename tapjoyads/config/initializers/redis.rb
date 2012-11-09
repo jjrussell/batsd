@@ -4,4 +4,5 @@ if Rails.env.production?
   $redis_read = Redis.new(:host => 'alpha.redis.tapjoy.net')
 else
   $redis_read = $redis = Redis.new
+  $perma_redis = Redis.new(:db => 1)
 end
