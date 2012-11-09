@@ -62,6 +62,12 @@ describe OfferInstructionsController do
        response.should render_template('layouts/iphone')
       end
 
+      it 'has the intructions layout' do
+        @params[:exp] = 'offer_instructions_experiment'
+        get(:index, @params)
+        response.should render_template('layouts/instructions')
+      end
+
       it 'assigns @complete_action_url to a website url' do
        get(:index, @params)
        assigns(:complete_action_url).should == 'some_website_url'
@@ -144,6 +150,37 @@ describe OfferInstructionsController do
           page.has_no_button?("Go to #{@app.name}")
         end
       end
+    end
+  end
+  
+  describe '#app_not_installed' do
+      before :each do
+        ApplicationController.stub(:verify_params).and_return(true)
+        @app = FactoryGirl.create(:app)
+        @offer = @app.primary_offer
+        Offer.stub(:find_in_cache).and_return(@offer)
+        @currency = FactoryGirl.create(:currency)
+        Currency.stub(:find_in_cache).and_return(@currency)
+        ApplicationController.stub(:verify_records).and_return(true)
+        @offer.stub(:complete_action_url).and_return('some_website_url')
+        @action_offer = FactoryGirl.create(:action_offer)
+        App.stub(:find_in_cache).with(@app.id).and_return(@app)
+        @params = {
+          :data                  => ObjectEncryptor.encrypt(:data => 'some_data'),
+          :id                    => @offer.id,
+          :udid                  => UUIDTools::UUID.random_create.to_s,
+          :publisher_app_id      => @currency.app.id,
+          :click_key             => '5',
+          :itunes_link_affiliate => 'itunes',
+          :os_version            => '1.0',
+          :action_app_id         => @app.id
+        }
+      end
+
+    it 'renders crap' do
+      @params[:exp] = 'test'
+      get(:app_not_installed, @params)
+      response.should render_template('layouts/iphone')
     end
   end
 end

@@ -1,5 +1,5 @@
 module WebsiteHelper
-  STEP_NUMBERING_REGEX = /^\d+\.\s|^\d+\./
+  STEP_NUMBER_REGEX = /^\d+\.\s|^\d+\./
 
   def include_tapjoy_graph
     content_for :page_head, stylesheet_link_tag('tapjoy_graph', 'reporting')
@@ -187,9 +187,9 @@ EOJS
     instructions = sanitize(text.to_s).gsub(/\r/, '').split(/\n+/)
     result = ""
     instructions.each_with_index do |instruction, index|
-      if STEP_NUMBERING_REGEX.match(instruction)
+      if STEP_NUMBER_REGEX.match(instruction)
         count = instruction.match(/^\d+/)
-        instruction_text = instruction.gsub(STEP_NUMBERING_REGEX, '')
+        instruction_text = instruction.gsub(STEP_NUMBER_REGEX, '')
         li = content_tag(:li) do
           concat content_tag(:div, count, :class => 'count')
           concat content_tag(:div, instruction_text, :class => 'step')
