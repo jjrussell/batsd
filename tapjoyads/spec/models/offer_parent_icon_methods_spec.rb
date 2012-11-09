@@ -21,9 +21,9 @@ describe OfferParentIconMethods do
       end
 
       context 'when model does not have a primary_app_metadata record' do
-        it 'calls Offer.get_icon_url and passes appropriate args' do
+        it 'calls IconHandler.get_icon_url and passes appropriate args' do
           subject.stub(:primary_app_metadata)
-          Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+          IconHandler.should_receive(:get_icon_url).with(options.merge(:icon_id => IconHandler.hashed_icon_id(subject.id))).once
         end
       end
     end
@@ -41,16 +41,16 @@ describe OfferParentIconMethods do
       end
 
       context 'when app does not have a primary_app_metadata record' do
-        it 'calls Offer.get_icon_url and passes appropriate args' do
+        it 'calls IconHandler.get_icon_url and passes appropriate args' do
           subject.app.stub(:primary_app_metadata)
-          Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+          IconHandler.should_receive(:get_icon_url).with(options.merge(:icon_id => IconHandler.hashed_icon_id(subject.id))).once
         end
       end
     end
 
     context 'for non-app-associated models' do
-      it 'calls Offer.get_icon_url and passes appropriate args' do
-        Offer.should_receive(:get_icon_url).with(options.merge(:icon_id => Offer.hashed_icon_id(subject.id))).once
+      it 'calls IconHandler.get_icon_url and passes appropriate args' do
+        IconHandler.should_receive(:get_icon_url).with(options.merge(:icon_id => IconHandler.hashed_icon_id(subject.id))).once
       end
     end
 
@@ -71,9 +71,9 @@ describe OfferParentIconMethods do
       end
 
       context 'when model does not have a primary_app_metadata record' do
-        it 'calls Offer.upload_icon! and passes appropriate args' do
+        it 'calls IconHandler.upload_icon! and passes appropriate args' do
           subject.stub(:primary_app_metadata)
-          Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
+          IconHandler.should_receive(:upload_icon!).with(image_data, subject.id, false)
         end
       end
     end
@@ -91,29 +91,29 @@ describe OfferParentIconMethods do
       end
 
       context 'when app does not have a primary_app_metadata record' do
-        it 'calls Offer.upload_icon! and passes appropriate args' do
+        it 'calls IconHandler.upload_icon! and passes appropriate args' do
           subject.app.stub(:primary_app_metadata)
-          Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
+          IconHandler.should_receive(:upload_icon!).with(image_data, subject.id, false)
         end
       end
     end
 
     context 'for non-app-associated models' do
       context 'when .class is not VideoOffer' do
-        it 'calls Offer.upload_icon! and passes appropriate args' do
-          Offer.should_receive(:upload_icon!).with(image_data, subject.id, false)
+        it 'calls IconHandler.upload_icon! and passes appropriate args' do
+          IconHandler.should_receive(:upload_icon!).with(image_data, subject.id, false)
         end
       end
 
       context 'when .class is VideoOffer' do
-        it 'calls Offer.upload_icon! and passes appropriate args' do
+        it 'calls IconHandler.upload_icon! and passes appropriate args' do
           subject.stub(:class).and_return(VideoOffer)
-          Offer.should_receive(:upload_icon!).with(image_data, subject.id, true)
+          IconHandler.should_receive(:upload_icon!).with(image_data, subject.id, true)
         end
       end
 
       it "should respect child offers' 'auto_update_icon' field" do
-        Offer.stub(:upload_icon!).and_return(true)
+        IconHandler.stub(:upload_icon!).and_return(true)
 
         offers = [Offer.new(:auto_update_icon => true), Offer.new(:auto_update_icon => false)]
         offers[0].should_receive(:remove_overridden_icon!).once
