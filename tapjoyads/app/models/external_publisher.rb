@@ -23,7 +23,7 @@ class ExternalPublisher
 
   def get_icon_url(options = {})
     icon_id = (app_metadata_id ? app_metadata_id : app_id)
-    Offer.get_icon_url(options.merge(:icon_id => Offer.hashed_icon_id(icon_id)))
+    IconHandler.get_icon_url(options.merge(:icon_id => IconHandler.hashed_icon_id(icon_id)))
   end
 
   def get_offerwall_url(device, currency, accept_language_str, user_agent_str, gamer_id = nil, no_log = false)

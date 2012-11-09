@@ -88,6 +88,7 @@ describe ClickController do
           web_request = mock('web_request').as_null_object
           web_request.should_receive(:offer_is_paid=).with(false)
           web_request.should_receive(:offer_daily_budget=).with(0)
+          web_request.should_receive(:offer_overall_budget=).with(0)
           WebRequest.should_receive(:new).and_return(web_request)
 
           get(:generic, @params)

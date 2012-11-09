@@ -112,7 +112,7 @@ module Offer::BannerCreatives
     self.banner_creatives += [size] unless has_banner_creative?(size)
     send("banner_creative_#{size}_blob=", image_data)
     set_primary_key if new_record? # we use "id" below, so we need to be sure it's set
-    self.creatives_dict = creatives_dict.merge(size => "#{Offer.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
+    self.creatives_dict = creatives_dict.merge(size => "#{IconHandler.hashed_icon_id(self.id)}_#{Time.now.to_i.to_s}_#{size}")
   end
 
   def approve_banner_creative(size)
@@ -133,7 +133,7 @@ module Offer::BannerCreatives
 
   def banner_creative_path(size, format = nil)
     format ||= banner_creative_format(size)
-    creatives_dict.include?(size) ? "banner_creatives/#{creatives_dict[size]}.#{format}" : "banner_creatives/#{Offer.hashed_icon_id(id)}_#{size}.#{format}"
+    creatives_dict.include?(size) ? "banner_creatives/#{creatives_dict[size]}.#{format}" : "banner_creatives/#{IconHandler.hashed_icon_id(id)}_#{size}.#{format}"
   end
 
   def banner_creative_url(options)

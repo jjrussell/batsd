@@ -62,7 +62,7 @@ describe Offer do
         @offer.icon_id_override = @guid
 
         UUIDTools::UUID.should_not_receive(:random_create)
-        Offer.should_receive(:hashed_icon_id).with(@guid).once.and_return(@icon_id)
+        IconHandler.should_receive(:hashed_icon_id).with(@guid).once.and_return(@icon_id)
         @offer.override_icon!(@image_data)
 
         @offer.changed?.should be_true # offer was not saved (changed is true due to setting icon_id_override above)
@@ -73,7 +73,7 @@ describe Offer do
     context "without an already-existing overridden icon" do
       it "uses new guid for icon_id_override" do
         UUIDTools::UUID.should_receive(:random_create).once.and_return(@guid)
-        Offer.should_receive(:hashed_icon_id).with(@guid).once.and_return(@icon_id)
+        IconHandler.should_receive(:hashed_icon_id).with(@guid).once.and_return(@icon_id)
         @offer.override_icon!(@image_data)
 
         @offer.icon_id_override.should == @guid
@@ -103,7 +103,7 @@ describe Offer do
         before :each do
           guid = "guid"
           @offer.update_attributes!(:icon_id_override => guid)
-          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+          IconHandler.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
         end
 
         context "with pre-existing image" do
@@ -148,7 +148,7 @@ describe Offer do
         before :each do
           guid = "guid"
           @action_offer.update_attributes!(:icon_id_override => guid)
-          Offer.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
+          IconHandler.should_receive(:hashed_icon_id).with(guid).once.and_return(@icon_id)
         end
 
         context "with pre-existing image" do
@@ -454,7 +454,7 @@ describe Offer do
       exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
       optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
       requires_udid requires_mac_address native_rank_score
-      featured_ad_action featured_ad_color featured_ad_content
+      featured_ad_action featured_ad_color featured_ad_content requires_admin_device
     }
 
     EXCLUDED_COLUMNS = %w{
