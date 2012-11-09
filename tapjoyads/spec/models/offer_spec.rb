@@ -454,7 +454,7 @@ describe Offer do
       exclusion_prerequisite_offer_ids app_metadata_id rate_filter_override
       optimized_rank_boost x_partner_exclusion_prerequisites x_partner_prerequisites
       requires_udid requires_mac_address native_rank_score
-      featured_ad_action featured_ad_color featured_ad_content
+      featured_ad_action featured_ad_color featured_ad_content requires_admin_device
     }
 
     EXCLUDED_COLUMNS = %w{
