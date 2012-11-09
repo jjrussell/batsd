@@ -316,9 +316,9 @@ class Offer < ActiveRecord::Base
     new_offer
   end
 
-  def icon_s3_object
+  def icon_s3_object(size = nil)
     bucket = S3.bucket(BucketNames::TAPJOY)
-    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
+    bucket.objects["icons/#{size.present? ? size : 'src'}/#{IconHandler.hashed_icon_id(icon_id)}.jpg"]
   end
 
   def app_offer?(only_client_facing = true)
@@ -507,7 +507,7 @@ class Offer < ActiveRecord::Base
 
   def video_icon_url(options = {})
     if video_offer? || item_type == 'TestVideoOffer'
-      object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"]
+      object = S3.bucket(BucketNames::TAPJOY).objects["icons/src/#{IconHandler.hashed_icon_id(icon_id)}.jpg"]
       begin
         object.exists? ? get_icon_url({:source => :cloudfront}.merge(options)) : "#{CLOUDFRONT_URL}/videos/assets/default.png"
       rescue AWS::Errors::Base
@@ -518,106 +518,7 @@ class Offer < ActiveRecord::Base
   memoize :video_icon_url
 
   def get_icon_url(options = {})
-    Offer.get_icon_url({:icon_id => Offer.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
-  end
-
-  def self.icon_cache_key(guid)
-    "icon.s3.#{guid}"
-  end
-
-  def self.get_icon_url(options = {})
-    source     = options.delete(:source)   { :s3 }
-    icon_id    = options.delete(:icon_id)  { |k| raise "#{k} is a required argument" }
-    item_type  = options.delete(:item_type)
-    size       = options.delete(:size)     { (item_type == 'VideoOffer' || item_type == 'TestVideoOffer') ? '200' : '57' }
-    bust_cache = options.delete(:bust_cache) { false }
-    update_ts  = options.delete(:offer_updated_at)
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    prefix = source == :s3 ? "https://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy" : CLOUDFRONT_URL
-
-    url = "#{prefix}/icons/#{size}/#{icon_id}.jpg"
-
-    if bust_cache
-      url << "?ts=#{Time.now.to_i}"
-    elsif source == :cloudfront && update_ts.present?
-      url << "?ts=#{update_ts}"
-    end
-
-    url
-  end
-
-  def self.remove_icon!(guid, video_offer = false)
-    icon_id = Offer.hashed_icon_id(guid)
-    bucket  = S3.bucket(BucketNames::TAPJOY)
-    src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
-
-    src_obj.delete if src_obj.exists?
-
-    paths = if video_offer
-              ["icons/200/#{icon_id}.jpg"]
-            else
-              ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-            end
-
-    paths.each do |path|
-      obj = bucket.objects[path]
-      obj.delete if obj.exists?
-    end
-
-    Mc.delete(icon_cache_key(guid))
-    CloudFront.invalidate(guid, paths)
-  end
-
-  def self.upload_icon!(icon_src_blob, guid, video_offer = false)
-    icon_id = Offer.hashed_icon_id(guid)
-    bucket  = S3.bucket(BucketNames::TAPJOY)
-    src_obj = bucket.objects["icons/src/#{icon_id}.jpg"]
-
-    existing_icon_blob = src_obj.exists? ? src_obj.read : ''
-    if Digest::MD5.hexdigest(icon_src_blob) == Digest::MD5.hexdigest(existing_icon_blob)
-      return false
-    end
-
-    if video_offer
-      paths = ["icons/200/#{icon_id}.jpg"]
-
-      icon_200 = Magick::Image.from_blob(icon_src_blob)[0].resize(200, 125).opaque('#ffffff00', 'white')
-      corner_mask_blob = bucket.objects["display/round_mask_200x125.png"].read
-      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(200, 125)
-      icon_200.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-      icon_200 = icon_200.opaque('#ffffff00', 'white')
-      icon_200.alpha(Magick::OpaqueAlphaChannel)
-
-      icon_200_blob = icon_200.to_blob{|i| i.format = 'JPG'}
-      bucket.objects[paths.first].write(:data => icon_200_blob, :acl => :public_read)
-      src_obj.write(:data => icon_src_blob, :acl => :public_read)
-    else
-      paths = ["icons/256/#{icon_id}.jpg", "icons/114/#{icon_id}.jpg", "icons/57/#{icon_id}.jpg", "icons/57/#{icon_id}.png"]
-
-      icon_256 = Magick::Image.from_blob(icon_src_blob)[0].resize(256, 256).opaque('#ffffff00', 'white')
-
-      corner_mask_blob = bucket.objects["display/round_mask.png"].read
-      corner_mask = Magick::Image.from_blob(corner_mask_blob)[0].resize(256, 256)
-      icon_256.composite!(corner_mask, 0, 0, Magick::CopyOpacityCompositeOp)
-      icon_256 = icon_256.opaque('#ffffff00', 'white')
-      icon_256.alpha(Magick::OpaqueAlphaChannel)
-
-      icon_256_blob = icon_256.to_blob{|i| i.format = 'JPG'}
-      icon_114_blob = icon_256.resize(114, 114).to_blob{|i| i.format = 'JPG'}
-      icon_57_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'JPG'}
-      icon_57_png_blob = icon_256.resize(57, 57).to_blob{|i| i.format = 'PNG'}
-
-      bucket.objects["icons/256/#{icon_id}.jpg"].write(:data => icon_256_blob, :acl => :public_read)
-      bucket.objects["icons/114/#{icon_id}.jpg"].write(:data => icon_114_blob, :acl => :public_read)
-      bucket.objects["icons/57/#{icon_id}.jpg"].write(:data => icon_57_blob, :acl => :public_read)
-      bucket.objects["icons/57/#{icon_id}.png"].write(:data => icon_57_png_blob, :acl => :public_read)
-      src_obj.write(:data => icon_src_blob, :acl => :public_read)
-    end
-
-    Mc.delete(icon_cache_key(guid))
-    CloudFront.invalidate(guid, paths) if existing_icon_blob.present?
-    true
+    IconHandler.get_icon_url({:icon_id => IconHandler.hashed_icon_id(icon_id), :item_type => item_type}.merge(options))
   end
 
   def remove_overridden_icon!
@@ -626,7 +527,7 @@ class Offer < ActiveRecord::Base
     # only allow removing of offer-specific, manually-uploaded icons
     return if icon_id_override.nil? || [item_id, app_metadata_id, app_id].include?(guid)
 
-    Offer.remove_icon!(guid, (item_type == 'VideoOffer'))
+    IconHandler.remove_icon!(guid, (item_type == 'VideoOffer'))
 
     icon_id_override = item_type == 'App' ? nil : app_id # for "app offers" set this back to its default value
     self.update_attributes!(:icon_id_override => icon_id_override)
@@ -635,18 +536,19 @@ class Offer < ActiveRecord::Base
   def override_icon!(icon_src_blob)
     # Here's how this works...
     # When an offer's icon is requested, it will use the 'icon_id' method,
-    # which, by default, uses (app_metadata_id || item_id) as the guid to be passed into Offer.hashed_icon_id()
-    # The icon_id_override field will be used, however, if it is not nil.
+    # which uses (icon_id_override || app_metadata_id || item_id)
+    # as the guid to be passed into IconHandler.hashed_icon_id()
     #
-    # This method ('save_icon!') will therefore use icon_id by default when uploading the icon,
-    # and icon_id_override only if override == true
+    # Since icon_id_override is normally nil, what this allows for is one icon file to be shared
+    # between offers with the same parent (app_metadata or item).
     #
-    # What this allows for is one icon file to be shared between offers with the same parent.
+    # This method will set (or utilize the existing) icon_id_override
     #
-    # This also means that if an individual offer's icon is overridden, then removed, the icon shown will fall back to the shared file
+    # If an individual offer's icon is overridden via this method, then removed via remove_overridden_icon!,
+    # the icon shown will fall back to the shared file
     replacing = ![item_id, app_metadata_id, app_id].include?(icon_id_override) && icon_id_override.present?
     guid = replacing ? icon_id_override : UUIDTools::UUID.random_create.to_s
-    Offer.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
+    IconHandler.upload_icon!(icon_src_blob, guid, (item_type == 'VideoOffer'))
     unless replacing
       self.update_attributes!(:icon_id_override => guid, :auto_update_icon => default_auto_update_icon_value)
     end
@@ -740,16 +642,13 @@ class Offer < ActiveRecord::Base
   end
 
   def store_id_for_feed
-    if item_type == 'App'
-      third_party_data || Offer.hashed_icon_id(id)
-    else
-      Offer.hashed_icon_id(id)
-    end
+    store_id = third_party_data if (item_type == 'App')
+    store_id || IconHandler.hashed_icon_id(id)
   end
 
   def uploaded_icon?
     bucket = AWS::S3.new.buckets[BucketNames::TAPJOY]
-    bucket.objects["icons/src/#{Offer.hashed_icon_id(icon_id)}.jpg"].exists?
+    bucket.objects["icons/src/#{IconHandler.hashed_icon_id(icon_id)}.jpg"].exists?
   end
 
   def update_payment(force_update = false)
@@ -811,10 +710,6 @@ class Offer < ActiveRecord::Base
 
   def icon_id
     icon_id_override || app_metadata_id || item_id
-  end
-
-  def self.hashed_icon_id(guid)
-    Digest::SHA2.hexdigest(ICON_HASH_SALT + guid)
   end
 
   def expensive?
@@ -1015,7 +910,7 @@ class Offer < ActiveRecord::Base
 
   def display_ad_image_hash(currency)
     currency_string = "#{currency.get_visual_reward_amount(self)}.#{currency.name}" if currency.present?
-    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{Offer.hashed_icon_id(icon_id)}")
+    Digest::MD5.hexdigest("#{currency_string}.#{name}.#{IconHandler.hashed_icon_id(icon_id)}")
   end
 
   def featured_ad_color_in_css
@@ -1061,10 +956,6 @@ class Offer < ActiveRecord::Base
 
   def default_auto_update_icon_value
     app_offer?(false) || item_type == 'DeeplinkOffer' # TODO: add DeeplinkOffer to app_offer? method
-  end
-
-  def is_test_device?(currency, device)
-    currency.get_test_device_ids.include?(device.id)
   end
 
   def cleanup_url

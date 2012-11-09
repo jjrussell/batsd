@@ -98,7 +98,7 @@ class DisplayAdController < ApplicationController
     web_request.put_values('display_ad_requested', params, ip_address, geoip_data, request.headers['User-Agent'])
     update_web_request_store_name(web_request, nil, @publisher_app)
 
-    if currency.get_test_device_ids.include?(params[:udid])
+    if currency.has_test_device?(params[:udid])
       offer = @publisher_app.test_offer
     else
       offer = OfferList.new(

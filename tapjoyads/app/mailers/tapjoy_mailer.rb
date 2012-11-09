@@ -31,15 +31,6 @@ class TapjoyMailer < ActionMailer::Base
     body :text => "An sms has been sent to #{phone}, with the message: #{message}"
   end
 
-  def email_signup(to_email, confirm_code, currency_name, publisher_app_name, amount)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients to_email
-    subject "Confirmation email - get #{amount} #{publisher_app_name} #{currency_name}"
-    content_type 'text/html'
-    url = "#{API_URL}/list_signup/confirm?code=#{confirm_code}"
-    body :url => url, :currency_name => currency_name, :publisher_app_name => publisher_app_name, :amount => amount
-  end
-
   def low_conversion_rate_warning(offer, stats)
     partner = Partner.find_by_id(offer.partner_id, :include => [ :users ])
     recipient_emails = partner.account_managers.map(&:email).tap do |emails|

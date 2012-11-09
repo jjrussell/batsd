@@ -81,21 +81,21 @@ class Conversion < ActiveRecord::Base
   }
 
   STAT_TO_REWARD_TYPE_MAP = {
-    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'published_installs'        => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 8, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false },
-    'jailbroken_installs'       => { :reward_types => [ 4, 2004, 3004 ],                            :attr_name => 'advertiser_offer_id', :segment_by_store => false },
-    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6 ],                            :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
-    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
-    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
-    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
-    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 2000, 2001, 2002, 2003, 2005, 2006, 3000, 3001, 3002, 3003, 3005, 3006 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false, :sum_attr => :advertiser_amount },
-    'tjm_offers'                => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'tjm_published_installs'    => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true },
-    'tjm_offers_revenue'        => { :reward_types => [ 3000, 3002, 3003, 3005, 3006 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
-    'tjm_installs_revenue'      => { :reward_types => [ 3001, 3004 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'offers'                    => { :reward_types => [ 0, 2, 3, 5, 6, 9 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'published_installs'        => { :reward_types => [ 1, 4 ],                                           :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'display_conversions'       => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1009 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'featured_published_offers' => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009 ], :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'paid_installs'             => { :reward_types => [ 0, 1, 2, 3, 5, 6, 8, 9, 2000, 2001, 2002, 2003, 2005, 2006, 2009, 3000, 3001, 3002, 3003, 3005, 3006, 3009 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false },
+    'jailbroken_installs'       => { :reward_types => [ 4, 2004, 3004 ],                                  :attr_name => 'advertiser_offer_id', :segment_by_store => false },
+    'offers_revenue'            => { :reward_types => [ 0, 2, 3, 5, 6, 9 ],                               :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'installs_revenue'          => { :reward_types => [ 1, 4 ],                                           :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'display_revenue'           => { :reward_types => [ 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1009 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'featured_revenue'          => { :reward_types => [ 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2009 ], :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'installs_spend'            => { :reward_types => [ 0, 1, 2, 3, 5, 6, 9, 2000, 2001, 2002, 2003, 2005, 2006, 2009, 3000, 3001, 3002, 3003, 3005, 3006, 3009 ], :attr_name => 'advertiser_offer_id', :segment_by_store => false, :sum_attr => :advertiser_amount },
+    'tjm_offers'                => { :reward_types => [ 3000, 3002, 3003, 3005, 3006, 3009 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'tjm_published_installs'    => { :reward_types => [ 3001, 3004 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true },
+    'tjm_offers_revenue'        => { :reward_types => [ 3000, 3002, 3003, 3005, 3006, 3009 ],             :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
+    'tjm_installs_revenue'      => { :reward_types => [ 3001, 3004 ],                                     :attr_name => 'publisher_app_id',   :segment_by_store => true, :sum_attr => :publisher_amount },
   }
 
   attr_accessor :store_name
@@ -116,7 +116,7 @@ class Conversion < ActiveRecord::Base
 
   def self.get_stat_definitions(reward_type)
     case reward_type
-    when 0, 2, 3, 5, 6
+    when 0, 2, 3, 5, 6, 9
       [ { :stat => 'offers',         :attr => :publisher_app_id },
         { :stat => 'paid_installs',  :attr => :advertiser_offer_id },
         { :stat => 'offers_revenue', :attr => :publisher_app_id,    :increment => :publisher_amount },
@@ -132,10 +132,10 @@ class Conversion < ActiveRecord::Base
         { :stat => 'installs_revenue',    :attr => :publisher_app_id, :increment => :publisher_amount } ]
     when 8
       [ { :stat => 'paid_installs',  :attr => :advertiser_offer_id } ]
-    when 1000, 1001, 1002, 1003, 1004, 1005, 1006
+    when 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1009
       [ { :stat => 'display_conversions', :attr => :publisher_app_id },
         { :stat => 'display_revenue',     :attr => :publisher_app_id, :increment => :publisher_amount } ]
-    when 2000, 2001, 2002, 2003, 2005, 2006
+    when 2000, 2001, 2002, 2003, 2005, 2006, 2009
       [ { :stat => 'featured_published_offers', :attr => :publisher_app_id },
         { :stat => 'paid_installs',             :attr => :advertiser_offer_id },
         { :stat => 'featured_revenue',          :attr => :publisher_app_id,    :increment => :publisher_amount },
@@ -144,7 +144,7 @@ class Conversion < ActiveRecord::Base
       [ { :stat => 'jailbroken_installs',       :attr => :advertiser_offer_id },
         { :stat => 'featured_published_offers', :attr => :publisher_app_id },
         { :stat => 'featured_revenue',          :attr => :publisher_app_id, :increment => :publisher_amount } ]
-    when 3000, 3002, 3003, 3005, 3006
+    when 3000, 3002, 3003, 3005, 3006, 3009
       [ { :stat => 'tjm_offers',         :attr => :publisher_app_id },
         { :stat => 'paid_installs',      :attr => :advertiser_offer_id },
         { :stat => 'tjm_offers_revenue', :attr => :publisher_app_id,    :increment => :publisher_amount },

@@ -1,7 +1,3 @@
-Given /^I have an app$/ do
-  @app = FactoryGirl.create :app, :partner => @partner
-end
-
 When /^I view the form to modify an app's caching options$/ do
   visit "/dashboard/apps/#{@app.id}/videos/options"
 end

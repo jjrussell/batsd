@@ -34,7 +34,7 @@ class GetOffersController < ApplicationController
 
   def webpage
     @sdk9plus = library_version >= '9'
-    if @currency.get_test_device_ids.include?(params[:udid])
+    if @currency.has_test_device?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
       if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
         @test_offers << @publisher_app.test_video_offer.primary_offer
@@ -66,7 +66,7 @@ class GetOffersController < ApplicationController
   end
 
   def featured
-    if @currency.get_test_device_ids.include?(params[:udid])
+    if @currency.has_test_device?(params[:udid])
       @offer_list = [ @publisher_app.test_offer ]
     elsif @for_preview
       offer = merge_preview_attributes(Offer.find_in_cache(params[:offer_id]))
@@ -313,7 +313,7 @@ class GetOffersController < ApplicationController
              :currentAppName => @publisher_app.name
            }
 
-    @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
+    @obj[:currentIconURL]      = IconHandler.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => IconHandler.hashed_icon_id(@publisher_app.id))
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
     @obj[:rewarded]            = @supports_rewarded

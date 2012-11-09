@@ -210,7 +210,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
     if @offer.has_overall_budget?
       start_time = Time.zone.parse('2010-01-01')
       stat_types = %w(paid_installs)
-      appstats_overall = Appstats.new(offer.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
+      appstats_overall = Appstats.new(@offer.id, :start_time => start_time, :end_time => now, :stat_types => stat_types)
       total_installs = appstats_overall.stats['paid_installs'].sum
       reasons << 'App over overall_budget. Overriding any calculations and setting show rate to 0.' if total_installs > @offer.overall_budget
     end

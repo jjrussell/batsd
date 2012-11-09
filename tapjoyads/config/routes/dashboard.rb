@@ -251,6 +251,8 @@ Tapjoyad::Application.routes.draw do
 
         match 'debug/:bucket' => 'admin_debug#show'
 
+        resources :notices, :only => [:index, :update]
+
         resources :brands
         resources :experiments do
           member do

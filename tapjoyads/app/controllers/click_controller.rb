@@ -81,7 +81,7 @@ class ClickController < ApplicationController
     publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @currency, publisher_app ])
 
-    unless @currency.get_test_device_ids.include?(params[:udid])
+    unless @currency.has_test_device?(params[:udid])
       raise "not a test device"
     end
 
@@ -108,7 +108,7 @@ class ClickController < ApplicationController
   def test_video_offer
     return unless verify_records([ @currency ])
 
-    raise "not a test device" unless @currency.get_test_device_ids.include?(params[:udid])
+    raise "not a test device" unless @currency.has_test_device?(params[:udid])
 
     test_reward = Reward.new
     test_reward.type              = 'test_video_offer'
@@ -266,6 +266,7 @@ class ClickController < ApplicationController
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
     @web_request.offer_is_paid = @offer.is_paid?
     @web_request.offer_daily_budget = @offer.daily_budget
+    @web_request.offer_overall_budget = @offer.overall_budget
     update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 
