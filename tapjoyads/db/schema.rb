@@ -296,6 +296,7 @@ ActiveRecord::Schema.define(:version => 20121106024714) do
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "store_whitelist",                                                                                           :null => false
+    t.string   "offer_filter"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
