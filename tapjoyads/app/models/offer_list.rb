@@ -65,6 +65,8 @@ class OfferList
       else
         @type
       end
+    elsif @currency && @currency.hide_rewarded_app_installs? && @type == Offer::DISPLAY_OFFER_TYPE
+      @type = Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
     end
 
     @device ||= Device.new(:key => udid) if udid.present?
