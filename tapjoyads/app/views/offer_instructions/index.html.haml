@@ -1,30 +1,41 @@
 - @page_title = t('text.instructions.title')
-- amount_and_currency = content_tag(:b, t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name))
-.ui-joy-mask
-  .ui-joy-panel#panel
-    .grey-box
-      .app-logo
-        = image_tag @offer.get_icon_url(:source => :cloudfront, :size => '57')
-      .heading= @offer.name
-    .instructions
-      .content
-        %ul.steps
-          = instruction_list(@offer.instructions).html_safe
-    .padit
-      .reward-button.click-action
-        - if @offer.item_type == 'ActionOffer'
-          - if @action_app && @action_app.protocol_handler.present? && @device_type.match(/\A(android|ios|ipad|iphone|itouch)\z/)
-            .button-holder
-              %input{:value => t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), :type => :button, :id => 'protocol', :class => 'button gradient'}
-          - else
-            - download_action = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_action_url)
-            = t('text.instructions.download_link_html', :download_action => download_action)
+- amount_and_currency = content_tag(:span, t('text.instructions.amount_and_currency', :amount => @currency.get_visual_reward_amount(@offer, params[:display_multiplier]), :currency => @currency.name), :class => 'amount' )
+
+#offers
+  #header
+    %img.app_icon{ :src => @offer.get_icon_url(:source => :cloudfront, :size => '57') }
+    #action_name
+      = @offer.name
+      %br
+      = t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency)
+
+  #action_instructions
+    .important= t('text.instructions.header', :currency => @currency.name)
+    .instructions! = simple_paragraphs @offer.instructions
+    .important= t('text.instructions.footer_html', :amount_and_currency => amount_and_currency)
+
+  #footer
+    %div
+      - if @offer.item_type == 'ActionOffer'
+        - if @action_app && @action_app.protocol_handler.present? && @device_type.match(/\A(android|ios|ipad|iphone|itouch)\z/)
+          .button-holder
+            %input{:value => t('text.instructions.open_app_button', :app_name => @action_app.name), :type => :button, :id => 'protocol', :class => 'button gradient'}
         - else
-          = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_action_url, :class => 'continue')
-    #adsby
-      %span#presented_by
-        = t('text.instructions.presented_by', :default => 'Presented By')
-      #logo
+          - download_action = link_to(t('text.instructions.download_action'), @complete_action_url)
+          = t('text.instructions.download_link_html', :download_action => download_action)
+      - else
+        = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
+
+#privacy
+  = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
+
+#adsby
+  %span= t('text.shared.ads_by')
+  #logo
+
+.clear
+
+%img.hidden{ :src => '/images/load-circle.gif' }
 
 - content_for :page_styles do
   :plain
@@ -91,6 +102,12 @@
       color: #004E09;
     }
 
+    #adsby {
+      margin-top: 2px;
+      float: right;
+      margin-right: 5%;
+    }
+
     #privacy {
       float: left;
       margin-left: 5%;
@@ -131,7 +148,11 @@
       font-weight: bold;
       margin: 10px 0;
     }
-    
+
+    .instructions {
+      margin: 10px 20px;
+    }
+
     .instructions p {
       margin-bottom: 10px;
     }
@@ -144,29 +165,15 @@
       font-size: 24px;
     }
 
-    #adsby {
-      margin-top: 2px;
-      text-align: center;
-    }
-
-    #adsby span { 
-      display: inline-block; 
-      font-size: 13px; 
-      text-decoration: none; 
-      vertical-align: top; 
-    }
-
-    #adsby #logo { 
-      background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC0AAAAVCAMAAADl7ZdoAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5QTg5Q0VGREY2MUUxMUUxOTJENUZCMTY3RDBBRjQwNSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5QTg5Q0VGRUY2MUUxMUUxOTJENUZCMTY3RDBBRjQwNSI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjlBODlDRUZCRjYxRTExRTE5MkQ1RkIxNjdEMEFGNDA1IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjlBODlDRUZDRjYxRTExRTE5MkQ1RkIxNjdEMEFGNDA1Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+eDSZzQAAAUpQTFRFiYmJi4uLmZmZ8PDwwcHB7+/vxMTEtLS0srKykpKSkJCQ5ubmx8fHioqK7Ozsk5OTn5+f8/Pz09PTmJiY8vLy6Ojo2NjY+fn5/v7+6urq5OTkmpqa3Nzc/Pz86enpjIyM7e3tpKSkjo6O8fHx7u7uxcXFzc3NzMzMu7u7q6urqKiom5ubp6en1tbWz8/P+/v739/frKysv7+/2dnZqampkZGR0NDQl5eX6+vrs7OzwMDAubm5+Pj49fX1pqamwsLCyMjI+vr63d3dysrK1NTUvr6+jY2Nnp6e9PT0oKCgycnJlZWVtra2vLy8nJyc4+PjtbW1oaGhr6+vlJSUoqKipaWl9/f3nZ2d3t7eo6Ojw8PDy8vL0tLS1dXV/f3919fXj4+Pzs7O5+fnuLi4lpaWvb29t7e34eHh9vb2ra2t2traxsbGrq6u////49ha4AAAAG50Uk5T/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wCgBTwzAAABzUlEQVR42oyT1XLjQBBFryzZQsvMjDFTYoeZmZeZ6f7/645dtcnG69T6lKpb1ToPPdMtsKDcJhwOR70+jA8J7PIhWDgGIEmSiBlpDGyM2xrqs7Yspz2wgk6nLMvDMHxELm6O208xGOYFN+L8L3iOK/kN2YTho89Va6gx+fvnwZom09R6Ue7U9tUil7Rz2ovqAV4D+RCpwMv0PPLAVhxwA126UKMlzoTDVA4tLqMaBcNrZwdkF2rUC39Bd/viuM624ElpKPn2EDYl2Mt4HzGkECG6iZDtBMpx3NBGgDOYo4lAxItnfpwxKCFr4WUZixzZgmIG50fQOIsqL6BwA+q3vLvQw5UoedqvUPFKsTs7icyqBc/RJXq8gbadl9ImPkUtJMKHOBWf+1B5Z5dEB7aBvRw+RnQxqOumaKhBOSDeGytMu5GJ3dt20iRjg+LmTuED9M7XVfILKmRwZv1tivS9wwnv7b8oY3+Uc2j+KaWWYDgn2x3lB0MtSzFw8dM1pHTqBfycbJNPfmGMeT8fs9s5GCeuKo7XlREvtpMrfNQOoy9WwTW6svGt+re0K2ZJXqI8lV2Cp5OtoB+cys7qoyX0cyqbZlfX57Ym/Q2/BRgAxOn0Cwpi9kwAAAAASUVORK5CYII=) no-repeat; 
-      display: inline-block; 
-      width: 45px; 
-      height: 21px; 
-      margin-bottom: 2px;
-    }
+    #adsby { margin-top: 2px; float: right; margin-right: 5%; }
+    #adsby span { display: inline-block; font-size: 13px; text-decoration: none; vertical-align: top; height: 20px; }
+    #adsby #logo { background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAUCAYAAAAOTSQ2AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNS4xIE1hY2ludG9zaCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpBNUU5NjZFRkZFNUYxMUUwOTJCN0UxMzQ3MTUzNTk5NCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpBNUU5NjZGMEZFNUYxMUUwOTJCN0UxMzQ3MTUzNTk5NCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkE1RTk2NkVERkU1RjExRTA5MkI3RTEzNDcxNTM1OTk0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOkE1RTk2NkVFRkU1RjExRTA5MkI3RTEzNDcxNTM1OTk0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Z3rhigAAB/hJREFUeNrMVgls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) no-repeat; }
+    #adsby #logo { display: inline-block; width: 39px; height: 20px; }
 
 - content_for :included_javascripts do
   = javascript_include_tag 'jquery-1.7.2.min'
-  :javascript
+- content_for :page_javascript do
+  :plain
     $(document).ready(function() {
         var isActionOffer = #{@offer.item_type == 'ActionOffer'};
         var hasActionApp = #{@action_app.present?};
