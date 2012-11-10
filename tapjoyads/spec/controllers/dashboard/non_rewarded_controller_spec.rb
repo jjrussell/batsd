@@ -199,7 +199,7 @@ describe Dashboard::NonRewardedController do
     context 'when a non-rewarded does exist' do
       before :each do
         @editable_attribs_for_users = [ :test_devices, :minimum_offerwall_bid, :minimum_featured_bid, :minimum_display_bid ]
-        @editable_attribs_for_admins = @editable_attribs_for_users + [ :tapjoy_enabled, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override, :conversion_rate_enabled ]
+        @editable_attribs_for_admins = @editable_attribs_for_users + [ :tapjoy_enabled, :hide_rewarded_app_installs, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override, :conversion_rate_enabled ]
         @app.build_non_rewarded.save
         @app.save
       end

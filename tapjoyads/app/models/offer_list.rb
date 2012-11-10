@@ -33,7 +33,7 @@ class OfferList
     @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
     @publisher_app ||= App.find_in_cache(@currency.app_id) if @currency.present?
 
-    @hide_rewarded_app_installs = @currency ? @currency.hide_rewarded_app_installs_for_version?(@app_version, @source) : false
+    @hide_rewarded_app_installs = @currency && @currency.hide_rewarded_app_installs?
     @normalized_device_type     = Device.normalize_device_type(@device_type)
 
     @store_whitelist = Set.new
