@@ -3,6 +3,9 @@ machine:
     America/Los_Angeles
   ruby:
     version: 1.8.7-p358
+checkout:
+  post:
+    - cp .env.local .env
 database:
   pre:
     - '[ -f "./data/GeoIPCity.dat" ] || curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > ./data/GeoIPCity.dat'

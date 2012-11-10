@@ -132,6 +132,7 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'cucumber-rails', :require => false
   gem 'shoulda-matchers', '1.2.0'
+  gem 'dotenv'
 end
 
 group :ops do

@@ -40,7 +40,9 @@ preload_app true
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
 if server_type == "dev"
-  listen "0.0.0.0:8080"
+  ((require 'dotenv' and Dotenv.load['PORT']) || 8080).tap do |port|
+    listen "0.0.0.0:#{port}"
+  end
 else
   listen("/tmp/tapjoy.socket", :backlog => 2048)
 end

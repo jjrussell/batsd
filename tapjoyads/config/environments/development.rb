@@ -47,13 +47,14 @@ ENV['AWS_ACCESS_KEY_ID'] = amazon['dev']['access_key_id']
 ENV['AWS_SECRET_ACCESS_KEY'] = amazon['dev']['secret_access_key']
 AWS_ACCOUNT_ID = '331510376354'
 
+mc_host_array                    = [ENV['MEMCACHED_HOST'] || '127.0.0.1']
 CACHE_SERVERS                    = {}
-CACHE_SERVERS[:analytics_logger] = ['127.0.0.1']
-CACHE_SERVERS[:stats]            = ['127.0.0.1']
-CACHE_SERVERS[:dedupe]           = ['127.0.0.1']
-MEMCACHE_SERVERS                 = ['127.0.0.1']
-SDB_MEMCACHE_SERVERS             = ['127.0.0.1']
-DISTRIBUTED_MEMCACHE_SERVERS     = ['127.0.0.1']
+CACHE_SERVERS[:analytics_logger] = mc_host_array
+CACHE_SERVERS[:stats]            = mc_host_array
+CACHE_SERVERS[:dedupe]           = mc_host_array
+MEMCACHE_SERVERS                 = mc_host_array
+SDB_MEMCACHE_SERVERS             = mc_host_array
+DISTRIBUTED_MEMCACHE_SERVERS     = mc_host_array
 
 EXCEPTIONS_NOT_LOGGED = []
 
