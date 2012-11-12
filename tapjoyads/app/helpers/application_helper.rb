@@ -43,6 +43,11 @@ module ApplicationHelper
     tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :dashboard_premier) and current_partner.is_premier?
     tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
     tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
+
+    if false
+      tabs << { :kontagent => kontagent_index_path } if permitted_to?(:index, :dashboard_kontagent)
+    end
+
     navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
   end
 end
