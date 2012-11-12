@@ -3,8 +3,8 @@ class App < ActiveRecord::Base
   acts_as_cacheable
   acts_as_trackable :third_party_data => :store_id, :age_rating => :age_rating, :wifi_only => :wifi_required?, :device_types => lambda { |ctx| get_offer_device_types.to_json }, :url => :store_url
 
-  ALLOWED_PLATFORMS = { 'android' => 'Android', 'iphone' => 'iOS', 'windows' => 'Windows' }
-  BETA_PLATFORMS    = {}
+  ALLOWED_PLATFORMS = {'android' => 'Android', 'iphone' => 'iOS'}
+  BETA_PLATFORMS    = {'windows' => 'Windows'}
   PLATFORMS         = ALLOWED_PLATFORMS.merge(BETA_PLATFORMS)
   APPSTORE_COUNTRIES_OPTIONS = GeoIP::CountryName.zip(GeoIP::CountryCode).select do |name, code|
       code.match(/[A-Z]{2}/) && code != 'KP'
@@ -207,12 +207,13 @@ class App < ActiveRecord::Base
 
   def build_non_rewarded
     options = {
-      :conversion_rate  => 0,
-      :callback_url     => Currency::NO_CALLBACK_URL,
-      :name             => Currency::NON_REWARDED_NAME,
-      :app_id           => self.id,
-      :tapjoy_enabled   => false,
-      :partner          => self.partner,
+      :conversion_rate    => 0,
+      :callback_url       => Currency::NO_CALLBACK_URL,
+      :name               => Currency::NON_REWARDED_NAME,
+      :app_id             => self.id,
+      :tapjoy_enabled     => false,
+      :partner            => self.partner,
+      :rev_share_override => 0.7
     }
     Currency.new(options)
   end

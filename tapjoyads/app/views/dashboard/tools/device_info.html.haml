@@ -93,6 +93,27 @@
             Banned?
           %td
             = check_box_tag 'banned', '1', @device.banned?
+        %tr
+          %th
+            Ban Reason
+          %td
+            = text_field_tag :ban_reason, params[:ban_reason]
+        - if @device.ban_notes.length > 0
+          %th
+            Ban History
+          %td
+            %table{:cellpadding => "5"}
+              %thead
+                %tr
+                  %th{:style => "text-align: center"} Date
+                  %th{:style => "text-align: center"} Action
+                  %th{:style => "text-align: center"} Reason
+              %tbody
+              - @device.ban_notes.each_with_index do |note, index|
+                %tr
+                  %td= note["date"]
+                  %td= note["action"]
+                  %td= note["reason"]
         - if @device.suspended?
           %tr
             %th
@@ -165,13 +186,6 @@
     %span.forced Forced (#{@force_converted_count})
     +
     %span.non-rewarded Non Rewarded (#{@non_rewarded_count})
-  - now = Time.zone.now
-  - if params[:use_recent_clicks].present?
-    - text = "Show Recent Clicks: #{(now - Device::RECENT_CLICKS_RANGE).to_s(:pub)} - #{now.to_s(:pub)}"
-    = submit_tag text, {:class => 'show-recent-clicks', :onclick => '#'}
-    - if params[:use_recent_clicks]
-      (Faster - using cached clicks, max 30 days)
-    <br>or <br>
   %table.with-border
     %thead
       - has_user_column = permitted_to?(:view_pub_user_account, :dashboard_tools)
@@ -235,8 +249,6 @@
           \-
           = text_field_tag(:end_date, next_end_date, {:id => 'end_date', :size => 10})
           = submit_tag "Update", {:class => 'search-clicks', :onclick => '#'}
-          - if params[:use_recent_clicks]
-            (Slower but larger range, more accurate)
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
@@ -266,11 +278,10 @@
     });
 
   - if @device
-    - use_recent_clicks_param = "#{params[:use_recent_clicks] ? '&use_recent_clicks=1' : ''}"
     :plain
       $(function($){
         $('.show-recent-clicks').click(function(){
-          location.href = '#{device_info_tools_path(:udid => @device.key)}' + '#{use_recent_clicks_param}'
+          location.href = '#{device_info_tools_path(:udid => @device.key)}'
           return false;
         });
       });
@@ -279,7 +290,7 @@
         $('.search-clicks').click(function(){
           var start_date = $('#start_date').val();
           var end_date = $('#end_date').val();
-          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date + '#{use_recent_clicks_param}'
+          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date
           return false;
         });
       });

@@ -128,6 +128,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.instruction_viewed_at  = click.instruction_viewed_at
       reward.cached_offer_list_id   = click.cached_offer_list_id
       reward.cached_offer_list_type = click.cached_offer_list_type
+      reward.auditioning            = click.auditioning
 
       begin
         reward.save!(:expected_attr => { 'type' => nil })

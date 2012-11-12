@@ -26,6 +26,8 @@ class OfferList
     @algorithm                  = options.delete(:algorithm)
     @algorithm_options          = options.delete(:algorithm_options)
 
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
     @algorithm_options ||= {}
 
     @currency ||= Currency.find_in_cache(currency_id) if currency_id.present?
@@ -50,12 +52,10 @@ class OfferList
       @store_whitelist << @app_store_name if AppStore.find(@app_store_name).exclusive?
     end
 
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    if @hide_rewarded_app_installs
+    if @currency && !@currency.rewarded?
       @type = case @type
       when Offer::DEFAULT_OFFER_TYPE
-        (@currency && !@currency.rewarded?) ? Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE : @type
+        Offer::NON_REWARDED_BACKFILLED_OFFER_TYPE
       when Offer::FEATURED_OFFER_TYPE
         Offer::NON_REWARDED_FEATURED_OFFER_TYPE
       when Offer::FEATURED_BACKFILLED_OFFER_TYPE
@@ -65,6 +65,8 @@ class OfferList
       else
         @type
       end
+    elsif @currency && @currency.hide_rewarded_app_installs? && @type == Offer::DISPLAY_OFFER_TYPE
+      @type = Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
     end
 
     @device ||= Device.new(:key => udid) if udid.present?

@@ -211,6 +211,7 @@ module Offer::UrlGeneration
       :cached_offer_list_id   => cached_offer_list_id,
       :cached_offer_list_type => cached_offer_list_type,
       :date_of_birth          => date_of_birth,
+      :auditioning            => auditioning,
     }
 
     "#{click_url}?data=#{ObjectEncryptor.encrypt(data)}"

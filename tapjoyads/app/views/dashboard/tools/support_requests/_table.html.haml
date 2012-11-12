@@ -5,8 +5,9 @@
       %th #{type.to_s.titleize}
       %th Requests
   %tbody
-    - requests.sort { |a,b| b[1] <=> a[1] }[0...25].each do |k,v|
+    - requests.each do |k,v|
       %tr
-        %td= (k.is_a?(App) || k.is_a?(Offer)) ? link_to(k.name, statz_path(k)) : k
-        %td= v
+        - o = v[:object]
+        %td= (o.is_a?(App) || o.is_a?(Offer)) ? link_to(o.name, statz_path(o)) : o
+        %td= v[:count]
 %br

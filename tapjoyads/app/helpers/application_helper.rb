@@ -26,10 +26,23 @@ module ApplicationHelper
   end
 
   def list_of_countries
-    Country::ALL
+    Earth::Country::ALL
   end
 
   def list_of_states
-    State::PAIRS
+    Earth::State::PAIRS
+  end
+
+  def navigation_tabs
+    tabs = []
+    tabs << { :apps      => apps_path }            if permitted_to?(:index, :dashboard_apps)
+    tabs << { :reporting => reporting_index_path } if permitted_to?(:index, :dashboard_reporting)
+    tabs << { :billing   => billing_index_path }   if permitted_to?(:index, :dashboard_billing)
+    tabs << { :account   => users_path }           if permitted_to?(:index, :dashboard_users)
+    tabs << { :partners  => partners_path }        if permitted_to?(:index, :dashboard_partners)
+    tabs << { :premier   => premier_path }         if permitted_to?(:edit,  :dashboard_premier) and current_partner.is_premier?
+    tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
+    tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
+    navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
   end
 end

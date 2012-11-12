@@ -10,4 +10,10 @@ class Dashboard::Tools::GamersController < Dashboard::DashboardController
     @gamer = Gamer.find(params[:id])
     @gamer.gamer_profile ||= GamerProfile.new(:gamer => @gamer)
   end
+
+  def reset_perishable_token
+    @gamer = Gamer.find(params[:id])
+    @gamer.reset_perishable_token!
+    redirect_to tools_gamer_path(@gamer)
+  end
 end

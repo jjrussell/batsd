@@ -22,15 +22,17 @@ MASTER_HEALTHZ_FILE = "#{Rails.root}/tmp/master_healthz_status.txt"
 EPHEMERAL_HEALTHZ_FILE = "#{Rails.root}/tmp/eph_test.txt"
 
 # SDK URLs
-ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v8.3.1.zip'
-ANDROID_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Android_v8.3.1.zip'
+ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v9.0.0.zip'
+ANDROID_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Android_v9.0.0.zip'
 ANDROID_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyVirtualGoodsSDK_Android_v8.3.0.zip'
 ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_Android_v8.3.1.zip'
 ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.3.1.zip'
 ANDROID_MARMALADE_EXTENSION = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyMarmaladePlugin_Android_v8.2.2.zip'
 
-IPHONE_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_iOS_v8.3.2.zip'
-IPHONE_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPublisherSDK_iOS_v8.3.2.zip'
+IPHONE_CONNECT_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_iOS_v9.0.0.zip'
+IPHONE_CONNECT_SDK_UDID_OPT_OUT = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAdvertiserSDK_iOS_v9.0.0_UDIDOptOut.zip'
+IPHONE_OFFERS_SDK               = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0.zip'
+IPHONE_OFFERS_SDK_UDID_OPT_OUT  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0_UDIDOptOut.zip'
 IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.3.2.zip'
 IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.3.1.zip'
 IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.3.2.zip'
@@ -49,6 +51,7 @@ LINK_FACEBOOK_WITH_TAPJOY_OFFER_ID = '609f5b88-80a9-48a7-ac98-d2a304bf9952'
 TAPJOY_GAMES_CURRENT_TOS_VERSION = 2
 TAPJOY_PARTNER_ID = '70f54c6d-f078-426c-8113-d6e43ac06c6d'
 TAPJOY_SURVEY_PARTNER_ID = '94784f5e-fd63-4897-a759-9850965695bf'
+TAPJOY_ACCOUNTING_PARTNER_IDS = [TAPJOY_PARTNER_ID, TAPJOY_SURVEY_PARTNER_ID]
 RECEIPT_EMAIL = 'email.receipts@tapjoy.com'
 GAMES_ANDROID_MARKET_URL = 'https://play.google.com/store/apps/details?id=com.tapjoy.tapjoy'
 

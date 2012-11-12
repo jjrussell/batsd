@@ -13,23 +13,8 @@ class Dashboard::DashboardController < ApplicationController
   before_filter { |c| Authorization.current_user = c.send(:current_user) }
   before_filter :check_employee_device
   before_filter :set_recent_partners
-  before_filter :inform_of_new_insights
-  before_filter :inform_of_new_sdk
+  before_filter :set_default_notice
   around_filter :set_time_zone
-
-  NEW_SDK_NOTICE = "Don't forget to update to Tapjoy SDK v8.3 in order to ensure effective monetization and distribution of your applications
-                    (<a href='http://www.tapjoy.com/sdk/' target='_blank'>http://www.tapjoy.com/sdk</a>).
-                    Visit the knowledge center for the entire change log to this version.
-                    (<a href='https://kc.tapjoy.com/en/integration/ios-change-log-release-notes' target='_blank'>iOS</a> or <a href='https://kc.tapjoy.com/en/integration/android-change-log-release-notes' target='_blank'>Android</a>)"
-
-
-  BILLING_INFO_NOTICE = "We've adopted a new payout system starting 10/19/12. In order to receive future payouts, " +
-  "as well as timely payments, please confirm payout information is accurate and complete new tax forms here: " +
-  "<a href='https://dashboard.tapjoy.com/billing/payment-info'>https://dashboard.tapjoy.com/billing/payment-info</a>. " +
-  "Further details on the payout process can be found here: " +
-  "<a href='https://kc.tapjoy.com/en/publisher-db/payout-information-steps'>https://kc.tapjoy.com/en/publisher-db/payout-information-steps</a>. " +
-  "If you have any further questions please write in to <a mailto='support@tapjoy.com'>support@tapjoy.com</a>. Please " +
-  "update all details by 10/24/12."
 
   def sanitize_currency_params(object, fields)
     unless object.nil?
@@ -136,14 +121,8 @@ class Dashboard::DashboardController < ApplicationController
     Time.zone = old_time_zone
   end
 
-  def inform_of_new_sdk
-    if current_user && flash.now[:notice].blank?
-      flash.now[:notice] = NEW_SDK_NOTICE
-    end
-  end
-
-  def inform_of_new_insights
-    flash[:notice] = BILLING_INFO_NOTICE if current_user && flash[:notice].blank?
+  def set_default_notice
+    flash.now[:notice] = ProductNotice.message if (ProductNotice.present? && current_user && flash.now[:notice].blank?)
   end
 
   def nag_user_about_payout_info

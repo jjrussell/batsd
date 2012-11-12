@@ -4,7 +4,7 @@ Tapjoyad::Application.configure do
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
   # since you don't have to restart the webserver when you make code changes.
-  config.cache_classes = false
+  config.cache_classes = true
 
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
@@ -28,9 +28,11 @@ Tapjoyad::Application.configure do
   config.assets.digest = true
 end
 
-MEMCACHE_SERVERS             = ['127.0.0.1']
-SDB_MEMCACHE_SERVERS         = ['127.0.0.1']
-DISTRIBUTED_MEMCACHE_SERVERS = ['127.0.0.1']
+CACHE_SERVERS                    = {}
+CACHE_SERVERS[:analytics_logger] = ['127.0.0.1']
+MEMCACHE_SERVERS                 = ['127.0.0.1']
+SDB_MEMCACHE_SERVERS             = ['127.0.0.1']
+DISTRIBUTED_MEMCACHE_SERVERS     = ['127.0.0.1']
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']

@@ -1,8 +1,17 @@
 require 'spec_helper'
 
 describe ApplicationController do
-  before :each do
-    @controller = ApplicationController.new
+  describe '#generate_web_request' do
+    it "should create a new web request" do
+      @controller.stub(:geoip_data).and_return({ :continent => "NA", :region => "West", :city => "San Francisco",
+                                                :lat => 38.0, :long => 97.0, :postal_code => "94109",
+                                                :area_code => 415, :dma_code => 807 })
+      @controller.send("generate_web_request").geoip_postal_code.should == "94109"
+      @controller.send("generate_web_request").geoip_city.should == "San Francisco"
+      @controller.send("generate_web_request").geoip_dma_code.should == 807
+      @controller.send("generate_web_request").geoip_area_code.should == 415
+      @controller.send("generate_web_request").geoip_continent.should == "NA"
+    end
   end
 
   describe '#verify_params' do

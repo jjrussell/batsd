@@ -12,12 +12,24 @@ class Dashboard::Tools::DeviceBanListsController < Dashboard::DashboardControlle
       object.write(:data => params[:file_content].read, :acl => :public_read)
       ban_count = Utils.ban_devices(Utils.create_id_hash(object, params[:ban_reason]))
       object.delete if object.exists?
-      flash[:success] = "You've successfully banned #{ban_count} device(s)."
-    elsif params[:target_id]
-      id_hash[params[:target_id]] = {:date => Time.now.strftime("%m/%d/%y"), :reason => params[:ban_reason]}
-      flash[:success] = "You've successfully banned a device." if Utils.ban_devices(id_hash)
+      flash[:notice] = "You've successfully banned #{ban_count} device(s)."
+    elsif params[:target_id].present?
+      unless params[:ban_reason].empty?
+        id_hash[params[:target_id].strip] = {:date => Time.now.strftime("%m/%d/%y"),
+                                             :reason => params[:ban_reason], :action => 'Banned'}
+        if Utils.ban_devices(id_hash) > 0
+          flash[:notice] = "You've successfully banned a device."
+        else
+          flash[:error] = "Either the device could not be found or it's already banned."
+        end
+      else
+        raise ArgumentError, "Ban reason cannot be blank."
+      end
     end
     redirect_to tools_device_ban_lists_path
+  rescue ArgumentError => e
+    flash[:error] = e.message
+    redirect_to :back
   end
 
   private

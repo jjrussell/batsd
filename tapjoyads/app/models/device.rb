@@ -28,15 +28,17 @@ class Device < SimpledbShardedResource
   self.sdb_attr :current_packages, :type => :json, :default_value => []
   self.sdb_attr :sdkless_clicks, :type => :json, :default_value => {}
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
-  self.sdb_attr :recent_click_hashes, :type => :json, :default_value => []
   self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
-  self.sdb_attr :experiment_bucket_id
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
   MAX_OVERWRITES_TRACKED = 100000
+
+  def self.cached_count
+    Mc.get('statz.devices_count') || 0
+  end
 
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
@@ -278,9 +280,8 @@ class Device < SimpledbShardedResource
       return
     end
 
-    is_new and assign_experiment_bucket
-
     remove_old_skips
+    delete_extra_attributes('recent_click_hashes')    # remove obsolete sdb_attr
     return_value = super({ :write_to_memcache => true }.merge(options))
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
     @create_device_identifiers = false
@@ -383,36 +384,6 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
-  def recent_clicks(start_time_at = (Time.zone.now-RECENT_CLICKS_RANGE).to_f, end_time_at = Time.zone.now.to_f)
-    clicks = []
-    self.recent_click_hashes.each do |recent_click_hash|
-      click = Click.find(recent_click_hash['id'])
-      next unless click
-      clicked_at = click.clicked_at.to_f
-      cutoff = (clicked_at > end_time_at || clicked_at < start_time_at)
-      clicks << click unless cutoff
-    end
-    clicks
-  end
-
-  def add_click(click)
-    click_id = click.id
-    temp_click_hashes = recent_click_hashes
-    num_clicks = temp_click_hashes.count
-
-    # skip clicks which could be caused by double clicking
-    return nil if temp_click_hashes.present? && (click_id == temp_click_hashes[num_clicks-1]['id'])
-
-    cutoff_time = (Time.now - RECENT_CLICKS_RANGE).to_f
-
-    temp_click_hashes.reject! {|click_hash| click_hash['clicked_at'] < cutoff_time }
-    temp_click_hashes << {'id' => click.id, 'clicked_at' => click.clicked_at.to_f}
-
-    self.recent_click_hashes = temp_click_hashes
-    @retry_save_on_fail = true
-    save
-  end
-
   def suspend!(num_hours)
     self.suspension_expires_at = Time.now + num_hours.hours
     save
@@ -452,19 +423,13 @@ class Device < SimpledbShardedResource
     ExperimentBucket.find_in_cache(experiment_bucket_id)
   end
 
-  def experiment_bucket=(bucket)
-    raise ArgumentError unless bucket.is_a?(ExperimentBucket)
-    self.experiment_bucket_id = bucket.id
-  end
-
-  def assign_experiment_bucket(hash_offset = nil)
+  def experiment_bucket_id(hash_offset = nil)
     return if ExperimentBucket.count_from_cache == 0
-    hash_offset ||= $redis.get('experiments:hash_offset').to_i || 0
+    hash_offset ||= ExperimentBucket.hash_offset
 
     # digest the udid, slice the characters we are using, and get an integer
     hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
-    index = hash % ExperimentBucket.count_from_cache
-    self.experiment_bucket_id = ExperimentBucket.id_for_index(index)
+    ExperimentBucket.id_for_index(hash % ExperimentBucket.count_from_cache)
   end
 
   private

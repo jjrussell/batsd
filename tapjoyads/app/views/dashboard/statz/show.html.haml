@@ -63,7 +63,7 @@
   = property_row('Overall budget', @offer.overall_budget, 0)
   - show_rate_string = number_to_percentage(((@offer.show_rate || 0) * 100.0), :precision => 1)
   - if @offer.show_rate < 0.001
-    - show_rate_string << " -  #{label_tag('show_rate_reasons', link_to('Show Reasons','', :id => :view_show_rate_reasons), :id => 'show_rate_reasons')}"
+    - show_rate_string = "#{show_rate_string} - #{label_tag('show_rate_reasons', link_to('Show Reasons','', :id => :view_show_rate_reasons), :id => 'show_rate_reasons')}"
   = property_row('Show rate', show_rate_string, "100.0%", @offer.show_rate < 0.001 ? 'warning' : '')
   = property_row('Min CVR', @offer.min_conversion_rate, nil)
   - if @offer.countries

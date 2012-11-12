@@ -16,6 +16,11 @@ describe WebRequest do
       @web_request.offer_daily_budget.should == 5
     end
 
+    it 'should have offer_overall_budget' do
+      @web_request.offer_overall_budget = '1337'
+      @web_request.offer_overall_budget.should == 1337
+    end
+
     it 'should have advertiser_balance' do
       @web_request.advertiser_balance = '10'
       @web_request.advertiser_balance.should == 10

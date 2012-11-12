@@ -32,7 +32,7 @@ class Dashboard::PasswordResetsController < Dashboard::DashboardController
     end
   end
 
-private
+  private
 
   def require_no_user
     unless current_user.nil?

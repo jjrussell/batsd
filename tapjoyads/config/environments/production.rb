@@ -61,19 +61,23 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
-MEMCACHE_SERVERS = [
+CACHE_SERVERS = {}
+CACHE_SERVERS[:analytics_logger] = [
   'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
 ]
+MEMCACHE_SERVERS = [
+  'localhost:11210' # couchbase stats cluster
+]
 SDB_MEMCACHE_SERVERS = [
   'tj-sdb-20120912.fqfjqv.0001.use1.cache.amazonaws.com',
   'tj-sdb-20120912.fqfjqv.0002.use1.cache.amazonaws.com',
-  'tj-sdb-20120912.fqfjqv.0003.use1.cache.amazonaws.com',
   'tj-sdb-20120912.fqfjqv.0004.use1.cache.amazonaws.com',
   'tj-sdb-20120912.fqfjqv.0005.use1.cache.amazonaws.com',
+  'tj-sdb-20120912.fqfjqv.0006.use1.cache.amazonaws.com',
 ]
 DISTRIBUTED_MEMCACHE_SERVERS = [
   'localhost:21210', # couchbase us-east-1b
@@ -159,9 +163,15 @@ TIPALTI_PAYER_API_WSDL = 'https://api.tipalti.com/PayerFunctions.asmx?WSDL'
 TIPALTI_PAYER_NAME = 'Tapjoy'
 TIPALTI_ENCRYPTION_SALT = 'spAtUbrarebaStuCebRek5febr9rega8pEnaSp968b29a3rUna7'
 
-RIAK_NODES = [{:host => 'general-1.us-east.riak.tapjoy.net'},
-              {:host => 'general-2.us-east.riak.tapjoy.net'},
-              {:host => 'general-3.us-east.riak.tapjoy.net'},
-              {:host => 'general-4.us-east.riak.tapjoy.net'},
-              {:host => 'general-5.us-east.riak.tapjoy.net'},
-              {:host => 'general-6.us-east.riak.tapjoy.net'}]
+RIAK_NODES = [{:host => 'cluster-1.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-2.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-3.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-4.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-5.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-6.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-7.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-8.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-9.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-10.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-11.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-12.us-east-e.riak.tapjoy.net'}]

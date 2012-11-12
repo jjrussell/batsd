@@ -14,6 +14,8 @@ class Dashboard::SdkController < Dashboard::DashboardController
     'iphone' => {
       'adv'       => IPHONE_CONNECT_SDK,
       'pub'       => IPHONE_OFFERS_SDK,
+      'advoptout'=> IPHONE_CONNECT_SDK_UDID_OPT_OUT,
+      'puboptout'=> IPHONE_OFFERS_SDK_UDID_OPT_OUT,
       'vg'        => IPHONE_VG_SDK,
       'marmalade' => IPHONE_MARMALADE_EXTENSION,
       'phonegap'  => IPHONE_PHONEGAP_PLUGIN,

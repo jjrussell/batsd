@@ -5,8 +5,9 @@ class Job::MasterReloadMoneyController < Job::JobController
 
     total_balance, total_pending_earnings = nil
     Partner.using_slave_db do
-      total_balance          = Partner.sum(:balance, :conditions => "id != '#{TAPJOY_PARTNER_ID}'") / 100.0
-      total_pending_earnings = Partner.sum(:pending_earnings, :conditions => "id != '#{TAPJOY_PARTNER_ID}'") / 100.0
+      not_tj_conditions      = ["id not in (?)", TAPJOY_ACCOUNTING_PARTNER_IDS]
+      total_balance          = Partner.sum(:balance, :conditions => not_tj_conditions) / 100.0
+      total_pending_earnings = Partner.sum(:pending_earnings, :conditions => not_tj_conditions) / 100.0
     end
 
     start_times               = {}

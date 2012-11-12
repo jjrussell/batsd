@@ -1,0 +1,8 @@
+- prefix ||= ''
+%li{:class => active_class(ops_path)                }= link_to "#{prefix}dashboard", ops_path
+%li{:class => active_class(as_groups_ops_path)      }= link_to "#{prefix}auto-scaler", as_groups_ops_path
+%li{:class => active_class(elb_status_ops_path)     }= link_to "#{prefix}load-balancer", elb_status_ops_path
+%li{:class => active_class(service_stats_ops_path)  }= link_to "#{prefix}service-stats", service_stats_ops_path
+%li{:class => active_class(vertica_status_ops_path) }= link_to "#{prefix}vertica-status", vertica_status_ops_path
+%li.divider
+%li= link_to 'kiosk-mode', ops_path(:kiosk => true)

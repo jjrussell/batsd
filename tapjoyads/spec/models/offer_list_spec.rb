@@ -84,7 +84,7 @@ describe OfferList do
   context 'with currency set to hide_rewarded_app_installs' do
     before :each do
       @currency = FactoryGirl.create(:currency)
-      @currency.stub(:hide_rewarded_app_installs_for_version?).and_return(true)
+      @currency.stub(:rewarded?).and_return(false)
     end
 
     it 'replaces each rewarded offer type with its non-rewarded equivalent' do

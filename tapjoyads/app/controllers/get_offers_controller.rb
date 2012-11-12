@@ -7,7 +7,6 @@ class GetOffersController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
   before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
-  # before_filter :choose_papaya_experiment, :only => [:index, :webpage]
 
   tracks_admin_devices(:only => [:webpage, :index])
 
@@ -34,11 +33,8 @@ class GetOffersController < ApplicationController
   end
 
   def webpage
-    if (params[:library_version] && params[:library_version][/^\d+/].to_i >= 9)
-      @fixed = true
-    end
-
-    if @currency.get_test_device_ids.include?(params[:udid])
+    @sdk9plus = library_version >= '9'
+    if @currency.has_test_device?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
       if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
         @test_offers << @publisher_app.test_video_offer.primary_offer
@@ -70,7 +66,7 @@ class GetOffersController < ApplicationController
   end
 
   def featured
-    if @currency.get_test_device_ids.include?(params[:udid])
+    if @currency.has_test_device?(params[:udid])
       @offer_list = [ @publisher_app.test_offer ]
     elsif @for_preview
       offer = merge_preview_attributes(Offer.find_in_cache(params[:offer_id]))
@@ -190,7 +186,7 @@ class GetOffersController < ApplicationController
     params[:source] = 'offerwall' if params[:source].blank?
 
     # No experiment running currently
-    params[:exp] = 'control'
+    choose_experiment(:auditioning_test)
 
     if @save_web_requests
       @web_request = generate_web_request
@@ -258,6 +254,7 @@ class GetOffersController < ApplicationController
         web_request.offerwall_rank_score = offer.rank_score
         web_request.cached_offer_list_id = offer.cached_offer_list_id
         web_request.cached_offer_list_type = offer.cached_offer_list_type
+        web_request.auditioning = offer.auditioning
         web_request.save
 
         # for third party tracking vendors
@@ -269,15 +266,6 @@ class GetOffersController < ApplicationController
     end
   end
 
-  def set_offerwall_experiment
-    experiment = if params[:source] == 'offerwall' && params[:action] == 'webpage'
-      :offerwall_redesign
-    end
-
-    # This method is oddly named; we are choosing a group (control/test)
-    choose_experiment(experiment)
-  end
-
   def set_algorithm
     if params[:source] == 'offerwall'
       @algorithm = '101'
@@ -286,16 +274,7 @@ class GetOffersController < ApplicationController
       @algorithm = '237'
       @algorithm_options = {:skip_country => true, :skip_currency => true}
     end
-  end
-
-  def choose_papaya_experiment
-    if !@for_preview && @device.is_papayan?
-      choose_experiment
-      if params[:exp] == '1'
-        @show_papaya = true
-        @papaya_offers = OfferCacher.get_papaya_offers || {}
-      end
-    end
+    @algorithm = '280' if params[:exp] == 'auditioning_test'
   end
 
   def server_to_server?
@@ -334,7 +313,7 @@ class GetOffersController < ApplicationController
              :currentAppName => @publisher_app.name
            }
 
-    @obj[:currentIconURL]      = Offer.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => Offer.hashed_icon_id(@publisher_app.id))
+    @obj[:currentIconURL]      = IconHandler.get_icon_url(:source => :cloudfront, :size => '57', :icon_id => IconHandler.hashed_icon_id(@publisher_app.id))
     @obj[:message]             = t('text.offerwall.instructions', { :currency => @currency.name.downcase})
     @obj[:records]             = @more_data_available if @more_data_available
     @obj[:rewarded]            = @supports_rewarded

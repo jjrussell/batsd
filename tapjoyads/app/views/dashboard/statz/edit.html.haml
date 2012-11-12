@@ -180,7 +180,7 @@
         = f.label(:min_conversion_rate, 'Min CVR')
         #help_min_conversion_rate.help ?
       %td
-        = f.text_field(:min_conversion_rate)
+        = f.text_field(:min_conversion_rate, :placeholder => @offer.calculate_min_conversion_rate)
         = error_message_on @offer, :min_conversion_rate
     = render('dashboard/apps/offers_shared/countries', :f => f)
     %tr
@@ -292,25 +292,30 @@
               = h(@offer.item.store_url)
             - elsif @offer.item_type == 'GenericOffer'
               = h(@offer.item.url)
-      - if current_user.is_admin?
-        %tr.admin
+        %tr
           %th
             = f.label(:rate_filter_override)
             #help_rate_filter_override.help ?
           %td
             = f.check_box(:rate_filter_override)
-        %tr.admin
+        %tr
           %th
             = f.label(:requires_udid)
             #help_requires_udid.help ?
           %td
             = f.check_box(:requires_udid)
-        %tr.admin
+        %tr
           %th
             = f.label(:requires_mac_address)
             #help_requires_mac_address.help ?
           %td
             = f.check_box(:requires_mac_address)
+        %tr
+          %th
+            = f.label(:requires_admin_device)
+            #help_requires_admin_device.help ?
+          %td
+            = f.check_box(:requires_admin_device)
 
     - if @offer.item_type == 'App' && @offer.item.screen_layout_sizes.any?
       %tr
@@ -478,6 +483,8 @@
       Requires an offer to only show if a UDID is present.
     #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
       Requires an offer to only show if a Mac Address is present.
+    #help_requires_admin_device_content{ :name => 'Requires Admin Device' }
+      This offer will only show up on admin devices.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do

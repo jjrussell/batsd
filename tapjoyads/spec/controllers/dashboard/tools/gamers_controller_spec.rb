@@ -1,48 +1,13 @@
 require 'spec_helper'
 
 describe Dashboard::Tools::GamersController do
-  before :each do
-    activate_authlogic
-  end
 
-  describe "#index" do
-    context "when logged in as customer service" do
-      before :each do
-        user = FactoryGirl.create(:user, :with_customer_service_role)
-        login_as user
+  PERMISSIONS_MAP = {
+    :index  => { :allowed => [ :account_mgr, :admin, :customer_service_manager, :customer_service, :payout_manager, :payops ]},
+    :show   => { :allowed => [ :account_mgr, :admin, :customer_service_manager, :customer_service, :payout_manager, :payops ]},
+    :reset_perishable_token => { :allowed => [ :account_mgr, :admin, :customer_service_manager, :customer_service, :payout_manager, :payops ]},
+  }
 
-        get(:index)
-      end
+  it_behaves_like "a controller with permissions"
 
-      it "allows access" do
-        response.should be_success
-      end
-    end
-
-    context "when logged in as an account manager" do
-      before :each do
-        user = FactoryGirl.create(:account_manager)
-        login_as user
-
-        get(:index)
-      end
-
-      it "allows access" do
-        response.should be_success
-      end
-    end
-
-    context "when logged in as a partner" do
-      before :each do
-        user = FactoryGirl.create(:user, :with_partner)
-        login_as user
-
-        get(:index)
-      end
-
-      it "disallows access" do
-        response.should_not be_success
-      end
-    end
-  end
 end

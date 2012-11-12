@@ -1,0 +1,13 @@
+- icon_class ||= ''
+%li
+  = link_to(KNOWLEDGE_CENTER_URL) do
+    %i.icon-book{:class => icon_class}
+    Knowledge Center
+%li
+  = link_to(DEV_FORUM_URL) do
+    %i.icon-user{:class => icon_class}
+    Dev forum
+%li
+  = link_to(logout_path) do
+    %i.icon-off{:class => icon_class}
+    Log out

@@ -28,7 +28,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
   def monthly_data
     @period, @period_str = get_period_str(params[:period])
-    conditions = [ "month = ? AND year = ? AND partner_id != '#{TAPJOY_PARTNER_ID}'", @period.month, @period.year ]
+    conditions = ["month = ? AND year = ? AND partner_id not in (?)",
+                  @period.month, @period.year, TAPJOY_ACCOUNTING_PARTNER_IDS]
     MonthlyAccounting.using_slave_db do
       expected    = Partner.count(:conditions => [ "created_at < ?", @period.next_month ])
       actual      = MonthlyAccounting.count(:conditions => [ "month = ? AND year = ?", @period.month, @period.year ])
@@ -216,36 +217,25 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         return
       end
 
-      if params[:use_recent_clicks].present?
-        use_recent_clicks = params[:start_date].blank? && params[:end_date].blank?
-      else
-        use_recent_clicks = false
-      end
       now = Time.zone.now
 
-      if use_recent_clicks
-        @start_date = now - Device::RECENT_CLICKS_RANGE
-        @end_date = now
-        @clicks = @device.recent_clicks.reverse
-      else
-        @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
-        @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
+      @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
+      @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
 
-        @start_date = now if @start_date > now
-        @end_date = now if @end_date > now
+      @start_date = now if @start_date > now
+      @end_date = now if @end_date > now
 
-        conditions = [
-          "udid = '#{udid}'",
-          "clicked_at > '#{@start_date.to_i}'",
-          "clicked_at < '#{@end_date.to_i}'",
-        ].join(' and ')
-        @clicks = []
-        NUM_CLICK_DOMAINS.times do |i|
-          Click.select(:domain_name => "clicksV3_#{i}", :where => conditions) do |click|
-            @clicks << click unless click.tapjoy_games_invitation_primary_click?
-          end
-          @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
+      conditions = [
+        "udid = '#{udid}'",
+        "clicked_at > '#{@start_date.to_i}'",
+        "clicked_at < '#{@end_date.to_i}'",
+      ].join(' and ')
+      @clicks = []
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "clicksV3_#{i}", :where => conditions) do |click|
+          @clicks << click unless click.tapjoy_games_invitation_primary_click?
         end
+        @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
       end
 
       @rewarded_clicks_count = 0
@@ -324,7 +314,18 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     opted_out_types.each { |type| device.opt_out_offer_types = type }
     opted_in_types.each  { |type| device.delete('opt_out_offer_types', type) }
     device.opted_out = params[:opted_out] == '1'
+    current_ban_status = device.banned
     device.banned = params[:banned] == '1'
+    if device.banned != current_ban_status
+      unless params[:ban_reason].empty?
+        device.ban_notes = device.ban_notes << {:date => Time.now.strftime("%m/%d/%y"),
+                                                :reason => params[:ban_reason],
+                                                :action => device.banned ? 'Banned' : 'Unbanned'}
+      else
+        flash[:error] = "Ban Reason cannot be blank."
+        return redirect_to :back
+      end
+    end
     device.save
     device.unsuspend! if params[:unsuspend] == '1'
     flash[:notice] = 'Device successfully updated.'

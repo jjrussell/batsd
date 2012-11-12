@@ -32,8 +32,15 @@ class UdidReports
       if reward.udid? || reward.mac_address?
         line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},"
         begin
-          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address}"
+          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address},"
         rescue
+
+        end
+        begin
+          click  = Click.new(:key => reward.click_key)
+          line << "#{click.clicked_at.to_s(:db) || ''}"
+        rescue
+
         end
         outfile.puts(line)
       end

@@ -99,7 +99,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
   end
 
   def reset_test_device
-    if @currency.get_test_device_ids.include?(params[:udid])
+    if @currency.has_test_device?(params[:udid])
       PointPurchases.transaction(:key => "#{params[:udid]}.#{params[:app_id]}") do |point_purchases|
         point_purchases.virtual_goods = {}
         point_purchases.points = @currency.initial_balance if params[:reset_balance] == '1'
