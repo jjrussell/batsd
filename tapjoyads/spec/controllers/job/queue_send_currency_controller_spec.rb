@@ -4,7 +4,7 @@ describe Job::QueueSendCurrencyController do
   before :each do
     @controller.should_receive(:authenticate).at_least(:once).and_return(true)
     @mock_response = mock()
-    @mock_response.stub(:status).and_return('OK')
+    @mock_response.stub(:status).and_return(200)
     @mock_response.stub(:body).and_return("mock response body")
 
     # prevents any callback_urls from actually getting called
@@ -51,7 +51,7 @@ describe Job::QueueSendCurrencyController do
   describe 'with Downloader errors' do
     before :each do
       class TestingError < RuntimeError; end
-      Downloader.should_receive(:get_strict).at_least(:once).and_raise(TestingError)
+      Downloader.should_receive(:get).at_least(:once).and_raise(TestingError)
 
       @now = Time.zone.now
       @mc_time = @now.to_i / 1.hour
@@ -88,13 +88,14 @@ describe Job::QueueSendCurrencyController do
     end
 
     it 'should record errors for multiple currencies' do
-      Timecop.freeze(@now) do
-        get(:run_job, :message => @reward.id) rescue TestingError
-      end
+       Timecop.freeze(@now) do
+         get(:run_job, :message => @reward.id) rescue TestingError
+       end
 
       currency = FactoryGirl.create(:currency, :callback_url => 'https://www.whatnot.com')
       reward = FactoryGirl.create(:reward, :currency_id => currency.id)
 
+      Downloader.stub(:get).and_raise(TestingError)
       Timecop.freeze(@now) do
         expect {
           get(:run_job, :message => reward.id)
@@ -168,7 +169,7 @@ describe Job::QueueSendCurrencyController do
 
   describe 'without errors' do
     before :each do
-      Downloader.should_receive(:get_strict).and_return(@mock_response)
+      Downloader.should_receive(:get).and_return(@mock_response)
     end
 
     it 'should save the reward' do
@@ -181,7 +182,7 @@ describe Job::QueueSendCurrencyController do
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.sent_currency.to_i.should be_within(1).of(Time.zone.now.to_i)
-      reward.send_currency_status.should == "OK"
+      reward.send_currency_status.should == "200"
     end
 
     it 'updates reward.attempts' do
@@ -191,7 +192,7 @@ describe Job::QueueSendCurrencyController do
       reward.attempts.last['body'].should == @mock_response.body
     end
 
-    it 'will create a web request' do
+    it 'creates a web request' do
       @mock_response.stub(:status).and_return(20)
       @web_request = WebRequest.new
       WebRequest.stub(:new).and_return(@web_request)
@@ -205,7 +206,7 @@ describe Job::QueueSendCurrencyController do
       @web_request.currency_id.should == @reward.currency_id
       @web_request.amount.should == @reward.currency_reward
     end
-    
+
     it 'should not reward twice' do
       get(:run_job, :message => @reward.id)
 
@@ -214,6 +215,25 @@ describe Job::QueueSendCurrencyController do
 
       Currency.should_receive(:find_in_cache).never
       get(:run_job, :message => reward.id)
+    end
+
+    it "should work with a 200 status" do
+      @mock_response.stub(:status).and_return(200)
+      @web_request = WebRequest.new
+      WebRequest.stub(:new).and_return(@web_request)
+      Reward.stub(:find).and_return(@reward)
+
+      get(:run_job, :message => @reward.id)
+      @reward.send_currency_status.should == "200"
+    end
+
+    it "should work with a 500 status" do
+      @mock_response.stub(:status).and_return(500)
+      @web_request = WebRequest.new
+      WebRequest.stub(:new).and_return(@web_request)
+
+      get(:run_job, :message => @reward.id)
+      assigns(:bad_callbacks).should include(@reward.currency_id)
     end
   end
 
@@ -265,8 +285,8 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
+        should_receive(:get).
+        with(callback_url, { :timeout => 20, :return_response => true }).
         and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
@@ -297,8 +317,8 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}?#{url_params.join('&')}"
 
       Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
+        should_receive(:get).
+        with(callback_url, { :timeout => 20, :return_response => true }).
         and_return(@mock_response)
 
       Offer.
@@ -323,8 +343,8 @@ describe Job::QueueSendCurrencyController do
       callback_url = "#{@currency.callback_url}&#{url_params.join('&')}"
 
       Downloader.
-        should_receive(:get_strict).
-        with(callback_url, { :timeout => 20 }).
+        should_receive(:get).
+        with(callback_url, { :timeout => 20, :return_response => true }).
         and_return(@mock_response)
 
       get(:run_job, :message => @reward.id)
