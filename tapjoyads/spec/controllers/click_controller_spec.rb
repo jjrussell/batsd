@@ -316,6 +316,7 @@ describe ClickController do
         before :each do
           @device = FactoryGirl.create(:device)
           Device.stub(:find).with('app_stuff').and_return(@device)
+          #TODO: This is testing CouponsController integration, should split out.
           fill_in 'email_address', :with => 'tapjoy@tapjoy.com'
           click_button('Send Coupon')
         end
