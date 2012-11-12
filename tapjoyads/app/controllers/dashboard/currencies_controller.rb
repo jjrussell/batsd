@@ -37,7 +37,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
 
     safe_attributes = [:name, :conversion_rate, :initial_balance, :callback_url, :secret_key, :test_devices, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid]
     if permitted_to?(:edit, :dashboard_statz)
-      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override, :send_offer_data]
+      safe_attributes += [:disabled_offers, :max_age_rating, :only_free_offers, :ordinal, :hide_rewarded_app_installs, :minimum_hide_rewarded_app_installs_version, :tapjoy_enabled, :rev_share_override, :send_offer_data, :offer_filter_selections, :use_offer_filter_selections]
     end
 
     old_conversion = @currency.conversion_rate
