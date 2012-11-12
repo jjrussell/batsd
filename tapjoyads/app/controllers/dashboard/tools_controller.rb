@@ -217,36 +217,25 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         return
       end
 
-      if params[:use_recent_clicks].present?
-        use_recent_clicks = params[:start_date].blank? && params[:end_date].blank?
-      else
-        use_recent_clicks = false
-      end
       now = Time.zone.now
 
-      if use_recent_clicks
-        @start_date = now - Device::RECENT_CLICKS_RANGE
-        @end_date = now
-        @clicks = @device.recent_clicks.reverse
-      else
-        @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
-        @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
+      @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
+      @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
 
-        @start_date = now if @start_date > now
-        @end_date = now if @end_date > now
+      @start_date = now if @start_date > now
+      @end_date = now if @end_date > now
 
-        conditions = [
-          "udid = '#{udid}'",
-          "clicked_at > '#{@start_date.to_i}'",
-          "clicked_at < '#{@end_date.to_i}'",
-        ].join(' and ')
-        @clicks = []
-        NUM_CLICK_DOMAINS.times do |i|
-          Click.select(:domain_name => "clicksV3_#{i}", :where => conditions) do |click|
-            @clicks << click unless click.tapjoy_games_invitation_primary_click?
-          end
-          @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
+      conditions = [
+        "udid = '#{udid}'",
+        "clicked_at > '#{@start_date.to_i}'",
+        "clicked_at < '#{@end_date.to_i}'",
+      ].join(' and ')
+      @clicks = []
+      NUM_CLICK_DOMAINS.times do |i|
+        Click.select(:domain_name => "clicksV3_#{i}", :where => conditions) do |click|
+          @clicks << click unless click.tapjoy_games_invitation_primary_click?
         end
+        @clicks = @clicks.sort_by {|click| -click.clicked_at.to_f }
       end
 
       @rewarded_clicks_count = 0
