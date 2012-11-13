@@ -95,7 +95,7 @@
             = check_box_tag 'banned', '1', @device.banned?
         %tr
           %th
-            Ban Reason
+            = @device.banned ? "Unban Reason" : "Ban Reason"
           %td
             = text_field_tag :ban_reason, params[:ban_reason]
         - if @device.ban_notes.length > 0

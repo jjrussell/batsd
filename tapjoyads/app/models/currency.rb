@@ -3,6 +3,25 @@ class Currency < ActiveRecord::Base
   acts_as_cacheable
   acts_as_approvable :on => :create
 
+  attr_accessor_with_default :use_offer_filter_selections, false
+  attr_accessor :offer_filter_selections
+  before_validation :convert_offer_filter
+  validate    :validate_offer_filter
+
+  def convert_offer_filter
+    if use_offer_filter_selections
+      self.offer_filter = offer_filter_selections ? offer_filter_selections.join(',') : nil
+    end
+  end
+
+  def validate_offer_filter
+    offer_selections = offer_filter ? offer_filter.split(',') : nil
+    if offer_selections && ((offer_selections & Offer::ACTIVE_OFFER_TYPES).length != offer_selections.length)
+      invalid_offers = offer_selections - (offer_selections & Offer::ACTIVE_OFFER_TYPES)
+      errors.add(:offer_filter, "contains invalid offer types #{invalid_offers.join(',')}")
+    end
+  end
+
   json_set_field :promoted_offers
 
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'

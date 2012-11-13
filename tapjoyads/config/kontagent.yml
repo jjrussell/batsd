@@ -1,0 +1,15 @@
+development: &dev
+  endpoint: https://www.platform.stg.kontagent.com/
+  username: TestPartner
+  password: kont@gent
+  partner: tapjoy
+  domain: platform.stg.kontagent.com
+
+test: *dev
+
+production:
+  endpoint: https://query.kontagent.net/
+  username: Tapjoy
+  password: d6e167f3b7e648c7be08c70218645cf8
+  partner: tapjoy
+  domain: kontagent.com

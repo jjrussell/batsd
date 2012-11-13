@@ -174,12 +174,44 @@ describe Offer::Rejecting do
     end
   end
 
+  describe "@offer_filter_reject" do
+    before :each do
+      @action_offer = FactoryGirl.create(:action_offer)
+      @generic_offer = FactoryGirl.create(:generic_offer)
+      @currency = FactoryGirl.create(:currency)
+    end
+
+    context "offer_filter is not defined" do
+      it "should not reject offer", :offer_filter do
+        @action_offer.primary_offer.offer_filter_reject?(@currency).should be_false
+      end
+    end
+
+    context "offer_filter is defined" do
+      before :each do
+        @currency.offer_filter = "GenericOffer,DeeplinkOffer"
+      end
+
+      it "should reject offer if offer type is not included in filter", :offer_filter do
+        action_offer = FactoryGirl.create(:action_offer)
+        offer = @action_offer.primary_offer
+        offer.offer_filter_reject?(@currency).should be_true
+      end
+
+      it "should not reject offer if offer type is included in filter", :offer_filter do
+        offer = @generic_offer.primary_offer
+        offer.offer_filter_reject?(@currency).should be_false
+      end
+    end
+  end
+
   describe '#admin_device_required_reject?' do
     before :each do
       @offer = FactoryGirl.create(:app).primary_offer
       @device = FactoryGirl.create(:device)
       @offer.extend(Offer::Rejecting)
     end
+
     context 'offer requires admin device' do
       before :each do
         @offer.requires_admin_device = true

@@ -75,6 +75,10 @@
       %li
         = link_to 'Approve Creatives', creative_tools_offers_path
         %span.badge.badge-info= CreativeApprovalQueue.count
+    - if permitted_to? :edit, :dashboard_statz
+      %li
+        = link_to 'Approve Kontagent Integrations', tools_kontagent_approvals_path
+        %span.badge.badge-info= KontagentIntegrationRequest.pending.count
     - if permitted_to? :index, :dashboard_activities                        # account_mgr
       %li= link_to 'Activity Log', activities_path
     - if permitted_to? :disabled_popular_offers, :dashboard_tools           # account_mgr

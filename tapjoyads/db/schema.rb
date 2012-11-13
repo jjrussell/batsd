@@ -296,6 +296,7 @@ ActiveRecord::Schema.define(:version => 20121106024714) do
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "store_whitelist",                                                                                           :null => false
+    t.string   "offer_filter"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -766,7 +767,7 @@ ActiveRecord::Schema.define(:version => 20121106024714) do
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false
     t.text     "device_types",                                                                                     :null => false
-    t.integer  "pay_per_click",                                                                 :default => 0
+    t.integer  "pay_per_click",                                                                 :default => 0,     :null => false
     t.boolean  "allow_negative_balance",                                                        :default => false
     t.boolean  "user_enabled",                                                                  :default => false
     t.boolean  "tapjoy_enabled",                                                                :default => false

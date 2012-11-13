@@ -25,7 +25,6 @@ EPHEMERAL_HEALTHZ_FILE = "#{Rails.root}/tmp/eph_test.txt"
 ANDROID_CONNECT_SDK         = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectSDK_Android_v9.0.0.zip'
 ANDROID_OFFERS_SDK          = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_Android_v9.0.0.zip'
 ANDROID_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyVirtualGoodsSDK_Android_v8.3.0.zip'
-ANDROID_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_Android_v8.3.1.zip'
 ANDROID_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPhoneGapPlugin_Android_v8.3.1.zip'
 ANDROID_MARMALADE_EXTENSION = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyMarmaladePlugin_Android_v8.2.2.zip'
 
@@ -34,7 +33,7 @@ IPHONE_CONNECT_SDK_UDID_OPT_OUT = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyAd
 IPHONE_OFFERS_SDK               = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0.zip'
 IPHONE_OFFERS_SDK_UDID_OPT_OUT  = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyPublisherSDK_iOS_v9.0.0_UDIDOptOut.zip'
 IPHONE_VG_SDK              = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectVirtualGoodsSDK_iOS_v8.3.2.zip'
-IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectUnityPluginSample_v8.3.1.zip'
+IPHONE_UNITY_PLUGIN        = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyUnityPlugin_v9.0.0.zip'
 IPHONE_PHONEGAP_PLUGIN     = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectPhoneGapPluginSample_v8.3.2.zip'
 IPHONE_MARMALADE_EXTENSION = 'https://github.com/downloads/marmalade/Tapjoy-for-Marmalade/Tapjoy_iOS.zip'
 IPHONE_ADOBE_AIR_PLUGIN    = 'https://s3.amazonaws.com/tapjoy/sdks/TapjoyConnectAdobeAIRPlugin_v8.3.3.zip'

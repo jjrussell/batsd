@@ -84,6 +84,7 @@ class Partner < ActiveRecord::Base
   belongs_to :sales_rep, :class_name => 'User'
   belongs_to :client
   has_many :earnings_adjustments
+  has_many :kontagent_integration_requests
 
   belongs_to :reseller
 
@@ -134,6 +135,9 @@ class Partner < ActiveRecord::Base
   before_save :check_billing_email
   after_save :update_currencies, :update_offers, :recache_currencies, :recache_offers
 
+  after_update :update_kontagent
+  before_destroy :delete_kontagent
+
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
 
@@ -144,9 +148,9 @@ class Partner < ActiveRecord::Base
         :order => "#{self.quoted_table_name}.name ASC, #{self.quoted_table_name}.contact_name ASC"
   scope :to_payout_by_earnings, :conditions => 'pending_earnings != 0', :order => 'pending_earnings DESC'
   scope :find_by_name_or_email, lambda { |name_or_email| { :joins => :users,
-      :conditions => [ "#{Partner.quoted_table_name}.name LIKE :query OR #{User.quoted_table_name}.email LIKE :query",
-        { :query => "%#{name_or_email}%" } ],
-      :group => "#{Partner.quoted_table_name}.id"
+        :conditions => [ "#{Partner.quoted_table_name}.name LIKE :query OR #{User.quoted_table_name}.email LIKE :query",
+          { :query => "%#{name_or_email}%" } ],
+        :group => "#{Partner.quoted_table_name}.id"
     }
   }
 
@@ -525,6 +529,13 @@ class Partner < ActiveRecord::Base
     "#{TIPALTI_PAYEE_API}#{action}?#{params.to_query}&key=#{key}"
   end
 
+  def kontagent_dashboard_url
+    subdomain = kontagent_subdomain
+    partner = KontagentConfig.partner
+    domain = KontagentConfig.domain
+    "http://#{subdomain}-#{partner}.#{domain}"
+  end
+
   private
 
   def update_currencies
@@ -608,5 +619,9 @@ class Partner < ActiveRecord::Base
 
   def payout_threshold_confirmation_roles
     %w(payout_manager account_mgr admin)
+  end
+
+  def update_kontagent
+    KontagentHelpers.update!(self) if kontagent_enabled and name_changed?
   end
 end
