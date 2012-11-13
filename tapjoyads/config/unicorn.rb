@@ -41,10 +41,14 @@ Rainbows! do
   # worker spawn times
   preload_app true
 
+  if ENV['RACK_ENV'] == 'development' && require('dotenv')
+    ENV['PORT'] ||= Dotenv.load['PORT']
+  end
+
   # listen on both a Unix domain socket and a TCP port,
   # we use a shorter backlog for quicker failover when busy
   if server_type == "dev"
-    listen "0.0.0.0:8080"
+    listen "0.0.0.0:#{ENV['PORT'] || '8080'}"
   else
     listen("/tmp/tapjoy.socket", :backlog => 2048)
   end

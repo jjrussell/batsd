@@ -4,6 +4,8 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+Dotenv.load
+
 Tapjoyad::Application.configure do
 
   config.middleware.use "Rack::Bug", :secret_key => "password"
