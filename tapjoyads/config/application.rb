@@ -77,6 +77,7 @@ module Tapjoyad
 
     config.console_oauth_url = 'https://oauth.tapjoy.com'
     config.hurricane_api_url = ENV['HURRICANE_API_URL'] || 'https://tapjoy-epf-staging.herokuapp.com'
+    config.threadsafe!
   end
 
 end

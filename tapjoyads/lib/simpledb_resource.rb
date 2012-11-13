@@ -1,4 +1,5 @@
 require 'logging'
+require 's3'
 
 class SimpledbResource
 

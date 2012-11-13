@@ -26,7 +26,10 @@ public/translations
 db/schema-dev.rb
 db/schema-dev.sqlite
 db/webserver-dev.sqlite
+tapjoy_db
+
 
 # Bundler
 vendor/bundle
 .bundle
+

@@ -1,7 +1,6 @@
 module ActiveRecordDisabler
   class QueriesDisabled < RuntimeError; end
-  @connection_metaclass = (class << ActiveRecord::Base.connection; self; end)
-
+  
   def self.disable_queries!
     return if queries_disabled?
     Rails.logger.debug "ActiveRecordDisabler -- disabling queries"

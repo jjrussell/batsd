@@ -1,3 +1,7 @@
+require 'sqs'
+require 'queue_names'
+require 'stats_cache'
+
 class ConnectController < ApplicationController
   include AdminDeviceLastRun::ControllerExtensions
 

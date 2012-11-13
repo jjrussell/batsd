@@ -1,3 +1,5 @@
+require 'iconv' # TODO deprecated, use String#encode -KB
+
 class WebRequest < AnalyticsLogger::Message
 
   PATH_TO_STAT_MAP = {

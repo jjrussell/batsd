@@ -43,7 +43,7 @@ Spork.prefork do
   require 'rspec/rails'
   require 'rspec/autorun'
   require 'capybara/rspec'
-  require 'db/seeds'
+  require Rails.root.join('db/seeds')
   require 'factory_girl'
   require 'authlogic/test_case'
   require 'hpricot'
