@@ -63,7 +63,7 @@ end
 
 CACHE_SERVERS = {}
 CACHE_SERVERS[:analytics_logger] = [
-  'tj-log-dedupe.fqfjqv.0001.use1.cache.amazonaws.com'
+  'rabbit-dedupe.tapjoy.net'
 ]
 MEMCACHE_SERVERS = [
   'localhost:11210' # couchbase stats cluster
