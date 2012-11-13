@@ -292,10 +292,36 @@ describe GetOffersController do
       get(:webpage, @params)
     end
 
-    it 'assigns test offer for test devices' do
-      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
-      get(:webpage, @params.merge(:udid => @device.id))
-      assigns(:test_offers).should_not be_nil
+    context "test offers" do
+      before :each do
+        OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
+        @params.merge!(:udid => @device.id)
+      end
+
+      it 'assigns test offer for test devices', :test_offers do
+        get(:webpage, @params)
+        assigns(:test_offers).should_not be_nil
+      end
+
+      it 'shows test video offer for SDK >= 8.3', :test_offers do
+        get(:webpage, @params.merge(:library_version => "8.3"))
+        assigns(:test_offers).map(&:id).include?('test_video').should be_true
+      end
+
+      it 'does not shows test video offer for SDK < 8.3', :test_offers do
+        get(:webpage, @params.merge(:library_version => "8.2"))
+        assigns(:test_offers).map(&:id).include?('test_video').should be_false
+      end
+
+      it 'shows test video offer for SDK < 8.3 if all_videos param is present', :test_offers do
+        get(:webpage, @params.merge(:library_version => "8.2", :all_videos => '1'))
+        assigns(:test_offers).map(&:id).include?('test_video').should be_true
+      end
+
+      it 'shows test video offer for SDK < 8.3 if video_offer_ids includes test_video', :test_offers do
+        get(:webpage, @params.merge(:library_version => "8.2", :video_offer_ids => 'test_video'))
+        assigns(:test_offers).map(&:id).include?('test_video').should be_true
+      end
     end
 
     it 'does not log impressions when there are no offers' do

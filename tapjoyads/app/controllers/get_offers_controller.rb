@@ -36,7 +36,9 @@ class GetOffersController < ApplicationController
     @sdk9plus = library_version >= '9'
     if @currency.has_test_device?(params[:udid])
       @test_offers = [ @publisher_app.test_offer ]
-      if params[:all_videos] || params[:video_offer_ids].to_s.split(',').include?('test_video')
+      if library_version >= '8.3' ||
+           params[:all_videos] ||
+           params[:video_offer_ids].to_s.split(',').include?('test_video')
         @test_offers << @publisher_app.test_video_offer.primary_offer
       end
     end
