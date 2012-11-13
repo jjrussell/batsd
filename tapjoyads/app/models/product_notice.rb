@@ -14,7 +14,7 @@ class ProductNotice
   end
 
   def message
-    @message ||= read_message
+    @message ||= get_message
   end
   alias_method :to_s, :message
 
@@ -23,12 +23,12 @@ class ProductNotice
   end
 
   def force_update!
-    self.message = read_message
+    self.message = get_message
     self
   end
 
   private
-  def read_message
+  def get_message
     $redis.get(self.class.key) || ''
   end
 
