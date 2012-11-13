@@ -9,7 +9,6 @@ class Dashboard::SdkController < Dashboard::DashboardController
       'vg'        => ANDROID_VG_SDK,
       'marmalade' => ANDROID_MARMALADE_EXTENSION,
       'phonegap'  => ANDROID_PHONEGAP_PLUGIN,
-      'unity'     => ANDROID_UNITY_PLUGIN,
     },
     'iphone' => {
       'adv'       => IPHONE_CONNECT_SDK,
