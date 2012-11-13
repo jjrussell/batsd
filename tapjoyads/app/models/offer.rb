@@ -224,7 +224,7 @@ class Offer < ActiveRecord::Base
   after_update :update_enabled_deeplink_offer_id
   after_save :update_enabled_rating_offer_id
   after_save :update_pending_enable_requests
-  after_save :update_tapjoy_sponsored_related_offers
+  after_save :update_tapjoy_sponsored_associated_offers
   after_save :sync_banner_creatives! # NOTE: this should always be the last thing run by the after_save callback chain
   set_callback :cache, :before, :clear_creative_blobs
   set_callback :cache, :before, :update_video_button_tracking_offers
@@ -376,14 +376,36 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  # ActiveRecord::Relation for all Offers (including this one) with this offer's item ID
+  # ActiveRecord::Relation for all Offers (excluding this one) with this offer's item ID
   def associated_offers
     o = Offer.scoped.table
     Offer.where(:item_id => item_id).where(o[:id].not_eq(id))
   end
 
+  # Offer that was the first to be created with this Offer's item_id, also matching the specified options
+  # Options:
+  #   * :featured : Boolean
+  #   * :rewarded : Boolean
+  def main_for(opts={})
+    raise ArgumentError unless opts.keys.include?(:featured) and opts.keys.include?(:rewarded)
+    Offer.where(
+      :item_id  => item_id,
+      :featured => opts[:featured],
+      :rewarded => opts[:rewarded]
+    ).order(:created_at).first
+  end
+
+  # Offer that was the first to be created with this Offer's:
+  #   * item_id
+  #   * featured status
+  #   * rewarded status
+  def main
+    @main ||= main_for(:featured => featured?, :rewarded => rewarded?)
+  end
+
+  # true if this is the main offer
   def main?
-    @main.nil? ? @main = self == Offer.where(:item_id => item_id).order(:created_at => :asc).first : @main
+    @is_main.nil? ? @is_main = self == self.main : @is_main
   end
 
   # ActiveRecord::Relation for related non-main offers that share the same "featured" and "rewarded" status as this one
@@ -1063,9 +1085,9 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def update_tapjoy_sponsored_related_offers
+  def update_tapjoy_sponsored_associated_offers
     if tapjoy_sponsored_changed?
-      related_offers.each do |o|
+      associated_offers.each do |o|
         o.tapjoy_sponsored = tapjoy_sponsored
         o.save! if o.changed?
       end
