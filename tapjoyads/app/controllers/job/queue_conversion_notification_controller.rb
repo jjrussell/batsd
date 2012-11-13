@@ -27,6 +27,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
         :app_secret_key => publisher_app.secret_key,
         :title => I18n.t('queue_conversion_notifications_controller.notification.title', :default => "Reward Notification"),
         :message => message_text,
+        :throttle_key => 'tjofferconversion',
         :device_aliases => device_aliases
       })
       @notification.deliver
