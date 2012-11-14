@@ -145,6 +145,8 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :raw_url
   self.define_attr :controller
   self.define_attr :controller_action
+  self.define_attr :instruction_viewed_at, :type => :time
+  self.define_attr :instruction_clicked_at, :type => :time
   self.define_attr :cached_offer_list_id
   self.define_attr :cached_offer_list_type
   self.define_attr :generated_at, :type => :time

@@ -17,7 +17,7 @@ class AppleEPF
     end
 
     S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'full_date'].write(:data => full_date, :acl => :public_read)
-    
+
     log_to_file(true, "end", "Successfully completed full job on #{DateTime.now.to_s} for date #{full_date}")
   ensure
     FileUtils.rm_rf('tmp/epf')
