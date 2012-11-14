@@ -101,12 +101,19 @@
       #help_enable_risk_management.help ?
       = f.check_box :enable_risk_management
       = error_message_on(@partner, :enable_risk_management) if @partner.errors.on :enable_risk_management
+    .field.admin
+      = f.label :developer_name
+      #help_developer_name.help ?
+      = f.text_field :developer_name
+      = error_message_on(@partner, :developer_name)
 
   = submit_tag "Update"
 
 .hidden
   #help_name_content{:name => 'Name'}
     The partner's name. Only Tapjoy employees may edit this field; contact support@tapjoy.com for assistance.
+  #help_developer_name_content{:name => 'Developer Name'}
+    The developer name in the app store (App Store, Google Play, etc.)
   #help_approved_publisher_content{:name => 'Approved publisher'}
     Approval status for publishing offers.
     Checking this box will make all future currencies created by this partner "tapjoy enabled" by default.

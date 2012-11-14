@@ -93,7 +93,7 @@ class Dashboard::PartnersController < Dashboard::DashboardController
       params[:partner][:country] = params[:partner][:country].first if params[:partner][:country].is_a? Array
     end
 
-    safe_attributes = [ :name, :account_managers, :account_manager_notes, :accepted_negotiated_tos,
+    safe_attributes = [ :name, :developer_name, :account_managers, :account_manager_notes, :accepted_negotiated_tos,
                         :negotiated_rev_share_ends_on, :rev_share, :transfer_bonus, :disabled_partners,
                         :direct_pay_share, :approved_publisher, :billing_email, :accepted_publisher_tos,
                         :cs_contact_email, :sales_rep, :max_deduction_percentage, :discount_all_offer_types, :country ]
