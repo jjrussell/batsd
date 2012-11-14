@@ -1,5 +1,8 @@
 class Api::Client::CampaignsController < Api::ClientController
   before_filter :set_scope, :only => :index
+  
+  include ActsAsPageable
+  pageable_resource :offers, :only => :index
 
   def index
   end
