@@ -115,7 +115,7 @@ class Deploy
   def update_working_copy
     puts "Updating working copy"
     git_status = `git status`
-    if git_status !~ /working directory clean/
+    if git_status !~ /nothing to commit/
       puts "You must have a clean working directory!"
       exit 1
     end
