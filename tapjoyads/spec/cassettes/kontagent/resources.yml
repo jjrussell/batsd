@@ -1,0 +1,40 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://TestPartner:kont%40gent@www.platform.stg.kontagent.com/partner/v1/accounts/
+    body: 
+      string: account_id=1397907d-451f-46b8-8607-ee8dfdca187e&subdomain=zxtes&name=zxTestCaseyzAccount
+    headers: 
+      authorization: 
+      - Basic VGVzdFBhcnRuZXI6a29udEBnZW50
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      content-type: 
+      - application/json; charset=utf-8
+      transfer-encoding: 
+      - chunked
+      vary: 
+      - Authorization, Cookie
+      set-cookie: 
+      - sessionid=b6adaa8d564fe20c582c21c784d62541; Domain=.platform.stg.kontagent.com; Path=/
+      date: 
+      - Fri, 02 Nov 2012 20:00:55 GMT
+      connection: 
+      - close
+      server: 
+      - nginx/0.7.64
+    body: 
+      string: |-
+        {
+            "subdomain": "zxtes.partner",
+            "type": "enterprise",
+            "name": "zxTestCaseyzAccount",
+            "account_id": "1397907d-451f-46b8-8607-ee8dfdca187e"
+        }
+    http_version: "1.1"
+  recorded_at: Fri, 02 Nov 2012 20:00:55 GMT
+recorded_with: VCR 2.2.5

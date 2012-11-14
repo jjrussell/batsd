@@ -266,6 +266,7 @@ class ClickController < ApplicationController
     @web_request.viewed_at = Time.zone.at(params[:viewed_at].to_f) if params[:viewed_at].present?
     @web_request.offer_is_paid = @offer.is_paid?
     @web_request.offer_daily_budget = @offer.daily_budget
+    @web_request.offer_overall_budget = @offer.overall_budget
     update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 
@@ -317,8 +318,6 @@ class ClickController < ApplicationController
     click.auditioning            = params[:auditioning]
 
     click.save
-
-    @device.add_click(click)
 
     # for third party tracking vendors
     @offer.queue_click_tracking_requests(params.slice(:udid, :publisher_app_id).merge(:ip_address => ip_address))

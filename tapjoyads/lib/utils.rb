@@ -259,13 +259,14 @@ class Utils
 
   def self.create_id_hash(file, default_reason)
     id_hash = {}
-    lines = file.read.split
+    lines = file.read.split(/\r/)
     lines.slice!(0)
     lines.each do |line|
       cells = line.split(',')
       id = cells[0]
-      reason = cells[1].nil? ? default_reason : cells[1]
-      id_hash[id] = {:date => Time.now.strftime("%m/%d/%y"), :reason => reason}
+      reason = cells[1].blank? ? default_reason : cells[1]
+      raise ArgumentError, "Ban reason cannot be blank" if reason.blank?
+      id_hash[id] = {:date => Time.now.strftime("%m/%d/%y"), :reason => reason, :action => 'Banned'}
     end
     id_hash
   end

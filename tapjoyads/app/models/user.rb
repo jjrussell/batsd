@@ -74,6 +74,9 @@ class User < ActiveRecord::Base
   after_create :create_mail_chimp_entry
   after_save :update_auth_net_cim_profile
 
+  before_save :update_kontagent
+  before_destroy :delete_kontagent
+
   def role_symbols
     user_roles.map do |role|
       role.name.underscore.to_sym
@@ -162,4 +165,18 @@ class User < ActiveRecord::Base
     end
   end
 
+  def update_kontagent
+    if current_partner and current_partner.kontagent_enabled
+      if KontagentHelpers.exists?(self)
+        KontagentHelpers.update!(self) if kontagent_enabled and email_changed?
+      else
+        KontagentHelpers.build!(self)
+        self.kontagent_enabled = true
+      end
+    end
+  end
+
+  def delete_kontagent
+    KontagentHelpers.delete!(self) if kontagent_enabled
+  end
 end

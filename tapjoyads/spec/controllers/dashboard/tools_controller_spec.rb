@@ -100,7 +100,6 @@ describe Dashboard::ToolsController do
         click = Click.new(:key => FactoryGirl.generate(:guid), :consistent => true)
         click.clicked_at = Time.now-1.day
         click.save
-        @device1.add_click(click)
       end
 
       it "should pass with valid parameters passed in", :device_info do

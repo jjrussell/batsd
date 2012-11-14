@@ -296,6 +296,7 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
     t.text     "promoted_offers",                                                                                           :null => false
     t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "store_whitelist",                                                                                           :null => false
+    t.string   "offer_filter"
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -846,6 +847,7 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
     t.text     "featured_ad_content"
     t.string   "featured_ad_action"
     t.string   "featured_ad_color"
+    t.boolean  "requires_admin_device",                                                         :default => false, :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"

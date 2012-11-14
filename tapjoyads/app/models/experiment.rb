@@ -4,6 +4,8 @@ class Experiment < ActiveRecord::Base
   include UuidPrimaryKey
   acts_as_cacheable
 
+  LOOKUP_KEY = 'experiments:ids_by_name'
+
   serialize :metadata, Hash
 
   belongs_to :owner, :class_name => 'User'
@@ -46,9 +48,7 @@ class Experiment < ActiveRecord::Base
 
     # Are there enough free devices to create this experiment?
     if population_size && self.metadata[:bucket_ids].empty?
-      self.available_buckets.inject(0) { |devices, bucket| devices += bucket.size }.tap do |free_devices|
-        free_devices >= population_size or errors.add(:population_size, 'insufficient available devices')
-      end
+      self.available_buckets.map(&:size).reduce(:+) >= population_size or errors.add(:population_size, 'insufficient available devices')
     end
 
     if bucket_type == 'interface' && apps.any?
@@ -57,17 +57,17 @@ class Experiment < ActiveRecord::Base
   end
 
   # Update our lookup-by-name in Redis
-  after_save { |e| $redis.hset('experiments:ids_by_name', e.name, e.id) }
+  after_save { |e| $perma_redis.hset(LOOKUP_KEY, e.name, e.id) }
 
   # Remove ourselves from cache lookup
   before_destroy do |e|
-    $redis.hdel('experiments:ids_by_name', e.name)
+    $perma_redis.hdel(LOOKUP_KEY, e.name)
     e.release_devices!
   end
 
   # Look up experiment from cache by name
   def self.[](name)
-    if exp_id = $redis.hget('experiments:ids_by_name', name)
+    if exp_id = $perma_redis.hget(LOOKUP_KEY, name)
       Experiment.find_in_cache(exp_id)
     else
       raise ActiveRecord::RecordNotFound.new("No experiment found in cache by name '#{name}'")

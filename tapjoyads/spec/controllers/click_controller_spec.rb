@@ -88,6 +88,7 @@ describe ClickController do
           web_request = mock('web_request').as_null_object
           web_request.should_receive(:offer_is_paid=).with(false)
           web_request.should_receive(:offer_daily_budget=).with(0)
+          web_request.should_receive(:offer_overall_budget=).with(0)
           WebRequest.should_receive(:new).and_return(web_request)
 
           get(:generic, @params)
@@ -313,6 +314,9 @@ describe ClickController do
       end
       context 'valid email' do
         before :each do
+          @device = FactoryGirl.create(:device)
+          Device.stub(:find).with('app_stuff').and_return(@device)
+          #TODO: This is testing CouponsController integration, should split out.
           fill_in 'email_address', :with => 'tapjoy@tapjoy.com'
           click_button('Send Coupon')
         end

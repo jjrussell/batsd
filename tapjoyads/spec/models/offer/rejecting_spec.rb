@@ -173,4 +173,75 @@ describe Offer::Rejecting do
       end
     end
   end
+
+  describe "@offer_filter_reject" do
+    before :each do
+      @action_offer = FactoryGirl.create(:action_offer)
+      @generic_offer = FactoryGirl.create(:generic_offer)
+      @currency = FactoryGirl.create(:currency)
+    end
+
+    context "offer_filter is not defined" do
+      it "should not reject offer", :offer_filter do
+        @action_offer.primary_offer.offer_filter_reject?(@currency).should be_false
+      end
+    end
+
+    context "offer_filter is defined" do
+      before :each do
+        @currency.offer_filter = "GenericOffer,DeeplinkOffer"
+      end
+
+      it "should reject offer if offer type is not included in filter", :offer_filter do
+        action_offer = FactoryGirl.create(:action_offer)
+        offer = @action_offer.primary_offer
+        offer.offer_filter_reject?(@currency).should be_true
+      end
+
+      it "should not reject offer if offer type is included in filter", :offer_filter do
+        offer = @generic_offer.primary_offer
+        offer.offer_filter_reject?(@currency).should be_false
+      end
+    end
+  end
+
+  describe '#admin_device_required_reject?' do
+    before :each do
+      @offer = FactoryGirl.create(:app).primary_offer
+      @device = FactoryGirl.create(:device)
+      @offer.extend(Offer::Rejecting)
+    end
+
+    context 'offer requires admin device' do
+      before :each do
+        @offer.requires_admin_device = true     
+      end
+      
+      it "should reject the offer when the device is not an admin device" do
+        @device.last_run_time_tester = false
+        @offer.admin_device_required_reject?(@device).should be_true
+      end
+
+      it "should not reject the offer when the device is an admin device" do
+        @device.last_run_time_tester = true
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+    end
+
+    context 'offer does not require admin device' do
+      before :each do
+        @offer.requires_admin_device = false     
+      end
+      
+      it "should not reject the offer when the device is not an admin device" do
+        @device.last_run_time_tester = false
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+
+      it "should not reject the offer when the device is an admin device" do
+        @device.last_run_time_tester = true
+        @offer.admin_device_required_reject?(@device).should be_false
+      end
+    end    
+  end
 end

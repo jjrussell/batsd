@@ -56,9 +56,10 @@ class CreateExperiments < ActiveRecord::Migration
     drop_table :experiment_buckets
     remove_column :apps, :experiment_id
 
-    # No, we can't use ExperimentBucket::REDIS_HASH_KEY because that model
+    # No, we can't use ExperimentBucket::LOOKUP_KEY because that model
     # is not required to exist in order to run this migration
-    $redis.del('experiments:buckets_by_index')
-    $redis.del('experiments:hash_offset')
+    $perma_redis.del('experiments:buckets_by_index')
+    $perma_redis.del('experiments:hash_offset')
+    $perma_redis.del('experiments:ids_by_name')
   end
 end

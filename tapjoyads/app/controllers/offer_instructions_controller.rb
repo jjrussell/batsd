@@ -1,7 +1,7 @@
 class OfferInstructionsController < ApplicationController
   prepend_before_filter :decrypt_data_param
 
-  layout 'iphone'
+  layout :instructions_layout
 
   def index
     return unless verify_params([ :data, :id, :publisher_app_id, :udid ])
@@ -17,6 +17,9 @@ class OfferInstructionsController < ApplicationController
       params[:data] = ObjectEncryptor.encrypt(params)
     end
 
+    @device = Device.new(:key => params[:udid])
+    choose_experiment(:offer_instructions_test) unless @device.last_run_time_tester?
+
     @complete_action_url = @offer.complete_action_url({
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
@@ -27,6 +30,7 @@ class OfferInstructionsController < ApplicationController
       :library_version       => params[:library_version],
       :os_version            => params[:os_version]
     })
+    render 'index_redesign' if choose_redesign?
   end
 
   def app_not_installed
@@ -34,5 +38,19 @@ class OfferInstructionsController < ApplicationController
     @offer = Offer.find_in_cache(params[:id])
     @action_app = App.find_in_cache(params[:action_app_id])
     return unless verify_records([ @offer, @action_app ])
+  end
+
+  private
+
+  def instructions_layout
+    if params[:action] == 'index' && choose_redesign?
+      'instructions'
+    else
+      'iphone'
+    end
+  end
+
+  def choose_redesign?
+    @device.last_run_time_tester? || params[:exp] == 'offer_instructions_experiment'
   end
 end

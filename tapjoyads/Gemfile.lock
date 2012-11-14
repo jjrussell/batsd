@@ -44,10 +44,10 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: 1b165fa4b5005907da37582fed2b2127e7bfa126
-  tag: v0.8.1
+  revision: fb9d35b3f506b07ed753bfd6a9ae4b31072424ad
+  tag: v0.8.6
   specs:
-    analytics_logger (0.8.1)
+    analytics_logger (0.8.6)
       activesupport (~> 3.0)
       bunny (~> 0.8.0)
       json (~> 1.5)
@@ -363,6 +363,8 @@ GEM
       activesupport (>= 2.3.14)
       multi_json (~> 1.0)
     rack (1.2.5)
+    rack-cors (0.2.7)
+      rack
     rack-mount (0.6.14)
       rack (>= 1.0.0)
     rack-test (0.5.7)
@@ -508,7 +510,7 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.8.1)!
+  analytics_logger (= 0.8.6)!
   annotate
   archive-tar-minitar
   asset_sync
@@ -576,6 +578,7 @@ DEPENDENCIES
   pry-rails
   pry-remote
   rabl (= 0.7.6)
+  rack-cors (= 0.2.7)
   rails (~> 3.0.12)
   rake
   rcov

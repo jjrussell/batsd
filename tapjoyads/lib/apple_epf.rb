@@ -5,46 +5,42 @@ class AppleEPF
   S3_EPF_BASE = 'epf/'
 
   def self.process_full
-    begin
-      log_to_file(true, "start", "Successfully started full job on #{DateTime.now.to_s} for date #{inc_date}")
+    full_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
+    full_current_files = extract_files_from_apache_directory_listing(full_current)
+    full_date = date_from_file(full_current_files.first)
 
-      full_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
-      full_current_files = extract_files_from_apache_directory_listing(full_current)
-      full_date = date_from_file(full_current_files.first)
+    log_to_file(true, "start", "Successfully started full job on #{DateTime.now.to_s} for date #{full_date}")
 
-      Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', full_date)}).each do |archive|
-        download_and_extract("#{APPLE_EPF_BASE_URL}full/current/#{archive}.tbz", generate_file_urls(full_date), true, true)
-        upload_files_in_tmp_folder
-      end
-
-      S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'full_date'].write(:data => full_date, :acl => :public_read)
-      
-      log_to_file(true, "end", "Successfully completed full job on #{DateTime.now.to_s} for date #{inc_date}")
-    ensure
-      FileUtils.rm_rf('tmp/epf')
+    Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', full_date)}).each do |archive|
+      download_and_extract("#{APPLE_EPF_BASE_URL}full/current/#{archive}.tbz", generate_file_urls(full_date), true, true)
+      upload_files_in_tmp_folder
     end
+
+    S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'full_date'].write(:data => full_date, :acl => :public_read)
+    
+    log_to_file(true, "end", "Successfully completed full job on #{DateTime.now.to_s} for date #{full_date}")
+  ensure
+    FileUtils.rm_rf('tmp/epf')
   end
 
   def self.process_incremental
-    begin
-      log_to_file(false, "start", "Successfully started incremental job on #{DateTime.now.to_s} for date #{inc_date}")
+    inc_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/incremental/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
+    inc_current_files = extract_files_from_apache_directory_listing(inc_current)
+    inc_date = date_from_file(inc_current_files.first)
 
-      inc_current = Nokogiri::HTML(open("#{APPLE_EPF_BASE_URL}full/current/incremental/current/", :http_basic_authentication => TAPJOY_EPF_CREDENTIALS))
-      inc_current_files = extract_files_from_apache_directory_listing(inc_current)
-      inc_date = date_from_file(inc_current_files.first)
+    log_to_file(false, "start", "Successfully started incremental job on #{DateTime.now.to_s} for date #{inc_date}")
 
-      Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', inc_date)}).each do |archive|
-        download_and_extract("#{APPLE_EPF_BASE_URL}full/current/incremental/current/#{archive}.tbz", generate_file_urls(inc_date), true, false)
-        upload_files_in_tmp_folder
-      end
-
-      S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'inc_#{Date.today.wday}'].write(:data => inc_date, :acl => :public_read)
-      S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'incremental_date'].write(:data => inc_date, :acl => :public_read)
-
-      log_to_file(false, "end", "Successfully completed incremental job on #{DateTime.now.to_s} for date #{inc_date}")
-    ensure
-      FileUtils.rm_rf('tmp/epf')
+    Set.new(EPF_FILES.collect{|file| file.slice(/^.*#/).sub('#', inc_date)}).each do |archive|
+      download_and_extract("#{APPLE_EPF_BASE_URL}full/current/incremental/current/#{archive}.tbz", generate_file_urls(inc_date), true, false)
+      upload_files_in_tmp_folder
     end
+
+    S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'inc_#{Date.today.wday}'].write(:data => inc_date, :acl => :public_read)
+    S3.bucket(BucketNames::APPLE_EPF).objects[S3_EPF_BASE + 'incremental_date'].write(:data => inc_date, :acl => :public_read)
+
+    log_to_file(false, "end", "Successfully completed incremental job on #{DateTime.now.to_s} for date #{inc_date}")
+  ensure
+    FileUtils.rm_rf('tmp/epf')
   end
 
   def self.log_to_file(is_full, file_name, message)
@@ -93,12 +89,10 @@ class AppleEPF
   end
 
   def self.download_and_extract(url, list_of_files, credentials = true, full = false)
-    begin
-      file = download_file(url, credentials)
-      extract_from_archive(file, list_of_files, full)
-    ensure
-      file.close! if file
-    end
+    file = download_file(url, credentials)
+    extract_from_archive(file, list_of_files, full)
+  ensure
+    file.close! if file
   end
 
   def self.generate_file_urls(date)

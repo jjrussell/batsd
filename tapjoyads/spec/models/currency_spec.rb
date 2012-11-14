@@ -63,6 +63,66 @@ describe Currency do
       end
     end
 
+    context "offer_filter" do
+      context "offer_filter direct assignment" do
+        before :each do
+          @currency.use_offer_filter_selections = false
+        end
+
+        it "should retain offer_filter if offer_filter_selections is nil", :offer_filter do
+          @currency.offer_filter_selections = nil
+          @currency.offer_filter = "ActionOffer,GenericOffer,Coupon"
+          @currency.save
+          @currency.offer_filter.should == "ActionOffer,GenericOffer,Coupon"
+        end
+
+        it "should retain offer_filter even if offer_filter_selections is not nil", :offer_filter do
+          @currency.offer_filter_selections = ["GenericOffer"]
+          @currency.offer_filter = "ActionOffer,GenericOffer,Coupon"
+          @currency.save
+          @currency.offer_filter.should == "ActionOffer,GenericOffer,Coupon"
+        end
+      end
+
+      context "offer_filter assignment through UI" do
+        before :each do
+          @currency.use_offer_filter_selections = true
+          @currency.offer_filter = "Coupon"
+        end
+
+        it "validates known offer types", :offer_filter do
+          @currency.offer_filter_selections = ["ActionOffer", "GenericOffer"]
+          @currency.save
+          @currency.offer_filter.should == "ActionOffer,GenericOffer"
+        end
+
+        it "invalidates unknown offer types", :offer_filter do
+          @currency.offer_filter_selections = ["ActionOffer,NoSuchOffer"]
+          @currency.save
+          @currency.errors[:offer_filter].join.should == "contains invalid offer types NoSuchOffer"
+        end
+
+        it "invalidates obsolete offer types", :offer_filter do
+          @currency.offer_filter_selections = ["ActionOffer,OfferpalOffer"]
+          @currency.save
+          @currency.errors[:offer_filter].join.should == "contains invalid offer types OfferpalOffer"
+        end
+
+        it "should convert offer_filter_selections to offer_filter", :offer_filter do
+          @currency.offer_filter_selections = ["ActionOffer", "GenericOffer"]
+          @currency.save
+          @currency.offer_filter.should == "ActionOffer,GenericOffer"
+        end
+
+        it "should set offer_filter to nil if there's no offers from offer_filter_selections", :offer_filter do
+          @currency.offer_filter_selections = nil
+          @currency.save
+          @currency.offer_filter.should be_nil
+        end
+
+      end
+    end
+
     context 'when test devices are not valid' do
       before :each do
         @currency.stub(:has_invalid_test_devices?).and_return(true)

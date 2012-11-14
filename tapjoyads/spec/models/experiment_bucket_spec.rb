@@ -16,6 +16,10 @@ describe ExperimentBucket do
       ExperimentBucket.where(:bucket_type => 'interface').count.should == 0
     end
 
+    # NOTE- while this spec is technically true, if you EB.rehash_population
+    # with a significantly different number of devices than you expect to
+    # be in the system at Experiment-time, you will get weird numbers because
+    # we can't guess the approximate size of a bucket.
     it 'does not requre devices to exist before the rehash' do
       ExperimentBucket.rehash_population(:buckets => 2)
       20.times { Factory(:device) }

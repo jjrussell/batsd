@@ -68,6 +68,13 @@
     = @currency.spend_share
 %tr.admin
   %th
+    Included Offer-Types
+    #help_offer_filter.help ?
+  %td
+    = f.hidden_field  :use_offer_filter_selections, {:value => true}
+    = f.chosen_select :offer_filter_selections, options_for_select(Offer::ACTIVE_OFFER_TYPES, :selected => (@currency.offer_filter ? @currency.offer_filter.split(',') : "")), {}, :multiple => true
+%tr.admin
+  %th
     Direct-pay share
     #help_direct_pay_share.help ?
     .msg
@@ -138,6 +145,8 @@
     The percent share of offer spending that this publisher gets. Computed as: (this partner's rev share) * (spend share ratio).
   #help_direct_pay_share_content{:name => 'Direct-pay share'}
     The percent share of direct-pay revenue that this publisher gets.
+  #help_offer_filter_content{:name => 'Included Offer Types'}
+    The offer types to be included on offerwall
   #help_hide_rewarded_app_installs_content{:name => 'Hide rewarded app installs'}
     Do not display pay-per-install offers on this publisher's offer wall.
   #help_minimum_hide_rewarded_app_installs_version_content{:name => 'Min hide rewarded installs version'}
