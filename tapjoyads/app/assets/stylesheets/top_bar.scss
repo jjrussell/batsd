@@ -15,6 +15,7 @@
   top: 0;
   z-index: 100;
   width: 100%;
+/* if you change the height of the top bar, also adjust height of the placeholder div below */
   height: 40px;
 
   .right {
@@ -46,4 +47,8 @@
       cursor: pointer;
     };
   }
+}
+
+.placeholder {
+  height: 40px;
 }
