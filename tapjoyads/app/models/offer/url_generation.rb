@@ -82,6 +82,7 @@ module Offer::UrlGeneration
         return "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
       when 'DeeplinkOffer'
         params = { :udid => udid, :id => currency.id, :click_key => click_key }
+        params[:referrer] = "tapjoy:deeplink:#{publisher_app_id}"
         return "#{WEBSITE_URL}/earn?data=#{ObjectEncryptor.encrypt(params)}"
     end
 
