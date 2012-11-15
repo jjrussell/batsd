@@ -155,7 +155,6 @@ authorization do
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
     has_permission_on :dashboard_tools_rejections, :to => [ :index ]
-    has_permission_on :dashboard_kontagent, :to => [ :index, :show, :new, :create ]
   end
 
   role :payops do
