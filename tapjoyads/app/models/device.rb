@@ -436,16 +436,10 @@ class Device < SimpledbShardedResource
     Mc.distributed_get_and_put("in_network_apps_for_device_#{self.key}", false, 1.hours) do
       in_network_apps = []
 
-      external_publishers = ExternalPublisher.load_all_for_device(self)
-
-      app_metadatas = {}
-      AppMetadata.where("id IN ('#{external_publishers.map(&:app_metadata_id).join("','")}')").each do |app_metadata|
-        app_metadatas[app_metadata.id] = app_metadata
-      end
-
-      external_publishers.each do |external_publisher|
+      ExternalPublisher.load_all_for_device(self).each do |external_publisher|
+        app_metadata = App.find_in_cache(external_publisher.app_id).primary_app_metadata
         in_network_apps << InNetworkApp.new(external_publisher,
-                                            app_metadatas[external_publisher.app_metadata_id],
+                                            app_metadata,
                                             last_run_time(external_publisher.app_id))
       end
       in_network_apps
