@@ -40,7 +40,7 @@ describe Job::QueueCreateConversionsController do
     end
 
     describe 'video offer' do
-      it "should not enqueue" do
+      it "should not enqueue" do 
         @offer.item_type = "VideoOffer"
         @offer.save
         Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)
@@ -49,7 +49,7 @@ describe Job::QueueCreateConversionsController do
     end
 
     describe 'survey offer' do
-      it "should not enqueue" do
+      it "should not enqueue" do 
         @offer.item_type = "SurveyOffer"
         @offer.save
         Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.key)

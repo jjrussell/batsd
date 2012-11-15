@@ -68,16 +68,9 @@ describe OfferInstructionsController do
         response.should render_template('layouts/instructions')
       end
 
-      it 'assigns @complete_instruction_url to a website url' do
+      it 'assigns @complete_action_url to a website url' do
        get(:index, @params)
-       assigns(:complete_instruction_url).should == 'some_website_url'
-      end
-
-      it 'assigns @complete_instruction_url to an instruction action url' do
-       @offer.stub(:instruction_action_url).and_return('some_instruction_action_url')
-       @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_instruction]
-       get(:index, @params)
-       assigns(:complete_instruction_url).should == 'some_instruction_action_url'
+       assigns(:complete_action_url).should == 'some_website_url'
       end
 
       it 'assigns @offer to the record found in Offer cache' do

@@ -19,7 +19,7 @@ class Dashboard::Tools::GenericOffersController < Dashboard::DashboardController
 
   def create
     generic_offer_params = sanitize_currency_params(params[:generic_offer], [ :price ])
-    # due to the creation order of the primary_offer at the model level, we need to pull out nested
+    # due to the creation order of the primary_offer at the model level, we need to pull out nested 
     # primary_offer_attributes upon creation
     generic_offer_params[:primary_offer_creation_attributes] = generic_offer_params.delete(:primary_offer_attributes)
 

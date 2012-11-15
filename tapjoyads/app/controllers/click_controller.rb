@@ -331,10 +331,8 @@ class ClickController < ApplicationController
       end
       @device.set_last_run_time!(app_id_for_device)
 
-      if @offer.pay_per_click?(:ppc_on_offerwall)
-        message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s }.to_json
-        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-      end
+      message = { :click_key => click_key, :install_timestamp => @now.to_f.to_s }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
     end
   end
 

@@ -130,7 +130,7 @@ private
     primary_offer.name_suffix         = 'Survey'
     primary_offer.device_types        = Offer::ALL_DEVICES.to_json
     primary_offer.tapjoy_enabled      = true
-    primary_offer.pay_per_click       = Offer::PAY_PER_CLICK_TYPES[:non_ppc]
+    primary_offer.pay_per_click       = false
     primary_offer.approved_sources    = %w(offerwall)
     primary_offer.multi_complete      = false
     primary_offer.save!

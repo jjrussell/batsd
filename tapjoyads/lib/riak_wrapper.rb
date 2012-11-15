@@ -1,9 +1,9 @@
 module RiakWrapper
 
-  #A wrapper around retrieving an object from riak
+  #A wrapper around retrieving an object from riak  
   def self.get(bucket, key)
-    begin
-      $riak[bucket][key].raw_data
+    begin      
+      $riak[bucket][key].raw_data    
     rescue Exception => e
       #We couldn't retrieve from Riak... We could try an exists? here to double check
       #that it is indeed not found, due to the read-repair issue
@@ -13,7 +13,7 @@ module RiakWrapper
 
   #Same as get, but tries to parse the object into JSON
   def self.get_json(bucket, key)
-    json = self.get(bucket, key)
+    json = self.get(bucket, key)    
     #If we didn't get anything back from riak, return an empty hash, otherwise parse the JSON
     json.nil? ? {} : JSON.parse(json)
   end

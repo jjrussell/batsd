@@ -205,7 +205,7 @@ describe Job::QueueSendCurrencyController do
       @web_request.currency_id.should == @reward.currency_id
       @web_request.amount.should == @reward.currency_reward
     end
-
+    
     it 'should not reward twice' do
       get(:run_job, :message => @reward.id)
 

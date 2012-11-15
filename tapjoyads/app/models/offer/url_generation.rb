@@ -4,7 +4,7 @@ module Offer::UrlGeneration
   end
 
   def destination_url(options)
-    if has_instructions?
+    if is_coupon? || (item_type != 'VideoOffer' && instructions.present?)
       instructions_url(options)
     else
       complete_action_url(options)
@@ -12,7 +12,33 @@ module Offer::UrlGeneration
   end
 
   def instructions_url(options)
-    data = instructions_data(options)
+    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
+    publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
+    currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    click_key             = options.delete(:click_key)             { nil }
+    device_click_ip       = options.delete(:device_click_ip)       { nil }
+    language_code         = options.delete(:language_code)         { nil }
+    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
+    display_multiplier    = options.delete(:display_multiplier)    { 1 }
+    library_version       = options.delete(:library_version)       { nil }
+    os_version            = options.delete(:os_version)            { nil }
+    device_type           = options.delete(:device_type)           { nil }
+    options.delete(:mac_address)
+    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
+
+    data = {
+      :id                    => id,
+      :udid                  => udid,
+      :publisher_app_id      => publisher_app_id,
+      :click_key             => click_key,
+      :device_click_ip       => device_click_ip,
+      :itunes_link_affiliate => itunes_link_affiliate,
+      :currency_id           => currency.id,
+      :language_code         => language_code,
+      :display_multiplier    => display_multiplier,
+      :library_version       => library_version,
+      :os_version            => os_version
+    }
 
     if item_type == 'GenericOffer' && generic_offer_trigger_action == 'Facebook Like'
       "#{API_URL_EXT}/offer_triggered_actions/fb_visit?data=#{ObjectEncryptor.encrypt(data)}"
@@ -23,13 +49,8 @@ module Offer::UrlGeneration
     elsif is_coupon?
       "#{API_URL}/coupon_instructions/new?data=#{ObjectEncryptor.encrypt(data)}"
     else
-      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data)}"
+      "#{API_URL}/offer_instructions?data=#{ObjectEncryptor.encrypt(data.merge({:device_type => device_type}))}"
     end
-  end
-
-  def instruction_action_url(options)
-    data = instructions_data(options)
-    "#{API_URL}/offer_instruction_click?data=#{ObjectEncryptor.encrypt(data)}"
   end
 
   def complete_action_url(options)
@@ -328,42 +349,5 @@ module Offer::UrlGeneration
     else
       "#{params[:udid]}.#{item_id_str}"
     end
-  end
-
-  private
-
-  def instructions_data(options)
-    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
-    publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
-    currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
-    click_key             = options.delete(:click_key)             { nil }
-    device_click_ip       = options.delete(:device_click_ip)       { nil }
-    language_code         = options.delete(:language_code)         { nil }
-    itunes_link_affiliate = options.delete(:itunes_link_affiliate) { nil }
-    display_multiplier    = options.delete(:display_multiplier)    { 1 }
-    library_version       = options.delete(:library_version)       { nil }
-    os_version            = options.delete(:os_version)            { nil }
-    viewed_at             = options.delete(:viewed_at)             { nil }
-    device_type           = options.delete(:device_type)           { nil }
-    options.delete(:mac_address)
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-
-    data = {
-      :id                    => id,
-      :udid                  => udid,
-      :publisher_app_id      => publisher_app_id,
-      :click_key             => click_key,
-      :device_click_ip       => device_click_ip,
-      :itunes_link_affiliate => itunes_link_affiliate,
-      :currency_id           => currency.id,
-      :language_code         => language_code,
-      :display_multiplier    => display_multiplier,
-      :library_version       => library_version,
-      :os_version            => os_version
-    }
-
-    data.merge!(:viewed_at => viewed_at) if viewed_at
-    data.merge!(:device_type => device_type) if device_type
-    data
   end
 end

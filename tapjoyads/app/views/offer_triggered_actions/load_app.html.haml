@@ -48,7 +48,7 @@
           $("body").append(src);
         }
         var phUrl = #{@protocol_handler_url.to_json.html_safe},
-            fallbackUrl = #{@complete_instruction_url.to_json.html_safe};
+            fallbackUrl = #{@complete_action_url.to_json.html_safe};
         var appversion = navigator.appVersion,
             idevice = (/iphone|ipad|ipod/gi).test(appversion),
             android = (/android/gi).test(appversion);

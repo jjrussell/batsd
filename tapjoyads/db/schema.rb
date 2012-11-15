@@ -767,7 +767,7 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
     t.integer  "overall_budget",                                                                :default => 0,     :null => false
     t.text     "countries",                                                                                        :null => false
     t.text     "device_types",                                                                                     :null => false
-    t.integer  "pay_per_click",                                                                 :default => 0,     :null => false
+    t.boolean  "pay_per_click",                                                                 :default => false
     t.boolean  "allow_negative_balance",                                                        :default => false
     t.boolean  "user_enabled",                                                                  :default => false
     t.boolean  "tapjoy_enabled",                                                                :default => false

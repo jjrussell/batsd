@@ -46,7 +46,6 @@ Tapjoyad::Application.routes.draw do
   match 'get_vg_store_items/all' => 'get_vg_store_items#all'
   match 'get_vg_store_items/purchased' => 'get_vg_store_items#purchased'
   match 'get_vg_store_items/user_account' => 'get_vg_store_items#user_account'
-  resources :offer_instruction_click, :only => [:index]
   resources :offer_instructions, :only => [:index] do
     collection do
       get :app_not_installed

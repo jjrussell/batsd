@@ -40,7 +40,7 @@
           %td
             = primary_offer_form.currency_field :payment, {}, :disabled => 'disabled'
             = error_message_on @action_offer, :primary_offer_payment
-        = render('dashboard/apps/offers_shared/featured_settings', :f => primary_offer_form, :show_featured_checkbox => true, :offer => @offer)
+        = render('dashboard/apps/offers_shared/featured_settings', :f => primary_offer_form, :show_featured_checkbox => true, :offer => @offer) 
       %tr
         %th
           = f.label :name, 'Action Name'

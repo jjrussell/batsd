@@ -40,7 +40,7 @@ class UdidReports
           click  = Click.new(:key => reward.click_key)
           line << "#{click.clicked_at.to_s(:db) || ''}"
         rescue
-
+      
         end
         outfile.puts(line)
       end
