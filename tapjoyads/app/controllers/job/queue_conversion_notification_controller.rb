@@ -22,7 +22,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
       ].reject{ |a| a[:identifier].nil?  }
 
       @notification = NotificationsClient::Notification.new({
-        :app_id => @reward.publisher_app_id, 
+        :app_id => @reward.publisher_app_id,
         :app_secret_key => publisher_app.secret_key,
         :title => I18n.t('queue_conversion_notifications_controller.notification.title', :default => "Reward Notification"),
         :message => message_text,
@@ -38,7 +38,7 @@ class Job::QueueConversionNotificationsController < Job::SqsReaderController
 
 private
   def message_text
-    #add custom message text where appropriate 
+    #add custom message text where appropriate
     case @reward.offer.item_type
     when "App"
       #PPI

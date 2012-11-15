@@ -46,7 +46,7 @@ class DeeplinkOffer < ActiveRecord::Base
     offer.approved_sources = %w(offerwall)
     offer.tapjoy_enabled = true
     offer.user_enabled = currency.rewarded?
-    offer.pay_per_click = true
+    offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
     offer.multi_complete = true
     offer.interval = 1.hour.to_i
     offer.device_types = Offer::ALL_DEVICES.to_json

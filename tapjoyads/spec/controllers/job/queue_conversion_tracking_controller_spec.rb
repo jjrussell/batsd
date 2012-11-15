@@ -4,14 +4,25 @@ def click_message(click_key)
   { :click_key => click_key, :install_timestamp => Time.zone.parse('2010-04-15').to_f.to_s }.to_json
 end
 
+INSTRUCTION_VIEWED_AT = Time.zone.parse('2010-01-01 00:00:00')
+INSTRUCTION_CLICKED_AT = Time.zone.parse('2010-01-01 00:05:00')
+def instruction_click_message(click_key)
+  { :click_key => click_key,
+    :offer_instruction_click => {
+      :viewed_at => INSTRUCTION_VIEWED_AT.to_f,
+      :clicked_at => INSTRUCTION_CLICKED_AT.to_f
+    }
+  }.to_json
+end
+
 def expect_request_completes
   reward_request = WebRequest.new(:time => Time.zone.now)
   reward_request.should_receive(:save)
   reward_request.should_receive(:advertiser_balance=).with(0)
-  
+
   conversion_attempt_request = WebRequest.new(:time => Time.zone.now)
   conversion_attempt_request.should_receive(:save)
-  
+
   WebRequest.should_receive(:new).and_return(reward_request, conversion_attempt_request)
 end
 
@@ -60,6 +71,10 @@ describe Job::QueueConversionTrackingController do
 
     def do_get
       get(:run_job, :message => click_message(@click.key))
+    end
+
+    def do_instruction_get
+      get(:run_job, :message => instruction_click_message(@click.key))
     end
 
     it 'ignores already converted clicks' do
@@ -290,6 +305,25 @@ describe Job::QueueConversionTrackingController do
     it 'creates a WebRequest object' do
       expect_request_completes
       do_get
+    end
+
+    context 'invoked from offer instruction' do
+      before :each do
+        do_instruction_get
+      end
+
+      it "should set instruction_viewed_at for the click", :instruction do
+        @click.instruction_viewed_at.should == INSTRUCTION_VIEWED_AT
+      end
+
+      it "should set instruction_clicked_at for the click", :instruction do
+        @click.instruction_clicked_at.should == INSTRUCTION_CLICKED_AT
+      end
+
+      it "should set instruction_viewed_at for the rewar", :instruction do
+        reward = Reward.find(@click.reward_key)
+        reward.instruction_viewed_at.should == INSTRUCTION_VIEWED_AT
+      end
     end
   end
 end

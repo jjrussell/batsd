@@ -86,7 +86,7 @@
     = f.label(:pay_per_click)
     #help_pay_per_click.help ?
   %td
-    = f.check_box(:pay_per_click)
+    = f.select(:pay_per_click, pay_per_click_selections(@offer.pay_per_click))
     = error_message_on @offer, :pay_per_click
 - if @offer.item_type != 'ActionOffer'
   %tr.admin
@@ -193,7 +193,7 @@
   #help_admin_offer_name_content{:name => 'Offer Name'} Name that will be displayed on offer walls.
   #help_tapjoy_enabled_content{ :name => 'Tapjoy Enabled' } Whether or not the offer is enabled for installs.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
-  #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
+  #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user on click.
   #help_featured_content{ :name => 'Featured' } Enables this offer in our featured offers feed.
   #help_internal_suffix_content{ :name => 'Internal Suffix' } Internal identifier for offers. i.e. 'featured' or 'us only'
   #help_audition_factor_content{ :name => 'Audition Factor' } Defines how prominently to display the offer when testing for performance
