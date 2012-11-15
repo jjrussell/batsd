@@ -18,16 +18,13 @@ class KontagentIntegrationRequest < ActiveRecord::Base
 
   attr_accessible :subdomain, :successful
 
-  # TODO validate subdomain before save
   validates_format_of :subdomain, :with => /^[A-Za-z\d_]+$/
-  #validates :subdomain, :presence => true, :allow_blank => false
 
   belongs_to :partner
   belongs_to :user
 
   acts_as_approvable :on => :create
 
-  # TODO there has got to be a better way to express this
   def self.pending
     self.all.reject { |integration_request| not integration_request.pending? }
   end
