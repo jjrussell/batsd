@@ -382,4 +382,10 @@ FactoryGirl.define do
     successful    false
     subdomain     { FactoryGirl.generate(:name).downcase.gsub(' ','') }
   end
+
+  factory :conversion_rate do
+    association :currency
+    rate                  100
+    minimum_offerwall_bid 50
+  end
 end

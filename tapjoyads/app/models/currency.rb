@@ -37,6 +37,7 @@ class Currency < ActiveRecord::Base
 
   has_many :reengagement_offers
   has_one :deeplink_offer, :required => true
+  has_many :conversion_rates
 
   validates_presence_of :reseller, :if => Proc.new { |currency| currency.reseller_id? }
   validates_presence_of :app, :partner, :name, :currency_group, :callback_url
@@ -45,6 +46,16 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
   validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
+  validates_each :conversion_rate, :if => :conversion_rate_changed? do |record, attribute, value|
+    if record.conversion_rates.any?
+      record.conversion_rates.each do |conversion_rate|
+        if record.conversion_rate >= conversion_rate.rate
+          record.errors.add(attribute, 'Cannot update the conversion rate to a value greater than any of the custom conversion rates you have already set. You must clean up your custom conversion rates or use a lower conversion rate value that does not conflict.')
+          break
+        end
+      end
+    end
+  end
   validates_each :callback_url, :if => :callback_url_changed? do |record, attribute, value|
     if record.conversion_rate == 0 && value != NO_CALLBACK_URL
       record.errors.add(attribute, "must be set to #{NO_CALLBACK_URL} for non-rewarded currencies")
@@ -205,8 +216,23 @@ class Currency < ActiveRecord::Base
     else
       reward_value = floored_reward_value(offer)
     end
-    reward_value * conversion_rate / 100.0
+    reward_value * currency_conversion_rate(offer) / 100.0
   end
+
+  def currency_conversion_rate(offer)
+    if self.conversion_rate_enabled?
+      all_conversion_rates.select do |conversion_rate|
+        conversion_rate.minimum_offerwall_bid <= self.get_publisher_amount(offer)
+      end.last.try(:rate) || self.conversion_rate
+    else
+      self.conversion_rate
+    end
+  end
+
+  def all_conversion_rates
+    Array self.conversion_rates.all(:order => 'minimum_offerwall_bid')
+  end
+  memoize :all_conversion_rates
 
   def get_publisher_amount(offer, displayer_app = nil)
     if displayer_app.present?

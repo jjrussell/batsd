@@ -452,6 +452,51 @@ describe Currency do
     end
   end
 
+  describe '#currency_conversion_rate' do
+    context 'not exchange rate enabled' do
+      before :each do
+        @currency.conversion_rate_enabled = false
+      end
+      it 'should return the currency\'s conversion rate' do
+        @currency.currency_conversion_rate(@offer).should == @currency.conversion_rate
+      end
+    end
+
+    context 'conversion rate enabled' do
+      before :each do
+        @currency.conversion_rate_enabled = true
+        @currency.save
+        Currency.stub(:find).and_return(@currency)
+        @offer = FactoryGirl.create(:app).primary_offer
+        @conversion_rate = FactoryGirl.create(:conversion_rate, :rate => 10, :minimum_offerwall_bid => 1, :currency_id => @currency.id)
+        @conversion_rate2 = FactoryGirl.create(:conversion_rate, :rate => 30, :minimum_offerwall_bid => 2, :currency_id => @currency.id)
+        @conversion_rate3 = FactoryGirl.create(:conversion_rate, :rate => 70, :minimum_offerwall_bid => 3, :currency_id => @currency.id)
+      end
+      context 'should return the conversion rate based on the publisher amount closest to the floored minimum offerwall bid' do
+        it 'returns currency\'s conversion rate if the publisher amount is less than all the conversion rates minimum_offerwall_bids' do
+          @currency.stub(:get_publisher_amount).and_return(0)
+          @currency.currency_conversion_rate(@offer).should == @currency.conversion_rate
+        end
+        it 'returns conversion_rate1 conversion rate' do
+          @currency.stub(:get_publisher_amount).and_return(1.2)
+          @currency.currency_conversion_rate(@offer).should == @conversion_rate.rate
+        end
+        it 'returns conversion_rate2 conversion rate' do
+          @currency.stub(:get_publisher_amount).and_return(2.9)
+          @currency.currency_conversion_rate(@offer).should == @conversion_rate2.rate
+        end
+        it 'returns conversion_rate3 conversion rate when the value is exactly on the minimum_offerwall_bid' do
+          @currency.stub(:get_publisher_amount).and_return(3)
+          @currency.currency_conversion_rate(@offer).should == @conversion_rate3.rate
+        end
+        it 'returns conversion_rate3 conversion rate (highest minimum_offerwall_bid) when the publisher amount is greater than all the minimum_offerwall_bid values' do
+          @currency.stub(:get_publisher_amount).and_return(13)
+          @currency.currency_conversion_rate(@offer).should == @conversion_rate3.rate
+        end
+      end
+    end
+  end
+
   describe '#get_reward_amount' do
     context 'when given a RatingOffer' do
       before :each do
