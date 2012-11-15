@@ -37,8 +37,8 @@ class KontagentIntegrationRequest < ActiveRecord::Base
       self.provision!
     rescue StandardError
       # on provisioning exception, delete all integration requests for this partner
-      outstanding_partner_requests = KontagentIntegrationRequest.all.select { |r| r.partner == self.partner }.
-      outstanding_partner_requests.collect(&:delete)
+      outstanding_partner_requests = KontagentIntegrationRequest.all.select { |r| r.partner == self.partner }
+      outstanding_partner_requests.collect!(&:delete)
       return
     end
 
