@@ -25,14 +25,18 @@ class Dashboard::KontagentController < Dashboard::DashboardController
 
     @accepted_terms = params[:terms_and_conditions]
 
-    if @accepted_terms and @kontagent_integration_request.no_conflicts? and @kontagent_integration_request.save!
+    if @accepted_terms and @kontagent_integration_request.no_conflicts? and @kontagent_integration_request.save
       @last_approval = @kontagent_integration_request.approvals.order("created_at desc").limit(1).first
       flash[:notice] = "Thank you! We have successfully created your integration request."
       render :show
     else
       if @accepted_terms
         if @kontagent_integration_request.no_conflicts?
-          flash[:error] = "We're sorry, but something went wrong attempting to register your request at this time."
+          if @kontagent_integration_request.errors
+            flash[:error] = @kontagent_integration_request.errors.full_messages
+          else
+            flash[:error] = "We're sorry, but something went wrong attempting to register your request at this time."
+          end
         else
           flash[:error] = "That domain name is already taken."
         end
