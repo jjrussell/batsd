@@ -433,7 +433,7 @@ class Device < SimpledbShardedResource
   end
 
   def in_network_apps
-    Rails.cache.fetch("in_network_apps_for_device_#{self.key}", :expires_in => 1.hours) do
+    Mc.distributed_get_and_put("in_network_apps_for_device_#{self.key}", false, 1.hours) do
       in_network_apps = []
 
       external_publishers = ExternalPublisher.load_all_for_device(self)
