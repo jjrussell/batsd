@@ -264,7 +264,8 @@ class Utils
     lines.each do |line|
       cells = line.split(',')
       id = cells[0]
-      reason = cells[1].blank? ? default_reason : cells[1]
+      reason_cell = cells[1..-1].join(',').gsub(/\"/, "")
+      reason = reason_cell.blank? ? default_reason : reason_cell
       raise ArgumentError, "Ban reason cannot be blank" if reason.blank?
       id_hash[id] = {:date => Time.now.strftime("%m/%d/%y"), :reason => reason, :action => 'Banned'}
     end
