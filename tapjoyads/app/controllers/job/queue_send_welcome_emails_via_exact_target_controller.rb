@@ -15,8 +15,24 @@ class Job::QueueSendWelcomeEmailsViaExactTargetController < Job::SqsReaderContro
     ##       Then modify this job to check the stored status before trying to send mail.
     ##
     device_info = Marshal.restore(Base64::decode64(message.body))
+    if device_info[:gamer_id]
+      gamer = Gamer.find(device_info.delete(:gamer_id))
+    else
+      gamer = {}
+      gamer[:facebook_id]         = device_info.delete(:facebook_id)
+      gamer[:email]               = device_info.delete(:email)
+      gamer[:confirmation_token]  = device_info.delete(:confirmation_token)
+      gamer[:gamer_devices]       = device_info.delete(:gamer_devices)
+      gamer.instance_eval do
+        def email
+          self.fetch(:email)
+        end
+        def confirmation_token
+          self.fetch(:confirmation_token)
+        end
+      end
+    end
 
-    gamer = Gamer.find(device_info.delete(:gamer_id))
     email_type = device_info.delete(:email_type) || 'welcome'
 
     mailer = TransactionalMailer.new

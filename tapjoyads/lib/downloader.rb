@@ -76,6 +76,18 @@ class Downloader
       queue_get_with_retry(url, download_options)
     end
   end
+  ##
+  # Download a url and return the response. Raises an exception if the response status is not normal.
+  def self.post_strict(url, data = {}, download_options = {})
+    response = Downloader.post(url, data, download_options.merge({:return_response => true}))
+    if response.status == 403
+      Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url} with data #{data.inspect}. 403 error.")
+    elsif response.status < 200 or response.status > 399
+      raise "#{response.status} error from #{url} using data #{data.inspect}"
+    end
+
+    return response
+  end
 
   ##
   # Download a url and return the response. Raises an exception if the response status is not normal.
@@ -92,6 +104,12 @@ class Downloader
 
   def self.queue_get_with_retry(url, download_options = {})
     message = { :url => url, :download_options => download_options }
+    Sqs.send_message(QueueNames::DOWNLOADS, message.to_json)
+    Rails.logger.info "Added to Downloads queue."
+  end
+
+  def self.queue_with_retry_until_successful(url, method=:get, data={}, download_options={})
+    message = {:url => url, :method => method, :data => data, :download_options => download_options}
     Sqs.send_message(QueueNames::DOWNLOADS, message.to_json)
     Rails.logger.info "Added to Downloads queue."
   end
