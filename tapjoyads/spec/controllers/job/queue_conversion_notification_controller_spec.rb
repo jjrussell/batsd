@@ -33,7 +33,7 @@ describe Job::QueueConversionNotificationsController do
   context "sending" do
     before(:each) do
       NotificationsClient::Notification.any_instance.stub(:deliver)
-    
+
       @device = Device.new(:key => 'udid')
       @device.idfa = 'idfa'
       @device.android_id = 'android_id'

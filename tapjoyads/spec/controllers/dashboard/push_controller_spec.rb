@@ -14,9 +14,9 @@ describe Dashboard::PushController do
 
     NotificationsClient::App.any_instance.stub(:update)
   end
- 
+
   describe 'update' do
-    def do_request(opts={}) 
+    def do_request(opts={})
       post :update, opts.reverse_merge(:app_id => @app.id, :app => {:notifications_enabled => true})
     end
 
@@ -52,4 +52,4 @@ describe Dashboard::PushController do
     end
   end
 end
- 
+

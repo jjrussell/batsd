@@ -126,7 +126,7 @@ class Stats < SimpledbResource
       changed = true
       self.virtual_goods = @parsed_virtual_goods
     end
-    
+
     if self.countries != @parsed_countries
       changed = true
       self.countries = @parsed_countries

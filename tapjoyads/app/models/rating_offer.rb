@@ -57,9 +57,9 @@ class RatingOffer < ActiveRecord::Base
     offer.bid = 0
     offer.reward_value = 15
     offer.third_party_data = app_id
+    offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
     offer.tapjoy_enabled = false
     offer.user_enabled = true
-    offer.pay_per_click = true
     offer.save!
   end
 

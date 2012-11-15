@@ -18,7 +18,7 @@
       }
       window.cURL = #{@conversion_tracking_urls.first.to_json.html_safe};
       window.cURL2 = #{@conversion_tracking_urls.second.to_json.html_safe};
-      window.rURL = #{@complete_action_url.to_json.html_safe};
+      window.rURL = #{@complete_instruction_url.to_json.html_safe};
       $('#click-action-2').click(function(){
         var src = '<iframe src="'+ window.cURL2 +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
         if (window.cURL2) {

@@ -100,7 +100,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
             web_request.reward_id           = reward.id
             web_request.publisher_app_id    = reward.publisher_app_id
             web_request.currency_id         = reward.currency_id
-            web_request.amount              = reward.currency_reward       
+            web_request.amount              = reward.currency_reward
             web_request.save
 
             attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
