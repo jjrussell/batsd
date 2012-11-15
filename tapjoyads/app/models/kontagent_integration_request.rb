@@ -30,7 +30,16 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   end
 
   def after_approve(approval)
-    self.provision! and self.save!
+    begin
+      self.provision!
+    rescue StandardError
+      # on provisioning exception, delete all integration requests for this partner
+      partner.kontagent_integration_requests.destroy_all
+
+      # re-raise error
+      raise StandardError, "Invalid response to provisioning request"
+    end
+
     if self.successful
       KontagentMailer::approval(self.user).deliver
     end
