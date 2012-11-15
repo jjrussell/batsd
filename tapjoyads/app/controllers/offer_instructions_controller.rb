@@ -32,9 +32,9 @@ class OfferInstructionsController < ApplicationController
     }
 
     if @offer.pay_per_click?(:ppc_on_instruction)
-      @complete_action_url = @offer.instruction_action_url(complete_action_data.merge(:viewed_at => Time.zone.now.to_f))
+      @complete_instruction_url = @offer.instruction_action_url(complete_action_data.merge(:viewed_at => Time.zone.now.to_f))
     else
-      @complete_action_url = @offer.complete_action_url(complete_action_data)
+      @complete_instruction_url = @offer.complete_action_url(complete_action_data)
     end
 
     render 'index_redesign' if choose_redesign?
