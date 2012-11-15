@@ -108,7 +108,11 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   private
 
   def provision_partner!
-    create_partner = KontagentHelpers.build!(self.partner)
+    create_partner = Kontagent::Account.build!(
+       :name        => partner.name,
+       :subdomain   => self.subdomain,
+       :account_id  => KontagentHelpers.id_for(partner)
+    )
     self.partner.kontagent_enabled = true
     self.partner.kontagent_subdomain = self.subdomain
     self.partner.save!

@@ -136,9 +136,6 @@ class Partner < ActiveRecord::Base
   before_save :check_billing_email
   after_save :update_currencies, :update_offers, :recache_currencies, :recache_offers
 
-  after_update :update_kontagent
-  before_destroy :delete_kontagent
-
   cattr_reader :per_page
   attr_protected :exclusivity_level_type, :exclusivity_expires_on, :premier_discount
 
@@ -620,9 +617,5 @@ class Partner < ActiveRecord::Base
 
   def payout_threshold_confirmation_roles
     %w(payout_manager account_mgr admin)
-  end
-
-  def update_kontagent
-    KontagentHelpers.update!(self) if kontagent_enabled and name_changed?
   end
 end
