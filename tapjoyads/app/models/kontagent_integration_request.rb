@@ -20,7 +20,7 @@ class KontagentIntegrationRequest < ActiveRecord::Base
 
   # TODO validate subdomain before save
   validates_format_of :subdomain, :with => /^[A-Za-z\d_]+$/
-
+  validates :subdomain, :presence => true, :allow_blank => false
 
   belongs_to :partner
   belongs_to :user
