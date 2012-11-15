@@ -23,7 +23,7 @@ And,
 
 = form_for(@kontagent_integration_request, :url => {:action => :create}) do |f|
   %div.field
-    = f.label "Please provide your desired Kontagent subdomain: "
+    = f.label "Please provide your desired Kontagent subdomain: " #:subdomain
     = f.text_field :subdomain
   %small Notes: the subdomain must be lowercase and alphanumeric.
   %br
