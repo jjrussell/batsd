@@ -617,8 +617,4 @@ class Partner < ActiveRecord::Base
   def payout_threshold_confirmation_roles
     %w(payout_manager account_mgr admin)
   end
-
-  #def update_kontagent
-  #  KontagentHelpers.update!(self) if kontagent_enabled and name_changed?
-  #end
 end
