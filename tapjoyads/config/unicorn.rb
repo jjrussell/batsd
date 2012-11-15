@@ -105,6 +105,7 @@ after_fork do |server, worker|
   defined?(VerticaCluster) and VerticaCluster.reset_connection
   defined?(AnalyticsLogger) and AnalyticsLogger.after_fork
   $redis.client.reconnect
+  defined?(GEOIP) and GEOIP.reconnect!
   at_exit { defined?(NewRelic) and NewRelic::Agent.shutdown({:force_send=>true}) }
 end
 
