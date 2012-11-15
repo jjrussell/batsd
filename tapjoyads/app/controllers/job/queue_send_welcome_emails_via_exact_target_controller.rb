@@ -16,7 +16,8 @@ class Job::QueueSendWelcomeEmailsViaExactTargetController < Job::SqsReaderContro
     ##
     device_info = Marshal.restore(Base64::decode64(message.body))
     if device_info[:gamer_id]
-      gamer = Gamer.find(device_info.delete(:gamer_id))
+      Sqs.send_message(QueueNames::SEND_WELCOME_EMAILS_OLD, message.body) and return
+      # gamer = Gamer.find(device_info.delete(:gamer_id))
     else
       gamer = {}
       gamer[:facebook_id]         = device_info.delete(:facebook_id)
