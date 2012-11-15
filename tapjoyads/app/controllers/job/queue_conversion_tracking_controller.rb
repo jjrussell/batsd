@@ -10,14 +10,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     json = JSON.parse(message.body)
     click = Click.find(json['click_key'], :consistent => true)
     raise "Click not found: #{json['click_key']}" if click.nil?
-
-    if json['offer_instruction_click'].present?
-      click.instruction_viewed_at = Time.zone.at(json['offer_instruction_click']['viewed_at'])
-      click.instruction_clicked_at = Time.zone.at(json['offer_instruction_click']['clicked_at'])
-      installed_at_epoch = click.instruction_clicked_at
-    else
-      installed_at_epoch = json['install_timestamp']
-    end
+    installed_at_epoch = json['install_timestamp']
 
     offer = Offer.find_in_cache(click.offer_id, :do_lookup => true)
     currency = Currency.find_in_cache(click.currency_id, :do_lookup => true)
@@ -59,8 +52,6 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.geoip_country          = click.geoip_country
     attempt.store_name             = click.store_name
     attempt.created                = installed_at_epoch
-    attempt.instruction_viewed_at  = click.instruction_viewed_at
-    attempt.instruction_clicked_at = click.instruction_clicked_at
     attempt.save
 
     checker = ConversionChecker.new(click, attempt)
@@ -125,7 +116,6 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.device_type            = click.device_type
       reward.offerwall_rank         = click.offerwall_rank
       reward.store_name             = click.store_name
-      reward.instruction_viewed_at  = click.instruction_viewed_at
       reward.cached_offer_list_id   = click.cached_offer_list_id
       reward.cached_offer_list_type = click.cached_offer_list_type
       reward.auditioning            = click.auditioning
@@ -161,7 +151,6 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
         web_request.device_type        = reward.device_type
         web_request.offerwall_rank     = reward.offerwall_rank
         web_request.store_name         = reward.store_name
-        web_request.instruction_viewed_at = reward.instruction_viewed_at
         web_request.save
       end
     end
@@ -237,8 +226,6 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.individual_offset      = attempt.individual_entities_offset
     web_request.rules_offset           = attempt.rules_offset
     web_request.risk_score             = attempt.final_risk_score
-    web_request.instruction_viewed_at  = attempt.instruction_viewed_at
-    web_request.instruction_clicked_at = attempt.instruction_clicked_at
     attempt.risk_profiles.each do |key, hash|
       begin
         prefix = key.split('.').first.downcase
@@ -263,5 +250,4 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       web_request.save
     end
   end
-
 end

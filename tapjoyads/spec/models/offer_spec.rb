@@ -1031,63 +1031,8 @@ describe Offer do
       end
 
       it "disallows pay-per-click offers" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
+        @offer.pay_per_click = true
         @offer.should_not be_valid
-      end
-    end
-
-    context "when pay_per_click is set" do
-      it "should allow pay_per_click to be within PAY_PER_CLICK_TYPES" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
-        @offer.should be_valid
-      end
-
-      it "should allow pay_per_click to be ppc_on_instructions if there are instructions" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_instruction]
-        @offer.instructions = "test instructions"
-        @offer.should be_valid
-      end
-
-      it "should not allow pay_per_click to be ppc_on_instructions if there're no instructions" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_instructions]
-        @offer.should_not be_valid
-      end
-
-      it "should not allow pay_per_click to be outside PAY_PER_CLICK_TYPES" do
-        @offer.pay_per_click = 100
-        @offer.should_not be_valid
-      end
-
-      it "should have pay_per_click? to be false if pay_per_click is non_ppc" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:non_ppc]
-        @offer.pay_per_click?.should be_false
-      end
-
-      it "should have pay_per_click? to be false if pay_per_click is not non_ppc" do
-        @offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
-        @offer.pay_per_click?.should be_true
-      end
-
-      context "validate pay_per_click for different offer types" do
-        it "should validate rating offers to have pay_per_click set" do
-          offer = FactoryGirl.create(:rating_offer).primary_offer
-          offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:non_ppc]
-          offer.should_not be_valid
-        end
-
-        it "should validate deeplink offers to have pay_per_click set" do
-          currency = FactoryGirl.create(:currency)
-          offer = currency.deeplink_offer.primary_offer
-          offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:non_ppc]
-          offer.should_not be_valid
-        end
-
-        it "should validate survey offers not to have pay_per_click set" do
-          partner = FactoryGirl.create(:partner, :id => TAPJOY_PARTNER_ID)
-          offer = FactoryGirl.create(:survey_offer, :partner => partner).primary_offer
-          offer.pay_per_click = Offer::PAY_PER_CLICK_TYPES[:ppc_on_offerwall]
-          offer.should_not be_valid
-        end
       end
     end
 

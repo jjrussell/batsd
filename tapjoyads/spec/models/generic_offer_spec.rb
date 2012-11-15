@@ -42,7 +42,7 @@ describe GenericOffer do
   it 'should allow setting of primary_offer_creation_attributes' do
     @offer = FactoryGirl.build(:generic_offer)
     @offer.primary_offer_creation_attributes = {:featured_ad_content => 'Some Content'}
-
+    
     @offer.save!
     @offer.primary_offer.featured_ad_content.should == 'Some Content'
   end

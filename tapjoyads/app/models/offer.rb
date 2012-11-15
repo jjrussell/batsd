@@ -97,8 +97,6 @@ class Offer < ActiveRecord::Base
 
   MC_KEY_AGE_GATING_PREFIX = 'offer.age_gating.device.offer'
 
-  PAY_PER_CLICK_TYPES = {:non_ppc => 0, :ppc_on_offerwall => 1, :ppc_on_instruction => 2}
-
   attr_reader :video_button_tracking_offers
   attr_accessor :cached_offer_list_id
   attr_accessor :cached_offer_list_type
@@ -142,8 +140,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :min_conversion_rate, :allow_nil => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
-  validates_inclusion_of :pay_per_click, :in => PAY_PER_CLICK_TYPES.map {|label, value| value}
-  validates_inclusion_of :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :in => [ true, false ]
+  validates_inclusion_of :pay_per_click, :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_inclusion_of :daily_cap_type, :allow_blank => true, :allow_nil => true, :in => [ :installs, :budget ]
@@ -193,8 +190,6 @@ class Offer < ActiveRecord::Base
     record.errors.add(attribute, "is only for GenericOffers and ActionsOffers") unless record.item_type == 'GenericOffer' || record.item_type == 'ActionOffer'
   end
   validate :bid_within_range
-  validate :instructions_needed_for_pay_per_click_on_instruction
-  validate :pay_per_click_is_valid
   validates_each :sdkless, :allow_blank => false, :allow_nil => false do |record, attribute, value|
     if value
       record.get_device_types()
@@ -295,14 +290,6 @@ class Offer < ActiveRecord::Base
 
   json_set_field :device_types, :screen_layout_sizes, :countries, :dma_codes, :regions,
     :approved_sources, :carriers, :cities, :exclusion_prerequisite_offer_ids
-
-  def pay_per_click?(ppc_type=nil)
-    if ppc_type
-      pay_per_click == PAY_PER_CLICK_TYPES[ppc_type]
-    else
-      pay_per_click != PAY_PER_CLICK_TYPES[:non_ppc]
-    end
-  end
 
   def clone
     return super if new_record?
@@ -945,10 +932,6 @@ class Offer < ActiveRecord::Base
     write_attribute(:daily_cap_type, value.blank? ? nil : value.to_sym)
   end
 
-  def has_instructions?
-    is_coupon? || (item_type != 'VideoOffer' && instructions.present?)
-  end
-
   def should_notify_on_conversion?
     !(video_offer? || survey_offer?)
   end
@@ -996,20 +979,6 @@ class Offer < ActiveRecord::Base
     self.last_daily_stats_aggregation_time = nil
     self.next_stats_aggregation_time       = now
     self.next_daily_stats_aggregation_time = (now + 1.day).beginning_of_day + StatsAggregation::DAILY_STATS_START_HOUR.hours
-  end
-
-  def instructions_needed_for_pay_per_click_on_instruction
-    if pay_per_click?(:ppc_on_instruction) && instructions.blank?
-      errors.add :pay_per_click, "needs instructions if set to pay-per-click on instruction page"
-    end
-  end
-
-  def pay_per_click_is_valid
-    if item_type == "RatingOffer" || item_type == "DeeplinkOffer"
-      errors.add :pay_per_click, "must not be Non Pay-per-click" unless pay_per_click?
-    elsif is_coupon? || item_type == "SurveyOffer"
-      errors.add :pay_per_click, "must be Non Pay-per-click" if pay_per_click?
-    end
   end
 
   def bid_within_range

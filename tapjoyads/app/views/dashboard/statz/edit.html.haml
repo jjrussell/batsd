@@ -50,7 +50,7 @@
         = f.label(:pay_per_click)
         #help_pay_per_click.help ?
       %td
-        = f.select(:pay_per_click, pay_per_click_selections(@offer.pay_per_click))
+        = f.check_box(:pay_per_click)
         = error_message_on @offer, :pay_per_click
     = render :partial => 'dashboard/apps/offers_shared/featured_settings', :locals => {:f => f, :offer => @offer, :show_featured_checkbox => true}
     %tr
@@ -407,7 +407,7 @@
   #help_user_enabled_content{ :name => 'User Enabled' } Whether or not the offer is enabled for installs by the user.
   #help_self_promote_only_content{ :name => 'Self Promote Only' } Only show this offer on offerwalls from the same partner.
   #help_allow_negative_balance_content{ :name => 'Allow Negative Balance' } Allow this partner's balance to go below zero. This effectively locks show rate to 1.0.
-  #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user on a click.
+  #help_pay_per_click_content{ :name => 'Pay-Per-Click' } Charge the advertiser and award the user immediately on click.
   #help_audition_factor_content{ :name => 'Audition-Factor' } Defines how prominently to display the offer when testing for performance.
   #help_multi_complete_content{ :name => 'Multi-complete' } Allow this offer to be completed multiple times per device.
   #help_tapjoy_sponsored_content{ :name => 'Tapjoy sponsored' } Whether or not the offer is Tapjoy sponsored.
