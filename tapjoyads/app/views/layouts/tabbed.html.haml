@@ -55,8 +55,7 @@
         - tabs << { :tools     => tools_path }           if permitted_to?(:index, :dashboard_tools)
         - tabs << { :ops       => ops_path }             if permitted_to?(:index, :dashboard_ops)
         - tabs << { :statz     => statz_index_path }     if permitted_to?(:index, :dashboard_statz)
-        - if false
-          - tabs << { :kontagent => kontagent_index_path } if permitted_to?(:index, :dashboard_kontagent)
+        - tabs << { :kontagent => kontagent_index_path } if permitted_to?(:index, :dashboard_kontagent)
         = navigation(tabs)
 
       #content
