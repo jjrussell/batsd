@@ -85,11 +85,10 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
         reward.send_currency_status = 'OK'
       else
         params[:callback_url] = callback_url
-        begin
           if Rails.env.production? || Rails.env.test?
-            start_time = Time.now                                                 #TODO Need to use Benchmark.realtime for this,
-            response = Downloader.get_strict(callback_url, { :timeout => 20 })    #but putting Downloader.get in a block breaks the scope for tests.
-            http_response_time  = Time.now - start_time                           #This code is the exact same thing Benchmark.realtime does.
+            start_time = Time.now                                                                   #TODO Need to use Benchmark.realtime for this,
+            response = Downloader.get(callback_url, {:return_response => true, :timeout => 20 })    #but putting Downloader.get in a block breaks the scope for tests.
+            http_response_time  = Time.now - start_time                                             #This code is the exact same thing Benchmark.realtime does.
             status = response.status
 
             web_request = WebRequest.new(:time => @now)
@@ -104,18 +103,24 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
             web_request.save
 
             attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
+
+            if status == 200
+              reward.send_currency_status = status
+            elsif status == 403
+              reward.send_currency_status = status
+              Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
+            else
+              @bad_callbacks << reward.currency_id
+            end
+
           else
             status = 'OK'
           end
-          reward.send_currency_status = status
-        rescue Exception => e
-          @bad_callbacks << reward.currency_id
-          raise e
-        end
       end
       params.delete(:callback_url)
-    rescue Exception => e
-      attempts << { :status => status, :body => e.message, :timestamp => Time.zone.now }
+
+    rescue Patron::TimeoutError, Exception => e
+      @bad_callbacks << reward.currency_id
       reward.attempts = attempts
       reward.delete('sent_currency')
       reward.save
