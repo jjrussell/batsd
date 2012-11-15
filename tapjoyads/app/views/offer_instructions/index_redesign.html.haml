@@ -17,9 +17,9 @@
             .button-holder
               %input{:value => t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), :type => :button, :id => 'protocol', :class => 'button gradient'}
           - else
-            = download_action = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_action_url)
+            = download_action = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_instruction_url)
         - else
-          = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_action_url, :class => 'continue')
+          = link_to(t('text.instructions.earn_currency_html', :amount_and_currency => amount_and_currency), @complete_instruction_url, :class => 'continue')
     #adsby
       %span#presented_by
         = t('text.instructions.presented_by', :default => 'Presented By')
@@ -173,7 +173,7 @@
         if (isActionOffer && hasActionApp && hasProtocolHandler) {
             var timeout;
             var phUrl = #{@action_app.present? ? @action_app.protocol_handler.to_json.html_safe : ""};
-            var fallbackUrl = #{@complete_action_url.to_json.html_safe},
+            var fallbackUrl = #{@complete_instruction_url.to_json.html_safe},
                   appversion = navigator.appVersion,
                   idevice = (/iphone|ipad|ipod/gi).test(appversion),
                   android = (/android/gi).test(appversion);

@@ -21,10 +21,10 @@
           .button-holder
             %input{:value => t('text.instructions.open_app_button', :app_name => @action_app.name), :type => :button, :id => 'protocol', :class => 'button gradient'}
         - else
-          - download_action = link_to(t('text.instructions.download_action'), @complete_action_url)
+          - download_action = link_to(t('text.instructions.download_action'), @complete_instruction_url)
           = t('text.instructions.download_link_html', :download_action => download_action)
       - else
-        = link_to(t('text.instructions.continue_link'), @complete_action_url, :class => 'continue')
+        = link_to(t('text.instructions.continue_link'), @complete_instruction_url, :class => 'continue')
 
 #privacy
   = link_to(t('text.shared.privacy'), "#{WEBSITE_URL}/site/privacy_mobile?language_code=#{I18n.locale}")
@@ -181,7 +181,7 @@
         if (isActionOffer && hasActionApp && hasProtocolHandler) {
             var timeout;
             var phUrl = #{@action_app.present? ? @action_app.protocol_handler.to_json.html_safe : ""};
-            var fallbackUrl = #{@complete_action_url.to_json.html_safe},
+            var fallbackUrl = #{@complete_instruction_url.to_json.html_safe},
                   appversion = navigator.appVersion,
                   idevice = (/iphone|ipad|ipod/gi).test(appversion),
                   android = (/android/gi).test(appversion);
