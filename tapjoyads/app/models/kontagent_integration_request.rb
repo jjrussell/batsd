@@ -33,7 +33,15 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   end
 
   def after_approve(approval)
-    self.provision! and self.save!
+    begin
+      self.provision!
+    rescue StandardError
+      # on provisioning exception, delete all integration requests for this partner
+      outstanding_partner_requests = KontagentIntegrationRequest.all.select { |r| r.partner == self.partner }.
+      outstanding_partner_requests.collect(&:delete)
+      return
+    end
+
     if self.successful
       KontagentMailer::approval(self.user).deliver
     end
