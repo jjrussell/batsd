@@ -34,7 +34,7 @@ class GetOffersController < ApplicationController
 
   def webpage
     @sdk9plus = library_version >= '9'
-    if @currency.has_test_device?(params[:udid])
+    if @currency.has_test_device?(params[:udid] || params[:mac_address])
       @test_offers = [ @publisher_app.test_offer ]
       if library_version >= '8.3' ||
            params[:all_videos] ||
@@ -68,7 +68,7 @@ class GetOffersController < ApplicationController
   end
 
   def featured
-    if @currency.has_test_device?(params[:udid])
+    if @currency.has_test_device?(params[:udid] || params[:mac_address])
       @offer_list = [ @publisher_app.test_offer ]
     elsif @for_preview
       offer = merge_preview_attributes(Offer.find_in_cache(params[:offer_id]))

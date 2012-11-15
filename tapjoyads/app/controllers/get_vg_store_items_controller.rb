@@ -51,7 +51,7 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
 
-    if @currency.has_test_device?(params[:udid])
+    if @currency.has_test_device?(params[:udid] || params[:mac_address])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
       @virtual_good_list = @virtual_good_list | Mc.get_and_put(mc_key, false, 5.minutes) do
         list = []
