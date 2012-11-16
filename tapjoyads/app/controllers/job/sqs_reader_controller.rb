@@ -46,6 +46,10 @@ class Job::SqsReaderController < Job::JobController
       message.delete
     end
 
+    Mc.put("sqs.stats.#{@short_queue_name}.visible_messages", queue.visible_messages)
+    Mc.put("sqs.stats.#{@short_queue_name}.invisible_messages", queue.invisible_messages)
+    Mc.put("sqs.stats.#{@short_queue_name}.visibility_timeout", queue.visibility_timeout)
+
     render :text => 'ok'
   end
 
