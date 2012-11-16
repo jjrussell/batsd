@@ -4,6 +4,7 @@ class OfferInstructionsController < ApplicationController
   layout :instructions_layout
 
   def index
+    @sdk9plus = library_version >= '9'
     return unless verify_params([ :data, :id, :publisher_app_id, :udid ])
     @offer = Offer.find_in_cache(params[:id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
