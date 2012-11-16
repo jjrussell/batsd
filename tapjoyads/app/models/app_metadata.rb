@@ -160,7 +160,7 @@ class AppMetadata < ActiveRecord::Base
       :name => name,
       :description => description,
       :screenshots => get_screenshots_urls,
-      :icon_url => Offer.get_icon_url(options.merge(:icon_id => IconHandler.hashed_icon_id(id))),
+      :icon_url => IconHandler.get_icon_url(options.merge(:icon_id => IconHandler.hashed_icon_id(id))),
       :developer => developer,
       :price => price,
       :age_rating => age_rating,
