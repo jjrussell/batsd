@@ -1,3 +1,4 @@
+require 'zlib'
 class RiskProfile < SimpledbShardedResource
   include RiakMirror
   mirror_configuration :riak_bucket_name => "risk_profiles"
@@ -132,6 +133,23 @@ class RiskProfile < SimpledbShardedResource
     domain_number = @key.matz_silly_hash % NUM_RISK_PROFILE_DOMAINS
 
     "risk_profiles_#{domain_number}"
+  end
+
+  def self.update_offsets
+    object = S3.bucket("tj-vertica").objects["fraud_score/fraud_score.txt.gz"]
+    score_file = Tempfile.new(['fraud_score', '.gz'])
+    score_file.write(object.read)
+    score_file.rewind
+    Zlib::GzipReader.open(score_file.path) { |file| RiskProfile.add_offsets_from_file(file) }
+    score_file.close!
+  end
+
+  def self.add_offsets_from_file(file)
+    file.each_line do |line|
+      device_id = line.split(',')[0].strip
+      score = line.split(',')[1].strip.to_i
+      RiskProfile.new(:key => "DEVICE.#{device_id}").add_curated_offset(Time.now.to_s, score)
+    end
   end
 
   private
