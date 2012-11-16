@@ -6,9 +6,8 @@ class Experiments
   }
   
   def self.get_audition_exp_hash
-    exp = Hash.new
-    (0...5).each  { |i| exp[i] = 'auditioning_control'}
-    (5...10).each { |i| exp[i] = 'auditioning_test' }
+    exp = Hash.new('auditioning_control')
+    (0...15).each { |i| exp[i] = 'auditioning_test' }
     class << exp; def length; 100; end; end;
     exp
   end
