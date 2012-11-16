@@ -157,9 +157,9 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       name = queue.url.split('/').last
       {
         :name          => name,
-        :size          => queue.visible_messages,
-        :hidden_size   => queue.invisible_messages,
-        :visibility    => queue.visibility_timeout,
+        :size          => Mc.get("sqs.stats.#{name}.visible_messages") || queue.visible_messages,
+        :hidden_size   => Mc.get("sqs.stats.#{name}.invisible_messages") || queue.invisible_messages,
+        :visibility    => Mc.get("sqs.stats.#{name}.visibility_timeout") || queue.visibility_timeout,
         :show_run_link => !!(name =~ /^#{RUN_MODE_PREFIX}/)
       }
     end
