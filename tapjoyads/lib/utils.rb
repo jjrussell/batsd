@@ -1,3 +1,4 @@
+require 'csv'
 Dir[File.dirname(__FILE__) + '/utils/*.rb'].each { |file| require(file) }
 
 class Utils
@@ -259,13 +260,11 @@ class Utils
 
   def self.create_id_hash(file, default_reason)
     id_hash = {}
-    lines = file.read.split(/\r/)
+    lines = CSV.parse(file.read, nil, "\r")
     lines.slice!(0)
     lines.each do |line|
-      cells = line.split(',')
-      id = cells[0]
-      reason_cell = cells[1..-1].join(',').gsub(/\"/, "")
-      reason = reason_cell.blank? ? default_reason : reason_cell
+      id = line[0]
+      reason = line[1].blank? ? default_reason : line[1]
       raise ArgumentError, "Ban reason cannot be blank" if reason.blank?
       id_hash[id] = {:date => Time.now.strftime("%m/%d/%y"), :reason => reason, :action => 'Banned'}
     end
