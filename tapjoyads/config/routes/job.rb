@@ -52,6 +52,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_update_papaya_user_count(/index)' => 'master_update_papaya_user_count#index'
     match 'master_update_rev_share(/index)' => 'master_update_rev_share#index'
     match 'master_verifications(/index)' => 'master_verifications#index'
+    match 'queue_cache_external_publishers(/index)' => 'queue_cache_external_publishers#index'
     match 'queue_calculate_show_rate(/index)' => 'queue_calculate_show_rate#index'
     match 'queue_change_partners(/index)' => 'queue_change_partners#index'
     match 'queue_conversion_tracking(/index)' => 'queue_conversion_tracking#index'
