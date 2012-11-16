@@ -72,6 +72,7 @@ module Tapjoyad
     config.assets.enabled = true
     config.assets.version = '1.0'
     config.assets.precompile = YAML.load_file("#{Rails.root}/config/precompile_assets.yml")
+    config.assets.precompile += %w[*.png *.jpg *.jpeg *.gif]
   end
 
 end
