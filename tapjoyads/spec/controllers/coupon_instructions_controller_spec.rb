@@ -53,6 +53,19 @@ describe CouponInstructionsController do
           fill_in 'email_address', :with => 'tapjoy@tapjoy.com'
           click_button('Send Coupon')
         end
+
+        it 'goes to complete action' do
+          response.should render_template('coupons/complete')
+        end
+        it 'responds with 200' do
+          response.should be_success
+        end
+        it 'has success on the page' do
+          page.has_content?('Success')
+        end
+        it 'has coupon\'s name' do
+          page.has_content?(@coupon.name)
+        end
         it 'should have a POST request to the create action' do
           response.should be_success
         end
