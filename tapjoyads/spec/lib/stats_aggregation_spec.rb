@@ -214,6 +214,10 @@ describe StatsAggregation do
   end
 
   describe '.aggregate_hourly_group_stats' do
+    before :each do
+      $stdout = File.new( '/tmp/output', 'w' )
+    end
+
     context 'with generic offer' do
       before :each do
         @partner_daily_count = 0
@@ -377,6 +381,10 @@ describe StatsAggregation do
           global_stat_row.get_daily_count('logins.google')[@last_aggregation.day - 1].should == @total_daily_count
         end
       end
+    end
+
+    after :each do
+      $stdout = STDOUT
     end
   end
 
