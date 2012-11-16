@@ -63,19 +63,19 @@ describe CouponInstructionsController do
         it 'has success on the page' do
           page.has_content?('Success')
         end
-        it 'has coupon\'s name' do
+        it "has coupon's name" do
           page.has_content?(@coupon.name)
         end
         it 'should have a POST request to the create action' do
           response.should be_success
         end
-        it 'should have redirected to the coupons controller\'s complete action' do
+        it "should have redirected to the coupons controller's complete action" do
           response.should render_template('coupons/complete')
         end
         it 'should have success on the page' do
           page.has_content?('Success')
         end
-        it 'should have coupon\'s name' do
+        it "should have coupon's name" do
           page.has_content?(@coupon.name)
         end
       end
