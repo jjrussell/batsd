@@ -512,56 +512,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     redirect_to :action => :view_pub_user_account, :publisher_app_id => params[:publisher_app_id], :publisher_user_id => params[:publisher_user_id]
   end
 
-  DEFAULT_MAX_ROWS = 100
-  MAX_ROWS_LIMIT = 500
-  MAX_DATE_RANGE = 30
-  def search_conversion_attempts
-    if params[:start_date].present? && params[:end_date].present?
-      start_time = Time.parse(params[:start_date])
-      end_time = Time.parse(params[:end_date])
-      if end_time - start_time > MAX_DATE_RANGE.days
-        flash.now[:error] = "Date range must be 30 days or less"
-        return
-      end
-
-      @attempts = []
-      conditions = [
-        "created <= '#{end_time.to_i}'",
-        "created >= '#{start_time.to_i}'"
-      ]
-      conditions << "publisher_app_id = '#{params[:publisher_app_id]}'"       if params[:publisher_app_id].present?
-      conditions << "advertiser_app_id = '#{params[:advertiser_app_id]}'"     if params[:advertiser_app_id].present?
-      conditions << "resolution = '#{params[:resolution]}'"                   if params[:resolution].present?
-      conditions << "final_risk_score >= '#{params[:score_above]}'"           if params[:score_above].present?
-      conditions << "final_risk_score <= '#{params[:score_below]}'"           if params[:score_below].present?
-      conditions << "processed_actions like '%#{params[:processed_action]}%'" if params[:processed_action].present?
-      conditions << "rules_matched like '%#{params[:rule_matched]}%'"         if params[:rule_matched].present?
-
-      count = 0
-      max = params[:max_rows].blank? ? DEFAULT_MAX_ROWS : params[:max_rows].to_i
-      if max > MAX_ROWS_LIMIT
-        flash.now[:error] = "Can't fetch more than #{MAX_ROWS_LIMIT} rows"
-        return
-      end
-
-      app_ids = []
-      ConversionAttempt.select_all(:conditions => conditions.join(' and ')) do |attempt|
-        @attempts << attempt
-        app_ids.push(attempt.advertiser_app_id, attempt.publisher_app_id)
-        count += 1
-        break if count >= max
-      end
-
-      # find all apps at once and store in look up table
-      @apps = {}
-      Offer.find_all_by_id(app_ids.uniq).each do |app|
-        @apps[app.id] = app
-      end
-    else
-      flash.now[:error] = "Start and end dates must be specified."
-    end
-  end
-
   def view_conversion_attempt
     @attempt = ConversionAttempt.new(:key => params[:conversion_attempt_key])
     if @attempt.is_new
