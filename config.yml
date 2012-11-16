@@ -3,7 +3,7 @@ port: 8125
 health_port: 8126
 root: tmp/statsd
 redis:
-  host: 127.0.0.1
+  host: 23.20.208.67
   port: 6379
 retentions:
   10:  360 #1 hour
