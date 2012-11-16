@@ -8,7 +8,8 @@
       %br
       = offer_event_changes(next_event, ", ")
       %br
-      = "(#{link_to('View All Scheduled Changes', app_offer_offer_events_path(@app, @offer))})"
+      = surround '(', ')' do
+        = link_to('View All Scheduled Changes', app_offer_offer_events_path(@app, @offer))
     - else
       No changes scheduled
       = surround '(', ')' do
