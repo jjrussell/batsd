@@ -99,6 +99,7 @@ group :development do
   gem 'awesome_print'
   gem 'pry-remote'
   gem 'pry-nav'
+  gem 'ruby_parser'
   gem 'ruby18_source_location', :platforms => :ruby_18
   gem 'parallel_tests'
 end
