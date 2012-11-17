@@ -1,6 +1,6 @@
 - @page_title = @currency.conversion_rate > 0 ? t('text.offerwall.title', :currency => @currency.name) : ''
 - @webpage_link = @currency.external_publisher? ? "#{WEBSITE_URL}/earn/#{ObjectEncryptor.encrypt(@currency.id)}" : WEBSITE_URL
-- @class_fixed = @sdk9plus ? "fixed" : ""
+- @class_fixed = library_version >= '9' ? "fixed" : ""
 - content_for :page_styles do
   = render 'redesign.css'
 
@@ -52,7 +52,7 @@
       data = #{@final.to_json};
 
 -# faking initial scroll in sdk9+ to make sure top bar position registers as fixed in ios
-- if @sdk9plus
+- if @class_fixed == 'fixed'
   :javascript
     window.scrollTo(0, 1);
 
