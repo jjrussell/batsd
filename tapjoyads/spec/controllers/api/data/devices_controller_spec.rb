@@ -4,6 +4,7 @@ describe Api::Data::DevicesController do
   before :each do
     Device.any_instance.stub(:external_publishers).and_return([])
     Device.any_instance.stub(:first_rewardable_currency_id).and_return(nil)
+    ExternalPublisher.stub(:load_all).and_return([])
   end
 
   describe '#verify_auth_token' do

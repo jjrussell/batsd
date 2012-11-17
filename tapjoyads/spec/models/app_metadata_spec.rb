@@ -287,8 +287,8 @@ describe AppMetadata do
       in_network_app_metadata[:categories].should == @app_metadata.categories
     end
 
-    it 'gets icon_url from Offer.get_icon_url' do
-      Offer.should_receive(:get_icon_url).once
+    it 'gets icon_url from IconHandler.get_icon_url' do
+      IconHandler.should_receive(:get_icon_url).once
       @app_metadata.in_network_app_metadata
     end
 
