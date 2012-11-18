@@ -10,14 +10,7 @@ class PackageNamesController < ApplicationController
     web_request.put_values('package_names', params, ip_address, geoip_data, request.headers['User-Agent'])
     web_request.truncated_package_names = false
 
-    # We have a strict limit of 8KB when saving a web request.
-    total_length = web_request.to_json.length.bytes + 1.kilobytes
     package_names.each do |package_name|
-      total_length += (package_name.length.bytes + 3.bytes)
-      if total_length > 8.kilobytes
-        web_request.truncated_package_names = true
-        break
-      end
       web_request.package_names = package_name
     end
 
