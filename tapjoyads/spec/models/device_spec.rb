@@ -660,4 +660,29 @@ describe Device do
       @device.pending_coupons.should include('456')
     end
   end
+
+  describe '#in_network_apps' do
+    before :each do
+      @app1 = FactoryGirl.create :app
+      FactoryGirl.create(:currency, :app_id => @app1.id, :callback_url => 'http://foo.com')
+
+      @app2 = FactoryGirl.create :app
+      FactoryGirl.create(:currency, :app_id => @app2.id, :callback_url => 'http://foo.com')
+
+      ext_pub1 = ExternalPublisher.new(@app1.currencies.first)
+      ext_pub2 = ExternalPublisher.new(@app2.currencies.first)
+
+      external_publishers = [ ext_pub1, ext_pub2 ]
+      ExternalPublisher.stub(:load_all_for_device).and_return(external_publishers)
+
+      InNetworkApp.stub(:new).and_return(mock('in_network_app'))
+      @device = FactoryGirl.create :device
+      @device.set_last_run_time!(@app1.id)
+      @device.set_last_run_time!(@app2.id)
+    end
+
+    it 'return in_network_apps based on device.apps' do
+      @device.in_network_apps.size.should == 2
+    end
+  end
 end

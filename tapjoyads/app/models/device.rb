@@ -432,6 +432,20 @@ class Device < SimpledbShardedResource
     ExperimentBucket.id_for_index(hash % ExperimentBucket.count_from_cache)
   end
 
+  def in_network_apps
+    Mc.distributed_get_and_put("in_network_apps_for_device_#{self.key}", false, 1.hours) do
+      in_network_apps = []
+
+      ExternalPublisher.load_all_for_device(self).each do |external_publisher|
+        app_metadata = App.find_in_cache(external_publisher.app_id).primary_app_metadata
+        in_network_apps << InNetworkApp.new(external_publisher,
+                                            app_metadata,
+                                            last_run_time(external_publisher.app_id))
+      end
+      in_network_apps
+    end
+  end
+
   private
 
   def merge_temporary_devices!(all_identifiers)

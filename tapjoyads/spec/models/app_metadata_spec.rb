@@ -270,4 +270,35 @@ describe AppMetadata do
       end
     end
   end
+
+  describe '#in_network_app_metadata' do
+    before :each do
+      @app_metadata = FactoryGirl.create(:app_metadata, :screenshots => ["a", "b"])
+    end
+
+    it 'sets name, description, developer, price, age_rating, user_rating, and categories based on app_metadata' do
+      in_network_app_metadata = @app_metadata.in_network_app_metadata
+      in_network_app_metadata[:name].should == @app_metadata.name
+      in_network_app_metadata[:description].should == @app_metadata.description
+      in_network_app_metadata[:developer].should == @app_metadata.developer
+      in_network_app_metadata[:price].should == @app_metadata.price
+      in_network_app_metadata[:age_rating].should == @app_metadata.age_rating
+      in_network_app_metadata[:user_rating].should == @app_metadata.user_rating
+      in_network_app_metadata[:categories].should == @app_metadata.categories
+    end
+
+    it 'gets icon_url from IconHandler.get_icon_url' do
+      IconHandler.should_receive(:get_icon_url).once
+      @app_metadata.in_network_app_metadata
+    end
+
+    it 'assembles screenshot urls based on app_metadata.screenshots' do
+      @app_metadata.in_network_app_metadata
+      screenshot_urls = [
+        "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/a",
+        "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/b"
+      ]
+      @app_metadata.in_network_app_metadata[:screenshots].should == screenshot_urls
+    end
+  end
 end

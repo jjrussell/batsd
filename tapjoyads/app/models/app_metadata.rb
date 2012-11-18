@@ -155,7 +155,30 @@ class AppMetadata < ActiveRecord::Base
     save_icon!(icon_src_blob) if icon_src_blob
   end
 
+  def in_network_app_metadata(options = {})
+    {
+      :name => name,
+      :description => description,
+      :screenshots => get_screenshots_urls,
+      :icon_url => IconHandler.get_icon_url(options.merge(:icon_id => IconHandler.hashed_icon_id(id))),
+      :developer => developer,
+      :price => price,
+      :age_rating => age_rating,
+      :user_rating => user_rating,
+      :categories => categories
+    }
+  end
+
   private
+
+  def get_screenshots_urls
+    screenshots_urls = []
+    return screenshots_urls unless self.screenshots
+    JSON::parse(self.screenshots).each do |screenshot_name|
+      screenshots_urls << "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/#{screenshot_name}"
+    end
+    screenshots_urls
+  end
 
   def download_blob(url)
     return nil if url.blank?
