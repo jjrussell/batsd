@@ -1,9 +1,9 @@
 %h1 Kontagent
 
 %h3 Actions
-= link_to "Your KT Dashboard", @kontagent_integration_request.partner.kontagent_dashboard_url
+= link_to "Your Kontagent Dashboard", @kontagent_integration_request.partner.kontagent_dashboard_url
 |
-= link_to 'Resync', kontagent_path(@kontagent_integration_request), :method => :put
+= link_to 'Resync with Kontagent', kontagent_path(@kontagent_integration_request), :method => :put
 
 %h3 Notes
 %ul
