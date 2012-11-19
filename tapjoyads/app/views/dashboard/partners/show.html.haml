@@ -197,15 +197,16 @@
         %th TJ Sponsored
     %tbody
       - @partner.offers.each do |offer|
-        %tr
-          %td.icon= image_tag(offer.get_icon_url, :size => '57x57')
-          %td= link_to_offer(offer)
-          %td= offer.item_type
-          %td= number_to_currency(offer.price / 100.0)
-          %td= number_to_currency(offer.payment / 100.0)
-          %td= offer.tapjoy_enabled
-          %td= offer.get_platform
-          %td= offer.tapjoy_sponsored ? "Yes" : "No"
+        - if !offer.hidden
+          %tr
+            %td.icon= image_tag(offer.get_icon_url, :size => '57x57')
+            %td= link_to_offer(offer)
+            %td= offer.item_type
+            %td= number_to_currency(offer.price / 100.0)
+            %td= number_to_currency(offer.payment / 100.0)
+            %td= offer.tapjoy_enabled
+            %td= offer.get_platform
+            %td= offer.tapjoy_sponsored ? "Yes" : "No"
 
 - content_for :page_javascript do
   :plain
