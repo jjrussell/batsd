@@ -80,7 +80,9 @@ describe Click do
           expected_array = []
           expected_array << { 'publisher_app_id' => @click.publisher_app_id,
                               'updated_at' => @click.updated_at.to_f,
-                              'publisher_user_id' => @click.publisher_user_id
+                              'publisher_user_id' => @click.publisher_user_id,
+                              'currency_id' => @click.currency_id,
+                              'currency_reward' => @click.currency_reward,
                             }
           @click.publisher_app_id = 'new1'
           @click.save
@@ -95,6 +97,49 @@ describe Click do
         @click.advertiser_amount = 20
         @click.save
         @click.previous_publisher_ids.should be_empty
+      end
+    end
+  end
+
+  describe '#resolve!' do
+   before :each do
+      @now = Time.zone.now
+      Timecop.freeze(@now)
+      @click.clicked_at = @now - 1.hour
+    end
+
+    after :each do
+      Timecop.return
+    end
+
+    context 'when new record' do
+      before :each do
+        @click.stub(:new_record?).and_return(true)
+      end
+
+      it 'will raise an error' do
+        lambda { @click.resolve! }.should raise_error(Exception, 'Unknown click id.')
+      end
+    end
+
+    context 'when publisher_id is not passed in' do
+      before :each do
+        @click.should_receive(:publisher_app_id=).never
+        @click.should_receive(:manually_resolved_at=).with(@now).once
+        @click.should_receive(:save!).once
+      end
+
+      it 'will resolve current click' do
+        @click.should_receive(:clicked_at=).never
+        @click.resolve!
+      end
+
+      context 'when clicked_at is stale' do
+        it 'will update clicked_at' do
+          @click.clicked_at = @now - 49.hours
+          @click.should_receive(:clicked_at=).with(@now - 1.minute).once
+          @click.resolve!
+        end
       end
     end
   end

@@ -3,6 +3,7 @@ FactoryGirl.define do
     key               { FactoryGirl.generate(:guid) }
     udid              { FactoryGirl.create(:device).key }
     currency_id       { FactoryGirl.create(:currency).id }
+    currency_reward   2000
     advertiser_app_id { FactoryGirl.create(:app).id }
     publisher_app_id  { Currency.find(currency_id).app.id }
     offer_id          { App.find(advertiser_app_id).offers.first.id }
