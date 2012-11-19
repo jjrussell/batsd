@@ -14,7 +14,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     if json['offer_instruction_click'].present?
       click.instruction_viewed_at = Time.zone.at(json['offer_instruction_click']['viewed_at'])
       click.instruction_clicked_at = Time.zone.at(json['offer_instruction_click']['clicked_at'])
-      installed_at_epoch = click.instruction_clicked_at
+      installed_at_epoch = click.instruction_clicked_at.to_f.to_s
     else
       installed_at_epoch = json['install_timestamp']
     end
