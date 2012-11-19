@@ -174,8 +174,11 @@ class AppMetadata < ActiveRecord::Base
   def get_screenshots_urls
     screenshots_urls = []
     return screenshots_urls unless self.screenshots
-    JSON::parse(self.screenshots).each do |screenshot_name|
-      screenshots_urls << "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/#{screenshot_name}"
+    begin
+      JSON::parse(self.screenshots).each do |screenshot_name|
+        screenshots_urls << "https://s3.amazonaws.com/#{BucketNames::APP_SCREENSHOTS}/app_store/original/#{screenshot_name}"
+      end
+    rescue JSON::ParserError
     end
     screenshots_urls
   end
