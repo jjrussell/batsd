@@ -10,7 +10,7 @@ require_dependency 'earth'
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
 
-  helper_method :geoip_data, :downcase_param
+  helper_method :geoip_data, :downcase_param, :library_version
 
   before_filter :check_uri if MACHINE_TYPE == 'website'
   before_filter :force_utc
