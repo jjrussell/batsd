@@ -9,7 +9,11 @@
   %tbody
   - @approvals.each do |approval|
     %tr
-      %td= approval.item.nil? ? "--" : approval.item.try(:to_s) || approval.item.id
+      %td
+        = approval.item.nil? ? "--" : approval.item.try(:to_s) || approval.item.id 
+        (Partner:
+        = link_to approval.item.partner.name, approval.item.partner
+        )
       %td= render :partial => 'owner_select', :locals => {:approval => approval}
       %td= approval.state
       %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
