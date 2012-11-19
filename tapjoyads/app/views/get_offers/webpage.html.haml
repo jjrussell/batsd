@@ -34,6 +34,7 @@
       #more.button.orange.gradientfix
         = t('text.offerwall.load_more')
 
+    #footer
       .center.links
         - if @currency.rewarded?
           %a{:id => "credits", :href => "#{new_support_request_path(missing_currency_support_params('html'))}"}
