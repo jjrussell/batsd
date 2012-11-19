@@ -630,12 +630,16 @@ ul#offers li .error {
 /**
  * Footer
  */
+
+#footer {
+  padding: 4px 0 12px;
+}
 .links,
 .links a,
 .poweredby {
   color: #707070;
   font-family: "Gill Sans", "Helvetica", arial, sans-serif;
-  font-size: 60%;
+  font-size: 80%;
   text-shadow: 0 1px 0 rgba(255,255,255, .8);
 }
 
