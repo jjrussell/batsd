@@ -12,9 +12,16 @@ describe Job::QueueSendCurrencyController do
     Resolv.should_receive(:getaddress).at_least(:once).and_return(true)
 
     @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.whatwhat.com')
+    
+    @publisher_app = FactoryGirl.create(:app, :id => @currency.id)
+    advertiser_app = FactoryGirl.create(:app)
+    @offer = advertiser_app.primary_offer
 
     @reward = FactoryGirl.build(
       :reward,
+      :type                  => 'offer',
+      :advertiser_app_id     => advertiser_app.id,
+      :offer_id              => @offer.id,
       :currency_id => @currency.id,
       :publisher_app_id => @currency.id,
       :created => Time.zone.parse('2011-02-15')
@@ -235,6 +242,8 @@ describe Job::QueueSendCurrencyController do
       get(:run_job, :message => @reward.id)
       assigns(:bad_callbacks).should include(@reward.currency_id)
     end
+
+    
   end
 
   describe 'with TJ managed currency' do
@@ -260,6 +269,41 @@ describe Job::QueueSendCurrencyController do
 
       reward = Reward.new(:key => @reward.key, :consistent => true)
       reward.send_currency_status.should == 'OK'
+    end
+  end
+
+  describe "sending notifications" do
+    before :each do
+
+    end
+
+    def enable_notifications
+      @publisher_app.update_attributes('notifications_enabled' => true)
+    end
+
+    it "should send" do
+      enable_notifications
+      Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
+      get(:run_job, :message => @reward.id)
+    end
+
+    it 'should send with TJ managed currency' do
+      @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
+      @currency.save!
+      enable_notifications
+      Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
+      get(:run_job, :message => @reward.id)
+    end
+
+    it 'should not send with notifications disabled' do
+      Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
+      get(:run_job, :message => @reward.id)
+    end
+
+    it 'should check to notify' do
+      Offer.any_instance.should_receive(:should_notify_on_conversion?)
+      Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
+      get(:run_job, :message => @reward.id)
     end
   end
 
