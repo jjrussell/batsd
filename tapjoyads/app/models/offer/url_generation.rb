@@ -93,7 +93,7 @@ module Offer::UrlGeneration
       when 'App'
         final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
 
-        mac_address ||= Device.find(udid).mac_address
+        mac_address ||= Device.find(udid).try(:mac_address)
         final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
         final_url.gsub!('TAPJOY_HASHED_MAC', mac_address ? Digest::SHA1.hexdigest(mac_address) : '')
 
