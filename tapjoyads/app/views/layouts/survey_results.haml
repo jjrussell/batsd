@@ -10,7 +10,7 @@
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :content => 'image/vnd.microsoft.icon' }
     %link{ :rel => 'apple-touch-icon-precomposed', :href => '/images/tjgames-114x114.png' }
 
-    %title= @page_title.blank? ? 'Tapjoy' : "#{@page_title} - Tapjoy"
+    %title= @page_title.blank? ? 'Tapjoy' : @page_title
 
     = stylesheet_link_tag("mobile/base")
     = stylesheet_link_tag("games/images")
