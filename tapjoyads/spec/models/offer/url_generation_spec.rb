@@ -143,6 +143,8 @@ describe Offer::UrlGeneration do
     context 'for App offers' do
       before(:each) do
         @dummy.stub(:item_type) { 'App' }
+        @device = mock()
+        Device.stub(:find).and_return(@device)
 
         @complete_action_url.clone.tap do |url_clone|
           Linkshare.should_receive(:add_params).
@@ -156,11 +158,18 @@ describe Offer::UrlGeneration do
       end
 
       it 'replaces TAPJOY_HASHED_MAC with an empty string if mac is not provided' do
+        @device.stub(:mac_address)
         @dummy.complete_action_url(@options.except(:mac_address)).should match(/hashed_mac=&/)
       end
 
-      it 'replaces TAPJOY_HASHED_MAC with a SHA1 hash of the device MAC if provided' do
+      it 'replaces TAPJOY_HASHED_MAC with a SHA1 hash of the device MAC if provided by SDK' do
         @dummy.complete_action_url(@options).should match(/hashed_mac=#{Digest::SHA1.hexdigest(@mac)}/)
+      end
+
+      it 'replaces TAPJOY_HASHED_MAC with a SHA1 hash of the device MAC if provided by Device table' do
+        @device.stub(:mac_address).and_return('74e1b6af98a0')
+        @dummy.complete_action_url(@options.except(:mac_address)).should match(/hashed_mac=#{Digest::SHA1.hexdigest('74e1b6af98a0')}/)
+
       end
     end
 
