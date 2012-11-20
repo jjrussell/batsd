@@ -3,10 +3,8 @@ module SecurityControllerAdditions
     base.helper_method :may?, :may_not?
   end
 
-  # TODO: backport of CanCan method signature from 2.0 branch
-  # attribute argument will be backported in a different commit
-  def may?(action, subject, attribute = nil)
-    can?(action, subject)
+  def may?(*args)
+    can?(*args)
   end
 
   def may_not?(*args)
@@ -17,7 +15,7 @@ module SecurityControllerAdditions
     include CanCan::Ability
 
     def initialize(user)
-      can :manage, :all
+      can :access, :all
     end
   end
 end
