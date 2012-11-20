@@ -9,7 +9,7 @@
 
 = form_tag :url => { :action => 'create' }, :html => {:class => 'tjform'} do
   - unless @app.partner.accepted_publisher_tos?
-    = label_tag "I agree to the Tapjoy "
+    I agree to the Tapjoy 
     = link_to 'Publisher Terms of Service', '/tos-publisher.html', :target => '_blank'
     = check_box_tag :terms_of_service
     %br/
