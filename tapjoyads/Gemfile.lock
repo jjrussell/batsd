@@ -7,8 +7,8 @@ GIT
 
 GIT
   remote: git://github.com/Tapjoy/newrelic-riak.git
-  revision: 9ce7cf9cf7d82877eb9a5e703eed9da6588e27ab
-  tag: v0.1.1
+  revision: 4a39afa977d84095378fae0a21313659e7da691d
+  tag: v0.1.2
   specs:
     newrelic_riak (0.1.1)
       newrelic_rpm (~> 3.0)
