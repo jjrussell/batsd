@@ -274,15 +274,10 @@ describe Job::QueueSendCurrencyController do
 
   describe "sending notifications" do
     before :each do
-
-    end
-
-    def enable_notifications
       @publisher_app.update_attributes('notifications_enabled' => true)
     end
 
     it "should send" do
-      enable_notifications
       Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
       get(:run_job, :message => @reward.id)
     end
@@ -290,12 +285,12 @@ describe Job::QueueSendCurrencyController do
     it 'should send with TJ managed currency' do
       @currency.callback_url = Currency::TAPJOY_MANAGED_CALLBACK_URL
       @currency.save!
-      enable_notifications
       Sqs.should_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
       get(:run_job, :message => @reward.id)
     end
 
     it 'should not send with notifications disabled' do
+      @publisher_app.update_attributes('notifications_enabled' => false)
       Sqs.should_not_receive(:send_message).with(QueueNames::CONVERSION_NOTIFICATIONS, @reward.id)
       get(:run_job, :message => @reward.id)
     end
