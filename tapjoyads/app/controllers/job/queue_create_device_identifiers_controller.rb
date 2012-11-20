@@ -2,6 +2,7 @@ class Job::QueueCreateDeviceIdentifiersController < Job::SqsReaderController
 
   def initialize
     super QueueNames::CREATE_DEVICE_IDENTIFIERS
+    @raise_on_error = false
   end
 
   private
