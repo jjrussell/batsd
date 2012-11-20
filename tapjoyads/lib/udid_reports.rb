@@ -2,7 +2,7 @@ class UdidReports
 
   MAX_RETRIES = 3
   S3_RETRY_PAUSE_PERIOD = 10
-  UDID_REPORT_COLUMN_HEADERS = "UDID, Created At, Country, MAC Address, Clicked At"
+  UDID_REPORT_COLUMN_HEADERS = ["Device ID", "Created At", "Country", "MAC Address", "Clicked At"]
 
   def self.queue_daily_jobs(date_str=nil, offer_list=[])
     date_str ||= (Time.zone.now.beginning_of_day - 1.day).strftime('%Y-%m-%d')
@@ -94,7 +94,7 @@ class UdidReports
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     return if bucket.objects.with_prefix("#{offer_id}/#{month}/").count <= 0
 
-    report_data = UDID_REPORT_COLUMN_HEADERS << "\n"
+    report_data = UDID_REPORT_COLUMN_HEADERS.join(',') << "\n"
     bucket.objects.with_prefix("#{offer_id}/#{month}/").each do |obj|
       report_data << obj.read
     end

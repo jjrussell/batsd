@@ -48,7 +48,7 @@ describe UdidReports do
 
   describe "defaults" do
     it "should have accurate defaults" do
-      UdidReports::UDID_REPORT_COLUMN_HEADERS.should == "UDID, Created At, Country, MAC Address, Clicked At"
+      UdidReports::UDID_REPORT_COLUMN_HEADERS.should == ["Device ID", "Created At", "Country", "MAC Address", "Clicked At"]
     end
   end
 
