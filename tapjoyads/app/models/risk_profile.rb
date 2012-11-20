@@ -148,7 +148,7 @@ class RiskProfile < SimpledbShardedResource
     file.each_line do |line|
       device_id = line.split(',')[0].strip
       score = line.split(',')[1].strip.to_i
-      RiskProfile.new(:key => "DEVICE.#{device_id}").add_curated_offset(Time.now.to_s, score)
+      RiskProfile.new(:key => "DEVICE.#{device_id}").add_historical_offset("country_count", score)
     end
   end
 
