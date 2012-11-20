@@ -40,10 +40,10 @@ class Dashboard::ReengagementOffersController < Dashboard::DashboardController
   def create
     @reengagement_offer = @app.build_reengagement_offer(params[:reengagement_offer])
     if @reengagement_offer.save
-      flash[:notice] = "Added day #{@reengagement_offer.day_number} reengagement offer."
+      flash[:notice] = "Added day #{@reengagement_offer.day_number} Daily Reward."
       redirect_to(app_reengagement_offers_path(@app))
     else
-      flash[:error] = "Problems encountered while adding reengagement offer."
+      flash[:error] = "Problems encountered while adding Daily Reward."
       render :action => :new
     end
   end
