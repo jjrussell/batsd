@@ -339,7 +339,6 @@ GEM
       treetop (~> 1.4.8)
     mail_safe (0.3.1)
       actionmailer (>= 1.3.6)
-    memcached (1.3.2)
     method_source (0.8)
     mime-types (1.19)
     mixlib-authentication (1.3.0)
@@ -634,7 +633,6 @@ DEPENDENCIES
   localeapp!
   locales
   mail_safe (= 0.3.1)
-  memcached (= 1.3.2)
   mogli (= 0.0.38)
   msgpack
   multi_json (= 1.0.3)

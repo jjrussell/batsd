@@ -26,7 +26,7 @@ class Job::SqsReaderController < Job::JobController
 
       begin
         DedupeCache.cache.add(get_memcache_lock_key(message.id), 'locked', visibility)
-      rescue Memcached::NotStored => e
+      rescue Dalli::DalliError => e
         Rails.logger.info('Lock exists for this message. Skipping processing.')
         next
       end

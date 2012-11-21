@@ -1,17 +1,21 @@
 require 'logging'
 
 class Mc
+  def self.dalli_opts
+    @dalli_opts ||= {
+      namespace: RUN_MODE_PREFIX,
+      async: ENV['ASYNC'],
+      socket_max_failures: 2,
+      cache_lookups: false,
+      down_retry_delay: 300
+    }
+  end
 
   def self.reset_connection
-    options = {
-      :support_cas      => true,
-      :prefix_key       => RUN_MODE_PREFIX,
-      :auto_eject_hosts => false,
-      :cache_lookups    => false
-    }
-
-    @cache              = Memcached.new(MEMCACHE_SERVERS, options)
-    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Dalli::Client.new(server, options.merge!({:async => true})) }
+    @cache              = Dalli::Client.new(MEMCACHE_SERVERS, dalli_opts)
+    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map do |server|
+      Dalli::Client.new(server, dalli_opts)
+    end
   end
 
   class << self
@@ -69,60 +73,60 @@ class Mc
     keys = keys.to_a
     key  = keys.shift
     caches ||= [ @cache ]
-    #We use missing_caches to make sure to distribute data in the event of a miss
+
+    # We use missing_caches to make sure to distribute data in the event of a miss
     missing_caches = []
 
-    #We use this for looping on the current key with the list of available caches
-    available_caches = caches.clone
+    # We might not find the value, we'll keep a string to log
+    fail_reason = nil
 
     value = nil
     log_info_with_time("Read from memcache") do
-      begin
-        #Grab a cache to try
-        cache = available_caches.shift
-        #"Key: #{cache_key(key)} ::: Value #{cache.get(cache_key(key))}"
-        unless cache.nil?
-          cache = cache.clone if clone
-          value = cache.get(cache_key(key))
-          value.ensure_utf8_encoding! if value.respond_to? :ensure_utf8_encoding!
-          Rails.logger.info("Memcache key found: #{key}")
+      # Loop over caches looking for our key
+      caches.each do |cache|
+        cache = cache.clone if clone
+        begin
+          cache.get(cache_key(key)).tap do |val|
+            # If we didn't find the key in this cache, hang on to it
+            # so we can write the value if we find it in another cache
+            if val
+              val.ensure_utf8_encoding! if val.respond_to?(:ensure_utf8_encoding!)
+              Rails.logger.info("Memcache key found: #{key}")
+              value = val
+              break
+            else
+              missing_caches << cache
+              Rails.logger.info("Memcache key not found in cache, retrying: #{key}")
+              next # try next cache
+            end
+          end
+        rescue Dalli::RingError => e
+          fail_reason = "Dalli::RingError: #{key}"
+          next
+        rescue Dalli::DalliError => e
+          fail_reason = "Dalli::DalliError: #{e.message}"
+          next
+        rescue Dalli::NetworkError => e
+          fail_reason = "Dalli::NetworkError: #{e}"
+        rescue ArgumentError => e
+          if e.message.match /undefined class\/module (.+)$/
+            $1.constantize
+            retry
+          end
+          fail_reason = "ArgumentError: #{e.message}"
         end
-      rescue Memcached::NotFound
-        missing_caches << cache
-        Rails.logger.info("Memcache key not found in cache, retrying: #{key}")
-        retry
-      rescue Memcached::ServerIsMarkedDead => e
-        Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
-        retry
-      rescue Memcached::ServerError => e
-        Rails.logger.info("Memcached::ServerError: #{e.message}")
-        retry
-      rescue Memcached::NoServersDefined => e
-        Rails.logger.info("Memcached::NoServersDefined: #{e}")
-      rescue Memcached::ATimeoutOccurred => e
-        Rails.logger.info("Memcached::ATimeoutOccurred: #{e}")
-      rescue Memcached::SystemError => e
-        Rails.logger.info("Memcached::SystemError: #{e.message}")
-      rescue ArgumentError => e
-        if e.message.match /undefined class\/module (.+)$/
-          $1.constantize
-          retry
-        end
-        Rails.logger.info("ArgumentError: #{e.message}")
       end
     end
+
+    Rails.logger.debug "I think val is #{value}"
+
+    fail_reason and Rails.logger.info(fail_reason) # value.nil? => true
 
     unless value.nil? || missing_caches.empty?
       missing_caches.each do |cache|
         # The default is 1.week.  The memcached library doesn't give us the expiration
         # information for keys, so these will just have to be refreshed
-        begin
-          Mc.add(key, value, clone, 1.week, cache)
-        rescue Memcached::NotStored
-          # Refilling a cache server, someone must have done it already
-        rescue Memcached::ServerError
-          # This cache server probably can't fit the key, ignore for now
-        end
+        Mc.add(key, value, clone, 1.week, cache)
       end
     end
 
@@ -203,66 +207,55 @@ class Mc
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
 
-    begin
-      if offset > 0
-        count = cache.increment(key, offset)
-      else
-        count = cache.decrement(key, -offset)
-      end
-    rescue Memcached::NotFound
-      count = offset + COUNT_OFFSET
-      cache.set(key, count.to_s, time.to_i, false)
+    if offset > 0
+      count = cache.incr(key, offset)
+    else
+      count = cache.decr(key, -offset)
     end
 
-    return count - COUNT_OFFSET
+    unless count
+      count = offset + COUNT_OFFSET
+      cache.set(key, count.to_i, time.to_i, raw: true)
+    end
+
+    count - COUNT_OFFSET
   end
 
   def self.get_count(key, clone = false)
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
 
-    begin
-      count = cache.get(key, false).to_i
-    rescue Memcached::NotFound
-      count = COUNT_OFFSET
-    end
-
-    return count - COUNT_OFFSET
+    count = cache.get(key, false) || COUNT_OFFSET
+    count.to_i - COUNT_OFFSET
   end
 
   def self.compare_and_swap(key, clone = false)
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
+    success = nil
 
-    retries = 2
-    begin
-      cache.cas(key) do |mc_val|
-        yield mc_val
+    retries = 5
+    retries.times do
+      success = cache.cas(key) do |mc_val|
+        mc_val.nil? ? success = nil : yield(mc_val)
       end
-    rescue Memcached::NotFound
-      # Attribute hasn't been stored yet.
-      cache.set(key, yield(nil))
-    rescue Memcached::ConnectionDataExists => e
-      # Attribute was modified before it could write.
-      if retries > 0
-        retries -= 1
-        retry
-      else
-        raise e
+
+      if success.nil?
+        cache.set(key, yield(nil))
+        success = true
       end
+
+      break if success
     end
+
+    success or raise Dalli::DalliError
   end
 
   def self.delete(key, clone = false, cache = nil)
     cache ||= @cache
     cache = cache.clone if clone
-    key = cache_key(key)
 
-    begin
-      cache.delete(key)
-    rescue Memcached::NotFound
-      Rails.logger.info("Memcached::NotFound when deleting.")
-    end
+    cache.delete(cache_key(key))
   end
 
   def self.distributed_delete(key, clone = false)

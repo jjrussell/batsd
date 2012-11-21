@@ -47,7 +47,12 @@ Spork.prefork do
   require 'factory_girl'
   require 'authlogic/test_case'
   require 'hpricot'
-  Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+  Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+
+  require 'fake_sdb'
+  require 'fake_s3'
+  require 'offer_cacher'
+  require 'active_record_disabler'
 
   VCR.configure do |c|
     c.cassette_library_dir     = 'spec/cassettes'
@@ -93,7 +98,6 @@ Spork.prefork do
       SimpledbResource.reset_connection
       AWS::S3.stub!(:new => FakeS3.new)
       Sqs.stub(:send_message)
-      Memcached.stub(:new) {|*args| FakeMemcached.new(*args)}
       Mc.reset_connection
       Mc.flush('totally_serious')
       OfferCacher.stub(:get_offer_stats) { Hash.new(0) }

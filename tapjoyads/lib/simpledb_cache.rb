@@ -1,6 +1,6 @@
 require 'logging'
 
-class SimpledbCache < DalliMc
+class SimpledbCache < Mc
   def self.reset_connection
     @cache = Dalli::Client.new(SDB_MEMCACHE_SERVERS, dalli_opts)
   end
