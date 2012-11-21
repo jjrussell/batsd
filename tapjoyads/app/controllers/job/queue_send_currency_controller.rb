@@ -108,7 +108,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
               reward.send_currency_status = status
             elsif status == 403
               reward.send_currency_status = status
-              Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{url}. 403 error.")
+              Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{callback_url}. 403 error.")
             else
               @bad_callbacks << reward.currency_id
             end
