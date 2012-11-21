@@ -128,6 +128,7 @@ class ApplicationController < ActionController::Base
   end
 
   def lookup_udid(set_temporary_udid = false)
+    params[:udid] = nil if IGNORED_UDIDS.include?(params[:udid])
     return if params[:udid].present?
     lookup_keys = []
 
