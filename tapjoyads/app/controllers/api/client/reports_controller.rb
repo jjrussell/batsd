@@ -2,8 +2,7 @@ class Api::Client::ReportsController < Api::ClientController
   before_filter :setup
 
   def sessions
-    data = transform(@appstats.graph_data[:connect_data])
-    render :json => data
+    @data = transform(@appstats.graph_data[:connect_data])
   end
 
   private
