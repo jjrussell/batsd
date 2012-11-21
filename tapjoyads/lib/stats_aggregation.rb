@@ -43,6 +43,37 @@ class StatsAggregation
     { :inaccurate => inaccurate, :stop_check => stop_check, :message => message }
   end
 
+  def self.verify_nonzero_hourly_stats(offer_id)
+    missing = false
+    message = ''
+    now = Time.zone.now
+    start_time = (now.beginning_of_hour - 10.hours).beginning_of_day
+    while start_time < now
+      current_stats = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer_id}", :load_from_memcache => false)
+      current_stats.get_hourly_count('logins').each_with_index do |count, i|
+        if start_time == now.beginning_of_day && i >= now.hour-3
+          break
+        elsif count == 0
+          message << "Stats logins counts for #{start_time.strftime('%Y-%m-%d')}, hour #{i} is zero.\n"
+          missing = true
+        end
+      end
+      start_time += 1.day
+    end
+
+    start_time = now.beginning_of_hour - 5.hours
+    while start_time < now
+      value = Mc.get_count(Stats.get_memcache_count_key('logins', offer_id, start_time))
+      if value == 0
+        message << "Couchbase logins counts for #{start_time} is zero.\n"
+        missing = true
+      end
+      start_time += 1.hour
+    end
+
+    { :missing => missing, :message => message }
+  end
+
   def self.cache_vertica_stats(start_time, end_time)
     raise "can't wrap over multiple days" if start_time.beginning_of_day != (end_time - 1.second).beginning_of_day
 
