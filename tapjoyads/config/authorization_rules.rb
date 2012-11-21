@@ -155,6 +155,7 @@ authorization do
     has_permission_on :dashboard_tools_employees, :to => [ :edit, :update, :delete_photo ]
     has_permission_on :dashboard_homepage, :to => [ :team ]
     has_permission_on :dashboard_tools_rejections, :to => [ :index ]
+    has_permission_on :dashboard_conversion_rates, :to => [ :index, :new, :create, :edit, :update, :destroy, :example ]
   end
 
   role :payops do
@@ -215,7 +216,6 @@ authorization do
     includes :partner_changer
     includes :payout_manager
     has_permission_on :dashboard_partners, :to => [ :new, :create ]
-    has_permission_on :dashboard_conversion_rates, :to => [ :index, :new, :create, :edit, :update, :destroy, :example ]
     has_permission_on :dashboard_pub_offer_whitelist, :to => [ :index, :enable, :disable ]
     has_permission_on :dashboard_tools, :to => [ :failed_sdb_saves, :sdb_metadata, :reset_device, :sqs_lengths, :elb_status, :ses_status, :as_groups, :fix_rewards ]
     has_permission_on :dashboard_tools_offers, :to => [ :creative, :approve_creative, :reject_creative ]
