@@ -666,6 +666,11 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     send_data(data.join("\n"), :type => 'text/csv', :filename => "monthly_rev_share_#{year}_#{month}.csv")
   end
 
+  # This tool has moved to tapjoy.com. Leaving this here for auth rules.
+  def gamers
+    redirect_to "#{WEBSITE_URL}/admin"
+  end
+
   private
 
   def parse_row(activity_log)
