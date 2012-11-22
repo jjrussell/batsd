@@ -304,6 +304,10 @@ class Offer < ActiveRecord::Base
     end
   end
 
+  def ad_name
+    self.requires_admin_device? ? "#{self.name} --admin" : self.name
+  end
+
   def clone
     return super if new_record?
 
@@ -376,7 +380,6 @@ class Offer < ActiveRecord::Base
   def tapjoy_enabled_associated_offers
     filter_attribute('associated_offers', :tapjoy_enabled? => true, :rewarded? => rewarded?, :featured? => featured?)
   end
-
 
   def tapjoy_disabled_associated_offers
     filter_attribute('associated_offers', :tapjoy_enabled? => false, :rewarded? => rewarded?, :featured? => featured?)

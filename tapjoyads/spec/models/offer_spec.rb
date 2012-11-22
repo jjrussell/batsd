@@ -1951,4 +1951,24 @@ describe Offer do
       @rank_boost.offer.optimized_rank_boost.should == @rank_boost.amount
     end
   end
+
+  describe '#ad_name' do
+    context 'admin device only offer' do
+      before :each do
+        @offer.requires_admin_device = true
+      end
+      it "has ' --admin' appeneded to the name" do
+        @offer.ad_name.should =~ / --admin/
+      end
+    end
+
+    context 'not an admin device only offer' do
+      before :each do
+        @offer.requires_admin_device = false
+      end
+      it "does not have ' --admin' appeneded to the name" do
+        @offer.ad_name.should_not =~ / --admin/
+      end
+    end
+  end
 end
