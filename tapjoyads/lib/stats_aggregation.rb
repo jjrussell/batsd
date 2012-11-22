@@ -48,10 +48,18 @@ class StatsAggregation
     message = ''
     now = Time.zone.now
     start_time = (now.beginning_of_hour - 10.hours).beginning_of_day
+    if now.hour < 3
+      stop_day = start_time.beginning_of_day
+      stop_hour = 24+now.hour-3
+    else
+      stop_day = now.beginning_of_day
+      stop_hour = now.hour-3
+    end
+
     while start_time < now
       current_stats = Stats.new(:key => "app.#{start_time.strftime('%Y-%m-%d')}.#{offer_id}", :load_from_memcache => false)
       current_stats.get_hourly_count('logins').each_with_index do |count, i|
-        if start_time == now.beginning_of_day && i >= now.hour-3
+        if start_time > stop_day || (start_time == stop_day && i >= stop_hour)
           break
         elsif count == 0
           message << "Stats logins counts for #{start_time.strftime('%Y-%m-%d')}, hour #{i} is zero.\n"
