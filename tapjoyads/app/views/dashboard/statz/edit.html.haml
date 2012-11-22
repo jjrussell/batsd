@@ -476,15 +476,14 @@
     This action will only be shown to users who have completed all the prerequisite offers. Must be a ";" separated list of publisher offer IDs.
   #help_x_partner_exclusion_prerequisites_content{ :name => 'Exclusion Prerequisites' }
     This action will only be shown to users who have NOT completed any of the exclusion prerequisite offers. Must be a ";" separated list of publisher offer IDs.
-  - if current_user.is_admin?
-    #help_rate_filter_override_content{ :name => 'Rate Filter Override' }
-      Normally, a rewarded offer is filtered out of the offerwall when the value of the offer is very small compared to the value of the rewarded virtual currency. By enabling this setting, the offer will be shown regardless of its value. Only meaningful for rewarded offers.
-    #help_requires_udid_content{ :name => 'Requires UDID' }
-      Requires an offer to only show if a UDID is present.
-    #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
-      Requires an offer to only show if a Mac Address is present.
-    #help_requires_admin_device_content{ :name => 'Requires Admin Device' }
-      This offer will only show up on admin devices.
+  #help_rate_filter_override_content{ :name => 'Rate Filter Override' }
+    Normally, a rewarded offer is filtered out of the offerwall when the value of the offer is very small compared to the value of the rewarded virtual currency. By enabling this setting, the offer will be shown regardless of its value. Only meaningful for rewarded offers.
+  #help_requires_udid_content{ :name => 'Requires UDID' }
+    Requires an offer to only show if a UDID is present.
+  #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
+    Requires an offer to only show if a Mac Address is present.
+  #help_requires_admin_device_content{ :name => 'Requires Admin Device' }
+    This offer will only show up on admin devices.
 
 - if @offer.app_offer? || @offer.item_type == 'GenericOffer'
   - content_for :page_javascript do
