@@ -144,8 +144,15 @@ class Currency < ActiveRecord::Base
 
   delimited_field :test_devices
 
-  def has_test_device?(identifier)
-    get_test_device_ids.include?(identifier)
+  def self.columns
+    super.reject do |c|
+      c == "minimum_hide_rewarded_app_installs_version"
+    end
+  end
+
+  def has_test_device?(udid)
+    udid = udid.id if udid.is_a?(Device)
+    get_test_device_ids.include?(udid)
   end
 
   def self.find_all_in_cache_by_app_id(app_id, do_lookup = !Rails.env.production?)
@@ -323,15 +330,6 @@ class Currency < ActiveRecord::Base
   def set_promoted_offers
     self.promoted_offers = app.currencies.present? ? app.currencies.first.get_promoted_offers : ''
     true
-  end
-
-  def hide_rewarded_app_installs_for_version?(app_version, source)
-    return false if source == 'tj_games' || source == 'tj_display'
-    return false unless hide_rewarded_app_installs?
-    return true if minimum_hide_rewarded_app_installs_version.blank?
-    return false unless app_version.present?
-
-    app_version.version_greater_than_or_equal_to?(minimum_hide_rewarded_app_installs_version)
   end
 
   def calculate_spend_shares
