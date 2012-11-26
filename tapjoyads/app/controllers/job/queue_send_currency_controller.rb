@@ -91,16 +91,18 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
             http_response_time  = Time.now - start_time                                             #This code is the exact same thing Benchmark.realtime does.
             status = response.status
 
+            options = {
+              :callback_url => callback_url,
+              :http_status_code => status,
+              :http_response_time => http_response_time,
+              :reward_id => reward.id,
+              :publisher_app_id => reward.publisher_app_id,
+              :currency_id => reward.currency_id,
+              :amount => reward.currency_reward
+            }
+
             web_request = WebRequest.new(:time => @now)
-            web_request.path                = 'send_currency_attempt'
-            web_request.callback_url        = callback_url
-            web_request.http_status_code    = status
-            web_request.http_response_time  = http_response_time
-            web_request.reward_id           = reward.id
-            web_request.publisher_app_id    = reward.publisher_app_id
-            web_request.currency_id         = reward.currency_id
-            web_request.amount              = reward.currency_reward
-            web_request.save
+            web_request.put_values('send_currency_attempt', options)
 
             attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
 
