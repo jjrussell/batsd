@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 shared_examples 'application_specific' do
   it { should_not allow_mass_assignment_of :application }
 
