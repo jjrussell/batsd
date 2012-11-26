@@ -290,7 +290,7 @@ GEM
       json
       rest-client
       ya2yaml
-    locales (1.0.45)
+    locales (1.0.52)
     lumberjack (1.0.2)
     mail (2.2.19)
       activesupport (>= 2.3.6)
