@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121107140500) do
+ActiveRecord::Schema.define(:version => 20121126210315) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -35,13 +35,14 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
   add_index "action_offers", ["prerequisite_offer_id"], :name => "index_action_offers_on_prerequisite_offer_id"
 
   create_table "admin_devices", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
+    t.string   "id",               :limit => 36, :null => false
     t.string   "udid"
     t.string   "description"
     t.string   "platform"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "user_id",     :limit => 36
+    t.string   "user_id",          :limit => 36
+    t.string   "tapjoy_device_id"
   end
 
   add_index "admin_devices", ["description"], :name => "index_admin_devices_on_description", :unique => true
@@ -861,6 +862,7 @@ ActiveRecord::Schema.define(:version => 20121107140500) do
     t.string   "featured_ad_action"
     t.string   "featured_ad_color"
     t.boolean  "requires_admin_device",                                                         :default => false, :null => false
+    t.boolean  "requires_advertising_id",                                                       :default => false, :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
