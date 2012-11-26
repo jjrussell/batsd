@@ -68,6 +68,11 @@ a img {
   background: -webkit-gradient(linear, left top, right bottom, from(#337BC8), to(#fff));
   background: -moz-linear-gradient(left,  #337BC8,  #fff);
 }
+.vertical-menu a.selected.non_main {
+  background: red;
+  background: -webkit-gradient(linear, left top, right bottom, from(red), to(#fff));
+  background: -moz-linear-gradient(left,  red,  #fff);
+}
 .vertical-menu li.disabled {
   color: #aaa;
 }

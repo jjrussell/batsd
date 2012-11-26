@@ -1,8 +1,9 @@
 - description = "#{@offer.rewarded? ? 'Rewarded' : 'Non-rewarded'} #{@offer.featured? ? 'Featured' : 'Non-featured'} Associated Offers"
 - if current_user.can_manage_account?
-  = link_to('[Create associated offer]', new_statz_path(:id => @offer.id))
+  = link_to('[Create Associated Offer]', new_statz_path(:id => @offer.id), :target => '_blank')
 
 - dataset     = @offer.tapjoy_enabled_filtered_associated_offers.all
+- dataset     = ([@offer.main] + dataset) unless dataset.include?(@offer.main) || @offer.main?
 - offer_count = dataset.count
 - if offer_count == 0
   %p#show_associated [0 #{description}]
@@ -21,7 +22,10 @@
           - dataset.each do |offer|
             %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
-              %td= link_to(offer.name_suffix.present? ? offer.name_suffix : 'Main', edit_app_offer_path(@app, offer))
+              - if offer.name_suffix.present?
+                %td= link_to(offer.name_suffix, edit_app_offer_path(@app, offer))
+              - else
+                %td= link_to('Main' + (offer.tapjoy_enabled? ? '' : ' [TAPJOY DISABLED]'), edit_app_offer_path(@app, offer))
               %td
                 .toggle-bg
                   %input{:type => "checkbox", :checked => offer.user_enabled?, :offer_id => offer.id, :url => toggle_app_offer_path(:id => offer.id, :app_id => @app .id) }
@@ -49,7 +53,7 @@
               %tr{:class => [cycle('odd','even')], :id => "offer_row_#{offer.id}" }
                 %td= offer.name
                 %td
-                  = link_to(offer.name_suffix, edit_statz_path(:id => offer.id))
+                  = link_to(offer.name_suffix, edit_statz_path(:id => offer.id), :target => '_blank')
 
 - content_for :page_javascript do
   :plain

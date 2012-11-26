@@ -19,8 +19,11 @@ module Dashboard::DashboardHelper
     )
   end
 
-  def css_selected_class_for_nav_item(offer, opts)
-    nav_item_selected?(offer, opts) ? 'selected' : ''
+  def css_classes_for_nav_item(offer, opts)
+    [
+      nav_item_selected?(offer, opts) ? 'selected' : '',
+      offer.main? ? 'main' : 'non_main'
+    ]
   end
 
   def scheduled_selected?(offer)

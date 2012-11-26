@@ -1,4 +1,4 @@
 - o = offer.main_for(opts)
-%li= link_to nav_item_title_for(opts), (o ? edit_app_offer_path(app, o) : new_app_offer_path(app, :offer_type => offer_type_for(opts))), :class => css_selected_class_for_nav_item(offer, opts)
+%li= link_to nav_item_title_for(opts), (o ? edit_app_offer_path(app, o) : new_app_offer_path(app, :offer_type => offer_type_for(opts))), :class => css_classes_for_nav_item(offer, opts)
 - if o.try(:tapjoy_enabled?)
   %li.inception= link_to 'Scheduling', app_offer_offer_events_path(app, o), :class => css_selected_class_for_scheduled(o)
