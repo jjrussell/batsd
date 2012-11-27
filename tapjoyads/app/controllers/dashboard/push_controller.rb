@@ -4,7 +4,7 @@ class Dashboard::PushController < Dashboard::DashboardController
   before_filter :setup
 
   #Used to enable push admin option. Temporary list for us to use internally for our beta period.
-  BETA_PUSH_NOTIFICATION_APPS = ["30091aa4-9ff3-4717-a467-c83d83f98d6d", "2349536b-c810-47d7-836c-2cd47cd3a796"]
+  BETA_PUSH_NOTIFICATION_APPS = ["30091aa4-9ff3-4717-a467-c83d83f98d6d", "2349536b-c810-47d7-836c-2cd47cd3a796", "f6634505-b442-42fc-a359-db3fd926b42d"]
 
   def update
     @app.notifications_enabled = params[:app][:notifications_enabled]
