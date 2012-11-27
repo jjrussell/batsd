@@ -27,6 +27,14 @@ GIT
     rollout (1.1.0)
 
 GIT
+  remote: git://github.com/brynary/rack-bug.git
+  revision: 1e6d33664fb21a5f08836e5d8a9d7bfcc47c8d81
+  branch: rails3
+  specs:
+    rack-bug (0.3.0)
+      rack (>= 1.0)
+
+GIT
   remote: git://github.com/dickeyxxx/sprockets_rails3_backport.git
   revision: 3290b76f411ad5f06f0fcf4a0ac887a8caf061f0
   specs:
@@ -584,6 +592,7 @@ DEPENDENCIES
   pry-rails
   pry-remote
   rabl (= 0.7.6)
+  rack-bug!
   rack-cors (= 0.2.7)
   rails (~> 3.0.12)
   rake

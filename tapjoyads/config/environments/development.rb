@@ -6,6 +6,8 @@ end
 
 Tapjoyad::Application.configure do
 
+  config.middleware.use "Rack::Bug", :secret_key => "password"
+
   config.middleware.use Rack::Cors do
     allow do
       origins '*'
