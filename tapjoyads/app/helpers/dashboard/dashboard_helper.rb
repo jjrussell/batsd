@@ -22,7 +22,7 @@ module Dashboard::DashboardHelper
   def css_classes_for_nav_item(offer, opts)
     [
       nav_item_selected?(offer, opts) ? 'selected' : '',
-      offer.main? ? 'main' : 'non_main'
+      (offer.new_record? || offer.main?) ? 'main' : 'non_main'
     ]
   end
 

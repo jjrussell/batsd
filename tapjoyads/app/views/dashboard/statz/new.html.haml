@@ -9,7 +9,7 @@
 = form_tag(statz_index_path, :method => :post) do
   = hidden_field_tag(:id, @offer.id)
   .field
-    = label_tag(:suffix, "Suffix (eg 'featured'. Only displayed internally)")
+    = label_tag(:suffix, "Suffix (eg 'featured'. Visible to partners on associated offers pages.)")
     = text_field_tag(:suffix)
   .field
     = submit_tag('Create')

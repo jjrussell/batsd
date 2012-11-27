@@ -95,7 +95,7 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   def create
     new_offer = @offer.clone_and_save! do |new_offer|
-      new_offer.tapjoy_enabled = @offer.tapjoy_enabled?
+      new_offer.tapjoy_enabled = false
       new_offer.name_suffix = params[:suffix]
     end
     flash[:notice] = "Successfully created offer"
