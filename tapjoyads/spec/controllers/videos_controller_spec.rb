@@ -6,6 +6,8 @@ describe VideosController do
   before(:each) do
     OfferCacher.stub(:get_offer_list).and_return([])
     @currency = FactoryGirl.create(:currency)
+    @device = FactoryGirl.create(:device)
+    Device.stub(:find).and_return(@device)
     @params = {
       :udid => 'stuff',
       :publisher_user_id => 'more_stuff',

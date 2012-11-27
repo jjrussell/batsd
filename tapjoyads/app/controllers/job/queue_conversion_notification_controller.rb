@@ -14,13 +14,13 @@ include ActionView::Helpers::TextHelper
     raise "Reward not found: #{message.body}" if @reward.nil?
 
     begin
-      @device = Device.new(:key => @reward.udid)
+      @device = Device.new(:key => @reward.tapjoy_device_id)
 
-      device_aliases = [{ 
-        :device_key => @device.key, 
-        :android_id => @device.android_id, 
-        :mac_sha1   => @device.mac_address && Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address)),
-        :idfa       => @device.idfa
+      device_aliases = [{
+        :device_key     => @device.key,
+        :android_id     => @device.android_id,
+        :mac_sha1       => @device.mac_address && Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address)),
+        :advertising_id => @device.advertising_id
       }.reject{ |k,v| v.nil? }]
 
       @notification = NotificationsClient::Notification.new({

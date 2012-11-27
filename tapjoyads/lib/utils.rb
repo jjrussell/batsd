@@ -117,10 +117,10 @@ class Utils
 
   def self.rewards_to_csv(where_clause, outfile)
     file = File.open(outfile, 'w')
-    file.puts("reward_id,publisher_app_id,udid,publisher_amount,created_at,sent_currency_at")
+    file.puts("reward_id,publisher_app_id,device_id,publisher_amount,created_at,sent_currency_at")
     NUM_REWARD_DOMAINS.times do |i|
       Reward.select(:where => where_clause, :domain_name => "rewards_#{i}") do |r|
-        file.puts("#{r.key},#{r.publisher_app_id},#{r.udid},#{r.publisher_amount},#{r.created.to_f},#{r.sent_currency.to_f}")
+        file.puts("#{r.key},#{r.publisher_app_id},#{r.tapjoy_device_id},#{r.publisher_amount},#{r.created.to_f},#{r.sent_currency.to_f}")
       end
     end
     file.close
@@ -274,7 +274,7 @@ class Utils
   def self.ban_devices(id_hash)
     banned = Set.new
     id_hash.each_pair do |id, notes|
-      device = (click = Click.find(id)) ? click.device : Device.find(id)
+      device = (click = Click.find(id)) ? click.device : Device.find_by_device_id(id)
       unless device.nil? || device.banned? || banned.include?(device.id)
         ban(device, notes)
         banned << device.id

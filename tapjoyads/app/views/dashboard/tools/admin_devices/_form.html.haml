@@ -6,6 +6,10 @@
       %th= f.label :platform
       %td= f.select 'platform', options_for_select(App::PLATFORMS.invert, @admin_device.platform)
     %tr
+      %th= f.label :tapjoy_device_id, 'Device ID'
+      %td= f.text_field :tapjoy_device_id, :class => 'tapjoy_device_id', :size => 42
+      %td= error_message_on(@admin_device, :tapjoy_device_id) if @admin_device.errors.on :tapjoy_device_id
+    %tr
       %th= f.label :udid, device_udid_label
       %td= f.text_field :udid, :class => 'udid', :size => 42
       %td= error_message_on(@admin_device, :udid) if @admin_device.errors.on :udid

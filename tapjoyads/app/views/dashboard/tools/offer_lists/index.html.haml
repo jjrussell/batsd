@@ -20,7 +20,10 @@
       %td= label_tag :currency_group_id, 'Currency Group'
       %td= select_tag :currency_group_id, options_for_select(CurrencyGroup.all.collect { |cg| [ cg.name, cg.id ] })
     %tr
-      %td= label_tag :udid, 'Device ID'
+      %td= label_tag :tapjoy_device_id, 'Device ID'
+      %td= text_field_tag :tapjoy_device_id, params[:tapjoy_device_id], :size => '55'
+    %tr
+      %td= label_tag :udid, 'UDID'
       %td= text_field_tag :udid, params[:udid], :size => '55'
     %tr
       %td= label_tag :source, 'Offer Source'
