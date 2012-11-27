@@ -14,7 +14,7 @@ module ConversionChecker::Rules
         150,
         Proc.new do
           # Exclude udid sent for all users by bad integration in Ludia
-          next false if @device.key == 'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a'
+          next false if IGNORED_UDIDS.include?(@device.key)
 
           risk_profile = RiskProfile.new(:key => "DEVICE.#{@device.key}")
           next false unless risk_profile
@@ -30,7 +30,7 @@ module ConversionChecker::Rules
         125,
         Proc.new do
           # Exclude udid sent for all users by bad integration in Ludia
-          next false if @device.key == 'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a'
+          next false if IGNORED_UDIDS.include?(@device.key)
 
           risk_profile = RiskProfile.new(:key => "DEVICE.#{@device.key}")
           next false unless risk_profile
