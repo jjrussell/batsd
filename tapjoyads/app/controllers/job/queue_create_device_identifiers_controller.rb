@@ -9,9 +9,10 @@ class Job::QueueCreateDeviceIdentifiersController < Job::SqsReaderController
 
   def on_message(message)
     json = JSON.load(message.body)
-    device = Device.find_by_device_id(json['device_id'], :consistent => true)
+    device = Device.find(json['device_id'], :consistent => true)
     return if device.nil?
     device.create_identifiers!
+    device.copy_mac_address_device!
   end
 
 end

@@ -60,7 +60,6 @@ describe Dashboard::ToolsController do
       @pub_user = FactoryGirl.create(:publisher_user)
       @device1 = FactoryGirl.create(:device)
       @device2 = FactoryGirl.create(:device)
-      Device.stub(:find_by_device_id).and_return(@device1, @device2)
       @pub_user.update!(@device1.key)
       @pub_user.update!(@device2.key)
       PublisherUser.stub(:new).and_return(@pub_user)
@@ -80,18 +79,18 @@ describe Dashboard::ToolsController do
         it 'does nothing' do
           app_id, user_id = @pub_user.key.split('.')
           @device3 = FactoryGirl.create(:device)
-          post(:detach_pub_user_account, {:publisher_app_id => app_id, :publisher_user_id => user_id, :tapjoy_device_id => @device3.key})
-          @pub_user.tapjoy_device_ids.count.should == 2
-          (@pub_user.tapjoy_device_ids - [@device1.key, @device2.key]).should be_empty
+          post(:detach_pub_user_account, {:publisher_app_id => app_id, :publisher_user_id => user_id, :udid => @device3.key})
+          @pub_user.udids.count.should == 2
+          (@pub_user.udids - [@device1.key, @device2.key]).should be_empty
         end
       end
 
       context 'with a valid udid' do
         it 'removes udid from user account' do
           app_id, user_id = @pub_user.key.split('.')
-          post(:detach_pub_user_account, {:publisher_app_id => app_id, :publisher_user_id => user_id, :device_id => @device1.key})
-          @pub_user.tapjoy_device_ids.count.should == 1
-          @pub_user.tapjoy_device_ids.should == [@device2.key]
+          post(:detach_pub_user_account, {:publisher_app_id => app_id, :publisher_user_id => user_id, :udid => @device1.key})
+          @pub_user.udids.count.should == 1
+          @pub_user.udids.should == [@device2.key]
         end
       end
     end

@@ -174,8 +174,8 @@ describe SurveyOffer do
         params['id'].first.should == subject.id
       end
 
-      it 'has a tapjoy_device_id param of TAPJOY_DEVICE_ID' do
-        params['tapjoy_device_id'].first.should == 'TAPJOY_DEVICE_ID'
+      it 'has a udid param of TAPJOY_UDID' do
+        params['udid'].first.should == 'TAPJOY_UDID'
       end
 
       it 'has a click_key param of TAPJOY_SURVEY' do

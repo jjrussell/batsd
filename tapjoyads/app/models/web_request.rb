@@ -46,14 +46,13 @@ class WebRequest < AnalyticsLogger::Message
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click', 'tj_display_offer_click' ], :attr_name => 'offer_id', :segment_by_store => false, :use_like => false },
   }
 
-  self.define_attr :tapjoy_device_id
   self.define_attr :udid
   self.define_attr :mac_address
   self.define_attr :sha2_udid
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
-  self.define_attr :advertising_id
+  self.define_attr :idfa
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool
@@ -183,14 +182,13 @@ class WebRequest < AnalyticsLogger::Message
     self.user_agent           = user_agent
     self.campaign_id          = params[:campaign_id]
     self.app_id               = params[:app_id]
-    self.tapjoy_device_id     = params[:tapjoy_device_id]
     self.udid                 = params[:udid]
     self.mac_address          = params[:mac_address]
     self.sha2_udid            = params[:sha2_udid]
     self.sha1_udid            = params[:sha1_udid]
     self.sha1_mac_address     = params[:sha1_mac_address]
     self.android_id           = params[:android_id]
-    self.advertising_id       = params[:advertising_id]
+    self.idfa                 = params[:idfa]
     self.open_udid            = params[:open_udid]
     self.open_udid_count      = params[:open_udid_count]
     self.udid_via_lookup      = params[:udid_via_lookup]

@@ -13,15 +13,15 @@ describe ConversionChecker do
       checker.risk_message.should be_nil
     end
 
-    it 'returns false for a pubuser associated with too many TapjoyDeviceIDs' do
+    it 'returns false for a pubuser associated with too many udids' do
       PublisherUser.any_instance.stub(:update!).and_return(false)
       checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
       checker.should_not be_acceptable_risk
-      checker.risk_message.should match(/TapjoyDeviceIDs/)
+      checker.risk_message.should match(/Udid/)
     end
 
     it 'returns false for banned devices' do
-      device = Device.new(:key => @click.tapjoy_device_id)
+      device = Device.new(:key => @click.udid)
       device.banned = true
       device.save
       checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
@@ -30,7 +30,7 @@ describe ConversionChecker do
     end
 
     it 'returns false for suspended devices' do
-      device = Device.new(:key => @click.tapjoy_device_id)
+      device = Device.new(:key => @click.udid)
       device.suspend!(24)
       checker = ConversionChecker.new(@click, ConversionAttempt.new(:key => @reward_uuid))
       checker.should_not be_acceptable_risk
