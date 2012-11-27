@@ -22,6 +22,7 @@ class OfferList
     @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
+    tapjoy_device_id            = options.delete(:tapjoy_device_id)
     @app_store_name             = AppStore::SDK_STORE_NAMES[options.delete(:store_name)]
     @algorithm                  = options.delete(:algorithm)
     @algorithm_options          = options.delete(:algorithm_options)
@@ -69,7 +70,8 @@ class OfferList
       @type = Offer::NON_REWARDED_DISPLAY_OFFER_TYPE
     end
 
-    @device ||= Device.new(:key => udid) if udid.present?
+    device_key = tapjoy_device_id || udid
+    @device ||= Device.find_by_device_id(device_key) if device_key.present?
 
     # TODO: Make promoted offers work with optimized offers.
     # if @currency

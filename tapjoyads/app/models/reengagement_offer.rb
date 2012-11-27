@@ -64,7 +64,7 @@ class ReengagementOffer < ActiveRecord::Base
   end
 
   def self.resolve(app, currencies, reengagement_offers, params, geoip_data)
-    device = Device.new( :key => params[:udid] )
+    device = Device.new( :key => params[:tapjoy_device_id] )
     reengagement_offer = reengagement_offers.detect{ |r| !device.has_app?(r.id) }
 
     if reengagement_offer.try(:should_show?, device, reengagement_offers)
@@ -105,6 +105,7 @@ class ReengagementOffer < ActiveRecord::Base
     reward.publisher_user_id = params[:publisher_user_id]
     reward.currency_reward   = reward_value
     reward.udid              = params[:udid]
+    reward.tapjoy_device_id  = params[:tapjoy_device_id]
     reward.country           = geoip_data[:primary_country]
     reward.save
 

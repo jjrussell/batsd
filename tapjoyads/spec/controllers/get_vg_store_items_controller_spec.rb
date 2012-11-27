@@ -18,6 +18,8 @@ describe GetVgStoreItemsController do
         app = FactoryGirl.create(:app)
         ApplicationController.stub(:verify_params).and_return(true)
         Currency.stub(:find_in_cache).and_return(nil)
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -39,6 +41,8 @@ describe GetVgStoreItemsController do
     context 'valid params' do
       before :each do
         app = FactoryGirl.create(:app)
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -86,6 +90,8 @@ describe GetVgStoreItemsController do
         app = FactoryGirl.create(:app)
         ApplicationController.stub(:verify_params).and_return(true)
         Currency.stub(:find_in_cache).and_return(nil)
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -107,6 +113,8 @@ describe GetVgStoreItemsController do
     context 'valid params' do
       before :each do
         app = FactoryGirl.create(:app)
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -154,6 +162,8 @@ describe GetVgStoreItemsController do
         app = FactoryGirl.create(:app)
         ApplicationController.stub(:verify_params).and_return(true)
         Currency.stub(:find_in_cache).and_return(nil)
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -176,6 +186,9 @@ describe GetVgStoreItemsController do
       let(:app) { FactoryGirl.create(:app) }
 
       before :each do
+        device = FactoryGirl.create(:device)
+        Device.stub(:find).and_return(device)
+        app = FactoryGirl.create(:app)
         @params = {
             :app_id             => app.id,
             :udid               => 'stuff',
@@ -201,7 +214,7 @@ describe GetVgStoreItemsController do
 
       it 'will have an instance variable @point_purchases.get_udid set for use in view' do
         get(:user_account, @params)
-        controller.instance_eval{ @point_purchases.get_udid }.should == @params[:app_id]
+        controller.instance_eval{ @point_purchases.get_tapjoy_device_id }.should == @params[:app_id]
       end
 
       it 'will have an instance variable @currency.name set for use in view' do

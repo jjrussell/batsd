@@ -7,9 +7,10 @@ describe SupportRequest do
     @app = FactoryGirl.create(:app)
     @offer = @app.primary_offer
     @currency = FactoryGirl.create(:currency, :app => @app)
-    @device = FactoryGirl.create(:device)
+    @device = FactoryGirl.create(:device, :udid => 'device_udid')
+    Device.stub(:find).and_return(@device)
     publisher_app = FactoryGirl.create(:app)
-    @click = FactoryGirl.create(:click,  :udid        => @device.key,
+    @click = FactoryGirl.create(:click,  :udid        => @device.udid,
                                 :currency_id          => @currency.id,
                                 :offer_id             => @offer.id,
                                 :publisher_app_id     => publisher_app.id,
@@ -21,6 +22,7 @@ describe SupportRequest do
     @params =  {  :language_code        => "en",
                   :udid                 => "test_udid",
                   :mac_address          => "test_mac",
+                  :tapjoy_device_id     => "tapjoy_device_id_test",
                   :publisher_app_id     => "test_publisher_app",
                   :publisher_partner_id => "test_publisher_partner",
                   :publisher_user_id    => "test_publisher_user",
@@ -93,6 +95,11 @@ describe SupportRequest do
     it "stores the description message from the params array" do
       @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
       @support_request.description.should == @params[:description]
+    end
+
+    it "stores the device_id from the params array" do
+      @support_request.fill_from_params(@params, @app, @currency, nil, @user_agent)
+      @support_request.tapjoy_device_id.should == @params[:tapjoy_device_id]
     end
 
     it "stores the UDID from the params array" do
@@ -295,9 +302,14 @@ describe SupportRequest do
       @support_request.description.should == @params[:description]
     end
 
+    it 'stores device_id from device model' do
+      @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
+      @support_request.tapjoy_device_id.should == @device.key
+    end
+
     it "stores UDID from device model" do
       @support_request.fill_from_click(@click, @params, @gamer_device, @gamer, @user_agent)
-      @support_request.udid.should == @gamer_device.device_id
+      @support_request.udid.should == @device.udid
     end
 
     it "stores the email address from the gamer model" do
@@ -329,11 +341,11 @@ describe SupportRequest do
 
   describe '#get_last_click' do
     it 'should perform the proper SimpleDB query' do
-      udid, offer = 'test udid', FactoryGirl.create(:app).primary_offer
-      conditions = ["udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id]
+      device_id, offer = 'test device_id', FactoryGirl.create(:app).primary_offer
+      conditions = ["tapjoy_device_id = ? or udid = ? and advertiser_app_id = ? and manually_resolved_at is null", device_id, device_id, offer.item_id]
 
       Click.should_receive(:select_all).with({ :conditions => conditions }).once.and_return([])
-      @support_request.get_last_click(udid, offer)
+      @support_request.get_last_click(device_id, offer)
     end
   end
 end

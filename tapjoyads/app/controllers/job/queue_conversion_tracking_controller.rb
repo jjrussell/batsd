@@ -45,6 +45,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     attempt.source                 = click.source
     attempt.ip_address             = click.ip_address
     attempt.udid                   = click.udid
+    attempt.tapjoy_device_id       = click.tapjoy_device_id
     attempt.country                = click.country
     attempt.viewed_at              = click.viewed_at
     attempt.clicked_at             = click.clicked_at
@@ -78,12 +79,12 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       raise "Click #{click.key} missing reward key!"
     end
 
-    device = Device.new(:key => click.udid)
+    device = Device.new(:key => click.tapjoy_device_id)
     if device.is_jailbroken && offer.is_paid? && offer.item_type == 'App' && click.type == 'install'
       click.tapjoy_amount += click.advertiser_amount
       click.advertiser_amount = 0
       click.type += '_jailbroken'
-      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.udid} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
+      Notifier.alert_new_relic(JailbrokenInstall, "Device: #{click.tapjoy_device_id} is jailbroken and installed a paid app: #{click.advertiser_app_id}, for click: #{click.key}", request, params)
     end
 
     if click.source == 'featured'
@@ -111,6 +112,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
       reward.tapjoy_amount          = click.tapjoy_amount
       reward.source                 = click.source
       reward.udid                   = click.udid
+      reward.tapjoy_device_id       = click.tapjoy_device_id
       reward.country                = click.country
       reward.reward_key_2           = click.reward_key_2
       reward.exp                    = click.exp
@@ -154,6 +156,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
         web_request.currency_reward    = reward.currency_reward
         web_request.source             = reward.source
         web_request.udid               = reward.udid
+        web_request.tapjoy_device_id   = reward.tapjoy_device_id
         web_request.country            = reward.country
         web_request.exp                = reward.exp
         web_request.viewed_at          = reward.viewed_at
@@ -222,6 +225,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
     web_request.source                 = attempt.source
     web_request.ip_address             = attempt.ip_address
     web_request.udid                   = attempt.udid
+    web_request.tapjoy_device_id       = attempt.tapjoy_device_id
     web_request.country                = attempt.country
     web_request.viewed_at              = attempt.viewed_at
     web_request.clicked_at             = attempt.clicked_at

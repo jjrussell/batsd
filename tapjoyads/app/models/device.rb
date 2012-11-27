@@ -1,6 +1,9 @@
 class Device < SimpledbShardedResource
   self.num_domains = NUM_DEVICES_DOMAINS
 
+  ALL_IDENTIFIERS = [:open_udid, :android_id, :advertising_id, :udid, :mac_address]
+  IDENTIFIERS_FOR_CREATE = [:udid, :mac_address, :advertising_id]
+
   attr_reader :parsed_apps, :is_temporary
 
   self.sdb_attr :apps, :type => :json, :default_value => {}
@@ -19,9 +22,10 @@ class Device < SimpledbShardedResource
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
+  self.sdb_attr :udid
   self.sdb_attr :open_udid
   self.sdb_attr :android_id
-  self.sdb_attr :idfa
+  self.sdb_attr :advertising_id
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -30,6 +34,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
+  self.sdb_attr :has_tapjoy_id, :type => :bool
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
@@ -40,42 +45,52 @@ class Device < SimpledbShardedResource
     Mc.get('statz.devices_count') || 0
   end
 
+  def self.find_by_device_id(id)
+    device = Device.find(id)
+    return device unless device.nil?
+    return DeviceIdentifier.find_device_for_identifier(id)
+  end
+
+  def self.lookup_by_device_info(params)
+    device = DeviceIdentifier.find_device_from_params(params)
+
+    if device.present? && params.key?(:advertising_id) && device.advertising_id? && device.advertising_id != params[:advertising_id]
+      new_device = Device.new
+      new_device.advertising_id = device.advertising_id
+      new_device.mac_address = device.mac_address
+      device = new_device
+    end
+
+    device
+  end
+
+  def self.define_lookup_identifiers
+    ALL_IDENTIFIERS.each do |identifier|
+      define_method "#{identifier.to_s}=" do |new_value|
+        new_value = new_value ? new_value.downcase.gsub(/:/,"") : '' if identifier == :mac_address
+        @create_device_identifiers ||= ("#{identifier.to_s}" != new_value)
+        put("#{identifier.to_s}", new_value)
+      end
+    end
+  end
+  self.define_lookup_identifiers
+
   # We want a consistent "device id" to report to partners/3rd parties,
   # but we don't want to reveal internal IDs. We also want to make
   # the values unique between partners so that no 'collusion' can
   # take place.
-  def self.advertiser_device_id(udid, advertiser_partner_id)
-    Digest::MD5.hexdigest("#{udid}.#{advertiser_partner_id}" + UDID_SALT)
+  def self.advertiser_device_id(tapjoy_device_id, advertiser_partner_id)
+    Digest::MD5.hexdigest("#{tapjoy_device_id}.#{advertiser_partner_id}" + TAPJOY_DEVICE_ID_SALT)
   end
 
   def advertiser_device_id(advertiser_partner_id)
     Device.advertiser_device_id(key, advertiser_partner_id)
   end
 
-  def mac_address=(new_value)
-    new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
-    @create_device_identifiers ||= (self.mac_address != new_value)
-    put('mac_address', new_value)
-  end
-
-  def open_udid=(new_value)
-    @create_device_identifiers ||= (self.open_udid != new_value)
-    put('open_udid', new_value)
-  end
-
-  def android_id=(new_value)
-    @create_device_identifiers ||= (self.android_id != new_value)
-    put('android_id', new_value)
-  end
-
-  def idfa=(new_value)
-    @create_device_identifiers ||= (self.idfa != new_value)
-    put('idfa', new_value)
-  end
-
   def initialize(options = {})
     @is_temporary = options.delete(:is_temporary) { false }
     super({ :load_from_memcache => true }.merge(options))
+    self.has_tapjoy_id = true if self.new_record?
   end
 
   def dynamic_domain_name
@@ -110,9 +125,9 @@ class Device < SimpledbShardedResource
     now = Time.zone.now
     path_list = []
 
-    self.mac_address = params[:mac_address] if params[:mac_address].present?
-    self.android_id = params[:android_id] if params[:android_id].present?
-    self.idfa = params[:idfa] if params[:idfa].present?
+    ALL_IDENTIFIERS.each do |identifier|
+      self.send("#{identifier.to_s}=", params[identifier]) if params[identifier].present?
+    end
 
     if params[:open_udid].present?
       open_udid_was = self.open_udid
@@ -157,7 +172,7 @@ class Device < SimpledbShardedResource
 
     if params[:country].present?
       if self.country.present? && self.country != params[:country]
-        Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
+        Notifier.alert_new_relic(DeviceCountryChanged, "Country for device: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
       end
       self.country = params[:country]
     end
@@ -292,50 +307,90 @@ class Device < SimpledbShardedResource
     mac_address.to_s.empty? ? nil : mac_address.strip.upcase.scan(/.{2}/).join(':')
   end
 
+  def udid
+    has_tapjoy_id? ? get('udid') : key
+  end
+
   def create_identifiers!
-    all_identifiers = [ Digest::SHA2.hexdigest(key) ]
-    all_identifiers << Digest::SHA1.hexdigest(key)
-    all_identifiers.push(open_udid) if self.open_udid.present?
-    all_identifiers.push(android_id) if self.android_id.present?
-    all_identifiers.push(idfa) if self.idfa.present?
-    if self.mac_address.present?
-      all_identifiers.push(mac_address)
-      all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
+    merge_existing_devices!
+
+    all_identifiers = []
+
+    ALL_IDENTIFIERS.each do |identifier|
+      identifier = self.send(identifier)
+      all_identifiers << identifier if identifier.present?
     end
+
+    unless has_tapjoy_id?
+      all_identifiers << Digest::SHA2.hexdigest(self.key)
+      all_identifiers << Digest::SHA1.hexdigest(self.key)
+    end
+
+    if self.udid.present?
+      all_identifiers << Digest::SHA2.hexdigest(self.udid)
+      all_identifiers << Digest::SHA1.hexdigest(self.udid)
+    end
+    all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address))) if self.mac_address.present?
+
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
-      next if device_identifier.udid == key
-      if !device_identifier.new_record? && device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
-        data = {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid, :timestamp => Time.zone.now}.to_json
+      next if device_identifier.device_id == key
+      if !device_identifier.new_record? && device_identifier.device_id? && device_identifier.device_id != key && Rails.env.production?
+        data = {:identifier => identifier, :new_device_id => key, :old_device_id => device_identifier.device_id, :timestamp => Time.zone.now}.to_json
         $redis.rpop('all_device_identifiers_overwrites') if $redis.lpush('all_device_identifiers_overwrites', data) > MAX_OVERWRITES_TRACKED
       end
-      device_identifier.udid = key
+      device_identifier.device_id = key
       device_identifier.save!
     end
     merge_temporary_devices!(all_identifiers)
   end
 
-  def copy_mac_address_device!
-    return if mac_address.nil? || key == mac_address
-    mac_device = Device.new(:key => mac_address, :consistent => true)
-    return if mac_device.new_record?
-
-    Currency.find_each(:conditions => ["id IN (?)", mac_device.parsed_apps.keys]) do |c|
-      app_id = c.id
-      mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}", :consistent => true)
-      next if mac_pp.new_record?
-
-      udid_pp = PointPurchases.new(:key => "#{key}.#{app_id}", :consistent => true)
-      udid_pp.points = mac_pp.points
-      udid_pp.virtual_goods = mac_pp.virtual_goods
-      udid_pp.save!
-      mac_pp.delete_all
+  def merge_existing_devices!
+    device_ids_to_merge = []
+    if self.udid? && self.udid != key
+      device_ids_to_merge << self.udid
+      device_ids_to_merge << Digest::SHA2.hexdigest(self.udid)
+      device_ids_to_merge << Digest::SHA1.hexdigest(self.udid)
     end
 
-    self.apps = mac_device.parsed_apps.merge(@parsed_apps)
-    self.publisher_user_ids = mac_device.publisher_user_ids.merge(publisher_user_ids)
+    if self.mac_address? && self.mac_address != key
+      device_ids_to_merge << self.mac_address
+      device_ids_to_merge << Digest::SHA1.hexdigest(self.mac_address)
+    end
+
+    device_ids_to_merge << self.advertising_id if self.advertising_id
+
+    new_apps = {}
+    new_pub_user_ids = {}
+    device_ids_to_merge.each do |device_id_to_merge|
+      device_for_merge = DeviceIdentifier.find_device_for_identifier(device_id_to_merge)
+      next if device_for_merge.nil? || self.key == device_for_merge.key
+      next if self.advertising_id? && device_for_merge.advertising_id? && self.advertising_id != device_for_merge.advertising_id
+
+      self.udid = device_for_merge.udid if !self.udid? && device_for_merge.udid?
+      self.mac_address = device_for_merge.mac_address if !self.mac_address? && device_for_merge.mac_address?
+      self.advertising_id = device_for_merge.advertising_id if !self.advertising_id? && device_for_merge.advertising_id?
+
+      Currency.find_each(:conditions => ["id IN (?)", device_for_merge.parsed_apps.keys]) do |c|
+        app_id = c.id
+        merge_pp = PointPurchases.new(:key => "#{device_id_to_merge}.#{app_id}", :consistent => true)
+        next if merge_pp.new_record?
+
+        self_pp = PointPurchases.new(:key => "#{key}.#{app_id}", :consistent => true)
+        self_pp.points = merge_pp.points
+        self_pp.virtual_goods = merge_pp.virtual_goods
+        self_pp.save!
+        merge_pp.delete_all
+      end
+
+      new_apps = device_for_merge.parsed_apps.merge(new_apps)
+      new_pub_user_ids = device_for_merge.publisher_user_ids.merge(new_pub_user_ids)
+      device_for_merge.delete_all
+    end
+
+    self.apps = new_apps.merge(@parsed_apps)
+    self.publisher_user_ids = new_pub_user_ids.merge(publisher_user_ids)
     save!
-    mac_device.delete_all
   end
 
   def handle_sdkless_click!(offer, now)
@@ -365,7 +420,7 @@ class Device < SimpledbShardedResource
   # For use within TJM (since dashboard URL helpers aren't available within TJM)
   def dashboard_device_info_tool_url
     uri = URI.parse(DASHBOARD_URL)
-    "#{uri.scheme}://#{uri.host}/tools/device_info?udid=#{self.key}"
+    "#{uri.scheme}://#{uri.host}/tools/device_info?device_id=#{self.key}"
   end
 
   def recently_skipped?(offer_id)

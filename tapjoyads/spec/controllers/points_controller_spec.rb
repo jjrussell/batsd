@@ -5,6 +5,8 @@ describe PointsController do
     before :each do
       @app = FactoryGirl.create(:app)
       @currency = FactoryGirl.create(:currency, :id => @app.id)
+      device = FactoryGirl.create(:device)
+      DeviceIdentifier.stub(:find_device_from_params).and_return(device)
       @params = {
         :app_id => @app.id,
         :udid => 'stuff',
@@ -64,12 +66,14 @@ describe PointsController do
 
   describe '#spend' do
     before :each do
+      @device = FactoryGirl.create(:device)
+      DeviceIdentifier.stub(:find_device_from_params).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
-        :tap_points => 10,
+        :tap_points => 10
       }
     end
 
@@ -82,7 +86,7 @@ describe PointsController do
     end
 
     it 'spends points and renders user_account' do
-      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p = PointPurchases.new(:key => "#{@device.key}.#{@params[:app_id]}")
       p.points += 100
       p.save!
       controller.should_receive(:check_success).with('spend_points')
@@ -102,6 +106,8 @@ describe PointsController do
 
   describe '#purchase_vg' do
     before :each do
+      @device = FactoryGirl.create(:device)
+      DeviceIdentifier.stub(:find_device_from_params).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @vg = FactoryGirl.create(:virtual_good)
@@ -113,7 +119,7 @@ describe PointsController do
     end
 
     it 'purchases vg and renders user_account' do
-      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p = PointPurchases.new(:key => "#{@device.key}.#{@params[:app_id]}")
       p.points += 100
       p.save!
       controller.should_receive(:check_success).with('purchased_vg')
@@ -125,7 +131,7 @@ describe PointsController do
     end
 
     it 'does not purchase if user already has max number of vgs' do
-      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p = PointPurchases.new(:key => "#{@device.key}.#{@params[:app_id]}")
       p.points += 100
       p.save!
       get(:purchase_vg, @params.merge(:quantity => 6))
@@ -144,6 +150,8 @@ describe PointsController do
 
   describe '#consume_vg' do
     before :each do
+      @device = FactoryGirl.create(:device)
+      DeviceIdentifier.stub(:find_device_from_params).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @vg = FactoryGirl.create(:virtual_good)
@@ -155,7 +163,7 @@ describe PointsController do
     end
 
     it 'consumes one vg' do
-      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p = PointPurchases.new(:key => "#{@device.key}.#{@params[:app_id]}")
       p.points += 100
       p.save!
       PointPurchases.purchase_virtual_good(p.key, @vg.key, 3)
@@ -169,7 +177,7 @@ describe PointsController do
     end
 
     it 'consumes more than one vg' do
-      p = PointPurchases.new(:key => "#{@params[:udid]}.#{@params[:app_id]}")
+      p = PointPurchases.new(:key => "#{@device.key}.#{@params[:app_id]}")
       p.points += 100
       p.save!
       PointPurchases.purchase_virtual_good(p.key, @vg.key, 3)

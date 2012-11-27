@@ -46,6 +46,10 @@ class RankBoost < ActiveRecord::Base
     self.save
   end
 
+  def is_optimized?
+    rank_boost_type == 'optimized'
+  end
+
 private
 
   def check_times

@@ -3,12 +3,12 @@
     = f.label :device_id, 'Gamer'
     = link_to @gamer_device.gamer.email, tools_gamer_path(@gamer_device.gamer)
   .field
-    = f.label :device_id, 'Device UDID'
+    = f.label :device_id, 'Device ID'
     - if @gamer_device.new_record?
       = f.text_field :device_id
       = error_message_on @gamer_device, :device_id
     - else
-      = link_to @gamer_device.device_id, device_info_tools_path(:udid => @gamer_device.device_id), :id => 'udid'
+      = link_to @gamer_device.device_id, device_info_tools_path(:device_id => @gamer_device.device_id), :id => 'device_id'
   .field
     = f.label :name
     = f.text_field :name
