@@ -28,25 +28,18 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
   # @option return [App, Offer, nil] :object
   # @option return [Integer] :count
   def index
-    @start_time = params[:start_time] || 1.day.ago
-    @end_time   = params[:end_time] || Time.zone.now
-    offer_id_count         = Hash.new(0)
-    publisher_app_id_count = Hash.new(0)
-    udid_count             = Hash.new(0)
-    @total                 = 0
-
-    SupportRequest.select(:where => "`updated-at` >= '#{@start_time.to_f}' AND `updated-at` < '#{@end_time.to_f}'") do |sr|
-      offer_id_count[sr.offer_id] += 1
-      publisher_app_id_count[sr.app_id] += 1
-      udid_count[sr.udid] += 1
-      @total += 1
-    end
+    @past_hours = params[:past_hours] ? params[:past_hours].to_i : 24
+    stats = SupportRequestStats.for_past(@past_hours)
+    offers         = stats[:offers]
+    publisher_apps = stats[:publisher_apps]
+    udids          = stats[:udids]
+    @total         = stats[:total]
+    @last_updated  = stats[:last_updated]
+    @end_time = @last_updated
+    @start_time = @end_time - @past_hours.hours
 
     @offers = ActiveSupport::OrderedHash.new
-    # Generate a hash ordered by the most frequently counted id
-    # Slower equivalent: offer_id_count.sort_by( |k,v| v}[0...25]
-    top_offer_ids = offer_id_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
-    top_offer_ids.each do |id, count|
+    offers.each do |id, count|
       @offers[id] = { :count => count, :object => nil }
     end
     Offer.find(@offers.keys).each do |o|
@@ -54,8 +47,7 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     end
 
     @publisher_apps = ActiveSupport::OrderedHash.new
-    top_publisher_app_ids = publisher_app_id_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
-    top_publisher_app_ids.each do |id, count|
+    publisher_apps.each do |id, count|
       @publisher_apps[id] = { :count => count, :object => nil }
     end
     App.find(@publisher_apps.keys).each do |pa|
@@ -63,8 +55,7 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     end
 
     @udids = ActiveSupport::OrderedHash.new
-    top_udids = udid_count.sort{ |a,b| b[1] <=> a[1] }[0...25]
-    top_udids.each do |id, count|
+    udids.each do |id, count|
       @udids[id] = { :count => count, :object => id }
     end
   end
