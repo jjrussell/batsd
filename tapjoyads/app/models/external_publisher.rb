@@ -35,7 +35,7 @@ class ExternalPublisher
     display_multiplier = device.display_multipliers[app_id].present? ? device.display_multipliers[app_id] : 1
 
     data = {
-      :tapjoy_device_id    => device.key,
+      :udid                => device.key,
       :publisher_user_id   => publisher_user_id,
       :currency_id         => currency[:id],
       :app_id              => app_id,

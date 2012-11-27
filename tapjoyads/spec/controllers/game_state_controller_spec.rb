@@ -17,7 +17,7 @@ describe GameStateController do
         @currency = double(Currency, :initial_balance => 100, :app_id => '12345')
         @params = {
           :app_id            => @currency.app_id,
-          :tapjoy_device_id  => '67890',
+          :udid              => '67890',
           :publisher_user_id => '2813308004',
           :version           => '1'
         }
@@ -68,7 +68,7 @@ describe GameStateController do
         @currency = double(Currency, :initial_balance => 100, :app_id => '12345')
         @params = {
           :app_id            => @currency.app_id,
-          :tapjoy_device_id  => '67890',
+          :udid              => '67890',
           :version           => '1'
         }
         Currency.stub(:find_in_cache).and_return(@currency)
@@ -104,7 +104,7 @@ describe GameStateController do
         @currency = double(Currency, :initial_balance => 100, :app_id => '12345')
         @params = {
           :app_id            => @currency.app_id,
-          :tapjoy_device_id  => '67890',
+          :udid              => '67890',
           :publisher_user_id => '2813308004',
           :version           => '1',
           :data              => { 'date' => 'some_data' },

@@ -21,7 +21,7 @@ class ConversionChecker
     @publisher_user = PublisherUser.for_click(@click)
     @entity_keys << "USER.#{@publisher_user.key}"
 
-    @device = Device.new(:key => @click.tapjoy_device_id)
+    @device = Device.new(:key => @click.udid)
     @entity_keys << "DEVICE.#{@device.key}"
     @resolution_update_keys << "DEVICE.#{@device.key}"
 
@@ -34,27 +34,27 @@ class ConversionChecker
 
   def acceptable_risk?
 
-    unless @publisher_user.update!(@click.tapjoy_device_id)
-      @risk_message = "TooManyTapjoyDeviceIDsForPublisherUserId" and return block_conversion
+    unless @publisher_user.update!(@click.udid)
+      @risk_message = "TooManyUdidsForPublisherUserId" and return block_conversion
     end
 
-    other_devices = (@publisher_user.tapjoy_device_ids - [ @click.tapjoy_device_id ]).map { |device_id| Device.new(:key => device_id) }
+    other_devices = (@publisher_user.udids - [ @click.udid ]).map { |udid| Device.new(:key => udid) }
 
     banned_devices = (other_devices + [ @device ]).select(&:banned?)
     if banned_devices.present?
-      @risk_message = "Banned (TAPJOY_DEVICE_ID=#{banned_devices.map(&:key).join ', '})" and return block_conversion
+      @risk_message = "Banned (UDID=#{banned_devices.map(&:key).join ', '})" and return block_conversion
     end
 
     suspended_devices = (other_devices + [ @device ]).select(&:suspended?)
     if suspended_devices.present?
-      @risk_message = "Suspended (TAPJOY_DEVICE_ID=#{suspended_devices.map(&:key).join ', '})" and return block_conversion
+      @risk_message = "Suspended (UDID=#{suspended_devices.map(&:key).join ', '})" and return block_conversion
     end
 
     # Do not reward if user has installed this app for the same publisher user id on another device
     unless @offer.multi_complete? || @offer.video_offer?
       other_devices.each do |d|
         if d.has_app?(@click.advertiser_app_id)
-          @risk_message = "AlreadyRewardedForPublisherUserId (TAPJOY_DEVICE_ID=#{d.key})" and return block_conversion
+          @risk_message = "AlreadyRewardedForPublisherUserId (UDID=#{d.key})" and return block_conversion
         end
       end
     end

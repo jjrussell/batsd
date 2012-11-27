@@ -146,7 +146,7 @@ private
   def generate_url
     url_params = [
       "id=#{id}",
-      "tapjoy_device_id=TAPJOY_DEVICE_ID",
+      "udid=TAPJOY_UDID",
       "click_key=TAPJOY_SURVEY",
     ]
     "#{API_URL}/survey_results/new?#{url_params.join('&')}"

@@ -36,10 +36,6 @@ class ApplicationController < ActionController::Base
 
   @@available_locales = I18n.available_locales.to_set
 
-  def params_for_device_creation
-    Device::IDENTIFIERS_FOR_CREATE.select {|identifier| params.include? identifier}
-  end
-
   def store_response
     if response.content_type == 'application/json'
       begin
@@ -76,14 +72,6 @@ class ApplicationController < ActionController::Base
     missing_params = required_params.select{ |param| params[param].blank? } || params[:udid] == 'null'
     render :text => "missing parameters: #{missing_params.join(', ')}", :status => 400 if render_missing_text && missing_params.any?
     !missing_params.any?
-  end
-
-  def verify_device_info(options = {})
-    render_missing_text = options.delete(:render_missing_text) { true }
-    raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    has_device_info = DeviceIdentifier::ALL_IDENTIFIERS.any? {|identifier| params.include? identifier}
-    render :text => 'missing required device params', :status => 400 if render_missing_text && !has_device_info
-    has_device_info
   end
 
   def verify_records(*args)
@@ -139,47 +127,32 @@ class ApplicationController < ActionController::Base
     language_code
   end
 
-  def find_or_create_device(allow_temp = false)
-    return @lookup_device if @lookup_device
+  def lookup_udid(set_temporary_udid = false)
+    params[:udid] = nil if IGNORED_UDIDS.include?(params[:udid])
+    return if params[:udid].present?
+    lookup_keys = []
 
-    if params[:can_create_new_device]
-      @lookup_device = Device.new
-      return @lookup_device
+    DeviceIdentifier::ALL_IDENTIFIERS.each do |identifier|
+      lookup_keys.push(params[identifier]) if params[identifier].present?
+    end
+    params[:identifiers_provided] = lookup_keys.any?
+
+    lookup_keys.each do |lookup_key|
+      identifier = DeviceIdentifier.new(:key => lookup_key)
+      unless identifier.new_record? || identifier.udid.to_s.start_with?('device_identifier')
+        params[:udid_via_lookup] = true
+        params[:udid] = identifier.udid
+        break
+      end
     end
 
-    if allow_temp && params[:temporary_device_id]
-      @lookup_device = Device.new(:key => params[:temporary_device_id], :is_temporary => true)
-      return @lookup_device
+    if params[:udid].blank? && params[:mac_address].present?
+      params[:udid] = params[:mac_address]
     end
 
-    # We couldnt find the device and/or create a temp one
-    nil
-  end
-
-  def lookup_device(set_temporary_device = false)
-    return params[:tapjoy_device_id] = nil if IGNORED_UDIDS.include?(params[:udid])
-
-    if @lookup_device
-      params[:tapjoy_device_id] = @lookup_device.key
-      return @lookup_device
-    end
-
-    return @lookup_device = Device.find_by_device_id(params[:tapjoy_device_id]) if params[:tapjoy_device_id].present?
-
-    unless @lookup_device
-      @lookup_device = DeviceIdentifier.find_device_from_params(params)
-    end
-
-    if @lookup_device
-      params[:tapjoy_device_id] = @lookup_device.key
-      return @lookup_device
-    end
-
-    params[:can_create_new_device] = params_for_device_creation.any?
-
-    if set_temporary_device && !params[:can_create_new_device]
-      lookup_params = params.slice(*DeviceIdentifier::ALL_IDENTIFIERS)
-      params[:temporary_device_id] = lookup_params.first.second if lookup_params.any?
+    if params[:udid].blank? && set_temporary_udid && lookup_keys.any?
+      params[:udid] = lookup_keys.first
+      params[:udid_is_temporary] = true
     end
   end
 
@@ -189,7 +162,6 @@ class ApplicationController < ActionController::Base
     downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
     downcase_param(:open_udid)
-    downcase_param(:advertising_id)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -282,10 +254,6 @@ class ApplicationController < ActionController::Base
     render(:json => { :success => false, :error => ['Bad UDID'] }, :status => 403) if BANNED_UDIDS.include?(params[:udid])
   end
 
-  def reject_banned_advertising_ids
-    render(:json => { :success => false, :error => ['Bad Advertising ID'] }, :status => 403) if BANNED_ADVERTISING_IDS.include?(params[:advertising_id])
-  end
-
   def log_activity(object, options={})
     included_methods = options.delete(:included_methods) { [] }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
@@ -321,7 +289,7 @@ class ApplicationController < ActionController::Base
   end
 
   def choose_experiment(experiment)
-    params[:exp] = Experiments.choose((params[:tapjoy_device_id] || params[:udid]), :experiment => experiment) unless params[:exp].present?
+    params[:exp] = Experiments.choose(params[:udid], :experiment => experiment) unless params[:exp].present?
   end
 
   def decrypt_data_param
@@ -339,7 +307,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_publisher_user_id
-    params[:publisher_user_id] = params[:tapjoy_device_id] if params[:publisher_user_id].blank?
+    params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
 
   def sdkless_supported?

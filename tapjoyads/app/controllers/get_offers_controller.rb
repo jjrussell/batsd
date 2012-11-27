@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_device, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
+  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
 
   tracks_admin_devices(:only => [:webpage, :index])
 
@@ -155,7 +155,7 @@ class GetOffersController < ApplicationController
     @save_web_requests = !@for_preview && params[:no_log] != '1'
     @server_to_server = server_to_server?
 
-    required_params = [:app_id] + (@for_preview ? [:offer_id] : [:tapjoy_device_id, :publisher_user_id])
+    required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
     return unless verify_params(required_params)
 
     @now = Time.zone.now
@@ -179,7 +179,7 @@ class GetOffersController < ApplicationController
     return unless verify_records([ @currency, @publisher_app ])
 
     unless @for_preview
-      @device = find_or_create_device
+      @device = Device.new(:key => params[:udid])
       @device.set_publisher_user_id(params[:app_id], params[:publisher_user_id])
       @device.set_last_run_time(TEXTFREE_PUB_APP_ID) if params[:app_id] == TEXTFREE_PUB_APP_ID && (!@device.has_app?(TEXTFREE_PUB_APP_ID) || (Time.zone.now - @device.last_run_time(TEXTFREE_PUB_APP_ID)) > 24.hours)
       @device.save if @device.changed?
@@ -262,7 +262,7 @@ class GetOffersController < ApplicationController
         # for third party tracking vendors
         offer.queue_impression_tracking_requests(
           :ip_address       => ip_address,
-          :tapjoy_device_id => @device.key,
+          :udid             => params[:udid],
           :publisher_app_id => params[:app_id])
       end
     end

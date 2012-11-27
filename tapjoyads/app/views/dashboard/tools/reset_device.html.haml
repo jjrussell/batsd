@@ -8,11 +8,9 @@ Delete all clicks and all records of which apps a device has run.
 %br
 
 %form{:method => :get, :action => reset_device_tools_path}
-  %tr
-    %td= label_tag :device_id, "Device ID:"
-    %td= text_field_tag :device_id, :size => 50
-  %tr
-    %td{ :colspan => 2}= submit_tag "Reset"
+  = label_tag :udid, "Device id:"
+  = text_field_tag :udid, nil, :size => 50
+  = submit_tag "Reset"
 
 - content_for :page_javascript do
   :plain

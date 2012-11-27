@@ -12,10 +12,6 @@ describe SurveyResultsController do
   let(:offer)           { survey_offer.primary_offer }
 
   describe '#new' do
-    before :each do
-      device = FactoryGirl.create(:device)
-      DeviceIdentifier.stub(:find_device_from_params).and_return(device)
-    end
     it 'verifies params' do
       get(:new)
       response.body.should =~ /missing parameters/

@@ -4,12 +4,11 @@ class SurveyResultsController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :read_click, :only => [ :create ]
-  before_filter :lookup_device
 
   helper_method :testing?
 
   def new
-    return unless verify_params([:tapjoy_device_id, :click_key]) unless testing?
+    return unless verify_params([:udid, :click_key])
     @survey_offer = SurveyOffer.find_in_cache(params[:id])
     @survey_questions = @survey_offer.questions
   end
@@ -64,11 +63,10 @@ private
 
   def save_survey_result
     result = SurveyResult.new
-    result.tapjoy_device_id = params[:tapjoy_device_id]
-    result.udid             = params[:udid]
-    result.click_key        = params[:click_key]
-    result.geoip_data       = geoip_data
-    result.answers          = @answers
+    result.udid       = params[:udid]
+    result.click_key  = params[:click_key]
+    result.geoip_data = geoip_data
+    result.answers    = @answers
     result.save
   end
 
@@ -82,7 +80,6 @@ private
   def log_web_request
     web_request = WebRequest.new(:time => @now)
     web_request.put_values('survey_result', params, ip_address, geoip_data, request.headers['User-Agent'])
-    web_request.tapjoy_device_id  = @click.tapjoy_device_id
     web_request.offer_id          = @click.offer_id
     web_request.advertiser_app_id = @click.advertiser_app_id
     web_request.publisher_app_id  = @click.publisher_app_id

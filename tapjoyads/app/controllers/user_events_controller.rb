@@ -2,8 +2,7 @@ class UserEventsController < ApplicationController
 
   DEVICE_KEYS_TO_TRY = [ :udid, :mac_address, :android_id, :serial_id, :sha1_mac_address ]
 
-  before_filter :lookup_device
-  before_filter :setup
+  before_filter :setup, :only => [ :create ]
 
   def create
     begin
@@ -26,8 +25,9 @@ class UserEventsController < ApplicationController
         raise UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_app_id', error_msg_data)
       end
 
-      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.no_device') unless params[:tapjoy_device_id].present?
-      device = find_or_create_device
+      device_id_key = DEVICE_KEYS_TO_TRY.detect { |key| params[key].present? }
+      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.no_device') unless device_id_key
+      device = Device.find(params[device_id_key])
 
       event_type_id = params.delete(:event_type_id).to_i
       @type = UserEvent::EVENT_TYPE_KEYS[event_type_id]
