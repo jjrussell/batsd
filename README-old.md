@@ -103,7 +103,9 @@ It is important that it's named "tapjoy" for deploy script to work
 Install RVM
 -----------
 
-RVM is important so we don't mess with the system's ruby, and can use the most recent version of Ruby 1.8.7.
+_you can also use [rbenv](https://github.com/sstephenson/rbenv) for this, but you need to know what you are doing_
+
+RVM is important so we don't mess with the system's ruby, and can Ruby version 1.8.7 (yes, tjs has been around for a while).
 
 Install RVM:
 
@@ -181,9 +183,19 @@ Follow the post-install directions. (Type `brew info redis` to see them again)
 Setup repo
 ----------
 
-Add the GeoIP database
+Add the GeoIP database:
+
+```
+curl http://s3.amazonaws.com/dev_tapjoy/rails_env/GeoLiteCity.dat.gz | gunzip > data/GeoIPCity.dat
+```
 
 Put in the local configuration yaml files.
+
+```
+cp config/newrelic-test.yml config/newrelic.yml
+cp config/local-default.yml config/local.yml
+cp config/database-default.yml config/database.yml
+```
 
 Install required gems
 ---------------------
