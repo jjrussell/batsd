@@ -56,7 +56,7 @@ class AppStore
       :platform  => 'android',
       :store_url => 'market://search?q=STORE_ID',
       :info_url  => 'https://play.google.com/store/apps/details?id=STORE_ID',
-      :exclusive => false,
+      :exclusive => true,
       :sdk_name  => 'google'
     }),
     'android.GFan' => AppStore.new({
