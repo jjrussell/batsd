@@ -89,7 +89,6 @@ class ExternalPublisher
     external_publishers = []
     self.load_all.each do |app_id, external_publisher|
       next unless device.has_app?(app_id)
-      next unless external_publisher.app.rewardable_currencies.count > 0
       #next unless device.publisher_user_ids[app_id].present? || external_publisher.currencies.all? { |h| h[:udid_for_user_id] }
 
       external_publisher.last_run_time = device.parsed_apps[app_id].to_i
@@ -153,9 +152,5 @@ class ExternalPublisher
 
   def self.find_by_app_id(app_id)
     self.load_all[app_id]
-  end
-
-  def app
-    App.find_in_cache(app_id)
   end
 end
