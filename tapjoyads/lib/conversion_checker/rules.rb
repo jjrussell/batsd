@@ -13,8 +13,11 @@ module ConversionChecker::Rules
         'device_velocity_check_24',
         150,
         Proc.new do
+          # Exclude udid sent for all users by bad integration in Ludia
+          next false if IGNORED_UDIDS.include?(@device.key)
+
           risk_profile = RiskProfile.new(:key => "DEVICE.#{@device.key}")
-          return false unless risk_profile
+          next false unless risk_profile
           if risk_profile.revenue_total(24) - @click.advertiser_amount > DEVICE_VELOCITY_LIMIT_24
             @rule_message = "Conversion revenue of #{-@click.advertiser_amount} added to last 24 hour revenue of #{risk_profile.revenue_total(24)} would exceed limit."
             true
@@ -26,8 +29,11 @@ module ConversionChecker::Rules
         'device_velocity_check_72',
         125,
         Proc.new do
+          # Exclude udid sent for all users by bad integration in Ludia
+          next false if IGNORED_UDIDS.include?(@device.key)
+
           risk_profile = RiskProfile.new(:key => "DEVICE.#{@device.key}")
-          return false unless risk_profile
+          next false unless risk_profile
           if risk_profile.revenue_total(72) - @click.advertiser_amount > DEVICE_VELOCITY_LIMIT_72
             @rule_message = "Conversion revenue of #{-@click.advertiser_amount} added to last 72 hour revenue of #{risk_profile.revenue_total(72)} would exceed limit."
             true
@@ -40,7 +46,7 @@ module ConversionChecker::Rules
         125,
         Proc.new do
           risk_profile = RiskProfile.new(:key => "IPADDR.#{@click.ip_address}")
-          return false unless risk_profile
+          next false unless risk_profile
           if risk_profile.revenue_total(24) - @click.advertiser_amount > IPADDR_VELOCITY_LIMIT_24
             @rule_message = "Conversion revenue of #{-@click.advertiser_amount} added to last 24 hour revenue of #{risk_profile.revenue_total(24)} would exceed limit."
             true
@@ -53,7 +59,7 @@ module ConversionChecker::Rules
         100,
         Proc.new do
           risk_profile = RiskProfile.new(:key => "IPADDR.#{@click.ip_address}")
-          return false unless risk_profile
+          next false unless risk_profile
           if risk_profile.revenue_total(72) - @click.advertiser_amount > IPADDR_VELOCITY_LIMIT_72
             @rule_message = "Conversion revenue of #{-@click.advertiser_amount} added to last 72 hour revenue of #{risk_profile.revenue_total(72)} would exceed limit."
             true
@@ -76,7 +82,7 @@ module ConversionChecker::Rules
         150,
         Proc.new do
           risk_profile = RiskProfile.new(:key => "DEVICE.#{@device.key}")
-          return false unless risk_profile
+          next false unless risk_profile
           if risk_profile.block_count(8) > BLOCKED_CONVERSION_LIMIT_8
             @rule_message = "#{risk_profile.block_count(8)} blocked conversions in the last 8 hours exceeds limit."
             true
