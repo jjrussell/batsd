@@ -36,6 +36,7 @@
 - mobile/base.css
 - mobile/modernizr.js
 - mobile/respond.js
+- offer_instructions/style.css
 - offerwall/offerwall.css
 - offerwall/offerwall.js
 - print.css
