@@ -67,7 +67,7 @@ module ActsAsPageable
   end
 
   def run_query!
-    self.resource = self.resource.paginate(:page => page_number, :per_page => per_page).all
+    self.resource = self.resource.paginate(:page => page_number, :per_page => per_page).all unless self.resource.nil?
   end
 
   def set_pagination_info!
@@ -76,6 +76,6 @@ module ActsAsPageable
       :count_pages  => (resource.total_entries.to_f / resource.per_page).ceil,
       :current_page => resource.current_page,
       :per_page     => resource.per_page
-    }
+    } unless resource.nil?
   end
 end
