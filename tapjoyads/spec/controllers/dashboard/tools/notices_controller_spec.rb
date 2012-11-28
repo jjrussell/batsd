@@ -2,11 +2,9 @@ require 'spec_helper'
 
 describe Dashboard::Tools::NoticesController do
 
-  PERMISSIONS_MAP = {
+  it_behaves_like "a controller with permissions", {
     :index  => { :allowed => [ :admin, :products ]},
     :update => { :allowed => [ :admin, :products ]}
   }
-
-  it_behaves_like "a controller with permissions"
 
 end
