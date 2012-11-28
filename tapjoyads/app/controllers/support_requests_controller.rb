@@ -4,7 +4,6 @@ class SupportRequestsController < ApplicationController
   layout 'iphone'
 
   def new
-    @show_topbar = library_version >= '9'
   end
 
   def create
@@ -52,6 +51,7 @@ private
       advertiser_offer_ids << click.advertiser_app_id unless advertiser_offer_ids.include?(click.advertiser_app_id)
       break if advertiser_offer_ids.length == 20
     end
+    @show_topbar = library_version >= '9'
     @incomplete_offers = advertiser_offer_ids.collect { |offer_id| Offer.find_in_cache(offer_id) }.compact
   end
 

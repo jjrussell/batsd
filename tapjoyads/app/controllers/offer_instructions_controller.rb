@@ -52,6 +52,7 @@ class OfferInstructionsController < ApplicationController
   private
 
   def instructions_layout
+    @show_topbar = library_version >= '9'
     if params[:action] == 'index' && choose_redesign?
       'instructions'
     else
