@@ -12,7 +12,7 @@
     %meta{ 'http-equiv' => 'Content-Type', :content => 'text/html; charset=utf-8' }
     %meta{ 'name' => 'viewport', :content => 'width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;' }
   %body
-    = render 'shared/top_bar' if library_version >= '9'
+    = render 'shared/top_bar' if @show_topbar
     - if @load_facebook == true
       #fb-root{ 'data-fb-options' => {:appId => Facebooker2.app_id, :locale => 'en_US'}.to_json }
 
