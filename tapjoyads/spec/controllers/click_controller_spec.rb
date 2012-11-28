@@ -4,6 +4,7 @@ describe ClickController do
 
   before :each do
     @currency = FactoryGirl.create(:currency)
+    @currency.stub(:active_currency_sale).and_return(nil)
   end
 
   context "for all click types" do

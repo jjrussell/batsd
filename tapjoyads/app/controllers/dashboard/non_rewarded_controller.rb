@@ -41,7 +41,7 @@ class Dashboard::NonRewardedController < Dashboard::DashboardController
     @currency or (redirect_to(new_app_non_rewarded_path(:app_id => @app.id)) and return)
     allowed_attr_names = [ :test_devices, :minimum_offerwall_bid, :minimum_featured_bid, :minimum_display_bid ]
     if permitted_to?(:edit, :dashboard_statz)
-      allowed_attr_names += [ :tapjoy_enabled, :hide_rewarded_app_installs, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override, :offer_filter_selections, :use_offer_filter_selections, :conversion_rate_enabled ]
+      allowed_attr_names += [ :tapjoy_enabled, :hide_rewarded_app_installs, :disabled_offers, :max_age_rating, :only_free_offers, :send_offer_data, :ordinal, :rev_share_override, :offer_filter_selections, :use_offer_filter_selections, :conversion_rate_enabled, :message, :message_enabled ]
     end
 
     record_was_valid = true

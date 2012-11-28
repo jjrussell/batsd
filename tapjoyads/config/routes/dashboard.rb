@@ -62,6 +62,7 @@ Tapjoyad::Application.routes.draw do
               get :example
             end
           end
+          resources :currency_sales, :except => [:show]
           member do
             post :reset_test_device
           end

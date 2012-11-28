@@ -388,4 +388,11 @@ FactoryGirl.define do
     rate                  100
     minimum_offerwall_bid 50
   end
+
+  factory :currency_sale do
+    association :currency
+    start_time            { Time.zone.now }
+    end_time              { Time.zone.now + 1.day }
+    multiplier            2
+  end
 end

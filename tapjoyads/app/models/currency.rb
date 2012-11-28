@@ -27,6 +27,7 @@ class Currency < ActiveRecord::Base
   TAPJOY_MANAGED_CALLBACK_URL = 'TAP_POINTS_CURRENCY'
   NO_CALLBACK_URL = 'NO_CALLBACK'
   SPECIAL_CALLBACK_URLS = [ TAPJOY_MANAGED_CALLBACK_URL, NO_CALLBACK_URL ]
+  DEFAULT_MULTIPLIER = 1.0
 
   NON_REWARDED_NAME = "Non-Rewarded"
 
@@ -36,6 +37,7 @@ class Currency < ActiveRecord::Base
   belongs_to :reseller
 
   has_many :reengagement_offers
+  has_many :currency_sales
   has_one :deeplink_offer, :required => true
   has_many :conversion_rates
 
@@ -45,7 +47,7 @@ class Currency < ActiveRecord::Base
   validates_numericality_of :spend_share, :direct_pay_share, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :rev_share_override, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1, :allow_nil => true
   validates_numericality_of :max_age_rating, :minimum_featured_bid, :minimum_offerwall_bid, :minimum_display_bid, :allow_nil => true, :only_integer => true
-  validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :in => [ true, false ]
+  validates_inclusion_of :only_free_offers, :send_offer_data, :hide_rewarded_app_installs, :tapjoy_enabled, :message_enabled, :in => [ true, false ]
   validates_each :conversion_rate, :if => :conversion_rate_changed? do |record, attribute, value|
     if record.conversion_rates.any?
       record.conversion_rates.each do |conversion_rate|
@@ -223,7 +225,7 @@ class Currency < ActiveRecord::Base
     else
       reward_value = floored_reward_value(offer)
     end
-    reward_value * currency_conversion_rate(offer) / 100.0
+    reward_value * currency_sale_multiplier * currency_conversion_rate(offer) / 100.0
   end
 
   def currency_conversion_rate(offer)
@@ -258,6 +260,30 @@ class Currency < ActiveRecord::Base
       advertiser_amount = -offer.payment
     end
     advertiser_amount
+  end
+
+  def currency_sale_multiplier
+    active_currency_sale.try(:multiplier) || DEFAULT_MULTIPLIER
+  end
+
+  def active_currency_sale
+    now = Time.zone.now
+    self.currency_sales.find(:first, :conditions => ["start_time <= ? AND end_time > ?", now, now])
+  end
+  memoize :active_currency_sale
+
+  def active_currency_sale?
+    active_currency_sale.present?
+  end
+
+  def next_currency_sale
+    now = Time.zone.now
+    self.currency_sales.find(:first, :conditions => [ "start_time > ? AND end_time > ?", now, now ], :order => 'start_time')
+  end
+  memoize :next_currency_sale
+
+  def next_currency_sale?
+    next_currency_sale.present?
   end
 
   def get_tapjoy_amount(offer, displayer_app = nil)

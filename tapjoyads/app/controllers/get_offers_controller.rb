@@ -49,6 +49,8 @@ class GetOffersController < ApplicationController
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
+    @currency_sale = @currency.active_currency_sale
+
     set_webpage_parameters
     if params[:json] == '1'
       if !@publisher_app.uses_non_html_responses? && params[:source] != 'tj_games'

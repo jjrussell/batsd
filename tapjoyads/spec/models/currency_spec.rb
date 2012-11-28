@@ -812,4 +812,100 @@ describe Currency do
       end
     end
   end
+
+  describe '#active_currency_sale' do
+    before :each do
+      @currency.save
+    end
+    context 'with an active currency sale' do
+      before :each do
+        @currency_sale = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now - 30.minutes, :end_time => Time.zone.now + 3.days, :currency_id => @currency.id)
+      end
+      it 'should return currency_sale object' do
+        @currency.active_currency_sale.should == @currency_sale
+      end
+    end
+    context 'without an active currency sale' do
+      it 'should return a blank array' do
+        @currency.active_currency_sale.should be_nil
+      end
+    end
+  end
+
+  describe '#active_currency_sale?' do
+    before :each do
+      @currency.save
+    end
+    context 'with an active currency sale' do
+      before :each do
+        @currency_sale = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now - 30.minutes, :end_time => Time.zone.now + 3.days, :currency_id => @currency.id)
+      end
+      it 'should return true' do
+        @currency.active_currency_sale?.should be_true
+      end
+    end
+    context 'without an active currency sale' do
+      it 'should return false' do
+        @currency.active_currency_sale?.should be_false
+      end
+    end
+  end
+
+  describe '#currency_sale_multiplier' do
+    before :each do
+      @currency.save
+    end
+    context 'with an active currency sale' do
+      before :each do
+        @currency_sale = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now - 30.minutes, :end_time => Time.zone.now + 3.days, :currency_id => @currency.id)
+      end
+      it 'should return the multiplier field from currency sale' do
+        @currency.currency_sale_multiplier.should == @currency_sale.multiplier
+      end
+    end
+    context 'without an active currency sale' do
+      it 'should return 1' do
+        @currency.currency_sale_multiplier.should == 1
+      end
+    end
+  end
+
+  describe '#next_currency_sale' do
+    before :each do
+      @currency.save
+    end
+    context 'with two future currency sales' do
+      before :each do
+        @currency_sale = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now + 1.day, :end_time => Time.zone.now + 3.days, :currency_id => @currency.id)
+        @currency_sale2 = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now + 4.day, :end_time => Time.zone.now + 6.days, :currency_id => @currency.id)
+      end
+      it 'should return the next closest, in time, currency sale' do
+        @currency.next_currency_sale.should == @currency_sale
+      end
+    end
+    context 'no future currency sale' do
+      it 'should return a blank array' do
+        @currency.next_currency_sale.should be_nil
+      end
+    end
+  end
+
+  describe '#next_currency_sale?' do
+    before :each do
+      @currency.save
+    end
+    context 'with a future currency sale' do
+      before :each do
+        @currency_sale = FactoryGirl.create(:currency_sale, :start_time => Time.zone.now + 1.day, :end_time => Time.zone.now + 3.days, :currency_id => @currency.id)
+      end
+      it 'should return true' do
+        @currency.next_currency_sale?.should be_true
+      end
+    end
+    context 'with no future currency sale' do
+      it 'should return false' do
+        @currency.next_currency_sale?.should be_false
+      end
+    end
+  end
 end

@@ -311,6 +311,8 @@ ActiveRecord::Schema.define(:version => 20121126210315) do
     t.text     "store_whitelist",                                                                                           :null => false
     t.string   "offer_filter"
     t.boolean  "conversion_rate_enabled",                                                                :default => false, :null => false
+    t.text     "message"
+    t.boolean  "message_enabled",                                                                        :default => false, :null => false
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
@@ -334,6 +336,21 @@ ActiveRecord::Schema.define(:version => 20121126210315) do
   end
 
   add_index "currency_groups", ["id"], :name => "index_currency_groups_on_id", :unique => true
+
+  create_table "currency_sales", :id => false, :force => true do |t|
+    t.string   "id",              :limit => 36,                    :null => false
+    t.datetime "start_time",                                       :null => false
+    t.datetime "end_time",                                         :null => false
+    t.float    "multiplier",                                       :null => false
+    t.string   "currency_id",     :limit => 36,                    :null => false
+    t.boolean  "message_enabled",               :default => false, :null => false
+    t.text     "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "currency_sales", ["currency_id"], :name => "index_currency_sales_on_currency_id"
+  add_index "currency_sales", ["id"], :name => "index_currency_sales_on_id", :unique => true
 
   create_table "deeplink_offers", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36, :null => false
