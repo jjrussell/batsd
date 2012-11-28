@@ -249,7 +249,6 @@ Tapjoyad::Application.routes.draw do
           get :ses_status
           get :view_pub_user_account
           post :detach_pub_user_account
-          get :search_conversion_attempts
           get :view_conversion_attempt
           post :force_conversion
           get :monthly_rev_share_report
