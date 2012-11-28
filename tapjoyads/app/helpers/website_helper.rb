@@ -1,5 +1,5 @@
 module WebsiteHelper
-  STEP_NUMBER_REGEX = /^\d+\.\s|^\d+\.|\d+\)\s|^\d+\)/
+  STEP_NUMBER_REGEX = /^\d+\.\s|^\d+\.|^\d+\)\s|^\d+\)/
 
   def include_tapjoy_graph
     content_for :page_head, stylesheet_link_tag('tapjoy_graph', 'reporting')
