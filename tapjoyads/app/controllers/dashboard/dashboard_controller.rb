@@ -77,24 +77,41 @@ class Dashboard::DashboardController < ApplicationController
     @current_partner ||= current_user && (current_user.current_partner || current_user.partners.first)
   end
 
+  def current_partner_apps_relation
+    current_partner.apps.visible.order("UPPER(name)").includes(:partner)
+  end
+
   def current_partner_apps
-    @current_partner_apps ||= current_partner.apps.visible.sort_by{|app| app.name.downcase}
+    @current_partner_apps ||= current_partner_apps_relation.all
+  end
+
+  def current_partner_offers_relation
+    current_partner.offers.visible.order("UPPER(name), UPPER(name_suffix)").includes(:partner)
   end
 
   def current_partner_offers
-    @current_partner_offers ||= current_partner.offers.visible.sort_by{|offer| offer.name_with_suffix.downcase}
+    @current_partner_offers ||= current_partner_offers_relation.all
+  end
+
+  def current_partner_app_offers_relation
+    current_partner.offers.visible.app_offers.order("UPPER(name)").includes(:partner)
   end
 
   def current_partner_app_offers
-    @current_partner_app_offers ||= current_partner.offers.visible.app_offers.sort_by{|app| app.name.downcase}
+    @current_partner_app_offers ||= current_partner_app_offers_relation.all
   end
 
   def current_partner_active_app_offers
     @current_partner_active_app_offers ||= current_partner_app_offers.select(&:enabled?)
   end
 
+  def current_partner_active_offers_relation
+    # This logic is duplicated in Offer#show_in_active_campaigns? in a non-ARel-y way.
+    current_partner_offers_relation.where(:item_type => ['VideoOffer', 'App', 'GenericOffer', 'ActionOffer', 'Coupon', 'SurveyOffer']).includes(:item)
+  end
+
   def current_partner_active_offers
-    @current_partner_active_offers ||= current_partner_offers.select(&:enabled?).select(&:show_in_active_campaigns?)
+    @current_partner_active_offers ||= current_partner_active_offers_relation.select(&:enabled?)
   end
 
   def premier_enabled?

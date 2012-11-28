@@ -520,6 +520,7 @@ class Offer < ActiveRecord::Base
   end
 
   def show_in_active_campaigns?
+    # This logic is duplicated in DashboardController#current_partner_active_offers_relation in an ARel-friendly way.
     item_type =~ /(VideoOffer|App|GenericOffer|ActionOffer|Coupon|SurveyOffer)/
   end
 
