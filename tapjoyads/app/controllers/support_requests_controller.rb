@@ -4,6 +4,7 @@ class SupportRequestsController < ApplicationController
   layout 'iphone'
 
   def new
+    @show_topbar = library_version >= '9'
   end
 
   def create
