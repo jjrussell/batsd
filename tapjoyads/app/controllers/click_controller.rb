@@ -140,6 +140,7 @@ class ClickController < ApplicationController
     required_params = [ :data ]
     required_params << :gamer_id if params[:advertiser_app_id] == TAPJOY_GAMES_INVITATION_OFFER_ID
     return false unless verify_params(required_params)
+    @unavailable_reasons = Set.new
 
     @now = Time.zone.now
     if params[:offer_id] == 'test_video'
@@ -163,6 +164,7 @@ class ClickController < ApplicationController
       build_web_request('expired_click')
       save_web_request
       @destination_url = destination_url
+      @unavailable_reasons << :expired_click
       render_unavailable_offer
       return
     end
@@ -198,6 +200,7 @@ class ClickController < ApplicationController
       build_web_request('disabled_currency')
       save_web_request
       @destination_url = destination_url
+      @unavailable_reasons << :disabled_currency
       render_unavailable_offer
     end
     disabled
@@ -209,6 +212,7 @@ class ClickController < ApplicationController
       build_web_request('disabled_offer')
       save_web_request
       @destination_url = destination_url
+      @unavailable_reasons << :disabled_offer
       render_unavailable_offer
     end
     disabled
@@ -239,6 +243,7 @@ class ClickController < ApplicationController
       build_web_request('completed_offer')
       save_web_request
       @destination_url = destination_url
+      @unavailable_reasons << :completed_offer
       render_unavailable_offer
     end
     completed
