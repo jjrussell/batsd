@@ -16,6 +16,7 @@ class EmailVerificationFailure < RuntimeError; end
 class EmailNotDelivered < RuntimeError; end
 class VerticaConnectionReset < RuntimeError; end
 class OptimizedOfferCachingFailed < RuntimeError; end
+class WebRequestMismatch < RuntimeError; end
 
 # Any errors that extend this class will result in an email being sent to dev@tapjoy.com.
 class EmailWorthyError < RuntimeError

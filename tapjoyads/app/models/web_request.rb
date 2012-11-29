@@ -244,6 +244,7 @@ class WebRequest < AnalyticsLogger::Message
   end
 
   def save
+    check_web_request
     super
     begin
       update_realtime_stats
@@ -272,6 +273,13 @@ class WebRequest < AnalyticsLogger::Message
     keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
     keys.each do |mc_key|
       Mc.increment_count(mc_key, false, 1.day)
+    end
+  end
+
+  #TODO: Either remove or abstract to do other sanity checks more cleanly
+  def check_web_request
+    if self.auditioning == true && self.cached_offer_list_type == 'native'
+      Notifier.alert_new_relic(WebRequestMismatch, "web request has auditioning = true and COLSource = native for key=#{self.id}")
     end
   end
 end
