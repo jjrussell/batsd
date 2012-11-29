@@ -220,10 +220,10 @@ ActiveRecord::Schema.define(:version => 20121126210315) do
   add_index "console_permissions", ["id"], :name => "index_console_permissions_on_id", :unique => true
 
   create_table "console_roles", :id => false, :force => true do |t|
-    t.string   "id",          :limit => 36, :null => false
-    t.string   "name",                      :null => false
+    t.string   "id",               :limit => 36, :null => false
+    t.string   "name",                           :null => false
     t.boolean  "publicly_visible"
-    t.string   "application",               :null => false
+    t.string   "application",                    :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
