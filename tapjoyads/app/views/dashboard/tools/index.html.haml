@@ -136,7 +136,7 @@
       %li= link_to 'Mass Resolve Support Requests', mass_resolve_tools_support_requests_path
     - if permitted_to? :send_currency_failures, :dashboard_tools        # customer_service, account_mgr
       %li= link_to 'Send Currency Failures', send_currency_failures_tools_path
-    - if permitted_to? :index, :dashboard_tools_gamers                  # customer_service
+    - if permitted_to? :gamers, :dashboard_tools                  # customer_service
       %li= link_to 'Gamer Accounts', tools_gamers_path
 
 - if has_permissions_for_one_of? :hr, :devices, :products, :file_sharer

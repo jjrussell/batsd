@@ -213,7 +213,6 @@ Tapjoyad::Application.routes.draw do
       match 'partners/managed_by/:id' => 'partners#managed_by'
       match 'partners/by_country/:country' => 'partners#by_country'
 
-      match 'search/gamers' => 'search#gamers', :as => :search_gamers
       match 'search/offers' => 'search#offers', :as => :search_offers
       match 'search/users' => 'search#users', :as => :search_users
       match 'search/partners' => 'search#partners', :as => :search_partners
@@ -403,12 +402,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
         resources :recommenders, :only => [:index, :create]
-        resources :gamers, :only => [:index, :show] do
-          member do
-            post :reset_perishable_token
-          end
-        end
-        resources :gamer_devices, :only => [:create, :edit, :new, :show, :update]
+        get 'gamers'
         resources :network_costs, :only => [:index]
         resources :partner_program_statz, :only => [:index] do
           collection do

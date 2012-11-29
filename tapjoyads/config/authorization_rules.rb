@@ -66,10 +66,7 @@ authorization do
     includes :tools
     includes :devices
     includes :file_sharer
-    has_permission_on :dashboard_search, :to => [ :gamers ]
-    has_permission_on :dashboard_tools, :to => [ :resolve_clicks, :device_info, :update_device, :send_currency_failures, :view_conversion_attempt ]
-    has_permission_on :dashboard_tools_gamers, :to => [:index, :show, :reset_perishable_token]
-    has_permission_on :dashboard_tools_gamer_devices, :to => [ :create, :edit, :new, :update ]
+    has_permission_on :dashboard_tools, :to => [:gamers]
     has_permission_on :dashboard_tools_support_requests, :to => [ :index, :mass_resolve ]
   end
 
