@@ -96,23 +96,6 @@ class Dashboard::SearchController < Dashboard::DashboardController
     render(:json => results.to_json)
   end
 
-  def gamers
-    term = params[:term].to_s.strip
-
-    if term.size >= 2
-      conditions = [ "email LIKE ?", "#{term}%" ]
-      @gamers = Gamer.find(:all,
-        :conditions => conditions,
-        :order => 'email ASC',
-        :limit => 100
-      )
-    else
-      @gamers = []
-    end
-
-    render :partial => 'gamers'
-  end
-
   def brands
     conditions = [ "name LIKE ?", "%#{params[:term]}%" ]
     results = Brand.find(:all,
