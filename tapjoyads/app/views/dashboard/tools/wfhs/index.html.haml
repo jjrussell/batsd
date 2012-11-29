@@ -16,7 +16,8 @@
       .clear
       .blank
 
-  %h3 Not here today:
+  %h3.clear{:style=>'padding-top:20px;'}
+    Not here today:
   %ul
     - @not_here_today.each do |employee|
       - wfh = @wfhs[employee.id].first
