@@ -142,6 +142,7 @@ class OfferList
       deeplink_offer = Offer.find_in_cache(@currency.enabled_deeplink_offer_id)
       if deeplink_offer.present? && deeplink_offer.accepting_clicks? && !postcache_reject?(deeplink_offer) && !found_offer_item_ids.include?(deeplink_offer.item_id)
         position = [ DEEPLINK_POSITION, returned_offers.length ].min
+        deeplink_offer.name = I18n.t('text.offerwall.promo_link', :default => "Check out more ways to enjoy the apps you love at Tapjoy.com!")
         returned_offers.insert(position, deeplink_offer)
       end
     end
