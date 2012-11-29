@@ -268,7 +268,7 @@ class Currency < ActiveRecord::Base
 
   def active_currency_sale
     now = Time.zone.now
-    self.currency_sales.find(:first, :conditions => ["start_time <= ? AND end_time > ?", now, now])
+    Array(self.currency_sales.find(:first, :conditions => ["start_time <= ? AND end_time > ?", now, now])).first
   end
   memoize :active_currency_sale
 
@@ -278,7 +278,7 @@ class Currency < ActiveRecord::Base
 
   def next_currency_sale
     now = Time.zone.now
-    self.currency_sales.find(:first, :conditions => [ "start_time > ? AND end_time > ?", now, now ], :order => 'start_time')
+    Array(self.currency_sales.find(:first, :conditions => [ "start_time > ? AND end_time > ?", now, now ], :order => 'start_time')).first
   end
   memoize :next_currency_sale
 
