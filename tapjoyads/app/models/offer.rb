@@ -102,7 +102,7 @@ class Offer < ActiveRecord::Base
   attr_reader :video_button_tracking_offers
   attr_accessor :cached_offer_list_id
   attr_accessor :cached_offer_list_type
-  attr_accessor :auditioning
+  attr_writer :auditioning
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
   has_many :associated_offers, :class_name => 'Offer', :foreign_key => :item_id, :primary_key => 'item_id', :conditions => proc { ["id != ?",  id] }
@@ -954,6 +954,10 @@ class Offer < ActiveRecord::Base
 
   def should_notify_on_conversion?
     !(video_offer? || survey_offer?)
+  end
+
+  def auditioning
+    @auditioning || false
   end
 
   private
