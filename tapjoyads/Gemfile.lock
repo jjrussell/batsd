@@ -157,7 +157,7 @@ GEM
       adapter (~> 0.5.1)
       redis
     addressable (2.2.6)
-    airbrake (3.0.5)
+    airbrake (3.0.9)
       activesupport
       builder
     akami (1.2.0)
@@ -576,8 +576,8 @@ DEPENDENCIES
   acts_as_approvable (= 0.7.0)
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
-  airbrake (= 3.0.5)
   analytics_logger (= 0.8.11)!
+  airbrake (~> 3.0.0)
   annotate
   archive-tar-minitar
   asset_sync
