@@ -165,7 +165,10 @@ class AppMetadata < ActiveRecord::Base
       :price => price,
       :age_rating => age_rating,
       :user_rating => user_rating,
-      :categories => categories
+      :categories => categories,
+      :external_store_name => store_name,
+      :external_store_key => store_id,
+      :file_size_bytes => file_size_bytes,
     }
   end
 
