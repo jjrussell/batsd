@@ -1,4 +1,4 @@
-class Job::QueueCacheSupportRequestStats < Job::SqsReaderController
+class Job::QueueCacheSupportRequestStatsController < Job::SqsReaderController
 
   def initialize
     super QueueNames::CACHE_SUPPORT_REQUEST_STATS
