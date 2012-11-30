@@ -106,7 +106,7 @@ class App < ActiveRecord::Base
   after_update :update_all_offers
   after_update :update_currencies
 
-  before_save :update_kontagent
+  # before_save :update_kontagent
   before_destroy :delete_kontagent
 
   scope :visible, :conditions => { :hidden => false }
