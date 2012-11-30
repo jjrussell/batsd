@@ -124,18 +124,17 @@ describe KontagentIntegrationRequest do
     end
 
     it "should re-provision entities if matching remote resources don't exist" do
-      return # TODO: re-enable this once Kotagent issue is resolved
       Kontagent::Account.should_receive(:exists?)            { true }
       Kontagent::User.should_receive(:exists?)               { false }
       Kontagent::Application.should_receive(:exists?).twice  { false }
 
-      integration_request.should_receive(:provision_app!)        { true }
+      integration_request.should_receive(:provision_app!).twice  { true }
       integration_request.should_receive(:provision_user!)       { true }
 
       another_app = FactoryGirl.create(:app,
                          :name => "#{title}App",
                          :id => UUIDTools::UUID.parse_int(new_app_id).to_s )
-      partner.apps = [another_app]
+      partner.apps += [another_app]
 
       another_user =  FactoryGirl.create(:user,
                                          :email => 'another.one@any.net',
