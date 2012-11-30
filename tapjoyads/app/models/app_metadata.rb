@@ -165,14 +165,6 @@ class AppMetadata < ActiveRecord::Base
     }
   end
 
-  private
-
-  def download_and_save_icon!(url)
-    return if url.blank? || offers.blank?
-    icon_src_blob = download_blob(url)
-    save_icon!(icon_src_blob) if icon_src_blob
-  end
-
   def get_screenshots_urls
     screenshots_urls = []
     return screenshots_urls unless self.screenshots
@@ -183,6 +175,14 @@ class AppMetadata < ActiveRecord::Base
     rescue JSON::ParserError
     end
     screenshots_urls
+  end
+
+  private
+
+  def download_and_save_icon!(url)
+    return if url.blank? || offers.blank?
+    icon_src_blob = download_blob(url)
+    save_icon!(icon_src_blob) if icon_src_blob
   end
 
   def download_blob(url)

@@ -1,6 +1,7 @@
 class ExternalPublisher
 
-  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count, :app_metadata_id
+  attr_accessor :app_id, :app_name, :partner_name, :currencies, :last_run_time, :active_gamer_count,
+                :app_metadata_id, :app_metadata, :store_url, :primary_category, :icon_url
 
   def initialize(currency)
     self.app_id = currency.app_id
@@ -118,11 +119,43 @@ class ExternalPublisher
         external_publishers[currency.app_id] = ExternalPublisher.new(currency)
       end
     end
+    store_in_s3(external_publishers, :marshal, 'external_publishers')
 
-    key = 'external_publishers'
+    # Store metadata for Hurricane external_app
+    app_metadata_ids = external_publishers.each_value.map(&:app_metadata_id).uniq.compact
+    metadata_hash = {}
+    AppMetadata.where(:id => app_metadata_ids).each do |app_metadata|
+      metadata_hash[app_metadata.id] = app_metadata
+    end
+
+    external_publishers.each_value do |publisher|
+      next unless publisher.app_metadata_id
+      app_metadata           = metadata_hash[publisher.app_metadata_id]
+      publisher.app_metadata = app_metadata.attributes
+      publisher.app_metadata["screenshots"] = app_metadata.get_screenshots_urls
+
+      # Converts Time data to int bc MessagePack can't pack Time
+      publisher.app_metadata.slice("updated_at", "created_at", "released_at").each do |attr, val|
+        publisher.app_metadata[attr] = val.to_i
+      end
+
+      publisher.store_url        = app_metadata.store_url
+      publisher.primary_category = app_metadata.primary_category
+      publisher.icon_url         = publisher.get_icon_url
+    end
+    store_in_s3(external_publishers.to_json, :message_pack, 'external_apps')
+
+    Mc.distributed_put('external_publishers', external_publishers, false, 1.day)
+  end
+
+  def self.store_in_s3(collection, format, key)
     bucket = S3.bucket(BucketNames::OFFER_DATA)
-    bucket.objects[key].write(Marshal.dump(external_publishers))
-    Mc.distributed_put(key, external_publishers, false, 1.day)
+    case format
+      when :marshal
+        bucket.objects[key].write(Marshal.dump(collection))
+      when :message_pack
+        bucket.objects[key].write(MessagePack.pack(collection), :acl => :authenticated_read)
+    end
   end
 
   def self.populate_potential
