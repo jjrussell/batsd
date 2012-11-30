@@ -499,6 +499,63 @@ class StatsAggregation
     end
   end
 
+  def self.aggregate_global_stats(date = nil, aggregate_daily = false)
+    date ||= Time.zone.now - 70.minutes
+    global_stat = Stats.new(:key => "global.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_ios_stat = Stats.new(:key => "global-ios.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_android_stat = Stats.new(:key => "global-android.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_joint_stat = Stats.new(:key => "global-joint.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+    global_windows_stat = Stats.new(:key => "global-windows.#{date.strftime('%Y-%m-%d')}", :load_from_memcache => false)
+
+    global_stats = [global_stat, global_ios_stat, global_android_stat, global_windows_stat, global_joint_stat]
+
+    global_stats.each do |stat|
+      stat.parsed_values.clear
+      stat.parsed_countries.clear
+    end
+
+    partner_counter = 1
+    Partner.find_each do |partner|
+      puts "#{Time.zone.now}: [#{partner_counter}] Processing partner- #{partner.name} (#{partner.id})..."
+      partner_stat = Stats.new(:key => "partner.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_ios_stat = Stats.new(:key => "partner-ios.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_android_stat = Stats.new(:key => "partner-android.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_joint_stat = Stats.new(:key => "partner-joint.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+      partner_windows_stat = Stats.new(:key => "partner-windows.#{date.strftime('%Y-%m-%d')}.#{partner.id}", :load_from_memcache => false)
+
+      puts "#{Time.zone.now}: Summing stats..."
+      partner_stat.parsed_values.each do |stat, values|
+        global_stat.parsed_values[stat] = sum_arrays(global_stat.get_hourly_count(stat), values)
+        global_ios_stat.parsed_values[stat] = sum_arrays(global_ios_stat.get_hourly_count(stat), partner_ios_stat.get_hourly_count(stat))
+        global_android_stat.parsed_values[stat] = sum_arrays(global_android_stat.get_hourly_count(stat), partner_android_stat.get_hourly_count(stat))
+        global_joint_stat.parsed_values[stat] = sum_arrays(global_joint_stat.get_hourly_count(stat), partner_joint_stat.get_hourly_count(stat))
+        global_windows_stat.parsed_values[stat] = sum_arrays(global_windows_stat.get_hourly_count(stat), partner_windows_stat.get_hourly_count(stat))
+      end
+
+      puts "#{Time.zone.now}: Summing country stats..."
+      partner_stat.parsed_countries.each do |stat, values|
+        global_stat.parsed_countries[stat] = sum_arrays(global_stat.get_hourly_count(['countries', stat]), values)
+        global_ios_stat.parsed_countries[stat] = sum_arrays(global_ios_stat.get_hourly_count(['countries', stat]), partner_ios_stat.get_hourly_count(['countries', stat]))
+        global_android_stat.parsed_countries[stat] = sum_arrays(global_android_stat.get_hourly_count(['countries', stat]), partner_android_stat.get_hourly_count(['countries', stat]))
+        global_joint_stat.parsed_countries[stat] = sum_arrays(global_joint_stat.get_hourly_count(['countries', stat]), partner_joint_stat.get_hourly_count(['countries', stat]))
+        global_windows_stat.parsed_countries[stat] = sum_arrays(global_windows_stat.get_hourly_count(['countries', stat]), partner_windows_stat.get_hourly_count(['countries', stat]))
+      end
+
+      partner_counter += 1
+    end
+
+    global_stats.each do |stat|
+      puts "#{Time.zone.now}: Saving global stat key = #{stat.key}..."
+      stat.save
+    end
+    if aggregate_daily
+      global_stats.each do |stat|
+        puts "#{Time.zone.now}: Updating global daily stats for stat key = #{stat.key}..."
+        stat.update_daily_stat
+      end
+    end
+  end
+
   def self.sum_arrays(array1, array2)
     array1.zip(array2).map { |pair| pair[0] + pair[1] }
   end
