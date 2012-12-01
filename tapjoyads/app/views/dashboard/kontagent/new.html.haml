@@ -33,7 +33,7 @@
   = f.submit "Request the Kontagent Partner Edition"
 
 %h3 Notes
-- if current_user.current_partner_id
+- if current_user && current_user.current_partner_id
   %ul
     %li= "Partner #{current_partner.name} will be provisioned with a Kontagent account (exists remotely? #{KontagentHelpers.exists?(current_partner)})"
     %li= "User #{current_user.email} will be provisioned with a Kontagent user (exists remotely? #{KontagentHelpers.exists?(current_user)})"
@@ -45,4 +45,4 @@
             %li= "Application '#{app.name}' (exists remotely? #{KontagentHelpers.exists?(app)})"
 - else
   %b Warning
-  %p You must have an active current partner to continue.
+  %p You must have an active current user and partner to continue.
