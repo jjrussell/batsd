@@ -547,13 +547,11 @@ class Partner < ActiveRecord::Base
 
   def update_offers
     return true unless (premier_discount_changed? || reseller_id_changed? || discount_all_offer_types_changed?)
-    if premier_discount_changed? || discount_all_offer_types_changed?
-      offers.each { |o| o.update_payment(true) }
+    offers.each do |o|
+      o.update_payment(true) if premier_discount_changed? || discount_all_offer_types_changed?
+      o.set_reseller_from_partner if reseller_id_changed?
+      o.save!
     end
-    if reseller_id_changed?
-      offers.each(&:set_reseller_from_partner)
-    end
-    offers.each(&:save!)
   end
 
   def recache_currencies
