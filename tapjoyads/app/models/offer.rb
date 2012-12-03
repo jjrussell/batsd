@@ -405,7 +405,8 @@ class Offer < ActiveRecord::Base
 
   # true if this is the main offer
   def main?
-    @is_main.nil? ? @is_main = self == self.main : @is_main
+    return @is_main unless @is_main.nil?
+    @is_main = (self == self.main)
   end
 
   # ActiveRecord::Relation for related non-main offers that share the same "featured" and "rewarded" status as this one

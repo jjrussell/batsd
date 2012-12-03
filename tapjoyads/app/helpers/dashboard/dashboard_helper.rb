@@ -34,4 +34,20 @@ module Dashboard::DashboardHelper
     scheduled_selected?(offer) ? 'selected' : ''
   end
 
+  def edit_offer_link_for(offer, enabled_list=true)
+    if offer.main?
+      link_to('Main' + main_suffix(offer, enabled_list), edit_app_offer_path(@app, offer))
+    else
+      link_to(offer.name_suffix, edit_app_offer_path(@app, offer))
+    end
+  end
+
+  def main_suffix(offer, enabled_list=true)
+    if !offer.tapjoy_enabled? && enabled_list
+      ' [TAPJOY DISABLED]'
+    else
+      ''
+    end
+  end
+
 end
