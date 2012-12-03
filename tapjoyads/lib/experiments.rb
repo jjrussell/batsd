@@ -23,7 +23,7 @@ class Experiments
   EXPERIMENTS[:auditioning_test] = self.get_audition_exp_hash
   EXPERIMENTS[:offer_instructions_test] = self.get_offer_instructions_exp_hash
 
-  RANDOMIZER = 'b1396e852a6e87c659967574602b2985'
+  RANDOMIZER = '0c837abcb4a44b578082701cbdcc9e26'
 
   def self.choose(udid, options = {})
     if udid.present?
