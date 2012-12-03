@@ -13,7 +13,7 @@ class StatuszController < ApplicationController
       :daily_app_stats     => (Sqs.queue(QueueNames::APP_STATS_DAILY).visible_messages < 1_000),
       :conversion_tracking => (Sqs.queue(QueueNames::CONVERSION_TRACKING).visible_messages < 10_000),
       :create_conversions  => (Sqs.queue(QueueNames::CREATE_CONVERSIONS).visible_messages < 10_000),
-      :failed_sdb_saves    => (Sqs.queue(QueueNames::FAILED_SDB_SAVES).visible_messages < 100_000),
+      :failed_sdb_saves    => (Sqs.queue(QueueNames::FAILED_SDB_SAVES).visible_messages < 200_000),
       :send_currency       => (Sqs.queue(QueueNames::SEND_CURRENCY).visible_messages < 10_000),
     }.reject { |queue, under| under }
 
