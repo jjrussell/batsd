@@ -9,12 +9,12 @@ class StatuszController < ApplicationController
 
   def queue_check
     queues = {
-      :hourly_app_stats    => (Sqs.queue(QueueNames::APP_STATS_HOURLY).visible_messages < 1000),
-      :daily_app_stats     => (Sqs.queue(QueueNames::APP_STATS_DAILY).visible_messages < 1000),
-      :conversion_tracking => (Sqs.queue(QueueNames::CONVERSION_TRACKING).visible_messages < 1000),
-      :create_conversions  => (Sqs.queue(QueueNames::CREATE_CONVERSIONS).visible_messages < 1000),
-      :failed_sdb_saves    => (Sqs.queue(QueueNames::FAILED_SDB_SAVES).visible_messages < 2000),
-      :send_currency       => (Sqs.queue(QueueNames::SEND_CURRENCY).visible_messages < 5000),
+      :hourly_app_stats    => (Sqs.queue(QueueNames::APP_STATS_HOURLY).visible_messages < 2_000),
+      :daily_app_stats     => (Sqs.queue(QueueNames::APP_STATS_DAILY).visible_messages < 1_000),
+      :conversion_tracking => (Sqs.queue(QueueNames::CONVERSION_TRACKING).visible_messages < 10_000),
+      :create_conversions  => (Sqs.queue(QueueNames::CREATE_CONVERSIONS).visible_messages < 10_000),
+      #:failed_sdb_saves    => (Sqs.queue(QueueNames::FAILED_SDB_SAVES).visible_messages < 200_000),
+      :send_currency       => (Sqs.queue(QueueNames::SEND_CURRENCY).visible_messages < 10_000),
     }.reject { |queue, under| under }
 
     render :json => queues, :status => queues.empty? ? :ok : :expectation_failed
