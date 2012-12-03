@@ -91,17 +91,7 @@ class OptimizedOfferList
       cached_offer_list.cached_offer_type = 'optimized'
       cached_offer_list.source = key
       cached_offer_list.save
-
-      web_request = WebRequest.new
-      web_request.path = 'cached_offer_list'
-      web_request.generated_at = cached_offer_list.generated_at
-      web_request.cached_at = cached_offer_list.cached_at
-      web_request.cached_offer_list_type = cached_offer_list.cached_offer_type
-      web_request.s3_offer_list_id = cached_offer_list.id
-      web_request.cached_offer_list_id = cached_offer_list.id
-      web_request.source = cached_offer_list.source
-      web_request.memcached_key = cached_offer_list.memcached_key
-      web_request.save
+      WebRequest.log_cached_offer_list(cached_offer_list)
 
       Mc.distributed_put("#{cache_key}.#{group}", [], false, 1.day)
     end
