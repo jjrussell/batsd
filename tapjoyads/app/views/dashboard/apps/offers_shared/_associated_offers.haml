@@ -22,7 +22,7 @@
           - dataset.each do |offer|
             %tr{:class => [cycle('odd','even'), offer.user_enabled? ? 'enabled' : 'disabled'], :id => "offer_row_#{offer.id}" }
               %td= offer.name
-              %td= edit_offer_link_for(offer)
+              %td.suffix= edit_offer_link_for(offer)
               %td
                 .toggle-bg
                   %input{:type => "checkbox", :checked => offer.user_enabled?, :offer_id => offer.id, :url => toggle_app_offer_path(:id => offer.id, :app_id => @app.id) }
@@ -65,18 +65,23 @@
     });
 
     $('#associated_offers input').click( function(event) {
-      $(this).prop("disabled", true)
-      $(event.target).siblings().addClass('loading')
+      var row_id = "#offer_row_" + $(event.target).attr('offer_id');
+      var anchor = $(row_id + ' td.suffix').html();
+
+      $(this).prop("disabled", true);
+      $(row_id + ' td.suffix').html('<img src="/assets/images/colorbox/loading.gif" alt="loading" />');
+      $(event.target).siblings().addClass('loading');
 
       $.post($(this).attr('url'), {"user_enabled" : $(this).prop("checked")}, function(){
-        $("#offer_row_" + $(event.target).attr('offer_id')).toggleClass('disabled')
+        $(row_id).toggleClass('disabled')
       })
       .fail (function() {
         $(event.target).prop("checked", !$(event.target).prop("checked"))
       })
       .always (function () {
-        $(event.target).prop("disabled", false)
-        $(event.target).siblings().removeClass('loading')
+        $(event.target).prop("disabled", false);
+        $(row_id + ' td.suffix').html(anchor);
+        $(event.target).siblings().removeClass('loading');
       })
     })
 
@@ -161,6 +166,7 @@
       z-index: 2;
       zoom: 1;
       filter: alpha(opacity=0);
+      cursor: pointer;
     }
 
     .switch{
