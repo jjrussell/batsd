@@ -1,7 +1,4 @@
 class TemporaryDevice < SimpledbShardedResource
-  #Note the that domain name is "td" to save on bytes since device keys are in memory for Riak
-  mirror_configuration :riak_bucket_name => "td"
-
   self.num_domains = NUM_TEMPORARY_DEVICE_DOMAINS
 
   self.sdb_attr :apps, :type => :json, :default_value => {}

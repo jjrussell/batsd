@@ -1,8 +1,4 @@
 class Device < SimpledbShardedResource
-  include RiakMirror
-  #Note the that domain name is "d" to save on bytes since device keys are in memory for Riak
-  mirror_configuration :riak_bucket_name => "d"
-
   self.num_domains = NUM_DEVICES_DOMAINS
 
   attr_reader :parsed_apps, :is_temporary
