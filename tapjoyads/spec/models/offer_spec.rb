@@ -1971,4 +1971,32 @@ describe Offer do
       end
     end
   end
+
+  describe '#main?' do
+    let(:app)            { FactoryGirl.create(:app) }
+    let!(:primary_offer) { app.primary_offer }
+    let(:newer_offer)    do
+      Timecop.travel(1.day.from_now)
+      o = primary_offer.send(:create_clone,
+        :featured   => primary_offer.featured?,
+        :rewarded   => primary_offer.rewarded?
+      )
+      Timecop.return
+      o
+    end
+
+    it 'is true for an offer on an ad with no associated offers' do
+      primary_offer.should be_main
+    end
+
+    it 'is true for the original offer on an ad with associated offers' do
+      newer_offer
+      primary_offer.reload
+      primary_offer.should be_main
+    end
+
+    it 'is false for an associated offer' do
+      newer_offer.should_not be_main
+    end
+  end
 end

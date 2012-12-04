@@ -105,7 +105,6 @@ class Offer < ActiveRecord::Base
   attr_writer :auditioning
 
   has_many :advertiser_conversions, :class_name => 'Conversion', :foreign_key => :advertiser_offer_id
-  has_many :associated_offers, :class_name => 'Offer', :foreign_key => :item_id, :primary_key => 'item_id', :conditions => proc { ["id != ?",  id] }
   has_many :rank_boosts
   has_many :enable_offer_requests
   has_many :dependent_action_offers, :class_name => 'ActionOffer', :foreign_key => :prerequisite_offer_id
@@ -377,16 +376,52 @@ class Offer < ActiveRecord::Base
     end
   end
 
-  def tapjoy_enabled_associated_offers
-    filter_attribute('associated_offers', :tapjoy_enabled? => true, :rewarded? => rewarded?, :featured? => featured?)
+  # ActiveRecord::Relation for all Offers (excluding this one) with this offer's item ID
+  def associated_offers
+    o = Offer.scoped.table
+    Offer.where(:item_id => item_id).where(o[:id].not_eq(id))
   end
 
-  def tapjoy_disabled_associated_offers
-    filter_attribute('associated_offers', :tapjoy_enabled? => false, :rewarded? => rewarded?, :featured? => featured?)
+  # Offer that was the first to be created with this Offer's item_id, also matching the specified options
+  # Options:
+  #   * :featured : Boolean
+  #   * :rewarded : Boolean
+  def main_for(opts={})
+    raise ArgumentError unless opts.keys.include?(:featured) and opts.keys.include?(:rewarded)
+    Offer.where(
+      :item_id  => item_id,
+      :featured => opts[:featured],
+      :rewarded => opts[:rewarded]
+    ).order(:created_at).first
   end
 
-  def find_associated_offers
-    Offer.find(:all, :conditions => ["item_id = ? and id != ?", item_id, id])
+  # Offer that was the first to be created with this Offer's:
+  #   * item_id
+  #   * featured status
+  #   * rewarded status
+  def main
+    @main ||= main_for(:featured => featured?, :rewarded => rewarded?)
+  end
+
+  # true if this is the main offer
+  def main?
+    return @is_main unless @is_main.nil?
+    @is_main = (self == self.main)
+  end
+
+  # ActiveRecord::Relation for related non-main offers that share the same "featured" and "rewarded" status as this one
+  def filtered_associated_offers
+    associated_offers.where(:featured => featured?, :rewarded => rewarded?)
+  end
+
+  # ActiveRecord::Relation for filtered associated offers that are tapjoy enabled.
+  def tapjoy_enabled_filtered_associated_offers
+    filtered_associated_offers.where(:tapjoy_enabled => true)
+  end
+
+  # ActiveRecord::Relation for filtered associated offers thet are tapjoy disabled ("Deleted").
+  def tapjoy_disabled_filtered_associated_offers
+    filtered_associated_offers.where(:tapjoy_enabled => false)
   end
 
   def integrated?
@@ -1057,7 +1092,7 @@ class Offer < ActiveRecord::Base
 
   def update_tapjoy_sponsored_associated_offers
     if tapjoy_sponsored_changed?
-      find_associated_offers.each do |o|
+      associated_offers.each do |o|
         o.tapjoy_sponsored = tapjoy_sponsored
         o.save! if o.changed?
       end

@@ -135,9 +135,9 @@
 
 .clear
 
-%a#show_associated{:href => '#'} [#{@associated_offers.size} associated offers]
+%a#show_associated{:href => '#'} [#{@associated_offers.size} Associated offers]
 - unless @offer.item_type =~ /^(VideoOffer|DeeplinkOffer)$/
-  = link_to('[Create secondary offer]', new_statz_path(:id => @offer.id))
+  = link_to('[Create Associated offer]', new_statz_path(:id => @offer.id))
 #associated_list
   %h5 Associated offers:
   %ul
