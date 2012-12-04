@@ -129,37 +129,19 @@ shared_examples_for "a cache" do
   end
 
   it "compares and swaps" do
-
-    thread_list = []
-    expected_val = ''
-    memcache.compare_and_swap('foo', true) do |mc_val|
-      'a'
-    end
-
-    memcache.get('foo').should == 'a'
-
-    # Verify retries can occur up to 2 times
-    retries = 0
-    memcache.compare_and_swap('foo', true) do |mc_val|
-      if retries < 2
-        retries += 1;
-        memcache.compare_and_swap('foo', true) do |mc_val|
-          mc_val + 'a'
-        end
+    unless memcache == StatsCache
+      thread_list = []
+      expected_val = ''
+      memcache.compare_and_swap('foo', true) do |mc_val|
+        'a'
       end
 
-      mc_val + 'a'
-    end
+      memcache.get('foo').should == 'a'
 
-    retries.should == 2
-    memcache.get('foo').should == 'aaaa'
-
-    # Can't retry more than 2 times
-    memcache.put('foo', 'a')
-    lambda do
+      # Verify retries can occur up to 2 times
       retries = 0
       memcache.compare_and_swap('foo', true) do |mc_val|
-        if retries < 3
+        if retries < 2
           retries += 1;
           memcache.compare_and_swap('foo', true) do |mc_val|
             mc_val + 'a'
@@ -168,9 +150,28 @@ shared_examples_for "a cache" do
 
         mc_val + 'a'
       end
-    end.should raise_error(Memcached::ConnectionDataExists)
-    retries.should == 3
-    memcache.get('foo').should == 'aaaa'
+
+      retries.should == 2
+      memcache.get('foo').should == 'aaaa'
+
+      # Can't retry more than 2 times
+      memcache.put('foo', 'a')
+      lambda do
+        retries = 0
+        memcache.compare_and_swap('foo', true) do |mc_val|
+          if retries < 3
+            retries += 1;
+            memcache.compare_and_swap('foo', true) do |mc_val|
+              mc_val + 'a'
+            end
+          end
+
+          mc_val + 'a'
+        end
+      end.should raise_error(Memcached::ConnectionDataExists)
+      retries.should == 3
+      memcache.get('foo').should == 'aaaa'
+    end
   end
 end
 
