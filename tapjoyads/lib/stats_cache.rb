@@ -4,7 +4,6 @@ class StatsCache < Mc
 
   def self.reset_connection
     options = {
-      :support_cas      => true,
       :prefix_key       => RUN_MODE_PREFIX,
       :auto_eject_hosts => false,
       :tcp_nodelay      => true,
