@@ -4,7 +4,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :downcase_device_id, :only => [ :device_info, :update_device, :reset_device ]
+  before_filter :downcase_udid, :only => [ :device_info, :update_device, :reset_device ]
   before_filter :set_months, :only => [ :monthly_data, :partner_monthly_balance, :monthly_rev_share_report ]
   before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
@@ -180,13 +180,13 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def reset_device
-    if params[:device_id]
-      device_id = params[:device_id]
+    if params[:udid]
+      udid = params[:udid]
       clicks_deleted = 0
 
-      device = Device.find_by_device_id(params[:device_id])
+      device = Device.new(:key => udid)
       NUM_CLICK_DOMAINS.times do |i|
-        Click.select(:domain_name => "clicksV3_#{i}", :where => "itemName() like '#{device.key}.%'") do |click|
+        Click.select(:domain_name => "clicksV3_#{i}", :where => "itemName() like '#{udid}.%'") do |click|
           click.delete_all
           clicks_deleted += 1
         end
@@ -199,35 +199,34 @@ class Dashboard::ToolsController < Dashboard::DashboardController
 
   def device_info
     # these fields are copy-and-pasted into a lot, so let's trim whitespaces
-    [:device_id, :click_key, :email_address, :udid, :mac_address, :advertising_id].each do |param|
+    [:udid, :click_key, :email_address, :mac_address].each do |param|
       params[param].strip! unless params[param].nil?
     end
 
-    now = Time.zone.now
-
-    @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
-    @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
-
-    @start_date = now if @start_date > now
-    @end_date = now if @end_date > now
-
-    if params[:device_id].blank? && params[:click_key].present?
+    if params[:udid].blank? && params[:click_key].present?
       click = Click.find(params[:click_key])
-      params[:device_id] = click.tapjoy_device_id if click.present?
+      params[:udid] = click.udid if click.present?
     end
 
-    if params[:device_id].present?
-      device_id = params[:device_id].downcase.gsub(/:/,"")
-      @device = Device.find_by_device_id(device_id)
-
-      if @device.nil? || @device.is_new
-        flash.now[:error] = "Device with ID #{device_id} not found"
+    if params[:udid].present?
+      udid = params[:udid]
+      @device = Device.new(:key => udid)
+      if @device.is_new
+        flash.now[:error] = "Device with ID #{udid} not found"
         @device = nil
         return
       end
 
+      now = Time.zone.now
+
+      @start_date = params[:start_date].present? ? Time.parse(params[:start_date]) :  (now - Device::RECENT_CLICKS_RANGE)
+      @end_date = params[:end_date].present? ? Time.parse(params[:end_date]) : now
+
+      @start_date = now if @start_date > now
+      @end_date = now if @end_date > now
+
       conditions = [
-        "udid = '#{@device.udid}' or tapjoy_device_id = '#{@device.key}'",
+        "udid = '#{udid}'",
         "clicked_at > '#{@start_date.to_i}'",
         "clicked_at < '#{@end_date.to_i}'",
       ].join(' and ')
@@ -247,7 +246,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       @force_converted_count = 0
       @non_rewarded_count = 0
       @rewards = {}
-      @support_requests_created = SupportRequest.count(:where => "tapjoy_device_id = '#{@device.key}' or udid = '#{@device.udid}'")
+      @support_requests_created = SupportRequest.count(:where => "udid = '#{udid}'")
       click_app_ids = nil, []
       @clicks.each do |click|
         next if click.tapjoy_games_invitation_primary_click?
@@ -265,7 +264,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         end
         @jailbroken_count += 1 if click.type =~ /install_jailbroken/
         if click.block_reason?
-          if click.block_reason =~ /TooManyTapjoyDeviceIDsForPublisherUserId|TooManyUdidsForPublisherUserId/
+          if click.block_reason =~ /TooManyUdidsForPublisherUserId/
             @blocked_count += 1
           else
             @not_rewarded_count += 1
@@ -285,46 +284,29 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       end.sort_by(&:first).reverse
 
     elsif params[:email_address].present?
-      #TODO(isingh) - Fix this
-      @all_device_ids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:tapjoy_device_id)
+      @all_udids = SupportRequest.find_all_by_email_address(params[:email_address]).map(&:udid)
       gamer = Gamer.find_by_email(params[:email_address])
-      @all_device_ids += gamer.gamer_devices.map(&:device_id) if gamer.present?
-      @all_device_ids.uniq!
-      if @all_device_ids.empty?
-        flash.now[:error] = "No Device IDs associated with the email address: #{params[:email_address]}"
-      elsif @all_device_ids.size == 1
-        redirect_to :action => :device_info, :device_id => @all_device_ids.first, :email_address => params[:email_address]
+      @all_udids += gamer.gamer_devices.map(&:device_id) if gamer.present?
+      @all_udids.uniq!
+      if @all_udids.empty?
+        flash.now[:error] = "No UDIDs associated with the email address: #{params[:email_address]}"
+      elsif @all_udids.size == 1
+        redirect_to :action => :device_info, :udid => @all_udids.first, :email_address => params[:email_address]
       end
 
     elsif params[:mac_address].present?
       mac_address = params[:mac_address].downcase.gsub(/:/,"")
       device_identifier = DeviceIdentifier.new(:key => mac_address)
-      if device_identifier.present?
-        redirect_to :action => :device_info, :device_id => device_identifier.device_id, :mac_address => params[:mac_address]
+      if device_identifier.udid?
+        redirect_to :action => :device_info, :udid => device_identifier.udid, :mac_address => params[:mac_address]
       else
-        flash.now[:error] = "No Device IDs associated with the MAC address: #{params[:mac_address]}"
-      end
-
-    elsif params[:advertising_id].present?
-      device_identifier = DeviceIdentifier.new(:key => params[:advertising_id])
-      if device_identifier.present?
-        redirect_to :action => :device_info, :device_id => device_identifier.device_id, :advertising_id => params[:advertising_id]
-      else
-        flash.now[:error] = "No Device IDs associated with the Advertising ID: #{params[:advertising_id]}"
-      end
-
-    elsif params[:udid].present?
-      device_identifier = Device.find_by_device_id(params[:udid])
-      if device_identifier.present?
-        redirect_to :action => :device_info, :device_id => (device_identifier.has_tapjoy_id? ? device_identifier.key : device_identifier.udid), :udid => params[:udid]
-      else
-        flash.now[:error] = "No Device IDs associated with the UDID: #{params[:udid]}"
+        flash.now[:error] = "No UDIDs associated with the MAC address: #{params[:mac_address]}"
       end
     end
   end
 
   def update_device
-    device = Device.new :key => params[:device_id]
+    device = Device.new :key => params[:udid]
     log_activity(device)
     device.internal_notes = params[:internal_notes]
     opted_out_types = params[:opt_out_offer_types] || []
@@ -347,18 +329,18 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     device.save
     device.unsuspend! if params[:unsuspend] == '1'
     flash[:notice] = 'Device successfully updated.'
-    redirect_to :action => :device_info, :device_id => params[:device_id]
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 
   def recreate_device_identifiers
-    device = Device.find_by_device_id(params[:device_id])
+    device = Device.find(params[:udid])
     if device.nil?
-      flash[:error] = "Unable to find a device with Device ID: #{params[:device_id]}"
+      flash[:error] = "Unable to find a device with UDID: #{params[:udid]}"
     else
       Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => device.key}.to_json)
       flash[:notice] = "The identifiers for the device #{device.key} should be recreated soon."
     end
-    redirect_to :action => :device_info, :device_id => params[:device_id]
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 
   def managed_partner_ids
@@ -396,7 +378,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       end
       flash[:error] = "Publisher ID #{publisher_id} not found for Click #{click.id}"
     end
-    redirect_to device_info_tools_path(:device_id => click.tapjoy_device_id)
+    redirect_to device_info_tools_path(:udid => click.udid)
   end
 
   def sanitize_users
@@ -474,20 +456,20 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
     return unless verify_records([ @publisher_app ])
 
-    if params[:device_id]
-      device = Device.find_by_device_id(params[:device_id])
+    if params[:udid].present?
+      device = Device.new(:key => params[:udid])
       @publisher_user_id = device.publisher_user_ids[params[:publisher_app_id]]
     end
 
     @amount = params[:currency_reward] if params[:currency_reward].present?
 
-    support_request = SupportRequest.find_support_request(params[:udid], params[:device_id], params[:publisher_app_id])
+    support_request = SupportRequest.find_by_udid_and_app_id(params[:udid], params[:publisher_app_id])
     if support_request.nil?
       click = Click.find(params[:click_id]) if params[:click_id].present?
       click ||= Click.find_by_udid_and_publisher_app_id(params[:udid], params[:publisher_app_id])
       if click.nil?
         flash[:error] = "Support request not found. The user must submit a support request for the app in order to award them currency."
-        redirect_to :action => :device_info, :device_id => params[:device_id] and return
+        redirect_to :action => :device_info, :udid => params[:udid] and return
       else
         @publisher_user_id ||= click.publisher_user_id
       end
@@ -499,7 +481,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   def update_award_currencies
     if params[:amount].nil? || params[:amount].empty?
       flash[:error] = "Must provide an amount."
-      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid => params[:udid], :device_id => params[:device_id]
+      redirect_to :action => :award_currencies, :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid => params[:udid]
       return
     end
     reward_key = nil
@@ -510,7 +492,6 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     customer_support_reward = Reward.new(:key => reward_key)
     customer_support_reward.type                       =  'customer support'
     customer_support_reward.udid                       =  params[:udid]
-    customer_support_reward.tapjoy_device_id           =  params[:device_id]
     customer_support_reward.publisher_user_id          =  params[:publisher_user_id]
     customer_support_reward.currency_id                =  params[:currency_id]
     customer_support_reward.publisher_app_id           =  params[:publisher_app_id]
@@ -527,7 +508,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     Sqs.send_message(QueueNames::SEND_CURRENCY, customer_support_reward.key)
 
     flash[:notice] = " Successfully awarded #{params[:amount]} currency. "
-    redirect_to :action => :device_info, :device_id => params[:device_id]
+    redirect_to :action => :device_info, :udid => params[:udid]
   end
 
   def view_pub_user_account
@@ -538,7 +519,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     end
 
     @devices = []
-    @pub_user.tapjoy_device_ids.each { |device_id| @devices << Device.find_by_device_id(device_id) }
+    @pub_user.udids.each { |udid| @devices << Device.new(:key => udid) }
     @devices.sort! do |a,b|
       a_last = a.last_run_time(@publisher_app.id) || Time.at(0)
       b_last = b.last_run_time(@publisher_app.id) || Time.at(0)
@@ -547,7 +528,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   end
 
   def detach_pub_user_account
-    if @pub_user.remove!(params[:device_id])
+    if @pub_user.remove!(params[:udid])
       flash[:notice] = "Successfully detached device from user account."
     else
       flash[:error] = "Failed to detach device."
@@ -678,8 +659,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
     str.to_s.gsub(/\n|\r/, ';').gsub(",", ' ')
   end
 
-  def downcase_device_id
-    downcase_param(:device_id)
+  def downcase_udid
+    downcase_param(:udid)
   end
 
   def get_period_str(period)

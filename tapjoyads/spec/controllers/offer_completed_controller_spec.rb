@@ -5,7 +5,7 @@ describe OfferCompletedController do
     @click = mock()
     @click.stub(:id).and_return('test.another')
     @click.stub(:is_new).and_return(false)
-    @click.stub(:tapjoy_device_id).and_return('test')
+    @click.stub(:udid).and_return('test')
     @click.stub(:advertiser_app_id).and_return('another')
     @click.stub(:installed_at).and_return(nil)
     @click.stub(:manually_resolved_at?).and_return(false)
@@ -26,7 +26,7 @@ describe OfferCompletedController do
       before :each do
         Click.stub(:new).with(:key => @click.id).and_return(@click)
         Offer.stub(:find_in_cache).and_return(@offer)
-        Device.stub(:new).with(:key => @click.tapjoy_device_id).and_return(@device)
+        Device.stub(:new).with(:key => @click.udid).and_return(@device)
         @device.stub(:has_app?).with(@click.advertiser_app_id).and_return(false)
         @parameters = {:click_key => @click.id}
       end
@@ -79,7 +79,7 @@ describe OfferCompletedController do
       @voucher = FactoryGirl.create(:voucher)
       Click.stub(:new).with(:key => @voucher.click_key).and_return(@click)
       Offer.stub(:find_in_cache).and_return(@offer)
-      Device.stub(:new).with(:key => @click.tapjoy_device_id).and_return(@device)
+      Device.stub(:new).with(:key => @click.udid).and_return(@device)
       @device.stub(:has_app?).with(@click.advertiser_app_id).and_return(false)
       @parameters = { :voucher => { :id => @voucher.id, :status => 'redeemed' }}
       Voucher.stub(:find).and_return(@voucher)

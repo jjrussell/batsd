@@ -142,7 +142,7 @@ class Offer < ActiveRecord::Base
   validates_numericality_of :show_rate, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 1
   validates_numericality_of :payment_range_low, :payment_range_high, :only_integer => true, :allow_nil => true, :greater_than => 0
   validates_inclusion_of :pay_per_click, :in => PAY_PER_CLICK_TYPES.map {|label, value| value}
-  validates_inclusion_of :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :requires_advertising_id, :in => [ true, false ]
+  validates_inclusion_of :user_enabled, :tapjoy_enabled, :allow_negative_balance, :self_promote_only, :featured, :multi_complete, :rewarded, :cookie_tracking, :requires_udid, :requires_mac_address, :in => [ true, false ]
   validates_inclusion_of :item_type, :in => ALL_OFFER_TYPES
   validates_inclusion_of :direct_pay, :allow_blank => true, :allow_nil => true, :in => DIRECT_PAY_PROVIDERS
   validates_inclusion_of :daily_cap_type, :allow_blank => true, :allow_nil => true, :in => [ :installs, :budget ]

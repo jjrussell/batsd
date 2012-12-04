@@ -2,7 +2,7 @@
 
 - if has_permissions_for_one_of?(:account_mgr, :customer_service, :admin)
   %h1= @page_title
-  = form_tag({ :action => 'update_award_currencies', :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :device_id => params[:device_id], :udid => params[:udid], :amount => @amount, :click_id => params[:click_id] }, { :class => 'tjform' }) do
+  = form_tag({ :action => 'update_award_currencies', :publisher_app_id => params[:publisher_app_id], :currency_id => params[:currency_id], :udid => params[:udid], :amount => @amount, :click_id => params[:click_id] }, { :class => 'tjform' }) do
     %table
       %tbody
         %tr
@@ -13,10 +13,6 @@
           %td= @publisher_app.id
         %tr
           %th Device ID
-          %td
-            = params[:tapjoy_device_id]
-        %tr
-          %th UDID
           %td
             = params[:udid]
         %tr

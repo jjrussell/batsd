@@ -15,8 +15,6 @@ describe AdshownController do
 
     context 'valid params' do
       before :each do
-        @device = FactoryGirl.create(:device)
-        Device.stub(:find).and_return(@device)
         @params = {
             :app_id             => 'test_id',
             :udid               => 'stuff',

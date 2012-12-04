@@ -396,14 +396,10 @@ module Offer::Rejecting
   end
 
   def udid_required_reject?(device)
-    device && requires_udid? && device.udid.blank? && !device.udid.udid?
+    device && requires_udid? && !device.id.udid?
   end
 
   def mac_address_required_reject?(device)
     device && requires_mac_address? && device.mac_address.blank?
-  end
-
-  def advertising_id_required_reject?(device)
-    device && requires_advertising_id? && device.advertising_id.blank?
   end
 end

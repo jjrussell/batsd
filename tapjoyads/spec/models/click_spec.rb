@@ -22,7 +22,7 @@ describe Click do
       end
 
       it "creates a connect call url" do
-        expected = "#{API_URL}/connect?app_id=#{@click.advertiser_app_id}&udid=#{@click.udid}&tapjoy_device_id=#{@click.tapjoy_device_id}&consistent=true"
+        expected = "#{API_URL}/connect?app_id=#{@click.advertiser_app_id}&udid=#{@click.udid}&consistent=true"
         @click.send(:url_to_resolve).should == expected
       end
     end

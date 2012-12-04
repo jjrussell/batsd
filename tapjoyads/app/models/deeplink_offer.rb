@@ -38,7 +38,7 @@ class DeeplinkOffer < ActiveRecord::Base
     offer.id = id
     offer.partner = partner
     offer.name = name
-    offer.url = "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&tapjoy_device_id=TAPJOY_DEVICE_ID"
+    offer.url = "#{WEBSITE_URL}/earn?eid=#{ObjectEncryptor.encrypt(currency_id)}&udid=TAPJOY_UDID"
     offer.price = 0
     offer.bid = 1
     offer.rewarded = true
