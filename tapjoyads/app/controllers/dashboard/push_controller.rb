@@ -27,17 +27,21 @@ private
   def notification_app
     NotificationsClient::App.new({
       :app_id => @app.id,
-      :app => {:secret_key => @app.secret_key}
+      :app => {
+        :secret_key => @app.secret_key,
+        :platform => @app.platform,
+        :name => @app.name
+      }
     })
   end
 
   def setup
     @app = find_app(params[:app_id])
-    @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?platform=#{@app.platform}&signature=#{signature}&signature_method=hmac_sha256"
+    @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?signature=#{signature}&signature_method=hmac_sha256"
   end
 
   def signature
-    Signage::Signature.new('hmac_sha256', Rails.application.config.notifications_secret).sign({:id => @app.id, :platform => @app.platform})
+    Signage::Signature.new('hmac_sha256', Rails.application.config.notifications_secret).sign({:id => @app.id})
   end
 
   def notifications_url_base
