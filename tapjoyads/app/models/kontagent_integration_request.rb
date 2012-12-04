@@ -26,7 +26,8 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   acts_as_approvable :on => :create
 
   def self.pending
-    self.all.reject { |integration_request| not integration_request.pending? }
+    approvals_table = Approval.arel_table
+    self.joins(:approvals).where(approvals_table[:state].eq 0).all
   end
 
   def after_approve(approval)
