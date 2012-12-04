@@ -567,7 +567,7 @@ class Appstats
         24.times do |i|
           time = date + i.hours
           if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
-            counts[i] = Mc.get_count(Stats.get_memcache_count_key(['virtual_goods', vg_key], app_id, time))
+            counts[i] = StatsCache.get_count(Stats.get_memcache_count_key(['virtual_goods', vg_key], app_id, time))
           end
         end
       end
@@ -587,7 +587,7 @@ class Appstats
         24.times do |i|
           time = date + i.hours
           if counts[i] == 0 && time <= @now && time >= (@now - cache_hours.hours)
-            counts[i] = Mc.get_count(Stats.get_memcache_count_key(stat_name, app_id, time))
+            counts[i] = StatsCache.get_count(Stats.get_memcache_count_key(stat_name, app_id, time))
           end
         end
       end

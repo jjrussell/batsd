@@ -65,6 +65,9 @@ CACHE_SERVERS = {}
 CACHE_SERVERS[:analytics_logger] = [
   'rabbit-dedupe.tapjoy.net'
 ]
+CACHE_SERVERS[:stats] = [
+  'localhost:11210' # couchbase stats cluster
+]
 MEMCACHE_SERVERS = [
   'localhost:11210' # couchbase stats cluster
 ]

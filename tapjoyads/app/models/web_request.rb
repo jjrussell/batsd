@@ -285,7 +285,7 @@ class WebRequest < AnalyticsLogger::Message
     segment_stat = Stats.get_segment_stat(stat_name_or_path, store_name)
     keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
     keys.each do |mc_key|
-      Mc.increment_count(mc_key, false, 1.day)
+      StatsCache.increment_count(mc_key, false, 1.day)
     end
   end
 

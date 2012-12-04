@@ -3,6 +3,10 @@ require 'spec_helper'
 shared_examples_for "a cache" do
   let(:memcache) { described_class }
 
+  before(:each) do
+    memcache.flush('totally_serious')
+  end
+
   describe '.get' do
     context 'for a non-existant type' do
       it 'raises a NameError when loading the constant' do
@@ -175,5 +179,9 @@ describe Mc do
 end
 
 describe SimpledbCache do
+  it_behaves_like "a cache"
+end
+
+describe StatsCache do
   it_behaves_like "a cache"
 end
