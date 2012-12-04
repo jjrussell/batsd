@@ -194,17 +194,19 @@ describe Job::QueueSendCurrencyController do
 
     it 'creates a web request' do
       @mock_response.stub(:status).and_return(20)
-      @web_request = WebRequest.new
-      WebRequest.stub(:new).and_return(@web_request)
-      get(:run_job, :message => @reward.id)
+      Timecop.freeze
 
-      @web_request.path.should == ['send_currency_attempt']
-      @web_request.http_status_code.should == 20
-      @web_request.callback_url.should == 'http://www.whatwhat.com?snuid=bill&currency=100&mac_address='
-      @web_request.reward_id.should == @reward.id
-      @web_request.publisher_app_id.should == @reward.publisher_app_id
-      @web_request.currency_id.should == @reward.currency_id
-      @web_request.amount.should == @reward.currency_reward
+      WebRequest.any_instance.should_receive(:put_values).with('send_currency_attempt',
+        {:callback_url => "http://www.whatwhat.com?snuid=bill&currency=100&mac_address=",
+        :http_status_code => 20,
+        :http_response_time => 0.0,
+        :reward_id => @reward.id,
+        :publisher_app_id => @reward.publisher_app_id,
+        :publisher_app_id => @reward.publisher_app_id,
+        :currency_id => @reward.currency_id,
+        :amount => @reward.currency_reward})
+
+      get(:run_job, :message => @reward.id)
     end
 
     it 'should not reward twice' do

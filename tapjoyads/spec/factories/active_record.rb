@@ -158,6 +158,7 @@ FactoryGirl.define do
     sequence(:name) { |i| "Currency #{i}" }
     callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
     conversion_rate 100
+    message_enabled false
   end
 
   factory :unmanaged_currency, :parent => :currency do

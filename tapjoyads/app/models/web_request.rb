@@ -189,71 +189,21 @@ class WebRequest < AnalyticsLogger::Message
     web_request.save
   end
 
-  def put_values(path, params, ip_address, geoip_data, user_agent)
+  def put_values(path, params, ip_address = nil, geoip_data = nil, user_agent = nil)
+    columns = WebRequest.attributes.keys
+    params.keys.each { |key| self.send("#{key}=", params[key]) if columns.include?(key.to_sym) } unless params.blank?
+    unless geoip_data.blank?
+      geoip_data.keys.each { |key| self.send("geoip_#{key}=", geoip_data[key]) if columns.include?("geoip_#{key}".to_sym) }
+      self.country            = geoip_data[:primary_country]
+      self.geoip_latitude     = geoip_data[:lat]
+      self.geoip_longitude    = geoip_data[:long]
+    end
     self.path                 = path
     self.ip_address           = ip_address
     self.user_agent           = user_agent
-    self.campaign_id          = params[:campaign_id]
-    self.app_id               = params[:app_id]
-    self.udid                 = params[:udid]
-    self.mac_address          = params[:mac_address]
-    self.sha2_udid            = params[:sha2_udid]
-    self.sha1_udid            = params[:sha1_udid]
-    self.sha1_mac_address     = params[:sha1_mac_address]
-    self.android_id           = params[:android_id]
-    self.idfa                 = params[:idfa]
-    self.open_udid            = params[:open_udid]
-    self.open_udid_count      = params[:open_udid_count]
-    self.udid_via_lookup      = params[:udid_via_lookup]
-    self.udid_is_temporary    = params[:udid_is_temporary]
-    self.currency_id          = params[:currency_id]
-    self.app_version          = params[:app_version]
-    self.device_os_version    = params[:device_os_version] || params[:os_version]
-    self.device_type          = params[:device_type]
-    self.device_name          = params[:device_name]
-    self.library_version      = params[:library_version]
-    self.offer_id             = params[:offer_id]
-    self.publisher_app_id     = params[:publisher_app_id]
-    self.advertiser_app_id    = params[:advertiser_app_id]
-    self.displayer_app_id     = params[:displayer_app_id]
-    self.device_ip            = params[:device_ip]
-    self.type                 = params[:type] if params[:type].present?
-    self.publisher_user_id    = params[:publisher_user_id]
-    self.virtual_good_id      = params[:virtual_good_id]
-    self.source               = params[:source]
-    self.exp                  = params[:exp]
+    self.device_os_version    = params[:os_version] if self.device_os_version.blank?
     self.language             = params[:language_code]
-    self.transaction_id       = params[:transaction_id]
-    self.tap_points           = params[:tap_points]
-    self.screen_density       = params[:screen_density]
-    self.screen_layout_size   = params[:screen_layout_size]
-    self.carrier_name         = params[:carrier_name]
-    self.allows_voip          = params[:allows_voip]
-    self.carrier_country_code = params[:carrier_country_code]
-    self.mobile_country_code  = params[:mobile_country_code]
-    self.mobile_network_code  = params[:mobile_network_code]
-    self.country_code         = params[:country_code]
-    self.country              = geoip_data[:primary_country]
-    self.geoip_country        = geoip_data[:country]
-    self.geoip_continent      = geoip_data[:continent]
-    self.geoip_region         = geoip_data[:region]
-    self.geoip_city           = geoip_data[:city]
-    self.geoip_postal_code    = geoip_data[:postal_code]
-    self.geoip_latitude       = geoip_data[:lat]
-    self.geoip_longitude      = geoip_data[:long]
-    self.geoip_area_code      = geoip_data[:area_code]
-    self.geoip_dma_code       = geoip_data[:dma_code]
-    self.sdk_type             = params[:sdk_type]
-    self.plugin               = params[:plugin]
-    self.store_name           = params[:store_name]
-    self.connection_type      = params[:connection_type]
-    self.date_of_birth        = params[:date_of_birth]
-    self.format               = params[:format]
-    self.impression_id        = params[:impression_id]
-    self.raw_url              = params[:raw_url]
-    self.controller           = params[:controller]
     self.controller_action    = params[:action]
-    self.offerwall_rank       = params[:offerwall_rank]
   end
 
   def save
