@@ -7,7 +7,7 @@ GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
 # This basically makes it work with dev systems that only have the regular
 # .dat file.
 geoip_tag = (GEOIP_VERSION == '' ? '' : '-')
-GEOIP = Geoproxy.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
+#GEOIP = Geoproxy.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2', '67.164.98.72', '67.180.48.106'])
 BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26bcea38cd6f73b6439a1398ead513a', #UDID and SHA2 of that UDID in pairs.
                         '012345678901234', 'd245de8f862b8f166024c1c4e1a0ce41ec03c33dd9cd2d203487e8cef4b5a061',

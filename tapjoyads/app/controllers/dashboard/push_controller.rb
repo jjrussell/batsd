@@ -27,7 +27,11 @@ private
   def notification_app
     NotificationsClient::App.new({
       :app_id => @app.id,
-      :app => {:secret_key => @app.secret_key}
+      :app => {
+        :secret_key => @app.secret_key,
+        :platform => @app.platform,
+        :name => @app.name
+      }
     })
   end
 
