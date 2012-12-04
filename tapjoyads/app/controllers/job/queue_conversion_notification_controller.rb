@@ -1,4 +1,5 @@
 class Job::QueueConversionNotificationsController < Job::SqsReaderController
+include ActionView::Helpers::TextHelper
 
   def initialize
     super QueueNames::CONVERSION_NOTIFICATIONS
@@ -44,9 +45,9 @@ private
     case @reward.offer.item_type
     when "App"
       #PPI
-      i18n_message("You earned #{currency.name} by downloading #{advertiser_app.name}")
+      i18n_message("You earned #{pluralize(@reward.currency_reward, currency.name)} by downloading #{advertiser_app.name}")
     else
-      i18n_message("Your #{currency.name} in #{publisher_app.name} is available!")
+      i18n_message("Your #{pluralize(@reward.currency_reward, currency.name)} in #{publisher_app.name} are available!")
     end
   end
 

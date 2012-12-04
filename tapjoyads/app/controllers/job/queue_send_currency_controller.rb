@@ -83,6 +83,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
           point_purchases.points = point_purchases.points + reward.currency_reward
         end
         reward.send_currency_status = 'OK'
+        send_notification(reward)
       else
         params[:callback_url] = callback_url
           if Rails.env.production? || Rails.env.test?
@@ -108,6 +109,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
             if status == 200
               reward.send_currency_status = status
+              send_notification(reward)
             elsif status == 403
               reward.send_currency_status = status
               Notifier.alert_new_relic(FailedToDownloadError, "Failed to download #{callback_url}. 403 error.")
@@ -117,6 +119,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
           else
             status = 'OK'
+            send_notification(reward)
           end
       end
       params.delete(:callback_url)
@@ -144,4 +147,10 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
     reward.save
   end
 
+  def send_notification(reward)
+    if reward.offer.should_notify_on_conversion?
+      publisher_app = App.find_in_cache(reward.publisher_app_id)
+      Sqs.send_message(QueueNames::CONVERSION_NOTIFICATIONS, reward.id) if publisher_app && publisher_app.notifications_enabled?
+    end
+  end
 end
