@@ -8,7 +8,6 @@ class GameState < SimpledbShardedResource
   self.sdb_attr :tapjoy_points, :type => :int, :default_value => 0
   self.sdb_attr :version, :type => :int, :default_value => 0
   self.sdb_attr :udids, :force_array => true, :replace => false
-  self.sdb_attr :tapjoy_device_ids, :force_array => true, :replace => false
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % GameState.num_domains
@@ -31,12 +30,8 @@ class GameState < SimpledbShardedResource
     key.split(".", 2).last
   end
 
-  def tapjoy_device_ids
-    get('tapjoy_device_ids', :force_array => true).present? ? get('tapjoy_device_ids', :force_array => true) : udids
-  end
-
-  def add_device(device_id)
-    put('tapjoy_device_ids', device_id, :replace => false) unless tapjoy_device_ids.include?(device_id)
+  def add_device(udid)
+    self.udids = udid unless udids.include? udid
   end
 
   def data

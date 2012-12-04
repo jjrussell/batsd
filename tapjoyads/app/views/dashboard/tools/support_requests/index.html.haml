@@ -4,7 +4,6 @@
 
 = render('table', :type => :offer, :requests => @offers) if @offers.length > 0
 = render('table', :type => :publisher_app, :requests => @publisher_apps) if @publisher_apps.length > 0
-= render('table', :type => 'Device ID', :requests => @tapjoy_device_ids) if @tapjoy_device_ids.length > 0
 = render('table', :type => :udid, :requests => @udids) if @udids.length > 0
 
 - content_for :page_javascript do

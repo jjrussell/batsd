@@ -42,8 +42,6 @@ describe OfferInstructionsController do
         ApplicationController.stub(:verify_records).and_return(true)
         @offer.stub(:complete_action_url).and_return('some_website_url')
         @action_offer = FactoryGirl.create(:action_offer)
-        device = FactoryGirl.create(:device)
-        Device.stub(:find).and_return(device)
         @params = {
           :data                  => ObjectEncryptor.encrypt(:data => 'some_data'),
           :id                    => @offer.id,

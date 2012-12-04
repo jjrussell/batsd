@@ -352,7 +352,7 @@ class Gamer < ActiveRecord::Base
       if referrer.starts_with?('tjreferrer:')
         click = Click.new :key => referrer.gsub('tjreferrer:', '')
         if click.rewardable?
-          device = Device.new :key => click.tapjoy_device_id
+          device = Device.new :key => click.udid
           device.product = click.device_name
           device.save
         end

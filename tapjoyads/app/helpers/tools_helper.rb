@@ -32,9 +32,9 @@ module ToolsHelper
     concat_li_currency('Adv', click.advertiser_amount)
     concat_li_currency('Pub', click.publisher_amount)
     concat_li_currency('Tj', click.tapjoy_amount)
-    concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.tapjoy_device_id
+    concat_li("Pub user ID", click.publisher_user_id) if click.publisher_user_id != click.udid
     concat_li("Source", click.source)
-    concat_li("Tapjoy Device ID's for blocking", click.publisher_user_tapjoy_device_ids.join('<BR/>')) if click.block_reason =~ /TooManyTapjoyDeviceIDsForPublisherUserId|TooManyUdidsForPublisherUserId/
+    concat_li("UDID's for blocking", click.publisher_user_udids.join('<BR/>')) if click.block_reason =~ /TooManyUdidsForPublisherUserId/
     if click.last_clicked_at?
       safe_concat("<ul>")
       click.last_clicked_at.each_with_index do |last_click_time, idx|
@@ -67,7 +67,7 @@ module ToolsHelper
     end
     classes << 'jailbroken'      if click.type =~ /install_jailbroken/
     classes << 'click-key-match' if click.key == params[:click_key]
-    if click.block_reason =~ /TooManyTapjoyDeviceIDsForPublisherUserId|Banned|TooManyUdidsForPublisherUserId/
+    if click.block_reason =~ /TooManyUdidsForPublisherUserId|Banned/
       classes << 'blocked'
     elsif click.block_reason?
       classes << 'not-rewarded'
