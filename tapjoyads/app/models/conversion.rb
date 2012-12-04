@@ -269,7 +269,7 @@ class Conversion < ActiveRecord::Base
     keys << Stats.get_memcache_count_key(segment_stat, attr_value, time) if segment_stat
 
     keys.each do |mc_key|
-      Mc.increment_count(mc_key, false, 1.day, count_inc)
+      StatsCache.increment_count(mc_key, false, 1.day, count_inc)
     end
   end
 end

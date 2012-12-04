@@ -71,7 +71,7 @@ class StatsAggregation
 
     start_time = now.beginning_of_hour - 5.hours
     while start_time < now
-      value = Mc.get_count(Stats.get_memcache_count_key('logins', offer_id, start_time))
+      value = StatsCache.get_count(Stats.get_memcache_count_key('logins', offer_id, start_time))
       if value == 0
         message << "Couchbase logins counts for #{start_time} is zero.\n"
         missing = true
@@ -148,12 +148,12 @@ class StatsAggregation
         stat_rows[date_str] ||= Stats.new(:key => "app.#{date_str}.#{offer.id}", :load_from_memcache => false)
 
         (Stats::CONVERSION_STATS + Stats::WEB_REQUEST_STATS).each do |stat|
-          value = Mc.get_count(Stats.get_memcache_count_key(stat, offer.id, start_time))
+          value = StatsCache.get_count(Stats.get_memcache_count_key(stat, offer.id, start_time))
           stat_rows[date_str].update_stat_for_hour(stat, start_time.hour, value)
           if app && app.platform == 'android' && Stats.segment_by_store?(stat)
             app.app_metadatas.each do |meta|
               segment_stat = Stats.get_segment_stat(stat, meta.store.sdk_name)
-              value = Mc.get_count(Stats.get_memcache_count_key(segment_stat, offer.id, start_time))
+              value = StatsCache.get_count(Stats.get_memcache_count_key(segment_stat, offer.id, start_time))
               stat_rows[date_str].update_stat_for_hour(segment_stat, start_time.hour, value)
             end
           end
@@ -164,7 +164,7 @@ class StatsAggregation
 
           (Stats::COUNTRY_CODES.keys + [ 'other' ]).each do |country|
             stat_path = [ 'countries', "#{stat}.#{country}" ]
-            value = Mc.get_count(Stats.get_memcache_count_key(stat_path, offer.id, start_time))
+            value = StatsCache.get_count(Stats.get_memcache_count_key(stat_path, offer.id, start_time))
             stat_rows[date_str].update_stat_for_hour(stat_path, start_time.hour, value)
           end
         end
@@ -172,7 +172,7 @@ class StatsAggregation
         if stat_rows[date_str].get_hourly_count('vg_purchases')[start_time.hour] > 0
           offer.virtual_goods.each do |virtual_good|
             stat_path = [ 'virtual_goods', virtual_good.id ]
-            value = Mc.get_count(Stats.get_memcache_count_key(stat_path, offer.id, start_time))
+            value = StatsCache.get_count(Stats.get_memcache_count_key(stat_path, offer.id, start_time))
             stat_rows[date_str].update_stat_for_hour(stat_path, start_time.hour, value)
           end
         end

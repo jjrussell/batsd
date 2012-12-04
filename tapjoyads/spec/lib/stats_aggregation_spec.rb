@@ -20,7 +20,7 @@ describe StatsAggregation do
         @offer.stub(:last_stats_aggregation_time).and_return(@last_aggregation)
         24.times.each do |i|
           key = Stats.get_memcache_count_key('paid_clicks', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 500 + i)
+          StatsCache.increment_count(key, false, 1.day, 500 + i)
         end
       end
 
@@ -39,7 +39,7 @@ describe StatsAggregation do
         @offer.stub(:last_stats_aggregation_time).and_return(@last_aggregation)
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 10000 + i)
+          StatsCache.increment_count(key, false, 1.day, 10000 + i)
         end
       end
 
@@ -59,13 +59,13 @@ describe StatsAggregation do
         @offer.stub(:last_stats_aggregation_time).and_return(@last_aggregation)
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 10000 + i)
+          StatsCache.increment_count(key, false, 1.day, 10000 + i)
           key = Stats.get_memcache_count_key('logins.google', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 7000 + i)
+          StatsCache.increment_count(key, false, 1.day, 7000 + i)
           key = Stats.get_memcache_count_key('logins.gfan', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 3000 + i)
+          StatsCache.increment_count(key, false, 1.day, 3000 + i)
           key = Stats.get_memcache_count_key('logins.skt', @offer.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 1500 + i)
+          StatsCache.increment_count(key, false, 1.day, 1500 + i)
         end
       end
 
@@ -129,7 +129,7 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('paid_clicks', @offer.id, @last_aggregation + i.hour)
           count = 500 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count += count
         end
         StatsAggregation.new([@offer.id]).populate_hourly_stats
@@ -157,7 +157,7 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer.id, @last_aggregation + i.hour)
           count = 10000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count += count
         end
         StatsAggregation.new([@offer.id]).populate_hourly_stats
@@ -184,19 +184,19 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer.id, @last_aggregation + i.hour)
           count = 10000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count['all'] += count
           key = Stats.get_memcache_count_key('logins.google', @offer.id, @last_aggregation + i.hour)
           count = 7000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count['google'] += count
           key = Stats.get_memcache_count_key('logins.gfan', @offer.id, @last_aggregation + i.hour)
           count = 3000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count['gfan'] += count
           key = Stats.get_memcache_count_key('logins.skt', @offer.id, @last_aggregation + i.hour)
           count = 1500 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @daily_count['skt'] += count
         end
         StatsAggregation.new([@offer.id]).populate_hourly_stats
@@ -230,7 +230,7 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('paid_clicks', @offer1.id, @last_aggregation + i.hour)
           count = 500 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @partner_daily_count += count
           @total_daily_count += count
         end
@@ -240,7 +240,7 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('paid_clicks', @offer2.id, @last_aggregation + i.hour)
           count = 1500 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @partner_daily_count += count
           @total_daily_count += count
         end
@@ -250,7 +250,7 @@ describe StatsAggregation do
         24.times.each do |i|
           key = Stats.get_memcache_count_key('paid_clicks', @offer3.id, @last_aggregation + i.hour)
           count = 5000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @total_daily_count += count
         end
         StatsAggregation.new([@offer1.id, @offer2.id, @offer3.id]).populate_hourly_stats
@@ -301,14 +301,14 @@ describe StatsAggregation do
         @offer1.save
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer1.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 8000 + i * 2)
+          StatsCache.increment_count(key, false, 1.day, 8000 + i * 2)
           key = Stats.get_memcache_count_key('logins.google', @offer1.id, @last_aggregation + i.hour)
           count = 7000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @total_daily_count += count
           key = Stats.get_memcache_count_key('logins.skt', @offer1.id, @last_aggregation + i.hour)
           count = 1000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @partner_daily_count += count
         end
         @app2 = FactoryGirl.create(:non_live_app, :platform => 'android', :partner => @partner)
@@ -319,10 +319,10 @@ describe StatsAggregation do
         @offer2.save
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer2.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 2500 + i)
+          StatsCache.increment_count(key, false, 1.day, 2500 + i)
           key = Stats.get_memcache_count_key('logins.skt', @offer2.id, @last_aggregation + i.hour)
           count = 2500 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @partner_daily_count += count
         end
         @app3 = FactoryGirl.create(:app, :platform => 'android')
@@ -334,15 +334,15 @@ describe StatsAggregation do
         @offer3.save
         24.times.each do |i|
           key = Stats.get_memcache_count_key('logins', @offer3.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 10000 + i * 3)
+          StatsCache.increment_count(key, false, 1.day, 10000 + i * 3)
           key = Stats.get_memcache_count_key('logins.google', @offer3.id, @last_aggregation + i.hour)
           count = 6000 + i
-          Mc.increment_count(key, false, 1.day, count)
+          StatsCache.increment_count(key, false, 1.day, count)
           @total_daily_count += count
           key = Stats.get_memcache_count_key('logins.gfan', @offer3.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 3000 + i)
+          StatsCache.increment_count(key, false, 1.day, 3000 + i)
           key = Stats.get_memcache_count_key('logins.skt', @offer3.id, @last_aggregation + i.hour)
-          Mc.increment_count(key, false, 1.day, 1000 + i)
+          StatsCache.increment_count(key, false, 1.day, 1000 + i)
         end
         StatsAggregation.new([@offer1.id, @offer2.id, @offer3.id]).populate_hourly_stats
       end
