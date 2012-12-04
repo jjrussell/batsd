@@ -5,8 +5,14 @@
   %table
     %tbody
       %tr
-        %th UDID:
+        %th Device ID:
+        %td= text_field_tag 'device_id', params[:device_id], :size => '55'
+      %tr
+        %th UDID
         %td= text_field_tag 'udid', params[:udid], :size => '55'
+      %tr
+        %th Advertising ID
+        %td= text_field_tag 'advertising_id', params[:advertising_id], :size => '55'
       %tr
         %th Click key:
         %td= text_field_tag 'click_key', params[:click_key], :size => '55'
@@ -14,33 +20,49 @@
         %th Email:
         %td= text_field_tag 'email_address', params[:email_address], :size => '55'
       %tr
-        %th MAC Address:
+        %th Mac Address:
         %td= text_field_tag 'mac_address', params[:mac_address], :size => '55'
       %tr
         %td{ :colspan => 2 }= submit_tag 'Find'
 
-- if @all_udids.present?
-  %h3 Please choose the udid for this email
+- if @all_device_ids.present?
+  %h3 Please choose the device for this email
   %table
     %tbody
-      - @all_udids.each do |udid|
+      - @all_device_ids.each do |device_id|
         %tr
           %td
-            = link_to udid, device_info_tools_path(:udid => udid, :email_address => params[:email_address])
+            = link_to device_id, device_info_tools_path(:device_id => device_id, :email_address => params[:email_address])
 
 - if @device.present?
   %h3 Device
   - if permitted_to? :recreate_device_identifiers, :dashboard_tools
-    = form_tag({ :action => 'recreate_device_identifiers', :udid => params[:udid] }, { :class => 'tjform' }) do
+    = form_tag({ :action => 'recreate_device_identifiers', :device_id => params[:device_id] }, { :class => 'tjform' }) do
       = submit_tag 'Recreate Identifiers'
   %br
 
-  = form_tag({ :action => 'update_device', :udid => params[:udid] }, { :class => 'tjform' }) do
+  = form_tag({ :action => 'update_device', :device_id => params[:device_id] }, { :class => 'tjform' }) do
     %table
       %tbody
         %tr
           %th Device ID
-          %td= params[:udid]
+          %td= @device.key
+        %tr
+          %th UDID
+          %td
+            - if @device.udid?
+              = @device.udid
+            - elsif !@device.has_tapjoy_id?
+              = @device.key
+            - else
+              %i unknown
+        %tr
+          %th Advertising Id
+          %td
+            - if @device.advertising_id?
+              = @device.advertising_id
+            - else
+              %i unknown
         %tr
           %th MAC address
           %td
@@ -216,7 +238,7 @@
             - elsif click.installed_at? || click.type =~ /install_jailbroken/
               Already awarded
             - elsif click.block_reason?
-              - if click.block_reason =~ /TooManyUdidsForPublisherUserId/
+              - if click.block_reason =~ /TooManyTapjoyDeviceIDsForPublisherUserId|TooManyUdidsForPublisherUserId/
                 Blocked device
               - else
                 Won't reward
@@ -279,7 +301,7 @@
     :plain
       $(function($){
         $('.show-recent-clicks').click(function(){
-          location.href = '#{device_info_tools_path(:udid => @device.key)}'
+          location.href = '#{device_info_tools_path(:device_id => @device.key, :udid => @device.udid)}'
           return false;
         });
       });
@@ -288,7 +310,7 @@
         $('.search-clicks').click(function(){
           var start_date = $('#start_date').val();
           var end_date = $('#end_date').val();
-          location.href = '?udid=#{@device.key}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date
+          location.href = '?device_id=#{@device.key}' + '&' + 'udid=#{@device.udid}' + '&' + 'start_date=' + start_date + '&' + 'end_date=' + end_date
           return false;
         });
       });

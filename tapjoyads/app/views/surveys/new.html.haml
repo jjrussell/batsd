@@ -6,6 +6,7 @@
 
 #main
   = form_tag(surveys_path) do
+    = hidden_field_tag(:tapjoy_device_id, params[:tapjoy_device_id])
     = hidden_field_tag(:udid, params[:udid])
     = hidden_field_tag(:click_key, params[:click_key])
 

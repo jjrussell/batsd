@@ -1,7 +1,8 @@
 FactoryGirl.define do
   factory :click do
     key               { FactoryGirl.generate(:guid) }
-    udid              { FactoryGirl.create(:device).key }
+    tapjoy_device_id  { FactoryGirl.create(:device).key }
+    udid              { FactoryGirl.generate(:udid) }
     currency_id       { FactoryGirl.create(:currency).id }
     currency_reward   2000
     advertiser_app_id { FactoryGirl.create(:app).id }
@@ -10,7 +11,7 @@ FactoryGirl.define do
   end
 
   factory :device do
-    key               { FactoryGirl.generate(:udid) }
+    key               { FactoryGirl.generate(:guid) }
     apps              { }
   end
 

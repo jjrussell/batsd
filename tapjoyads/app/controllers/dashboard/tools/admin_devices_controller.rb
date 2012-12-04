@@ -15,7 +15,7 @@ class Dashboard::Tools::AdminDevicesController < Dashboard::DashboardController
     @admin_device = AdminDevice.new(params[:admin_device])
     if @admin_device.save
       flash[:notice] = "Device added"
-      device = Device.new(:key => @admin_device.udid)
+      device = Device.new(:key => @admin_device.tapjoy_device_id)
       device.last_run_time_tester = true
       device.save
       redirect_to tools_admin_devices_path
@@ -30,7 +30,7 @@ class Dashboard::Tools::AdminDevicesController < Dashboard::DashboardController
 
   def update
     @admin_device = AdminDevice.find(params[:id])
-    if @admin_device.safe_update_attributes( params[:admin_device], [ :udid, :description, :platform, :user_id ] )
+    if @admin_device.safe_update_attributes( params[:admin_device], [ :tapjoy_device_id, :udid, :description, :platform, :user_id ] )
       flash[:notice] = "Device saved"
       redirect_to tools_admin_devices_path
     else
@@ -41,7 +41,7 @@ class Dashboard::Tools::AdminDevicesController < Dashboard::DashboardController
   def destroy
     admin_device = AdminDevice.find(params[:id])
     admin_device.destroy
-    device = Device.new(:key => admin_device.udid)
+    device = Device.new(:key => admin_device.tapjoy_device_id)
     device.last_run_time_tester = false
     device.save
     flash[:notice] = "Device deleted"

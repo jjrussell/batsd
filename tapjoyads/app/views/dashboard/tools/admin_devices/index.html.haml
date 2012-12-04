@@ -8,6 +8,7 @@
   %thead
     %tr
       %th Platform
+      %th Device ID
       %th UDID
       %th{ :class => 'headerSortDown header' }  Description
       - action_colspan = 2
@@ -19,12 +20,13 @@
       - class_names += " mine" if device.user_id == current_user.id
       %tr{ :class => class_names }
         %td= device.platform
-        %td.udid= device.udid
+        %td.udid= device.tapjoy_device_id
+        %td.udid= device.udid || 'N/A'
         %td= device.description
         %td= link_to '[Edit]', edit_tools_admin_device_path(device)
         %td= link_to '[Delete]', tools_admin_device_path(device), :method => :delete, :confirm => "Are you sure you want to remove this device: #{device.description}"
         - if permitted_to?(:device_info, :dashboard_tools)
-          %td= link_to '[More Info]', device_info_tools_path(:udid => device.udid)
+          %td= link_to '[More Info]', device_info_tools_path(:device_id => device.tapjoy_device_id)
 
 - content_for :page_javascript do
   :plain

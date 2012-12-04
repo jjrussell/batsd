@@ -33,9 +33,11 @@ module Offer::UrlGeneration
   end
 
   def complete_action_url(options)
-    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
+    tapjoy_device_id      = options.delete(:tapjoy_device_id)      { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    udid                  = options.delete(:udid)                  { nil }
+    advertising_id        = options.delete(:advertising_id)        { nil }
     publisher_user_id     = options.delete(:publisher_user_id)     { nil }
     click_key             = options.delete(:click_key)             { nil }
     device_click_ip       = options.delete(:device_click_ip)       { nil }
@@ -52,15 +54,18 @@ module Offer::UrlGeneration
     case item_type
       when 'VideoOffer', 'TestVideoOffer'
         params = {
-          :offer_id          => id,
+          :tapjoy_device_id  => tapjoy_device_id,
+          :advertising_id    => advertising_id,
+          :mac_address       => mac_address,
           :app_id            => publisher_app_id,
           :currency_id       => currency.id,
           :udid              => udid,
+          :offer_id          => id,
           :publisher_user_id => publisher_user_id
         }
         return "#{API_URL}/videos/#{id}/complete?data=#{ObjectEncryptor.encrypt(params)}"
       when 'DeeplinkOffer'
-        params = { :udid => udid, :id => currency.id, :click_key => click_key }
+        params = { :tapjoy_device_id => tapjoy_device_id, :udid => udid, :id => currency.id, :click_key => click_key }
         params[:referrer] = "tapjoy:deeplink:#{publisher_app_id}"
         return "#{WEBSITE_URL}/earn?data=#{ObjectEncryptor.encrypt(params)}"
     end
@@ -79,21 +84,28 @@ module Offer::UrlGeneration
         when 'TAPJOY_GENERIC_SOURCE'
           source_token(publisher_app_id)
         when 'TAPJOY_EXTERNAL_UID'
-          Device.advertiser_device_id(udid, partner_id)
+          Device.advertiser_device_id(tapjoy_device_id, partner_id)
         when 'TAPJOY_DEVICE_CLICK_IP'
           device_click_ip
       end
     end
 
     # Not sure why ActionOffers don't respect this macro, but not going to mess with it, without a full understanding
-    final_url.gsub!('TAPJOY_UDID', udid.to_s) unless item_type == 'ActionOffer'
+    unless item_type == 'ActionOffer'
+      if final_url.include? 'TAPJOY_DEVICE_ID'
+        final_url.gsub!('TAPJOY_DEVICE_ID', tapjoy_device_id.to_s)
+      elsif final_url.include? 'TAPJOY_UDID'
+        final_url.gsub!('udid', 'tapjoy_device_id')
+        final_url.gsub!('TAPJOY_UDID', tapjoy_device_id.to_s)
+      end
+    end
 
     # now for item_type-specific macros
     case item_type
       when 'App'
         final_url = Linkshare.add_params(final_url, itunes_link_affiliate)
 
-        mac_address ||= Device.find(udid).try(:mac_address)
+        mac_address ||= Device.find_by_device_id(tapjoy_device_id).try(:mac_address)
         final_url.gsub!('TAPJOY_HASHED_KEY', Click.hashed_key(click_key))
         final_url.gsub!('TAPJOY_HASHED_MAC', mac_address ? Digest::SHA1.hexdigest(mac_address) : '')
 
@@ -117,7 +129,7 @@ module Offer::UrlGeneration
         final_url.gsub!('DATA', ObjectEncryptor.encrypt(data))
         if has_variable_payment?
           extra_params = {
-            :uid      => Digest::SHA256.hexdigest(udid + UDID_SALT),
+            :uid      => Digest::SHA256.hexdigest(tapjoy_device_id + TAPJOY_DEVICE_ID_SALT),
             :cvr      => currency.spend_share * currency.conversion_rate / 100,
             :currency => CGI::escape(currency.name),
           }
@@ -144,28 +156,30 @@ module Offer::UrlGeneration
   end
 
   def click_url(options)
-    publisher_app         = options.delete(:publisher_app)        { |k| raise "#{k} is a required argument" }
-    publisher_user_id     = options.delete(:publisher_user_id)    { |k| raise "#{k} is a required argument" }
-    udid                  = options.delete(:udid)                 { |k| raise "#{k} is a required argument" }
-    currency_id           = options.delete(:currency_id)          { |k| raise "#{k} is a required argument" }
-    source                = options.delete(:source)               { |k| raise "#{k} is a required argument" }
-    app_version           = options.delete(:app_version)          { nil }
-    viewed_at             = options.delete(:viewed_at)            { |k| raise "#{k} is a required argument" }
-    displayer_app_id      = options.delete(:displayer_app_id)     { nil }
-    exp                   = options.delete(:exp)                  { nil }
-    primary_country       = options.delete(:primary_country)      { nil }
-    language_code         = options.delete(:language_code)        { nil }
-    display_multiplier    = options.delete(:display_multiplier)   { 1 }
-    device_name           = options.delete(:device_name)          { nil }
-    library_version       = options.delete(:library_version)      { nil }
-    gamer_id              = options.delete(:gamer_id)             { nil }
-    os_version            = options.delete(:os_version)           { nil }
-    mac_address           = options.delete(:mac_address)          { nil }
-    device_type           = options.delete(:device_type)          { nil }
-    offerwall_rank        = options.delete(:offerwall_rank)       { nil }
-    view_id               = options.delete(:view_id)              { nil }
-    store_name            = options.delete(:store_name)           { nil }
-    date_of_birth         = options.delete(:date_of_birth)        { nil }
+    tapjoy_device_id   = options.delete(:tapjoy_device_id)   { |k| raise "#{k} is a required argument" }
+    publisher_app      = options.delete(:publisher_app)      { |k| raise "#{k} is a required argument" }
+    publisher_user_id  = options.delete(:publisher_user_id)  { |k| raise "#{k} is a required argument" }
+    currency_id        = options.delete(:currency_id)        { |k| raise "#{k} is a required argument" }
+    source             = options.delete(:source)             { |k| raise "#{k} is a required argument" }
+    app_version        = options.delete(:app_version)        { nil }
+    viewed_at          = options.delete(:viewed_at)          { |k| raise "#{k} is a required argument" }
+    mac_address        = options.delete(:mac_address)        { nil }
+    advertising_id     = options.delete(:advertising_id)     { nil }
+    udid               = options.delete(:udid)               { nil }
+    displayer_app_id   = options.delete(:displayer_app_id)   { nil }
+    exp                = options.delete(:exp)                { nil }
+    primary_country    = options.delete(:primary_country)    { nil }
+    language_code      = options.delete(:language_code)      { nil }
+    display_multiplier = options.delete(:display_multiplier) { 1 }
+    device_name        = options.delete(:device_name)        { nil }
+    library_version    = options.delete(:library_version)    { nil }
+    gamer_id           = options.delete(:gamer_id)           { nil }
+    os_version         = options.delete(:os_version)         { nil }
+    device_type        = options.delete(:device_type)        { nil }
+    offerwall_rank     = options.delete(:offerwall_rank)     { nil }
+    view_id            = options.delete(:view_id)            { nil }
+    store_name         = options.delete(:store_name)         { nil }
+    date_of_birth      = options.delete(:date_of_birth)      { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     click_url = "#{API_URL}/click/"
@@ -187,10 +201,13 @@ module Offer::UrlGeneration
     end
 
     data = {
+      :tapjoy_device_id       => tapjoy_device_id,
       :advertiser_app_id      => item_id,
       :publisher_app_id       => publisher_app.id,
       :publisher_user_id      => publisher_user_id,
       :udid                   => udid,
+      :advertising_id         => advertising_id,
+      :mac_address            => mac_address,
       :source                 => source,
       :offer_id               => id,
       :app_version            => app_version,
@@ -254,8 +271,11 @@ module Offer::UrlGeneration
 
   def fullscreen_ad_url(options)
     publisher_app_id   = options.delete(:publisher_app_id)   { |k| raise "#{k} is a required argument" }
+    tapjoy_device_id   = options.delete(:tapjoy_device_id)   { |k| raise "#{k} is a required argument" }
     publisher_user_id  = options.delete(:publisher_user_id)  { |k| }
-    udid               = options.delete(:udid)               { |k| }
+    udid               = options.delete(:udid)               { nil }
+    mac_address        = options.delete(:mac_address)        { nil }
+    advertising_id     = options.delete(:advertising_id)     { nil }
     currency_id        = options.delete(:currency_id)        { |k| }
     source             = options.delete(:source)             { |k| }
     app_version        = options.delete(:app_version)        { nil }
@@ -279,10 +299,13 @@ module Offer::UrlGeneration
     ad_url << "/test_video_offer" if item_type == 'TestVideoOffer'
 
     data = {
+      :tapjoy_device_id   => tapjoy_device_id,
       :advertiser_app_id  => item_id,
       :publisher_app_id   => publisher_app_id,
       :publisher_user_id  => publisher_user_id,
       :udid               => udid,
+      :advertising_id     => advertising_id,
+      :mac_address        => mac_address,
       :source             => source,
       :offer_id           => id,
       :app_version        => app_version,
@@ -325,18 +348,19 @@ module Offer::UrlGeneration
     if item_id_str == TAPJOY_GAMES_INVITATION_OFFER_ID
       "#{params[:gamer_id]}.#{item_id_str}"
     elsif item_type == 'GenericOffer' && item_id_str != TAPJOY_GAMES_REGISTRATION_OFFER_ID
-      Digest::MD5.hexdigest("#{params[:udid]}.#{item_id_str}")
+      Digest::MD5.hexdigest("#{params[:tapjoy_device_id]}.#{item_id_str}")
     else
-      "#{params[:udid]}.#{item_id_str}"
+      "#{params[:tapjoy_device_id]}.#{item_id_str}"
     end
   end
 
   private
 
   def instructions_data(options)
-    udid                  = options.delete(:udid)                  { |k| raise "#{k} is a required argument" }
+    tapjoy_device_id      = options.delete(:tapjoy_device_id)      { |k| raise "#{k} is a required argument" }
     publisher_app_id      = options.delete(:publisher_app_id)      { |k| raise "#{k} is a required argument" }
     currency              = options.delete(:currency)              { |k| raise "#{k} is a required argument" }
+    udid                  = options.delete(:udid)                  { nil }
     click_key             = options.delete(:click_key)             { nil }
     device_click_ip       = options.delete(:device_click_ip)       { nil }
     language_code         = options.delete(:language_code)         { nil }
@@ -346,12 +370,16 @@ module Offer::UrlGeneration
     os_version            = options.delete(:os_version)            { nil }
     viewed_at             = options.delete(:viewed_at)             { nil }
     device_type           = options.delete(:device_type)           { nil }
-    options.delete(:mac_address)
+    advertising_id        = options.delete(:advertising_id)        { nil }
+    mac_address           = options.delete(:mac_address)           { nil }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     data = {
       :id                    => id,
       :udid                  => udid,
+      :tapjoy_device_id      => tapjoy_device_id,
+      :advertising_id        => advertising_id,
+      :mac_address           => mac_address,
       :publisher_app_id      => publisher_app_id,
       :click_key             => click_key,
       :device_click_ip       => device_click_ip,
