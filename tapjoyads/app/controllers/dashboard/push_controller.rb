@@ -37,7 +37,7 @@ private
 
   def setup
     @app = find_app(params[:app_id])
-    @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?platform=#{@app.platform}&signature=#{signature}&signature_method=hmac_sha256"
+    @admin_url = "#{notifications_url_base}/admin/apps/#{@app.id}/edit?signature=#{signature}&signature_method=hmac_sha256"
   end
 
   def signature
