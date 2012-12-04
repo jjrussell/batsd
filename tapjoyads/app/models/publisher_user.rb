@@ -1,6 +1,6 @@
 class PublisherUser < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "publisher_users"
+  mirror_configuration :riak_bucket_name => "publisher_users", :read_from_riak => true
 
   MAX_UDIDS = 5
 
