@@ -43,9 +43,9 @@ GIT
 
 GIT
   remote: git://github.com/dickeyxxx/localeapp.git
-  revision: 9b83b9e0f17586a2cdc65ec458807fd96893e7b8
+  revision: 323400f43f0b7dc68e7ac779179426a894f338d5
   specs:
-    localeapp (0.6.8)
+    localeapp (0.5.1)
       gli
       i18n
       json
