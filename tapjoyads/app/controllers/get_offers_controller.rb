@@ -49,7 +49,15 @@ class GetOffersController < ApplicationController
       @offer_list, @more_data_available = get_offer_list.get_offers(@start_index, @max_items)
     end
 
-    @currency_sale = @currency.active_currency_sale
+    #TODO(nixoncd): uncomment when currency sale view gets cleaned up
+    #@currency_sale = @currency.active_currency_sale
+    #if @currency_sale
+      #if @currency_sale.message.present?
+        #@currency_sale_message = @currency_sale.message
+      #else
+        #@currency_sale_message = I18n.t('text.currency_sale.sale_default_message', :publisher => @publisher_app.name, :multiplier => @currency_sale.multiplier_to_string, :currency_name => @currency.name)
+      #end
+    #end
 
     set_webpage_parameters
     if params[:json] == '1'

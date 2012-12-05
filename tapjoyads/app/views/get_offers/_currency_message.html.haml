@@ -1,0 +1,6 @@
+- if @currency_sale.present?
+  %div
+    = @currency_sale_message
+- elsif @currency.message_enabled?
+  %div
+    = @currency.message
