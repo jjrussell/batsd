@@ -55,7 +55,6 @@ class Dashboard::KontagentController < Dashboard::DashboardController
   end
 
   def show
-    get_last_approval
   end
 
   # attempt to resync current_partner with KT
@@ -74,10 +73,17 @@ class Dashboard::KontagentController < Dashboard::DashboardController
 
   private
   def get_last_integration_request
-    @kontagent_integration_request = current_partner.try(:kontagent_integration_requests).order("created_at desc").limit(1).first
+    @kontagent_integration_request = nil
+    requests = current_partner.try(:kontagent_integration_requests)
+    if requests
+      @kontagent_integration_request = requests.order("created_at desc").limit(1).first
+    end
   end
 
   def get_last_approval
-    @last_approval = get_last_integration_request.try(:approvals).order("created_at desc").limit(1).first
+    get_last_integration_request
+    unless @kontagent_integration_request.nil?
+      @last_approval = @kontagent_integration_request.try(:approvals).order("created_at desc").limit(1).first
+    end
   end
 end
