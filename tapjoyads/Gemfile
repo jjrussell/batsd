@@ -127,7 +127,7 @@ group :development, :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'cucumber-rails', :require => false
-  gem 'localeapp'
+  gem 'localeapp', :github => 'dickeyxxx/localeapp'
   gem 'shoulda-matchers', '1.2.0'
 end
 
