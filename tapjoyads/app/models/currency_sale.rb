@@ -4,6 +4,7 @@ class CurrencySale < ActiveRecord::Base
   OVERLAPPING_TIMES_ERROR = I18n.t('text.currency_sale.overlap_error')
   TIME_TRAVEL_FAIL = I18n.t('text.currency_sale.time_travel_fail')
   MULTIPLIER_SELECT = [1.5, 2.0, 3.0]
+  START_TIME_ALLOWANCE = 1.hour
 
   belongs_to :currency
 
@@ -20,9 +21,24 @@ class CurrencySale < ActiveRecord::Base
   scope :past, lambda { { :conditions => [ "start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now ], :order => 'start_time' } }
   scope :future, lambda { { :conditions => [ "start_time > ? AND end_time > ?", Time.zone.now, Time.zone.now ], :order => 'start_time' } }
 
+  #
+  # Predicate queries
+  #
   def past?
     now = Time.zone.now
     start_time < now && end_time < now
+  end
+
+  def starts_recently_or_in_future?
+    start_time > START_TIME_ALLOWANCE.ago
+  end
+
+  def ends_in_future?
+    Time.current < end_time
+  end
+
+  def time_changed?
+    self.start_time.present? && self.end_time.present? && [self.start_time_changed?, self.end_time_changed?].any?
   end
 
 protected
@@ -46,9 +62,9 @@ private
   def validate_in_the_future
     now = Time.zone.current
     if start_time_changed?
-      errors.add(:base, TIME_TRAVEL_FAIL) if (now - 1.hour) >= self.start_time
+      errors.add(:base, TIME_TRAVEL_FAIL) unless starts_recently_or_in_future?
     elsif end_time_changed?
-      errors.add(:base, TIME_TRAVEL_FAIL) if now >= self.end_time
+      errors.add(:base, TIME_TRAVEL_FAIL) unless ends_in_future?
     end
   end
 
@@ -69,8 +85,9 @@ private
   #
   #
 
-  def time_changed?
-    self.start_time.present? && self.end_time.present? && [self.start_time_changed?, self.end_time_changed?].any?
+  # Failure helper
+  def add_time_travel_error
+    errors.add :base, I18n.t('text.currency_sale.time_travel_fail')
   end
 
   def overlapping?(currency_sale)
