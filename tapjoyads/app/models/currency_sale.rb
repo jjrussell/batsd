@@ -15,9 +15,9 @@ class CurrencySale < ActiveRecord::Base
   end
   validates_inclusion_of :message_enabled, :in => [ true, false ]
 
-  scope :active, lambda { { :conditions => [ "start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now ] } }
-  scope :past, lambda { { :conditions => [ "start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now ], :order => 'start_time' } }
-  scope :future, lambda { { :conditions => [ "start_time > ? AND end_time > ?", Time.zone.now, Time.zone.now ], :order => 'start_time' } }
+  scope :active,   lambda { where("start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now) }
+  scope :past,     lambda { where("start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :future,   lambda { where("start_time > ? AND end_time > ?", Time.zone.now, Time.zone.now).order('start_time') }
 
   #
   # Predicate queries
