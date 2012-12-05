@@ -13,7 +13,13 @@
           = link_to('#', new_app_path, :class => "hidden")
       - else
         = image_tag(selected.get_icon_url, :size => '24x24', :alt => '')
-        = selected.is_a?(App) ? selected.name : selected.name_with_suffix
+        - name = selected.is_a?(App) ? selected.name : selected.name_with_suffix
+        - if selected.is_a?(Offer)
+          - name += ' ('
+          - name += (selected.try(:rewarded?) ? 'rewarded' : 'non-rewarded')
+          - name += (selected.try(:featured?) ? ' featured' : '')
+          - name += ')'
+        = name
         = image_tag(platform_icon_url(selected), :class => 'platform_icon')
   #apps_dropdown.hidden
     #filter_box
@@ -38,7 +44,13 @@
         .app{ :class => class_name, :title => o.name }
           = image_tag(o.get_icon_url, :size => '24x24', :alt => '')
           %span.app-name
-            = o.is_a?(App) ? o.name : o.name_with_suffix
+            - name = o.is_a?(App) ? o.name : o.name_with_suffix
+            - if o.is_a?(Offer)
+              - name += ' ('
+              - name += (o.try(:rewarded?) ? 'rewarded' : 'non-rewarded')
+              - name += (o.try(:featured?) ? ' featured' : '')
+              - name += ')'
+            = name
             = image_tag(platform_icon_url(o), :class => 'platform_icon')
             = hidden_field_tag 'app_id', (o.is_a?(App) ? o.id : o), :disabled => true
           = link_to('#', url, :class => "hidden")

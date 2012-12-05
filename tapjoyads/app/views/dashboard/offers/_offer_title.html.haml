@@ -1,0 +1,5 @@
+.offer_name
+  .icon= image_tag(offer.get_icon_url, :size => '57x57', :id => 'icon')
+
+  %h1= offer.name_with_suffix
+  .descriptors= offer.descriptors.join(', ')
