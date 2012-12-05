@@ -3,10 +3,15 @@ class Currency < ActiveRecord::Base
   acts_as_cacheable
   acts_as_approvable :on => :create
 
-  attr_accessor_with_default :use_offer_filter_selections, false
+  attr_writer :use_offer_filter_selections
   attr_accessor :offer_filter_selections
   before_validation :convert_offer_filter
   validate    :validate_offer_filter
+
+  # NOTE: we can't use attr_accessor_with_default due to: https://rails.lighthouseapp.com/projects/8994/tickets/4776
+  def use_offer_filter_selections
+    @use_offer_filter_selections || false
+  end
 
   def convert_offer_filter
     if use_offer_filter_selections
