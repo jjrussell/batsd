@@ -70,11 +70,11 @@ private
   end
 
   def validate_not_overlapping_times
-    unless currency.currency_sales.blank?
-      currency.currency_sales.each do |currency_sale|
-        next if self.id == currency_sale.id
-        break if validate_overlapping_errors(currency_sale)
-      end
+    # Search for a sale with an overlapping time range
+    currency.currency_sales.detect do |currency_sale|
+      next if currency_sale == self
+
+      validate_overlapping_errors(currency_sale)
     end
   end
 
