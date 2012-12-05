@@ -143,7 +143,7 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   end
 
   def send_notification(reward)
-    if reward.offer.should_notify_on_conversion?
+    if reward.offer.try(:should_notify_on_conversion?)
       publisher_app = App.find_in_cache(reward.publisher_app_id)
       Sqs.send_message(QueueNames::CONVERSION_NOTIFICATIONS, reward.id) if publisher_app && publisher_app.notifications_enabled?
     end
