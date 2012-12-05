@@ -70,7 +70,6 @@ private
   end
 
   def validate_not_overlapping_times
-    currency = Currency.find(currency_id)
     unless currency.currency_sales.blank?
       currency.currency_sales.each do |currency_sale|
         next if self.id == currency_sale.id
