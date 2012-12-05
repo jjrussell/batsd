@@ -18,6 +18,8 @@ class QueueNames
   MAIL_CHIMP_UPDATES         = "#{BASE_NAME}MailChimpUpdates"
   PARTNER_CHANGES            = "#{BASE_NAME}PartnerChanges"
   PARTNER_NOTIFICATIONS      = "#{BASE_NAME}PartnerNotifications"
+  PARTNER_STATS_DAILY        = "#{BASE_NAME}PartnerStatsDaily"
+  PARTNER_STATS_HOURLY       = "#{BASE_NAME}PartnerStatsHourly"
   RECOUNT_STATS              = "#{BASE_NAME}RecountStats"
   RESOLVE_SUPPORT_REQUESTS   = "#{BASE_NAME}ResolveSupportRequests"
   SDB_BACKUPS                = "#{BASE_NAME}SdbBackups"
