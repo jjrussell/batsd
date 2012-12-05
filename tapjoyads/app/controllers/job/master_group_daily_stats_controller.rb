@@ -1,7 +1,5 @@
-# This job will group daily stats into aggregate totals by partner/platform and
-# global/platform. It will not run until every offer has had its daily stats
-# aggregated for the previous UTC day, after which it will process that entire
-# day's stats.
+# This job will group all partners' daily stat totals into global aggregate totals by platform.
+# It processes the previous day's stats.
 
 class Job::MasterGroupDailyStatsController < Job::JobController
 
@@ -10,7 +8,7 @@ class Job::MasterGroupDailyStatsController < Job::JobController
     unless File.exists?(lockfile)
       `touch #{lockfile}`
       begin
-        StatsAggregation.aggregate_daily_group_stats
+        StatsAggregation.aggregate_global_stats((Time.zone.now - 1.day).beginning_of_day, true)
       rescue Exception => e
         File.delete(lockfile)
         raise e
