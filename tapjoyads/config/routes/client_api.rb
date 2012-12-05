@@ -7,6 +7,10 @@ Tapjoyad::Application.routes.draw do
           get :sessions
         end
       end
+      resources :campaigns do
+        resources :ads, :only => [:index] do
+        end
+      end
       resources :partners, :only => [] do
         resources :ads, :only => [:index]
         resources :campaigns, :only => [:index, :show]
