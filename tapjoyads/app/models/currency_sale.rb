@@ -1,8 +1,6 @@
 class CurrencySale < ActiveRecord::Base
   include UuidPrimaryKey
 
-  OVERLAPPING_TIMES_ERROR = I18n.t('text.currency_sale.overlap_error')
-  TIME_TRAVEL_FAIL = I18n.t('text.currency_sale.time_travel_fail')
   MULTIPLIER_SELECT = [1.5, 2.0, 3.0]
   START_TIME_ALLOWANCE = 1.hour
 
@@ -56,15 +54,14 @@ private
   #
 
   def validate_overlapping_errors(currency_sale)
-    errors.add(:base, OVERLAPPING_TIMES_ERROR) if overlapping?(currency_sale)
+    errors.add(:base, I18n.t('text.currency_sale.overlap_error')) if overlapping?(currency_sale)
   end
 
   def validate_in_the_future
-    now = Time.zone.current
     if start_time_changed?
-      errors.add(:base, TIME_TRAVEL_FAIL) unless starts_recently_or_in_future?
+      add_time_travel_error unless starts_recently_or_in_future?
     elsif end_time_changed?
-      errors.add(:base, TIME_TRAVEL_FAIL) unless ends_in_future?
+      add_time_travel_error unless ends_in_future?
     end
   end
 
@@ -81,6 +78,7 @@ private
       end
     end
   end
+
 
   #
   #
