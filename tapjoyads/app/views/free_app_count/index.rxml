@@ -1,4 +1,0 @@
-xml.instruct!
-xml.TapjoyConnectReturnObject do
-  xml.FreeAppCount @free_app_count
-end

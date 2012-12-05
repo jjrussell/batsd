@@ -1,8 +1,9 @@
 class AppsInstalledController < ApplicationController
 
+  before_filter :lookup_device
+
   def index
-    lookup_udid
-    return unless verify_params([:app_id, :udid, :library_version, :package_names, :sdk_type, :verifier])
+    return unless verify_params([:app_id, :library_version, :package_names, :sdk_type, :verifier]) && verify_records(get_device_key)
 
     unless sdkless_supported?
       @error_message = "sdkless not supported"
@@ -15,13 +16,13 @@ class AppsInstalledController < ApplicationController
       render(:template => 'layouts/error', :status => 400) and return
     end
 
-    device = Device.new(:key => params[:udid])
+    device = find_or_create_device
     temp_sdkless_clicks = device.sdkless_clicks
 
     params[:package_names].split(',').each do |package_name|
       sdkless_click = temp_sdkless_clicks[package_name]
       if sdkless_click.present?
-        click = Click.new(:key => "#{params[:udid]}.#{sdkless_click['item_id']}")
+        click = Click.new(:key => "#{get_device_key}.#{sdkless_click['item_id']}")
 
         message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)

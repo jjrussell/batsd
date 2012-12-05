@@ -30,11 +30,12 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
   def index
     @past_hours = params[:past_hours] ? params[:past_hours].to_i : 24
     stats = SupportRequestStats.for_past(@past_hours)
-    offers         = stats[:offers]
-    publisher_apps = stats[:publisher_apps]
-    udids          = stats[:udids]
-    @total         = stats[:total]
-    @last_updated  = stats[:last_updated]
+    offers            = stats[:offers]
+    publisher_apps    = stats[:publisher_apps]
+    udids             = stats[:udids]
+    tapjoy_device_ids = stats[:tapjoy_device_ids]
+    @total            = stats[:total]
+    @last_updated     = stats[:last_updated]
     @end_time = @last_updated
     @start_time = @end_time - @past_hours.hours
 
@@ -57,6 +58,11 @@ class Dashboard::Tools::SupportRequestsController < Dashboard::DashboardControll
     @udids = ActiveSupport::OrderedHash.new
     udids.each do |id, count|
       @udids[id] = { :count => count, :object => id }
+    end
+
+    @tapjoy_device_ids = ActiveSupport::OrderedHash.new
+    tapjoy_device_ids.each do |id, count|
+      @tapjoy_device_ids[id] = { :count => count, :object => id }
     end
   end
 end

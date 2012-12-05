@@ -5,10 +5,10 @@ class ReengagementRewardsController < ApplicationController
 
   OK_BUTTON_URL = "http://ok"
 
-  before_filter :lookup_udid, :set_publisher_user_id
+  before_filter :lookup_device, :set_publisher_user_id
 
   def index
-    return unless verify_params([:udid, :publisher_user_id, :app_id])
+    return unless verify_params([:publisher_user_id, :app_id]) && verify_records(get_device_key)
     @app = App.find_in_cache(params[:app_id])
     @currencies = Currency.find_all_in_cache_by_app_id(params[:app_id]) if @app.try(:reengagement_campaign_enabled?)
     @reengagement_offers = ReengagementOffer.find_all_in_cache_by_app_id(params[:app_id]) if @currencies.present?

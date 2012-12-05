@@ -1,7 +1,7 @@
 class SupportRequestStats
   PREFIX = 'support_request_stats:'
   HOURS_CACHED = [24, 12, 1]
-  STATS = %w(last_updated total offers publisher_apps udids)
+  STATS = %w(last_updated total offers publisher_apps udids tapjoy_device_ids)
 
   # Cache the past X hours, where X is a number in HOURS_CACHED
   #
@@ -28,6 +28,7 @@ class SupportRequestStats
     offer_id_count         = Hash.new(0)
     publisher_app_id_count = Hash.new(0)
     udid_count             = Hash.new(0)
+    tapjoy_device_id_count = Hash.new(0)
     total                  = 0
     query = "`updated-at` >= '#{start_time.to_f}' " +
             "AND `updated-at` < '#{end_time.to_f}'"
@@ -35,6 +36,7 @@ class SupportRequestStats
       offer_id_count[sr.offer_id] += 1
       publisher_app_id_count[sr.app_id] += 1
       udid_count[sr.udid] += 1
+      tapjoy_device_id_count[sr.tapjoy_device_id] += 1
       total += 1
     end
 
@@ -46,6 +48,9 @@ class SupportRequestStats
 
     top_udids = sort_by_most_frequently_reported(udid_count)[0...25]
     $redis.set "#{key_prefix}udids", top_udids.to_json
+
+    top_tapjoy_device_ids = sort_by_most_frequently_reported(tapjoy_device_id_count)[0...25]
+    $redis.set "#{key_prefix}tapjoy_device_ids", top_tapjoy_device_ids.to_json
 
     $redis.set "#{key_prefix}total", total
     $redis.set "#{key_prefix}last_updated", Time.zone.now.to_yaml

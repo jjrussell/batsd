@@ -34,6 +34,7 @@ module GetOffersHelper
       :publisher_app      => @publisher_app,
       :publisher_user_id  => params[:publisher_user_id],
       :udid               => params[:udid],
+      :tapjoy_device_id   => get_device_key,
       :currency_id        => @currency.id,
       :source             => options.delete(:source) { params[:source] },
       :app_version        => params[:app_version],
@@ -47,6 +48,7 @@ module GetOffersHelper
       :gamer_id           => params[:gamer_id],
       :os_version         => params[:os_version],
       :mac_address        => params[:mac_address],
+      :advertising_id     => params[:advertising_id],
       :device_type        => params[:device_type],
       :offerwall_rank     => options.delete(:offerwall_rank) { nil },
       :view_id            => options.delete(:view_id)        { nil },
@@ -65,7 +67,10 @@ module GetOffersHelper
         :publisher_user_id  => params[:publisher_user_id],
         :publisher_app_id   => @publisher_app.id,
         :currency           => @currency,
-        :udid               => params[:udid]
+        :udid               => params[:udid],
+        :advertising_id     => params[:advertising_id],
+        :mac_address        => params[:mac_address],
+        :tapjoy_device_id   => get_device_key
       )
 
       parameters = "video_id=#{offer.id}&"
@@ -86,6 +91,9 @@ module GetOffersHelper
         :publisher_app_id   => @publisher_app.id,
         :publisher_user_id  => params[:publisher_user_id],
         :udid               => params[:udid],
+        :mac_address        => params[:mac_address],
+        :advertising_id     => params[:advertising_id],
+        :tapjoy_device_id   => get_device_key,
         :currency_id        => @currency.id,
         :source             => params[:source],
         :app_version        => params[:app_version],
@@ -118,7 +126,7 @@ module GetOffersHelper
   end
 
   def missing_currency_support_params(format = 'html')
-    support_params = [ :app_id, :currency_id, :udid, :device_type, :publisher_user_id, :language_code ].inject({}) { |h,k| h[k] = params[k]; h }
+    support_params = [ :app_id, :currency_id, :tapjoy_device_id, :mac_address, :advertising_id, :udid, :device_type, :publisher_user_id, :language_code ].inject({}) { |h,k| h[k] = params[k]; h }
     support_params[:format] = format
     support_params
   end
@@ -154,5 +162,9 @@ module GetOffersHelper
     else
       return offer.item_type == 'App' ? t('text.featured.download') : t('text.featured.earn_now')
     end
+  end
+
+  def get_device_key
+    params[:tapjoy_device_id] || params[:udid] || params[:mac_address]
   end
 end

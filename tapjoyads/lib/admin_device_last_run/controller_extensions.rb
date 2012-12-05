@@ -7,10 +7,7 @@ class AdminDeviceLastRun
     module InstanceMethods
       def should_track_device?
         # The easiest check, and sets @device
-        @device ||= Device.new(
-          :key => params[:udid],
-          :is_temporary => params[:udid_is_temporary].present?
-        )
+        @device ||= find_or_create_device(params[:temporary_device_id].present?)
         return true if @device.last_run_time_tester?
 
         # Check for partner test device
@@ -25,16 +22,14 @@ class AdminDeviceLastRun
       end
 
       def track_admin_device
-        return if params[:udid].blank?
-        @device ||= Device.new(
-          :key => params[:udid],
-          :is_temporary => params[:udid_is_temporary].present?
-        )
+        return if get_device_key.blank?
+        @device ||= find_or_create_device(params[:temporary_device_id].present?)
 
         if should_track_device?
           @device.changed? and @device.save
           AdminDeviceLastRun.add(
             :udid => params[:udid],
+            :tapjoy_device_id => get_device_key,
             :app_id => params[:app_id],
             # some controllers like to set their own @web_request
             # if this isn't one of them, use ApplicationController's version

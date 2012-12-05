@@ -11,9 +11,9 @@ class Dashboard::Tools::RecommendersController < Dashboard::DashboardController
       n = params[:n].blank? ? 20 : params[:n].to_i
       @options[:recommender] = recommender.type
       case
-      when params[:recommend_for] == 'udid' && params[:app_or_device_id].present?
+      when params[:recommend_for] == 'device_id' && params[:app_or_device_id].present?
         @options[:description] = "Recommendations for Device #{params[:app_or_device_id]} by #{@recommenders[recommender.type]}"
-        @options[:udid] = params[:app_or_device_id]
+        @options[:device_id] = params[:app_or_device_id]
         @recommendations = recommender.for_device(params[:app_or_device_id], :n => n)
       when params[:recommend_for] == 'app_id' && params[:app_or_device_id].present?
         app = App.find(params[:app_or_device_id]) rescue nil

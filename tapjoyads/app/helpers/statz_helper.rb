@@ -153,13 +153,13 @@ module StatzHelper
     if args.size == 1 && args.first.is_a?(AdminDeviceLastRun)
       run = args.first
       link_to(run.time, device_last_run_statz_path(
-        run.app_id, run.udid, run.time
+        run.app_id, run.tapjoy_device_id, run.time
       ))
     elsif args.size == 3
-      text, item_id, udid = args
+      text, item_id, tapjoy_device_id = args
 
       if text != 'Never'
-        link_to(text, device_last_run_statz_path(item_id, udid))
+        link_to(text, device_last_run_statz_path(item_id, tapjoy_device_id))
       else
         text
       end

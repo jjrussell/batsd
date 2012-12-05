@@ -4,6 +4,8 @@ describe OfferTriggeredActionsController do
   before :each do
     ApplicationController.stub(:verify_params).and_return(true)
     ApplicationController.stub(:verify_records).and_return(true)
+    @device = FactoryGirl.create(:device)
+    DeviceIdentifier.stub(:find_device_from_params).and_return(@device)
     @generic_offer = FactoryGirl.create(:generic_offer)
     @offer = @generic_offer.primary_offer
     @click = FactoryGirl.create(:click, :offer_id => @offer.id)

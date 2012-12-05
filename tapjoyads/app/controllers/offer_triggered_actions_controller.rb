@@ -1,7 +1,7 @@
 class OfferTriggeredActionsController < ApplicationController
   include Facebooker2::Rails::Controller
   prepend_before_filter :decrypt_data_param
-  before_filter :setup
+  before_filter :lookup_device, :setup
 
   layout 'instructions', :only => [ :load_app, :fb_login, :fb_visit ]
 
@@ -10,7 +10,7 @@ class OfferTriggeredActionsController < ApplicationController
   end
 
   def fb_login
-    @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?udid=#{params[:udid]}"
+    @redirect_url = "#{WEBSITE_URL}/gamer/create_account_for_offer?tapjoy_device_id=#{get_device_key}"
   end
 
   def fb_visit
@@ -19,7 +19,7 @@ class OfferTriggeredActionsController < ApplicationController
   private
 
   def setup
-    return unless verify_params([ :data, :id, :udid, :publisher_app_id ])
+    return unless verify_params([ :data, :id, :publisher_app_id ]) && verify_records(get_device_key)
 
     @offer = Offer.find_in_cache params[:id]
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
@@ -30,6 +30,7 @@ class OfferTriggeredActionsController < ApplicationController
     @conversion_tracking_urls = @offer.conversion_tracking_urls
 
     complete_action_data = {
+      :tapjoy_device_id      => get_device_key,
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,

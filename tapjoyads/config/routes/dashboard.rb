@@ -167,7 +167,7 @@ Tapjoyad::Application.routes.draw do
         end
         member do
           get :last_run_times
-          get 'last_runs/:udid(/time/:time)', :action => :last_run, :as => :device_last_run
+          get 'last_runs/:device_id(/time/:time)', :action => :last_run, :as => :device_last_run
           get :udids
           get :support_request_reward_ratio
           get :show_rate_reasons

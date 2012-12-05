@@ -7,7 +7,7 @@ class Dashboard::Tools::RejectionsController < Dashboard::DashboardController
     if Offer.exists?(params[:offer_id])
       @offer = Offer.find(params[:offer_id])
       app = App.find(@offer.app_id) if @offer.app_id.present?
-      device = Device.find(params[:device_id]) if params[:device_id].present?
+      device = Device.find_by_device_id(params[:device_id]) if params[:device_id].present?
       geoip_data = {:primary_country => params[:primary_country]}
       currency = Currency.find(params[:currency_id]) if Currency.exists?(params[:currency_id])
       @rejections = @offer.postcache_rejections(app, device, currency, params[:device_type],

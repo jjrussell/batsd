@@ -6,7 +6,7 @@ class GetOffersController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :set_featured_params, :only => :featured
-  before_filter :lookup_udid, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
+  before_filter :lookup_device, :set_publisher_user_id, :setup, :set_algorithm, :except => [:webpage_cross_promo, :featured_cross_promo]
 
   tracks_admin_devices(:only => [:webpage, :index])
 
@@ -165,7 +165,7 @@ class GetOffersController < ApplicationController
     @save_web_requests = !@for_preview && params[:no_log] != '1'
     @server_to_server = server_to_server?
 
-    required_params = [:app_id] + (@for_preview ? [:offer_id] : [:udid, :publisher_user_id])
+    required_params = [:app_id] + (@for_preview ? [:offer_id] : [which_to_slice, :publisher_user_id])
     return unless verify_params(required_params)
 
     @now = Time.zone.now
@@ -189,7 +189,7 @@ class GetOffersController < ApplicationController
     return unless verify_records([ @currency, @publisher_app ])
 
     unless @for_preview
-      @device = Device.new(:key => params[:udid])
+      @device = find_or_create_device
       @device.screen_layout_size = params[:screen_layout_size] if params[:screen_layout_size].present?
       @device.mobile_country_code = params[:mobile_country_code] if params[:mobile_country_code].present?
       @device.mobile_network_code = params[:mobile_network_code] if params[:mobile_network_code].present?
@@ -275,7 +275,7 @@ class GetOffersController < ApplicationController
         # for third party tracking vendors
         offer.queue_impression_tracking_requests(
           :ip_address       => ip_address,
-          :udid             => params[:udid],
+          :tapjoy_device_id => get_device_key,
           :publisher_app_id => params[:app_id])
       end
     end
