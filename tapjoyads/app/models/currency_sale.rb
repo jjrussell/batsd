@@ -52,17 +52,17 @@ private
   # Validation methods
   # Responsible for checking constraints and adding errors to the instance
   #
-
-  def validate_overlapping_errors(currency_sale)
-    errors.add(:base, I18n.t('text.currency_sale.overlap_error')) if overlapping?(currency_sale)
+  def validate_in_the_future
+    validate_starts_recently_or_in_future and return if start_time_changed?
+    validate_ends_in_future if end_time_changed?
   end
 
-  def validate_in_the_future
-    if start_time_changed?
-      add_time_travel_error unless starts_recently_or_in_future?
-    elsif end_time_changed?
-      add_time_travel_error unless ends_in_future?
-    end
+  def validate_starts_recently_or_in_future
+    add_time_travel_error unless starts_recently_or_in_future?
+  end
+
+  def validate_ends_in_future
+    add_time_travel_error unless ends_in_future?
   end
 
   def validate_start_end
@@ -74,7 +74,7 @@ private
     currency.currency_sales.detect do |currency_sale|
       next if currency_sale == self
 
-      validate_overlapping_errors(currency_sale)
+      errors.add(:base, I18n.t('text.currency_sale.overlap_error')) if overlapping?(currency_sale)
     end
   end
 
