@@ -50,7 +50,7 @@ describe Job::QueueConversionNotificationsController do
         :app_id => @reward.publisher_app_id,
         :app_secret_key => @publisher_app.secret_key,
         :title => "Reward Notification",
-        :message => "You earned #{@reward.currency_reward} #{@currency.name}s by downloading #{@advertiser_app.name}",
+        :message => "You earned #{@reward.currency_reward} #{@currency.name} by downloading #{@advertiser_app.name}",
         :throttle_key => 'tjofferconversion',
         :device_aliases => [{:device_key => 'udid', :android_id => 'android_id', :idfa => 'idfa'}]
       }).and_return(@notification)
@@ -66,7 +66,7 @@ describe Job::QueueConversionNotificationsController do
         :app_id => @reward.publisher_app_id,
         :app_secret_key => @publisher_app.secret_key,
         :title => "Reward Notification",
-        :message => "You earned #{@reward.currency_reward} #{@currency.name}s by downloading #{@advertiser_app.name}",
+        :message => "You earned #{@reward.currency_reward} #{@currency.name} by downloading #{@advertiser_app.name}",
         :throttle_key => 'tjofferconversion',
         :device_aliases => [{:device_key => 'udid', :android_id => 'android_id', :mac_sha1 => '1f22542dc51c54db355649323bc7792fbcea94a9', :idfa => 'idfa'}]
       }).and_return(@notification)
