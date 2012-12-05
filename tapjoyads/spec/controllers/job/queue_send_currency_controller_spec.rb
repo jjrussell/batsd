@@ -192,13 +192,6 @@ describe Job::QueueSendCurrencyController do
       reward.send_currency_status.should == "200"
     end
 
-    it 'updates reward.attempts' do
-      get(:run_job, :message => @reward.id)
-      reward = Reward.new(:key => @reward.key, :consistent => true)
-      reward.attempts.last['status'].should == @mock_response.status
-      reward.attempts.last['body'].should == @mock_response.body
-    end
-
     it 'creates a web request' do
       @mock_response.stub(:status).and_return(20)
       Timecop.freeze

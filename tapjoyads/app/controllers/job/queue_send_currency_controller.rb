@@ -12,7 +12,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
   def on_message(message)
     params.delete(:callback_url)
     reward = Reward.find(message.body, :consistent => true)
-    attempts = reward.attempts || []
     raise "Reward not found: #{message.body}" if reward.nil?
     return if reward.sent_currency? && reward.send_currency_status?
 
@@ -105,8 +104,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
             web_request = WebRequest.new(:time => @now)
             web_request.put_values('send_currency_attempt', options)
 
-            attempts << { :status => status, :body => response.body, :timestamp => Time.zone.now }
-
             if status == 200
               reward.send_currency_status = status
               send_notification(reward)
@@ -126,7 +123,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
 
     rescue Patron::TimeoutError, Exception => e
       @bad_callbacks << reward.currency_id
-      reward.attempts = attempts
       reward.delete('sent_currency')
       reward.save
 
@@ -143,7 +139,6 @@ class Job::QueueSendCurrencyController < Job::SqsReaderController
       raise e
     end
 
-    reward.attempts = attempts
     reward.save
   end
 
