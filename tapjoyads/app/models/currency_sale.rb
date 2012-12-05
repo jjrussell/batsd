@@ -45,9 +45,7 @@ private
 
   def validate_in_the_future
     now = Time.zone.current
-    if start_time_changed? && end_time_changed?
-      errors.add(:base, TIME_TRAVEL_FAIL) if ((now - 1.hour) >= self.start_time) || (now >= self.end_time)
-    elsif start_time_changed?
+    if start_time_changed?
       errors.add(:base, TIME_TRAVEL_FAIL) if (now - 1.hour) >= self.start_time
     elsif end_time_changed?
       errors.add(:base, TIME_TRAVEL_FAIL) if now >= self.end_time
