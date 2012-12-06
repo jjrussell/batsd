@@ -40,7 +40,7 @@
           %span#acting_as
             = form_tag('') do
               acting as
-              = select_tag(:recent_partners, options_for_select(@recent_partners))
+              = select_tag(:recent_partners, options_for_select(@recent_partners, :selected => [current_partner.name, make_current_partner_path(current_partner)]))
               = link_to('Partner page', partner_path(current_partner))
 
       #tabs
