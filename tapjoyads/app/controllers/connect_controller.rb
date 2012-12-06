@@ -16,7 +16,9 @@ class ConnectController < ApplicationController
     return unless verify_params(required_param)
     return unless params[:udid].present?
 
-    @device = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
+    @device   = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
+    click     = nil
+    path_list = []
 
     unless @device.has_app?(params[:app_id]) && !@device.is_temporary
       click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
@@ -33,9 +35,16 @@ class ConnectController < ApplicationController
     @web_request = WebRequest.new
     @web_request.put_values('connect', params, ip_address, geoip_data, request.headers['User-Agent'])
     @web_request.raw_url = request.url
+
+    if click
+      @web_request.click_id       =  click.id
+      @web_request.click_offer_id =  click.offer_id
+      path_list                   << 'conversion_user'
+    end
+
     update_web_request_store_name(@web_request, params[:app_id])
 
-    path_list = @device.handle_connect!(params[:app_id], params)
+    path_list += @device.handle_connect!(params[:app_id], params)
     path_list.each do |path|
       @web_request.path = path
     end

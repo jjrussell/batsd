@@ -94,6 +94,8 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :mobile_country_code, :cgi_escape => true
   self.define_attr :mobile_network_code
   self.define_attr :click_key
+  self.define_attr :click_id
+  self.define_attr :click_offer_id
   self.define_attr :transaction_id
   self.define_attr :tap_points
   self.define_attr :publisher_amount, :type => :int
