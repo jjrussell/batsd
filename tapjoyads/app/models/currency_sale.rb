@@ -66,7 +66,7 @@ private
   end
 
   def validate_start_end
-    errors.add :end_time, "must be after Start Time" if self.start_time >= self.end_time
+    errors.add :end_time, I18n.t('text.currency_sale.start_before_end_error', :default => "must be after Start Time") if self.start_time >= self.end_time
   end
 
   def validate_not_overlapping_times
