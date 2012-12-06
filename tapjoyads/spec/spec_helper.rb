@@ -72,6 +72,15 @@ Spork.prefork do
 
     config.before(:suite) do
       DeferredGarbageCollection.start
+
+      class Timecop
+        def self.at_time(time)
+          Timecop.freeze(time)
+            yield
+        ensure
+          Timecop.return
+        end
+      end
     end
 
     config.before(:each) do
