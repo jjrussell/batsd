@@ -106,59 +106,21 @@ describe Dashboard::CurrencySalesController do
       end
     end
     context 'invalid update' do
-      context 'end time less than the start time' do
-        before :each do
-          CurrencySale.stub(:find).and_return(@currency_sale)
-          update_params = { :currency_sale => {
-                        :start_time => (Time.zone.now + 6.days).to_s,
-                        :end_time   => (Time.zone.now + 5.days).to_s,
-                        :multiplier => @currency_sale.multiplier },
-                      :id => @currency_sale.id
-          }
-          put(:update, @params.merge(update_params))
-        end
-        it 'should have a flash error' do
-          flash.now[:error].should == I18n.t('text.currency_sale.update_fail')
-        end
-        it 'should render edit layout' do
-          response.should render_template('edit')
-        end
+      before :each do
+        CurrencySale.stub(:find).and_return(@currency_sale)
+        update_params = { :currency_sale => {
+                      :start_time => (Time.zone.now + 6.days).to_s,
+                      :end_time   => (Time.zone.now + 5.days).to_s,
+                      :multiplier => @currency_sale.multiplier },
+                    :id => @currency_sale.id
+        }
+        put(:update, @params.merge(update_params))
       end
-      context 'overlapping times' do
-        before :each do
-          CurrencySale.stub(:find).and_return(@currency_sale)
-          update_params = { :currency_sale => {
-                        :start_time => (@currency_sale2.start_time - 30.minutes).to_s,
-                        :end_time   => (@currency_sale2.end_time + 30.minutes).to_s,
-                        :multiplier => @currency_sale.multiplier },
-                      :id => @currency_sale.id
-          }
-          put(:update, @params.merge(update_params))
-        end
-        it 'should have a flash notice' do
-          flash.now[:error].should == CurrencySale::OVERLAPPING_TIMES_ERROR
-        end
-        it 'should render edit layout' do
-          response.should render_template('edit')
-        end
+      it 'should have a flash error' do
+        flash.now[:error].should == I18n.t('text.currency_sale.update_fail')
       end
-      context 'times created in the past' do
-        before :each do
-          CurrencySale.stub(:find).and_return(@currency_sale)
-          update_params = { :currency_sale => {
-                        :start_time => (Time.zone.now - 1.day).to_s,
-                        :end_time   => (Time.zone.now + 3.days).to_s,
-                        :multiplier => @currency_sale.multiplier },
-                      :id => @currency_sale.id
-          }
-          put(:update, @params.merge(update_params))
-        end
-        it 'should have a flash notice' do
-          flash.now[:error].should == CurrencySale::TIME_TRAVEL_FAIL
-        end
-        it 'should render edit layout' do
-          response.should render_template('edit')
-        end
+      it 'should render edit layout' do
+        response.should render_template('edit')
       end
     end
   end
@@ -217,6 +179,9 @@ describe Dashboard::CurrencySalesController do
         }
         post(:create, @params.merge(create_params))
       end
+      it "should set the currency" do
+        assigns(:currency_sale).currency.should == @currency
+      end
       it 'should have a successful flash notice' do
         flash[:notice].should == I18n.t('text.currency_sale.create_success')
       end
@@ -225,53 +190,40 @@ describe Dashboard::CurrencySalesController do
       end
     end
     context 'invalid create' do
-      context 'end time less than the start time' do
-        before :each do
-          create_params = { :currency_sale => {
-                        :start_time => Time.zone.now + 6.days,
-                        :end_time   => Time.zone.now + 5.days,
-                        :multiplier => '3' }
-          }
-          post(:create, @params.merge(create_params))
-        end
-        it 'should have a flash error' do
-          flash.now[:error].should == I18n.t('text.currency_sale.create_fail')
-        end
-        it 'should render edit layout' do
-          response.should render_template('new')
+      let(:error_message) { "test message" }
+      let(:do_request)    { post(:create, @params.merge(create_params)) }
+      let(:create_params) { { :currency_sale => {
+                      :start_time => Time.zone.now + 6.days,
+                      :end_time   => Time.zone.now + 5.days,
+                      :multiplier => '3' }
+      }}
+      let(:currency_sale) do
+        CurrencySale.new.tap do |sale|
+          sale.errors.add :base, error_message
+          sale.stub!(:save).and_return(false)
         end
       end
-      context 'overlapping times' do
-        before :each do
-          create_params = { :currency_sale => {
-                        :start_time => @currency_sale2.start_time - 30.minutes,
-                        :end_time   => @currency_sale2.end_time + 30.minutes,
-                        :multiplier => '3' }
-          }
-          post(:create, @params.merge(create_params))
-        end
-        it 'should have a flash notice' do
-          flash.now[:error].should == CurrencySale::OVERLAPPING_TIMES_ERROR
-        end
-        it 'should render edit layout' do
-          response.should render_template('new')
-        end
+
+      before(:each) do
+        # Ensure instance is created before .new is stubbed
+        currency_sale && CurrencySale.stub!(:new).and_return(currency_sale)
       end
-      context 'times created in the past' do
-        before :each do
-          create_params = { :currency_sale => {
-                        :start_time => Time.zone.now - 3.days,
-                        :end_time   => Time.zone.now - 4.days,
-                        :multiplier => '3' }
-          }
-          post(:create, @params.merge(create_params))
-        end
-        it 'should have a flash notice' do
-          flash.now[:error].should == CurrencySale::TIME_TRAVEL_FAIL
-        end
-        it 'should render edit layout' do
-          response.should render_template('new')
-        end
+
+      it "should instantiate currency sale with params" do
+        CurrencySale.should_receive(:new).with(create_params[:currency_sale].stringify_keys)
+        do_request
+      end
+
+      it "should save the sale" do
+        currency_sale.should_receive(:save).and_return(false)
+        do_request
+      end
+
+      it 'should have a flash error' do
+        do_request; flash.now[:error].should == error_message
+      end
+      it 'should render edit layout' do
+        do_request; response.should render_template('new')
       end
     end
   end
