@@ -4,7 +4,6 @@ class QueueNames
   APP_STATS_DAILY            = "#{BASE_NAME}AppStatsDaily"
   APP_STATS_HOURLY           = "#{BASE_NAME}AppStatsHourly"
   CACHE_EXTERNAL_PUBLISHERS  = "#{BASE_NAME}CacheExternalPublishers"
-  CACHE_SUPPORT_REQUEST_STATS= "#{BASE_NAME}CacheSupportRequestStats"
   CALCULATE_SHOW_RATE        = "#{BASE_NAME}CalculateShowRate"
   CONVERSION_TRACKING        = "#{BASE_NAME}ConversionTracking"
   CREATE_CONVERSIONS         = "#{BASE_NAME}CreateConversions"
