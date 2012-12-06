@@ -217,7 +217,7 @@ class Currency < ActiveRecord::Base
 
   def get_reward_amount(offer)
     return 0 unless rewarded? && offer.rewarded?
-    [get_raw_reward_value(offer), 1.0].max.to_i
+    ([get_raw_reward_value(offer), 1.0].max.to_i * currency_sale_multiplier).to_i
   end
 
   def get_raw_reward_value(offer)
@@ -230,7 +230,7 @@ class Currency < ActiveRecord::Base
     else
       reward_value = floored_reward_value(offer)
     end
-    reward_value * currency_sale_multiplier * currency_conversion_rate(offer) / 100.0
+    reward_value * currency_conversion_rate(offer) / 100.0
   end
 
   def currency_conversion_rate(offer)
