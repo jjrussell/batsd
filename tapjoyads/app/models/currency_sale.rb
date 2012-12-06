@@ -6,14 +6,15 @@ class CurrencySale < ActiveRecord::Base
 
   belongs_to :currency
 
-  validates_presence_of :start_time, :end_time, :multiplier
-  validates_uniqueness_of :start_time, :end_time
-  validates_numericality_of :multiplier, :greater_than => 0
+  validates :start_time,       :presence => true, :uniqueness => true
+  validates :end_time,         :presence => true, :uniqueness => true
+  validates :multiplier,       :presence => true, :numericality => { :greater_than => 0 },
+                               :inclusion => { :in => CurrencySale::MULTIPLIER_SELECT,
+                                               :message => I18n.t('text.currency_sale.must_be_dropdown') }
+  validates :message_enabled,  :inclusion => { :in => [ true, false ] }
+
   validate :validate_start_end, :validate_in_the_future, :validate_not_overlapping_times, :if => :time_changed?
-  validates_each :multiplier do |record, attribute, value|
-    record.errors.add(attribute, I18n.t('text.currency_sale.must_be_dropdown')) unless CurrencySale::MULTIPLIER_SELECT.include?(value)
-  end
-  validates_inclusion_of :message_enabled, :in => [ true, false ]
+
 
   scope :active,   lambda { where("start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now) }
   scope :past,     lambda { where("start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now).order('start_time') }
