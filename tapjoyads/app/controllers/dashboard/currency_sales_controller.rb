@@ -18,7 +18,9 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
   end
 
   def create
-    @currency_sale = CurrencySale.new(params[:currency_sale].merge(:currency_id => @currency.id))
+    @currency_sale = CurrencySale.new(params[:currency_sale]) do |sale|
+      sale.currency = @currency
+    end
     log_activity(@currency_sale)
     if @currency_sale.save
       flash[:notice] = I18n.t('text.currency_sale.create_success')
@@ -67,12 +69,9 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
     @future_currency_sales = @currency.currency_sales.future.paginate(:page => params[:page], :per_page => PER_PAGE)
   end
 
+  # Use any base error as the flash. Base errors are only set for time range problems.
   def error
-    if @currency_sale.errors[:base].include?(CurrencySale::TIME_TRAVEL_FAIL)
-      CurrencySale::TIME_TRAVEL_FAIL
-    elsif @currency_sale.errors[:base].include?(CurrencySale::OVERLAPPING_TIMES_ERROR)
-      CurrencySale::OVERLAPPING_TIMES_ERROR
-    end
+    @currency_sale.errors[:base].first
   end
 
   def check_times
