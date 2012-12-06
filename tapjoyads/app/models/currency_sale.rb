@@ -8,8 +8,7 @@ class CurrencySale < ActiveRecord::Base
 
   validates :start_time,       :presence => true, :uniqueness => true
   validates :end_time,         :presence => true, :uniqueness => true
-  validates :multiplier,       :presence => true, :numericality => { :greater_than => 0 },
-                               :inclusion => { :in => CurrencySale::MULTIPLIER_SELECT,
+  validates :multiplier,       :inclusion => { :in => CurrencySale::MULTIPLIER_SELECT,
                                                :message => I18n.t('text.currency_sale.must_be_dropdown') }
   validates :message_enabled,  :inclusion => { :in => [ true, false ] }
 
