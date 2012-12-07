@@ -1,23 +1,32 @@
 %table.tablesorter
   %thead
     %tr
-      %th Record
-      %th Reviewing User (optional)
-      %th State
-      %th Rejection Reason
+      %th Company Name
+      %th Integration Request
+      %th Reviewing User
+      %th Request State
       %th
   %tbody
   - @approvals.each do |approval|
+    - partner = approval.item.partner
     %tr
+      %td= partner.payout_info.present? ? partner.payout_info.company_name : partner.name_or_contact_name
       %td
         = approval.item.nil? ? "--" : approval.item.try(:to_s) || approval.item.id
         - if approval.item.partner
           (Partner:
           = link_to approval.item.partner.name, approval.item.partner
           )
-      %td= render :partial => 'owner_select', :locals => {:approval => approval}
+
+
+      %td
+        = form_for(approval,
+                   :url => {:action => :assign, :id => approval.id},
+                   :html => {:class => 'assignment',:method => :post}) do |f|
+          = f.select(:owner_id, options_for_select(Approval.options_for_available_owners(true), approval.owner_id))
+          = image_tag('spinner.gif', :class => 'spinner hidden')
+
       %td= approval.state
-      %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
       %td.actions
         - if approval.pending?
           = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
