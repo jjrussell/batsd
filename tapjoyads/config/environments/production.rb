@@ -66,10 +66,18 @@ CACHE_SERVERS[:analytics_logger] = [
   'rabbit-dedupe.tapjoy.net'
 ]
 CACHE_SERVERS[:stats] = [
-  'localhost:11210' # couchbase stats cluster
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com' # couchbase stats cluster
 ]
 MEMCACHE_SERVERS = [
-  'localhost:11210' # couchbase stats cluster
+  'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0003.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
+  'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com'
 ]
 SDB_MEMCACHE_SERVERS = [
   'tj-sdb-20120912.fqfjqv.0001.use1.cache.amazonaws.com',
