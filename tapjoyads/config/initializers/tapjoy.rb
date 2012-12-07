@@ -14,7 +14,8 @@ BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26b
                         '012345678901237', 'f413dceae5ffc62ade872a6697e31a23d43b3e3c83ad45303c6e63e8cfb0a1e4',
                         '352005048247251', 'cafc5c408c7aaa5b1626169964b69be08792d4fe75a0f4a8b062dd7c8bbdebb2',
                         '355195000000017', '6f2493936ac99c3068d4da6eca711926c496df66500362dceb4b745a63084cf5',
-                        '358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8'])
+                        '358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8',
+                        'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a'])
 IGNORED_UDIDS = Set.new(['a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a'])
 
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
