@@ -147,7 +147,7 @@ GEM
       activemodel (= 3.0.15)
       activesupport (= 3.0.15)
     activesupport (3.0.15)
-    acts-as-approvable (0.6.9)
+    acts_as_approvable (0.7.0)
     adapter (0.5.2)
     adapter-redis (0.5)
       adapter (~> 0.5.1)
@@ -545,7 +545,7 @@ PLATFORMS
 DEPENDENCIES
   SystemTimer (= 1.2.3)
   activemerchant
-  acts-as-approvable (= 0.6.9)
+  acts_as_approvable (= 0.7.0)
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)

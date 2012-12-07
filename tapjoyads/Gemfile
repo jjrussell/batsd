@@ -2,7 +2,7 @@ source :rubygems
 source 'https://gems.gemfury.com/NpbzcqYHo5hzMWudyHNj/'
 
 gem 'activemerchant'
-gem 'acts-as-approvable', '0.6.9'
+gem 'acts_as_approvable', '0.7.0'
 gem 'adapter-redis', '0.5'
 gem 'addressable', '2.2.6', :require => 'addressable/uri'
 gem 'airbrake', '3.0.5'
