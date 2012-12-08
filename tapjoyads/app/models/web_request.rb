@@ -165,6 +165,7 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :geoip_longitude, :type => :float
   self.define_attr :geoip_area_code, :type => :int
   self.define_attr :geoip_dma_code, :type => :int
+  self.define_attr :rewarded, :type => :bool
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)

@@ -65,6 +65,7 @@ class Click < SimpledbShardedResource
   self.sdb_attr :auditioning, :type => :bool
   self.sdb_attr :instruction_viewed_at,         :type => :time
   self.sdb_attr :instruction_clicked_at,        :type => :time
+  self.sdb_attr :rewarded, :type => :bool
 
   #Special case for new domain
   def self.all_domain_names
