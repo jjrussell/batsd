@@ -63,7 +63,7 @@ class Job::SqsReaderController < Job::JobController
   private
 
   def get_memcache_lock_key(message_id)
-    "sqslocks.#{@short_queue_name}.#{message_id}.#{Time.now.to_i / 5.minutes}"
+    "sqslocks.#{@short_queue_name}.#{message_id}.locked"
   end
 
   # NewRelic truncates parameter length to ~250 chars so split the message up
