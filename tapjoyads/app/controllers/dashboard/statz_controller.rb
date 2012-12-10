@@ -44,8 +44,6 @@ class Dashboard::StatzController < Dashboard::DashboardController
         @store_options[meta.store.name] = meta.store.sdk_name
       end
     end
-    @user_test_udid = UUIDTools::UUID.md5_create(
-      UUIDTools::UUID_OID_NAMESPACE, current_user.id).to_s
 
     respond_to do |format|
       format.html do
