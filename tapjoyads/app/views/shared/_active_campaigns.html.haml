@@ -16,9 +16,7 @@
                 = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
             %td
               %a{:href => url_to_offer_item(offer)}
-                %span= offer.name_with_suffix
-                %br
-                %span.descriptors= offer.descriptors.join(', ')
+                = render :partial => 'dashboard/offers/offer_title', :locals => {:offer => offer}
             %td.offer-type
               - if offer.app_offer?
                 = image_tag(platform_icon_url(offer))

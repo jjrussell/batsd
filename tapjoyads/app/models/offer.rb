@@ -709,6 +709,10 @@ class Offer < ActiveRecord::Base
     @descriptors
   end
 
+  def description
+    descriptors.join(', ')
+  end
+
   def store_id_for_feed
     store_id = third_party_data if (item_type == 'App')
     store_id || IconHandler.hashed_icon_id(id)

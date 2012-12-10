@@ -12,15 +12,7 @@
           Add a new App
           = link_to('#', new_app_path, :class => "hidden")
       - else
-        = image_tag(selected.get_icon_url, :size => '24x24', :alt => '')
-        - name = selected.is_a?(App) ? selected.name : selected.name_with_suffix
-        - if selected.is_a?(Offer)
-          - name += ' ('
-          - name += (selected.try(:rewarded?) ? 'rewarded' : 'non-rewarded')
-          - name += (selected.try(:featured?) ? ' featured' : '')
-          - name += ')'
-        = name
-        = image_tag(platform_icon_url(selected), :class => 'platform_icon')
+        = render :partial => 'shared/dropdown_item', :locals => {:item => selected}
   #apps_dropdown.hidden
     #filter_box
       Filter:
@@ -42,16 +34,8 @@
           - url = reporting_path(o, options[:extra_url_params])
         - class_name = o == selected ? "selected" : ""
         .app{ :class => class_name, :title => o.name }
-          = image_tag(o.get_icon_url, :size => '24x24', :alt => '')
           %span.app-name
-            - name = o.is_a?(App) ? o.name : o.name_with_suffix
-            - if o.is_a?(Offer)
-              - name += ' ('
-              - name += (o.try(:rewarded?) ? 'rewarded' : 'non-rewarded')
-              - name += (o.try(:featured?) ? ' featured' : '')
-              - name += ')'
-            = name
-            = image_tag(platform_icon_url(o), :class => 'platform_icon')
+            = render :partial => 'shared/dropdown_item', :locals => {:item => o}
             = hidden_field_tag 'app_id', (o.is_a?(App) ? o.id : o), :disabled => true
           = link_to('#', url, :class => "hidden")
     - if options[:not_for_nav]
@@ -125,6 +109,23 @@
         vertical-align: middle;
         margin: 0px 10px;
       }
+
+      #selected_app .offer_name, #apps_box .offer_name {
+        float: left;
+        height: 24px;
+        width: 540px;
+        margin: 0px;
+      }
+
+      #selected_app .offer_name h1, #apps_box .offer_name h1 {
+        font-size: small;
+        margin: 0px;
+        padding: 0px;
+      }
+
+      .offer_name .descriptors {
+        font-size: small;
+      }
       #selected_app_arrow img {
         margin: 0px 4px;
       }
@@ -172,7 +173,7 @@
         overflow-x: hidden;
         white-space: nowrap;
         padding: 5px 5px;
-        height: 24px;
+        height: 39px;
       }
       .app.selected {
         background: #337BC8;
@@ -193,9 +194,11 @@
       img.platform_icon {
         opacity: 0.25;
         margin: 0;
+        float: right;
       }
       #selected_app_text img.platform_icon {
         opacity: 1.0;
+        float: right;
       }
   - content_for :page_javascript do
     :plain

@@ -135,8 +135,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
 
   private
   def search_result_html_for(offer)
-      offer.name_with_suffix +
-      "<br/><span style='font-size:smaller;'>#{offer.descriptors.join(', ')}</span>"
+    render_to_string(:partial => '/dashboard/offers/offer_title.html.haml', :locals => {:offer => offer})
   end
 
 end
