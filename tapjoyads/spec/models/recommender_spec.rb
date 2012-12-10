@@ -58,7 +58,7 @@ def recommender_instance_spec(recommender)
     before :each do
       recommender.cache_all
       @app = "003333af-df6f-4a03-80dd-082e35237d12"
-      @udid = "dummy_udid"
+      @udid = "statz_test_udid"
     end
 
     describe "cache_all" do

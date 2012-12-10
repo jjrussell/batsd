@@ -34,7 +34,7 @@ WEBSITE_URL = 'http://rogue.tapjoy.net'
 ### Test 1: Successfully complete a coupon offer and obtaining a voucher in the email
 1. First, make sure coupons exists. Refer to Test 4.
 2. Make sure you have cached offers. Go to tapjoyserver console, do OfferCacher.cache_offers(true).
-3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=dummy_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
+3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=statz_test_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
 4. Find a coupon offer and click on it, most start with 'Save 40%...' or 'Save 50$...'.
    It also has the '/click/coupon?data=' url when you hover over the link.
 5. An instructions page whill show up.
@@ -53,7 +53,7 @@ WEBSITE_URL = 'http://rogue.tapjoy.net'
 ### Test 2: Fail completing a coupon offer (invalid or blank email)
 1. First, make sure coupons exists. Refer to Test 4.
 2. Make sure you have cached offers. Go to tapjoyserver console, do OfferCacher.cache_offers(true).
-3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=dummy_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
+3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=statz_test_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
 4. Find a coupon offer and click on it, most start with 'Save 40%...' or 'Save 50$...'.
    It also has the '/click/coupon' url when you hover over the link.
 5. An instructions page whill show up.
@@ -65,7 +65,7 @@ WEBSITE_URL = 'http://rogue.tapjoy.net'
 ### Test 3: Fail completing a coupon offer using the same device to request a coupon more than once.
 1. First, make sure coupons exists. Refer to Test 4.
 2. Make sure you have cached offers. Go to tapjoyserver console, do OfferCacher.cache_offers(true).
-3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=dummy_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
+3. Go to in-app offer wall or directly use, for example [offer wall webpage](http://rogue.tapjoy.net/get_offers/webpage?app_id=5e355f54-7353-4450-ad13-842692e1342d&udid=statz_test_udid&publisher_user_id=testuser&currency_id=5e355f54-7353-4450-ad13-842692e1342d&device_type=android).
 4. Find a coupon offer and click on it, most start with 'Save 40%...' or 'Save 50$...'.
    It also has the '/click/coupon?data=' url when you hover over the link.
 5. An instructions page whill show up.
