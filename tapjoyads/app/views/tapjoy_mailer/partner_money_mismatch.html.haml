@@ -1,0 +1,14 @@
+%p
+  = Date.today.to_s
+%p
+  Balance mismatches:
+  %br/
+  - @balance_mismatches.each do |partner|
+    #{partner[:id]} went from #{partner[:before]} to #{partner[:after]}
+    %br/
+%p
+  Earnings mismatches:
+  %br/
+  - @earnings_mismatches.each do |partner|
+    #{partner[:id]} went from #{partner[:before]} to #{partner[:after]}
+    %br/

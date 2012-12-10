@@ -24,11 +24,11 @@ class TapjoyMailer < ActionMailer::Base
     body :rows => rows, :fields => alert.fields
   end
 
-  def sms_sent(phone, message)
-    from 'Tapjoy <noreply@tapjoy.com>'
-    recipients "dev@tapjoy.com"
-    subject "An SMS has been sent"
-    body :text => "An sms has been sent to #{phone}, with the message: #{message}"
+  def partner_money_mismatch(balance_mismatches, earnings_mismatches)
+    from 'Tapjoy <noc@tapjoy.com>'
+    recipients "noc@tapjoy.com"
+    subject "Balance/Earnings mismatches for #{Date.today.to_s}"
+    body(:balance_mismatches => balance_mismatches, :earnings_mismatches => earnings_mismatches)
   end
 
   def low_conversion_rate_warning(offer, stats)
