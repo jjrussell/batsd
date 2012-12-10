@@ -1,5 +1,6 @@
 class OfferInstructionsController < ApplicationController
   prepend_before_filter :decrypt_data_param
+  after_filter :save_web_request, :only => [:index]
 
   layout :instructions_layout
 
@@ -28,7 +29,7 @@ class OfferInstructionsController < ApplicationController
       :device_click_ip       => params[:device_click_ip],
       :itunes_link_affiliate => params[:itunes_link_affiliate],
       :library_version       => params[:library_version],
-      :os_version            => params[:os_version]
+      :os_version            => params[:os_version],
     }
 
     if @offer.pay_per_click?(:ppc_on_instruction)
@@ -60,5 +61,9 @@ class OfferInstructionsController < ApplicationController
 
   def choose_redesign?
     @device.last_run_time_tester? || params[:exp] == 'offer_instructions_experiment'
+  end
+
+  def save_web_request
+    WebRequest.log_offer_instructions(Time.zone.now, params, ip_address, geoip_data, request.headers['User-Agent'])
   end
 end

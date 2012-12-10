@@ -189,6 +189,14 @@ class WebRequest < AnalyticsLogger::Message
     web_request.save
   end
 
+  def self.log_offer_instructions( time, params, ip_address = nil, geoip_data = nil, user_agent = nil)
+    path = 'offer_instructions'
+    params[:offer_id] = params[:id]
+    web_request = WebRequest.new(:time => time)
+    web_request.put_values(path, params, ip_address, geoip_data, user_agent)
+    web_request.save
+  end
+
   def put_values(path, params, ip_address = nil, geoip_data = nil, user_agent = nil)
     columns = WebRequest.attributes.keys
     params.keys.each { |key| self.send("#{key}=", params[key]) if columns.include?(key.to_sym) } unless params.blank?
