@@ -14,7 +14,6 @@ class CurrencySale < ActiveRecord::Base
 
   validate :validate_start_end, :validate_in_the_future, :validate_not_overlapping_times, :if => :time_changed?
 
-
   scope :active,   lambda { where("start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now) }
   scope :past,     lambda { where("start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now).order('start_time') }
   scope :future,   lambda { where("start_time > ? AND end_time > ?", Time.zone.now, Time.zone.now).order('start_time') }
@@ -38,6 +37,11 @@ class CurrencySale < ActiveRecord::Base
   def time_changed?
     self.start_time.present? && self.end_time.present? && [self.start_time_changed?, self.end_time_changed?].any?
   end
+
+  #TODO(nixoncd): uncomment when currency sale view is cleaned up
+  #def multiplier_to_string
+    #(self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s
+  #end
 
 protected
 

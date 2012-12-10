@@ -10,6 +10,9 @@
     - if params[:currency_selector] == '1' && @currencies.present? && @currencies.size > 1
       = render 'currency_selector'
 
+    -#TODO(nixoncd): uncomment when currency sale view gets cleaned up
+    -#= render 'currency_message'
+
     - if @test_offers.present?
       #test_offers
         - unless @currency.tapjoy_enabled?
@@ -46,18 +49,6 @@
       #poweredby.center.poweredby
         = t('text.offerwall.powered')
 
-  - sale_lightbox_active = @currency_sale && @currency_sale.message_enabled?
-  - if @currency.message_enabled? && !sale_lightbox_active
-    %div{:style => 'display:none;'}
-      #currency_message{:style => 'padding:10px; background:#fff;'}
-        %strong= @currency.message
-  - elsif sale_lightbox_active
-    %div{:style => 'display:none;'}
-      #currency_message{:style => 'padding:10px; background:#fff;'}
-        - multiplier = @currency_sale.multiplier % 1 == 0 ? @currency_sale.multiplier.to_i.to_s : @currency_sale.multiplier.to_s
-        %strong= @currency_sale.message.present? ? @currency_sale.message : I18n.t('text.currency_sale.sale_default_message', :multiplier => multiplier, :currency_name => @currency.name)
-        .countdown.countdown_row
-
 :javascript
   #{render 'shared/translations.js',  :filter => 'offerwall'}
   var page = #{@webpage_link.to_json},
@@ -71,5 +62,3 @@
 
 = javascript_include_tag 'shared/i18n'
 = javascript_include_tag "offerwall/offerwall"
-- if @currency.message_enabled? || @currency_sale
-  = render 'lightbox'

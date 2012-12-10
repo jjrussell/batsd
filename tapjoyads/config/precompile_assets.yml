@@ -12,7 +12,6 @@
 - chosen.jquery.js
 - colorbox.css
 - conversion.js
-- countdown.css
 - dashboard.css
 - facebox.css
 - facebox.js
@@ -20,7 +19,6 @@
 - featured_ad/style-master.css
 - games/images-hd.css
 - games/images.css
-- get_offers_lightbox.css
 - highcharts.js
 - jquery-1.4.2.min.js
 - jquery-1.7.2.min.js
@@ -29,8 +27,6 @@
 - jquery-ui-timepicker-addon.min.js
 - jquery-ujs.js
 - jquery.colorbox.min.js
-- jquery.cookie.js
-- jquery.countdown.min.js
 - jquery.delayedobserver.js
 - jquery.form.min.js
 - jquery.tablesorter.js
