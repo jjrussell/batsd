@@ -46,6 +46,12 @@ describe UdidReports do
     File.unlink(@report_filepath)
   end
 
+  describe "defaults" do
+    it "should have accurate defaults" do
+      UdidReports::UDID_REPORT_COLUMN_HEADERS.should == ["Device ID", "Created At", "Country", "MAC Address", "Clicked At"]
+    end
+  end
+
   describe "#generate_report" do
     it "should generate UDID report" do
       @device.apps = {"1" => 101, "2" => 202}
@@ -61,7 +67,7 @@ describe UdidReports do
       Device.any_instance.stub(:fix_app_json) { raise }
       expect{UdidReports.generate_report(@offer_id, @date_str)}.to_not raise_error
       buf = File.read(@report_filepath).chomp
-      [3,4].should include(buf.split(',').length)
+      [4,5].should include(buf.split(',').length)
     end
   end
 end
