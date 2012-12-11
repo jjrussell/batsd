@@ -16,7 +16,7 @@
         %td.wide= active_currency_sale.multiplier
         %td.small= active_currency_sale.message_enabled
         - if active_currency_sale.message_enabled?
-          %td.wide= active_currency_sale.message.present? ? active_currency_sale.message : I18n.t('text.currency_sale.sale_default_message', :multiplier => active_currency_sale.multiplier, :currency_name => @currency.name)
+          %td.wide= active_currency_sale.message.present? ? active_currency_sale.message : I18n.t('text.currency_sale.sale_default_message', :publisher => @app.name, :multiplier => active_currency_sale.multiplier_to_string, :currency_name => @currency.name)
         - else
           %td.wide= I18n.t('text.currency_sale.no_message_lightbox')
         - if permitted_to?(:edit, :dashboard_currency_sales)
