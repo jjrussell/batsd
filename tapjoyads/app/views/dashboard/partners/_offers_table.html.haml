@@ -1,5 +1,6 @@
+- css_class ||= 'default'
 .offers_table
-  %table.apps_table.tablesorter
+  %table.apps_table.tablesorter{:class => css_class}
     %thead
       %tr
         %th.linked-offer-with-icon Offer
@@ -22,7 +23,7 @@
           %td= offer.tapjoy_sponsored ? "Yes" : "No"
 
 - content_for :page_javascript do
-  :plain
+  :erb
     $(function($) {
       $.tablesorter.addParser({
         id: 'currency-column',
@@ -40,7 +41,7 @@
           return jQuery(s).find('.name').text().toLowerCase();
         }
       });
-      $(".apps_table").tablesorter({
+      $(".apps_table.<%=css_class%>").tablesorter({
         widgets: ['zebra'],
         headers: {
           0: { sorter: 'linked-offer-with-icon'},
