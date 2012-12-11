@@ -695,24 +695,6 @@ class Offer < ActiveRecord::Base
     search_name
   end
 
-  def descriptors
-    return @descriptors unless @descriptors.nil?
-    @descriptors = []
-    @descriptors << (main? ? 'main' : 'associated')
-    @descriptors << (rewarded? ? 'rewarded' : 'non-rewarded')
-    @descriptors << 'featured' if featured?
-    @descriptors << item_type.gsub('Offer', '').downcase unless item_type == 'App'
-    @descriptors << 'disabled' unless enabled?
-    @descriptors << 'active'   if accepting_clicks?
-    @descriptors << 'hidden'   if hidden?
-    @descriptors << item.platform if item_type == 'App'
-    @descriptors
-  end
-
-  def description
-    descriptors.join(', ')
-  end
-
   def store_id_for_feed
     store_id = third_party_data if (item_type == 'App')
     store_id || IconHandler.hashed_icon_id(id)
@@ -1137,8 +1119,8 @@ class Offer < ActiveRecord::Base
     clone_and_save! do |new_offer|
       new_offer.attributes = {
         :featured    => !featured.nil? ? featured : self.featured,
-        :rewarded    => !rewarded.nil? ? rewarded : self.rewarded
-      }
+        :rewarded    => !rewarded.nil? ? rewarded : self.rewarded,
+        :name_suffix => "#{rewarded ? '' : 'non-'}rewarded#{featured ? ' featured': ''}" }
       new_offer.bid = new_offer.min_bid
     end
   end
