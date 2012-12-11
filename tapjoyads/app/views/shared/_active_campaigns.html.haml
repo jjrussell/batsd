@@ -4,7 +4,9 @@
       %tbody
         %tr
           %td
+          %td Type
           %td Name
+          %td Suffix
           %td
           %td Bid
           %td
@@ -15,8 +17,11 @@
               = form_tag toggle_app_offer_path(:id => offer.id, :app_id => offer.item.id) do
                 = check_box_tag("toggle_offer_#{offer.id}", '1', {}, :class => 'toggle_offer')
             %td
-              %a{:href => url_to_offer_item(offer)}
-                = render :partial => 'dashboard/offers/offer_title', :locals => {:offer => offer}
+              = offer.video_offer? ? 'Video' : (offer.app_offer? ? 'App' : 'Other')
+            %td
+              = offer.app_offer? ? link_to(offer.name, url_to_offer_item(offer)) : offer.name
+            %td
+              = offer.name_suffix
             %td.offer-type
               - if offer.app_offer?
                 = image_tag(platform_icon_url(offer))

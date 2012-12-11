@@ -1,6 +1,0 @@
-- if item.is_a?(Offer)
-  = render :partial => 'dashboard/offers/offer_title', :locals => {:offer => item, :size => '24x24'}
-- else
-  = image_tag(item.get_icon_url, :size => '24x24', :alt => '')
-  = item.is_a?(App) ? item.name : item.name_with_suffix
-= image_tag(platform_icon_url(item), :class => 'platform_icon')

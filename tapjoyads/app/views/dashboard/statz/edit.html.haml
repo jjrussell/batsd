@@ -1,7 +1,9 @@
 - @page_title = "Edit offer: #{@offer.name_with_suffix}"
 - content_for :page_head, stylesheet_link_tag('facebox')
 
-= render :partial => 'dashboard/offers/offer_title', :locals => {:offer => @offer}
+.icon= image_tag(@offer.get_icon_url, :size => '57x57', :id => 'icon')
+
+%h1= @offer.name_with_suffix
 
 .clear
 
@@ -631,6 +633,10 @@
 
 - content_for :page_styles do
   :plain
+    .icon {
+      float: left;
+      padding: 20px 0;
+    }
     .details {
       font-size: 12px;
     }

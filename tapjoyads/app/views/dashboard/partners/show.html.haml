@@ -188,7 +188,7 @@
 
   - if permitted_to?(:edit, :dashboard_offers)
     %h3 HIDDEN OFFERS
-    = render 'offers_table', :offers => @partner.offers.select(&:hidden), :css_class => 'hidden_offers'
+    = render 'offers_table', :offers => @partner.offers.select(&:hidden)
 
 - content_for :page_javascript do
   :plain

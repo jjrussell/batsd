@@ -4,7 +4,9 @@
   = label_tag('search_box', 'Offer Name:')
   = text_field_tag('search_box', '', :size => '40')
 
-= render :partial => 'dashboard/offers/offer_title', :locals => {:offer => @offer}
+.icon= image_tag(@offer.get_icon_url, :size => '57x57')
+
+%h1= @offer.name_with_suffix
 
 .clear
 
@@ -230,13 +232,9 @@
     #ads.graph
 
 - include_tapjoy_graph
-
-- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
-
 - content_for :page_javascript do
   :plain
-
-    $('#search_box').autocomplete({ source: '#{search_offers_path}', html: true, delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
 
     $('.currency .more').click(function() {
       $('#details_' + $(this).attr('c_id')).toggle();
