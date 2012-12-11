@@ -133,7 +133,7 @@
           %td{ :colspan => 2 }
             = submit_tag 'Update'
 
-  %h3 Installed Apps (#{@apps.length})
+  %h3 Installed Apps (#{@apps.length} #{"of #{@total_apps}" if @total_apps.present?})
   %table.with-border
     %thead
       %tr

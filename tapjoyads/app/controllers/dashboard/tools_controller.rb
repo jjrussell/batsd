@@ -9,6 +9,8 @@ class Dashboard::ToolsController < Dashboard::DashboardController
   before_filter :set_publisher_user, :only => [ :view_pub_user_account, :detach_pub_user_account ]
   after_filter :save_activity_logs, :only => [ :update_user, :update_device, :resolve_clicks, :award_currencies, :update_award_currencies, :detach_pub_user_account ]
 
+  DEVICE_INFO_APP_LIMIT = 250
+
   def index
   end
 
@@ -278,8 +280,15 @@ class Dashboard::ToolsController < Dashboard::DashboardController
       Offer.find_all_by_id(click_app_ids.uniq).each do |app|
         @click_apps[app.id] = app
       end
+      
+      if @device.parsed_apps.count > DEVICE_INFO_APP_LIMIT
+        @total_apps = @device.parsed_apps.count
+        offer_list = @device.parsed_apps.sort{|a,b| a[1] <=> b[1]}.slice(0,DEVICE_INFO_APP_LIMIT).map {|sub_array| sub_array[0]}
+      else
+        offer_list = @device.parsed_apps.keys
+      end
 
-      @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
+      @apps = Offer.select("id, name, item_type, item_id").includes(:item).find_all_by_id(offer_list).map do |app|
         [ @device.last_run_time(app.id), app ]
       end.sort_by(&:first).reverse
 
