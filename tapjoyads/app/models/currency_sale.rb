@@ -39,7 +39,7 @@ class CurrencySale < ActiveRecord::Base
   end
 
   def multiplier_to_string
-    ((self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s) unless self.multiplier.blank?
+    (self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s
   end
 
 protected
