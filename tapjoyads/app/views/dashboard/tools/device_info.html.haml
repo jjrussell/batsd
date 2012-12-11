@@ -17,6 +17,11 @@
         %th MAC Address:
         %td= text_field_tag 'mac_address', params[:mac_address], :size => '55'
       %tr
+        %th 
+          Apps to show
+          #help_show_apps.help ?
+        %td= select_tag :show_apps, options_for_select([['All', 'all'],['100 most recent', 'last100'],['Last 3 months', '3months'],['None', 'none']], :selected => (params[:show_apps] || 'last100'))
+      %tr
         %td{ :colspan => 2 }= submit_tag 'Find'
 
 - if @all_udids.present?
@@ -250,6 +255,7 @@
 
 .hidden
   #help_opt_out_offer_types_content{ :name => 'Opt Out Offer Types' } Opt the device out of specific offers only. The user will be considered for all offers, except for those selected here.
+  #help_show_apps_content{ :name => 'Apps to show' } This allows you to limit the number of apps displayed for a particular device. Showing more apps increases the likelihood of a page timeout or error.
 
 - content_for :page_head, stylesheet_link_tag('tools')
 
