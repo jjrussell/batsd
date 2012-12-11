@@ -14,10 +14,13 @@ module RiakMirror
   def write_to_sdb_with_mirror(expected_attr = {})
     result = write_to_sdb_without_mirror(expected_attr)
 
+    retry_count = 0
     begin
       json = @attributes.to_json
       RiakWrapper.put(self.riak_bucket_name, @key, json)
     rescue Exception => e
+      retry_count += 1
+      retry if retry_count < 4
       Rails.logger.error "Error writing to Riak"
       #Let's catch all Riak exceptions.  We don't want these to bubble up.  I'll fire
       #off an Airbrake message just so I know what's going on
@@ -30,9 +33,12 @@ module RiakMirror
 
   def load_from_sdb_with_mirror(consistent=false)
     if read_from_riak 
-      begin 
+      retry_count = 0
+      begin
         RiakWrapper.get_json(self.riak_bucket_name, @key)
       rescue Exception => e
+        retry_count += 1
+        retry if retry_count < 4
         Rails.logger.error "Error reading from Riak"
         Airbrake.notify_or_ignore(e)
         #Fallback to SDB
