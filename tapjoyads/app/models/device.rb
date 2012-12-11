@@ -439,6 +439,10 @@ class Device < SimpledbShardedResource
     in_network_apps
   end
 
+  def mobile_carrier_code
+    "#{mobile_country_code}.#{mobile_network_code}"
+  end
+
   private
 
   def mac_address_mergeable?

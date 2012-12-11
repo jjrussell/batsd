@@ -72,8 +72,6 @@ class VideosController < ApplicationController
       :os_version          => params[:os_version],
       :type                => Offer::VIDEO_OFFER_TYPE,
       :library_version     => params[:library_version],
-      :screen_layout_size  => params[:screen_layout_size],
-      :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
       :store_name          => params[:store_name])
   end
 end

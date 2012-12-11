@@ -13,13 +13,11 @@ class OfferList
     @type                       = options.delete(:type) || Offer::DEFAULT_OFFER_TYPE
     @library_version            = options.delete(:library_version) || ''
     @os_version                 = options.delete(:os_version)
-    @screen_layout_size         = options.delete(:screen_layout_size)
     @source                     = options.delete(:source)
     @exp                        = options.delete(:exp)
     @platform_name              = options.delete(:platform_name)
     @video_offer_ids            = options.delete(:video_offer_ids) { [] }
     @all_videos                 = options.delete(:all_videos) { false }
-    @mobile_carrier_code        = options.delete(:mobile_carrier_code)
     udid                        = options.delete(:udid)
     currency_id                 = options.delete(:currency_id)
     @app_store_name             = AppStore::SDK_STORE_NAMES[options.delete(:store_name)]
@@ -206,8 +204,8 @@ class OfferList
 
   def postcache_reject?(offer)
     offer.postcache_reject?(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
-      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist,  @app_store_name)
+      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version,
+      @video_offer_ids, @source, @all_videos, @store_whitelist,  @app_store_name)
   end
 
   def can_be_promoted?(offer)
@@ -216,8 +214,8 @@ class OfferList
 
   def rejections_for(offer)
     offer.postcache_rejections(@publisher_app, @device, @currency, @normalized_device_type, @geoip_data, @app_version,
-      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @screen_layout_size,
-      @video_offer_ids, @source, @all_videos, @mobile_carrier_code, @store_whitelist, @app_store_name)
+      @direct_pay_providers, @type, @hide_rewarded_app_installs, @library_version, @os_version, @video_offer_ids,
+      @source, @all_videos, @store_whitelist, @app_store_name)
   end
 
   def add_rejections!(offers)

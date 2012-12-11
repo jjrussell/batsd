@@ -13,8 +13,8 @@ class Dashboard::Tools::RejectionsController < Dashboard::DashboardController
       @rejections = @offer.postcache_rejections(app, device, currency, params[:device_type],
                     geoip_data, params[:app_version], params[:direct_pay_providers], params[:offer_type],
                     params[:hide_rewarded_app_installs], params[:library_version], params[:os_version],
-                    params[:screen_layout_size], params[:video_offer_ids], params[:source], params[:all_videos],
-                    params[:mobile_carrier_code], params[:store_whitelist], params[:store_name])
+                    params[:video_offer_ids], params[:source], params[:all_videos], params[:store_whitelist],
+                    params[:store_name])
     end
   end
 end
