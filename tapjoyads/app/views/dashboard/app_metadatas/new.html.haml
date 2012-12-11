@@ -34,11 +34,8 @@
         %tr
           %th Store ID
           %td
-            - if permitted_to?(:edit, :dashboard_statz)
-              = text_field_tag :store_id, nil, { :placeholder => 'INTERNAL: Manual override', :id => 'app_store_id' }
-            - else
-              %a#app_store_link{ :target => '_blank' }
-              = hidden_field_tag 'store_id', nil, :id => 'app_store_id'
+            %a#app_store_link{ :target => '_blank' }
+            = hidden_field_tag 'store_id', nil, :id => 'app_store_id'
         %tr
           %th Icon
           %td#app_icon &nbsp;

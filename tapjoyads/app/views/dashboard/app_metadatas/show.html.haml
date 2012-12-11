@@ -15,36 +15,32 @@
         %td
           = @app_metadata.store.name
           = hidden_field_tag :store_name, @app_metadata.store_name
-      -# TODO: Remove this conditional when TStore API support is available
-      - if @app_metadata.store_name == 'android.SKTStore'
-        = render('tstore_details', :f => f)
-      - else
-        %tr
-          %th
-            Name
-          %td
-            = text_field_tag :app_name, @app_metadata.name
-            #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
-          %td= button_to "Search #{@app_metadata.store.name}", '#', :class => 'search', :id => 'search_button'
-        %tr
-          %th Store ID
-          %td
-            - if @app_metadata.store_id.present?
-              = link_to(@app_metadata.store_id, @app_metadata.info_url, :target => '_blank', :id => 'app_store_link')
-            - else
-              %a#app_store_link{ :target => '_blank' }
-            = hidden_field_tag :store_id, @app_metadata.store_id, :id => 'app_store_id'
-        %tr
-          %th Icon
-          %td#app_icon= image_tag(@app_metadata.get_icon_url, :size => '57x57', :alt => 'icon')
-        %tr
-          %th Price
-          %td#app_price= number_to_currency(@app_metadata.price / 100.0)
-        %tr
-          %th Description
-          %td#app_description= (@app_metadata.description || '').gsub("\n", '<br>')
-        %tr
-          %td{ :colspan => 2 }= f.submit "Update from #{@app_metadata.store.name}", :id => 'submit_button'
+      %tr
+        %th
+          Name
+        %td
+          = text_field_tag :app_name, @app_metadata.name
+          #search_results= image_tag 'load-circle.gif', :class => 'load-circle'
+        %td= button_to "Search #{@app_metadata.store.name}", '#', :class => 'search', :id => 'search_button'
+      %tr
+        %th Store ID
+        %td
+          - if @app_metadata.store_id.present?
+            = link_to(@app_metadata.store_id, @app_metadata.info_url, :target => '_blank', :id => 'app_store_link')
+          - else
+            %a#app_store_link{ :target => '_blank' }
+          = hidden_field_tag :store_id, @app_metadata.store_id, :id => 'app_store_id'
+      %tr
+        %th Icon
+        %td#app_icon= image_tag(@app_metadata.get_icon_url, :size => '57x57', :alt => 'icon')
+      %tr
+        %th Price
+        %td#app_price= number_to_currency(@app_metadata.price / 100.0)
+      %tr
+        %th Description
+        %td#app_description= (@app_metadata.description || '').gsub("\n", '<br>')
+      %tr
+        %td{ :colspan => 2 }= f.submit "Update from #{@app_metadata.store.name}", :id => 'submit_button'
 
 - content_for :page_head, stylesheet_link_tag('apps')
 - content_for :included_javascripts, javascript_include_tag('tapjoy/apps')

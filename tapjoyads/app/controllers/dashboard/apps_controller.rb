@@ -64,14 +64,11 @@ class Dashboard::AppsController < Dashboard::DashboardController
           raise
         end
 
-        # TODO: Remove this conditional when TStore API support is available
-        unless store_name == 'android.SKTStore'
-          begin
-            app_metadata.update_from_store(params[:app_country])
-          rescue
-            @error_message = "Grabbing app data from app store failed. Please try again."
-            raise
-          end
+        begin
+          app_metadata.update_from_store(params[:app_country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
         end
       end
 
@@ -121,14 +118,11 @@ class Dashboard::AppsController < Dashboard::DashboardController
           raise
         end
 
-        # TODO: Remove this conditional when TStore API support is available
-        unless store_name == 'android.SKTStore'
-          begin
-            app_metadata.update_from_store(params[:app_country])
-          rescue
-            @error_message = "Grabbing app data from app store failed. Please try again."
-            raise
-          end
+        begin
+          app_metadata.update_from_store(params[:app_country])
+        rescue
+          @error_message = "Grabbing app data from app store failed. Please try again."
+          raise
         end
       end
 
