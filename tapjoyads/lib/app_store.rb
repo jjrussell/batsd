@@ -13,7 +13,7 @@ class AppStore
   SKT_STORE_SPID       = 'OASP_tapjoy'
   SKT_BASEURL          = '220.103.229.113:8600'
   SKT_STORE_APP_URL    = "http://#{SKT_BASEURL}/api/openapi/getAppInfo.omp?cmd=getAppInfo"
-  SKT_STORE_SEARCH_URL = "http://#{SKT_BASEURL}/api/openapi/tstore.omp?cmd=getSearchProductByName"
+  SKT_STORE_SEARCH_URL = "http://#{SKT_BASEURL}/api/openapi/tstore.omp?cmd=getSearchProductByName&ua_code=SSMF&mdn=01012341234&category_type=DP0005&display_count=10&current_page=1&order=D"
 
   SKT_STORE_CURRENCY   = 'KRW'
 
@@ -434,7 +434,7 @@ class AppStore
   end
 
   def self.search_skt_store(term)
-    response = request(SKT_STORE_SEARCH_URL + "&sp_id=#{SKT_STORE_SPID}&ua_code=SSMF&mdn=01012341234&category_type=DP0005&display_count=10&current_page=1&keyword=#{term}&order=D")
+    response = request(SKT_STORE_SEARCH_URL + "&sp_id=#{SKT_STORE_SPID}&keyword=#{term}")
     if response.status == 200
       doc = XML::Parser.string(response.body).parse
       return doc.find('//ITEM').map do |item|
