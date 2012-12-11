@@ -38,10 +38,9 @@ class CurrencySale < ActiveRecord::Base
     self.start_time.present? && self.end_time.present? && [self.start_time_changed?, self.end_time_changed?].any?
   end
 
-  #TODO(nixoncd): uncomment when currency sale view is cleaned up
-  #def multiplier_to_string
-    #(self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s
-  #end
+  def multiplier_to_string
+    (self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s
+  end
 
 protected
 
