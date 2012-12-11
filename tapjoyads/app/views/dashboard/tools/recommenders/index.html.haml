@@ -17,10 +17,10 @@
             = radio_button_tag :recommend_for, :app_id, app_id_selected
             = label_tag :recommend_for, "Application"
           %div
-            = radio_button_tag :recommend_for, :udid, !app_id_selected
+            = radio_button_tag :recommend_for, :device_id, !app_id_selected
             = label_tag :recommend_for, "Device"
       %tr
-        %th= label_tag :app_or_device_id, "Enter App ID or Device UDID:"
+        %th= label_tag :app_or_device_id, "Enter App ID or Tapjoy Device ID:"
         %td= text_field_tag :app_or_device_id, params[:app_or_device_id] , :size => 60
       %tr
         %th= label_tag :n, "Max number of recommendations:"

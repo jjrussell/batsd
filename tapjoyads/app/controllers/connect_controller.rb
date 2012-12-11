@@ -3,19 +3,19 @@ class ConnectController < ApplicationController
 
   tracks_admin_devices # :only => [:index]
   before_filter :reject_banned_udids
+  before_filter :reject_banned_advertising_ids
 
   def index
-    lookup_udid(true)
-    required_param = [:app_id]
-    required_param << :udid unless params[:identifiers_provided]
+    lookup_device(true)
 
-    return unless verify_params(required_param)
-    return unless params[:udid].present?
+    return unless verify_params([:app_id]) && verify_device_info
 
-    @device = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
+    @device = find_or_create_device(true)
+
+    return unless verify_records(@device)
 
     unless @device.has_app?(params[:app_id]) && !@device.is_temporary
-      click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
+      click = Click.new(:key => "#{get_device_key}.#{params[:app_id]}", :consistent => params[:consistent])
       if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
       end

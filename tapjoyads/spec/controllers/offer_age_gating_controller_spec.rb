@@ -12,6 +12,8 @@ describe OfferAgeGatingController do
       offer = FactoryGirl.create(:generic_offer).primary_offer
       currency = FactoryGirl.create(:currency)
       app = FactoryGirl.create(:app)
+      device = FactoryGirl.create(:device)
+      DeviceIdentifier.stub(:find_device_from_params).and_return(device)
       publisher_user_id = 'testuser'
       source = "offerwall"
 
@@ -22,6 +24,7 @@ describe OfferAgeGatingController do
                :display_multiplier => 1,
                :source => source,
                :publisher_user_id => publisher_user_id,
+               :tapjoy_device_id => device.key,
                :options => {}
       }
       data={ :data => ObjectEncryptor.encrypt(params) }
@@ -30,6 +33,7 @@ describe OfferAgeGatingController do
 
       url_params = { :publisher_app => app,
                      :publisher_user_id => publisher_user_id,
+                     :tapjoy_device_id => device.key,
                      :udid => udid,
                      :currency_id => currency.id,
                      :source => source,

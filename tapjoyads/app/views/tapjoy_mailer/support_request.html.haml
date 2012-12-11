@@ -3,8 +3,9 @@
     = "Missing Currency Support Request"
 %div
   = support_request_field :email,             @email_address
-  = support_request_field :udid,              "#{@device.key} #{@device.dashboard_device_info_tool_url}"
+  = support_request_field :tapjoy_device_id,  "#{@device.key} #{@device.dashboard_device_info_tool_url}"
   = support_request_field :mac_address,       @support_request.mac_address
+  = support_request_field :udid,              "#{@device.udid} #{@device.dashboard_device_info_tool_url}"
   = support_request_field :offer,             "#{@offer.dashboard_statz_url}"
   = support_request_field :offer_value,       @support_request.offer_value.abs
   = support_request_field :currency,          "#{@currency.dashboard_app_currency_url}"

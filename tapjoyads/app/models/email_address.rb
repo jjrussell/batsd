@@ -4,6 +4,7 @@ class EmailAddress < SimpledbResource
 
   self.domain_name = 'email_addresses'
 
+  self.sdb_attr :tapjoy_device_id
   self.sdb_attr :udid
   self.sdb_attr :email_address
   self.sdb_attr :created_at,   :type => :time
@@ -11,6 +12,10 @@ class EmailAddress < SimpledbResource
 
   def after_initialize
     self.created_at = Time.zone.now unless created_at?
+  end
+
+  def tapjoy_device_id
+    get('tapjoy_device_id') || udid
   end
 
 end

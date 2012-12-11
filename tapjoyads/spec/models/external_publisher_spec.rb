@@ -25,7 +25,7 @@ describe ExternalPublisher do
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)
       decrypted_url = ObjectEncryptor.decrypt(test.match(/.*data=(.*)/)[1])
       decrypted_url.should include(
-        :udid               => @device.key,
+        :tapjoy_device_id   => @device.key,
         :publisher_user_id  => @device.key,
         :currency_id        => @currency[:id],
         :display_multiplier => '1'
@@ -40,7 +40,7 @@ describe ExternalPublisher do
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)
       decrypted_url = ObjectEncryptor.decrypt(test.match(/.*data=(.*)/)[1])
       decrypted_url.should include(
-        :udid               => @device.key,
+        :tapjoy_device_id   => @device.key,
         :publisher_user_id  => 'username',
         :currency_id        => @currency[:id],
         :display_multiplier => '1'
@@ -55,7 +55,7 @@ describe ExternalPublisher do
       test = url.get_offerwall_url(@device, @currency, @accept_language_str, @user_agent_str, @gamer_id, @no_log)
       decrypted_url = ObjectEncryptor.decrypt(test.match(/.*data=(.*)/)[1])
       decrypted_url.should include(
-        :udid               => @device.key,
+        :tapjoy_device_id   => @device.key,
         :publisher_user_id  => 'username',
         :currency_id        => @currency[:id],
         :display_multiplier => '4'

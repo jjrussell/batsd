@@ -17,7 +17,14 @@ class ApiController < ApplicationController
     return unless params[:id].present? && !@object
     return if self.class.object_class.nil?
     begin
-      @object = self.class.object_class.find(params[:id])
+      if self.class.object_class.is_a?(Device)
+        #lookup in Device using the id, if that returns
+        #nothing, then look in DeviceIdentifier for the
+        #appropriate device using the id
+        @object = Device.find_by_device_id(params[:id])
+      else
+        @object = self.class.object_class.find(params[:id])
+      end
     rescue
     end
     @object ||= self.class.object_class.new
@@ -28,7 +35,7 @@ class ApiController < ApplicationController
     return unless params[:sync_changes] && @object
     merge_attributes(params[:sync_changes])
 
-    @object.save if !@object.new_record? || params[:create_new] == true
+    @object.save if !@object.new_record? || params[:create_new]
   end
 
   def merge_attributes(new_attributes)

@@ -56,6 +56,7 @@ describe UdidReports do
     it "should generate UDID report" do
       @device.apps = {"1" => 101, "2" => 202}
       @device.mac_address = "1234"
+      @device.advertising_id = "1234"
       @device.save
       UdidReports.generate_report(@offer_id, @date_str)
       buf = File.read(@report_filepath).chomp

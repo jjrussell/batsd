@@ -30,21 +30,24 @@ class UdidReports
     outfile = File.open(fs_path, 'w')
 
     Reward.select_all(:conditions => conditions) do |reward|
-      if reward.udid? || reward.mac_address?
-        line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},"
+      line = "#{reward.created.to_s(:db)},#{reward.country},"
+      if reward.advertising_id.present?
+        line.insert(0, "#{reward.advertising_id},")
+      elsif reward.udid? || reward.mac_address?
+        line.insert(0, "#{reward.tapjoy_device_id},")
         begin
-          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address},"
+          line << "#{reward.mac_address || Device.new(:key => reward.tapjoy_device_id).mac_address},"
         rescue
           line << ","
         end
-        begin
-          click  = Click.new(:key => reward.click_key)
-          line << "#{click.clicked_at.to_s(:db) || ''}"
-        rescue
-
-        end
-        outfile.puts(line)
       end
+      begin
+        click  = Click.new(:key => reward.click_key)
+        line << "#{click.clicked_at.to_s(:db) || ''}"
+      rescue
+
+      end
+      outfile.puts(line)
     end
 
     if outfile.pos > 0

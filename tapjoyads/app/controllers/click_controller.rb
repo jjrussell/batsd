@@ -3,6 +3,7 @@ class ClickController < ApplicationController
 
   prepend_before_filter :decrypt_data_param
   before_filter :reengagement_setup, :only => [ :reengagement ]
+  before_filter :lookup_device
   before_filter :setup
   before_filter :validate_click, :except => [ :test_offer, :test_video_offer ]
   before_filter :determine_link_affiliates, :only => :app
@@ -90,12 +91,14 @@ class ClickController < ApplicationController
     test_reward = Reward.new
     test_reward.type              = 'test_offer'
     test_reward.udid              = params[:udid]
+    test_reward.tapjoy_device_id  = params[:tapjoy_device_id]
     test_reward.publisher_user_id = params[:publisher_user_id]
     test_reward.currency_id       = params[:currency_id]
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
     test_reward.mac_address       = params[:mac_address]
+    test_reward.advertising_id    = params[:advertising_id]
     test_reward.currency_reward   = @currency.get_reward_amount(@test_offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -113,12 +116,14 @@ class ClickController < ApplicationController
     test_reward = Reward.new
     test_reward.type              = 'test_video_offer'
     test_reward.udid              = params[:udid]
+    test_reward.tapjoy_device_id  = get_device_key
     test_reward.publisher_user_id = params[:publisher_user_id]
     test_reward.currency_id       = params[:currency_id]
     test_reward.publisher_app_id  = params[:publisher_app_id]
     test_reward.advertiser_app_id = params[:publisher_app_id]
     test_reward.offer_id          = params[:publisher_app_id]
     test_reward.mac_address       = params[:mac_address]
+    test_reward.advertising_id    = params[:advertising_id]
     test_reward.currency_reward   = @currency.get_reward_amount(@offer)
     test_reward.publisher_amount  = 0
     test_reward.advertiser_amount = 0
@@ -169,11 +174,11 @@ class ClickController < ApplicationController
       return
     end
 
-    @device = Device.new(:key => params[:udid])
+    @device = find_or_create_device
 
     # These apps send the same publisher_user_id for every click
     if APPS_WITH_BAD_PUB_USER_ID.include?(params[:publisher_app_id])
-      params[:publisher_user_id] = params[:udid]
+      params[:publisher_user_id] = get_device_key
     end
   end
 
@@ -229,9 +234,9 @@ class ClickController < ApplicationController
     completed = @device.has_app?(app_id_for_device)
     unless completed || @offer.video_offer?
       publisher_user = PublisherUser.new(:key => "#{params[:publisher_app_id]}.#{params[:publisher_user_id]}")
-      other_udids = publisher_user.udids - [ @device.key ]
-      other_udids.each do |udid|
-        device = Device.new(:key => udid)
+      other_tapjoy_device_ids = publisher_user.tapjoy_device_ids - [ @device.key ]
+      other_tapjoy_device_ids.each do |tapjoy_device_id|
+        device = Device.new(:key => tapjoy_device_id)
         if device.has_app?(app_id_for_device)
           completed = true
           break
@@ -288,6 +293,8 @@ class ClickController < ApplicationController
     click.clicked_at             = @now
     click.viewed_at              = Time.zone.at(params[:viewed_at].to_f)
     click.udid                   = params[:udid]
+    click.tapjoy_device_id       = get_device_key
+    click.advertising_id         = params[:advertising_id]
     click.publisher_app_id       = params[:publisher_app_id]
     click.publisher_user_id      = params[:publisher_user_id]
     click.advertiser_app_id      = params[:advertiser_app_id]
@@ -325,7 +332,7 @@ class ClickController < ApplicationController
     click.save
 
     # for third party tracking vendors
-    @offer.queue_click_tracking_requests(params.slice(:udid, :publisher_app_id).merge(:ip_address => ip_address))
+    @offer.queue_click_tracking_requests(params.slice(which_to_slice, :publisher_app_id).merge(:ip_address => ip_address))
   end
 
   def handle_pay_per_click
@@ -346,6 +353,8 @@ class ClickController < ApplicationController
   def destination_url
     @offer.destination_url({
       :udid                  => params[:udid],
+      :tapjoy_device_id      => get_device_key,
+      :advertising_id        => params[:advertising_id],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,
       :click_key             => click_key,
@@ -365,7 +374,7 @@ class ClickController < ApplicationController
   end
 
   def click_key
-    @click_key ||= @offer.format_as_click_key(params.slice(:udid, :advertiser_app_id, :gamer_id))
+    @click_key ||= @offer.format_as_click_key(params.slice(which_to_slice, :advertiser_app_id, :gamer_id))
   end
 
   def handle_multi_complete_video

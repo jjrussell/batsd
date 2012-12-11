@@ -5,7 +5,7 @@ class PointPurchases < SimpledbShardedResource
   include RiakMirror
   mirror_configuration :riak_bucket_name => "point_purchases"
 
-  self.key_format = "udid.app_id"
+  self.key_format = "tapjoy_device_id.app_id"
   self.num_domains = NUM_POINT_PURCHASES_DOMAINS
 
   self.sdb_attr :points,        :type => :int
@@ -43,7 +43,7 @@ class PointPurchases < SimpledbShardedResource
     return virtual_goods[virtual_good_key] || 0
   end
 
-  def get_udid
+  def get_tapjoy_device_id
     @key.split('.')[0..-2].join('.')
   end
 

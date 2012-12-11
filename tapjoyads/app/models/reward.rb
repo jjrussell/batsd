@@ -20,6 +20,8 @@ class Reward < SimpledbShardedResource
   self.sdb_attr :source
   self.sdb_attr :type
   self.sdb_attr :udid
+  self.sdb_attr :advertising_id
+  self.sdb_attr :tapjoy_device_id
   self.sdb_attr :country
   self.sdb_attr :reward_key_2
   self.sdb_attr :exp
@@ -48,6 +50,14 @@ class Reward < SimpledbShardedResource
 
   def after_initialize
     put('created', Time.zone.now.to_f.to_s) unless get('created')
+  end
+
+  def tapjoy_device_id
+    get('tapjoy_device_id') || udid
+  end
+
+  def tapjoy_device_id=(tj_id)
+    put('tapjoy_device_id', tj_id)
   end
 
   def dynamic_domain_name

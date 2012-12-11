@@ -46,13 +46,14 @@ class WebRequest < AnalyticsLogger::Message
     'paid_clicks'               => { :paths => [ 'offer_click', 'featured_offer_click', 'tjm_offer_click', 'tj_display_offer_click' ], :attr_name => 'offer_id', :segment_by_store => false, :use_like => false },
   }
 
+  self.define_attr :tapjoy_device_id
   self.define_attr :udid
   self.define_attr :mac_address
   self.define_attr :sha2_udid
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
-  self.define_attr :idfa
+  self.define_attr :advertising_id
   self.define_attr :open_udid
   self.define_attr :open_udid_count
   self.define_attr :udid_via_lookup, :type => :bool
@@ -206,6 +207,7 @@ class WebRequest < AnalyticsLogger::Message
       self.geoip_latitude     = geoip_data[:lat]
       self.geoip_longitude    = geoip_data[:long]
     end
+    self.udid                 = params[:mac_address] || params[:advertising_id] if self.udid.blank?
     self.path                 = path
     self.ip_address           = ip_address
     self.user_agent           = user_agent

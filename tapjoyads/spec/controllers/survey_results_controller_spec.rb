@@ -19,20 +19,19 @@ describe SurveyResultsController do
 
     it 'assigns survey questions' do
       SurveyOffer.stub(:find_in_cache).and_return(survey_offer)
-      get(:new, :udid => 'something', :click_key => '5', :id => offer.id)
+      get(:new, :tapjoy_device_id => 'something', :click_key => '5', :id => offer.id)
       assigns(:survey_questions).length.should == 1
       response.should render_template('new')
     end
   end
 
   describe '#create' do
-    let(:udid)    { FactoryGirl.generate(:guid) }
+    let(:tapjoy_device_id)    { FactoryGirl.generate(:guid) }
     let(:mock_click) do
       mock('Mock Click', :installed_at? => true, :currency_id => 5)
     end
 
     before :each do
-      Device.stub(:new)
       Downloader.stub(:get_with_retry)
       Click.stub(:find).with('5', :consistent => true).and_return(mock_click)
       Currency.stub(:find_in_cache).with(5).and_return('fake currency')
