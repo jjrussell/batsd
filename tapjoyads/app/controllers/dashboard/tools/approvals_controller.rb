@@ -35,13 +35,11 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
       else
         user = User.find(params[:approval][:owner_id])
         if @approval.assign(user)
-          ApprovalMailer.deliver_assigned(
+          ApprovalMailer.assigned(
               user.email,
               @approval.item_type,
               :url => mine_tools_acceptance_index_url
-              # {:action=>"mine", :controller=>"dashboard/tools/approvals"}
-          )
-          #mine_tools_approvals_url)
+          ).deliver
         end
       end
     end
