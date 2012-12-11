@@ -34,6 +34,9 @@ class Device < SimpledbShardedResource
   self.sdb_attr :recent_skips, :type => :json, :default_value => []
   self.sdb_attr :bookmark_tutorial_shown, :type => :bool, :default_value => false
   self.sdb_attr :pending_coupons, :type => :json, :default_value => []
+  self.sdb_attr :screen_layout_size
+  self.sdb_attr :mobile_country_code
+  self.sdb_attr :mobile_network_code
 
   SKIP_TIMEOUT = 24.hours
   MAX_SKIPS    = 100
@@ -185,7 +188,7 @@ class Device < SimpledbShardedResource
     set_last_run_time(app_id)
     save
   end
-
+   
   def last_run_app_ids
     @parsed_apps.sort_by{|k,v| v }.map{|k,v| k }.reverse
   end
