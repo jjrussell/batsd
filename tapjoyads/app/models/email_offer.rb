@@ -35,7 +35,7 @@ private
     offer.partner = partner
     offer.name = name
     offer.price = 0
-    offer.url = "#{API_URL}/list_signup?tapjoy_device_id=TAPJOY_DEVICE_ID&advertiser_app_id=#{id}"
+    offer.url = "#{API_URL}/list_signup?udid=TAPJOY_UDID&advertiser_app_id=#{id}"
     offer.device_types = Offer::ALL_DEVICES.to_json
     offer.third_party_data = third_party_id
     offer.save!

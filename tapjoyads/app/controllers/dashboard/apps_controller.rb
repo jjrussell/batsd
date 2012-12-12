@@ -4,7 +4,6 @@ class Dashboard::AppsController < Dashboard::DashboardController
   current_tab :apps
 
   filter_access_to :all
-  before_filter :lookup_device, :only => [ :integrate_check ]
   before_filter :grab_partner_apps
   before_filter :has_apps, :only => [:show, :index, :integrate, :publisher_integrate, :integrate_check]
   before_filter :setup, :only => [:show, :index, :integrate, :publisher_integrate, :integrate_check, :update, :confirm, :archive, :unarchive ]

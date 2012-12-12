@@ -5,8 +5,6 @@ describe PointsController do
     before :each do
       @app = FactoryGirl.create(:app)
       @currency = FactoryGirl.create(:currency, :id => @app.id)
-      device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(device)
       @params = {
         :app_id => @app.id,
         :udid => 'stuff',
@@ -66,14 +64,12 @@ describe PointsController do
 
   describe '#spend' do
     before :each do
-      @device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @params = {
         :app_id => app.id,
         :udid => 'stuff',
-        :tap_points => 10
+        :tap_points => 10,
       }
     end
 
@@ -106,8 +102,6 @@ describe PointsController do
 
   describe '#purchase_vg' do
     before :each do
-      @device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @vg = FactoryGirl.create(:virtual_good)
@@ -150,8 +144,6 @@ describe PointsController do
 
   describe '#consume_vg' do
     before :each do
-      @device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(@device)
       app = FactoryGirl.create(:app)
       currency = FactoryGirl.create(:currency, :id => app.id)
       @vg = FactoryGirl.create(:virtual_good)

@@ -5,7 +5,6 @@ class EmailSignup < SimpledbResource
   self.domain_name = 'email_signup'
 
   self.sdb_attr :udid
-  self.sdb_attr :tapjoy_device_id
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :email_address
@@ -13,8 +12,4 @@ class EmailSignup < SimpledbResource
   self.sdb_attr :city
   self.sdb_attr :sent_date, :type => :time
   self.sdb_attr :confirmed, :type => :time
-
-  def tapjoy_device_id
-    get('tapjoy_device_id') || udid
-  end
 end

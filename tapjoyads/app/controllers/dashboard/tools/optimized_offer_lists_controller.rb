@@ -3,7 +3,7 @@ class Dashboard::Tools::OptimizedOfferListsController < Dashboard::DashboardCont
   current_tab :tools
   filter_access_to :all
 
-  OFFER_LIST_KEYS = %w( type device_type platform_name udid tapjoy_device_id source currency_id algorithm )
+  OFFER_LIST_KEYS = %w( type device_type platform_name udid source currency_id algorithm )
 
   def index
     @key = s3_key(params)

@@ -24,7 +24,6 @@ class OfferInstructionClickController < ApplicationController
     Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
 
     complete_instruction_url = @offer.complete_action_url({
-      :tapjoy_device_id      => get_device_key,
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,

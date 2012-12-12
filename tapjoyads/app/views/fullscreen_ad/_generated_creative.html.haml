@@ -36,7 +36,7 @@
   - else
     :plain
         xmlHttpRequst = new XMLHttpRequest();
-        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :tapjoy_device_id => params[:tapjoy_device_id] , :offer_id => @offer.id }))}', false)
+        xmlHttpRequst.open('POST', '#{encrypt_url(skip_fullscreen_ad_path({ :udid => params[:udid] , :offer_id => @offer.id }))}', false)
         xmlHttpRequst.send();
   :plain
       }

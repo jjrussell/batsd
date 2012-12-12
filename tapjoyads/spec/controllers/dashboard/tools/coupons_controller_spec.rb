@@ -14,7 +14,6 @@ describe Dashboard::Tools::CouponsController do
       @partner = FactoryGirl.create(:partner)
       @coupon = FactoryGirl.create(:coupon, :partner_id => @partner.id)
       @coupon2 = FactoryGirl.create(:coupon, :partner_id => @partner.id)
-      @partner.stub_chain(:coupons, :visible).and_return([@coupon, @coupon2])
       get(:index, :partner_id => @partner.id)
     end
     it 'should have an array of coupons' do

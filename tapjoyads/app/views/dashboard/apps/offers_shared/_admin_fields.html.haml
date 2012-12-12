@@ -44,20 +44,6 @@
     = error_message_on @offer, :x_partner_exclusion_prerequisites
 %tr.admin
   %th
-    = f.label :x_partner_prerequisites, 'Cross Partner Prerequisites'
-    #help_x_partner_prerequisites.help ?
-  %td
-    = f.text_area :x_partner_prerequisites, :rows => 3
-    = error_message_on @offer, :x_partner_prerequisites
-%tr.admin
-  %th
-    = f.label :x_partner_exclusion_prerequisites, 'Cross Partner Exclusion Prerequisites'
-    #help_x_partner_exclusion_prerequisites.help ?
-  %td
-    = f.text_area :x_partner_exclusion_prerequisites, :rows => 3
-    = error_message_on @offer, :x_partner_exclusion_prerequisites
-%tr.admin
-  %th
     = f.label(:regions)
     #help_regions.help ?
   %td
@@ -188,12 +174,6 @@
     #help_requires_mac_address.help ?
   %td
     = f.check_box(:requires_mac_address)
-%tr.admin
-  %th
-    = f.label(:requires_advertising_id)
-    #help_requires_advertising_id.help ?
-  %td
-    = f.check_box(:requires_advertising_id)
 
 - if @app.screen_layout_sizes.any?
   %tr.admin
@@ -236,8 +216,6 @@
     Requires an offer to only show if a UDID is present.
   #help_requires_mac_address_content{ :name => 'Requires Mac Address' }
     Requires an offer to only show if a Mac Address is present.
-  #help_requires_advertising_id_content{ :name => 'Requires Advertising ID' }
-    Requires an offer to only show if an Advertising ID is present.
 
 - content_for :page_javascript do
   :plain

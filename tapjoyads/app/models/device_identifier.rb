@@ -11,14 +11,12 @@ class DeviceIdentifier < SimpledbShardedResource
     :sha1_mac_address,
     :open_udid,
     :android_id,
-    :advertising_id,
-    :udid,
+    :idfa,
   ]
 
   self.num_domains = NUM_DEVICE_IDENTIFIER_DOMAINS
 
   self.sdb_attr :udid
-  self.sdb_attr :device_id
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICE_IDENTIFIER_DOMAINS
@@ -58,3 +56,4 @@ class DeviceIdentifier < SimpledbShardedResource
     device
   end
 end
+

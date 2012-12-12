@@ -2,7 +2,7 @@ class VideosController < ApplicationController
   layout 'api-games', :only => :complete
 
   prepend_before_filter :decrypt_data_param, :only => [:complete]
-  before_filter :lookup_device, :set_publisher_user_id, :setup
+  before_filter :lookup_udid, :set_publisher_user_id, :setup
 
   def index
     @options = Hash.new
@@ -46,13 +46,13 @@ class VideosController < ApplicationController
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params(:app_id, :currency_id, :publisher_user_id)
+    return unless verify_params(:app_id, :udid, :currency_id, :publisher_user_id)
 
-    @device = find_or_create_device
+    @device = Device.new(:key => params[:udid])
     @publisher_app = App.find_in_cache(params[:app_id])
     @currency = Currency.find_in_cache(params[:currency_id])
     @currency = nil if @currency.present? && @currency.app_id != params[:app_id]
-    return unless verify_records(@publisher_app, @currency, get_device_key)
+    return unless verify_records(@publisher_app, @currency)
 
     if library_version.control_video_caching?
       @hide_videos = params[:hide_videos] =~ /^1|true$/
@@ -65,8 +65,6 @@ class VideosController < ApplicationController
   def offer_list
     OfferList.new(
       :device              => @device,
-      :tapjoy_device_id    => get_device_key,
-      :udid                => params[:udid],
       :publisher_app       => @publisher_app,
       :currency            => @currency,
       :device_type         => params[:device_type],

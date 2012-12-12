@@ -1,12 +1,11 @@
 class OfferInstructionsController < ApplicationController
   prepend_before_filter :decrypt_data_param
   after_filter :save_web_request, :only => [:index]
-  before_filter :lookup_device
 
   layout :instructions_layout
 
   def index
-    return unless verify_params([ :data, :id, :publisher_app_id ]) && verify_records(get_device_key)
+    return unless verify_params([ :data, :id, :publisher_app_id, :udid ])
     @offer = Offer.find_in_cache(params[:id])
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id])
     return unless verify_records([ @offer, @currency ])
@@ -19,11 +18,10 @@ class OfferInstructionsController < ApplicationController
       params[:data] = ObjectEncryptor.encrypt(params)
     end
 
-    @device = Device.new(:key => get_device_key)
+    @device = Device.new(:key => params[:udid])
     choose_experiment(:offer_instructions_test) unless @device.last_run_time_tester?
 
     complete_action_data = {
-      :tapjoy_device_id      => get_device_key,
       :udid                  => params[:udid],
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,

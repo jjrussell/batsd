@@ -2,14 +2,13 @@ class SetPublisherUserIdController < ApplicationController
   include AdminDeviceLastRun::ControllerExtensions
 
   before_filter :reject_banned_udids
-  before_filter :reject_banned_advertising_ids
   tracks_admin_devices
 
   def index
-    lookup_device(params[:temporary_device_id].present?)
-    return unless verify_params([:app_id, :publisher_user_id]) && verify_records(get_device_key)
+    lookup_udid(true)
+    return unless verify_params([:app_id, :udid, :publisher_user_id])
 
-    device = find_or_create_device(true)
+    device = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
     device.set_publisher_user_id(params[:app_id], params[:publisher_user_id])
     device.set_display_multiplier(params[:app_id], params[:display_multiplier]) unless params[:display_multiplier].blank?
 
