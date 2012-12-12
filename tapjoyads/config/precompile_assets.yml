@@ -61,6 +61,7 @@
 - tapjoy/payout_confirmations.js
 - tapjoy/payouts.js
 - tapjoy/reporting.js
+- tapjoy/search_box.js
 - tapjoy_graph.css
 - themes/blue/style.css
 - tools.css
