@@ -1,6 +1,6 @@
 - @page_title = 'Edit Offer'
 
-%h2= offer_title_for(@offer)
+= render :partial => 'dashboard/offers/offer_title', :locals => {:offer => @offer}
 
 = render('dashboard/apps/offers_shared/descriptions')
 

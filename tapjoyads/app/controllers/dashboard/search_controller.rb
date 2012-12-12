@@ -21,7 +21,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
       :limit => 10
     ).collect do |o|
       if params[:more_details]
-        result = { :label => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
+        result = { :label => search_result_html_for(o), :value => o.search_result_name, :id => o.id, :user_enabled => o.user_enabled, :name => o.name, :description => "", :click_url => "", :icon_url => o.get_icon_url }
         if o.item_type == 'GenericOffer' || o.item_type == 'SurveyOffer'
           result[:click_url] = o.url
         elsif o.video_offer?
@@ -37,7 +37,7 @@ class Dashboard::SearchController < Dashboard::DashboardController
         end
         result
       else
-        { :label => o.search_result_name, :url => statz_path(o), :id => o.id, :user_enabled => o.user_enabled, :daily_budget => o.daily_budget, :bid => o.bid, :payment => o.payment}
+        { :label => search_result_html_for(o), :value => o.search_result_name, :url => statz_path(o), :id => o.id, :user_enabled => o.user_enabled, :daily_budget => o.daily_budget, :bid => o.bid, :payment => o.payment}
       end
     end
 
@@ -132,4 +132,10 @@ class Dashboard::SearchController < Dashboard::DashboardController
 
     render :partial => 'currencies'
   end
+
+  private
+  def search_result_html_for(offer)
+    render_to_string(:partial => '/dashboard/offers/offer_title.html.haml', :locals => {:offer => offer})
+  end
+
 end
