@@ -391,6 +391,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
                                                 :udid => click.udid,
                                                 :currency_id => (most_recent['currency_id'] || App.find(params[:publisher_app_id]).primary_currency.id),
                                                 :click_id => click.id,
+                                                :device_id => click.tapjoy_device_id,
                                                 :currency_reward => most_recent['currency_reward'])
         return
       end
