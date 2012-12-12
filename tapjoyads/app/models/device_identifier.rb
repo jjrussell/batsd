@@ -33,13 +33,13 @@ class DeviceIdentifier < SimpledbShardedResource
     put("device_id", device_id)
   end
 
-  def self.find_device_for_identifier(identifier_name, consistent = false)
+  def self.find_device_for_identifier(identifier_name, consistent = true)
     identifier = find_by_identifier(identifier_name, consistent)
     return nil unless identifier
     Device.find(identifier.device_id)
   end
 
-  def self.find_by_identifier(identifier_name, consistent = false)
+  def self.find_by_identifier(identifier_name, consistent = true)
     identifier = DeviceIdentifier.find(identifier_name, :consistent => consistent) unless identifier_name.blank?
     return nil if identifier.nil? || identifier.device_id.to_s.start_with?('device_identifier')
     identifier
