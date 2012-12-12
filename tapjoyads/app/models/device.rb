@@ -361,9 +361,11 @@ class Device < SimpledbShardedResource
     device_ids_to_merge.each do |device_id_to_merge|
       identifier = DeviceIdentifier.find_by_identifier(device_id_to_merge)
       next unless identifier
+      next if identifier.device_id == self.key
 
       device_for_merge = Device.find(identifier.device_id)
-      next if device_for_merge.nil? || self.key == device_for_merge.key
+      next if device_for_merge.nil?
+
       next if self.advertising_id? && device_for_merge.advertising_id? && self.advertising_id != device_for_merge.advertising_id
 
       self.udid = device_for_merge.udid if !self.udid? && device_for_merge.udid?
