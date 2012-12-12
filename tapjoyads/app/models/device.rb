@@ -207,7 +207,7 @@ class Device < SimpledbShardedResource
     set_last_run_time(app_id)
     save
   end
-
+   
   def last_run_app_ids
     @parsed_apps.sort_by{|k,v| v }.map{|k,v| k }.reverse
   end
@@ -359,10 +359,7 @@ class Device < SimpledbShardedResource
     new_apps = {}
     new_pub_user_ids = {}
     device_ids_to_merge.each do |device_id_to_merge|
-      identifier = DeviceIdentifier.find_by_identifier(device_id_to_merge)
-      next unless identifier
-
-      device_for_merge = Device.find(identifier.device_id)
+      device_for_merge = DeviceIdentifier.find_device_for_identifier(device_id_to_merge)
       next if device_for_merge.nil? || self.key == device_for_merge.key
       next if self.advertising_id? && device_for_merge.advertising_id? && self.advertising_id != device_for_merge.advertising_id
 
