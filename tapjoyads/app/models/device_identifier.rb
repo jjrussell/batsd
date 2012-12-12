@@ -5,9 +5,9 @@ class DeviceIdentifier < SimpledbShardedResource
   # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid | idfa | android_id)
   #
   ALL_IDENTIFIERS = [
+    :mac_address,
     :sha2_udid,
     :sha1_udid,
-    :mac_address,
     :sha1_mac_address,
     :open_udid,
     :android_id,
@@ -47,7 +47,7 @@ class DeviceIdentifier < SimpledbShardedResource
 
   def self.find_device_from_params(params)
     device = nil
-    [:tapjoy_device_id, :udid, :mac_address].each do |old_udid_style|
+    [:tapjoy_device_id, :udid].each do |old_udid_style|
       device = Device.find(params[old_udid_style]) if params.include?(old_udid_style) && params[old_udid_style].present?
       break if device
     end
@@ -57,6 +57,9 @@ class DeviceIdentifier < SimpledbShardedResource
         break if device
       end
     end
+
+    device = Device.find(params[:mac_address]) if device.nil? && params[:mac_address]
+
     device
   end
 end
