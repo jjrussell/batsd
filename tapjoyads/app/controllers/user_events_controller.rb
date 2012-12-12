@@ -1,6 +1,6 @@
 class UserEventsController < ApplicationController
 
-  before_filter :lookup_device, :setup
+  before_filter :setup
 
   def create
     begin
@@ -22,9 +22,6 @@ class UserEventsController < ApplicationController
         error_msg_data = { :app_id => params[:app_id] }
         raise UserEvent::UserEventInvalid, I18n.t('user_event.error.invalid_app_id', error_msg_data)
       end
-
-      raise UserEvent::UserEventInvalid, I18n.t('user_event.error.no_device') unless params[:tapjoy_device_id].present?
-      device = find_or_create_device
 
       event_type_id = params.delete(:event_type_id).to_i
       @type = UserEvent::EVENT_TYPE_KEYS[event_type_id]

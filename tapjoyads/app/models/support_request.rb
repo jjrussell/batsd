@@ -65,7 +65,7 @@ class SupportRequest < SimpledbResource
   end
 
   def self.find_support_request(udid, device_id, pub_app_id)
-    SupportRequest.find(:first, :conditions => ["tapjoy_device_id = ? or udid = ? and app_id = ?", device_id, udid, app_id])
+    SupportRequest.find(:first, :conditions => ["tapjoy_device_id = ? or udid = ? and app_id = ?", device_id, udid, pub_app_id])
   end
 
   private
