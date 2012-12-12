@@ -41,6 +41,7 @@ class Dashboard::Tools::ApprovalsController < Dashboard::DashboardController
               :url => mine_tools_acceptance_index_url
           ).deliver
         end
+        true
       end
     end
   end
