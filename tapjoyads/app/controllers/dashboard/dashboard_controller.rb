@@ -158,7 +158,7 @@ class Dashboard::DashboardController < ApplicationController
       partner_ids = cookies[:recent_partners].to_s.split(';') + current_user.partners.map(&:id)
       @recent_partners = Partner.where(:id => partner_ids.uniq).map do |partner|
         [partner.name, make_current_partner_path(partner.id)]
-      end
+      end.sort
     end
   end
 
