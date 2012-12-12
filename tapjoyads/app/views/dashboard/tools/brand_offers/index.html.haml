@@ -30,6 +30,9 @@
 
 = form_tag tools_brands_path, :method => :post, :class => 'create_brand' do
   %input#brand_name{ :type => 'hidden', :value => ''}
+
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   :plain
       $('#search_box').autocomplete({ source: function(request,response){
@@ -44,7 +47,7 @@
               response(data);
             }
           });
-        }, delay: 150, minLength: 2, select: function(event, ui) {
+        }, delay: 150, minLength: 2, html: true, select: function(event, ui) {
           var offer = ui.item;
           var data = $('.create_brand').serialize()+"&brand="+$('#brand').attr('value')+"&offer="+offer.id;
           $.ajax({

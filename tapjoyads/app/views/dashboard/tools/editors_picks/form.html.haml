@@ -44,6 +44,7 @@
       text-align: right;
     }
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
 - content_for :page_javascript do
   :plain
     $('#editors_pick_scheduled_for').datetimepicker({
@@ -54,6 +55,7 @@
       source: '#{search_offers_path(:app_offers_only => true)}',
       delay: 250,
       minLength: 2,
+      html: true,
       select: function(event, ui) {
         $('#editors_pick_offer_id').val(ui.item.id);
       }
