@@ -1,6 +1,6 @@
 class DeviceIdentifier < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "device_identifiers"
+  mirror_configuration :riak_bucket_name => "device_identifiers", :read_from_riak => true
 
   # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid | idfa | android_id)
   #
