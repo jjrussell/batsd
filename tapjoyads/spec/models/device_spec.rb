@@ -55,92 +55,33 @@ describe Device do
     end
   end
 
-  describe '#merge_existing_devices' do
-    before :each do
-      @device = FactoryGirl.create(:device, :apps => {'1' => 70, '2' => 55, '3' => 30})
-      @device.send(:after_initialize)
-
-      @udid_device = FactoryGirl.create(:device, :apps => {'2' => 40, '4' => 60})
-      @mac_address_device = FactoryGirl.create(:device, :apps => {'3' => 45, '5' => 65})
-      @udid_device.send(:after_initialize)
-      @mac_address_device.send(:after_initialize)
-    end
-
-    it 'should merge both udid and mac_address based devices' do
-      @device.mac_address = 'test_mac_address'
-      @device.udid = 'test_udid'
-      DeviceIdentifier.should_receive(:find_device_for_identifier).with('test_mac_address').and_return(@mac_address_device)
-      DeviceIdentifier.should_receive(:find_device_for_identifier).with(Digest::SHA1.hexdigest('test_mac_address')).and_return(@udid_device)
-      DeviceIdentifier.should_receive(:find_device_for_identifier).with('test_udid').and_return(@udid_device)
-      DeviceIdentifier.should_receive(:find_device_for_identifier).with(Digest::SHA1.hexdigest('test_udid')).and_return(@udid_device)
-      DeviceIdentifier.should_receive(:find_device_for_identifier).with(Digest::SHA2.hexdigest('test_udid')).and_return(@udid_device)
-      @device.should_receive(:save!)
-
-      @device.merge_existing_devices!
-      @device.apps.sort.should == [["1", 70], ["2", 55], ["3", 30], ["4", 60], ["5", 65]]
-    end
-
-    context 'with advertising id based devices' do
-      it 'copies missing data' do
-        @advertising_id_device = FactoryGirl.create(:device, :advertising_id => 'test_advertising_id', :mac_address => 'test_mac_address', :apps => { '1' => 60, '6' => 39})
-        @advertising_id_device.send(:after_initialize)
-        @device.mac_address = 'test_mac_address'
-        DeviceIdentifier.should_receive(:find_device_for_identifier).with('test_mac_address').and_return(@advertising_id_device)
-        DeviceIdentifier.should_receive(:find_device_for_identifier).with(Digest::SHA1.hexdigest('test_mac_address')).and_return(nil)
-        @device.should_receive(:save!)
-        @device.merge_existing_devices!
-        @device.advertising_id.should == 'test_advertising_id'
-        @device.apps.sort.should == [["1", 70], ["2", 55], ["3", 30], ["6", 39]]
-      end
-
-      it 'does not merge for advertising_id changed device' do
-        @advertising_id_device = FactoryGirl.create(:device, :advertising_id => 'test_advertising_id', :mac_address => 'test_mac_address', :apps => { '1' => 60, '6' => 39})
-        @advertising_id_device.send(:after_initialize)
-
-        @device.advertising_id = 'test_advertising_id_new'
-        @device.mac_address = 'test_mac_address'
-
-        DeviceIdentifier.should_receive(:find_device_for_identifier).with('test_advertising_id_new').and_return(nil)
-        DeviceIdentifier.should_receive(:find_device_for_identifier).with('test_mac_address').and_return(@advertising_id_device)
-        DeviceIdentifier.should_receive(:find_device_for_identifier).with(Digest::SHA1.hexdigest('test_mac_address')).and_return(nil)
-
-        @device.should_receive(:save!)
-        @device.merge_existing_devices!
-        @device.advertising_id.should == 'test_advertising_id_new'
-        @device.apps.sort.should == [["1", 70], ["2", 55], ["3", 30]]
-
-      end
-    end
-  end
-
   describe '#create_identifiers!' do
     before :each do
       @device = FactoryGirl.create(:device)
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
-      @device.advertising_id = 'test-advertiser-id'
-      @device.udid = 'test-udid'
+      @device.idfa = 'test-advertiser-id'
+      @device.open_udid = 'test-open-udid'
       @device_identifier = FactoryGirl.create(:device_identifier)
     end
 
     it 'creates the device identifiers' do
-      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.udid)).and_return(@device_identifier)
-      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.udid)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.key)).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
-      DeviceIdentifier.should_receive(:new).with(:key => @device.advertising_id).and_return(@device_identifier)
-      DeviceIdentifier.should_receive(:new).with(:key => @device.udid).and_return(@device_identifier)
+      DeviceIdentifier.should_receive(:new).with(:key => @device.idfa).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
 
       @device.should_receive(:merge_temporary_devices!).once
-      @device.should_receive(:merge_existing_devices!).once
       @device.create_identifiers!
     end
 
     context 'with a temporary device' do
       before :each do
         @app_ids = {'1' => 50, '2' => 60}
-        @device = FactoryGirl.create(:device, :apps => @app_ids, :udid => 'test-udid')
+        @device = FactoryGirl.create(:device, :apps => @app_ids)
         @device.send(:after_initialize)
         @temp_device = FactoryGirl.create(:temporary_device, :apps => {'2' => 55, '3' => 30},
                                           :publisher_user_ids => {'2' => 'TEST_PUB_ID'},
@@ -148,12 +89,10 @@ describe Device do
       end
 
       it 'copies the apps and deletes the temporary device' do
-        TemporaryDevice.stub(:find).with(@device.udid).and_return(@temp_device)
-        TemporaryDevice.stub(:find).with(Digest::SHA2.hexdigest(@device.udid)).and_return(nil)
-        TemporaryDevice.stub(:find).with(Digest::SHA1.hexdigest(@device.udid)).and_return(nil)
+        TemporaryDevice.stub(:find).with(Digest::SHA2.hexdigest(@device.key)).and_return(@temp_device)
+        TemporaryDevice.stub(:find).with(Digest::SHA1.hexdigest(@device.key)).and_return(nil)
         @temp_device.should_receive(:delete_all).once
         @device.should_receive(:save!).with(:create_identifiers => false)
-        @device.should_receive(:merge_existing_devices!)
         @device.create_identifiers!
         @device.apps.should == { '1' => 50, '2' => 55, '3' => 30 }
         @device.publisher_user_ids.should == { '2' => 'TEST_PUB_ID' }
@@ -434,7 +373,7 @@ describe Device do
     end
 
     it 'matches URL for Rails device_info_tools_url helper' do
-      @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?device_id=#{@device.key}"
+      @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
     end
   end
 
@@ -542,18 +481,16 @@ describe Device do
 
   describe '#save' do
     context 'for a new device' do
-      before :each do
-        @device = FactoryGirl.build(:device)
-      end
+      let(:device) { Device.new(:key => FactoryGirl.generate(:guid)) }
 
       it 'creates the identifiers' do
-        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => @device.key}.to_json)
-        @device.save
+        Sqs.should_receive(:send_message).with(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => device.key}.to_json)
+        device.save
       end
 
       it 'doesnt create the identifers if specified' do
         Sqs.should_not_receive(:send_message)
-        @device.save(:create_identifiers => false)
+        device.save(:create_identifiers => false)
       end
     end
 
@@ -611,7 +548,7 @@ describe Device do
 
     context 'for a temporary device' do
       before :each do
-        @new_device = Device.new(:key => 'test_udid', :is_temporary => true)
+        @device = Device.new(:key => 'test_udid', :is_temporary => true)
         @temp_device = FactoryGirl.create(:temporary_device,
                        :apps => {'2' => 50},
                        :publisher_user_ids => {'2' => 'PUB_ID_TEST'},
@@ -619,11 +556,11 @@ describe Device do
       end
 
       it 'should load apps from temporary devices' do
-        TemporaryDevice.stub(:new).and_return(@temp_device)
-        @new_device.send :after_initialize
-        @new_device.apps.should == {'2' => 50}
-        @new_device.publisher_user_ids.should == {'2' => 'PUB_ID_TEST'}
-        @new_device.display_multipliers.should == {'2' => 3}
+        TemporaryDevice.should_receive(:new).with(:key => @device.key).and_return(@temp_device)
+        @device.send :after_initialize
+        @device.apps.should == {'2' => 50}
+        @device.publisher_user_ids.should == {'2' => 'PUB_ID_TEST'}
+        @device.display_multipliers.should == {'2' => 3}
       end
     end
 

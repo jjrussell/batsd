@@ -136,7 +136,7 @@ private
       end
     end
 
-    device = Device.new(:key => click.tapjoy_device_id)
+    device = Device.new(:key => click.udid)
     if device.has_app?(click.advertiser_app_id) && (!offer.multi_complete? || offer.frequency_capping_reject?(device))
       @error_message = "offer has already been completed by this device for click {#{click.key}}"
       notify_and_render_error(false)

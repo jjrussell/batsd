@@ -25,14 +25,14 @@ class Experiments
 
   RANDOMIZER = '0c837abcb4a44b578082701cbdcc9e26'
 
-  def self.choose(device_id, options = {})
-    if device_id.present?
+  def self.choose(udid, options = {})
+    if udid.present?
       experiment = options[:experiment]
       experiment_ids = EXPERIMENTS[experiment]
       return nil if experiment_ids.blank?
-      device_id_index = Digest::MD5.hexdigest("#{RANDOMIZER}#{device_id}#{experiment}").hex % experiment_ids.length
+      udid_index = Digest::MD5.hexdigest("#{RANDOMIZER}#{udid}#{experiment}").hex % experiment_ids.length
 
-      experiment_ids[device_id_index]
+      experiment_ids[udid_index]
     end
   end
 

@@ -1,6 +1,6 @@
 class PointsController < ApplicationController
 
-  before_filter :lookup_device, :set_publisher_user_id
+  before_filter :lookup_udid, :set_publisher_user_id
 
   BLOCK_AWARDS = [ '9a3b761a-2cfe-4eee-8014-c1e2b5f51231', '26daded9-21af-4273-b460-fa25127bad41' ]
   GLU_PARTNER_ID = '28239536-44dd-417f-942d-8247b6da0e84'
@@ -15,7 +15,7 @@ class PointsController < ApplicationController
     'f50242be-dcbc-4488-b302-1d8de75718b4', ]
 
   def award
-    return unless verify_params([ :app_id, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ]) && verify_records(get_device_key)
+    return unless verify_params([ :app_id, :udid, :publisher_user_id, :tap_points, :guid, :timestamp, :verifier ])
 
     unless params[:verifier] == generate_verifier([ params[:tap_points], params[:guid] ])
       @error_message = "invalid verifier"
@@ -37,7 +37,6 @@ class PointsController < ApplicationController
     return unless verify_records([ @currency ])
 
     reward = Reward.new(:key => params[:guid])
-    reward.tapjoy_device_id  = get_device_key
     reward.type              = 'award_currency'
     reward.publisher_app_id  = params[:app_id]
     reward.currency_id       = @currency.id
@@ -66,10 +65,10 @@ class PointsController < ApplicationController
   end
 
   def spend
-    return unless verify_params([:app_id, :tap_points, :publisher_user_id])
+    return unless verify_params([:app_id, :udid, :tap_points, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
-    return unless verify_records([ @currency, get_device_key ])
+    return unless verify_records([ @currency ])
 
     pp_key = "#{params[:publisher_user_id]}.#{params[:app_id]}"
     tap_points = params[:tap_points].to_i
@@ -92,10 +91,10 @@ class PointsController < ApplicationController
   end
 
   def purchase_vg
-    return unless verify_params([:app_id, :virtual_good_id, :publisher_user_id])
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
-    return unless verify_records([ @currency, get_device_key ])
+    return unless verify_records([ @currency ])
 
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
     @success, @message, @point_purchases = PointPurchases.purchase_virtual_good("#{params[:publisher_user_id]}.#{params[:app_id]}", params[:virtual_good_id], quantity)
@@ -105,10 +104,10 @@ class PointsController < ApplicationController
   end
 
   def consume_vg
-    return unless verify_params([:app_id, :virtual_good_id, :publisher_user_id])
+    return unless verify_params([:app_id, :udid, :virtual_good_id, :publisher_user_id])
 
     @currency = Currency.find_in_cache(params[:app_id])
-    return unless verify_records([ @currency, get_device_key ])
+    return unless verify_records([ @currency ])
 
     quantity = params[:quantity].blank? ? 1 : params[:quantity].to_i
 

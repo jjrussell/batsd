@@ -5,20 +5,18 @@ class DeviceIdentifier < SimpledbShardedResource
   # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid | idfa | android_id)
   #
   ALL_IDENTIFIERS = [
-    :mac_address,
     :sha2_udid,
     :sha1_udid,
+    :mac_address,
     :sha1_mac_address,
     :open_udid,
     :android_id,
-    :advertising_id,
-    :udid,
+    :idfa,
   ]
 
   self.num_domains = NUM_DEVICE_IDENTIFIER_DOMAINS
 
   self.sdb_attr :udid
-  self.sdb_attr :device_id
 
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICE_IDENTIFIER_DOMAINS
@@ -33,21 +31,16 @@ class DeviceIdentifier < SimpledbShardedResource
     put("device_id", device_id)
   end
 
-  def self.find_device_for_identifier(identifier_name, consistent = false)
-    identifier = find_by_identifier(identifier_name, consistent)
-    return nil unless identifier
-    Device.find(identifier.device_id)
-  end
-
-  def self.find_by_identifier(identifier_name, consistent = false)
+  def self.find_device_for_identifier(identifier_name, consistent = true)
+    identifier = nil
     identifier = DeviceIdentifier.find(identifier_name, :consistent => consistent) unless identifier_name.blank?
     return nil if identifier.nil? || identifier.device_id.to_s.start_with?('device_identifier')
-    identifier
+    Device.find(identifier.device_id)
   end
 
   def self.find_device_from_params(params)
     device = nil
-    [:tapjoy_device_id, :udid].each do |old_udid_style|
+    [:tapjoy_device_id, :udid, :mac_address].each do |old_udid_style|
       device = Device.find(params[old_udid_style]) if params.include?(old_udid_style) && params[old_udid_style].present?
       break if device
     end
@@ -57,9 +50,7 @@ class DeviceIdentifier < SimpledbShardedResource
         break if device
       end
     end
-
-    device = Device.find(params[:mac_address]) if device.nil? && params[:mac_address]
-
     device
   end
 end
+

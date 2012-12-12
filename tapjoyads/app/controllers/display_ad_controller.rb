@@ -1,7 +1,7 @@
 class DisplayAdController < ApplicationController
 
   before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
-  before_filter :set_device_type, :lookup_device, :set_publisher_user_id, :setup, :except => [:image, :cross_promo]
+  before_filter :set_device_type, :lookup_udid, :set_publisher_user_id, :setup, :except => [:image, :cross_promo]
   after_filter :queue_impression_tracking, :only => [:index, :webview]
 
   def index
@@ -68,7 +68,7 @@ class DisplayAdController < ApplicationController
 
   def setup
     params[:currency_id] ||= params[:app_id]
-    return unless verify_params([:app_id, :currency_id]) && verify_records(get_device_key)
+    return unless verify_params([:app_id, :udid, :currency_id])
 
     now = Time.zone.now
 
@@ -81,7 +81,7 @@ class DisplayAdController < ApplicationController
       params[:size] = '640x100'
     end
 
-    device = find_or_create_device
+    device = Device.new(:key => params[:udid])
     @publisher_app = App.find_in_cache(params[:app_id])
     currency = Currency.find_in_cache(params[:currency_id])
     currency = nil if currency.present? && currency.app_id != params[:app_id]
@@ -102,8 +102,6 @@ class DisplayAdController < ApplicationController
       offer = @publisher_app.test_offer
     else
       offer = OfferList.new(
-        :tapjoy_device_id    => get_device_key,
-        :udid                => params[:udid],
         :publisher_app       => @publisher_app,
         :device              => device,
         :currency            => currency,
@@ -122,10 +120,9 @@ class DisplayAdController < ApplicationController
 
     if offer.present?
       @click_url = offer.click_url(
-        :tapjoy_device_id  => get_device_key,
-        :udid              => params[:udid],
         :publisher_app     => @publisher_app,
         :publisher_user_id => params[:publisher_user_id],
+        :udid              => params[:udid],
         :currency_id       => currency.id,
         :source            => 'display_ad',
         :viewed_at         => now,
@@ -306,7 +303,7 @@ class DisplayAdController < ApplicationController
     if @offer.present?
       @offer.queue_impression_tracking_requests(
         :ip_address       => ip_address,
-        :tapjoy_device_id => get_device_key,
+        :udid             => params[:udid],
         :publisher_app_id => params[:app_id])
     end
   end

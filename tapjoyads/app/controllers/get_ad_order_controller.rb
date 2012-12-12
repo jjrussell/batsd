@@ -1,8 +1,7 @@
 class GetAdOrderController < ApplicationController
-  before_filter :lookup_device
 
   def index
-    return unless verify_params([ :app_id ]) && verify_records(get_device_key)
+    return unless verify_params([ :app_id, :udid ])
 
     app = App.find_in_cache(params[:app_id])
     return unless verify_records([ app ])

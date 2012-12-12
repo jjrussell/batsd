@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe GetOffersController do
   render_views
-  before :each do
-    @device = FactoryGirl.create(:device, :udid => 'stuff')
-    Device.stub(:find_by_device_id).and_return(@device)
-  end
 
   describe '#index' do
     before :each do
@@ -38,7 +34,6 @@ describe GetOffersController do
       OfferCacher.stub(:get_offers_prerejected).and_return(offers)
       RailsCache.stub(:get).and_return(nil)
       controller.stub(:ip_address).and_return('208.90.212.38')
-
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',
@@ -54,8 +49,9 @@ describe GetOffersController do
     it 'should queue up tracking url calls' do
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address       => @controller.send(:ip_address),
-        :tapjoy_device_id => @device.key,
+        :udid             => 'stuff',
         :publisher_app_id => @currency.app.id).once
+
       get(:index, @params)
     end
 
@@ -245,7 +241,8 @@ describe GetOffersController do
 
   describe '#webpage' do
     before :each do
-      @currency = FactoryGirl.create(:currency, :test_devices => 'test_device')
+      @device = FactoryGirl.create(:device)
+      @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @params = {
         :udid => 'stuff',
@@ -289,15 +286,16 @@ describe GetOffersController do
       OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
       @offer.should_receive(:queue_impression_tracking_requests).with(
         :ip_address       => @controller.send(:ip_address),
-        :tapjoy_device_id => @device.key,
+        :udid             => 'stuff',
         :publisher_app_id => @currency.app.id).once
+
       get(:webpage, @params)
     end
 
     context "test offers" do
       before :each do
         OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
-        @currency.stub(:has_test_device?).and_return(true)
+        @params.merge!(:udid => @device.id)
       end
 
       it 'assigns test offer for test devices', :test_offers do
@@ -339,7 +337,8 @@ describe GetOffersController do
   describe '#featured' do
     before :each do
       RailsCache.stub(:get).and_return(nil)
-      @currency = FactoryGirl.create(:currency, :test_devices => 'test_device')
+      @device = FactoryGirl.create(:device)
+      @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
       @currency.update_attribute(:hide_rewarded_app_installs, false)
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
@@ -470,7 +469,7 @@ describe GetOffersController do
     end
 
     it 'assigns test offer for test devices' do
-      get(:featured, @params.merge(:udid => 'test_device'))
+      get(:featured, @params.merge(:udid => @device.id))
       assigns(:offer_list).first.item_type.should == "TestOffer"
       assigns(:offer_list).length.should == 1
     end
@@ -499,6 +498,7 @@ describe GetOffersController do
 
   describe '#setup' do
     before :each do
+      @device = FactoryGirl.create(:device)
       @currency = FactoryGirl.create(:currency, :callback_url => 'http://www.tapjoy.com')
       @offer = FactoryGirl.create(:app).primary_offer
       @offer.partner.balance = 10
@@ -507,7 +507,7 @@ describe GetOffersController do
       fake_cache_object.stub(:value).and_return([@offer])
       RailsCache.stub(:get_and_put).and_return(fake_cache_object)
       @params = {
-        :udid => 'stuff',
+        :udid => @device.id,
         :publisher_user_id => 'more_stuff',
         :currency_id => @currency.id,
         :app_id => @currency.app.id
@@ -517,7 +517,6 @@ describe GetOffersController do
 
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
-
       get(:index, @params)
     end
 

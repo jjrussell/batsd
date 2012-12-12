@@ -12,6 +12,7 @@ class Job::QueueCreateDeviceIdentifiersController < Job::SqsReaderController
     device = Device.find(json['device_id'], :consistent => true)
     return if device.nil?
     device.create_identifiers!
+    device.copy_mac_address_device!
   end
 
 end

@@ -1465,12 +1465,13 @@ describe Offer do
         @ts = 1.hour.from_now
         @ip_address = '127.0.0.1'
         @udid = 'udid'
+        uid = Click.hashed_key(@offer.format_as_click_key(:udid => @udid))
         @publisher_app_id = 'pub_app_id'
         user_agent = @offer.source_token(@publisher_app_id)
-        Device.stub(:advertiser_device_id).and_return('hello')
 
         @urls.each do |url|
-          result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', 'hello')
+          uid = Device.advertiser_device_id(@udid, @offer.partner_id)
+          result = url.sub('[timestamp]', @ts.to_i.to_s).sub('[ip_address]', @ip_address).sub('[uid]', uid)
           result.sub!('[user_agent]', user_agent)
           Downloader.should_receive(:queue_get_with_retry).with(result, anything).once
         end

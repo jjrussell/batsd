@@ -5,7 +5,6 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
   filter_access_to :all
 
-  before_filter :lookup_device, :only => [ :last_run ]
   before_filter :find_offer, :only => [ :show, :edit, :update, :new, :create, :last_run_times, :last_run, :udids, :download_udids, :support_request_reward_ratio, :show_rate_reasons ]
   before_filter :setup, :only => [ :show, :global ]
   before_filter :set_platform, :only => [ :global, :publisher, :advertiser ]
@@ -112,20 +111,21 @@ class Dashboard::StatzController < Dashboard::DashboardController
 
     admin_devices = AdminDevice.platform_in(targeted_platforms).ordered_by_description
 
-    unless params[:other_device_id].blank?
-      admin_devices.unshift(AdminDevice.new(:tapjoy_device_id => params[:other_device_id], :description => 'Other Device ID'))
+    unless params[:other_udid].blank?
+      admin_devices.unshift(AdminDevice.new(:udid => params[:other_udid], :description => 'Other UDID'))
     end
 
     @last_run_times = []
     admin_devices.each do |admin_device|
-      device = Device.new(:key => admin_device.tapjoy_device_id)
+      device = Device.new(:key => admin_device.udid)
       last_run_time = device.has_app?(@offer.item_id) ? device.last_run_time(@offer.item_id).to_s(:pub_ampm_sec) : 'Never'
       @last_run_times << [ admin_device, last_run_time ]
     end
   end
 
   def last_run
-    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :tapjoy_device_id => params[:device_id])
+    @runs = AdminDeviceLastRun.for(:app_id => @offer.id, :udid => params[:udid])
+
     if params[:time] && time = Time.zone.parse(params[:time])
       @last_run = @runs.find { |run| run.time.change(:usec => 0) == time }
     else

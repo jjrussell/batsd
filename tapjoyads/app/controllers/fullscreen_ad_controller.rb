@@ -1,7 +1,5 @@
 class FullscreenAdController < ApplicationController
 
-  before_filter :lookup_device, :only => [ :skip, :index ]
-
   layout 'iphone'
 
   prepend_before_filter :decrypt_data_param
@@ -32,7 +30,7 @@ class FullscreenAdController < ApplicationController
       # for third party tracking vendors
       @offer.queue_impression_tracking_requests(
         :ip_address       => ip_address,
-        :tapjoy_device_id => get_device_key,
+        :udid             => params[:udid],
         :publisher_app_id => params[:publisher_app_id])
     end
 
@@ -70,7 +68,7 @@ class FullscreenAdController < ApplicationController
   end
 
   def skip
-    device = find_or_create_device
+    device = Device.new(:key => params[:udid])
     device.add_skip(params[:offer_id])
     device.save
     render :nothing => true

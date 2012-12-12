@@ -10,8 +10,6 @@ describe FullscreenAdController do
       @offer.name = "Consistent Name"
       Offer.stub(:find_in_cache).with(@offer.id).and_return(@offer)
       OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
-      @device = FactoryGirl.create(:device)
-      Device.stub(:find).and_return(@device)
 
       @currency = FactoryGirl.create(:currency)
       @currency.stub(:active_currency_sale).and_return(nil)
@@ -36,7 +34,7 @@ describe FullscreenAdController do
         WebRequest.should_receive(:new).with(:time => Time.zone.now).once
         wr.should_receive(:put_values).with(
           'featured_offer_impression',
-          @params.with_indifferent_access.merge(:controller => 'fullscreen_ad', :tapjoy_device_id => @device.key, :action => 'index'),
+          @params.with_indifferent_access.merge(:controller => 'fullscreen_ad', :action => 'index'),
           @controller.send(:ip_address),
           @controller.send(:geoip_data),
           @request.headers['User-Agent']).once
@@ -53,7 +51,7 @@ describe FullscreenAdController do
       it 'queues up tracking url calls' do
         @offer.should_receive(:queue_impression_tracking_requests).with(
           :ip_address       => @controller.send(:ip_address),
-          :tapjoy_device_id => @device.key,
+          :udid             => 'stuff',
           :publisher_app_id => @currency.app.id).once
 
         get(:index, @params)

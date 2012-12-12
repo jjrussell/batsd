@@ -39,7 +39,7 @@ describe ToolsHelper do
       @click.stub(:block_reason?).and_return(true)
       @click.stub(:block_reason).and_return('Banned')
       helper.click_tr_class(@click, nil).should == 'blocked'
-      @click.stub(:block_reason).and_return('TooManyTapjoyDeviceIDsForPublisherUserId')
+      @click.stub(:block_reason).and_return('TooManyUdidsForPublisherUserId')
       helper.click_tr_class(@click, nil).should == 'blocked'
       @click.stub(:block_reason).and_return('SomeOtherReason')
       helper.click_tr_class(@click, nil).should == 'not-rewarded'

@@ -5,7 +5,7 @@ class Click < SimpledbShardedResource
 
   MAX_HISTORY = 20
 
-  belongs_to :device, :foreign_key => 'tapjoy_device_id'
+  belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'
   belongs_to :displayer_app, :class_name => 'App'
   belongs_to :offer
@@ -16,12 +16,10 @@ class Click < SimpledbShardedResource
   belongs_to :publisher_reseller, :class_name => 'Reseller'
   belongs_to :advertiser_reseller, :class_name => 'Reseller'
 
-  self.key_format = 'tapjoy_device_id.advertiser_app_id'
+  self.key_format = 'udid.advertiser_app_id'
   self.num_domains = NUM_CLICK_DOMAINS
 
   self.sdb_attr :udid
-  self.sdb_attr :tapjoy_device_id
-  self.sdb_attr :advertising_id
   self.sdb_attr :publisher_app_id
   self.sdb_attr :advertiser_app_id
   self.sdb_attr :displayer_app_id
@@ -79,14 +77,6 @@ class Click < SimpledbShardedResource
     "clicksV3_#{domain_number}"
   end
 
-  def tapjoy_device_id
-    get('tapjoy_device_id') || udid
-  end
-
-  def tapjoy_device_id=(tj_id)
-    put('tapjoy_device_id', tj_id)
-  end
-
   def self.hashed_key(key)
     Digest::MD5.hexdigest(key.to_s + CLICK_KEY_SALT)
   end
@@ -103,8 +93,8 @@ class Click < SimpledbShardedResource
     installed_at? && reward && reward.successful?
   end
 
-  def publisher_user_tapjoy_device_ids
-    PublisherUser.for_click(self).tapjoy_device_ids
+  def publisher_user_udids
+    PublisherUser.for_click(self).udids
   end
 
   def tapjoy_games_invitation_primary_click?
@@ -123,7 +113,7 @@ class Click < SimpledbShardedResource
     end
     save!
 
-    d = Device.new(:key => tapjoy_device_id)
+    d = Device.new(:key => udid)
     d.unset_last_run_time!(advertiser_app_id)
 
     Downloader.get_with_retry(url_to_resolve) if Rails.env.production?
@@ -199,7 +189,7 @@ class Click < SimpledbShardedResource
     if type == 'generic' || type == 'survey'
       "#{API_URL}/offer_completed?click_key=#{key}"
     else
-      "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&tapjoy_device_id=#{tapjoy_device_id}&consistent=true"
+      "#{API_URL}/connect?app_id=#{advertiser_app_id}&udid=#{udid}&consistent=true"
     end
   end
 

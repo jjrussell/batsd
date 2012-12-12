@@ -1,7 +1,6 @@
 class CouponInstructionsController < ApplicationController
   prepend_before_filter :decrypt_data_param
   before_filter :setup
-  before_filter :lookup_device, :only => [ :create ]
 
   def new
     @publisher_app = App.find_in_cache(params[:publisher_app_id])
@@ -9,8 +8,8 @@ class CouponInstructionsController < ApplicationController
   end
 
   def create
-    return unless verify_params([ :email_address ]) && verify_records(get_device_key)
-    @device = find_or_create_device
+    return unless verify_params([ :email_address ])
+    @device = Device.find(params[:udid])
     return unless verify_records([ @device ])
 
     unless params[:email_address] =~ Authlogic::Regex.email
@@ -23,7 +22,6 @@ class CouponInstructionsController < ApplicationController
 
     complete_action_url = @offer.complete_action_url({
       :udid                  => params[:udid],
-      :tapjoy_device_id      => get_device_key,
       :publisher_app_id      => params[:publisher_app_id],
       :currency              => @currency,
       :click_key             => params[:click_key],
@@ -41,7 +39,7 @@ class CouponInstructionsController < ApplicationController
   private
 
   def setup
-    verify_params([ :data, :id, :publisher_app_id ])
+    verify_params([ :data, :id, :udid, :publisher_app_id ])
     @offer = Offer.find_in_cache(params[:id])
     @coupon = Coupon.find_in_cache(@offer.item_id) if @offer
     @currency = Currency.find_in_cache(params[:currency_id] || params[:publisher_app_id]) if @coupon

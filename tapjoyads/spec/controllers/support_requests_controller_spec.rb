@@ -2,20 +2,19 @@ require 'spec_helper'
 
 describe SupportRequestsController do
   before :each do
-    @device = FactoryGirl.create(:device)
-    DeviceIdentifier.stub(:find_device_from_params).and_return(@device)
     @app = FactoryGirl.create(:app)
     @currency = FactoryGirl.create(:currency)
+    @udid = 'test udid'
   end
 
   describe '#incomplete_offers' do
     it 'should perform the proper SimpleDB query' do
       now = Time.zone.now
       Timecop.freeze(now) do
-        conditions = ["tapjoy_device_id = ? or udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", @device.id, @device.id, @currency.id, 30.days.ago.to_f]
+        conditions = ["udid = ? and currency_id = ? and clicked_at > ? and manually_resolved_at is null", @udid, @currency.id, 30.days.ago.to_f]
 
         Click.should_receive(:select_all).with({ :conditions => conditions }).once.and_return([])
-        get(:incomplete_offers, :app_id => @app.id, :currency_id => @currency.id, :udid => @device.id)
+        get(:incomplete_offers, :app_id => @app.id, :currency_id => @currency.id, :udid => @udid)
       end
     end
   end
@@ -73,7 +72,7 @@ describe SupportRequestsController do
         SupportRequest.stub(:fill_from_params)
         SupportRequest.stub(:save).and_return(true)
         Click.should_receive(:new).with(:key => @support_request.click_id).and_return(@click)
-        DeviceIdentifier.should_receive(:find_device_from_params).and_return(@device)
+        Device.should_receive(:new).with(:key => @params[:udid]).and_return(@device)
         @controller.should_receive(:duplicate_support_request?).and_return(false)
         post(:create, @params)
       end

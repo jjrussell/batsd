@@ -6,7 +6,7 @@ class GamesMailer < ActionMailer::Base
   def feedback(gamer, content, user_agent, device_id)
     @content = content
     @email = gamer.email
-    @tapjoy_device_id = device_id
+    @udid = device_id
     @user_agent = user_agent
     mail :to => "customerservice@tapjoy.com", :reply_to => gamer.email, :subject => "User Feedback - Tapjoy"
   end
@@ -14,7 +14,7 @@ class GamesMailer < ActionMailer::Base
   def report_bug(gamer, content, user_agent, device_id)
     @content = content
     @email = gamer.email
-    @tapjoy_device_id = device_id
+    @udid = device_id
     @user_agent = user_agent
     mail :to => "mobilehelp@tapjoy.com", :subject => "Bug Report - Tapjoy", :reply_to => gamer.email
   end

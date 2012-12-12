@@ -1,10 +1,7 @@
 class PackageNamesController < ApplicationController
-
-  before_filter :lookup_device
-
   def index
-    return unless verify_params([:package_names]) && verify_records(get_device_key)
-    device = find_or_create_device
+    return unless verify_params([:udid, :package_names])
+    device = Device.find(params[:udid])
     package_names = params[:package_names].split(',').map(&:strip).reject(&:empty?).uniq
     @call_success = true
     @new_refresh_interval = 1.week
