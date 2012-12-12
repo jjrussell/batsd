@@ -345,12 +345,8 @@ class ApplicationController < ActionController::Base
     true
   end
 
-  def publisher_params
-    params[:udid] || params[:mac_address]
-  end
-
   def set_publisher_user_id
-    params[:publisher_user_id] = publisher_params if params[:publisher_user_id].blank?
+    params[:publisher_user_id] = params[:udid] if params[:publisher_user_id].blank?
   end
 
   def sdkless_supported?
