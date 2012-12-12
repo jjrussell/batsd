@@ -1,10 +1,11 @@
 %h3 Video Caching and Streaming Options (Publishers on SDK version 8.3+ Only)
+%p Check all boxes to maximize revenue.
 
 = form_for(@app, :url => update_options_app_videos_path(@app), :remote => true, :html => {:class => 'tjform'}) do |f|
   %table
     %tr
       %th(width=200)
-        = f.label(:videos_enabled, 'Enable Video Ads')
+        = f.label(:videos_enabled, 'Enable Video Ads (Stream over WiFi)')
         #help_videos_enabled.help ?
       %td
         = f.check_box(:videos_enabled)
@@ -41,7 +42,7 @@
       %td{ :colspan => 2 }= f.submit('Save Changes')
 
 .hidden
-  #help_videos_enabled_content{ :name => 'Enable Videos' } If this option is disabled video ads will never appear in your app.
+  #help_videos_enabled_content{ :name => 'Enable Videos' } This option is enabled by default, and it allows videos to be streamed over WiFi. If this option is disabled video ads will never appear in your app.
   #help_videos_cache_wifi_content{ :name => 'Cache Videos on WiFi' } If enabled, video ads will be pre-cached when a user is connected via WiFi.
   #help_videos_cache_3g_content{ :name => 'Cache Videos on 3G' } If enabled, video ads will be pre-cached when a user is connected via 3G.
   #help_videos_cache_auto_content{ :name => 'Automatic Caching' } If enabled, Tapjoy will control the optimal video caching size and timing. If disabled, initVideos must be called from the client in order to cache videos.
