@@ -14,7 +14,7 @@
       - offers.each do |offer|
         %tr
           %td.offer
-            %a{:href => edit_statz_url(offer)}= render :partial => 'dashboard/offers/offer_title', :locals => {:offer => offer}
+            %a{:href => statz_url(offer)}= render :partial => 'dashboard/offers/offer_title', :locals => {:offer => offer}
           %td= offer.item_type
           %td= number_to_currency(offer.price / 100.0)
           %td= number_to_currency(offer.payment / 100.0)
