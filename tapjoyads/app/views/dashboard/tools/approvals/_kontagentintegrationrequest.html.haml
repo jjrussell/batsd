@@ -15,10 +15,15 @@
           (Partner:
           = link_to approval.item.partner.name, approval.item.partner
           )
-      %td= render :partial => 'owner_select', :locals => {:approval => approval}
+      %td
+        = form_for(approval,
+                   :url => {:action => :assign, :id => approval.id},
+                   :html => {:class => 'assignment',:method => :post}) do |f|
+          = f.select(:owner_id, options_for_select(Approval.options_for_available_owners(true), approval.owner_id))
+          = image_tag('spinner.gif', :class => 'spinner hidden')
       %td= approval.state
       %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
       %td.actions
         - if approval.pending?
           = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
-          = link_to('Reject', reject_tools_acceptance_path(approval.id), :class => 'reject')
+          = link_to('Reject',  reject_tools_acceptance_path(approval.id),  :class => 'reject')
