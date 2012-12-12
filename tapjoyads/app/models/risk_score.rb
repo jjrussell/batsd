@@ -51,7 +51,7 @@ class RiskScore
       sum + (profile.total_score_offset * profile.weight.to_f)
     end
 
-    @offsets[category] = total / divisor * CATEGORY_OFFSET_LIMIT / RiskProfile::MAXIMUM_TOTAL_OFFSET
+    @offsets[category] = total / divisor * CATEGORY_OFFSET_LIMIT / RiskProfile::OFFSET_MAXIMUM
   end
 
   def rule_offset
