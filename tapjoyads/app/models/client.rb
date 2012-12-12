@@ -16,9 +16,9 @@ class Client < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :case_sensitive => false
 
-  scope :ordered_by_name, :order => :name
+  scope :ordered_by_name, order(self.arel_table[:name])
   scope :search_by_name, lambda { |name|
-    { :order => :name, :conditions => [ "name LIKE ?", "%#{name}%"] }
+    where(self.arel_table[:name].matches("%#{name}%")).ordered_by_name
   }
 
   before_save :update_payment_type_changed_at
