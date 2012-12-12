@@ -279,7 +279,20 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         @click_apps[app.id] = app
       end
 
-      @apps = Offer.find_all_by_id(@device.parsed_apps.keys).map do |app|
+      @total_apps = @device.parsed_apps.count
+      case params[:show_apps]
+        when 'all'
+          offer_list = @device.parsed_apps.keys
+          @total_apps = nil
+        when 'none'
+          offer_list = []
+        when '3months'
+          offer_list = @device.parsed_apps.reject {|app_id, last_run| Time.at(last_run.to_f) < (Time.zone.now - 3.months)}.keys
+        else
+          offer_list = @device.parsed_apps.sort{|a,b| a[1] <=> b[1]}.slice(0,100).map {|sub_array| sub_array[0]}
+      end
+
+      @apps = Offer.select("id, name, item_type, item_id").includes(:item).find_all_by_id(offer_list).map do |app|
         [ @device.last_run_time(app.id), app ]
       end.sort_by(&:first).reverse
 
