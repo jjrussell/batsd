@@ -26,6 +26,9 @@
   #ads.graph
 
 - include_tapjoy_graph
+
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   :plain
-    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, select: function(event, ui) { window.location.assign(ui.item.url); } });
+    $('#search_box').autocomplete({ source: '#{search_offers_path}', delay: 250, minLength: 2, html: true, select: function(event, ui) { window.location.assign(ui.item.url); } });

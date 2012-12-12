@@ -44,6 +44,8 @@
 
 = will_paginate(@optimized_rank_boosts)
 
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   :plain
     $(function() {
@@ -55,6 +57,7 @@
         source: '#{search_offers_path}',
         delay: 250,
         minLength: 2,
+        html: true,
         select: function(event, ui) {
           $('input#offer_id').val(ui.item.id);
           $('#filter-form').submit();

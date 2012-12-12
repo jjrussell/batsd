@@ -46,6 +46,8 @@
 
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
 
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   = set_tapjoy_timezone_skew
   :plain
@@ -54,6 +56,7 @@
         source: '#{search_offers_path}',
         delay: 250,
         minLength: 2,
+        html: true,
         select: function(event, ui) {
           $('#rank_boost_offer_id').val(ui.item.id);
         }

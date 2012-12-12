@@ -72,6 +72,8 @@
 
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
 
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   = set_tapjoy_timezone_skew
   :plain
@@ -102,6 +104,7 @@
         source: '#{search_offers_path}',
         delay: 250,
         minLength: 2,
+        html: true,
         select: function(event, ui) {
           var currentUserEnabled = ui.item.user_enabled ? 'Enabled' : 'Disabled';
           var currentDailyBudget = ui.item.daily_budget == 0 ? 'Unlimited' : ui.item.daily_budget;
