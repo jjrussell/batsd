@@ -14,35 +14,24 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
     log_activity(@app_metadata)
     @orig_app_metadata = @app_metadata
 
-    # TODO: Remove this conditional when TStore API support is available
-    if @app_metadata.store_name == 'android.SKTStore'
-      @app_metadata.download_and_save_icon!(params[:icon_url]) if params[:icon_url]
-      params[:app_metadata][:categories] = params[:app_metadata][:categories].split(';') if params[:app_metadata][:categories]
-      safe_attributes = [:name, :store_id, :price, :description, :file_size_bytes, :user_rating, :categories, :developer, :released_at]
-      unless @app_metadata.safe_update_attributes(params[:app_metadata], safe_attributes)
-        flash.now[:error] = "Update unsuccessful."
-        render :action => "show" and return
-      end
-    else
-      if params[:store_id].blank?
-        flash.now[:error] = 'A live app must be selected.'
-        render :action => "show" and return
+    if params[:store_id].blank?
+      flash.now[:error] = 'A live app must be selected.'
+      render :action => "show" and return
+    end
+
+    AppMetadata.transaction do
+      begin
+        @app_metadata = @app.update_app_metadata(params[:store_name], params[:store_id])
+      rescue
+        @error_message = 'Update unsuccessful.'
+        raise
       end
 
-      AppMetadata.transaction do
-        begin
-          @app_metadata = @app.update_app_metadata(params[:store_name], params[:store_id])
-        rescue
-          @error_message = 'Update unsuccessful.'
-          raise
-        end
-
-        begin
-          app_store_data = @app_metadata.update_from_store()
-        rescue
-          @error_message = "Grabbing app data from app store failed. Please try again."
-          raise
-        end
+      begin
+        app_store_data = @app_metadata.update_from_store()
+      rescue
+        @error_message = "Grabbing app data from app store failed. Please try again."
+        raise
       end
     end
 
@@ -81,14 +70,11 @@ class Dashboard::AppMetadatasController < Dashboard::DashboardController
         raise
       end
 
-      # TODO: Remove this conditional when TStore API support is available
-      unless params[:store_name] == 'android.SKTStore'
-        begin
-          app_store_data = @app_metadata.update_from_store()
-        rescue
-          @error_message = "Grabbing app data from app store failed. Please try again."
-          raise
-        end
+      begin
+        app_store_data = @app_metadata.update_from_store()
+      rescue
+        @error_message = "Grabbing app data from app store failed. Please try again."
+        raise
       end
     end
 

@@ -10,9 +10,12 @@ class AppStore
   WINDOWS_APP_IMAGES   = 'http://catalog.zune.net/v3.2/en-US/image/_IMGID_?width=1280&amp;height=720&amp;resize=true'
   GFAN_APP_URL         = 'http://api.gfan.com/market/api/getProductDetail'
   GFAN_SEARCH_URL      = 'http://api.gfan.com/market/api/search'
-  SKT_STORE_SPID       = 'api_key pending from T-Store'
-  SKT_STORE_APP_URL    = 'http://baseurl/api/openapi/getAppInfo.omp?cmd=getAppInfo'
-  SKT_STORE_SEARCH_URL = 'http://baseurl/api/openapi/tstore.omp?cmd=getSearchProductByName'
+  SKT_STORE_SPID       = 'OASP_tapjoy'
+  SKT_BASEURL          = '220.103.229.113:8600'
+  SKT_STORE_APP_URL    = "http://#{SKT_BASEURL}/api/openapi/getAppInfo.omp?cmd=getAppInfo"
+  SKT_STORE_SEARCH_URL = "http://#{SKT_BASEURL}/api/openapi/tstore.omp?cmd=getSearchProductByName&ua_code=SSMF&mdn=01012341234&category_type=DP0005&display_count=10&current_page=1&order=D"
+
+  SKT_STORE_CURRENCY   = 'KRW'
 
   # NOTE: these numbers change every once in a while. Last update: 2011-08-11
   PRICE_TIERS = {
@@ -325,13 +328,13 @@ class AppStore
       result = doc.find('//Result').first
       {
         :item_id          => id,
-        :title            => CGI::unescapeHTML(result['name']),
-        :description      => CGI::unescapeHTML(result['desc']),
-        :icon_url         => result['icon_url'],
-        :publisher        => CGI::unescapeHTML(result['dev_name']),
-        :price            => result['charge'].to_f,
-        :user_rating      => result['rate'].to_f,
-        :categories       => [result['category']],
+        :title            => CGI::unescapeHTML(result.find('//name').first.content),
+        :description      => CGI::unescapeHTML(result.find('//prod_dtl_desc').first.content),
+        :icon_url         => result.find('//icon').first.content,
+        :publisher        => CGI::unescapeHTML(result.find('//dev_name').first.content),
+        :price            => CurrencyExchange.convert_foreign_to_usd(result.find('//charge').first.content.to_f, SKT_STORE_CURRENCY),
+        :user_rating      => result.find('//rate').first.content.to_f,
+        :categories       => [result.find('//category').first.content],
       }
     else
       raise "Invalid response."
@@ -431,17 +434,17 @@ class AppStore
   end
 
   def self.search_skt_store(term)
-    response = request(SKT_STORE_SEARCH_URL + "&sp_id=#{SKT_STORE_SPID}&display_count=10&current_page=1&keyword=#{term}&order=D")
+    response = request(SKT_STORE_SEARCH_URL + "&sp_id=#{SKT_STORE_SPID}&keyword=#{term}")
     if response.status == 200
       doc = XML::Parser.string(response.body).parse
       return doc.find('//ITEM').map do |item|
         {
-          :item_id          => product['product_id'],
-          :title            => CGI::unescapeHTML(product['title']),
-          :description      => CGI::unescapeHTML(product['description']),
-          :icon_url         => product['image_url'],
-          :price            => (product['price'].to_i / 100).to_f,
-          :user_rating      => product['rate'].to_f,
+          :item_id          => item.find('//product_id').first.content,
+          :title            => CGI::unescapeHTML(item.find('//title').first.content),
+          :description      => CGI::unescapeHTML(item.find('//description').first.content),
+          :icon_url         => item.find('image_url').first.content,
+          :price            => CurrencyExchange.convert_foreign_to_usd(item.find('//price').first.content.to_f, SKT_STORE_CURRENCY),
+          :user_rating      => item.find('//rate').first.content.to_f,
         }
       end
     else

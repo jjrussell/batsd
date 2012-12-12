@@ -148,13 +148,6 @@ class AppMetadata < ActiveRecord::Base
     save! if changed?
   end
 
-  # TODO: Make this method private when TStore API is available
-  def download_and_save_icon!(url)
-    return if url.blank? || offers.blank?
-    icon_src_blob = download_blob(url)
-    save_icon!(icon_src_blob) if icon_src_blob
-  end
-
   def in_network_app_metadata(options = {})
     {
       :name => name,
@@ -173,6 +166,12 @@ class AppMetadata < ActiveRecord::Base
   end
 
   private
+
+  def download_and_save_icon!(url)
+    return if url.blank? || offers.blank?
+    icon_src_blob = download_blob(url)
+    save_icon!(icon_src_blob) if icon_src_blob
+  end
 
   def get_screenshots_urls
     screenshots_urls = []
