@@ -47,7 +47,7 @@ class DeviceIdentifier < SimpledbShardedResource
 
   def self.find_device_from_params(params)
     device = nil
-    [:udid, :mac_address].each do |old_udid_style|
+    [:tapjoy_device_id, :udid, :mac_address].each do |old_udid_style|
       device = Device.find(params[old_udid_style]) if params.include?(old_udid_style) && params[old_udid_style].present?
       break if device
     end
