@@ -166,10 +166,6 @@ class ApplicationController < ActionController::Base
 
     return if device_exists
 
-    @lookup_device = Device.find_by_device_id(get_device_key) if get_device_key.present?
-
-    return if device_exists
-
     @lookup_device = DeviceIdentifier.find_device_from_params(params)
 
     return if device_exists
