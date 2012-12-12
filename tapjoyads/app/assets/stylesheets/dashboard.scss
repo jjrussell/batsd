@@ -358,6 +358,16 @@ div.help-dialog .ui-dialog-title {
   font-size: 10px;
   color: #444;
 }
+#active_campaigns_box td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#active_campaigns_box td h1 {
+  font-size: medium;
+}
+#active_campaigns_box .descriptors {
+  font-size: smaller;
+}
 a.soft-link.inactive {
   color: #888;
   text-decoration: none;
@@ -426,4 +436,14 @@ select.chosen {
   td.badges {
     width: 160px;
   }
+}
+
+.icon {
+  padding-bottom: 20px;
+  padding-right: 10px;
+  float: left;
+}
+
+.ui-autocomplete .ui-menu-item h1 {
+  font-size: medium;
 }

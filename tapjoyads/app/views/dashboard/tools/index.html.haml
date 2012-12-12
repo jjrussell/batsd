@@ -154,11 +154,14 @@
     - if permitted_to? :index, :dashboard_tools_shared_files  # file_sharer
       %li= link_to 'My Shared Files', tools_shared_files_path
 
+- content_for :included_javascripts, javascript_include_tag('tapjoy/search_box')
+
 - content_for :page_javascript do
   - if permitted_to? :show, :dashboard_statz
     :plain
       var offerSearchOptions = {
         source: '#{search_offers_path}',
+        html: true,
         delay: 250,
         minLength: 2,
         select: function(event, ui) {
