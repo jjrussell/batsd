@@ -1,5 +1,6 @@
 class ConversionRate < ActiveRecord::Base
   include UuidPrimaryKey
+  include CacheCurrency #This starts a conversion rate immediately by caching the currency
 
   OVERLAP_ERROR_MESSAGE = I18n.t('text.conversion_rate.error_message')
   CONVERSION_RATE_ERROR_MESSAGE = I18n.t('text.conversion_rate.currency_error_message')
