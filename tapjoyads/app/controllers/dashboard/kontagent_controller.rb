@@ -59,11 +59,18 @@ class Dashboard::KontagentController < Dashboard::DashboardController
 
   # attempt to resync current_partner with KT
   def resync
-    @kontagent_integration_request              = KontagentIntegrationRequest.new
-    @kontagent_integration_request.partner      = current_partner
-    @kontagent_integration_request.user         = current_user
-    @kontagent_integration_request.subdomain    = current_partner.kontagent_subdomain
-    @kontagent_integration_request.resync!
+    kontagent_integration_request              = KontagentIntegrationRequest.new
+    kontagent_integration_request.partner      = current_partner
+    kontagent_integration_request.user         = current_user
+    kontagent_integration_request.subdomain    = current_partner.kontagent_subdomain
+    kontagent_integration_request.resync!
+
+    # here we could set the flash based on whether the resync was successful
+
+    # ...and delete afterwards -- this integration request wasn't created by a human
+    # (we should probably just invoke the sync ops manually rather than building and tearing down an integration request)
+    kontagent_integration_request.delete
+
 
     redirect_to :action => :index
   end

@@ -3,4 +3,4 @@
 %h3 Actions
 = link_to "Your Kontagent Dashboard", current_partner.kontagent_dashboard_url
 |
-= link_to 'Resync with Kontagent', {:action=>"resync"}
+= link_to 'Resync with Kontagent', {:action=>"resync"}, :method => :post
