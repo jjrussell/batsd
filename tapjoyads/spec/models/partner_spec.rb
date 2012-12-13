@@ -335,37 +335,6 @@ describe Partner do
       end
     end
 
-    describe '.verify_balances' do
-      context 'when alert on mismatch' do
-        before :each do
-          Partner.stub(:find).with(@partner.id).and_return(@partner)
-        end
-
-        context 'when partner balance changed' do
-          it 'notifies of balance change' do
-            @partner.stub(:balance_was).and_return(10000)
-            @partner.stub(:balance).and_return(0)
-            @partner.stub(:balance_changed?).and_return(true)
-            @partner.stub(:pending_earnings_changed?).and_return(false)
-            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Balance mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
-            p = Partner.verify_balances(@partner.id, true)
-          end
-        end
-
-        context 'when partner pending earnings changed' do
-          it 'notifies of a pending earnings change' do
-            @partner.stub(:pending_earnings_was).and_return(10000)
-            @partner.stub(:pending_earnings).and_return(0)
-            @partner.stub(:balance_changed?).and_return(false)
-            @partner.stub(:pending_earnings_changed?).and_return(true)
-            @partner.stub(:add_payout_confirmations)
-            Notifier.stub(:alert_new_relic).with(BalancesMismatch, "Pending Earnings mismatch for partner: #{@partner.id}, previously: 10000, now: 0").once
-            p = Partner.verify_balances(@partner.id, true)
-          end
-        end
-      end
-    end
-
     describe '#confirm_for_payout' do
       before :each do
         @partner.payout_threshold_confirmation = false

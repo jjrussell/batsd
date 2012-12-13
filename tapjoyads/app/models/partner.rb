@@ -223,19 +223,11 @@ class Partner < ActiveRecord::Base
     end
   end
 
-  def self.verify_balances(partner_id, alert_on_mismatch = false)
+  def self.verify_balances(partner_id)
     Partner.using_slave_db do
       Partner.slave_connection.execute("BEGIN")
       partner = Partner.find(partner_id)
       partner.recalculate_balance_and_pending_earnings
-      if alert_on_mismatch
-        if partner.balance_changed?
-          Notifier.alert_new_relic(BalancesMismatch, "Balance mismatch for partner: #{partner.id}, previously: #{partner.balance_was}, now: #{partner.balance}")
-        end
-        if partner.pending_earnings_changed?
-          Notifier.alert_new_relic(BalancesMismatch, "Pending Earnings mismatch for partner: #{partner.id}, previously: #{partner.pending_earnings_was}, now: #{partner.pending_earnings}")
-        end
-      end
       return partner
     end
   ensure
