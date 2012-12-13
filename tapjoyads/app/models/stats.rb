@@ -27,6 +27,13 @@ class Stats < SimpledbResource
     @parsed_countries = countries
   end
 
+  def dynamic_domain_name
+    if /\w\.(\d\d\d\d)-\d\d/ =~ @key
+      return "stats_#{$1}" if $1.to_i > 2012
+    end
+    'stats'
+  end
+
   ##
   # Gets the hourly stats for a stat type.
   # stat_name_or_path: The stat to get, a string, or an array representing the path.
