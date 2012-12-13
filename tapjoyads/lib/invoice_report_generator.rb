@@ -26,8 +26,13 @@ class InvoiceReportGenerator
 
   def perform
     generate_report!
-    upload_report!
-    cleanup!
+    begin
+      upload_report!
+    rescue Exception => e
+      Notifier.alert_new_relic(e, "Failed to upload invoice report for #{date}")
+    ensure
+      cleanup!
+    end
   end
 
   def filename
@@ -58,7 +63,7 @@ class InvoiceReportGenerator
   end
 
   def invoices
-    @invoices ||= Order.where(:updated_at => (date..date+1), :payment_method => 1).includes(:partner)
+    @invoices ||= Order.where(:updated_at => date_range, :payment_method => 1).includes(:partner)
   end
 
   private
