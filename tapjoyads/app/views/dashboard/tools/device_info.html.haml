@@ -17,7 +17,7 @@
         %th MAC Address:
         %td= text_field_tag 'mac_address', params[:mac_address], :size => '55'
       %tr
-        %th 
+        %th
           Apps to show
           #help_show_apps.help ?
         %td= select_tag :show_apps, options_for_select([['All', 'all'],['100 most recent', 'last100'],['Last 3 months', '3months'],['None', 'none']], :selected => (params[:show_apps] || 'last100'))
@@ -51,6 +51,13 @@
           %td
             - if @device.mac_address?
               = @device.mac_address
+            - else
+              %i unknown
+        %tr
+          %th Advertising ID
+          %td
+            - if @device.advertising_id?
+              = @device.advertising_id
             - else
               %i unknown
         %tr
