@@ -311,7 +311,7 @@ GEM
       rb-fchange (~> 0.0.5)
       rb-fsevent (~> 0.9.1)
       rb-inotify (~> 0.8.8)
-    locales (1.0.59)
+    locales (1.0.65)
     lumberjack (1.0.2)
     mail (2.2.19)
       activesupport (>= 2.3.6)
