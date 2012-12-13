@@ -30,7 +30,7 @@
       %th Pending<br/> Earnings
       %th Offers
   %tbody
-    - @client.partners.each do |partner|
+    - @partners.each do |partner|
       %tr
         %td
           - path = remove_partner_tools_client_path(@client)+"?partner_id=#{partner.id}"
@@ -62,6 +62,7 @@
                   = link_to_offer(o)
                   - if o.tapjoy_enabled? || o.user_enabled?
                     (#{o.tapjoy_enabled? ? 'T' : ''}#{o.user_enabled? ? 'U' : ''})
+= will_paginate(@partners)
 
 - content_for :page_javascript do
   :plain
