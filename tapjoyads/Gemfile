@@ -82,7 +82,7 @@ gem 'xml-simple', :require => 'xmlsimple'
 gem 'notifications_client', :git => 'git@github.com:Tapjoy/notifications_client.git', :ref => '6594294b8570b63e318a9326f43dd7e427224d1d'
 
 # This needs to be down here to get sdb stuff
-gem 'newrelic_rpm', '3.3.0'
+gem 'newrelic_rpm', '3.5.3.25'
 gem 'newrelic_riak', '0.1.1', :github => 'Tapjoy/newrelic-riak', :tag => 'v0.1.2'
 
 group :development, :staging do

@@ -349,7 +349,7 @@ GEM
     net-ssh-multi (1.1)
       net-ssh (>= 2.1.4)
       net-ssh-gateway (>= 0.99.0)
-    newrelic_rpm (3.3.0)
+    newrelic_rpm (3.5.3.25)
     nokogiri (1.5.5)
     nori (1.1.2)
     oauth (0.4.5)
@@ -606,7 +606,7 @@ DEPENDENCIES
   multipart-post (= 1.1.0)
   mysql (= 2.8.1)
   newrelic_riak (= 0.1.1)!
-  newrelic_rpm (= 3.3.0)
+  newrelic_rpm (= 3.5.3.25)
   nokogiri (= 1.5.5)
   notifications_client!
   oauth (= 0.4.5)
