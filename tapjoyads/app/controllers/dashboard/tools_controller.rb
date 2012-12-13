@@ -289,7 +289,7 @@ class Dashboard::ToolsController < Dashboard::DashboardController
         when '3months'
           offer_list = @device.parsed_apps.reject {|app_id, last_run| Time.at(last_run.to_f) < (Time.zone.now - 3.months)}.keys
         else
-          offer_list = @device.parsed_apps.sort{|a,b| a[1] <=> b[1]}.slice(0,100).map {|sub_array| sub_array[0]}
+          offer_list = @device.parsed_apps.sort{|a,b| b[1] <=> a[1]}.slice(0,100).map {|sub_array| sub_array[0]}
       end
 
       @apps = Offer.select("id, name, item_type, item_id").includes(:item).find_all_by_id(offer_list).map do |app|
