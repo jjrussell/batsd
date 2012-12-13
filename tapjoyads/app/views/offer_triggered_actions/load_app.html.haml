@@ -28,31 +28,54 @@
 - content_for :included_javascripts do
   :javascript
     $(function($){
-      var ctURL = #{@click_tracking_urls.first.to_json.html_safe},
-          src = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+      var timeout,
+          ctURL = #{@click_tracking_urls.first.to_json.html_safe},
+          ctURLSrc = '<iframe src="'+ ctURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
       if (ctURL) {
-        $("body").append(src);
+        $("body").append(ctURLSrc);
       }
       $('.click-action').click(function(e) {
-        var cURL = #{@conversion_tracking_urls.first.to_json.html_safe},
-            src = '<iframe src="'+ cURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
-        if (cURL) {
-          $("body").append(src);
+        var cvURL = #{@conversion_tracking_urls.first.to_json.html_safe},
+            cvURLSrc = '<iframe src="'+ cvURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+        if (cvURL) {
+          $("body").append(cvURLSrc);
         }
         var phUrl = #{@protocol_handler_url.to_json.html_safe},
-            fallbackUrl = #{@complete_instruction_url.to_json.html_safe};
+            clickURL = #{@complete_instruction_url.to_json.html_safe},
+            fallbackUrl = #{@fallback_url.to_json.html_safe},
+            clickUrlSrc = '<iframe src="'+ clickURL +'" width="1" height="1" frameborder="0" style="display:none"></iframe>';
+        if (clickURL) {
+          $("body").append(clickUrlSrc);
+        }
         var appversion = navigator.appVersion,
-            idevice = (/iphone|ipad|ipod/gi).test(appversion),
+            idevice = (/iphone|ipad|ipod|itouch/gi).test(appversion),
             android = (/android/gi).test(appversion);
 
-        if (idevice || android) {
+        if (android) {
+          if (navigator.userAgent.match(/Chrome/)) {
+            setTimeout(function() {
+              if (!document.webkitHidden)
+                window.location.href = fallbackURL;
+            }, 1000);
+            window.location.href = phUrl;
+          } else {
+            $('#loader').attr('src', phUrl);
+          }
+        }
+        else if (idevice) {
+          timeout = setTimeout(function(){
+            window.location.href = fallbackUrl;
+          }, 1000);
           $('#loader').attr('src', phUrl);
-          window.setTimeout(function(){
-            window.location.replace(fallbackUrl);
-          }, 500);
+          window.addEventListener("pageshow", function() {
+            clearTimeout(timeout);
+            window.location.reload();
+          });
         }
         else {
+        setTimeout(function(){
           window.location.href = fallbackUrl;
+          }, 1000);
         }
       });
     });

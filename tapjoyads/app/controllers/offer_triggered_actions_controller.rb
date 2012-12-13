@@ -42,6 +42,7 @@ class OfferTriggeredActionsController < ApplicationController
 
     if @offer.has_instructions? && @offer.pay_per_click?(:ppc_on_instruction)
       @complete_instruction_url = @offer.instruction_action_url(complete_action_data.merge(:viewed_at => Time.zone.now.to_f))
+      @fallback_url = @offer.complete_action_url(complete_action_data) if params[:action] === 'load_app'
     else
       @complete_instruction_url = @offer.complete_action_url(complete_action_data)
     end
