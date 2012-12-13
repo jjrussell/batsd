@@ -41,7 +41,7 @@ describe Dashboard::CurrencySalesController do
       assigns(:future_currency_sales).should == []
     end
     it 'has an index specific page title' do
-      assigns(:page_title).should == I18n.t('text.currency_sale.index_page_title', :currency_name => @currency.name)
+      assigns(:page_title).should == "#{@currency.name} Currency Sales"
     end
   end
 
@@ -72,7 +72,7 @@ describe Dashboard::CurrencySalesController do
       assigns(:future_currency_sales).should == []
     end
     it 'has an edit specific page title' do
-      assigns(:page_title).should == I18n.t('text.currency_sale.edit_page_title')
+      assigns(:page_title).should == "Edit Currency Sale"
     end
     it 'has an currency_sale instance variable' do
       assigns(:currency_sale).should == @currency_sale
@@ -100,7 +100,7 @@ describe Dashboard::CurrencySalesController do
         put(:update, @params.merge(update_params))
       end
       it 'should have a successful flash notice' do
-        flash[:notice].should == I18n.t('text.currency_sale.update_success')
+        flash[:notice].should == "Successfully updated the currency sale"
       end
       it 'should redirect to index' do
         response.should redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
@@ -118,7 +118,7 @@ describe Dashboard::CurrencySalesController do
         put(:update, @params.merge(update_params))
       end
       it 'should have a flash error' do
-        flash.now[:error].should == I18n.t('text.currency_sale.update_fail')
+        flash.now[:error].should == "Unable to update currency sale"
       end
       it 'should render edit layout' do
         response.should render_template('edit')
@@ -155,7 +155,7 @@ describe Dashboard::CurrencySalesController do
       assigns(:future_currency_sales).should == [@currency_sale2]
     end
     it 'has a new specific page title' do
-      assigns(:page_title).should == I18n.t('text.currency_sale.new_page_title')
+      assigns(:page_title).should == "New Currency Sale"
     end
     it 'has a new conversion rate object' do
       assigns(:currency_sale).should == @currency_sale_mock
@@ -184,7 +184,7 @@ describe Dashboard::CurrencySalesController do
         assigns(:currency_sale).currency.should == @currency
       end
       it 'should have a successful flash notice' do
-        flash[:notice].should == I18n.t('text.currency_sale.create_success')
+        flash[:notice].should == "Successfully created currency sale"
       end
       it 'should redirect to index' do
         response.should redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
@@ -236,7 +236,7 @@ describe Dashboard::CurrencySalesController do
       delete(:destroy, @params.merge(:id => @currency_sale.id))
     end
     it 'should have a successfully destroyed flash notice' do
-      flash[:notice].should == I18n.t('text.currency_sale.removed')
+      flash[:notice].should == "Successfully removed the currency sale"
     end
     it 'should redirect to index' do
       response.should redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)

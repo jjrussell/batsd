@@ -9,12 +9,12 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
   after_filter :save_activity_logs, :only => [:update, :create, :destroy]
 
   def index
-    @page_title = I18n.t('text.conversion_rate.index_title')
+    @page_title = "Conversion Rate Settings"
   end
 
   def edit
     @conversion_rate = ConversionRate.find(params[:id])
-    @page_title = I18n.t('text.conversion_rate.edit_title')
+    @page_title = "Edit a Conversion Rate"
   end
 
   def update
@@ -22,18 +22,18 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     log_activity(@conversion_rate)
     conversion_rate_params = sanitize_currency_params(params[:conversion_rate], [:minimum_offerwall_bid])
     if @conversion_rate.update_attributes(conversion_rate_params)
-      flash[:notice] = I18n.t('text.conversion_rate.updated')
+      flash[:notice] = "Successfully updated the conversion rate."
       redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)
     else
       generate_graph
-      flash.now[:error] = error || I18n.t('text.conversion_rate.unable_update')
+      flash.now[:error] = error || "Unable to update this conversion rate."
       render :edit
     end
   end
 
   def new
     @conversion_rate = ConversionRate.new
-    @page_title = I18n.t('text.conversion_rate.new_title')
+    @page_title = "Create a new Conversion Rate"
   end
 
   def create
@@ -41,11 +41,11 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     @conversion_rate = ConversionRate.new(conversion_rate_params.merge(:currency_id => params[:currency_id]))
     log_activity(@conversion_rate)
     if @conversion_rate.save
-      flash[:notice] = I18n.t('text.conversion_rate.created')
+      flash[:notice] = "Successfully created a conversion rate."
       redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)
     else
       generate_graph
-      flash.now[:error] = error || I18n.t('text.conversion_rate.unable_create')
+      flash.now[:error] = error || "Unable to create this conversion rate."
       render :new
     end
   end
@@ -54,12 +54,12 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     @conversion_rate = ConversionRate.find(params[:id])
     log_activity(@conversion_rate)
     @conversion_rate.destroy
-    flash[:notice] = I18n.t('text.conversion_rate.deleted')
+    flash[:notice] = "Successfully deleted conversion rate."
     redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)
   end
 
   def example
-    @page_title = I18n.t('text.conversion_rate.example_title')
+    @page_title = "Example Conversion Structure"
     @example_graph = HighchartsGraph.example_conversion_rates_graph
   end
 
@@ -86,7 +86,7 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     else
       graph_data << [[0, @currency.conversion_rate], [100, @currency.conversion_rate]]
     end
-    @graph = HighchartsGraph.generate_graph(graph_data, I18n.t('text.conversion_rate.graph_title'), I18n.t('text.conversion_rate.xaxis'), I18n.t('text.conversion_rate.yaxis'), 'area', false, false)
+    @graph = HighchartsGraph.generate_graph(graph_data, "Conversion Rates Graph Layout", "Minimum Offer Payout", "Conversion Rate", 'area', false, false)
   end
 
   def error

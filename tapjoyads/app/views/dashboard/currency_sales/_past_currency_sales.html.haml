@@ -1,26 +1,8 @@
-%h3= I18n.t('text.currency_sale.past_sale_header')
-- if @past_currency_sales.any?
+%h3 Past Currency Sales
+- if @past_currency_sales.present?
   %table
-    %tr
-      %th.wide= I18n.t('text.currency_sale.start_time')
-      %th.wide= I18n.t('text.currency_sale.end_time')
-      %th.wide= I18n.t('text.currency_sale.multiplier')
-      %th.small= I18n.t('text.currency_sale.message_enabled')
-      %th.wide= I18n.t('text.currency_sale.message')
-      %th.small &nbsp;
-      %th.small &nbsp;
-    - for past_currency_sale in @past_currency_sales
-      %tr
-        %td.wide= past_currency_sale.start_time.to_s :mdy_ampm
-        %td.wide= past_currency_sale.end_time.to_s :mdy_ampm
-        %td.wide= past_currency_sale.multiplier
-        %td.small= past_currency_sale.message_enabled
-        - if past_currency_sale.message_enabled?
-          %td.wide= past_currency_sale.message.present? ? past_currency_sale.message : I18n.t('text.currency_sale.sale_default_message', :publisher => @app.name, :multiplier => past_currency_sale.multiplier_to_string, :currency_name => @currency.name)
-        - else
-          %td.wide= I18n.t('text.currency_sale.no_message_lightbox')
-        %td.small &nbsp;
-        %td.small &nbsp;
+    = render 'table_header'
+    = render :partial => 'sales_list', :locals => { :sales => @past_currency_sales }
   = will_paginate(@past_currency_sales)
 - else
-  %h4= I18n.t('text.currency_sale.no_previous_sale')
+  %h4 No previous currency sales ran

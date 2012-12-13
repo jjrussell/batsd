@@ -1,11 +1,11 @@
 %h3= @page_title
 
-%p= link_to I18n.t('text.conversion_rate.example_setup'), example_app_currency_conversion_rates_path(:currency_id => @currency.id, :app_id => @app.id)
+%p= link_to "Example Conversion Rates Setup", example_app_currency_conversion_rates_path(:currency_id => @currency.id, :app_id => @app.id)
 
 = render 'conversion_rates_list'
 
 %br
-= button_to(I18n.t('text.conversion_rate.create_conversion_button'), new_app_currency_conversion_rate_path(:app_id => @app.id, :currency_id => @currency.id), :method => :get)
+= button_to("Create new Conversion Rate", new_app_currency_conversion_rate_path(:app_id => @app.id, :currency_id => @currency.id), :method => :get)
 
 - content_for :page_styles do
   :plain

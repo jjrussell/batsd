@@ -2,8 +2,10 @@ class ConversionRate < ActiveRecord::Base
   include UuidPrimaryKey
   include CacheCurrency #This starts a conversion rate immediately by caching the currency
 
-  OVERLAP_ERROR_MESSAGE = I18n.t('text.conversion_rate.error_message')
-  CONVERSION_RATE_ERROR_MESSAGE = I18n.t('text.conversion_rate.currency_error_message')
+  OVERLAP_ERROR_MESSAGE         = "Unable to create conversion rate, you are trying to add a conversion rate and
+                                  minimum offer bid that overlaps already created conversion rates."
+  CONVERSION_RATE_ERROR_MESSAGE = "Unable to create conversion rate, you are trying to create a conversion rate
+                                  with a conversion rate value less than or equal to the currency's conversion rate."
 
   belongs_to :currency
 

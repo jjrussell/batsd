@@ -1,27 +1,8 @@
-%h3= I18n.t('text.currency_sale.future_sale_header')
-- if @future_currency_sales.any?
+%h3 Future Currency Sales
+- if @future_currency_sales.present?
   %table
-    %tr
-      %th.wide= I18n.t('text.currency_sale.start_time')
-      %th.wide= I18n.t('text.currency_sale.end_time')
-      %th.wide= I18n.t('text.currency_sale.multiplier')
-      %th.small= I18n.t('text.currency_sale.message_enabled')
-      %th.wide= I18n.t('text.currency_sale.message')
-      %th.small &nbsp;
-      %th.small &nbsp;
-    - for future_currency_sale in @future_currency_sales
-      %tr
-        %td.wide= future_currency_sale.start_time.to_s :mdy_ampm
-        %td.wide= future_currency_sale.end_time.to_s :mdy_ampm
-        %td.wide= future_currency_sale.multiplier
-        %td.small= future_currency_sale.message_enabled
-        - if future_currency_sale.message_enabled?
-          %td.wide= future_currency_sale.message.present? ? future_currency_sale.message : I18n.t('text.currency_sale.sale_default_message', :publisher => @app.name, :multiplier => future_currency_sale.multiplier_to_string, :currency_name => @currency.name)
-        - else
-          %td.wide= I18n.t('text.currency_sale.no_message_lightbox')
-        - if permitted_to?(:edit, :dashboard_currency_sales)
-          %td.small= link_to I18n.t('text.shared.edit'), edit_app_currency_currency_sale_path(:id => future_currency_sale.id, :currency_id => @currency.id, :app_id => @app.id)
-          %td.small= link_to I18n.t('text.shared.delete'), app_currency_currency_sale_path(:id => future_currency_sale.id, :currency_id => @currency.id, :app_id => @app.id), :method => :delete, :confirm => 'Are you sure?'
+    = render 'table_header'
+    = render :partial => 'sales_list', :locals => { :sales => @future_currency_sales }
   = will_paginate(@future_currency_sales)
 - else
-  %h4= I18n.t('text.currency_sale.no_future_sale')
+  %h4 No currency sales planned.
