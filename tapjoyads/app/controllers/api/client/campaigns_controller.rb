@@ -16,10 +16,8 @@ class Api::Client::CampaignsController < Api::ClientController
 
   private
   def set_scope
-    if can? :read, Offer
-      @offers = Offer.select(%w( offers.id offers.name bid )).campaigns
-      @offers = @offers.scoped_by_partner_id(params['partner_id']) if params['partner_id']
-      @offers = @offers.active if params['active'] == '1'
-    end
+    @offers = Offer.select(%w( offers.id offers.name bid )).campaigns
+    @offers = @offers.scoped_by_partner_id(params['partner_id']) if params['partner_id']
+    @offers = @offers.active if params['active'] == '1'
   end
 end
