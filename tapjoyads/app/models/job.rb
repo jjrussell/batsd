@@ -17,7 +17,7 @@
 class Job < ActiveRecord::Base
   include UuidPrimaryKey
 
-  JOB_TYPES = %w( master queue internal )
+  JOB_TYPES = %w( master queue )
   FREQUENCIES = %w( interval hourly daily )
   CONCURRENCY_DIR = "#{Rails.root}/tmp/job_concurrency"
 
@@ -25,6 +25,7 @@ class Job < ActiveRecord::Base
   validates_inclusion_of :job_type, :in => JOB_TYPES
   validates_inclusion_of :frequency, :in => FREQUENCIES
   validates_inclusion_of :active, :in => [ true, false ]
+  validates_inclusion_of :uses_database, :in => [ true, false ]
   validates_numericality_of :seconds, :max_concurrency, :only_integer => true, :greater_than_or_equal_to => 0
   validates_each :seconds, :allow_nil => true do |record, attribute, value|
     if record.frequency == 'daily'
@@ -36,6 +37,7 @@ class Job < ActiveRecord::Base
   validate :check_job_path
 
   scope :active, :conditions => 'active = true'
+  scope :uses_database, lambda { |uses_database| { :conditions => [ "uses_database = ?", uses_database ] } }
   scope :by_job_type, lambda { |type| { :conditions => [ "job_type = ?", type ] } }
   scope :for_index, :order => "active desc, job_type, frequency, seconds"
 
