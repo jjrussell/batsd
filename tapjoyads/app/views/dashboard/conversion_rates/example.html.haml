@@ -3,8 +3,8 @@
 %table
   %tr
     %th &nbsp;
-    %th= I18n.t('text.conversion_rate.conversion_rate')
-    %th= I18n.t('text.conversion_rate.minimum_offer_bid')
+    %th Conversion Rate
+    %th Minimum Offer Payout
   %tr
     %td $1=
     %td 10 #{@currency.name}
@@ -28,53 +28,53 @@
 
 = high_chart('example_graph', @example_graph)
 
-%h3= I18n.t('text.conversion_rate.example_offers')
+%h3 Example Offers
 %table
   %tr
-    %th= I18n.t('text.conversion_rate.placement')
-    %th= I18n.t('text.conversion_rate.payout')
-    %th= I18n.t('text.conversion_rate.applicable_conversion_rate')
-    %th= I18n.t('text.conversion_rate.user_reward')
+    %th Placement
+    %th Payout
+    %th Applicable Conversion Rate per $1.00
+    %th User Reward
   %tr
-    %td= I18n.t('text.conversion_rate.offerwall')
+    %td Offerwall
     %td $0.50
     %td 10
     %td 5 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.offerwall')
+    %td Offerwall
     %td $1.50
     %td 30
     %td 45 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.offerwall')
+    %td Offerwall
     %td $6.00
     %td 500
     %td 3000 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.featured_ad')
+    %td Featured Ad
     %td $1.70
     %td 30
     %td 51 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.featured_ad')
+    %td Featured Ad
     %td $3.00
     %td 140
     %td 420 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.display_ad')
+    %td Display Ad
     %td $2.60
     %td 70
     %td 182 #{@currency.name}
   %tr
-    %td= I18n.t('text.conversion_rate.display_ad')
+    %td Display Ad
     %td $16.20
     %td 500
     %td 8100 #{@currency.name}
 
-%h3= I18n.t('text.conversion_rate.suggestions')
+%h3 Suggestions
 %ul
-  %li= I18n.t('text.conversion_rate.suggestion1')
-  %li= I18n.t('text.conversion_rate.suggestion2')
+  %li Some offers will be hidden when you use minimum bid values for your currency.
+  %li It's important to make sure that as the minimum offer bid goes up, the 'bonus' given to the user increases.
 
 - content_for :page_styles do
   :plain

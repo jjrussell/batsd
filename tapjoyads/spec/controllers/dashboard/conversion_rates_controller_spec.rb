@@ -35,7 +35,7 @@ describe Dashboard::ConversionRatesController do
       assigns(:conversion_rates).should == [@conversion_rate, @conversion_rate2]
     end
     it 'has an index specific page title' do
-      assigns(:page_title).should == I18n.t('text.conversion_rate.index_title')
+      assigns(:page_title).should == "Conversion Rate Settings"
     end
   end
 
@@ -57,7 +57,7 @@ describe Dashboard::ConversionRatesController do
       assigns(:conversion_rates).should == [@conversion_rate, @conversion_rate2]
     end
     it 'has an edit specific page title' do
-      assigns(:page_title).should == I18n.t('text.conversion_rate.edit_title')
+      assigns(:page_title).should == "Edit a Conversion Rate"
     end
     it 'has an conversion_rate instance variable' do
       assigns(:conversion_rate).should == @conversion_rate
@@ -71,7 +71,7 @@ describe Dashboard::ConversionRatesController do
         put(:update, @params.merge(:id => @conversion_rate.id, :conversion_rate => { :rate => "110" }))
       end
       it 'should have a successful flash notice' do
-        flash[:notice].should == I18n.t('text.conversion_rate.updated')
+        flash[:notice].should == "Successfully updated the conversion rate."
       end
       it 'should redirect to index' do
         response.should redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)
@@ -84,7 +84,7 @@ describe Dashboard::ConversionRatesController do
           put(:update, @params.merge(:id => @conversion_rate.id, :conversion_rate => { :rate => "120" }))
         end
         it 'should have a flash notice' do
-          flash.now[:error].should == I18n.t('text.conversion_rate.unable_update')
+          flash.now[:error].should == "Unable to update this conversion rate."
         end
         it 'should render edit layout' do
           response.should render_template('edit')
@@ -124,7 +124,7 @@ describe Dashboard::ConversionRatesController do
       assigns(:conversion_rates).should == [@conversion_rate, @conversion_rate2]
     end
     it 'has a new specific page title' do
-      assigns(:page_title).should == I18n.t('text.conversion_rate.new_title')
+      assigns(:page_title).should == "Create a new Conversion Rate"
     end
     it 'has a new conversion rate object' do
       assigns(:conversion_rate).should == @conversion_rate_mock
@@ -138,7 +138,7 @@ describe Dashboard::ConversionRatesController do
         post(:create, @params.merge(:conversion_rate => { :rate => "150", :minimum_offerwall_bid => "300" }))
       end
       it 'should have a successful flash notice' do
-        flash[:notice].should == I18n.t('text.conversion_rate.created')
+        flash[:notice].should == "Successfully created a conversion rate."
       end
       it 'should redirect to index' do
         response.should redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)
@@ -151,7 +151,7 @@ describe Dashboard::ConversionRatesController do
           post(:create, @params.merge(:conversion_rate => { :rate => "120", :minimum_offerwall_bid => "300"}))
         end
         it 'should have a flash notice' do
-          flash.now[:error].should == I18n.t('text.conversion_rate.unable_create')
+          flash.now[:error].should == "Unable to create this conversion rate."
         end
         it 'should render new layout' do
           response.should render_template('new')
@@ -191,7 +191,7 @@ describe Dashboard::ConversionRatesController do
       delete(:destroy, @params.merge(:id => @conversion_rate.id))
     end
     it 'should have a successfully destroyed flash notice' do
-      flash[:notice].should == I18n.t('text.conversion_rate.deleted')
+      flash[:notice].should == "Successfully deleted conversion rate."
     end
     it 'should redirect to index' do
       response.should redirect_to app_currency_conversion_rates_path(:app_id => @app.id, :currency_id => @currency.id)

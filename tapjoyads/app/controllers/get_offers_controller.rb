@@ -55,7 +55,7 @@ class GetOffersController < ApplicationController
       #if @currency_sale.message.present?
         #@currency_sale_message = @currency_sale.message
       #else
-        #@currency_sale_message = I18n.t('text.currency_sale.sale_default_message', :publisher => @publisher_app.name, :multiplier => @currency_sale.multiplier_to_string, :currency_name => @currency.name)
+        #@currency_sale_message = @currency_sale.currency_sale_message(@publisher_app.name, @currency.name)
       #end
     #end
 

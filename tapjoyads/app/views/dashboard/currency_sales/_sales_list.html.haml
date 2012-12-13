@@ -1,0 +1,13 @@
+- for currency_sale in sales
+  %tr
+    %td.wide= currency_sale.start_time.to_s :mdy_ampm
+    %td.wide= currency_sale.end_time.to_s :mdy_ampm
+    %td.wide= currency_sale.multiplier
+    %td.small= currency_sale.message_enabled
+    - if currency_sale.message_enabled?
+      %td.wide= currency_sale.message.present? ? currency_sale.message : currency_sale_message(@app.name, currency_sale.multiplier_to_string, @currency.name)
+    - else
+      %td.wide No message is enabled for this currency sale.
+    - if permitted_to?(:edit, :dashboard_currency_sales) && !currency_sale.past?
+      %td.small= link_to "Edit", edit_app_currency_currency_sale_path(:id => currency_sale.id, :currency_id => @currency.id, :app_id => @app.id)
+      %td.small= link_to "Delete", app_currency_currency_sale_path(:id => currency_sale.id, :currency_id => @currency.id, :app_id => @app.id), :method => :delete, :confirm => 'Are you sure?'

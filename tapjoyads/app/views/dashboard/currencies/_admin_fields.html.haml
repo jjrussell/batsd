@@ -27,7 +27,7 @@
     = f.check_box :message_enabled
     .details
       - if @currency.message_enabled? && @currency.active_currency_sale? && @currency.active_currency_sale.message_enabled?
-        = I18n.t('text.currency_sale.overridden')
+        This is currently overridden by an active currency sale message.
 %tr.admin.message_enabled{:class => @currency.message_enabled? ? '' : 'hidden' }
   %th
     = f.label :message, 'Currency Message'
@@ -40,15 +40,15 @@
     Currency Sales
     #help_currency_sales.help ?
   %td
-    = @currency.active_currency_sale? ? I18n.t('text.currency_sale.active_time', :time => "#{@currency.active_currency_sale.end_time.to_s(:mdy_ampm)}") : I18n.t('text.currency_sale.no_active_running')
+    = @currency.active_currency_sale? ? "You currently have a currency sale running till #{@currency.active_currency_sale.end_time.to_s(:mdy_ampm)}" : "You have no active currency sales."
 %tr.admin
   %th &nbsp;
   %td
-    = @currency.next_currency_sale? ? I18n.t('text.currency_sale.future_planned_time', :time => "#{@currency.next_currency_sale.start_time.to_s(:mdy_ampm)}") : I18n.t('text.currency_sale.no_future_planned')
+    = @currency.next_currency_sale? ?  "Your next currency sale is on #{@currency.next_currency_sale.start_time.to_s(:mdy_ampm)}" : "You have no planned currency sales."
 %tr.admin
   %th &nbsp;
   %td
-    = link_to(I18n.t('text.currency_sale.custom_currency_sale'), app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id))
+    = link_to('manage currency sales', app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id))
 %tr.admin
   %th
     = f.label :hide_rewarded_app_installs
@@ -140,10 +140,11 @@
     = clippy(ObjectEncryptor.encrypt(@currency.id))
 
 .hidden
-  #help_tier_conversion_rates_content{:name => 'Tier Conversion Rates'} #{I18n.t('text.conversion_rate.help_text')}
+  #help_tier_conversion_rates_content{:name => 'Tier Conversion Rates'}
+    Use tiered conversion rates to allow users to earn more virtual currency as you earn more! You cannot enable tiered conversion rates until you set them up through the hyperlink to the right.
   #help_tapjoy_enabled_content{:name => 'Tapjoy Enabled'}
     Tapjoy approval status. If this is unchecked, the offerwall will be blank and no featured/display ads will be shown.
-  #help_currency_sales_content{:name => 'Currency Sales'} #{I18n.t('text.currency_sale.help')}
+  #help_currency_sales_content{:name => 'Currency Sales'} #{CurrencySale::HELP_MESSAGE}
   #help_disabled_offers_content{:name => 'Disabled offers'}
     A semi-colon (;) separated list of offer id's. Offers that match these id's will not be shown in
     this app's offerwall.
@@ -175,8 +176,10 @@
         The offer name.
   #help_ordinal_content{:name => 'Ordinal'}
     Determines the order of the currency selector buttons on the offer wall webpage.
-  #help_message_content{:name => 'Display Message'} #{I18n.t('text.currency.help_message')}
-  #help_message_enabled_content{:name => 'Enable Message?'} #{I18n.t('text.currency.help_message_enabled')}
+  #help_message_content{:name => 'Display Message'}
+    The message displayed to a user on the offerwall.
+  #help_message_enabled_content{:name => 'Enable Message?'}
+    Check this box to allow a custom message displayed to users on the offerwall. The message can't be blank.
   #help_rev_share_override_content{:name => 'Rev share override'}
     Override the partner's rev share for this currency only. Should be a decimal between 0 and 1 or blank.
   #help_spend_share_content{:name => 'Spend share'}

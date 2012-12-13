@@ -47,4 +47,8 @@ module ApplicationHelper
 
     navigation(tabs).gsub(/current/, 'active').gsub(/navigation/, 'nav').html_safe
   end
+
+  def currency_sale_message(pub, mult, currency_name)
+    "#{pub} is having a currency sale! Earn #{mult}x #{currency_name}!"
+  end
 end

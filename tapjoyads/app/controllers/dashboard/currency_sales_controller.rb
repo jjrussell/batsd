@@ -9,11 +9,11 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
   PER_PAGE = 10
 
   def index
-    @page_title = I18n.t('text.currency_sale.index_page_title', :currency_name => @currency.name)
+    @page_title = "#{@currency.name} Currency Sales"
   end
 
   def new
-    @page_title = I18n.t('text.currency_sale.new_page_title')
+    @page_title = "New Currency Sale"
     @currency_sale = CurrencySale.new
   end
 
@@ -23,26 +23,26 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
     end
     log_activity(@currency_sale)
     if @currency_sale.save
-      flash[:notice] = I18n.t('text.currency_sale.create_success')
+      flash[:notice] = "Successfully created currency sale"
       redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
     else
-      flash.now[:error] = error || I18n.t('text.currency_sale.create_fail')
+      flash.now[:error] = error || "Unable to create currency sale"
       render :new
     end
   end
 
   def edit
-    @page_title = I18n.t('text.currency_sale.edit_page_title')
+    @page_title = "Edit Currency Sale"
     @currency_sale = CurrencySale.find(params[:id])
   end
 
   def update
     log_activity(@currency_sale)
     if !@currency_sale.past? && @currency_sale.update_attributes(params[:currency_sale])
-      flash[:notice] = I18n.t('text.currency_sale.update_success')
+      flash[:notice] = "Successfully updated the currency sale"
       redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
     else
-      flash.now[:error] = error || I18n.t('text.currency_sale.update_fail')
+      flash.now[:error] = error || "Unable to update currency sale"
       render :edit
     end
   end
@@ -51,10 +51,10 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
     @currency_sale = CurrencySale.find(params[:id])
     log_activity(@currency_sale)
     if @currency_sale.past?
-      flash[:notice] = I18n.t('text.currency_sale.removed_fail')
+      flash[:error] = "Unable to delete currency sale that has already been run"
     else
       @currency_sale.destroy
-      flash[:notice] = I18n.t('text.currency_sale.removed')
+      flash[:notice] = "Successfully removed the currency sale"
     end
     redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
   end

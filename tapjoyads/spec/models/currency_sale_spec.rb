@@ -22,7 +22,7 @@ describe CurrencySale do
       context "with an unselectable value" do
         [-1, 0, 255].each do |value|
           it "should have dropdown error for #{value}" do
-            with_attrs(:multiplier => value).errors_on(:multiplier).should include(I18n.t('text.currency_sale.must_be_dropdown'))
+            with_attrs(:multiplier => value).errors_on(:multiplier).should include("must be a multiplier value from the dropdown")
           end
         end
       end
@@ -52,7 +52,7 @@ describe CurrencySale do
       context "when < start_time" do
         let(:subject) { with_attrs(:end_time => 10.minutes.from_now, :start_time => 30.minutes.from_now) }
         it("should have an error") { should have(1).errors_on(:end_time) }
-        it { subject.errors_on(:end_time).should include(I18n.t('text.currency_sale.start_before_end_error')) }
+        it { subject.errors_on(:end_time).should include("must be after Start Time") }
       end
 
       context "when start_time is not set" do
@@ -63,7 +63,7 @@ describe CurrencySale do
 
     context "for base" do
       let(:base_errors) { subject.errors_on(:base) }
-      let(:time_travel_error) { I18n.t('text.currency_sale.time_travel_fail') }
+      let(:time_travel_error) { CurrencySale::TIME_TRAVEL_FAIL }
 
       context "with start_time in the recent past" do
         let(:subject) { with_attrs(:start_time => (CurrencySale::START_TIME_ALLOWANCE.ago + 1.minute)) }
@@ -89,7 +89,7 @@ describe CurrencySale do
         let(:currency) { FactoryGirl.create(:currency) }
         let(:sale) { FactoryGirl.create(:currency_sale, :currency_id => currency) }
         let(:subject) { with_attrs(:currency_id => currency, :start_time => sale.end_time - 1.minute, :end_time => sale.end_time + 5.minutes) }
-        it("should have overlap error") { base_errors.should include(I18n.t('text.currency_sale.overlap_error')) }
+        it("should have overlap error") { base_errors.should include(CurrencySale::OVERLAP_ERROR) }
 
         it { currency.should == subject.currency}
       end

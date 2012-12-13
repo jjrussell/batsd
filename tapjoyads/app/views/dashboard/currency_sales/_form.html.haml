@@ -28,7 +28,7 @@
         = error_message_on @currency_sale, :multiplier
     %tr
       %th
-        = f.label :message_enabled, 'Enable Lightbox & Message?'
+        = f.label :message_enabled, 'Enable Message?'
         #help_message_enabled.help ?
       %td
         = f.check_box :message_enabled
@@ -39,17 +39,23 @@
       %td
         = f.text_area :message, :size => '20x10', :placeholder => 'Leave blank for the default message as below.'
         .details
-          %i Default Message: #{I18n.t('text.currency.no_message_set', :currency_name => @currency.name)}
+          %i Default Message: #{currency_sale_message(@app.name, '<multiplier>', @currency.name)}
         = error_message_on(@currency_sale, :message)
     %tr
       %td{ :colspan => 2 }= f.submit 'Save Currency Sale'
 
 .hidden
-  #help_start_time_content{ :name => 'Start Time' } #{I18n.t('text.currency_sale.help_start_time')}
-  #help_end_time_content{ :name => 'End Time' } #{I18n.t('text.currency_sale.help_end_time')}
-  #help_multiplier_content{ :name => 'Multiplier' } #{I18n.t('text.currency_sale.help_multiplier')}
-  #help_message_content{:name => 'Display Message'} #{I18n.t('text.currency_sale.help_message')}
-  #help_message_enabled_content{:name => 'Enable Message?'} #{I18n.t('text.currency_sale.help_message_enabled')}
+  #help_start_time_content{ :name => 'Start Time' }
+    When the currency sale should start.
+  #help_end_time_content{ :name => 'End Time' }
+    When the currency sale should end.
+  #help_multiplier_content{ :name => 'Multiplier' }
+    The amount used to multiply the reward value to reward the user currency during a sale.
+  #help_message_content{:name => 'Display Message'}
+    What you want your message displayed to users during a currency sale to say. Leave the message blank to use the default message.
+  #help_message_enabled_content{:name => 'Enable Message?'}
+    Check this box to allow a message to be displayed to users during a currency sale on the offerwall.
+    Do not check the box if you want to run a currency sale without a message.
 
 - content_for :included_javascripts, javascript_include_tag('jquery-ui-timepicker-addon.min')
 

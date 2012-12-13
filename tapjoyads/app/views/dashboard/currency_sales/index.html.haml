@@ -3,4 +3,4 @@
 = render 'currency_sales'
 
 %br
-= button_to(I18n.t('text.currency_sale.create_sale_button'), new_app_currency_currency_sale_path(:app_id => @app.id, :currency_id => @currency.id), :method => :get)
+= button_to("Create new Currency Sale", new_app_currency_currency_sale_path(:app_id => @app.id, :currency_id => @currency.id), :method => :get)

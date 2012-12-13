@@ -1,8 +1,8 @@
 %table
   %tr
     %th &nbsp;
-    %th= I18n.t('text.conversion_rate.conversion_rate')
-    %th= I18n.t('text.conversion_rate.minimum_offer_bid')
+    %th Conversion Rate
+    %th Mimimum Offer Payout
     %th &nbsp;
     %th &nbsp;
   %tr
@@ -23,5 +23,5 @@
             = @currency.name
           %td= number_to_currency conversion_rate.bid_number_to_currency
           - if permitted_to?(:edit, :dashboard_conversion_rates)
-            %td= link_to(I18n.t('text.shared.edit'), edit_app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id))
-            %td= link_to(I18n.t('text.shared.delete'), app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id), :method => :delete, :confirm => 'Are you sure?')
+            %td= link_to("Edit", edit_app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id))
+            %td= link_to("Delete", app_currency_conversion_rate_path(:currency_id => @currency.id, :app_id => @app.id, :id => conversion_rate.id), :method => :delete, :confirm => 'Are you sure?')
