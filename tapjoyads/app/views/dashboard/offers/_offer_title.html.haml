@@ -1,6 +1,7 @@
 - size ||= '57x57'
+- hide_icon ||= false
 .offer_name
-  - unless show_icon == false
+  - unless hide_icon
     .icon= image_tag(offer.get_icon_url, :size => size, :id => 'icon')
 
   %h1.name= offer.name_with_suffix
