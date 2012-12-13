@@ -1,5 +1,5 @@
 namespace :unicorn do
-  SERVER_TYPES = 'masterjobs jobserver dashboard website webserver connect offers'
+  SERVER_TYPES = 'masterjobs jobserver queues-nodb dashboard website webserver connect offers'
 
   desc "Reload unicorn"
   task :reload, :servers do |task, args|
