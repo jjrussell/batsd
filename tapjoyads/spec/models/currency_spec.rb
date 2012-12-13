@@ -465,12 +465,14 @@ describe Currency do
     context 'conversion rate enabled' do
       before :each do
         @currency.conversion_rate_enabled = true
+        @currency.conversion_rate = 0.5
         @currency.save
         Currency.stub(:find).and_return(@currency)
         @offer = FactoryGirl.create(:app).primary_offer
         @conversion_rate = FactoryGirl.create(:conversion_rate, :rate => 10, :minimum_offerwall_bid => 1, :currency_id => @currency.id)
         @conversion_rate2 = FactoryGirl.create(:conversion_rate, :rate => 30, :minimum_offerwall_bid => 2, :currency_id => @currency.id)
         @conversion_rate3 = FactoryGirl.create(:conversion_rate, :rate => 70, :minimum_offerwall_bid => 3, :currency_id => @currency.id)
+        @currency.stub(:all_conversion_rates).and_return([@conversion_rate, @conversion_rate2, @conversion_rate3])
       end
       context 'should return the conversion rate based on the publisher amount closest to the floored minimum offerwall bid' do
         it 'returns currency\'s conversion rate if the publisher amount is less than all the conversion rates minimum_offerwall_bids' do
