@@ -73,8 +73,6 @@ module Tapjoyad
     config.assets.version = '1.0'
     config.assets.precompile = YAML.load_file("#{Rails.root}/config/precompile_assets.yml")
     config.assets.precompile += %w[*.png *.jpg *.jpeg *.gif]
-
-    config.console_oauth_url = 'https://oauth.tapjoy.com'
   end
 
 end
