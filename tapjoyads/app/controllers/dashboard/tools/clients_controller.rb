@@ -37,6 +37,7 @@ class Dashboard::Tools::ClientsController < Dashboard::DashboardController
   def show
     @client = Client.find(params[:id])
     @page_title = "Client: #{@client.name}"
+    @partners = @client.partners.order(:name).paginate(:page => params[:page])
   end
 
   def update
