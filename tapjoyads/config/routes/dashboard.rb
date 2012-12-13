@@ -293,9 +293,7 @@ Tapjoyad::Application.routes.draw do
             get :mine
           end
           member do
-            post :approve
-            post :reject
-            post :assign
+            post :approve, :reject, :assign
           end
         end
 
