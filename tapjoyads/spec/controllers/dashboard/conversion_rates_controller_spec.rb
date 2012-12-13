@@ -9,11 +9,12 @@ describe Dashboard::ConversionRatesController do
     login_as(admin)
     @app = FactoryGirl.create(:app)
     App.stub(:find).and_return(@app)
-    @currency = FactoryGirl.create(:currency)
+    @currency = FactoryGirl.create(:currency, :conversion_rate => 5)
     Currency.stub(:find).and_return(@currency)
     @conversion_rate = FactoryGirl.create(:conversion_rate, :currency_id => @currency.id)
     @conversion_rate2 = FactoryGirl.create(:conversion_rate, :rate => "120", :minimum_offerwall_bid => "100", :currency_id => @currency.id)
-    @currency.stub(:conversion_rates).and_return([@conversion_rate, @conversion_rate2])
+    @currency.conversion_rates << @conversion_rate
+    @currency.conversion_rates << @conversion_rate2
     Currency.any_instance.stub(:cache).and_return(true)
     @params = {:app_id => @app.id, :currency_id => @currency.id}
   end
@@ -95,8 +96,9 @@ describe Dashboard::ConversionRatesController do
           ConversionRate.stub(:find).and_return(@conversion_rate)
           put(:update, @params.merge(:id => @conversion_rate.id, :conversion_rate => { :rate => "170" }))
         end
-        it 'should have a flash notice' do
-          flash.now[:error].should == ConversionRate::OVERLAP_ERROR_MESSAGE
+        it 'should have a error notice' do
+          flash.now[:error].should == "Unable to create conversion rate, you are trying to add a conversion rate and
+                                     minimum offer bid that overlaps already created conversion rates."
         end
         it 'should render edit layout' do
           response.should render_template('edit')
@@ -162,8 +164,9 @@ describe Dashboard::ConversionRatesController do
           ConversionRate.stub(:save).and_return(false)
           post(:create, @params.merge(:conversion_rate => { :rate => "101", :minimum_offerwall_bid => "500" }))
         end
-        it 'should have a flash notice' do
-          flash.now[:error].should == ConversionRate::OVERLAP_ERROR_MESSAGE
+        it 'should have a error notice' do
+          flash.now[:error].should == "Unable to create conversion rate, you are trying to add a conversion rate and
+                                     minimum offer bid that overlaps already created conversion rates."
         end
         it 'should render new layout' do
           response.should render_template('new')
@@ -172,10 +175,11 @@ describe Dashboard::ConversionRatesController do
       context 'a conversion rate with a rate less than a currency\'s conversion rate' do
         before :each do
           ConversionRate.stub(:save).and_return(false)
-          post(:create, @params.merge(:conversion_rate => { :rate => "40", :minimum_offerwall_bid => "500" }))
+          post(:create, @params.merge(:conversion_rate => { :rate => "4", :minimum_offerwall_bid => "500" }))
         end
-        it 'should have a flash notice' do
-          flash.now[:error].should == ConversionRate::CONVERSION_RATE_ERROR_MESSAGE
+        it 'should have a error notice' do
+          flash.now[:error].should == "Unable to create conversion rate, you are trying to create a conversion rate
+                                     with a conversion rate value less than or equal to the currency's conversion rate."
         end
         it 'should render new layout' do
           response.should render_template('new')

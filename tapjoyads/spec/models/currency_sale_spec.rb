@@ -63,7 +63,8 @@ describe CurrencySale do
 
     context "for base" do
       let(:base_errors) { subject.errors_on(:base) }
-      let(:time_travel_error) { CurrencySale::TIME_TRAVEL_FAIL }
+      let(:time_travel_error) { "Cannot create currency sale. You are trying to create a currency sale in a
+                        time frame that has already passed us by." }
 
       context "with start_time in the recent past" do
         let(:subject) { with_attrs(:start_time => (CurrencySale::START_TIME_ALLOWANCE.ago + 1.minute)) }
@@ -89,7 +90,8 @@ describe CurrencySale do
         let(:currency) { FactoryGirl.create(:currency) }
         let(:sale) { FactoryGirl.create(:currency_sale, :currency_id => currency) }
         let(:subject) { with_attrs(:currency_id => currency, :start_time => sale.end_time - 1.minute, :end_time => sale.end_time + 5.minutes) }
-        it("should have overlap error") { base_errors.should include(CurrencySale::OVERLAP_ERROR) }
+        it("should have overlap error") { base_errors.should include("Cannot create currency sale. You have already created a currency sale for this time frame.
+                     Either edit the currency sale for the times you entered, or use different times.") }
 
         it { currency.should == subject.currency}
       end

@@ -3,5 +3,6 @@
   %table
     = render 'table_header'
     = render :partial => 'sales_list', :locals => { :sales => @disabled_currency_sales }
+  = will_paginate(@disabled_currency_sales)
 - else
   %h4 No disabled currency sales

@@ -465,7 +465,7 @@ describe Currency do
     context 'conversion rate enabled' do
       before :each do
         @currency.conversion_rate_enabled = true
-        @currency.conversion_rate = 0.5
+        @currency.conversion_rate = 5
         @currency.save
         Currency.stub(:find).and_return(@currency)
         @offer = FactoryGirl.create(:app).primary_offer

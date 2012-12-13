@@ -4,12 +4,6 @@ class CurrencySale < ActiveRecord::Base
 
   MULTIPLIER_SELECT = [1.5, 2.0, 3.0]
   START_TIME_ALLOWANCE = 1.hour
-  OVERLAP_ERROR    = "Cannot create currency sale. You have already created a currency sale for this time frame.
-                      Either edit the currency sale for the times you entered, or use different times."
-  TIME_TRAVEL_FAIL = "Cannot create currency sale. You are trying to create a currency sale in a
-                      time frame that has already passed us by."
-  HELP_MESSAGE     = "Currency Sales allow you to run time-based sales to increase the amount of virtual
-                      currency a user earns, and help spread the word of your sale fast with custom messages."
 
   belongs_to :currency
 
@@ -95,10 +89,12 @@ private
 
   def validate_not_overlapping_times
     # Search for a sale with an overlapping time range
+    overlap_error = "Cannot create currency sale. You have already created a currency sale for this time frame.
+                     Either edit the currency sale for the times you entered, or use different times."
     currency.currency_sales.detect do |currency_sale|
       next if currency_sale == self || currency_sale.disabled? || currency_sale.past?
 
-      errors.add(:base, OVERLAP_ERROR) if overlapping?(currency_sale)
+      errors.add(:base, overlap_error) if overlapping?(currency_sale)
     end
   end
 
@@ -108,7 +104,9 @@ private
 
   # Failure helper
   def add_time_travel_error
-    errors.add :base, TIME_TRAVEL_FAIL
+    time_travel_fail = "Cannot create currency sale. You are trying to create a currency sale in a
+                        time frame that has already passed us by."
+    errors.add :base, time_travel_fail
   end
 
   def overlapping?(currency_sale)
