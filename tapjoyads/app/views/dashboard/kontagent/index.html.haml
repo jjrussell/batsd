@@ -1,32 +1,32 @@
 %h1 Kontagent
 
 %h3 Actions
-= link_to "Your Kontagent Dashboard", @kontagent_integration_request.partner.kontagent_dashboard_url
+= link_to "Your Kontagent Dashboard", current_partner.kontagent_dashboard_url
 |
-= link_to 'Resync with Kontagent', kontagent_path(@kontagent_integration_request), :method => :put
-
-%h3 Notes
-%ul
-  %li
-    Partner
-    = @kontagent_integration_request.partner.name
-    %b= "has #{@kontagent_integration_request.partner.kontagent_enabled? ? '' : 'not'} been "
-    provisioned with a Kontagent account
-
-  %li
-    User
-    = @kontagent_integration_request.user.email
-    %b= "has #{@kontagent_integration_request.user.kontagent_enabled? ? '' : 'not'} been "
-    provisioned with a Kontagent user
-
-  - integrated_apps = @kontagent_integration_request.partner.apps.select(&:kontagent_enabled?)
-  %li
-    = integrated_apps.count
-    apps provisioned with a Kontagent application
-    %ul
-      - integrated_apps.each do |app|
-        %li
-          App
-          = app.name
-          %b= "has #{app.kontagent_enabled? ? '' : 'not'} been "
-          provisioned
+= link_to 'Resync with Kontagent', {:action=>"resync"}
+-#
+-#%h3 Notes
+-#%ul
+-#  %li
+-#    Partner
+-#    = @kontagent_integration_request.partner.name
+-#    %b= "has #{@kontagent_integration_request.partner.kontagent_enabled? ? '' : 'not'} been "
+-#    provisioned with a Kontagent account
+-#
+-#  %li
+-#    User
+-#    = @kontagent_integration_request.user.email
+-#    %b= "has #{@kontagent_integration_request.user.kontagent_enabled? ? '' : 'not'} been "
+-#    provisioned with a Kontagent user
+-#
+-#  - integrated_apps = @kontagent_integration_request.partner.apps.select(&:kontagent_enabled?)
+-#  %li
+-#    = integrated_apps.count
+-#    apps provisioned with a Kontagent application
+-#    %ul
+-#      - integrated_apps.each do |app|
+-#        %li
+-#          App
+-#          = app.name
+-#          %b= "has #{app.kontagent_enabled? ? '' : 'not'} been "
+-#          provisioned

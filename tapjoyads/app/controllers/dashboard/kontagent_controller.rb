@@ -5,7 +5,7 @@ class Dashboard::KontagentController < Dashboard::DashboardController
   def index
     get_last_integration_request
 
-    unless current_partner.kontagent_enabled
+    if !current_partner.kontagent_enabled
       if @kontagent_integration_request.nil? or @kontagent_integration_request.rejected?
         redirect_to :action => :new
       elsif @kontagent_integration_request.pending?
@@ -58,7 +58,7 @@ class Dashboard::KontagentController < Dashboard::DashboardController
   end
 
   # attempt to resync current_partner with KT
-  def update
+  def resync
     @kontagent_integration_request              = KontagentIntegrationRequest.new
     @kontagent_integration_request.partner      = current_partner
     @kontagent_integration_request.user         = current_user

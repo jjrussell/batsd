@@ -204,9 +204,10 @@ Tapjoyad::Application.routes.draw do
 
       end
 
-      resources :kontagent, :only => [:index, :new, :create, :show, :update] do
+      resources :kontagent, :only => [:index, :new, :create, :show] do
         collection do
           get :terms
+          post :resync
         end
       end
 
@@ -292,7 +293,9 @@ Tapjoyad::Application.routes.draw do
             get :mine
           end
           member do
-            post :approve, :reject, :assign
+            post :approve
+            post :reject
+            post :assign
           end
         end
 
