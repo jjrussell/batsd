@@ -164,4 +164,14 @@ describe CurrencySale do
       it { should include(future_sale) }
     end
   end
+
+  describe "#save" do
+    let(:currency) {FactoryGirl.create(:currency)}
+    let(:sale) { FactoryGirl.build(:currency_sale, :currency_id => currency, :multiplier => 3.0, :end_time => 30.minutes.from_now, :start_time => 10.minutes.from_now) }
+
+    it "should cache the currency" do
+      Currency.any_instance.should_receive(:cache)
+      sale.save
+    end
+  end
 end

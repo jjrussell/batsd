@@ -1,5 +1,6 @@
 class CurrencySale < ActiveRecord::Base
   include UuidPrimaryKey
+  include CacheCurrency #This starts a currency sale immediately by caching the currency
 
   MULTIPLIER_SELECT = [1.5, 2.0, 3.0]
   START_TIME_ALLOWANCE = 1.hour

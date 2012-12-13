@@ -14,6 +14,7 @@ describe Dashboard::ConversionRatesController do
     @conversion_rate = FactoryGirl.create(:conversion_rate, :currency_id => @currency.id)
     @conversion_rate2 = FactoryGirl.create(:conversion_rate, :rate => "120", :minimum_offerwall_bid => "100", :currency_id => @currency.id)
     @currency.stub(:conversion_rates).and_return([@conversion_rate, @conversion_rate2])
+    Currency.any_instance.stub(:cache).and_return(true)
     @params = {:app_id => @app.id, :currency_id => @currency.id}
   end
 

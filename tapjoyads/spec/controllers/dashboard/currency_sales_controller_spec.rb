@@ -96,6 +96,7 @@ describe Dashboard::CurrencySalesController do
                     :id => @currency_sale.id
         }
         CurrencySale.stub(:find).and_return(@currency_sale)
+        Currency.any_instance.stub(:cache).and_return(true)
         put(:update, @params.merge(update_params))
       end
       it 'should have a successful flash notice' do
