@@ -124,7 +124,8 @@ describe Dashboard::KontagentController do
       partner.stub    :kontagent_enabled => true,  :kontagent_subdomain => subdomain
       controller.stub :current_partner => partner, :current_user => user
 
-      put :update, :id => integration_request.id
+      #put :update, :id => integration_request.id
+      post :resync
 
       response.should redirect_to(:action => :index)
     end

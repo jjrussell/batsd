@@ -4,3 +4,29 @@
 = link_to "Your Kontagent Dashboard", current_partner.kontagent_dashboard_url
 |
 = link_to 'Resync with Kontagent', {:action=>"resync"}, :method => :post
+
+%h3 Notes
+%ul
+  %li
+    Partner
+    = current_partner.name
+    %b= "has #{current_partner.kontagent_enabled? ? '' : 'not'} been "
+    provisioned with a Kontagent account
+
+  %li
+    User
+    = current_user.email
+    %b= "has #{current_user.kontagent_enabled? ? '' : 'not'} been "
+    provisioned with a Kontagent user
+
+  - integrated_apps = current_partner.apps
+  %li
+    = integrated_apps.count
+    apps provisioned with a Kontagent application
+    %ul
+      - integrated_apps.each do |app|
+        %li
+          App
+          = app.name
+          %b= "has #{app.kontagent_enabled? ? '' : 'not'} been "
+          provisioned

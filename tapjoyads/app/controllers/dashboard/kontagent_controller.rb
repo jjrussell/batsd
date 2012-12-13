@@ -66,11 +66,9 @@ class Dashboard::KontagentController < Dashboard::DashboardController
     kontagent_integration_request.resync!
 
     # here we could set the flash based on whether the resync was successful
-
-    # ...and delete afterwards -- this integration request wasn't created by a human
+    # ensure we delete this request afterwards -- this integration request wasn't created by a human
     # (we should probably just invoke the sync ops manually rather than building and tearing down an integration request)
     kontagent_integration_request.delete
-
 
     redirect_to :action => :index
   end
