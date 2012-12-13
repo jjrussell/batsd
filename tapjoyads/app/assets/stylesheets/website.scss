@@ -368,10 +368,18 @@ div.help-dialog .ui-dialog-title {
   max-width: 450px;
   border-right: 1px solid #ccc;
   border-bottom: 1px solid #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #active_campaigns_box td.offer-type {
   font-size: 10px;
   color: #444;
+}
+#active_campaigns_box td h1 {
+  font-size: medium;
+}
+#active_campaigns_box .descriptors {
+  font-size: smaller;
 }
 a.soft-link.inactive {
   color: #888;
