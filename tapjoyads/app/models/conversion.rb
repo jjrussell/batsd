@@ -253,7 +253,10 @@ class Conversion < ActiveRecord::Base
 
     return true if partners.empty?
 
-    Partner.find_all_by_id(partners, :lock => "FOR UPDATE")
+    # To avoid deadlocks, always lock on the partners in the same order
+    partners.sort.each do |partner_id|
+      Partner.find(partner_id, :lock => "FOR UPDATE") # lock until the end of the txn
+    end
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET pending_earnings = (pending_earnings + #{publisher_amount}) WHERE id = '#{publisher_partner_id}'") unless publisher_amount == 0
     Partner.connection.execute("UPDATE #{Partner.quoted_table_name} SET balance = (balance + #{advertiser_amount}) WHERE id = '#{advertiser_partner_id}'") unless advertiser_amount == 0
   end
