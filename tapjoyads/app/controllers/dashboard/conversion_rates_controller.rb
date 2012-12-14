@@ -75,21 +75,36 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     graph_data = []
     if @conversion_rates.present?
       @conversion_rates.each_with_index do |rate, index|
-        if graph_data.present?
-          graph_data << add_to_graph(@conversion_rates[index - 1].bid_number_to_currency, rate.bid_number_to_currency, @conversion_rates[index-1].rate)
-        else
-          graph_data << add_to_graph(index, rate.bid_number_to_currency, @currency.conversion_rate)
-        end
+        graph_data << data_to_add(index, rate, graph_data.present?)
       end
-      graph_data << add_to_graph(@conversion_rates.last.bid_number_to_currency, @conversion_rates.last.bid_number_to_currency(true), @conversion_rates.last.rate)
+      graph_data << last_graph_section
     else
-      graph_data << add_to_graph(0, 100, @currency.conversion_rate)
+      graph_data << no_data_graph
     end
     @graph = HighchartsGraph.generate_graph(graph_data, "Conversion Rates Graph Layout", "Minimum Offer Payout", "Conversion Rate", 'area', false, false)
   end
 
   def add_to_graph(x1, x2, y)
     [[x1,y],[x2,y]] #intepretation of data from Highcharts to create a step-like graph
+  end
+
+  #generates the last sect of data on the graph to create a visualization of continuation
+  def last_graph_section
+    add_to_graph(@conversion_rates.last.bid_number_to_currency, @conversion_rates.last.bid_number_to_currency(true), @conversion_rates.last.rate)
+  end
+
+  #generate a graph if no conversion rates are present
+  def no_data_graph
+    add_to_graph(0, 100, @currency.conversion_rate)
+  end
+
+  #adds data to graph
+  def data_to_add(index, rate, present)
+    if present #data is already present on graph
+      add_to_graph(@conversion_rates[index - 1].bid_number_to_currency, rate.bid_number_to_currency, @conversion_rates[index - 1].rate)
+    else #no data has been added to the graph yet, add the initial currency's conversion rate as the base step
+      add_to_graph(index, rate.bid_number_to_currency, @currency.conversion_rate)
+    end
   end
 
   def error
