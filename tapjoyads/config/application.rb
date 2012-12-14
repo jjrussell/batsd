@@ -58,7 +58,7 @@ module Tapjoyad
                         %w( web legacy global )
                       when 'offers'
                         %w( web legacy global )
-                      when 'jobserver', 'queues-nodb'
+                      when 'jobserver'
                         %w( job global )
                       else
                         %w( api dashboard job website web legacy global client_api )
