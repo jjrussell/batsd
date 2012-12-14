@@ -1,6 +1,6 @@
 - size ||= '57x57'
 - hide_icon ||= false
-- use_main = false if use_main.nil?
+- use_main ||= false
 .offer_name
   - unless hide_icon
     .icon= image_tag(offer.get_icon_url, :size => size, :id => 'icon')
