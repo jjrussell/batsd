@@ -536,6 +536,18 @@ describe Device do
         @temp_device.display_multipliers.should include('2')
       end
     end
+
+    context 'for a device with more than Device::APP_LIMIT apps' do
+      it 'keeps only the Device::APP_LIMIT most recent apps' do
+        stub_const("Device::APP_LIMIT", 20)
+        too_many = Device::APP_LIMIT + 20
+        device = FactoryGirl.create(:device)
+        too_many.times { |app| device.set_last_run_time(app.to_s) }
+        device.apps.count.should == too_many
+        device.save
+        device.apps.count.should == Device::APP_LIMIT
+      end
+    end
   end
 
   describe '#after_initialize' do
