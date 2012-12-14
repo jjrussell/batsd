@@ -53,7 +53,7 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
     if @currency_sale.past?
       flash[:error] = "Unable to delete currency sale that has already been run"
     else
-      @currency_sale.destroy
+      @currency_sale.disable!
       flash[:notice] = "Successfully removed the currency sale"
     end
     redirect_to app_currency_currency_sales_path(:app_id => @app.id, :currency_id => @currency.id)
@@ -62,11 +62,13 @@ class Dashboard::CurrencySalesController < Dashboard::DashboardController
   private
 
   def setup
-    @app = App.find(params[:app_id])
-    @currency = Currency.find(params[:currency_id])
-    @active_currency_sales = @currency.currency_sales.active
-    @past_currency_sales = @currency.currency_sales.past.paginate(:page => params[:page], :per_page => PER_PAGE)
-    @future_currency_sales = @currency.currency_sales.future.paginate(:page => params[:page], :per_page => PER_PAGE)
+    @app                     = App.find(params[:app_id])
+    @currency                = Currency.find(params[:currency_id])
+    currency_sales           = @currency.currency_sales
+    @active_currency_sales   = currency_sales.active
+    @past_currency_sales     = currency_sales.past.paginate(:page => params[:page], :per_page => PER_PAGE)
+    @future_currency_sales   = currency_sales.future.paginate(:page => params[:page], :per_page => PER_PAGE)
+    @disabled_currency_sales = currency_sales.disabled.paginate(:page => params[:page], :per_page => PER_PAGE)
   end
 
   # Use any base error as the flash. Base errors are only set for time range problems.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121213194522) do
+ActiveRecord::Schema.define(:version => 20121214013205) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -423,6 +423,7 @@ ActiveRecord::Schema.define(:version => 20121213194522) do
     t.text     "message"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "disabled_at"
   end
 
   add_index "currency_sales", ["currency_id"], :name => "index_currency_sales_on_currency_id"

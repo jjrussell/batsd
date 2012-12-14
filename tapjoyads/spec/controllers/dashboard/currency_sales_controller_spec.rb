@@ -20,6 +20,7 @@ describe Dashboard::CurrencySalesController do
       @currency.stub_chain(:currency_sales, :active).and_return([@currency_sale])
       @currency.stub_chain(:currency_sales, :past, :paginate).and_return([])
       @currency.stub_chain(:currency_sales, :future, :paginate).and_return([])
+      @currency.stub_chain(:currency_sales, :disabled, :paginate).and_return([])
       get(:index, @params)
     end
     it 'should respond with 200' do
@@ -40,6 +41,9 @@ describe Dashboard::CurrencySalesController do
     it 'should have future_currency_sales instance variable' do
       assigns(:future_currency_sales).should == []
     end
+    it 'should have disabled_currency_sales instance variable' do
+      assigns(:disabled_currency_sales).should == []
+    end
     it 'has an index specific page title' do
       assigns(:page_title).should == "#{@currency.name} Currency Sales"
     end
@@ -50,6 +54,7 @@ describe Dashboard::CurrencySalesController do
       @currency.stub_chain(:currency_sales, :active).and_return([@currency_sale])
       @currency.stub_chain(:currency_sales, :past, :paginate).and_return([])
       @currency.stub_chain(:currency_sales, :future, :paginate).and_return([])
+      @currency.stub_chain(:currency_sales, :disabled, :paginate).and_return([])
       CurrencySale.stub(:find).and_return(@currency_sale)
       get(:edit, @params.merge(:id => @currency_sale.id))
     end
@@ -71,6 +76,9 @@ describe Dashboard::CurrencySalesController do
     it 'should have future_currency_sales instance variable' do
       assigns(:future_currency_sales).should == []
     end
+    it 'should have disabled_currency_sales instance variable' do
+      assigns(:disabled_currency_sales).should == []
+    end
     it 'has an edit specific page title' do
       assigns(:page_title).should == "Edit Currency Sale"
     end
@@ -86,6 +94,7 @@ describe Dashboard::CurrencySalesController do
       @currency.stub_chain(:currency_sales, :active).and_return([@currency_sale])
       @currency.stub_chain(:currency_sales, :past, :paginate).and_return([])
       @currency.stub_chain(:currency_sales, :future, :paginate).and_return([@currency_sale2])
+      @currency.stub_chain(:currency_sales, :disabled, :paginate).and_return([])
     end
     context 'valid update' do
       before :each do
@@ -132,6 +141,7 @@ describe Dashboard::CurrencySalesController do
       @currency.stub_chain(:currency_sales, :active).and_return([@currency_sale])
       @currency.stub_chain(:currency_sales, :past, :paginate).and_return([])
       @currency.stub_chain(:currency_sales, :future, :paginate).and_return([@currency_sale2])
+      @currency.stub_chain(:currency_sales, :disabled, :paginate).and_return([])
       @currency_sale_mock = double(CurrencySale)
       CurrencySale.stub(:new).and_return(@currency_sale_mock)
       get(:new, @params)
@@ -154,6 +164,9 @@ describe Dashboard::CurrencySalesController do
     it 'should have future_currency_sales instance variable' do
       assigns(:future_currency_sales).should == [@currency_sale2]
     end
+    it 'should have disabled_currency_sales instance variable' do
+      assigns(:disabled_currency_sales).should == []
+    end
     it 'has a new specific page title' do
       assigns(:page_title).should == "New Currency Sale"
     end
@@ -169,6 +182,7 @@ describe Dashboard::CurrencySalesController do
       @currency.stub_chain(:currency_sales, :active).and_return([@currency_sale])
       @currency.stub_chain(:currency_sales, :past, :paginate).and_return([])
       @currency.stub_chain(:currency_sales, :future, :paginate).and_return([@currency_sale2])
+      @currency.stub_chain(:currency_sales, :disabled, :paginate).and_return([])
     end
     context 'valid create' do
       before :each do
@@ -231,7 +245,7 @@ describe Dashboard::CurrencySalesController do
 
   describe '#destroy' do
     before :each do
-      @currency_sale.should_receive(:destroy)
+      @currency_sale.should_receive(:disable!)
       CurrencySale.stub(:find).and_return(@currency_sale)
       delete(:destroy, @params.merge(:id => @currency_sale.id))
     end
