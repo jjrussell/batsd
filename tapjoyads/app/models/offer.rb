@@ -707,7 +707,7 @@ class Offer < ActiveRecord::Base
     @descriptors << 'disabled' unless enabled?
     @descriptors << 'active'   if accepting_clicks?
     @descriptors << 'hidden'   if hidden?
-    @descriptors << item.platform if item_type == 'App'
+    # @descriptors << item.platform if item_type == 'App' # TODO: use sparingly? (involves an extra query)
     @descriptors
   end
 
