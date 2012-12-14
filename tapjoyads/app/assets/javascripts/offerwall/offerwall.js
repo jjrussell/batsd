@@ -263,6 +263,10 @@
     },
 
     fetch: function(){
+      if (!data.records || data.records == 0) {
+        $.loadMore.parentNode.style.display = 'none';
+        return;
+      }
       $.loader.style.display = 'block';
 
       $.ajax({
