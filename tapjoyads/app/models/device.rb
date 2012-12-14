@@ -43,6 +43,7 @@ class Device < SimpledbShardedResource
   MAX_SKIPS    = 100
   RECENT_CLICKS_RANGE = 30.days
   MAX_OVERWRITES_TRACKED = 100000
+  APP_LIMIT = 1500
 
   def self.cached_count
     Mc.get('statz.devices_count') || 0
@@ -272,6 +273,13 @@ class Device < SimpledbShardedResource
     save!
   end
 
+  # Clear all apps besides the most recently used
+  def clear_lru_apps
+    self.apps = Hash[
+      self.apps.to_a.sort { |a, b| b[1] <=> a[1] }.first(APP_LIMIT) # bigger value for timestamp => used more recently
+    ]
+  end
+
   def save(options = {})
     create_identifiers = options.delete(:create_identifiers) { true }
     if @is_temporary
@@ -283,6 +291,7 @@ class Device < SimpledbShardedResource
       return
     end
 
+    clear_lru_apps if self.apps.count > APP_LIMIT # Keep simpledb from exploding everywhere
     remove_old_skips
     delete_extra_attributes('recent_click_hashes')    # remove obsolete sdb_attr
     return_value = super({ :write_to_memcache => true }.merge(options))
