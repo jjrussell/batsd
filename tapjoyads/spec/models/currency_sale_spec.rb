@@ -131,14 +131,36 @@ describe CurrencySale do
     end
   end
 
-  describe "" do
-    def create_sale(time = Time.current)
-      Timecop.at_time(time) { FactoryGirl.create(:currency_sale, :start_time => 1.minute.ago, :end_time => 1.hour.from_now) }
+  describe '#disabled?' do
+    context 'disabled' do
+      let(:subject) { with_attrs(:disabled_at => Time.zone.now) }
+      it { should be_disabled }
     end
 
-    let(:active_sale) { create_sale }
-    let(:past_sale)   { create_sale(2.days.ago) }
-    let(:future_sale) { create_sale(2.days.from_now) }
+    context 'not disabled' do
+      let(:subject) { with_attrs(:disabled_at => nil) }
+      it { should_not be_disabled }
+    end
+  end
+
+  describe '#disable!' do
+    let(:currency) { FactoryGirl.create(:currency) }
+    let(:sale) { with_attrs(:currency_id => currency, :multiplier => 3.0, :end_time => 30.minutes.from_now, :start_time => 10.minutes.from_now) }
+    it 'should be disabled on call' do
+      sale.disable!
+      sale.should be_disabled
+    end
+  end
+
+  describe "" do
+    def create_sale(time = Time.current, disabled = nil)
+      Timecop.at_time(time) { FactoryGirl.create(:currency_sale, :start_time => 1.minute.ago, :end_time => 1.hour.from_now, :disabled_at => disabled) }
+    end
+
+    let(:active_sale)   { create_sale }
+    let(:past_sale)     { create_sale(2.days.ago) }
+    let(:future_sale)   { create_sale(2.days.from_now) }
+    let(:disabled_sale) { create_sale(2.days.from_now, 1.minute.ago) }
 
     describe ".active" do
       let(:subject) { CurrencySale.active }
@@ -146,6 +168,7 @@ describe CurrencySale do
       it { should include(active_sale) }
       it { should_not include(past_sale) }
       it { should_not include(future_sale) }
+      it { should_not include(disabled_sale) }
     end
 
     describe ".past" do
@@ -154,6 +177,7 @@ describe CurrencySale do
       it { should_not include(active_sale) }
       it { should include(past_sale) }
       it { should_not include(future_sale) }
+      it { should_not include(disabled_sale) }
     end
 
     describe ".future" do
@@ -162,12 +186,22 @@ describe CurrencySale do
       it { should_not include(active_sale) }
       it { should_not include(past_sale) }
       it { should include(future_sale) }
+      it { should_not include(disabled_sale) }
+    end
+
+    describe ".disabled" do
+      let(:subject) { CurrencySale.disabled }
+
+      it { should_not include(active_sale) }
+      it { should_not include(past_sale) }
+      it { should_not include(future_sale) }
+      it { should include(disabled_sale) }
     end
   end
 
   describe "#save" do
-    let(:currency) {FactoryGirl.create(:currency)}
-    let(:sale) { FactoryGirl.build(:currency_sale, :currency_id => currency, :multiplier => 3.0, :end_time => 30.minutes.from_now, :start_time => 10.minutes.from_now) }
+    let(:currency) { FactoryGirl.create(:currency) }
+    let(:sale) { with_attrs(:currency_id => currency, :multiplier => 3.0, :end_time => 30.minutes.from_now, :start_time => 10.minutes.from_now) }
 
     it "should cache the currency" do
       Currency.any_instance.should_receive(:cache)

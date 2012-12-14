@@ -21,9 +21,10 @@ class CurrencySale < ActiveRecord::Base
 
   validate :validate_start_end, :validate_in_the_future, :validate_not_overlapping_times, :if => :time_changed?
 
-  scope :active,   lambda { where("start_time <= ? AND end_time > ?", Time.zone.now, Time.zone.now) }
-  scope :past,     lambda { where("start_time < ? AND end_time < ?", Time.zone.now, Time.zone.now).order('start_time') }
-  scope :future,   lambda { where("start_time > ? AND end_time > ?", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :active,   lambda { where("start_time <= ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now) }
+  scope :past,     lambda { where("start_time < ? AND end_time < ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :future,   lambda { where("start_time > ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :disabled, lambda { where("disabled_at IS NOT NULL").order('start_time') }
 
   #
   # Predicate queries
@@ -31,6 +32,15 @@ class CurrencySale < ActiveRecord::Base
   def past?
     now = Time.zone.now
     start_time < now && end_time < now
+  end
+
+  def disabled?
+    self.disabled_at.present?
+  end
+
+  def disable!
+    self.disabled_at = Time.zone.now
+    save!
   end
 
   def starts_recently_or_in_future?
@@ -86,7 +96,7 @@ private
   def validate_not_overlapping_times
     # Search for a sale with an overlapping time range
     currency.currency_sales.detect do |currency_sale|
-      next if currency_sale == self
+      next if currency_sale == self || currency_sale.disabled? || currency_sale.past?
 
       errors.add(:base, OVERLAP_ERROR) if overlapping?(currency_sale)
     end

@@ -1,0 +1,7 @@
+%h3 Disabled Currency Sales
+- if @disabled_currency_sales.present?
+  %table
+    = render 'table_header'
+    = render :partial => 'sales_list', :locals => { :sales => @disabled_currency_sales }
+- else
+  %h4 No disabled currency sales

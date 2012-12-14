@@ -8,6 +8,6 @@
       %td.wide= currency_sale.message.present? ? currency_sale.message : currency_sale_message(@app.name, currency_sale.multiplier_to_string, @currency.name)
     - else
       %td.wide No message is enabled for this currency sale.
-    - if permitted_to?(:edit, :dashboard_currency_sales) && !currency_sale.past?
+    - if permitted_to?(:edit, :dashboard_currency_sales) && !currency_sale.past? && !currency_sale.disabled?
       %td.small= link_to "Edit", edit_app_currency_currency_sale_path(:id => currency_sale.id, :currency_id => @currency.id, :app_id => @app.id)
-      %td.small= link_to "Delete", app_currency_currency_sale_path(:id => currency_sale.id, :currency_id => @currency.id, :app_id => @app.id), :method => :delete, :confirm => 'Are you sure?'
+      %td.small= link_to "Disable", app_currency_currency_sale_path(:id => currency_sale.id, :currency_id => @currency.id, :app_id => @app.id), :method => :delete, :confirm => 'Are you sure?'
