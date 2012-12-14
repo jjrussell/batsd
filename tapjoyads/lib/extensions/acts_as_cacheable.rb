@@ -101,10 +101,15 @@ module ActsAsCacheable
   module InstanceMethods
 
     def cache
-      run_callbacks :cache do
-        clear_association_cache
-        run_callbacks :cache_associations
-        Mc.distributed_put(cache_key, self, false, 1.day)
+      begin
+        run_callbacks :cache do
+          clear_association_cache
+          run_callbacks :cache_associations
+          Mc.distributed_put(cache_key, self, false, 1.day)
+        end
+      rescue Exception => e
+        Notifier.alert_new_relic(CacheFailure, e.message)
+        raise e
       end
     end
 
