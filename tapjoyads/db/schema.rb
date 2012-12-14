@@ -748,7 +748,6 @@ ActiveRecord::Schema.define(:version => 20121214013205) do
     t.datetime "updated_at"
     t.integer  "max_concurrency",               :default => 0,       :null => false
     t.string   "uri"
-    t.boolean  "uses_database",                 :default => true
   end
 
   add_index "jobs", ["id"], :name => "index_jobs_on_id", :unique => true
