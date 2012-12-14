@@ -695,10 +695,12 @@ class Offer < ActiveRecord::Base
     search_name
   end
 
-  def descriptors
+  # yup. Doesn't work right if you ran descriptors(false), then desciptors(true)
+  # once the code freeze is off, we'll fix this
+  def descriptors(use_main=false)
     return @descriptors unless @descriptors.nil?
     @descriptors = []
-    @descriptors << (main? ? 'main' : 'associated')
+    @descriptors << (main? ? 'main' : 'associated') if use_main
     @descriptors << (rewarded? ? 'rewarded' : 'non-rewarded')
     @descriptors << 'featured' if featured?
     @descriptors << item_type.gsub('Offer', '').downcase unless item_type == 'App'
@@ -709,8 +711,8 @@ class Offer < ActiveRecord::Base
     @descriptors
   end
 
-  def description
-    descriptors.join(', ')
+  def description(use_main=false)
+    descriptors(use_main).join(', ')
   end
 
   def store_id_for_feed
