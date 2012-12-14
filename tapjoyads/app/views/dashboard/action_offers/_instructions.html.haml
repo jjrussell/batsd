@@ -1,15 +1,24 @@
 %p
-  Use "action" campaigns to encourage users to engage in your application. We support two action campaign types:
-  %ol
+  We support two action campaign types:
+  %ol.instructions
     %li
       %strong
         Pay Per Install + Action
-      Create a campaign that asks new users to install and perform a specific action in your application. Minimum bid is $.20. Prerequisite must be set to none. To change this setting, please submit a request to #{mail_to "support@tapjoy.com"}.
+      &ndash; A campaign that asks new users to install your app and perform an action that you specify, e.g. "Complete the tutorial." The minimum bid is $0.20. The prerequisite should be set to "None" (to make this change, submit a request to #{mail_to "support@tapjoy.com"})
     %li
       %strong
         Tapjoy Reconnect
-      Create a campaign that retargets existing users and asks them to perform a specific action. Within our dashboard, you will need to provide specific instructions on how to complete the action. Your prerequisite should be set to the application you'd like users to return to. Additionally, we accept protocol handlers, which send users directly to your app after the click. To support this, please submit a request to #{mail_to "support@tapjoy.com"}. The use of protocol handlers is optional. If a protocol handler is not present, users will need to exit the app they see your action campaign to complete the action.
+      &ndash; A campaign that targets your existing userbase to return to your app and perform an action that you specify, e.g. "Spin the daily wheel." The minimum bid is $0.10. The prerequisite should be set to the application you would like the user to return to. Please note that we accept protocol handlers, which sends users directly to your app (to support this, please submit a request to #{mail_to "support@tapjoy.com"}). The use of protocol handlers is optional but highly recommended. If a protocol handler is not in place, users will need to open your app manually.
 %p
-  Create an Action ID below to get integrated. You can edit any action and instructions by selecting the action, or create new actions by clicking on the Create New Action button.
+  Create an Action ID below to get integrated. You can edit any action and their instructions by selecting the action, or create new actions by clicking on the Create New Action button.
+  %ul
+    %li
+      You cannot incentivize actions that require payment.
+    %li
+      All actions need to be able to be completed in less than 3 minutes.
+    %li
+      You must have the name of the app in the name of the action.
+    %li
+      Actions will be reviewed by Tapjoy support before they are enabled.
 %p
   Once you've integrated the code, contact #{mail_to "support@tapjoy.com"} to test the integration and enable your action campaign. Each action needs to be individually tested and enabled by Tapjoy.
