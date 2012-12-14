@@ -39,6 +39,11 @@ describe OfferTriggeredActionsController do
       get(:fb_visit, @params)
       assigns(:complete_instruction_url).should == "some_instruction_url"
     end
+
+    it "uses complete_action_url as fallback_url" do
+      get(:load_app, @params)
+      assigns(:fallback_url) == "some_web_url"
+    end
   end
 
   describe '#fb_visit' do
