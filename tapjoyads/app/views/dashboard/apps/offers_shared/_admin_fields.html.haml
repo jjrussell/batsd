@@ -25,6 +25,7 @@
     = f.label :name, 'Exclusion Prerequisites'
     #help_exclusion_prerequisites.help ?
   %td
+    - offer_options ||= options_for_prerequisites(@offer)
     = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
     = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
     = error_message_on @offer, :exclusion_prerequisite_offer_ids
