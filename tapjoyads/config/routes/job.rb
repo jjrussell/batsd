@@ -56,6 +56,7 @@ Tapjoyad::Application.routes.draw do
     match 'master_update_rev_share(/index)' => 'master_update_rev_share#index'
     match 'master_verifications(/index)' => 'master_verifications#index'
     match 'master_verify_hourly_stats(/index)' => 'master_verify_hourly_stats#index'
+    match 'master_expire_currency_sales(/index)' => 'master_expire_currency_sales#index'
     match 'queue_cache_external_publishers(/index)' => 'queue_cache_external_publishers#index'
     match 'queue_calculate_show_rate(/index)' => 'queue_calculate_show_rate#index'
     match 'queue_change_partners(/index)' => 'queue_change_partners#index'
