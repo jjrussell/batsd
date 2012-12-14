@@ -20,14 +20,14 @@
       - prerequisites_options = [ [ "None", "" ] ] + offer_options if ((permitted_to?(:edit, :dashboard_statz) || @offer.prerequisite_offer_id.blank?))
       = f.select :prerequisite_offer_id, prerequisites_options
       = error_message_on @offer, :prerequisite_offer_id
-  %tr.admin
-    %th
-      = f.label :name, 'Exclusion Prerequisites'
-      #help_exclusion_prerequisites.help ?
-    %td
-      = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
-      = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
-      = error_message_on @offer, :exclusion_prerequisite_offer_ids
+%tr.admin
+  %th
+    = f.label :name, 'Exclusion Prerequisites'
+    #help_exclusion_prerequisites.help ?
+  %td
+    = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'offer[exclusion_prerequisite_offer_ids][]')
+    = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
+    = error_message_on @offer, :exclusion_prerequisite_offer_ids
 %tr.admin
   %th
     = f.label :x_partner_prerequisites, 'Cross Partner Prerequisites'

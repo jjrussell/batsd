@@ -60,14 +60,6 @@
           = error_message_on @action_offer, :prerequisite_offer_id
       %tr
         %th
-          = f.label :name, 'Exclusion Prerequisites'
-          #help_exclusion_prerequisites.help ?
-        %td
-          = f.hidden_field(:hidden_exclusion_prerequisite_offer_ids, :value => '', :name => 'action_offer[exclusion_prerequisite_offer_ids][]')
-          = f.chosen_select(:exclusion_prerequisite_offer_ids, options_for_select(offer_options, @action_offer.get_exclusion_prerequisite_offer_ids.to_a), {}, :multiple => true)
-          = error_message_on @action_offer, :exclusion_prerequisite_offer_ids
-      %tr
-        %th
           = f.label :instructions, 'Instructions'
           #help_instructions.help ?
         %td
