@@ -69,6 +69,15 @@
         %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
+        %tr
+          %th TJM Gamers
+          %td
+            %ul
+              - @device.gamers.each do |gamer|
+                %li= link_to gamer.email, "#{WEBSITE_URL}/admin/manage_gamers?search=#{gamer.email}"
+            %br/
+            NOTE: This may be an incomplete list.
+
         - if @device.country.present?
           %tr
             %th Country
