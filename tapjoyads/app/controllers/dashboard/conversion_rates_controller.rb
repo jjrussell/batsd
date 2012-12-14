@@ -38,7 +38,7 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
 
   def create
     conversion_rate_params = sanitize_currency_params(params[:conversion_rate], [:minimum_offerwall_bid])
-    @conversion_rate = ConversionRate.new(conversion_rate_params.merge(:currency_id => params[:currency_id]))
+    @conversion_rate = @currency.conversion_rates.build(conversion_rate_params)
     log_activity(@conversion_rate)
     if @conversion_rate.save
       flash[:notice] = "Successfully created a conversion rate."
@@ -75,25 +75,24 @@ class Dashboard::ConversionRatesController < Dashboard::DashboardController
     graph_data = []
     if @conversion_rates.present?
       @conversion_rates.each_with_index do |rate, index|
-        if graph_data.blank?
-          graph_data << [[index, @currency.conversion_rate], [rate.bid_number_to_currency, @currency.conversion_rate]]
+        if graph_data.present?
+          graph_data << add_to_graph(@conversion_rates[index - 1].bid_number_to_currency, rate.bid_number_to_currency, @conversion_rates[index-1].rate)
         else
-          graph_data << [[@conversion_rates[index - 1].bid_number_to_currency, @conversion_rates[index-1].rate], [rate.bid_number_to_currency, @conversion_rates[index-1].rate]]
+          graph_data << add_to_graph(index, rate.bid_number_to_currency, @currency.conversion_rate)
         end
       end
-      last_exchange = @conversion_rates.last
-      graph_data << [[last_exchange.bid_number_to_currency, last_exchange.rate], [last_exchange.bid_number_to_currency(true), last_exchange.rate]]
+      graph_data << add_to_graph(@conversion_rates.last.bid_number_to_currency, @conversion_rates.last.bid_number_to_currency(true), @conversion_rates.last.rate)
     else
-      graph_data << [[0, @currency.conversion_rate], [100, @currency.conversion_rate]]
+      graph_data << add_to_graph(0, 100, @currency.conversion_rate)
     end
     @graph = HighchartsGraph.generate_graph(graph_data, "Conversion Rates Graph Layout", "Minimum Offer Payout", "Conversion Rate", 'area', false, false)
   end
 
+  def add_to_graph(x1, x2, y)
+    [[x1,y],[x2,y]] #intepretation of data from Highcharts to create a step-like graph
+  end
+
   def error
-    if @conversion_rate.errors[:base].include?(ConversionRate::OVERLAP_ERROR_MESSAGE)
-      ConversionRate::OVERLAP_ERROR_MESSAGE
-    elsif @conversion_rate.errors[:base].include?(ConversionRate::CONVERSION_RATE_ERROR_MESSAGE)
-      ConversionRate::CONVERSION_RATE_ERROR_MESSAGE
-    end
+    @conversion_rate.errors[:base].first
   end
 end
