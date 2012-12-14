@@ -3,7 +3,7 @@
 - use_main ||= false
 .offer_name
   - unless hide_icon
-    .icon= image_tag(offer.get_icon_url, :size => size, :id => 'icon')
+    .icon= image_tag(offer.get_icon_url, :size => size, :id => 'icon', :alt => '')
 
   %h1.name= offer.name_with_suffix
   .descriptors= offer.description(use_main)
