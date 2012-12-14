@@ -26,7 +26,7 @@ elsif server_type == 'offers'
   worker_processes 12
   timeout 90
 elsif server_type == 'connect'
-  worker_processes 24
+  worker_processes 16
   timeout 20
 else
   worker_processes 5
