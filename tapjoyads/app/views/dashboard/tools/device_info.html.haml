@@ -17,7 +17,7 @@
         %th MAC Address:
         %td= text_field_tag 'mac_address', params[:mac_address], :size => '55'
       %tr
-        %th 
+        %th
           Apps to show
           #help_show_apps.help ?
         %td= select_tag :show_apps, options_for_select([['All', 'all'],['100 most recent', 'last100'],['Last 3 months', '3months'],['None', 'none']], :selected => (params[:show_apps] || 'last100'))
@@ -62,6 +62,15 @@
         %tr
           %th Jailbroken?
           %td{:class => @device.is_jailbroken? ? "jailbroken" : ""}= @device.is_jailbroken?
+        %tr
+          %th TJM Gamers
+          %td
+            %ul
+              - @device.gamers.each do |gamer|
+                %li= link_to gamer.email, "#{WEBSITE_URL}/admin/manage_gamers?search=#{gamer.email}"
+            %br/
+            NOTE: This may be an incomplete list.
+
         - if @device.country.present?
           %tr
             %th Country
