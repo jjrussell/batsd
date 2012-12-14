@@ -1,6 +1,7 @@
 class PremierTasks
 
   def self.set_exclusivity_and_premier_discounts
+    #TODO: Handle failure by partner more gracefully.
     Partner.find_each do |partner|
       save_partner = false
 
