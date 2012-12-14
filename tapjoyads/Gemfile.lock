@@ -143,8 +143,6 @@ GEM
       activesupport (= 3.0.15)
       arel (~> 2.0.10)
       tzinfo (~> 0.3.23)
-    activerecord-mysql2-adapter (0.0.3)
-      mysql2
     activeresource (3.0.15)
       activemodel (= 3.0.15)
       activesupport (= 3.0.15)
@@ -343,7 +341,6 @@ GEM
     multi_xml (0.4.0)
     multipart-post (1.1.0)
     mysql (2.8.1)
-    mysql2 (0.3.11)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.1.4)
@@ -550,7 +547,6 @@ PLATFORMS
 DEPENDENCIES
   SystemTimer (= 1.2.3)
   activemerchant
-  activerecord-mysql2-adapter
   acts-as-approvable (= 0.6.9)
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
@@ -611,7 +607,6 @@ DEPENDENCIES
   multi_xml (= 0.4.0)
   multipart-post (= 1.1.0)
   mysql (= 2.8.1)
-  mysql2
   newrelic_riak (= 0.1.1)!
   newrelic_rpm (= 3.5.3.25)
   nokogiri (= 1.5.5)
