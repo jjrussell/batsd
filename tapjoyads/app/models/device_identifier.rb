@@ -22,6 +22,10 @@ class DeviceIdentifier < SimpledbShardedResource
     super({ :load_from_memcache => true }.merge(options))
   end
 
+  def save(options = {})
+    super({ :write_to_memcache => true }.merge(options))
+  end
+
   def dynamic_domain_name
     domain_number = @key.matz_silly_hash % NUM_DEVICE_IDENTIFIER_DOMAINS
     "device_identifiers_#{domain_number}"
