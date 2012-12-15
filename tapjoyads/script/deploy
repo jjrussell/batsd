@@ -18,7 +18,7 @@ class Deploy
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
           @options[:environment] = 'production'
-          @options[:server_groups] = 'masterjobs jobserver dashboard webserver connect offers'
+          @options[:server_groups] = 'masterjobs jobserver queues-nodb dashboard webserver connect offers'
         elsif environment == 'util'
           @options[:environment] = 'util'
           @options[:server_groups] = 'util'

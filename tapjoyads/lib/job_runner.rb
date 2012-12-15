@@ -8,14 +8,20 @@ class JobRunner
   def self.get_active_jobs
     jobs_hash = {}
     return jobs_hash unless Rails.env.production?
-    if MACHINE_TYPE == 'masterjobs'
-      active_jobs = Job.active.by_job_type('master')
-    elsif MACHINE_TYPE == 'jobserver' || MACHINE_TYPE == 'testserver' || MACHINE_TYPE == 'staging'
-      active_jobs = Job.active.by_job_type('queue') | Job.active.by_job_type('internal')
+
+    case MACHINE_TYPE
+    when 'testserver', 'staging'
+      active_jobs = Job.active.by_job_type('queue')
+    when 'jobserver'
+      # TODO (amdtech): Once we have the second cluster for no database access, update this to only get database jobs
+      active_jobs = Job.active.by_job_type('queue')
+    when 'queues-nodb'
+      active_jobs = Job.active.uses_database(false).by_job_type('queue')
     else
       active_jobs = []
       Rails.logger.info "JobRunner: Not running any jobs. Not a job server."
     end
+
     active_jobs.each do |job|
       jobs_hash[job.id] = job
     end
@@ -65,6 +71,7 @@ class JobRunner
 
   def self.start
     Rails.logger.info "JobRunner: running"
+    ActiveRecord::Base.establish_connection('job_runner')
     load_jobs
     Rails.logger.flush
 
