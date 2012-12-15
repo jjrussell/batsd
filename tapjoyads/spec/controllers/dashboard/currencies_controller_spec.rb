@@ -80,4 +80,22 @@ describe Dashboard::CurrenciesController do
       end
     end
   end
+  describe '#create' do
+    context 'secondary currency' do
+      before :each do
+        @currency = FactoryGirl.create(:currency, :tapjoy_enabled => false)
+        @params = {
+          :terms_of_service => '1',
+          :currency => {
+            :name => "Super #{@currency.name}",
+          }
+        }
+      end
+
+      it 'is tapjoy disabled' do
+        put(:create, @params)
+        assigns[:currency].tapjoy_enabled.should be_false
+      end
+    end
+  end
 end
