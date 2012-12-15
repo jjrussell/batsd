@@ -5,3 +5,11 @@ production:
 production_slave:
   adapter: sqlite3
   database: db/production.sqlite
+
+job_runner:
+  adapter: mysql2
+  database: tapjoy_db
+  host: tapjoy-db-rds.cck8zbm50hdd.us-east-1.rds.amazonaws.com
+  username: tapjoy
+  password: andoverbusiness1
+  reconnect: true
