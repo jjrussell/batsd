@@ -21,6 +21,4 @@ root = File.expand_path(File.join(File.dirname(__FILE__), '..'))
 require File.join(root, 'config', 'boot')
 require File.join(root, 'config', 'environment')
 
-ActiveRecord::Base.establish_connection('job_runner')
-
 JobRunner.start

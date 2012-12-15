@@ -71,6 +71,7 @@ class JobRunner
 
   def self.start
     Rails.logger.info "JobRunner: running"
+    ActiveRecord::Base.establish_connection('job_runner')
     load_jobs
     Rails.logger.flush
 
