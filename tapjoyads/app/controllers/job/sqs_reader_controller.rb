@@ -25,7 +25,7 @@ class Job::SqsReaderController < Job::JobController
       Rails.logger.info "#{@short_queue_name} message received: #{message.body}"
 
       begin
-        Mc.cache.add(get_memcache_lock_key(message.id), 'locked', visibility)
+        DedupeCache.cache.add(get_memcache_lock_key(message.id), 'locked', visibility)
       rescue Memcached::NotStored => e
         Rails.logger.info('Lock exists for this message. Skipping processing.')
         next
@@ -46,9 +46,13 @@ class Job::SqsReaderController < Job::JobController
       message.delete
     end
 
-    Mc.put("sqs.stats.#{@short_queue_name}.visible_messages", queue.visible_messages)
-    Mc.put("sqs.stats.#{@short_queue_name}.invisible_messages", queue.invisible_messages)
-    Mc.put("sqs.stats.#{@short_queue_name}.visibility_timeout", queue.visibility_timeout)
+    begin
+      Mc.put("sqs.stats.#{@short_queue_name}.visible_messages", queue.visible_messages)
+      Mc.put("sqs.stats.#{@short_queue_name}.invisible_messages", queue.invisible_messages)
+      Mc.put("sqs.stats.#{@short_queue_name}.visibility_timeout", queue.visibility_timeout)
+    rescue
+      # don't fail jobs because stats aren't saved properly
+    end
 
     render :text => 'ok'
   end

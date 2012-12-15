@@ -101,6 +101,7 @@ after_fork do |server, worker|
   defined?(ActiveRecord::Base) and ActiveRecord::Base.establish_connection
   defined?(Mc) and Mc.reset_connection
   defined?(SimpledbCache) and SimpledbCache.reset_connection
+  defined?(DedupeCache) and DedupeCache.reset_connection
   defined?(SimpledbResource) and SimpledbResource.reset_connection
   defined?(VerticaCluster) and VerticaCluster.reset_connection
   defined?(AnalyticsLogger) and AnalyticsLogger.after_fork

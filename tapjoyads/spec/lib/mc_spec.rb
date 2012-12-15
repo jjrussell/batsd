@@ -186,3 +186,7 @@ end
 describe StatsCache do
   it_behaves_like "a cache"
 end
+
+describe DedupeCache do
+  it_behaves_like "a cache"
+end
