@@ -6,6 +6,7 @@ describe Dashboard::CurrenciesController do
     @user = FactoryGirl.create(:user)
     login_as(@user)
   end
+
   describe '#show' do
     before :each do
       @app = FactoryGirl.create(:app)
@@ -80,21 +81,72 @@ describe Dashboard::CurrenciesController do
       end
     end
   end
+
   describe '#create' do
-    context 'secondary currency' do
+    context 'with approved partner' do
       before :each do
-        @currency = FactoryGirl.create(:currency, :tapjoy_enabled => false)
+        @app = FactoryGirl.create(:app)
         @params = {
           :terms_of_service => '1',
+          :app_id => @app.id,
           :currency => {
-            :name => "Super #{@currency.name}",
+            :name => "Gold",
           }
         }
       end
 
-      it 'is tapjoy disabled' do
-        put(:create, @params)
-        assigns[:currency].tapjoy_enabled.should be_false
+      it 'creates a new currency' do
+        expect {
+          post :create, @params
+        }.to change(Currency, :count).by(+1)
+      end
+
+      it 'newly created currency is tapjoy enabled' do
+        post :create, @params
+        assigns(:currency).should be_tapjoy_enabled
+      end
+
+      context 'on secondary currency' do
+        before :each do
+          options = {
+            :app_id => @app.id,
+            :callback_url => 'http://example.com',
+          }
+          primary_currency = FactoryGirl.create(:currency, options)
+          @params = {
+            :terms_of_service => '1',
+            :app_id => @app.id,
+            :currency => {
+              :name => "Silver",
+            }
+          }
+          App.any_instance.stub(:can_have_new_currency?).and_return(true)
+        end
+
+        it 'is tapjoy disabled' do
+          post(:create, @params)
+          response.should be_redirect
+          assigns(:currency).should_not be_tapjoy_enabled
+        end
+      end
+    end
+
+    context 'with unapproved partner' do
+      before :each do
+        partner = FactoryGirl.create(:partner, :approved_publisher => false)
+        @app = FactoryGirl.create(:app, :partner => partner)
+        @params = {
+          :terms_of_service => '1',
+          :app_id => @app.id,
+          :currency => {
+            :name => "Gold",
+          }
+        }
+      end
+
+      it 'newly created currency is not tapjoy enabled' do
+        post :create, @params
+        assigns(:currency).should_not be_tapjoy_enabled
       end
     end
   end

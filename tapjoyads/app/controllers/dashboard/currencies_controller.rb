@@ -80,7 +80,6 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
         :created_at     => nil,
         :updated_at     => nil,
         :ordinal        => (@app.currencies.last.ordinal + 100),
-        :tapjoy_enabled => false,
       }
     end
 
