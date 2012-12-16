@@ -331,7 +331,10 @@ class Device < SimpledbShardedResource
     mac_device = Device.new(:key => mac_address, :consistent => true)
     return if mac_device.new_record?
 
-    mac_device.parsed_apps.keys.each do |app_id|
+    mac_device.parsed_apps.keys.each do |currency_id|
+      c = Currency.find_in_cache(currency_id)
+      next unless c
+      app_id = c.id
       mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}", :consistent => true)
       next if mac_pp.new_record?
 
