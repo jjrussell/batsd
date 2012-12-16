@@ -14,7 +14,7 @@ class JobRunner
       active_jobs = Job.active.by_job_type('queue')
     when 'jobserver'
       # TODO (amdtech): Once we have the second cluster for no database access, update this to only get database jobs
-      active_jobs = Job.active.by_job_type('queue')
+      active_jobs = Job.active.uses_database(true).by_job_type('queue')
     when 'queues-nodb'
       active_jobs = Job.active.uses_database(false).by_job_type('queue')
     else
