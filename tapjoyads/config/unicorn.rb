@@ -12,7 +12,7 @@ if server_type == 'masterjobs'
   timeout 43200
 elsif server_type == 'jobserver' || server_type == 'queues-nodb'
   worker_processes 36
-  timeout 43200
+  timeout 3600
 elsif server_type == "dev"
   worker_processes 2
   timeout 90
