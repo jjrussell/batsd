@@ -8,7 +8,9 @@ class Job::JobController < ApplicationController
   private
 
   def around_job
+    worker_name = $0
     params[:concurrency_filename] = nil if params[:concurrency_filename] =~ /\.\.\//
+    $0 = "unicorn - #{@short_queue_name}"
     yield
   rescue => exception
     Airbrake.notify(exception, airbrake_request_data)
@@ -17,6 +19,7 @@ class Job::JobController < ApplicationController
     if params[:concurrency_filename].present? && File.exists?("#{Job::CONCURRENCY_DIR}/#{params[:concurrency_filename]}")
       File.delete("#{Job::CONCURRENCY_DIR}/#{params[:concurrency_filename]}")
     end
+    $0 = worker_name
   end
 
 end
