@@ -328,17 +328,17 @@ class Device < SimpledbShardedResource
 
   def copy_mac_address_device!
     return if mac_address.nil? || key == mac_address
-    mac_device = Device.new(:key => mac_address, :consistent => true)
+    mac_device = Device.new(:key => mac_address)
     return if mac_device.new_record?
 
     mac_device.parsed_apps.keys.each do |currency_id|
       c = Currency.find_in_cache(currency_id)
       next unless c
       app_id = c.id
-      mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}", :consistent => true)
+      mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}")
       next if mac_pp.new_record?
 
-      udid_pp = PointPurchases.new(:key => "#{key}.#{app_id}", :consistent => true)
+      udid_pp = PointPurchases.new(:key => "#{key}.#{app_id}")
       udid_pp.points = mac_pp.points
       udid_pp.virtual_goods = mac_pp.virtual_goods
       udid_pp.save!
@@ -348,7 +348,7 @@ class Device < SimpledbShardedResource
     self.apps = mac_device.parsed_apps.merge(@parsed_apps)
     self.publisher_user_ids = mac_device.publisher_user_ids.merge(publisher_user_ids)
     save!
-    mac_device.delete_all
+    mac_device.delete_all(true)
   end
 
   def handle_sdkless_click!(offer, now)
