@@ -10,8 +10,6 @@ class SupportRequest < SimpledbResource
   belongs_to :click, :foreign_key => 'key'
   belongs_to :gamer
 
-  REQUEST_SOURCE = 'offerwall'
-
   self.domain_name = 'support_requests'
 
   self.sdb_attr :udid
@@ -43,18 +41,9 @@ class SupportRequest < SimpledbResource
           :user_agent => user_agent )
   end
 
-  def fill_from_click(click, params, device, gamer, user_agent)
-    fill( :click      => click,
-          :params     => params,
-          :device     => device,
-          :gamer      => gamer,
-          :user_agent => user_agent )
-  end
-
   def get_last_click(udid, offer)
     conditions = ["udid = ? and advertiser_app_id = ? and manually_resolved_at is null", udid, offer.item_id]
-    clicks = Click.select_all(:conditions => conditions)
-    clicks.max_by { |c| c.clicked_at.to_f }
+    Click.select_all(:conditions => conditions).max_by { |c| c.clicked_at.to_f }
   end
 
   def click
@@ -66,55 +55,26 @@ class SupportRequest < SimpledbResource
   def fill(options)
     app         = options.delete(:app)        { nil }
     currency    = options.delete(:currency)   { nil }
-    click       = options.delete(:click)      { nil }
-    device      = options.delete(:device)     { nil }
-    gamer       = options.delete(:gamer)      { nil }
     offer       = options.delete(:offer)      { nil }
     params      = options.delete(:params)     { |k| raise "#{k} is a required argument" }
     user_agent  = options.delete(:user_agent) { |k| raise "#{k} is a required argument" }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
+    set_attrs(params)
+    currency                    = Currency.find_in_cache(params[:currency_id]) unless currency.present?
+    offer_click                 = offer.present? ? get_last_click(params[:udid], offer) : nil
     self.user_agent             = user_agent
-    self.description            = params[:description]
-    self.language_code          = params[:language_code]
-
-    self.publisher_app_id       = click.present? ? click.publisher_app_id : params[:publisher_app_id]
-    self.publisher_partner_id   = click.present? ? click.publisher_partner_id : params[:publisher_partner_id]
-    self.publisher_user_id      = click.present? ? click.publisher_user_id : params[:publisher_user_id]
-    self.udid                   = device.present? ? device.device_id : params[:udid]
-    self.mac_address            = device.present? && device.is_a?(Device) ? device.mac_address : params[:mac_address]
-    self.device_type            = device.present? ? device.device_type : params[:device_type]
-    self.email_address          = gamer.present? ? gamer.email : params[:email_address]
-    self.gamer_id               = gamer.present? ? gamer.id : nil
-
-
-    unless currency.present?
-      if click.present?
-        currency = Currency.find_in_cache(click.currency_id)
-      else
-        currency = Currency.find_in_cache(params[:currency_id])
-      end
-    end
-
+    self.lives_in               = 'offerwall'
+    self.app_id                 = app.try(:id) if self.app_id.blank?
+    self.currency_id            = currency.try(:id) if self.currency_id.blank?
     self.managed_currency       = currency.try(:tapjoy_managed?)
+    self.offer_id               = offer.try(:id) if self.offer_id.blank?
+    self.click_id               = offer_click.try(:id) if self.click_id.blank?
+    self.offer_value            = offer.try(:payment)
+  end
 
-    self.lives_in = REQUEST_SOURCE
-
-    if click.present?
-      self.app_id               = click.offer.item_id
-      self.currency_id          = click.currency_id
-      self.offer_id             = click.offer_id
-      self.click_id             = click.id
-      self.offer_value          = click.advertiser_amount
-      self.click_source         = click.source
-    else
-      self.app_id               = app.present? ? app.id : params[:app_id]
-      self.currency_id          = currency.present? ? currency.id : params[:currency_id]
-      self.offer_id             = offer.present? ? offer.id : nil
-      offer_click               = offer.present? ? get_last_click(params[:udid], offer) : nil
-      self.click_id             = offer_click.present? ? offer_click.id : nil
-      self.offer_value          = offer.present? ? offer.payment : nil
-      self.click_source         = nil
-    end
+  def set_attrs(params = {})
+    columns = SupportRequest.attribute_names
+    params.each { |k,v| self.put(k.to_s, v) if columns.include?(k.to_s) }
   end
 end
