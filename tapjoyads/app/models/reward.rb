@@ -1,6 +1,6 @@
 class Reward < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "rewards"
+  mirror_configuration :riak_bucket_name => "rewards", :secondary_indexes => ["offer_id"], :read_from_riak => true
 
   self.num_domains = NUM_REWARD_DOMAINS
 
