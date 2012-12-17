@@ -161,7 +161,6 @@ class ApplicationController < ActionController::Base
     downcase_param(:sha2_udid)
     downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
-    downcase_param(:open_udid)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)

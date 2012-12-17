@@ -61,14 +61,12 @@ describe Device do
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
       @device.advertising_id = 'test-advertiser-id'
-      @device.open_udid = 'test-open-udid'
       @device_identifier = FactoryGirl.create(:device_identifier)
     end
 
     it 'creates the device identifiers' do
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA2.hexdigest(@device.key)).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(@device.key)).and_return(@device_identifier)
-      DeviceIdentifier.should_receive(:new).with(:key => @device.open_udid).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.android_id).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => @device.mac_address).and_return(@device_identifier)
       DeviceIdentifier.should_receive(:new).with(:key => Digest::SHA1.hexdigest(Device.formatted_mac_address(@device.mac_address))).and_return(@device_identifier)
