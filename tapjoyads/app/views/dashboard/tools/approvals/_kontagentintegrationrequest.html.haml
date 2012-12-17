@@ -10,7 +10,7 @@
   - @approvals.each do |approval|
     %tr
       %td
-        = approval.item.nil? ? "--" : approval.item.try(:to_s) || approval.item.id
+        = approval.item.to_s
         - if approval.item.partner
           (Partner:
           = link_to approval.item.partner.name, approval.item.partner
