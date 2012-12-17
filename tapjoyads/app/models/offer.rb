@@ -19,7 +19,8 @@ class Offer < ActiveRecord::Base
   ALL_DEVICES = APPLE_DEVICES + ANDROID_DEVICES + WINDOWS_DEVICES
   ALL_OFFER_TYPES = %w( App EmailOffer GenericOffer OfferpalOffer RatingOffer ActionOffer VideoOffer SurveyOffer ReengagementOffer DeeplinkOffer Coupon)
   OBSOLETE_OFFER_TYPES = %w(EmailOffer OfferpalOffer RatingOffer)
-  ACTIVE_OFFER_TYPES = ALL_OFFER_TYPES - OBSOLETE_OFFER_TYPES
+  IMPLICIT_OFFER_TYPES = %w(ReengagementOffer)
+  ACTIVE_OFFER_TYPES = ALL_OFFER_TYPES - OBSOLETE_OFFER_TYPES - IMPLICIT_OFFER_TYPES
   REWARDED_APP_INSTALL_OFFER_TYPES = Set.new(%w( App EmailOffer OfferpalOffer RatingOffer ReengagementOffer))
   ALL_SOURCES = %w( offerwall display_ad featured tj_games )
 

@@ -168,7 +168,7 @@ module Offer::Rejecting
   end
 
   def offer_filter_reject?(currency)
-    currency && currency.offer_filter && !currency.offer_filter.split(',').include?(item_type)
+    !Offer::IMPLICIT_OFFER_TYPES.include?(item_type) && currency && currency.offer_filter && !currency.offer_filter.split(',').include?(item_type)
   end
 
   def device_platform_mismatch?(normalized_device_type)

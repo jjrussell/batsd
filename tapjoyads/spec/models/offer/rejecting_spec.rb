@@ -202,6 +202,16 @@ describe Offer::Rejecting do
         offer = @generic_offer.primary_offer
         offer.offer_filter_reject?(@currency).should be_false
       end
+
+      it "should not reject offer if offer type is a reengagement offer", :offer_filter do
+        app = FactoryGirl.create(:app)
+        currency = FactoryGirl.create(:currency, :app => app)
+        reengagement_offer = app.build_reengagement_offer(:currency => currency, :reward_value => 3, :instructions => "some instructions")
+        reengagement_offer.save
+
+        offer = reengagement_offer.primary_offer
+        offer.offer_filter_reject?(currency).should be_false
+      end
     end
   end
 
