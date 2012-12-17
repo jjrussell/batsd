@@ -17,7 +17,11 @@ module RiakMirror
     retry_count = 0
     begin
       json = @attributes.to_json
-      RiakWrapper.put(self.riak_bucket_name, @key, json)
+      indexes = {}
+      self.secondary_indexes.each do |attribute_name|
+        indexes["#{attribute_name}_bin"] = [@attributes[attribute_name]] unless @attributes[attribute_name].blank?
+      end
+      RiakWrapper.put(self.riak_bucket_name, @key, json, indexes)
     rescue Exception => e
       retry_count += 1
       retry if retry_count < 4
@@ -53,8 +57,10 @@ module RiakMirror
     def mirror_configuration(options = {})
       cattr_accessor :riak_bucket_name
       cattr_accessor :read_from_riak
+      cattr_accessor :secondary_indexes
       self.riak_bucket_name = options[:riak_bucket_name]
       self.read_from_riak = options[:read_from_riak] || false
+      self.secondary_indexes = [options[:secondary_indexes]].flatten || []
     end
   end
 end

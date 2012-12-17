@@ -19,10 +19,11 @@ module RiakWrapper
   end
 
   #Just a wrapper around storing an object in riak
-  def self.put(bucket, key, value, content_type='application/json')
+  def self.put(bucket, key, value, secondary_indexes={}, content_type='application/json')
     bucket = $riak.bucket(bucket)
     object = bucket.get_or_new(key)
     object.content_type = content_type
+    object.indexes = secondary_indexes
     object.raw_data = value
     object.store
   end
