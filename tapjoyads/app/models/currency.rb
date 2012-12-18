@@ -350,7 +350,7 @@ class Currency < ActiveRecord::Base
       self.offer_whitelist   = partner.offer_whitelist
       self.use_whitelist     = partner.use_whitelist
     end
-    if new_record?
+    if new_record? && (id == app_id)
       self.tapjoy_enabled     = partner.approved_publisher
       self.external_publisher = partner.accepted_publisher_tos?
     end
