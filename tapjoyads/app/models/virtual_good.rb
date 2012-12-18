@@ -1,6 +1,6 @@
 class VirtualGood < SimpledbResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "virtual_good"
+  mirror_configuration :riak_bucket_name => "virtual_good", :read_from_riak => true
 
   belongs_to :app
 

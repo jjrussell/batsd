@@ -1,6 +1,6 @@
 class SupportRequest < SimpledbResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "support_requests"
+  mirror_configuration :riak_bucket_name => "support_requests", :read_from_riak => true
 
   belongs_to :device, :foreign_key => 'udid'
   belongs_to :publisher_app, :class_name => 'App'

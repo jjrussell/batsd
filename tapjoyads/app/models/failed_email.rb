@@ -1,6 +1,6 @@
 class FailedEmail < SimpledbResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "failed_emails"
+  mirror_configuration :riak_bucket_name => "failed_emails", :read_from_riak => true
 
   self.domain_name = 'failed_emails'
 

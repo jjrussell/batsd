@@ -1,6 +1,6 @@
 class GameStateMapping < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "game_state_mappings"
+  mirror_configuration :riak_bucket_name => "game_state_mappings", :read_from_riak => true
 
   # key format: app_id.(udid | facebook_id)
 
