@@ -1,9 +1,9 @@
 - size ||= '57x57'
 - hide_icon ||= false
 - use_main ||= false
-.offer_name
+.offer_name{:id => offer.id}
   - unless hide_icon
-    .icon= image_tag(offer.get_icon_url, :size => size, :id => 'icon', :alt => '')
+    .icon= image_tag(offer.get_icon_url(:source => :cloudfront), :size => size, :id => 'icon', :alt => '')
 
   %h1.name= offer.name_with_suffix
   .descriptors= offer.description(use_main)

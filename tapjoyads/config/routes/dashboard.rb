@@ -104,7 +104,7 @@ Tapjoyad::Application.routes.draw do
           end
         end
       end
-      resource :offer do
+      resources :offers do
         member do
           post :toggle
           post :percentile

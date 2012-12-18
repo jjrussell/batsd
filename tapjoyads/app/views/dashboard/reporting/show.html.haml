@@ -16,7 +16,7 @@
     = link_to 'Chrome', 'http://www.google.com/chrome', :target => '_blank'
     \.
 
-= render :partial => 'shared/dropdown_select', :locals => {:objects => current_partner_offers, :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
+= render :partial => 'shared/dropdown_select', :locals => {:objects => [@offer], :selected => @offer, :options => {:extra_url_params => params, :title_prefix => 'Reporting for'} }
 %br/
 
 %form#change_date.tjform
@@ -57,3 +57,9 @@
       .li= link_to(key, download_udids_reporting_path(@offer.id, :date => key))
 
 - include_tapjoy_graph
+
+- content_for :included_javascripts, javascript_include_tag('tapjoy/lazy_loaded_dropdown')
+
+- content_for :page_javascript do
+  :plain
+    $(fetchDropdownOffers($('#apps_box')));

@@ -58,6 +58,7 @@
 - tapjoy/apps.js
 - tapjoy/daily-budget.js
 - tapjoy/graph.js
+- tapjoy/lazy_loaded_dropdown.js
 - tapjoy/payout_confirmations.js
 - tapjoy/payouts.js
 - tapjoy/reporting.js
