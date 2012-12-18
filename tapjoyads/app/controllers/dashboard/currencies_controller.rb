@@ -76,7 +76,7 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
       @currency.ordinal = 1
     else
       @currency = @app.currencies.first.clone
-      @currency.attributes = { :created_at => nil, :updated_at => nil, :ordinal => (@app.currencies.last.ordinal + 100) }
+      @currency.attributes = { :created_at => nil, :updated_at => nil, :ordinal => (@app.currencies.last.ordinal + 100), :tapjoy_enabled => false }
     end
 
     log_activity(@currency)
