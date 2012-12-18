@@ -153,7 +153,7 @@ module Kontagent
           http_response.parsed_response
         else
           p http_response
-          raise StandardError, "Invalid response from remote host"
+          raise StandardError, "Invalid response from remote Kontagent host: #{http_response}"
         end
       end
 

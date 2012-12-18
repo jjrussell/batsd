@@ -33,7 +33,9 @@ class KontagentIntegrationRequest < ActiveRecord::Base
   def after_approve(approval)
     begin
       self.provision!
-    rescue StandardError
+    rescue StandardError => e
+      Airbrake.notify(e)
+
       # on provisioning exception, delete all integration requests for this partner
       partner.kontagent_integration_requests.destroy_all
 
