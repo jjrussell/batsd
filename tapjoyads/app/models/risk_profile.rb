@@ -1,7 +1,7 @@
 require 'zlib'
 class RiskProfile < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "risk_profiles"
+  mirror_configuration :riak_bucket_name => "risk_profiles", :read_from_riak => true
 
   self.num_domains = NUM_RISK_PROFILE_DOMAINS
 
