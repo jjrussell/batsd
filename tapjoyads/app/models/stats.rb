@@ -1,6 +1,6 @@
 class Stats < SimpledbResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "stats"
+  mirror_configuration :riak_bucket_name => "stats", :read_from_riak => true
 
   self.domain_name = 'stats'
 
