@@ -22,9 +22,16 @@ class Stats < SimpledbResource
   end
 
   def after_initialize
-    @parsed_values = values
-    @parsed_virtual_goods = virtual_goods
-    @parsed_countries = countries
+    begin
+      @parsed_values = values
+      @parsed_virtual_goods = virtual_goods
+      @parsed_countries = countries
+    rescue JSON::ParserError
+      fix_bad_json
+      @parsed_values = values
+      @parsed_virtual_goods = virtual_goods
+      @parsed_countries = countries
+    end
   end
 
   def dynamic_domain_name
@@ -118,28 +125,30 @@ class Stats < SimpledbResource
   end
 
   def save(options = {})
-    strip_defaults(@parsed_values)
-    strip_defaults(@parsed_virtual_goods)
-    strip_defaults(@parsed_countries)
+    unless @fixing_bad_json
+      strip_defaults(@parsed_values)
+      strip_defaults(@parsed_virtual_goods)
+      strip_defaults(@parsed_countries)
 
-    changed = false
+      changed = false
 
-    if self.values != @parsed_values
-      changed = true
-      self.values = @parsed_values
+      if self.values != @parsed_values
+        changed = true
+        self.values = @parsed_values
+      end
+
+      if self.virtual_goods != @parsed_virtual_goods
+        changed = true
+        self.virtual_goods = @parsed_virtual_goods
+      end
+
+      if self.countries != @parsed_countries
+        changed = true
+        self.countries = @parsed_countries
+      end
     end
 
-    if self.virtual_goods != @parsed_virtual_goods
-      changed = true
-      self.virtual_goods = @parsed_virtual_goods
-    end
-
-    if self.countries != @parsed_countries
-      changed = true
-      self.countries = @parsed_countries
-    end
-
-    super({ :write_to_memcache => true }.merge(options)) if changed
+    super({ :write_to_memcache => true }.merge(options)) if @fixing_bad_json || changed
   end
 
   def hourly?
@@ -181,5 +190,26 @@ class Stats < SimpledbResource
 
     obj[key] = Array.new(length, 0) if obj[key].nil?
     obj[key]
+  end
+
+  def fix_bad_json
+    @fixing_bad_json = true
+    json_attributes = %w(values virtual_goods countries)
+    json_attributes.each do |attribute|
+      begin
+        self.send(attribute.to_sym)
+      rescue JSON::ParserError
+        multiples = get(attribute).length / 1000
+        key = attribute
+        multiples.times do
+          key += '_'
+        end
+        self.delete(key)
+        self.send(attribute.to_sym)
+      end
+    end
+    save!
+  ensure
+    @fixing_bad_json = false
   end
 end
