@@ -1,6 +1,6 @@
 class EmailAddress < SimpledbResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "email_addresses"
+  mirror_configuration :riak_bucket_name => "email_addresses", :read_from_riak => true
 
   self.domain_name = 'email_addresses'
 

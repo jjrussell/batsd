@@ -1,6 +1,6 @@
 class GameState < SimpledbShardedResource
   include RiakMirror
-  mirror_configuration :riak_bucket_name => "game_states"
+  mirror_configuration :riak_bucket_name => "game_states", :read_from_riak => true
 
   # key format: app_id.publisher_user_id
 
