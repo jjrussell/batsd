@@ -1,7 +1,7 @@
 class Api::Data::DevicesController < ApiController
 
   SAFE_ATTRIBUTES = [:apps, :is_jailbroken, :country, :banned, :product, :version, :mac_address, :publisher_user_ids,
-                     :open_udid, :android_id, :platform, :is_papayan, :all_packages, :current_packages,
+                     :android_id, :platform, :is_papayan, :all_packages, :current_packages,
                      :display_multipliers, :bookmark_tutorial_shown, :suspension_expires_at, :opted_out, :in_network_apps]
   # TODO(isingh): These make RDS calls. Disable them for now
   #:external_publishers, :first_rewardable_currency_id]

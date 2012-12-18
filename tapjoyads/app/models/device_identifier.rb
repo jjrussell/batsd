@@ -2,14 +2,13 @@ class DeviceIdentifier < SimpledbShardedResource
   include RiakMirror
   mirror_configuration :riak_bucket_name => "device_identifiers", :read_from_riak => true
 
-  # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | open_udid | android_id)
+  # key_format: (hashed_udid | mac_address | sha1_hashed_raw_mac_address | android_id)
   #
   ALL_IDENTIFIERS = [
     :sha2_udid,
     :sha1_udid,
     :mac_address,
     :sha1_mac_address,
-    :open_udid,
     :android_id,
   ]
 

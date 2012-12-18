@@ -23,7 +23,6 @@ class Device < SimpledbShardedResource
   self.sdb_attr :product
   self.sdb_attr :version
   self.sdb_attr :mac_address
-  self.sdb_attr :open_udid
   self.sdb_attr :android_id
   self.sdb_attr :idfa
   self.sdb_attr :advertising_id
@@ -65,11 +64,6 @@ class Device < SimpledbShardedResource
     new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
-  end
-
-  def open_udid=(new_value)
-    @create_device_identifiers ||= (self.open_udid != new_value)
-    put('open_udid', new_value)
   end
 
   def android_id=(new_value)
@@ -117,12 +111,6 @@ class Device < SimpledbShardedResource
     self.mac_address = params[:mac_address] if params[:mac_address].present?
     self.android_id = params[:android_id] if params[:android_id].present?
     self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
-
-    if params[:open_udid].present?
-      open_udid_was = self.open_udid
-      self.open_udid = params[:open_udid]
-      path_list << 'open_udid_change' if open_udid_was.present? && open_udid_was != open_udid
-    end
 
     is_jailbroken_was = is_jailbroken
     country_was = country
@@ -307,7 +295,6 @@ class Device < SimpledbShardedResource
   def create_identifiers!
     all_identifiers = [ Digest::SHA2.hexdigest(key) ]
     all_identifiers << Digest::SHA1.hexdigest(key)
-    all_identifiers.push(open_udid) if self.open_udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
     if self.mac_address.present?
       all_identifiers.push(mac_address)
