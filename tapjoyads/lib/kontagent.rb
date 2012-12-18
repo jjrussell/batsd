@@ -147,13 +147,13 @@ module Kontagent
       #   higher-level helpers
       #
 
-      def handle_interaction(expected_code=200,args=nil)
+      def handle_interaction(args=nil,expected_code=200)
         http_response = yield
         if http_response.code == expected_code
           http_response.parsed_response
         else
           error_message = "Invalid response from remote Kontagent host: #{http_response}"
-          error_message = "#{error_message} (Sent arguments: #{args})" if args
+          error_message << "(Sent arguments: #{args})" if args
           raise StandardError, error_message
         end
       end
@@ -163,19 +163,19 @@ module Kontagent
       end
 
       def build!(args)
-        handle_interaction(200,args) do
+        handle_interaction(args) do
           create(args)
         end
       end
 
       def update!(args)
-        handle_interaction(200,args) do
+        handle_interaction(args) do
           update(args)
         end
       end
 
       def delete!(id)
-        handle_interaction(204) { destroy(id) }
+        handle_interaction(nil,204) { destroy(id) }
       end
 
       def find_by_id(id)
