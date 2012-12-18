@@ -17,6 +17,6 @@ class CachedOfferList::S3CachedOfferList < S3Resource
   def self.sync_cached_offer_list(cached_offer_list)
     col = self.new(:id => cached_offer_list.id)
     @@sync_columns.each { |n| col.send("#{n}=", cached_offer_list.send(n))}
-    col.save
+    col.save if Rails.env == 'production'
   end
 end
