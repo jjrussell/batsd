@@ -10,7 +10,7 @@ class Job::JobController < ApplicationController
   def around_job
     worker_name = $0
     params[:concurrency_filename] = nil if params[:concurrency_filename] =~ /\.\.\//
-    $0 = "unicorn - #{@short_queue_name}"
+    $0 = "unicorn - #{self.class.to_s}"
     yield
   rescue => exception
     Airbrake.notify(exception, airbrake_request_data)
