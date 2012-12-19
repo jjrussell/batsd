@@ -72,6 +72,11 @@ CACHE_SERVERS[:stats] = [
   'tj-prod-20120424.fqfjqv.0004.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0005.use1.cache.amazonaws.com' # couchbase stats cluster
 ]
+CACHE_SERVERS[:dedupe] = [
+  'queues-dedupe-0.tapjoy.local',
+  'queues-dedupe-1.tapjoy.local',
+  'queues-dedupe-2.tapjoy.local'
+]
 MEMCACHE_SERVERS = [
   'tj-prod-20120424.fqfjqv.0001.use1.cache.amazonaws.com',
   'tj-prod-20120424.fqfjqv.0002.use1.cache.amazonaws.com',

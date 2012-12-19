@@ -32,6 +32,7 @@ module Tapjoyad
         if forked
           Mc.reset_connection
           SimpledbResource.reset_connection
+          DedupeResource.reset_connection
           VerticaCluster.reset_connection
         end
       end
