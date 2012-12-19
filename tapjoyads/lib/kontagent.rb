@@ -153,7 +153,7 @@ module Kontagent
           http_response.parsed_response
         else
           error_message = "Invalid response from remote Kontagent host: #{http_response}"
-          error_message << "(Sent arguments: #{args})" if args
+          error_message << " (Sent arguments: #{args.inspect})" if args
           raise StandardError, error_message
         end
       end
