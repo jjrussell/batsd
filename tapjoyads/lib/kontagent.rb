@@ -288,8 +288,8 @@ module KontagentHelpers
     elsif resource.is_a? App
       app = resource
       {
-        :name           => app.name,
-        :platform_name  => app.platform_name,
+        :name           => app.name.truncate(36),
+        :platform_name  => app.platform_name.try(:downcase) == 'android' ? 'android' : 'iOS',
         :account_id     => id_for(app.partner),
         :application_id => id_for(app)
       }
