@@ -10,8 +10,11 @@ working_directory app_dir
 if server_type == 'masterjobs'
   worker_processes 24
   timeout 43200
-elsif server_type == 'jobserver' || server_type == 'queues-nodb'
-  worker_processes 36
+elsif server_type == 'jobserver'
+  worker_processes 15
+  timeout 3600
+elsif server_type == 'queues-nodb'
+  worker_processes 25
   timeout 3600
 elsif server_type == "dev"
   worker_processes 2
