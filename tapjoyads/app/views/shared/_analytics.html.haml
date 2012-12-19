@@ -2,12 +2,12 @@
   :javascript
     var _gaq = _gaq || [];
     _gaq.push(
-      ['_setCustomVar', 1, 'tapjoy_user', '#{current_user ? current_user.employee? : 'logged_out'}', 1],
       ['_setAccount', 'UA-25098478-2'],
       ['_setDomainName', '.tapjoy.com'],
       ['_trackPageview'],
       ['b._setAccount', 'UA-5323442-1'],
       ['b._setDomainName', '.tapjoy.com'],
+      ['b._setCustomVar', 1, 'tapjoy_user', '#{current_user ? current_user.employee? : 'logged_out'}', 1],
       ['b._trackPageview']
     );
     (function() {
