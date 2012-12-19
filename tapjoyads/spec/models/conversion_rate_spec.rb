@@ -17,6 +17,16 @@ describe ConversionRate do
     end
   end
 
+  describe '#destroy' do
+    let(:currency) { FactoryGirl.create(:currency, :conversion_rate => 10) }
+    let(:conversion) { with_attrs(:currency_id => currency.id, :rate => 40, :minimum_offerwall_bid => 3) }
+
+    it "should cache the currency" do
+      Currency.any_instance.should_receive(:cache)
+      conversion.destroy
+    end
+  end
+
   describe 'validations' do
     context 'rate' do
       context 'when blank' do

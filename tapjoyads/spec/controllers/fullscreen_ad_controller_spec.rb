@@ -12,7 +12,7 @@ describe FullscreenAdController do
       OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
 
       @currency = FactoryGirl.create(:currency)
-      @currency.stub(:active_currency_sale).and_return(nil)
+      @currency.stub(:active_and_future_sales).and_return({})
       @params = {
         :udid => 'stuff',
         :publisher_user_id => 'more_stuff',

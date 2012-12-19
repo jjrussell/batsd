@@ -50,12 +50,12 @@ class GetOffersController < ApplicationController
     end
 
     #TODO(nixoncd): uncomment when currency sale view gets cleaned up
-    #@currency_sale = @currency.active_currency_sale
+    #@currency_sale = @currency.active_and_future_sales[Time.zone.now]
     #if @currency_sale
-      #if @currency_sale.message.present?
-        #@currency_sale_message = @currency_sale.message
+      #if @currency_sale[:message_enabled]
+        #@currency_sale_message = @currency_sale[:message]
       #else
-        #@currency_sale_message = @currency_sale.currency_sale_message(@publisher_app.name, @currency.name)
+        #@currency_sale_message = CurrencySale.currency_sale_message(@publisher_app.name, @currency.name, @currency_sale[:multiplier])
       #end
     #end
 

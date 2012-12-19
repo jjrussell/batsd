@@ -26,7 +26,7 @@
   %td
     = f.check_box :message_enabled
     .details
-      - if @currency.message_enabled? && @currency.active_currency_sale? && @currency.active_currency_sale.message_enabled?
+      - if @currency.message_enabled? && @active_sales.present? && @active_sales.first.message_enabled?
         This is currently overridden by an active currency sale message.
 %tr.admin.message_enabled{:class => @currency.message_enabled? ? '' : 'hidden' }
   %th
@@ -40,11 +40,11 @@
     Currency Sales
     #help_currency_sales.help ?
   %td
-    = @currency.active_currency_sale? ? "You currently have a currency sale running till #{@currency.active_currency_sale.end_time.to_s(:mdy_ampm)}" : "You have no active currency sales."
+    = @active_sales.present? ? "You currently have a currency sale running till #{@active_sales.first.end_time.to_s(:mdy_ampm)}" : "You have no active currency sales."
 %tr.admin
   %th &nbsp;
   %td
-    = @currency.next_currency_sale? ?  "Your next currency sale is on #{@currency.next_currency_sale.start_time.to_s(:mdy_ampm)}" : "You have no planned currency sales."
+    = @future_sales.present? ?  "Your next currency sale is on #{@future_sales.first.start_time.to_s(:mdy_ampm)}" : "You have no planned currency sales."
 %tr.admin
   %th &nbsp;
   %td

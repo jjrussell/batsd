@@ -15,10 +15,11 @@ class CurrencySale < ActiveRecord::Base
 
   validate :validate_start_end, :validate_in_the_future, :validate_not_overlapping_times, :if => :time_changed?
 
-  scope :active,   lambda { where("start_time <= ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now) }
-  scope :past,     lambda { where("start_time < ? AND end_time < ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
-  scope :future,   lambda { where("start_time > ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
-  scope :disabled, lambda { where("disabled_at IS NOT NULL").order('start_time') }
+  scope :active,           lambda { where("start_time <= ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now) }
+  scope :past,             lambda { where("start_time < ? AND end_time < ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :future,           lambda { where("start_time > ? AND end_time > ? AND disabled_at IS NULL", Time.zone.now, Time.zone.now).order('start_time') }
+  scope :disabled,         lambda { where("disabled_at IS NOT NULL").order('start_time') }
+  scope :active_or_future, lambda { where("((start_time <= ? AND end_time > ?) OR (start_time > ? AND end_time > ?)) AND disabled_at IS NULL", Time.zone.now, Time.zone.now, Time.zone.now, Time.zone.now) }
 
   #
   # Predicate queries
@@ -49,12 +50,16 @@ class CurrencySale < ActiveRecord::Base
     self.start_time.present? && self.end_time.present? && [self.start_time_changed?, self.end_time_changed?].any?
   end
 
-  def multiplier_to_string
-    (self.multiplier % 1) == 0 ? self.multiplier.to_i.to_s : self.multiplier.to_s
+  def self.multiplier_to_string(multiplier)
+    (multiplier % 1) == 0 ? multiplier.to_i.to_s : multiplier.to_s
   end
 
-  def currency_sale_message(pub, currency_name)
-    "#{pub} is having a currency sale! Earn #{self.multiplier_to_string}x #{currency_name}!"
+  def multiplier_to_string
+    CurrencySale.multiplier_to_string(self.multiplier)
+  end
+
+  def self.currency_sale_message(pub, currency_name, multiplier)
+    "#{pub} is having a currency sale! Earn #{CurrencySale.multiplier_to_string(multiplier)}x #{currency_name}!"
   end
 
 protected

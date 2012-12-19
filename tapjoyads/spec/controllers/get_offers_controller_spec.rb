@@ -27,6 +27,7 @@ describe GetOffersController do
 
       @deeplink.cache
       Currency.stub(:find_in_cache).and_return(@currency)
+      @currency.stub(:active_and_future_sales).and_return({})
       App.stub(:find_in_cache).and_return(@currency.app)
 
       offers = [ @offer, @offer2, @offer3, @offer4 ]
@@ -256,6 +257,7 @@ describe GetOffersController do
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
       Offer.stub(:find_in_cache).and_return(@offer)
+      @currency.stub(:active_and_future_sales).and_return({})
     end
 
     context 'with redesign specified' do
@@ -353,6 +355,7 @@ describe GetOffersController do
       }
       Currency.stub(:find_in_cache).and_return(@currency)
       App.stub(:find_in_cache).and_return(@currency.app)
+      @currency.stub(:active_and_future_sales).and_return({})
     end
 
     it 'should mark the pub app as using non-html responses' do
@@ -516,6 +519,7 @@ describe GetOffersController do
       [@offer, @currency].each &:cache
 
       Currency.stub(:find_in_cache).and_return(@currency)
+      @currency.stub(:active_and_future_sales).and_return({})
       App.stub(:find_in_cache).and_return(@currency.app)
       get(:index, @params)
     end
@@ -548,7 +552,6 @@ describe GetOffersController do
     end
 
     it 'assigns currencies' do
-      Currency.any_instance.stub(:active_currency_sale).and_return(nil)
       get(:index, @params.merge(:currency_selector => '1'))
       assigns(:currency).should == @currency
       assigns(:currencies).should_not be_nil
