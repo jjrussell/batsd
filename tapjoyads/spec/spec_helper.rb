@@ -106,7 +106,6 @@ Spork.prefork do
 
     config.after(:suite) do
       SimpledbResource.reset_connection
-      SimpledbResource.delete_domain(RUN_MODE_PREFIX + "testing")
       DeferredGarbageCollection.stop
     end
   end

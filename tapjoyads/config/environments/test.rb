@@ -61,7 +61,7 @@ SPROCKETS_CONFIG = {
 if ENV['CUCUMBER']
   RUN_MODE_PREFIX = "test_"
 else
-  RUN_MODE_PREFIX = "test_#{Time.now.to_i}_"
+  RUN_MODE_PREFIX = "test_#{Time.now.to_i % 20}_"
 end
 
 API_URL = local_config['api_url'] || 'http://localhost:3000'
