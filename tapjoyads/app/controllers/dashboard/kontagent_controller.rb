@@ -19,10 +19,10 @@ class Dashboard::KontagentController < Dashboard::DashboardController
   end
 
   def create
-    unless current_user.current_partner_id
+    unless current_user && current_user.current_partner_id
       @kontagent_integration_request = KontagentIntegrationRequest.new
       flash[:error] = "You must have an active current partner to continue"
-      redirect_to :action => :new
+      redirect_to login_path
       return
     end
 
