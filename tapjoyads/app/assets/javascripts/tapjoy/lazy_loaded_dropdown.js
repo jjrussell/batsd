@@ -17,7 +17,7 @@ function dropdownify(offers, element) {
 function titleFor(offer) {
   return "<div class='offer_name'>" +
     "<div class='icon'>" +
-      // "<img alt='' height='24' width='24' id='icon' src='" + offer.icon_url + "'>" +
+      "<img alt='' height='24' width='24' id='icon' src='" + offer.icon_url + "'>" +
     "</div>" +
     "<h1 class='name'>" + offer.name + "</h1>" +
     "<div class='descriptors'>" + offer.descriptors.join(', ') + "</div>" +
@@ -33,7 +33,7 @@ function urlFor(offer) {
 }
 
 function isSelected(offer) {
-  offer.id == ('#selected_app .app .offer_name').attr('id');  //TODO: Not this
+  offer.id == ('#selected_app .app .offer_name').attr('id');
 }
 
 function selected(offer) {
@@ -85,10 +85,10 @@ function fetchDropdownOffers(element) {
 };
 
 function checkFinishedLoading(count) {
-  setInterval(function () {
+  var k = setInterval(function () {
     if($('#apps_box .app').size() >= count-1) {
       $('#app_dropdown_loading_icon').remove();
       clearInterval();
     }
-  }, 100);
+  }, 1000);
 }
