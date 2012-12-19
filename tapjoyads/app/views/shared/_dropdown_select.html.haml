@@ -12,32 +12,13 @@
           Add a new App
           = link_to('#', new_app_path, :class => "hidden")
       - else
-        = render :partial => 'shared/dropdown_item', :locals => {:item => selected}
+        = render :partial => 'shared/dropdown_item', :locals => {:item => selected, :selected => nil, :options => options}
   #apps_dropdown.hidden
     #filter_box
       Filter:
       = text_field_tag(:dropdown_app_name)
     #apps_box
-      - objects.each do |o|
-        - if o.is_a?(App)
-          - case params[:controller]
-          - when 'currencies'
-            - if o.primary_currency.nil?
-              - url = new_app_currency_path(:app_id => o.id)
-            - else
-              - url = app_currency_path(:app_id => o.id, :id => o.primary_currency.id)
-          - when 'virtual_goods'
-            - url = app_virtual_goods_path(:app_id => o.id)
-          - else
-            - url = app_path(o, options[:extra_url_params])
-        - else
-          - url = reporting_path(o, options[:extra_url_params])
-        - class_name = o == selected ? "selected" : ""
-        .app{ :class => class_name, :title => o.name }
-          %span.app-name
-            = render :partial => 'shared/dropdown_item', :locals => {:item => o}
-            = hidden_field_tag 'app_id', (o.is_a?(App) ? o.id : o), :disabled => true
-          = link_to('#', url, :class => "hidden")
+      = render :partial => 'shared/dropdown_item', :collection => objects, :as => :item, :locals => {:selected => selected, :options => options}
     - if options[:not_for_nav]
       #app_box_placeholder
     - else
@@ -104,6 +85,11 @@
         border-bottom-left-radius: 0px;
         -moz-border-radius-topleft: 0px;
         -moz-border-radius-bottomleft: 0px;
+      }
+
+      #selected_app .app {
+        padding-top: 0px;
+        max-height: 24px;
       }
       #selected_app img, .app img {
         vertical-align: middle;

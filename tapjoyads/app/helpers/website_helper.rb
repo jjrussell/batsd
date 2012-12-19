@@ -115,19 +115,20 @@ EOJS
     (request.headers['User-Agent'] || '')[/msie/i]
   end
 
-  def platform_icon_url(object)
-    platform =
-      if object.is_a?(Offer)
-        if %w(App RatingOffer ActionOffer).include?(object.item_type)
-          object.item.platform
-        else
-          'multi_platform'
-        end
+  def platform(object)
+    if object.is_a?(Offer)
+      if %w(App RatingOffer ActionOffer).include?(object.item_type)
+        object.item.platform
       else
-        object.platform
+        'multi_platform'
       end
+    else
+      object.platform
+    end
+  end
 
-    "#{platform}_flat.png"
+  def platform_icon_url(object)
+    "#{platform(object)}_flat.png"
   end
 
   def set_tapjoy_timezone_skew

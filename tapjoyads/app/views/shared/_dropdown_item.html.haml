@@ -1,6 +1,24 @@
-- if item.is_a?(Offer)
-  = render :partial => 'dashboard/offers/offer_title', :locals => {:offer => item, :size => '24x24'}
+- if item.is_a?(App)
+  - case params[:controller]
+  - when 'currencies'
+    - if item.primary_currency.nil?
+      - url = new_app_currency_path(:app_id => item.id)
+    - else
+      - url = app_currency_path(:app_id => item.id, :id => item.primary_currency.id)
+  - when 'virtual_goods'
+    - url = app_virtual_goods_path(:app_id => item.id)
+  - else
+    - url = app_path(item, options[:extra_url_params])
 - else
-  = image_tag(item.get_icon_url, :size => '24x24', :alt => '')
-  = item.is_a?(App) ? item.name : item.name_with_suffix
-= image_tag(platform_icon_url(item), :class => 'platform_icon')
+  - url = reporting_path(item, options[:extra_url_params])
+- class_name = item == selected ? "selected" : ""
+.app{ :class => class_name, :title => item.name }
+  %span.app-name
+    - if item.is_a?(Offer)
+      = render :partial => 'dashboard/offers/offer_title', :locals => {:offer => item, :size => '24x24', :use_main => true}
+    - else
+      = image_tag(item.get_icon_url, :size => '24x24', :alt => '')
+      = item.is_a?(App) ? item.name : item.name_with_suffix
+    = image_tag(platform_icon_url(item), :class => 'platform_icon')
+    = hidden_field_tag 'app_id', (item.is_a?(App) ? item.id : item), :disabled => true
+  = link_to('#', url, :class => "hidden")

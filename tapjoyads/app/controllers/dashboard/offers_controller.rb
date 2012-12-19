@@ -1,9 +1,10 @@
 class Dashboard::OffersController < Dashboard::DashboardController
+  include WebsiteHelper
   layout 'apps'
   current_tab :apps
 
   filter_access_to :all
-  before_filter :setup, :except => [ :toggle ]
+  before_filter :setup, :except => [ :index, :toggle ]
   after_filter :save_activity_logs, :only => [ :create, :update, :toggle ]
 
   BASE_SAFE_ATTRIBUTES     = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
@@ -17,6 +18,26 @@ class Dashboard::OffersController < Dashboard::DashboardController
                                :dma_codes, :regions, :carriers, :cities, :rate_filter_override,
                                :x_partner_prerequisites, :x_partner_exclusion_prerequisites, :requires_mac_address,
                                :requires_udid ]
+
+  # Only used to dynamically build offer lists
+  def index
+    if(params[:count])
+      render :text => current_partner.offers.count, :status => :ok
+      return
+    end
+    limit  = (params[:page_size] || 100).to_i
+    offset = (params[:page]      ||   0).to_i * limit
+    @offers = current_partner.offers.where("id != ?", params[:selected]).
+      offset(offset).
+      limit(limit).
+      order('UPPER(name), UPPER(name_suffix)').
+      includes(:item)
+
+    render :json => {:data => (
+      #[id, name, descriptors, icon_url, platform_icon_url]
+      @offers.map {|o| {:id => o.id, :name => o.name_with_suffix, :descriptors => o.descriptors(true), :icon_url => o.get_icon_url, :platform => platform(o), :platform_icon_url => platform_icon_url(o)} }
+      )}, :status => :ok
+  end
 
   def new
     offer_params = {}
