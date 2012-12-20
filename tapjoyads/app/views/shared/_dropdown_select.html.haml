@@ -96,6 +96,10 @@
         margin: 0px 10px;
       }
 
+      #selected_app img#app_dropdown_loading_icon {
+        margin: 0px;
+      }
+
       #selected_app .offer_name, #apps_box .offer_name {
         float: left;
         height: 24px;
@@ -191,6 +195,8 @@
         opacity: 1.0;
         float: right;
       }
+
+
   - content_for :page_javascript do
     :plain
       $(function($){
@@ -208,17 +214,6 @@
             $('#apps_dropdown input#dropdown_app_name').focus();
           } else {
             $('#apps_dropdown').hide();
-          }
-        });
-
-        $('#apps_dropdown .app').not('.selected').click(function(e) {
-          $('.app.selected').removeClass('selected');
-          $(this).addClass('selected');
-          $('#selected_app_text').html($(this).html());
-          if ("#{options[:not_for_nav]}") {
-            location.href = "#{per_app_inventory_management_index_path}?current_app=" + $(this).children('span').children('input').val();
-          } else {
-            location.href = $(this).children('a').attr('href');
           }
         });
 
