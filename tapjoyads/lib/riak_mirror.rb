@@ -12,7 +12,7 @@ module RiakMirror
   #there are no partial updates.  Whatever the state of the attributes is at write time
   #is what we put into riak
   def write_to_sdb_with_mirror(expected_attr = {})
-    result = write_to_sdb_without_mirror(expected_attr)
+    result = self.disable_sdb_writes ? {} : write_to_sdb_without_mirror(expected_attr)
 
     retry_count = 0
     begin
@@ -58,9 +58,11 @@ module RiakMirror
       cattr_accessor :riak_bucket_name
       cattr_accessor :read_from_riak
       cattr_accessor :secondary_indexes
+      cattr_accessor :disable_sdb_writes
       self.riak_bucket_name = options[:riak_bucket_name]
       self.read_from_riak = options[:read_from_riak] || false
       self.secondary_indexes = [options[:secondary_indexes]].flatten || []
+      self.disable_sdb_writes = options[:disable_sdb_writes] || false
     end
   end
 end
