@@ -120,6 +120,9 @@ class Dashboard::CurrenciesController < Dashboard::DashboardController
     @app = App.find(params[:app_id])
     if params[:id]
       @currency = @app.currencies.find(params[:id])
+      currency_sales = @currency.currency_sales
+      @active_sales = currency_sales.active
+      @future_sales = currency_sales.future
     end
   end
 

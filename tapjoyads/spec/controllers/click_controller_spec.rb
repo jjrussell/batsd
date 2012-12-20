@@ -4,7 +4,7 @@ describe ClickController do
 
   before :each do
     @currency = FactoryGirl.create(:currency)
-    @currency.stub(:active_currency_sale).and_return(nil)
+    Currency.any_instance.stub(:active_and_future_sales).and_return({})
   end
 
   context "for all click types" do
@@ -163,7 +163,6 @@ describe ClickController do
 
   describe '#deeplink' do
     before :each do
-      @currency = FactoryGirl.create(:currency)
       @deeplink_offer = @currency.deeplink_offer
       @udid = '0000222200002229'
       @offer= @deeplink_offer.primary_offer

@@ -9,7 +9,8 @@ describe OfferTriggeredActionsController do
     @click = FactoryGirl.create(:click, :offer_id => @offer.id)
     Click.stub(:find).and_return(@click)
     currency = @click.currency
-    Currency.stub(:find_in_cache).and_return(currency)
+    Currency.any_instance.stub(:active_and_future_sales).and_return({})
+    @currency.stub(:active_and_future_sales).and_return({})
     @params = {
       :data                  => ObjectEncryptor.encrypt(:data => 'some_data'),
       :id                    => @offer.id,

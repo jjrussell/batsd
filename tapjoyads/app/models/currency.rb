@@ -267,29 +267,21 @@ class Currency < ActiveRecord::Base
     advertiser_amount
   end
 
+  #Get the multiplier value from the ranged hash by doing a key lookup with the current time, or if there is no
+  #'active sale' just return the default multiplier of 1.0
   def currency_sale_multiplier
-    active_currency_sale.try(:multiplier) || DEFAULT_MULTIPLIER
+    active_and_future_sales[Time.zone.now].try(:[], :multiplier) || DEFAULT_MULTIPLIER
   end
 
-  def active_currency_sale
-    now = Time.zone.now
-    Array(self.currency_sales.find(:first, :conditions => ["start_time <= ? AND end_time > ? AND disabled_at is null", now, now])).first
+  #Build a ranged hash which has a key (the range) of the start time to end time of a currency sale. Then by doing
+  #a key lookup in the ranged hash with a specific time we can get the multiplier, message_enabled and message of a
+  #currency sale based on it being between a key (the range)
+  def active_and_future_sales
+    self.currency_sales.active_or_future.each_with_object(RangedHash.new) do |sale, hash|
+      hash[sale.start_time..sale.end_time] = { :multiplier => sale.multiplier, :message => sale.message, :message_enabled => sale.message_enabled }
+    end
   end
-  memoize :active_currency_sale
-
-  def active_currency_sale?
-    active_currency_sale.present?
-  end
-
-  def next_currency_sale
-    now = Time.zone.now
-    Array(self.currency_sales.find(:first, :conditions => [ "start_time > ? AND end_time > ? AND disabled_at is null", now, now ], :order => 'start_time')).first
-  end
-  memoize :next_currency_sale
-
-  def next_currency_sale?
-    next_currency_sale.present?
-  end
+  memoize :active_and_future_sales
 
   def get_tapjoy_amount(offer, displayer_app = nil)
     -get_advertiser_amount(offer) - get_publisher_amount(offer, displayer_app) - get_displayer_amount(offer, displayer_app)

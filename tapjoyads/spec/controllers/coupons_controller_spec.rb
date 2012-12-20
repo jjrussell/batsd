@@ -8,7 +8,7 @@ describe CouponsController do
     @offer = @app.primary_offer
     Offer.stub(:find_in_cache).and_return(@offer)
     @currency = FactoryGirl.create(:currency)
-    @currency.stub(:active_currency_sale).and_return(nil)
+    @currency.stub(:active_and_future_sales).and_return({})
     Currency.stub(:find_in_cache).and_return(@currency)
     params = { :udid => '123', :publisher_app_id => 'pub_id',
                :click_key => 'click', :currency_id => @currency.id,
