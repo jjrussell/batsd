@@ -34,6 +34,7 @@ class KontagentIntegrationRequest < ActiveRecord::Base
     begin
       self.provision!
     rescue StandardError => e
+      LiveDebugger.new('kontagent_issues').log(e)
       Airbrake.notify(e)
 
       # on provisioning exception, delete all integration requests for this partner
