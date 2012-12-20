@@ -29,7 +29,7 @@ elsif server_type == 'connect'
   worker_processes 24
   timeout 20
 else
-  worker_processes 10
+  worker_processes 5
   timeout 90
 end
 
