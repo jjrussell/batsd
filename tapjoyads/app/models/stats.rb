@@ -18,7 +18,8 @@ class Stats < SimpledbResource
   COUNTRY_CODES = Earth::Country::CODE_TO_NAME
 
   def initialize(options = {})
-    super({ :load_from_memcache => true }.merge(options))
+    #TODO::: TURN BACK ON THE CACHE WHEN WE FIX THE /etc/hosts issue
+    super({ :load_from_memcache => false }.merge(options))
   end
 
   def after_initialize
@@ -148,7 +149,8 @@ class Stats < SimpledbResource
       end
     end
 
-    super({ :write_to_memcache => true }.merge(options)) if @fixing_bad_json || changed
+    #TODO::: TURN BACK ON THE CACHE WHEN WE FIX THE /etc/hosts issue
+    super({ :write_to_memcache => false }.merge(options)) if @fixing_bad_json || changed
   end
 
   def hourly?
