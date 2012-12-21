@@ -86,10 +86,13 @@ MEMCACHE_SERVERS = [
 ]
 SDB_MEMCACHE_SERVERS = [
   'tj-sdb-20120912.fqfjqv.0001.use1.cache.amazonaws.com',
-  'tj-sdb-20120912.fqfjqv.0002.use1.cache.amazonaws.com',
+  'riakcache-cache-1.tapjoy.local',
   'tj-sdb-20120912.fqfjqv.0004.use1.cache.amazonaws.com',
   'tj-sdb-20120912.fqfjqv.0005.use1.cache.amazonaws.com',
   'tj-sdb-20120912.fqfjqv.0006.use1.cache.amazonaws.com',
+  'riakcache-cache-5.tapjoy.local',
+  'riakcache-cache-6.tapjoy.local',
+  'riakcache-cache-7.tapjoy.local'
 ]
 DISTRIBUTED_MEMCACHE_SERVERS = [
   'localhost:21210', # couchbase us-east-1b
