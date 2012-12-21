@@ -46,6 +46,7 @@ class SimpledbResource
     @attributes_to_replace     = options.delete(:attrs_to_replace)     { {} }
     @attributes_to_delete      = options.delete(:attrs_to_delete)      { {} }
     @attribute_names_to_delete = options.delete(:attr_names_to_delete) { [] }
+    @bypass_riak_reads         = options.delete(:bypass_riak_reads)    { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
     #NOTE: need to define attribute methods here, since we have to have all attributes defined
     # before we can call this method
@@ -176,7 +177,7 @@ class SimpledbResource
     save_to_sdb      = options.delete(:write_to_sdb)      { true }
     catch_exceptions = options.delete(:catch_exceptions)  { true }
     expected_attr    = options.delete(:expected_attr)     { {} }
-    from_queue       = options.delete(:from_queue)        { false }
+    from_queue       = options.delete(:from_queue)        { false }    
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
     Rails.logger.info "Saving to #{@this_domain_name}"
@@ -338,7 +339,7 @@ class SimpledbResource
     retries      = options.delete(:retries)      { 3 }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    load_options = {:consistent => true, :load_from_memcache => false}.merge(load_options)
+    load_options = {:consistent => true, :load_from_memcache => false, :bypass_riak_reads => true}.merge(load_options)
 
     begin
       row = self.new(load_options.dup)
