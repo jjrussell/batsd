@@ -36,7 +36,7 @@ module RiakMirror
   end
 
   def load_from_sdb_with_mirror(consistent=false)
-    if read_from_riak 
+    if read_from_riak && !@bypass_riak_reads
       retry_count = 0
       begin
         RiakWrapper.get_json(self.riak_bucket_name, @key)
