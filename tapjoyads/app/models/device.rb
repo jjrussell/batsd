@@ -303,10 +303,6 @@ class Device < SimpledbShardedResource
     all_identifiers.each do |identifier|
       device_identifier = DeviceIdentifier.new(:key => identifier)
       next if device_identifier.udid == key
-      if !device_identifier.new_record? && device_identifier.udid? && device_identifier.udid != key && Rails.env.production?
-        data = {:identifier => identifier, :new_udid => key, :old_udid => device_identifier.udid, :timestamp => Time.zone.now}.to_json
-        $redis.rpop('all_device_identifiers_overwrites') if $redis.lpush('all_device_identifiers_overwrites', data) > MAX_OVERWRITES_TRACKED
-      end
       device_identifier.udid = key
       device_identifier.save!
     end
