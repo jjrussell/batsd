@@ -679,6 +679,7 @@ class SimpledbResource
 protected
 
   def write_to_sdb(expected_attr = {})
+    RightAws::AWSErrorHandler.reiteration_time = 0.1
     sdb_interface = RightAws::SdbInterface.new(nil, nil, {:multi_thread => true, :port => 80, :protocol => 'http'})
     attributes_to_put = @attributes_to_add.merge(@attributes_to_replace)
     attributes_to_delete = @attributes_to_delete.clone
