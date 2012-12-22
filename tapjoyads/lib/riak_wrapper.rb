@@ -19,13 +19,24 @@ module RiakWrapper
   end
 
   #Just a wrapper around storing an object in riak
-  def self.put(bucket, key, value, secondary_indexes={}, content_type='application/json')
-    bucket = $riak.bucket(bucket)
+  def self.put(bucket_name, key, value, secondary_indexes={}, content_type='application/json')
+    bucket = $riak.bucket(bucket_name)
     object = bucket.get_or_new(key)
     object.content_type = content_type
     object.indexes = secondary_indexes
     object.raw_data = value
     object.store
+
+    # Write devices to two riak clusters..sdb is about to lose it.
+    #SUPER HACKY.  Obviously we could abstract this change, but I'd rather isolate the code we know is working
+    if bucket_name == 'd'
+      device_bucket = $riak_devices.bucket(bucket_name)
+      device_object = device_bucket.get_or_new(key)
+      device_object.content_type = content_type
+      device_object.indexes = secondary_indexes
+      device_object.raw_data = value
+      device_object.store
+    end
   end
 
 end
