@@ -61,8 +61,13 @@ module RiakMirror
         retry if retry_count < 4
         Rails.logger.error "Error reading from Riak"
         Airbrake.notify_or_ignore(e)
-        #Fallback to SDB
-        load_from_sdb_without_mirror(consistent)  
+        #If we don't have the data in SDB, no need to fallback to it
+        if self.disabled_sdb_writes          
+          raise e
+        else
+          #Fallback to SDB
+          load_from_sdb_without_mirror(consistent)
+        end        
       end
     else
       load_from_sdb_without_mirror(consistent)
