@@ -72,6 +72,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_daily_partner_stats(/index)' => 'queue_daily_partner_stats#index'
     match 'queue_downloads(/index)' => 'queue_downloads#index'
     match 'queue_failed_sdb_saves(/index)' => 'queue_failed_sdb_saves#index'
+    match 'queue_failed_riak_saves(/index)' => 'queue_failed_riak_saves#index'
     match 'queue_get_store_info(/index)' => 'queue_get_store_info#index'
     match 'queue_hourly_app_stats(/index)' => 'queue_hourly_app_stats#index'
     match 'queue_hourly_partner_stats(/index)' => 'queue_hourly_partner_stats#index'

@@ -13,6 +13,7 @@ class QueueNames
   DOWNLOADS                  = "#{BASE_NAME}Downloads"
   FAILED_EMAILS              = "#{BASE_NAME}FailedEmails"
   FAILED_SDB_SAVES           = "#{BASE_NAME}FailedSdbSaves"
+  FAILED_RIAK_SAVES          = "#{BASE_NAME}FailedRiakSaves"
   GET_STORE_INFO             = "#{BASE_NAME}GetStoreInfo"
   MAIL_CHIMP_UPDATES         = "#{BASE_NAME}MailChimpUpdates"
   PARTNER_CHANGES            = "#{BASE_NAME}PartnerChanges"

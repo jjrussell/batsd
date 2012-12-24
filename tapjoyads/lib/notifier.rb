@@ -10,6 +10,7 @@ class DeviceCountryChanged < RuntimeError; end
 class JailbrokenInstall < RuntimeError; end
 class FailedToInvalidateCloudfront < RuntimeError; end
 class SdbObjectNotInS3 < RuntimeError; end
+class RiakObjectNotInS3 < RuntimeError; end
 class SkippedSendCurrency < RuntimeError; end
 class AndroidRank404 < RuntimeError; end
 class EmailVerificationFailure < RuntimeError; end

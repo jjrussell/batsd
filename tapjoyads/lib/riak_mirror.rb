@@ -15,12 +15,12 @@ module RiakMirror
     result = self.disable_sdb_writes ? {} : write_to_sdb_without_mirror(expected_attr)
 
     retry_count = 0
-    begin
-      json = @attributes.to_json
-      indexes = {}
-      self.secondary_indexes.each do |attribute_name|
-        indexes["#{attribute_name}_bin"] = [@attributes[attribute_name]] unless @attributes[attribute_name].blank?
-      end
+    json = @attributes.to_json
+    indexes = {}
+    self.secondary_indexes.each do |attribute_name|
+      indexes["#{attribute_name}_bin"] = [@attributes[attribute_name]] unless @attributes[attribute_name].blank?
+    end
+    begin          
       RiakWrapper.put(self.riak_bucket_name, @key, json, indexes)
     rescue Exception => e
       retry_count += 1
@@ -29,6 +29,22 @@ module RiakMirror
       #Let's catch all Riak exceptions.  We don't want these to bubble up.  I'll fire
       #off an Airbrake message just so I know what's going on
       Airbrake.notify_or_ignore(e)
+      if self.queue_failed_writes
+        #Push the data off to the riak write queue
+        Rails.logger.info "Riak save failed. Adding to sqs. Domain: #{self.riak_bucket_name} Key: #{@key} Exception: #{e.class} - #{e}"
+        uuid = UUIDTools::UUID.random_create.to_s
+        s3_bucket = S3.bucket(BucketNames::FAILED_RIAK_SAVES)
+        riak_data = {
+          :json_data => json,
+          :bucket_name => self.riak_bucket_name,
+          :key => @key,
+          :indexes => indexes
+        }
+        s3_bucket.objects["incomplete/#{uuid}"].write(:data => riak_data.to_json)
+        message = { :uuid => uuid }.to_json
+        Sqs.send_message(QueueNames::FAILED_RIAK_SAVES, message)
+        Rails.logger.info "Successfully added to sqs. Message: #{message}"
+      end
     end
 
     #And now it's like we were never here...
@@ -59,10 +75,12 @@ module RiakMirror
       cattr_accessor :read_from_riak
       cattr_accessor :secondary_indexes
       cattr_accessor :disable_sdb_writes
+      cattr_accessor :queue_failed_writes
       self.riak_bucket_name = options[:riak_bucket_name]
       self.read_from_riak = options[:read_from_riak] || false
       self.secondary_indexes = [options[:secondary_indexes]].flatten || []
       self.disable_sdb_writes = options[:disable_sdb_writes] || false
+      self.queue_failed_writes = options[:queue_failed_writes] || false
     end
   end
 end
