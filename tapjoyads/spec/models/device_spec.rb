@@ -98,6 +98,29 @@ describe Device do
     end
   end
 
+  describe '#copy_mac_address_device!' do
+    context 'without invalid data' do
+      before :each do
+        @device = FactoryGirl.create(:device)
+        Device.should_not_receive(:new)
+      end
+
+      it 'doesnt attempt a copy' do
+        @device.mac_address = ''
+        @device.copy_mac_address_device!
+
+        @device.mac_address = 'null'
+        @device.copy_mac_address_device!
+
+        @device.mac_address = @device.key
+        @device.copy_mac_address_device!
+
+        @device.key = 'null'
+        @device.copy_mac_address_device!
+      end
+    end
+  end
+
   describe '#handle_sdkless_click!' do
     before :each do
       app = FactoryGirl.create :app
