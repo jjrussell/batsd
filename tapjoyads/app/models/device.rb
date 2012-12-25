@@ -310,7 +310,7 @@ class Device < SimpledbShardedResource
   end
 
   def copy_mac_address_device!
-    return if mac_address.nil? || key == mac_address
+    return unless mac_address_mergable?
     mac_device = Device.new(:key => mac_address)
     return if mac_device.new_record?
 
@@ -440,6 +440,10 @@ class Device < SimpledbShardedResource
   end
 
   private
+
+  def mac_address_mergable?
+    !(mac_address.nil? || key == mac_address || mac_address == "null" || key == "null")
+  end
 
   def merge_temporary_devices!(all_identifiers)
     orig_apps = self.parsed_apps.clone
