@@ -310,7 +310,7 @@ class Device < SimpledbShardedResource
   end
 
   def copy_mac_address_device!
-    return unless mac_address_mergable?
+    return unless mac_address_mergeable?
     mac_device = Device.new(:key => mac_address)
     return if mac_device.new_record?
 
@@ -441,7 +441,7 @@ class Device < SimpledbShardedResource
 
   private
 
-  def mac_address_mergable?
+  def mac_address_mergeable?
     !(mac_address.nil? || key == mac_address || mac_address == "null" || key == "null")
   end
 
