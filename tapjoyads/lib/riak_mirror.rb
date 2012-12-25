@@ -20,7 +20,7 @@ module RiakMirror
     self.secondary_indexes.each do |attribute_name|
       indexes["#{attribute_name}_bin"] = [@attributes[attribute_name]] unless @attributes[attribute_name].blank?
     end
-    begin          
+    begin
       RiakWrapper.put(self.riak_bucket_name, @key, json, indexes)
     rescue Exception => e
       retry_count += 1
@@ -62,12 +62,12 @@ module RiakMirror
         Rails.logger.error "Error reading from Riak"
         Airbrake.notify_or_ignore(e)
         #If we don't have the data in SDB, no need to fallback to it
-        if self.disabled_sdb_writes          
+        if self.disable_sdb_writes
           raise e
         else
           #Fallback to SDB
           load_from_sdb_without_mirror(consistent)
-        end        
+        end
       end
     else
       load_from_sdb_without_mirror(consistent)
