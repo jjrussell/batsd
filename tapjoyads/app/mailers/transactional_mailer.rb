@@ -189,7 +189,7 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     latest_run_time = 0
     gamer_devices = gamer[:gamer_devices]  # [{:id=>..., :type=>...},...,...]
 
-    gamer_devices.try (:each) do |device_hash|    #{:id=> Device#key, :type=>GamerDevice#device_type}
+    gamer_devices.each do |device_hash|    #{:id=> Device#key, :type=>GamerDevice#device_type}
       device = Device.new(:key => device_hash[:id])
       external_publisher = ExternalPublisher.load_all_for_device(device).first
       next unless external_publisher.present?
