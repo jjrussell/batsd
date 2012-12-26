@@ -200,6 +200,13 @@ class WebRequest < AnalyticsLogger::Message
     params.keys.each { |key| self.send("#{key}=", params[key]) if columns.include?(key.to_sym) } unless params.blank?
     unless geoip_data.blank?
       geoip_data.keys.each { |key| self.send("geoip_#{key}=", geoip_data[key]) if columns.include?("geoip_#{key}".to_sym) }
+
+      # All city names are encoded using ISO-8859-1.  The version of JSON
+      # being used in this app (1.5.3) cannot properly generate json from strings
+      # containing some characters in this encoding -- and we can't upgrade JSON
+      # (to 1.6.6) due to a conflict with the Chef gem.  As a result, we convert
+      # the string to utf8 (which *can* be used by the JSON gem).
+      self.geoip_city         = Iconv.conv('utf-8', 'ISO-8859-1', geoip_data[:city]) if geoip_data[:city]
       self.country            = geoip_data[:primary_country]
       self.geoip_latitude     = geoip_data[:lat]
       self.geoip_longitude    = geoip_data[:long]
