@@ -603,7 +603,7 @@ class SimpledbResource
     attributes_only = options.delete(:attributes_only) { false }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
 
-    obj = {:domain => @this_domain_name, :key => @key, :attrs => @attributes}
+    obj = {:domain => @this_domain_name, :key => @key, :attrs => @attributes, :clazz => self.class.to_s}
     unless attributes_only
       obj[:attrs_to_add] = @attributes_to_add unless @attributes_to_add.empty?
       obj[:attrs_to_replace] = @attributes_to_replace unless @attributes_to_replace.empty?
@@ -625,14 +625,19 @@ class SimpledbResource
     attrs_to_replace = json['attrs_to_replace']
     attrs_to_delete = json['attrs_to_delete']
     attr_names_to_delete = json['attr_names_to_delete']
+    clazz = json['clazz']
 
     options = {:load => false, :domain_name => domain_name, :key => key, :attributes => attributes}
     options[:attrs_to_add] = attrs_to_add if attrs_to_add
     options[:attrs_to_replace] = attrs_to_replace if attrs_to_replace
     options[:attrs_to_delete] = attrs_to_delete if attrs_to_delete
     options[:attr_names_to_delete] = attr_names_to_delete if attr_names_to_delete
-
-    return self.new(options)
+    #If we know the originating class, let's instantiate that to get the appropriate parameters
+    unless clazz.nil?
+      Object.const_get(clazz).new(options)
+    else
+      self.new(options)      
+    end
   end
 
   ##
