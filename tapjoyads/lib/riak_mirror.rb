@@ -62,7 +62,7 @@ module RiakMirror
         Rails.logger.error "Error reading from Riak"
         Airbrake.notify_or_ignore(e)
         #If we don't have the data in SDB, no need to fallback to it
-        if self.disable_sdb_writes
+        if self.disable_sdb_writes && Rails.env.production?
           raise e
         else
           #Fallback to SDB
