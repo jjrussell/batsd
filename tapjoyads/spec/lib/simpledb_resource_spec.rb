@@ -10,6 +10,7 @@ describe SimpledbResource do
     self.sdb_attr :foo_time, {:type => :time}
     self.sdb_attr :foo_array, {:cgi_escape => true, :replace => false, :force_array => true}
     self.sdb_attr :foo_bool, {:type => :bool}
+    self.sdb_attr :foo_to_delete
   end
 
   def load_model(options = {})
@@ -133,6 +134,7 @@ describe SimpledbResource do
       @model.foo_array.should == ['a']
       @model.foo_array = 'b'
       @model.foo_bool = true
+      @model.foo_to_delete = 'blah'
       @model.save!
 
       @model.foo_10.should == 10
@@ -140,6 +142,7 @@ describe SimpledbResource do
       @model.foo_time.should == Time.at(16)
       SortedSet.new(@model.foo_array).should == SortedSet.new(['a', 'b'])
       @model.foo_bool.should == true
+      @model.foo_to_delete.should == 'blah'
 
       load_model
       @model.foo_10.should == 10
@@ -147,7 +150,12 @@ describe SimpledbResource do
       @model.foo_time.should == Time.at(16)
       SortedSet.new(@model.foo_array).should == SortedSet.new(['a', 'b'])
       @model.foo_bool.should be_true
+      @model.foo_to_delete.should == 'blah'
       @model.updated_at.should > Time.now - 1.minutes
+      @model.remove_foo_to_delete
+      @model.save!
+      load_model
+      @model.foo_to_delete.should be_nil
     end
 
     it 'handles expected attributes' do

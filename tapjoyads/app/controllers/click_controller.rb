@@ -306,7 +306,11 @@ class ClickController < ApplicationController
     click.currency_reward        = @currency.get_reward_amount(@offer)
     click.displayer_amount       = @currency.get_displayer_amount(@offer, @displayer_app)
     click.tapjoy_amount          = @currency.get_tapjoy_amount(@offer, @displayer_app)
-    click.exp                    = params[:exp]
+    if click.exp.present? && params[:exp].blank?
+      click.remove_exp
+    else
+      click.exp                    = params[:exp]
+    end
     click.device_name            = params[:device_name]
     click.publisher_partner_id   = @currency.partner_id
     click.advertiser_partner_id  = @offer.partner_id
