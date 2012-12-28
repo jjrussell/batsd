@@ -249,11 +249,11 @@ class SimpledbResource
 
     attr_array = @attributes[attr_name]
 
-    unless @attributes[attr_name]
+    if @attributes[attr_name].blank?
       return force_array ? [] : default_value
     end
 
-    if not force_array and @attributes[attr_name].first.length >= 1000
+    if !force_array && @attributes[attr_name].first.length >= 1000
       joined_value = ''
       while @attributes[attr_name] && @attributes[attr_name].first.length >= 1000 do
         joined_value += @attributes[attr_name].first
@@ -269,7 +269,7 @@ class SimpledbResource
       TypeConverters::TYPES[type].from_string(unescape_specials(value))
     end
 
-    return attr_array.first if not force_array and attr_array.length == 1
+    return attr_array.first if !force_array && attr_array.length == 1
     return attr_array
   end
 
