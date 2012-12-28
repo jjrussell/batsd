@@ -7,7 +7,7 @@ class DedupeCache < Mc
   # waiting on memcache for a bit.
   def self.reset_connection
     options = {
-      :support_cas      => false,
+      :support_cas      => true,
       :prefix_key       => RUN_MODE_PREFIX,
       :auto_eject_hosts => true,
       :tcp_nodelay      => true,
