@@ -185,24 +185,14 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
   end
 
   def setup_for_tjm_welcome_email_without_using_tjm_tables(gamer, device_info = {})
-    arr = [nil, nil, nil]
-    latest_run_time = 0
-    gamer_devices = gamer[:gamer_devices]  # [{:id=>..., :type=>...},...,...]
-
-    gamer_devices.each do |device_hash|    #{:id=> Device#key, :type=>GamerDevice#device_type}
-      device = Device.new(:key => device_hash[:id])
-      external_publisher = ExternalPublisher.load_all_for_device(device).first
-      next unless external_publisher.present?
-      latest_run_time = [latest_run_time, external_publisher.last_run_time].max
-      if latest_run_time == external_publisher.last_run_time
-        arr = [device, device_hash, external_publisher]
-      end
+    gamer_devices = gamer[:gamer_devices]
+    if gamer_devices.present?
+      device, gamer_device, external_publisher = get_latest_device(gamer_devices)
     end
-    device, gamer_device, external_publisher = arr
 
     get_offerwall(device, device_info, external_publisher) if external_publisher
 
-    gamer_device ||= gamer_devices.first
+    gamer_device ||= gamer_devices.present? ? gamer_devices.first : nil
     selected_devices = device_info[:selected_devices] || []
     @linked = gamer_device.present?
     @android_device = @linked ? (gamer_device[:type] == 'android') : !selected_devices.include?('ios')
@@ -213,5 +203,20 @@ class TransactionalMailer  ## Soon to extend ExactTargetMailer
     @facebook_signup = gamer[:facebook_id].present?
     @gamer_email = gamer[:email] if @facebook_signup
     true
+  end
+
+  def get_latest_device(gamer_devices)
+    latest_run_time = 0
+    arr = nil
+    gamer_devices.each do |device_hash|    #{:id=> Device#key, :type=>GamerDevice#device_type}
+      device = Device.new(:key => device_hash[:id])
+      external_publisher = ExternalPublisher.load_all_for_device(device).first
+      next unless external_publisher.present?
+      latest_run_time = [latest_run_time, external_publisher.last_run_time].max
+      if latest_run_time == external_publisher.last_run_time
+        arr = [device, device_hash, external_publisher]
+      end
+    end
+    arr
   end
 end
