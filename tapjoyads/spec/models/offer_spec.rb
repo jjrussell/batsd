@@ -1972,33 +1972,6 @@ describe Offer do
     end
   end
 
-  describe '#rewarded_for?' do
-    before :each do
-      @currency = FactoryGirl.create(:currency)
-    end
-    context 'offer and currency are rewared' do
-      it 'should return true' do
-        @offer.rewarded_for?(@currency).should == true
-      end
-    end
-    context 'offer or currency or both are non-rewared' do
-      it 'should return false' do
-        @offer.rewarded = false
-        @currency.stub(:rewarded?).and_return(true)
-        @offer.rewarded_for?(@currency).should == false
-
-        @offer.rewarded = true
-        @currency.stub(:rewarded?).and_return(false)
-        @offer.rewarded_for?(@currency).should == false
-
-        @offer.rewarded = true
-        @currency.stub(:rewarded?).and_return(false)
-        @offer.rewarded_for?(@currency).should == false
-
-      end
-    end
-  end
-
   describe '#main?' do
     let(:app)            { FactoryGirl.create(:app) }
     let!(:primary_offer) { app.primary_offer }

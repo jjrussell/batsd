@@ -45,6 +45,13 @@ describe ClickController do
         @click.store_name.should == 'google'
       end
     end
+
+    context "offer and currency are rewarded" do
+      it "click should be rewarded" do
+        get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
+        @click.rewarded.should be_true
+      end
+    end
   end
 
   describe "#generic" do

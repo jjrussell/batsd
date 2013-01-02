@@ -824,10 +824,6 @@ class Offer < ActiveRecord::Base
     name
   end
 
-  def rewarded_for?(currency)
-    rewarded? && currency.rewarded?
-  end
-
   def num_support_requests(start_time = 1.day.ago, end_time = Time.zone.now)
     Mc.get_and_put("offer.support_requests.#{id}", false, 1.hour) do
       conditions = [
