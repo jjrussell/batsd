@@ -40,7 +40,12 @@ class ConnectController < ApplicationController
       @web_request.path = path
     end
 
-    @web_request.save
+    begin
+      @web_request.save
+    rescue JSON::GeneratorError => e
+      @web_request.attributes.each { |k, v| v.force_encoding!('utf-8') }
+      @web_request.save # will re-raise the same thing if fix doesn't work
+    end
 
     if sdkless_supported?
       @sdkless_clicks = @device.sdkless_clicks

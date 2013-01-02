@@ -55,7 +55,7 @@ module TypeConverters
 
   class JsonConverter
     def from_string(s, strict=false)
-      JSON.parse(s)
+      JSON.parse(s) rescue JSON.parse(s.force_encoding('utf-8'))
     end
     def to_string(j)
       j.to_json
