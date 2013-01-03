@@ -12,7 +12,11 @@ module RiakMirror
   #there are no partial updates.  Whatever the state of the attributes is at write time
   #is what we put into riak
   def write_to_sdb_with_mirror(expected_attr = {})
-    result = self.disable_sdb_writes ? {} : write_to_sdb_without_mirror(expected_attr)
+    result = {}
+    #Till we get in a test riak solution, we can keep using mock sdb
+    if Rails.env.production? && !self.disable_sdb_writes
+      result = write_to_sdb_without_mirror(expected_attr)
+    end
 
     retry_count = 0
     json = @attributes.to_json
@@ -29,7 +33,8 @@ module RiakMirror
       #Let's catch all Riak exceptions.  We don't want these to bubble up.  I'll fire
       #off an Airbrake message just so I know what's going on
       Airbrake.notify_or_ignore(e)
-      if self.queue_failed_writes
+      #Disable queueing for tests until we get the test Riak in palce
+      if self.queue_failed_writes && Rails.env.production?
         #Push the data off to the riak write queue
         Rails.logger.info "Riak save failed. Adding to sqs. Domain: #{self.riak_bucket_name} Key: #{@key} Exception: #{e.class} - #{e}"
         uuid = UUIDTools::UUID.random_create.to_s

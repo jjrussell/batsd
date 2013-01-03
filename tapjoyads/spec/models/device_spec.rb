@@ -286,12 +286,6 @@ describe Device do
     it 'is correctly found when searched by id' do
       Device.find(@key, :consistent => true).should == @device
       Device.find_by_id(@key, :consistent => true).should == @device
-      Device.find_all_by_id(@key, :consistent => true).first.should == @device
-    end
-
-    it 'is correctly found when searched by where conditions' do
-      Device.find(:first, :where => "itemname() = '#{@key}'", :consistent => true).should == @device
-      Device.find(:all, :where => "itemname() = '#{@key}'", :consistent => true).first.should == @device
     end
   end
 
