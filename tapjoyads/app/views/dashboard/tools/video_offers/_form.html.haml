@@ -50,8 +50,8 @@
         = f.text_area(:x_partner_exclusion_prerequisites, :rows => 5)
         = error_message_on @video_offer, :x_partner_exclusion_prerequisites
     %tr
-      %th= label_tag :video, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
-      %td= file_field_tag :video
+      %th= label_tag :video_file, @video_offer.new_record? ? 'Upload Video' : 'Upload New Video'
+      %td= f.file_field :video_file
     - if !@video_offer.new_record?
       %tr
         %th= label_tag "Current Icon", "Current Icon"

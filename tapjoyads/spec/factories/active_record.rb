@@ -127,7 +127,7 @@ FactoryGirl.define do
   factory :video_offer do
     association :partner
     name { FactoryGirl.generate(:name) }
-    video_url ''
+    video_file { File.new(Rails.root.join('features', 'support', 'fixtures', 'icon.png')) }
     app_targeting false
   end
 

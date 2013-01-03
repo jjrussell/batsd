@@ -616,17 +616,6 @@ class Offer < ActiveRecord::Base
     false
   end
 
-  def save_video!(video_src_blob)
-    bucket = S3.bucket(BucketNames::TAPJOY)
-
-    object = bucket.objects["videos/src/#{id}.mp4"]
-    existing_video_blob = object.exists? ? object.read : ''
-
-    return if Digest::MD5.hexdigest(video_src_blob) == Digest::MD5.hexdigest(existing_video_blob)
-
-    object.write(:data => video_src_blob, :acl => :public_read)
-  end
-
   def expected_device_types
     if item_type == 'App' || item_type == 'ActionOffer' || item_type == 'RatingOffer'
       item.get_offer_device_types
