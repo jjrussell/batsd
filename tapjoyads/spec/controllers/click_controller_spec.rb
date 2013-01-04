@@ -3,7 +3,7 @@ require 'spec_helper'
 describe ClickController do
 
   before :each do
-    @currency = FactoryGirl.create(:currency)
+    @currency = FactoryGirl.create(:currency, :tapjoy_enabled => true)
     Currency.any_instance.stub(:active_and_future_sales).and_return({})
   end
 
