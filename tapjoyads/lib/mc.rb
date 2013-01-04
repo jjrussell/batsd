@@ -176,6 +176,10 @@ class Mc
     end
   end
 
+  class << self
+    alias_method :set, :put # for rollout
+  end
+
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
       errors = []
