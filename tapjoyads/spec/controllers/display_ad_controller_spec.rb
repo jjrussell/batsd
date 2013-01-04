@@ -175,20 +175,27 @@ describe DisplayAdController do
         obj_ad_bg.stub(:read).and_return(ad_bg)
       end
 
-      it 'should mark the pub app as using non-html responses' do
-        message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
-        Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+      context 'valid OfferList' do
+        before :each do
+          offer_list = double(OfferList)
+          OfferList.stub(:new).and_return(offer_list)
+          offer_list.stub(:weighted_rand).and_return(@offer)
+        end
+        it 'should mark the pub app as using non-html responses' do
+          message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+          Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
 
-        get(:index, @params)
-      end
+          get(:index, @params)
+        end
 
-      it 'should queue up tracking url calls' do
-        @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address       => @controller.send(:ip_address),
-          :udid             => 'stuff',
-          :publisher_app_id => @currency.app.id).once
+        it 'should queue up tracking url calls' do
+          @offer.should_receive(:queue_impression_tracking_requests).with(
+            :ip_address       => @controller.send(:ip_address),
+            :udid             => 'stuff',
+            :publisher_app_id => @currency.app.id).once
 
-        get(:index, @params)
+          get(:index, @params)
+        end
       end
 
       context 'with unfilled request' do
@@ -205,6 +212,9 @@ describe DisplayAdController do
 
       context 'with custom ad' do
         before :each do
+          offer_list = double(OfferList)
+          OfferList.stub(:new).and_return(offer_list)
+          offer_list.stub(:weighted_rand).and_return(@offer)
           @offer.banner_creatives = %w(320x50 640x100)
           @offer.approved_banner_creatives = %w(320x50 640x100)
           @offer.rewarded = false
@@ -258,17 +268,27 @@ describe DisplayAdController do
 
     describe '#webview' do
 
-      it 'should queue up tracking url calls' do
-        @offer.should_receive(:queue_impression_tracking_requests).with(
-          :ip_address       => @controller.send(:ip_address),
-          :udid             => 'stuff',
-          :publisher_app_id => @currency.app.id).once
+      context 'valid OfferList' do
+        before :each do
+          offer_list = double(OfferList)
+          OfferList.stub(:new).and_return(offer_list)
+          offer_list.stub(:weighted_rand).and_return(@offer)
+        end
+        it 'should queue up tracking url calls' do
+          @offer.should_receive(:queue_impression_tracking_requests).with(
+            :ip_address       => @controller.send(:ip_address),
+            :udid             => 'stuff',
+            :publisher_app_id => @currency.app.id).once
 
-        get(:webview, @params)
+          get(:webview, @params)
+        end
       end
 
       context 'with custom ad' do
         before :each do
+          offer_list = double(OfferList)
+          OfferList.stub(:new).and_return(offer_list)
+          offer_list.stub(:weighted_rand).and_return(@offer)
           @offer.banner_creatives = %w(320x50)
           @offer.approved_banner_creatives = %w(320x50)
           @offer.rewarded = false
@@ -286,6 +306,11 @@ describe DisplayAdController do
       end
 
       context 'with generated ad' do
+        before :each do
+          offer_list = double(OfferList)
+          OfferList.stub(:new).and_return(offer_list)
+          offer_list.stub(:weighted_rand).and_return(@offer)
+        end
         it 'contains proper image link' do
           get(:webview, @params)
 
