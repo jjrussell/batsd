@@ -256,21 +256,22 @@ describe Dashboard::OffersController do
           :featured_ad_action, :featured_ad_content, :featured_ad_color]
 
         @controller.stub(:find_app).with(@app.id, {:redirect_on_nil => false}).and_return(@app)
-        @offer = mock('offer')
+        @offer = @app.primary_offer
         @controller.stub(:log_activity).with(@offer)
-        @app.stub(:primary_offer).and_return(@offer)
+        @app.stub_chain(:offers, :find).and_return(@offer)
+        @params = { :id => @offer.id, :app_id => @app.id, :offer => {} }
       end
 
       it 'will call with base attributes' do
         @offer.stub(:safe_update_attributes).with({}, @safe_attributes).once.and_return(true)
-        post(:update, :app_id => @app.id, :offer => {})
+        put(:update, @params)
       end
 
       context 'when it updates properly' do
         it 'flashes a success notice' do
           @controller.instance_eval{flash.stub(:sweep)}
           @offer.stub(:safe_update_attributes).with({}, @safe_attributes).and_return(true)
-          post(:update, :app_id => @app.id, :offer => {})
+          put(:update, @params)
           flash[:notice].should == 'Your offer was successfully updated.'
         end
       end
@@ -284,15 +285,16 @@ describe Dashboard::OffersController do
             mock_enable_requests.stub(:pending).and_return(['test'])
             @controller.instance_eval{flash.stub(:sweep)}
             @offer.stub(:enable_offer_requests).and_return(mock_enable_requests)
+            @params = { :id => @offer.id, :app_id => @app.id, :offer => {} }
           end
 
           it 'assigns the first pending enable offer' do
-            post(:update, :app_id => @app.id, :offer => {})
+            put(:update, @params)
             assigns(:enable_request).should == 'test'
           end
 
           it 'flashes an error' do
-            post(:update, :app_id => @app.id, :offer => {})
+            put(:update, @params)
             flash[:error].should == 'Your offer could not be updated.'
           end
         end
@@ -309,12 +311,12 @@ describe Dashboard::OffersController do
           end
 
           it 'assigns the built enable offer' do
-            post(:update, :app_id => @app.id, :offer => {})
+            put(:update, @params)
             assigns(:enable_request).should == 'test'
           end
 
           it 'flashes an error' do
-            post(:update, :app_id => @app.id, :offer => {})
+            put(:update, @params)
             flash[:error].should == 'Your offer could not be updated.'
           end
         end
@@ -325,9 +327,10 @@ describe Dashboard::OffersController do
       before :each do
         @controller.stub(:permitted_to?).with(:edit, :dashboard_statz).and_return(true)
         @controller.stub(:find_app).with(@app.id, anything).and_return(@app)
-        @offer = mock('offer')
+        @offer = @app.primary_offer
         @controller.stub(:log_activity).and_return(true)
-        @app.stub(:primary_offer).and_return(@offer)
+        @app.stub_chain(:offers, :find).and_return(@offer)
+        @params = { :id => @offer.id, :app_id => @app.id, :offer => {} }
       end
 
       SAFE_ATTRIBUTES = [ :daily_budget, :user_enabled, :bid, :self_promote_only,
@@ -341,7 +344,7 @@ describe Dashboard::OffersController do
       it "can update only safe atrtibutes on the related Offer" do
         @offer.stub(:safe_update_attributes) do |garbage, attributes|
           attributes.each { |attribute| SAFE_ATTRIBUTES.should include attribute }
-          post(:update, :app_id => @app.id, :offer => {})
+          put(:update, @params)
         end
       end
 
@@ -349,7 +352,7 @@ describe Dashboard::OffersController do
         SAFE_ATTRIBUTES.each do |attribute|
           it "including '#{attribute}'" do
             @offer.should_receive(:safe_update_attributes) { |garbage, attributes| attributes.should include attribute }
-            post(:update, :app_id => @app.id, :offer => {})
+            put(:update, @params)
           end
         end
       end
