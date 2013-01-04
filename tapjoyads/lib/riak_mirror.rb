@@ -14,7 +14,7 @@ module RiakMirror
   def write_to_sdb_with_mirror(expected_attr = {})
     result = {}
     #Till we get in a test riak solution, we can keep using mock sdb
-    if Rails.env.production? && !self.disable_sdb_writes
+    if !self.disable_sdb_writes || !Rails.env.production?
       result = write_to_sdb_without_mirror(expected_attr)
     end
 
