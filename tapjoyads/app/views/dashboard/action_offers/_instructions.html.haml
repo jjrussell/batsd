@@ -1,8 +1,24 @@
 %p
-  Use Pay-Per-Action to encourage your users to engage with your application. Pay-Per-Action allows you to set up actions such as "Register for XYZ", "Complete the Tutorial", or "Beat Level One" that allow you to pay for a user to engage with your app.
+  We support two action campaign types:
+  %ol.instructions
+    %li
+      %strong
+        Pay Per Install + Action
+      &ndash; A campaign that asks new users to install your app and perform an action that you specify, e.g. "Complete the tutorial." The minimum bid is $0.20. The prerequisite should be set to "None" (to make this change, submit a request to #{mail_to "support@tapjoy.com"})
+    %li
+      %strong
+        Tapjoy Reconnect
+      &ndash; A campaign that targets your existing userbase to return to your app and perform an action that you specify, e.g. "Spin the daily wheel." The minimum bid is $0.10. The prerequisite should be set to the application you would like the user to return to. Please note that we accept protocol handlers, which sends users directly to your app (to support this, please submit a request to #{mail_to "support@tapjoy.com"}). The use of protocol handlers is optional but highly recommended. If a protocol handler is not in place, users will need to open your app manually.
+%p
+  Create an Action ID below to get integrated. You can edit any action and their instructions by selecting the action, or create new actions by clicking on the Create New Action button.
   %ul
-    %li You cannot incentivize actions that require payment.
-    %li All actions need to be able to be completed in less than 3 minutes.
-    %li You must have the name of the app in the name of the action.
-    %li Actions will be reviewed by Tapjoy support before they are enabled.
-%p= "If you have any questions about whether an action is suitable for PPA, please email #{mail_to "mobilesupport@tapjoy.com"}.".html_safe
+    %li
+      You cannot incentivize actions that require payment.
+    %li
+      All actions need to be able to be completed in less than 3 minutes.
+    %li
+      You must have the name of the app in the name of the action.
+    %li
+      Actions will be reviewed by Tapjoy support before they are enabled.
+%p
+  Once you've integrated the code, contact #{mail_to "support@tapjoy.com"} to test the integration and enable your action campaign. Each action needs to be individually tested and enabled by Tapjoy.
