@@ -3,7 +3,7 @@ class Job::JobController < ApplicationController
 
   before_filter { ActiveRecordDisabler.enable_queries! } unless Rails.env.production?
   before_filter :authenticate
-  around_filter :around_job
+  around_filter :around_job unless Rails.env.test?
 
   private
 
