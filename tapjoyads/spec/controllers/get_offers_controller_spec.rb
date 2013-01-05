@@ -513,7 +513,8 @@ describe GetOffersController do
         :udid => @device.id,
         :publisher_user_id => 'more_stuff',
         :currency_id => @currency.id,
-        :app_id => @currency.app.id
+        :app_id => @currency.app.id,
+        :type => Offer::CLASSIC_OFFER_TYPE
       }
 
       [@offer, @currency].each &:cache
