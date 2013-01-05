@@ -654,7 +654,7 @@ describe Currency do
 
     context 'when approved' do
       it 'should set currency to Tapjoy Enabled' do
-        @currency.tapjoy_enabled.should_not be_true
+        @currency.tapjoy_enabled = false
         @currency.after_approve(nil)
         @currency.reload
         @currency.tapjoy_enabled.should be_true
