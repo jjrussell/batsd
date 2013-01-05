@@ -159,6 +159,7 @@ FactoryGirl.define do
     callback_url Currency::TAPJOY_MANAGED_CALLBACK_URL
     conversion_rate 100
     message_enabled false
+    tapjoy_enabled true
   end
 
   factory :unmanaged_currency, :parent => :currency do
