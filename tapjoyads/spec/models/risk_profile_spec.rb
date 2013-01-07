@@ -25,31 +25,45 @@ describe RiskProfile do
     it 'returns total offset' do
       subject.add_curated_offset('test1', 20)
       subject.add_historical_offset('test2', -40)
-      subject.total_score_offset.should == -20
+      subject.total_score_offset.should == -10
     end
 
     context 'when profile includes no historical offsets' do
       it 'adds default offset for profile with no history' do
         subject.add_curated_offset('test1', 20)
-        subject.total_score_offset.should == 20 + RiskProfile::NO_HISTORY_OFFSET
+        subject.total_score_offset.should == (20 + RiskProfile::NO_HISTORY_OFFSET['no_history']['offset']) / 2
       end
     end
 
-    context 'when sum of offsets is below minimum offset' do
-      it 'returns minimum offset' do
-        subject.add_curated_offset('test1', -60)
-        subject.add_historical_offset('test2', -40)
-        subject.add_historical_offset('test3', -1)
-        subject.total_score_offset.should == RiskProfile::MINIMUM_TOTAL_OFFSET
+    context 'when adding an offset with a value less than the minimum offset' do
+      it 'sets sets value of historical offset to minimum offset value' do
+        subject.add_curated_offset('test1', -100)
+        subject.add_historical_offset('test2', -101)
+        subject.add_historical_offset('test3', -150)
+        subject.total_score_offset.should == -100
+      end
+
+      it 'sets sets value of curated offset to minimum offset value' do
+        subject.add_curated_offset('test1', -100)
+        subject.add_historical_offset('test2', -101)
+        subject.add_curated_offset('test3', -150)
+        subject.total_score_offset.should == -100
       end
     end
 
-    context 'when sum of offsets exceeds maximum offset' do
-      it 'returns maximum offset' do
-        subject.add_curated_offset('test1', 60)
-        subject.add_historical_offset('test2', 40)
-        subject.add_historical_offset('test3', 1)
-        subject.total_score_offset.should == RiskProfile::MAXIMUM_TOTAL_OFFSET
+    context 'when adding an offset with a value greater than the maximum offset' do
+      it 'sets sets value of historical offset to maximum offset value' do
+        subject.add_curated_offset('test1', 100)
+        subject.add_historical_offset('test2', 103)
+        subject.add_historical_offset('test3', 150)
+        subject.total_score_offset.should == 100
+      end
+
+      it 'sets sets value of curated offset to maximum offset value' do
+        subject.add_curated_offset('test1', 100)
+        subject.add_historical_offset('test2', 103)
+        subject.add_curated_offset('test3', 150)
+        subject.total_score_offset.should == 100
       end
     end
   end

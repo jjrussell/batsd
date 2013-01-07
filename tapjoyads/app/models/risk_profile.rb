@@ -16,11 +16,16 @@ class RiskProfile < SimpledbShardedResource
     'IPADDR'     => { :category => 'INDIVIDUAL', :weight => 1 },
   }
 
-  MINIMUM_TOTAL_OFFSET = -100
-  MAXIMUM_TOTAL_OFFSET = 100
+  OFFSET_TYPE_TO_WEIGHT_MAP = {
+    'country_count' => 1
+  }
+
+  OFFSET_MAXIMUM = 100
+  OFFSET_MINIMUM = -100
+
   VELOCITY_WINDOW_HOURS = 72
   SECONDS_PER_HOUR = 3600
-  NO_HISTORY_OFFSET = 0
+  NO_HISTORY_OFFSET = { 'no_history' => { 'offset' => 0 } }
 
   self.sdb_attr :category
   self.sdb_attr :weight
@@ -39,15 +44,17 @@ class RiskProfile < SimpledbShardedResource
   end
 
   def add_curated_offset(name, value)
+    offset = score_min_max_check(value)
     parsed_curated_offsets = curated_offsets
-    parsed_curated_offsets[name] = { :offset => value, :updated => Time.now.to_f }
+    parsed_curated_offsets[name] = { :offset => offset, :updated => Time.now.to_f }
     self.curated_offsets = parsed_curated_offsets
     save
   end
 
   def add_historical_offset(name, value)
+    offset = score_min_max_check(value)
     parsed_historical_offsets = historical_offsets
-    parsed_historical_offsets[name] =  { :offset => value, :updated => Time.now.to_f }
+    parsed_historical_offsets[name] =  { :offset => offset, :updated => Time.now.to_f }
     self.historical_offsets = parsed_historical_offsets
     save
   end
@@ -56,18 +63,25 @@ class RiskProfile < SimpledbShardedResource
     parsed_curated_offsets = curated_offsets
     parsed_historical_offsets = historical_offsets
 
-    total = 0
-    total += parsed_curated_offsets.values.inject(0) { |sum, h| sum += h['offset'] } unless parsed_curated_offsets.empty?
     if parsed_historical_offsets.empty?
-      total += NO_HISTORY_OFFSET
+      total = calculate_offsets_total(parsed_curated_offsets, NO_HISTORY_OFFSET)
     else
-      total += parsed_historical_offsets.values.inject(0) { |sum, h| sum += h['offset'] }
+      total = calculate_offsets_total(parsed_curated_offsets, parsed_historical_offsets)
     end
 
-    return MINIMUM_TOTAL_OFFSET if total < MINIMUM_TOTAL_OFFSET
-    return MAXIMUM_TOTAL_OFFSET if total > MAXIMUM_TOTAL_OFFSET
-
     total
+  end
+
+  def calculate_offsets_total(*all_offsets)
+    offset_sum = weight_sum = 0
+    all_offsets.each do |offsets|
+      offsets.each do |offset_type, values|
+        weight = OFFSET_TYPE_TO_WEIGHT_MAP[offset_type] || 1
+        offset_sum += values['offset'] * weight
+        weight_sum += weight
+      end
+    end
+    offset_sum / (weight_sum > 0 ? weight_sum : 1)
   end
 
   def process_conversion(reward)
@@ -148,7 +162,9 @@ class RiskProfile < SimpledbShardedResource
     file.each_line do |line|
       device_id = line.split(',')[0].strip
       score = line.split(',')[1].strip.to_i
-      RiskProfile.new(:key => "DEVICE.#{device_id}").add_historical_offset("country_count", score)
+      unless device_id.blank?
+        RiskProfile.new(:key => "DEVICE.#{device_id}").add_historical_offset("country_count", score)
+      end
     end
   end
 
@@ -163,5 +179,11 @@ class RiskProfile < SimpledbShardedResource
     @parsed_conversion_tracker.delete_if { |key, value| key.to_i < start }
     @parsed_block_tracker.delete_if { |key, value| key.to_i < start }
     @parsed_revenue_tracker.delete_if { |key, value| key.to_i < start }
+  end
+
+  def score_min_max_check(value)
+    return OFFSET_MINIMUM if value < OFFSET_MINIMUM
+    return OFFSET_MAXIMUM if value > OFFSET_MAXIMUM
+    value
   end
 end

@@ -37,7 +37,7 @@ describe RiskScore do
       subject.add_offset(@individual_profile)
       subject.add_offset(@system_profile)
       subject.rule_matched(@rule)
-      subject.final_score.should == RiskScore::STARTING_SCORE + 165.0
+      subject.final_score.should == RiskScore::STARTING_SCORE + 126.0
     end
   end
 
@@ -64,10 +64,10 @@ describe RiskScore do
       attempt.risk_profiles.keys.include?(@individual_profile.key).should be_true
       attempt.risk_profiles.keys.include?(@system_profile.key).should be_true
       attempt.rules_matched.keys.should == ['rule1']
-      attempt.system_entities_offset.to_f.should == 35.0 * RiskScore::CATEGORY_OFFSET_LIMIT / RiskProfile::MAXIMUM_TOTAL_OFFSET
-      attempt.individual_entities_offset.to_f.should == 15.0 * RiskScore::CATEGORY_OFFSET_LIMIT / RiskProfile::MAXIMUM_TOTAL_OFFSET
+      attempt.system_entities_offset.to_f.should == 17.0 * RiskScore::CATEGORY_OFFSET_LIMIT / RiskProfile::OFFSET_MAXIMUM
+      attempt.individual_entities_offset.to_f.should == 7.0 * RiskScore::CATEGORY_OFFSET_LIMIT / RiskProfile::OFFSET_MAXIMUM
       attempt.rules_offset.to_f.should == 90.0
-      attempt.final_risk_score.to_f.should == RiskScore::STARTING_SCORE + 165.0
+      attempt.final_risk_score.to_f.should == RiskScore::STARTING_SCORE + 126.0
     end
   end
 end
