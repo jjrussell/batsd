@@ -92,54 +92,6 @@ class UdidReports
     File.delete(fs_path) rescue nil
   end
 
-  def self.generate_report_from_sdb(offer_id, date_str)
-    date = Time.zone.parse(date_str).beginning_of_day
-    conditions = "offer_id = '#{offer_id}' AND created >= '#{date.to_i}' AND created < '#{(date + 1.day).to_i}'"
-    fs_path = "tmp/#{offer_id}_#{date.strftime('%Y-%m-%d')}.s3"
-    outfile = File.open(fs_path, 'w')
-
-    Reward.select_all(:conditions => conditions) do |reward|
-      if reward.udid? || reward.mac_address?
-        line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},"
-        begin
-          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address},"
-        rescue
-          line << ","
-        end
-        begin
-          click  = Click.new(:key => reward.click_key)
-          line << "#{click.clicked_at.to_s(:db) || ''}"
-        rescue
-
-        end
-        outfile.puts(line)
-      end
-    end
-
-    if outfile.pos > 0
-      outfile.close
-      path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
-      tries = 0
-      begin
-        bucket = S3.bucket(BucketNames::UDID_REPORTS)
-        bucket.objects[path].write(:file => fs_path, :acl => :authenticated_read)
-        cache_available_months(offer_id)
-      rescue Exception => e
-        tries += 1
-        if tries < MAX_RETRIES
-          sleep S3_RETRY_PAUSE_PERIOD
-          retry
-        else
-          raise e
-        end
-      end
-    end
-
-  ensure
-    outfile.close rescue nil
-    File.delete(fs_path) rescue nil
-  end
-
   def self.cache_available_months(offer_id)
     bucket = S3.bucket(BucketNames::UDID_REPORTS)
     months = Set.new
