@@ -32,6 +32,7 @@ class VideoOffer < ActiveRecord::Base
 
   accepts_nested_attributes_for :primary_offer
   attr_accessor :primary_offer_creation_attributes
+  attr_accessor :video_file
 
   belongs_to :partner
   belongs_to :prerequisite_offer, :class_name => 'Offer'
@@ -41,15 +42,14 @@ class VideoOffer < ActiveRecord::Base
   attr_accessor :age_gating
 
   validates_presence_of :partner, :name
-  validates_presence_of :video_url, :unless => :new_record?
   validates_presence_of :prerequisite_offer, :if => Proc.new { |video_offer| video_offer.prerequisite_offer_id? }
-  validate :video_exists, :unless => :new_record?
+  validate :video_exists
   validates_numericality_of :age_gating, :only_integer => true, :allow_blank => true, :message => "can only be whole number or empty."
   validates :x_partner_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates :x_partner_exclusion_prerequisites, :id_list => {:of => Offer}, :allow_blank => true
   validates_with OfferPrerequisitesValidator
 
-  before_save :update_video_url
+  before_save :upload_video
   after_create :create_primary_offer
   after_update :update_offers
 
@@ -143,11 +143,6 @@ class VideoOffer < ActiveRecord::Base
     end
   end
 
-  def update_video_url
-    prefix = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy"
-    self.video_url = "#{prefix}/videos/src/#{id}.mp4"
-  end
-
   def xml_for_buttons
     buttons = video_buttons.enabled.ordered
     buttons_xml = buttons.inject([]) do |result, button|
@@ -157,13 +152,26 @@ class VideoOffer < ActiveRecord::Base
   end
 
   def video_exists
-    bucket = S3.bucket(BucketNames::TAPJOY)
-    obj    = bucket.objects["videos/src/#{id}.mp4"]
-
-    errors.add :video_url, 'Video does not exist.' unless obj.exists?
+    # Validate we had a video already, or provided one
+    errors.add :video_file, 'No video.' unless video_file or video_url
   end
 
-  private
+  def upload_video
+    return unless video_file
+    bucket = S3.bucket(BucketNames::TAPJOY)
+    blob = video_file.read
+    self.video_file = nil # so acts_as_cacheable doesn't save it
+    hash = Digest::MD5.hexdigest(blob)
+    path = "videos/src/#{id}/#{hash}.mp4"
+    object = bucket.objects[path]
+    object.write(:data => blob, :acl => :public_read) unless object.exists?
+
+    if $rollout.active?(:cloudfront_video_offers, self)
+      self.video_url = "#{CLOUDFRONT_URL}/#{path}"
+    else
+      self.video_url = "http://s3.amazonaws.com/#{RUN_MODE_PREFIX}tapjoy/#{path}"
+    end
+  end
 
   def cache_video_buttons_and_tracking_offers
     video_buttons.each do |button|
