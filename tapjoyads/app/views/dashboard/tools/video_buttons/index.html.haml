@@ -21,7 +21,10 @@
       %tr
         %td.button-id= button.id
         %td.name= button.name
-        %td.offer= link_to(button.item.try(:name), statz_path(button.tracking_offer))
+        - if button.tracking_offer.present?
+          %td.offer= link_to(button.item.try(:name), statz_path(button.tracking_offer))
+        - else
+          %td.offer= "N/A"
         %td.platform= button.tracking_offer.try(:get_platform)
         %td.ordinal= button.ordinal
         %td.enabled= button.read_attribute(:enabled)
