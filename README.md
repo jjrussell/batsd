@@ -1,4 +1,4 @@
-tapjoyserver repo setup
+connect repo setup
 -----------------------
 
 First, fork this repository to your github account.
@@ -9,13 +9,13 @@ When you are in your VM, go into `/vagrant` directory and clone the repository:
 
 ```
 cd /vagrant
-git clone git@github.com:[your github nickname]/tapjoyserver.git
+git clone git@github.com:[your github nickname]/connect.git
 ```
 
 Install necessary gems under ruby 1.8.7:
 
 ```
-cd /vagrant/tapjoyserver/tapjoyads
+cd /vagrant/connect/tapjoyads
 rvm use 1.8.7-p358
 bundle
 ```
@@ -30,7 +30,7 @@ rake setup
 Setup the database by syncing the production db with the local db:
 
 ```
-cd /vagrant/tapjoyserver/tapjoyads
+cd /vagrant/connect/tapjoyads
 rake db:create
 rake db:sync
 ```
@@ -49,7 +49,7 @@ If any tests fail, ask for help in Flowdock.
 Running the server
 ------------------
 
-Within Vagrant, you can run the application directly from the `/vagrant/tapjoyserver/tapjoyads` directory by running:
+Within Vagrant, you can run the application directly from the `/vagrant/connect/tapjoyads` directory by running:
 
 ```
 rails s thin

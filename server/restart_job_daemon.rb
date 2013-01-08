@@ -5,12 +5,12 @@ if ENV['USER'] != 'webuser'
   exit
 end
 
-server_type = `/home/webuser/tapjoyserver/server/server_type.rb`
+server_type = `/home/webuser/connect/server/server_type.rb`
 if server_type == 'jobserver' || server_type == 'queues-nodb'
   puts "Stopping jobs"
-  `/home/webuser/tapjoyserver/tapjoyads/script/jobs stop`
+  `/home/webuser/connect/tapjoyads/script/jobs stop`
   `ps aux | grep -v grep | grep jobs`.each { |line| `kill #{line.split(' ')[1]}` }
 
   puts "Starting jobs"
-  `/home/webuser/tapjoyserver/tapjoyads/script/jobs start -- production`
+  `/home/webuser/connect/tapjoyads/script/jobs start -- production`
 end

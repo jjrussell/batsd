@@ -1,10 +1,10 @@
 namespace :unicorn do
-  SERVER_TYPES = 'masterjobs jobserver queues-nodb dashboard website webserver connect offers'
+  SERVER_TYPES = 'connect connect-19'
 
   desc "Reload unicorn"
   task :reload, :servers do |task, args|
     servers = args[:servers] || SERVER_TYPES
-    system("script/cloudrun '#{servers}' 'tapjoyserver/server/start_or_reload_unicorn.rb' 'webuser'")
+    system("script/cloudrun '#{servers}' 'connect/server/start_or_reload_unicorn.rb' 'webuser'")
   end
 
   desc "Show master processes"

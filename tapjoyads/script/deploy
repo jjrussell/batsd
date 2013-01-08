@@ -18,7 +18,7 @@ class Deploy
       opts.on('-e', '--environment [ENVIRONMENT]') do |environment|
         if environment == 'production'
           @options[:environment] = 'production'
-          @options[:server_groups] = 'masterjobs jobserver queues-nodb dashboard webserver connect offers'
+          @options[:server_groups] = 'connect-19'
         elsif environment == 'util'
           @options[:environment] = 'util'
           @options[:server_groups] = 'util'
@@ -71,7 +71,7 @@ class Deploy
     if execute_cloudrun
       system("script/record_deploy -e #{@options[:environment]} -v #{@options[:version]}")
     end
-    system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/tapjoyserver")
+    system("bundle exec rake airbrake:deploy TO=#{@options[:environment]} REVISION=#{@options[:version]} USER=#{ENV['USER']} REPO=git://github.com/Tapjoy/connect")
     system("git checkout master")
     puts "Done deploying: #{Time.now}"
   end
@@ -183,7 +183,7 @@ class Deploy
   end
 
   def execute_cloudrun
-    command = "script/cloudrun '#{@options[:server_groups]}' 'cd /home/webuser/tapjoyserver && server/deploy.rb #{@options[:version]}' 'webuser'"
+    command = "script/cloudrun '#{@options[:server_groups]}' 'cd /home/webuser/connect && server/deploy.rb #{@options[:version]}' 'webuser'"
     system(command)
   end
 

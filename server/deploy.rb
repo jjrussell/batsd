@@ -4,7 +4,7 @@
 
 require 'yaml'
 
-# This points to /<dir>/tapjoyserver
+# This points to /<dir>/connect
 base_dir = File.expand_path("../../", __FILE__)
 
 if ENV['USER'] != 'webuser'

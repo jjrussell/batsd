@@ -8,4 +8,4 @@ else
   puts "Unsupported operating system!"
   exit 1
 end
-system("#{command} https://github.com/Tapjoy/tapjoyserver/compare/deploy...master")
+system("#{command} https://github.com/Tapjoy/connect/compare/deploy...master")

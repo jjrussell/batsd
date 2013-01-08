@@ -7,31 +7,8 @@ server_type = `#{base_dir}/server/server_type.rb`
 app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir
 
-if server_type == 'masterjobs'
-  worker_processes 24
-  timeout 43200
-elsif server_type == 'jobserver'
-  worker_processes 15
-  timeout 3600
-elsif server_type == 'queues-nodb'
-  worker_processes 25
-  timeout 3600
-elsif server_type == "dev"
-  worker_processes 2
-  timeout 90
-elsif server_type == 'webserver'
-  worker_processes 12
-  timeout 90
-elsif server_type == 'offers'
-  worker_processes 12
-  timeout 90
-elsif server_type == 'connect'
-  worker_processes 16
-  timeout 20
-else
-  worker_processes 5
-  timeout 90
-end
+worker_processes 16
+timeout 20
 
 Rainbows! do
   use :EventMachine
@@ -126,7 +103,7 @@ Rainbows! do
   # Read environment settings from .env. This allows the environment to be changed during a unicorn
   # upgrade via USR2
   before_exec do |server|
-    env_files = [ File.join(ENV['HOME'], '.tapjoyserver.env'), File.join(app_dir, '.env') ]
+    env_files = [ File.join(ENV['HOME'], '.connect.env'), File.join(app_dir, '.env') ]
 
     env_files.each do |env_file|
       if File.exists?(env_file)

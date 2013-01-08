@@ -80,22 +80,22 @@ Setup git following these instructions: http://help.github.com/mac-set-up-git/
 
 NOTE: You already have git installed from the Xcode step.
 
-In github, fork tapjoyserver repository:
+In github, fork connect repository:
 
-  * main repo location: `https://github.com/Tapjoy/tapjoyserver`
+  * main repo location: `https://github.com/Tapjoy/connect`
   * click "Fork"
 
 Clone your forked repo locally
 
 
 ```
-git clone git@github.com:[your github nickname]/tapjoyserver.git
+git clone git@github.com:[your github nickname]/connect.git
 ```
 
-Add main tapjoyserver repo as remote repo (for updating your code with the latest):
+Add main connect repo as remote repo (for updating your code with the latest):
 
 ```
-git remote add tapjoy git@github.com:Tapjoy/tapjoyserver.git
+git remote add tapjoy git@github.com:Tapjoy/connect.git
 ```
 
 It is important that it's named "tapjoy" for deploy script to work
@@ -232,7 +232,7 @@ If any tests fail, ask for help in Campfire.
 Running locally
 ---------------
 
-Using Unicorn and Foreman, you can run the application directly from the `tapjoyserver/tapjoyads` directory by running:
+Using Unicorn and Foreman, you can run the application directly from the `connect/tapjoyads` directory by running:
 
 ```
 foreman start
@@ -251,8 +251,8 @@ Optional steps
 
 If you would like to run projects with different gemsets or rubies, it can be helpful to have a .rvmrc file in the project. This will make it so whenever the folder is opened, the correct ruby + gemset will be used.
 
-Here is an example .rvmrc that uses `ruby-1.8.7p357` and a `tapjoyserver` gemset:
+Here is an example .rvmrc that uses `ruby-1.8.7p357` and a `connect` gemset:
 
 ```
-rvm ruby-1.8.7-p357@tapjoyserver
+rvm ruby-1.8.7-p357@connect
 ```

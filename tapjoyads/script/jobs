@@ -3,7 +3,7 @@
 ENV['APP_ROOT'] ||= File.expand_path(File.join(File.dirname(__FILE__), '..'))
 APP_ROOT = ENV['APP_ROOT']
 
-env_files = [ File.join(ENV['HOME'], '.tapjoyserver.env'), File.join(APP_ROOT, '.env') ]
+env_files = [ File.join(ENV['HOME'], '.connect.env'), File.join(APP_ROOT, '.env') ]
 
 env_files.each do |env_file|
   if File.exists?(env_file)

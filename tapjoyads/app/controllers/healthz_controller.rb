@@ -7,7 +7,7 @@ class HealthzController < ActionController::Base
       f.write(Time.zone.now.to_i)
     end
 
-    if File.exists?("#{Rails.root}/tmp/tapjoyserver.freeze")
+    if File.exists?("#{Rails.root}/tmp/connect.freeze")
       render :text => 'disabled', :status => :service_unavailable
     else
       render :text => 'OK'
