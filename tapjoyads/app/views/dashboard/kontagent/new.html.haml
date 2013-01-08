@@ -1,6 +1,6 @@
 %h2 Kontagent Partner Edition presented by Tapjoy
 %p
-  As a valued Tapjoy customer, you're invited to sign up for the Kontagent Partner Edition now, and start measuring meaningful app engagement and monetization metrics more closely. Use Kontagent's industry-leading customer analytics platform to answer questions like: 
+  As a valued Tapjoy customer, you're invited to sign up for the Kontagent Partner Edition now, and start measuring meaningful app engagement and monetization metrics more closely. Use Kontagent's industry-leading customer analytics platform to answer questions like:
 %ul
   %li "How useful was the new feature developed last week? "
   %li "Are we monetizing optimally? "
@@ -38,11 +38,16 @@
     %li= "Partner #{current_partner.name} will be provisioned with a Kontagent account (exists remotely? #{KontagentHelpers.exists?(current_partner)})"
     %li= "User #{current_user.email} will be provisioned with a Kontagent user (exists remotely? #{KontagentHelpers.exists?(current_user)})"
     %li= "#{current_partner.apps.count} apps will be provisioned with a Kontagent application"
-    - if current_partner.apps.count > 0
+    - total_app_count = current_partner.apps.count
+    - display_limit = 10
+    - apps = current_partner.apps.limit(display_limit)
+    - if apps.count > 0
       %li
         %ol
-          - current_partner.apps.each do |app|
+          - apps.each do |app|
             %li= "Application '#{app.name}' (exists remotely? #{KontagentHelpers.exists?(app)})"
+          - if (diff = total_app_count - display_limit) > 0
+            %li= "And #{diff} more... (too many to display)"
 - else
   %b Warning
   %p You must have an active current user and partner to continue.
