@@ -46,10 +46,28 @@ describe ClickController do
       end
     end
 
-    context "offer and currency are rewarded" do
-      it "click should be rewarded" do
-        get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
-        @click.rewarded.should be_true
+    context "#rewarded_click", :focus do
+      context "when offer and currency are rewarded" do
+        it "click should be rewarded" do
+          @offer.stub(:rewarded?).and_return(true)
+          @currency.stub(:rewarded?).and_return(true)
+          get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
+          @click.rewarded.should be_true
+        end
+      end
+
+      context "when offer or currency are non-rewarded" do
+        it "click should not be rewarded" do
+          @offer.stub(:rewarded?).and_return(false)
+          get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
+          @click.rewarded.should be_false
+        end
+
+       it "click should not be rewarded" do
+          @currency.stub(:rewarded?).and_return(false)
+          get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
+          @click.rewarded.should be_false
+        end
       end
     end
   end
