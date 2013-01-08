@@ -35,31 +35,14 @@ if deploy_version == 'master'
   system "git pull --tags origin master"
 end
 
-if server_type == 'jobserver'
-  `cp tapjoyads/config/newrelic-queues.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'queues-nodb'
-  `cp tapjoyads/config/newrelic-queues-nodb.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'masterjobs'
-  `cp tapjoyads/config/newrelic-cron.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'testserver' || server_type == 'staging'
+if server_type == 'testserver' || server_type == 'staging'
   `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
   `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
-elsif server_type == 'webserver'
-  `cp tapjoyads/config/newrelic-web.yml tapjoyads/config/newrelic.yml`
 elsif server_type == 'connect'
   `cp tapjoyads/config/newrelic-connect.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'offers'
-  `cp tapjoyads/config/newrelic-offers.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'website'
-  `cp tapjoyads/config/newrelic-website.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'dashboard'
-  `cp tapjoyads/config/newrelic-dashboard.yml tapjoyads/config/newrelic.yml`
-elsif server_type == 'util'
-  `cp tapjoyads/config/newrelic-util.yml tapjoyads/config/newrelic.yml`
-  `cp tapjoyads/config/local-util.yml tapjoyads/config/local.yml`
 end
 
-if server_type == 'webserver' || server_type == 'connect' || server_type == 'offers' || server_type == 'queues-nodb'
+if server_type == 'connect'
   `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
   `chmod 444 tapjoyads/db/production.sqlite`
   `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
@@ -75,10 +58,8 @@ Dir.chdir "tapjoyads" do
   end
 
   puts "Updating GeoIPCity Data"
-  system "../server/update_geoip.rb"
+  system "bundle exec ../server/update_geoip.rb"
 
   puts "Restarting unicorn"
-  system "../server/start_or_reload_unicorn.rb"
-
-  system "../server/restart_job_daemon.rb"
+  system "bundle exec ../server/start_or_reload_unicorn.rb"
 end
