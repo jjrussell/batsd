@@ -31,7 +31,7 @@ namespace :setup do
     if !system("which rvm > /dev/null")
       say "RVM is not installed. Skipping ruby setup"
     elsif !File.exists?(".rvmrc")
-      ruby = "1.8.7-p358"
+      ruby = "1.9.3-p194"
       run "Installing #{ruby} if needed", "rvm list rubies | grep #{ruby} || rvm install #{ruby}"
       File.open(".rvmrc", "w+") { |f| f.puts "rvm use #{ruby}" }
       run "Marking rvmrc trusted", "rvm rvmrc trust #{Dir.pwd}"
