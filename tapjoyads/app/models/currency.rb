@@ -216,12 +216,12 @@ class Currency < ActiveRecord::Base
   end
 
   def get_reward_amount(offer)
-    return 0 unless rewarded? && offer.rewarded?
+    return 0 unless offer.rewarded? && rewarded?
     ([get_raw_reward_value(offer), 1.0].max.to_i * currency_sale_multiplier).to_i
   end
 
   def get_raw_reward_value(offer)
-    return 0 unless rewarded? && offer.rewarded?
+    return 0 unless offer.rewarded? && rewarded?
 
     if offer.reward_value.present?
       reward_value = offer.reward_value

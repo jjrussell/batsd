@@ -272,6 +272,7 @@ class ClickController < ApplicationController
     @web_request.offer_is_paid = @offer.is_paid?
     @web_request.offer_daily_budget = @offer.daily_budget
     @web_request.offer_overall_budget = @offer.overall_budget
+    @web_request.rewarded = rewarded_click?
     update_web_request_store_name(@web_request, params[:publisher_app_id])
   end
 
@@ -321,6 +322,7 @@ class ClickController < ApplicationController
     click.cached_offer_list_id   = params[:cached_offer_list_id]
     click.cached_offer_list_type = params[:cached_offer_list_type]
     click.auditioning            = params[:auditioning]
+    click.rewarded               = rewarded_click?
 
     click.save
 
@@ -375,4 +377,7 @@ class ClickController < ApplicationController
     end
   end
 
+  def rewarded_click?
+    @offer.rewarded? && @currency.rewarded?
+  end
 end
