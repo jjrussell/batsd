@@ -658,7 +658,7 @@ DEPENDENCIES
   rack-bug!
   rack-cors (= 0.2.7)
   rack-fiber_pool
-  rails (~> 3.0.12)
+  rails (~> 3.0.19)
   rainbows (= 4.3.1)
   rake
   rcov
