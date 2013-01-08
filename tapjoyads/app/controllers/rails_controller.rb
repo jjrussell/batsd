@@ -11,7 +11,7 @@ class RailsController < ApplicationController
     info[:time_zone]     = Time.zone.name
     info[:machine_type]  = MACHINE_TYPE
     info[:ruby_version]  = "#{RUBY_VERSION}-p#{RUBY_PATCHLEVEL}"
-    info[:platform]  = PLATFORM
+    info[:platform]      = RUBY_PLATFORM
     info[:rails_version] = Rails.version
 
     render :json => info
