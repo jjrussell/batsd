@@ -254,4 +254,61 @@ describe Offer::Rejecting do
       end
     end
   end
+  
+  describe '#screen_layout_sizes_reject?', :focus do
+    before :each do
+      @offer = FactoryGirl.create(:app).primary_offer
+      @device = FactoryGirl.create(:device)
+      @offer.extend(Offer::Rejecting)
+    end
+
+    context 'offer does not have screen size requirement' do
+      it "should not reject the offer" do
+        @offer.screen_layout_sizes = ""
+        @offer.send(:screen_layout_sizes_reject?, @device).should be_false
+      end
+    end
+
+    context 'offer has screen size requirement' do
+      before :each do
+        @offer.screen_layout_sizes = ['1']
+      end
+
+      it 'should reject the offer if the device has no screen size' do
+        @device.screen_layout_size = ''
+        @offer.send(:screen_layout_sizes_reject?, @device).should be_true
+      end
+
+      it 'should reject the offer if the device screen size is incorrect' do
+        @device.screen_layout_size = '2'
+        @offer.send(:screen_layout_sizes_reject?, @device).should be_true
+      end
+
+      it 'should not reject the offer if the device screen size is correct' do
+        @device.screen_layout_size = '1'
+        @offer.send(:screen_layout_sizes_reject?, @device).should be_false
+      end
+    end
+  end
+
+  describe '#carriers_reject?', :focus do
+    before :each do
+      @offer = FactoryGirl.create(:app).primary_offer
+      @device = FactoryGirl.create(:device)
+      @offer.extend(Offer::Rejecting)
+      @offer.carriers = ["NTT DoCoMo"]
+    end
+
+    it "should not reject the offer if carrier in list" do
+      @device.mobile_country_code = '440'
+      @device.mobile_network_code = '23'
+      @offer.send(:carriers_reject?, @device).should be_false
+    end
+
+    it "should reject the offer if carrier not in list" do
+      @device.mobile_country_code = '404'
+      @device.mobile_network_code = '17'
+      @offer.send(:carriers_reject?, @device).should be_true
+    end
+  end
 end

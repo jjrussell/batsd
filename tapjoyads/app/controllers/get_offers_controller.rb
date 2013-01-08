@@ -244,12 +244,10 @@ class GetOffersController < ApplicationController
       :library_version      => params[:library_version],
       :os_version           => params[:os_version],
       :source               => params[:source],
-      :screen_layout_size   => params[:screen_layout_size],
       :video_offer_ids      => @video_offer_ids,
       :all_videos           => @all_videos,
       :algorithm            => @algorithm,
       :algorithm_options    => @algorithm_options,
-      :mobile_carrier_code  => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
       :store_name           => params[:store_name]
     )
   end

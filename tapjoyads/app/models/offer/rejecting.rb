@@ -13,7 +13,7 @@ module Offer::Rejecting
 
   def postcache_rejections(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
+      video_offer_ids, source, all_videos, store_whitelist, store_name)
     reject_functions = [
       { :method => :geoip_reject?, :parameters => [geoip_data], :reason => 'geoip' },
       { :method => :already_complete?, :parameters => [device, app_version], :reason => 'already_complete' },
@@ -25,7 +25,7 @@ module Offer::Rejecting
       { :method => :direct_pay_reject?, :parameters => [direct_pay_providers], :reason => 'direct_pay' },
       { :method => :min_os_version_reject?, :parameters => [os_version], :reason => 'min_os_version' },
       { :method => :cookie_tracking_reject?, :parameters => [publisher_app, library_version, source], :reason => 'cookie_tracking' },
-      { :method => :screen_layout_sizes_reject?, :parameters => [screen_layout_size], :reason => 'screen_layout_sizes' },
+      { :method => :screen_layout_sizes_reject?, :parameters => [device], :reason => 'screen_layout_sizes' },
       { :method => :offer_is_the_publisher?, :parameters => [currency], :reason => 'offer_is_the_publisher' },
       { :method => :offer_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'offer_is_blacklisted_by_currency' },
       { :method => :partner_is_blacklisted_by_currency?, :parameters => [currency], :reason => 'partner_is_blacklisted_by_currency' },
@@ -38,7 +38,7 @@ module Offer::Rejecting
       { :method => :tapjoy_games_retargeting_reject?, :parameters => [device], :reason => 'tapjoy_games_retargeting' },
       { :method => :source_reject?, :parameters => [source], :reason => 'source' },
       { :method => :non_rewarded_offerwall_rewarded_reject?, :parameters => [currency], :reason => 'non_rewarded_offerwall_rewarded' },
-      { :method => :carriers_reject?, :parameters => [mobile_carrier_code], :reason => 'carriers' },
+      { :method => :carriers_reject?, :parameters => [device], :reason => 'carriers' },
       { :method => :app_store_reject?, :parameters => [store_whitelist], :reason => 'app_store' },
       { :method => :distribution_reject?, :parameters => [store_name], :reason => 'distribution' },
       { :method => :miniscule_reward_reject?, :parameters => currency, :reason => 'miniscule_reward'},
@@ -57,7 +57,7 @@ module Offer::Rejecting
 
   def postcache_reject?(publisher_app, device, currency, device_type, geoip_data, app_version,
       direct_pay_providers, type, hide_rewarded_app_installs, library_version, os_version,
-      screen_layout_size, video_offer_ids, source, all_videos, mobile_carrier_code, store_whitelist, store_name)
+      video_offer_ids, source, all_videos, store_whitelist, store_name)
     geoip_reject?(geoip_data) ||
     already_complete?(device, app_version) ||
     prerequisites_not_complete?(device) ||
@@ -69,7 +69,7 @@ module Offer::Rejecting
     direct_pay_reject?(direct_pay_providers) ||
     min_os_version_reject?(os_version) ||
     cookie_tracking_reject?(publisher_app, library_version, source) ||
-    screen_layout_sizes_reject?(screen_layout_size) ||
+    screen_layout_sizes_reject?(device) ||
     offer_is_the_publisher?(currency) ||
     offer_is_blacklisted_by_currency?(currency) ||
     partner_is_blacklisted_by_currency?(currency) ||
@@ -83,7 +83,7 @@ module Offer::Rejecting
     tapjoy_games_retargeting_reject?(device) ||
     source_reject?(source) ||
     non_rewarded_offerwall_rewarded_reject?(currency) ||
-    carriers_reject?(mobile_carrier_code) ||
+    carriers_reject?(device) ||
     sdkless_reject?(library_version) ||
     recently_skipped?(device) ||
     has_insufficient_funds?(currency) ||
@@ -320,11 +320,11 @@ module Offer::Rejecting
     !os_version.version_greater_than_or_equal_to?(min_os_version)
   end
 
-  def screen_layout_sizes_reject?(screen_layout_size)
+  def screen_layout_sizes_reject?(device)
     return false if screen_layout_sizes.blank? || screen_layout_sizes == '[]'
-    return true if screen_layout_size.blank?
+    return true if device.screen_layout_size.blank?
 
-    !get_screen_layout_sizes.include?(screen_layout_size)
+    !get_screen_layout_sizes.include?(device.screen_layout_size)
   end
 
   def cookie_tracking_reject?(publisher_app, library_version, source)
@@ -366,8 +366,8 @@ module Offer::Rejecting
     item_type != 'App'
   end
 
-  def carriers_reject?(mobile_carrier_code)
-    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[mobile_carrier_code])
+  def carriers_reject?(device)
+    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[device.mobile_carrier_code])
   end
 
   def sdkless_reject?(library_version)

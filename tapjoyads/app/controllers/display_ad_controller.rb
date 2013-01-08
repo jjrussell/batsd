@@ -112,8 +112,6 @@ class DisplayAdController < ApplicationController
         :type                => Offer::DISPLAY_OFFER_TYPE,
         :source              => params[:source],
         :library_version     => params[:library_version],
-        :screen_layout_size  => params[:screen_layout_size],
-        :mobile_carrier_code => "#{params[:mobile_country_code]}.#{params[:mobile_network_code]}",
         :store_name          => params[:store_name]
       ).weighted_rand
     end
