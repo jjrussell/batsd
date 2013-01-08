@@ -118,8 +118,6 @@ class Mc
       end
     end
 
-    Rails.logger.debug "I think val is #{value}"
-
     fail_reason and Rails.logger.info(fail_reason) # value.nil? => true
 
     unless value.nil? || missing_caches.empty?
@@ -138,22 +136,24 @@ class Mc
       end
     end
 
-    value
+    ensure_safely_unmarshaled(value)
   end
 
   def self.distributed_get(key, clone = false)
-    value = Mc.get(key, clone, @distributed_caches.shuffle) do
-      yield if block_given?
-    end
-
-    if value.is_a? String
-      begin
-        Marshal.restore_with_ensure_utf8(value)
-      rescue TypeError
-        value
+    ensure_safely_unmarshaled(
+      Mc.get(key, clone, @distributed_caches.shuffle) do
+        yield if block_given?
       end
+    )
+  end
+
+  # We hope these values are hashes, but if they are still strings there
+  # is one more trick we can try
+  def self.ensure_safely_unmarshaled(val)
+    if val.is_a?(String)
+      Marshal.restore_with_ensure_utf8(val) rescue val
     else
-      value
+      val
     end
   end
 
