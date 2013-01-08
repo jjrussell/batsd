@@ -46,7 +46,7 @@ describe ClickController do
       end
     end
 
-    context "#rewarded_click", :focus do
+    context "#rewarded_click" do
       context "when offer and currency are rewarded" do
         it "click should be rewarded" do
           @offer.stub(:rewarded?).and_return(true)
