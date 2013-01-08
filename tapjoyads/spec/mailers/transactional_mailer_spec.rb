@@ -88,7 +88,7 @@ describe TransactionalMailer do
       end
     end
   end
-  
+
   context '#setup_for_tjm_welcome_email_without_using_tjm_tables' do
     let(:gamer) { {
         :facebook_id => 'gamer.facebook_id',
@@ -111,13 +111,26 @@ describe TransactionalMailer do
       subject.stub(:get_device => a_device)
     end
     it 'should assign proper instance_variables' do
+      subject.should_receive(:get_latest_device)
       subject.send(:setup_for_tjm_welcome_email, gamer, device_info)
       subject.instance_variable_get(:@linked).should be_true
       subject.instance_variable_get(:@recommendations).should == [:test_value]
       subject.instance_variable_get(:@facebook_signup).should be_true
       subject.instance_variable_get(:@gamer_email).should == 'gamer.email'
       subject.instance_variable_get(:@offer_data).should_not be_nil
+     end
+
+    it 'should handle nil gamer_devices' do
+      gamer[:gamer_devices] = nil
+      subject.should_not_receive(:get_latest_device)
+      subject.send(:setup_for_tjm_welcome_email, gamer, device_info)
+      subject.instance_variable_get(:@linked).should be_false
+      subject.instance_variable_get(:@recommendations).should == [:test_value]
+      subject.instance_variable_get(:@facebook_signup).should be_true
+      subject.instance_variable_get(:@gamer_email).should == 'gamer.email'
+      subject.instance_variable_get(:@offer_data).should_not be_nil
     end
+
   end
   context '#record_invalid_email without using tjm_tables' do
     context 'should result in a Downloader post with proper params' do
