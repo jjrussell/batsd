@@ -12,7 +12,6 @@ describe CachedOfferList::S3CachedOfferList do
       catcher.should_receive(:cached_offer_type=).with(@cached_offer_list.cached_offer_type)
       catcher.should_receive(:source=).with(@cached_offer_list.source)
       catcher.should_receive(:memcached_key=).with(@cached_offer_list.memcached_key)
-      catcher.should_receive(:save).and_return(true)
       CachedOfferList::S3CachedOfferList.stub(:new).with(:id => @cached_offer_list.id).and_return(catcher)
       CachedOfferList::S3CachedOfferList.sync_cached_offer_list(@cached_offer_list)
     end
