@@ -10,7 +10,7 @@ class Job::QueueCacheOptimizedOfferListController < Job::SqsReaderController
     begin
       OptimizedOfferList.cache_offer_list(s3_optimization_key)
     rescue
-      Notifier.alert_new_relic(OptimizedOfferCachingFailed, message)
+      Notifier.alert_new_relic(OptimizedOfferCachingFailed, message.body)
     end
   end
 end
