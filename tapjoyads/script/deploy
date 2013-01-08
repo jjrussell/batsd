@@ -39,10 +39,6 @@ class Deploy
         @options[:skip_schema_check] = true
       end
 
-      opts.on('--skip-assets') do
-        @options[:skip_assets] = true
-      end
-
       opts.on_tail('-h', '--help') do
         print_usage_and_exit
       end
@@ -83,7 +79,6 @@ class Deploy
     puts "    -c, --cherry-pick (optional): If you've already cherry-picked the changes, deploy won't auto-merge master in."
     puts "    -e, --environment (optional): The environment to deploy to. Can be 'test', 'util', or 'production'. Default is 'test'."
     puts "    -v, --version (optional): The version to deploy. Defaults to 'master' for test and util deploys, creates a new tag for production deploys."
-    puts "    --skip-assets (optional): Skips asset compilation."
     exit
   end
 
@@ -129,7 +124,6 @@ class Deploy
 
     unless @options[:version] == 'master'
       system('git checkout deploy')
-      precompile_assets unless @options[:skip_assets]
       git_status = `git status`
       if git_status !~ /On branch deploy/
         puts "Couldn't checkout deploy!"
@@ -141,13 +135,6 @@ class Deploy
         system('git merge master')
       end
     end
-  end
-
-  def precompile_assets
-    system("bundle exec rake assets:precompile")
-    system("sort public/assets/manifest.yml -o public/assets/manifest.yml") # to keep the diff clean
-    system("git add public/assets/manifest.yml")
-    system("git commit -m 'Updated asset manifest'")
   end
 
   def create_deploy_tag
