@@ -3,7 +3,9 @@ require 'logging'
 class Mc
   def self.dalli_opts
     @dalli_opts ||= {
-      namespace: RUN_MODE_PREFIX,
+      # TODO (amdtech): namespace needs to be nil, otherwise Dalli prepends a colon to the key.
+      #   Instead of this hack, we should clean up RUN_MODE_PREFIX to be nil in production
+      namespace: RUN_MODE_PREFIX == '' ? nil : RUN_MODE_PREFIX,
       async: ENV['ASYNC'],
       socket_max_failures: 2,
       cache_lookups: false,
