@@ -376,16 +376,19 @@ describe Offer do
     @offer.send(:geoip_reject?, geoip_data).should == true
   end
 
-  it "rejects depending on carriers" do
-    @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
-    mobile_carrier_code = '440.01'
-    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
-    mobile_carrier_code = '123.123'
-    @offer.send(:carriers_reject?, mobile_carrier_code).should == true
-    @offer.send(:carriers_reject?, nil).should == true
-    @offer.update_attributes({ :carriers => '[]' })
-    @offer.reload
-    @offer.send(:carriers_reject?, mobile_carrier_code).should == false
+  context 'carriers' do
+    let(:device) { FactoryGirl.create(:device) }
+    it "rejects depending on carriers" do
+      @offer.carriers = ["Verizon", "NTT DoCoMo"].to_json
+      device.stub(:mobile_carrier_code).and_return('440.01')
+      @offer.send(:carriers_reject?, device).should == false
+      device.stub(:mobile_carrier_code).and_return('123.123')
+      @offer.send(:carriers_reject?, device).should == true
+      @offer.send(:carriers_reject?, nil).should == true
+      @offer.update_attributes({ :carriers => '[]' })
+      @offer.reload
+      @offer.send(:carriers_reject?, device).should == false
+    end
   end
 
   it "rejects based on source" do

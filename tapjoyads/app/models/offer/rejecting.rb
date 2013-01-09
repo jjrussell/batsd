@@ -367,7 +367,7 @@ module Offer::Rejecting
   end
 
   def carriers_reject?(device)
-    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[device.mobile_carrier_code])
+    get_carriers.present? && !get_carriers.include?(Carriers::MCC_MNC_TO_CARRIER_NAME[device.try(:mobile_carrier_code)])
   end
 
   def sdkless_reject?(library_version)
