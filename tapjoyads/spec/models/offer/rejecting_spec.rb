@@ -254,8 +254,8 @@ describe Offer::Rejecting do
       end
     end
   end
-  
-  describe '#screen_layout_sizes_reject?', :focus do
+
+  describe '#screen_layout_sizes_reject?' do
     before :each do
       @offer = FactoryGirl.create(:app).primary_offer
       @device = FactoryGirl.create(:device)
