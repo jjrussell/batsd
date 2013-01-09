@@ -15,22 +15,23 @@ describe InvoiceReportGenerator do
     let (:partner) { FactoryGirl.create(:partner, :billing_email => FactoryGirl.generate(:email), :client => client) }
     let (:note_to_client) { nil }
     let (:invoice) { FactoryGirl.create(:order, :payment_method => 1, :partner => partner, :note_to_client => note_to_client) }
+    subject(:row) { InvoiceReportGenerator.new(report_date).rowify(invoice) }
 
     it 'should use Order#id as the legacy invoice number' do
-      subject.rowify(invoice)[0].should == invoice.id
+      row[0].should == invoice.id
     end
 
     it 'should use fixed values for line number, status, and unit price' do
-      subject.rowify(invoice)[1].should == 1
-      subject.rowify(invoice)[2].should == 'New'
-      subject.rowify(invoice)[7].should == 1
+      row[1].should == 1
+      row[2].should == 'New'
+      row[7].should == 1
     end
 
     context 'with no client' do
       let (:client) { nil }
 
       it 'should list the client ID as "none"' do
-        subject.rowify(invoice)[3].should == 'none'
+        row[3].should == 'none'
       end
     end
 
@@ -38,7 +39,7 @@ describe InvoiceReportGenerator do
       let (:client) { FactoryGirl.create(:client) }
 
       it 'it should list the client ID' do
-        subject.rowify(invoice)[3].should == client.id
+        row[3].should == client.id
       end
     end
 
@@ -46,7 +47,7 @@ describe InvoiceReportGenerator do
       let (:note_to_client) { nil }
 
       it 'should list the description as "TapjoyAdsCredit"' do
-        subject.rowify(invoice)[5].should == 'TapjoyAdsCredit'
+        row[5].should == 'TapjoyAdsCredit'
       end
     end
 
@@ -54,7 +55,7 @@ describe InvoiceReportGenerator do
       let (:note_to_client) { 'Test note' }
 
       it 'should populate the description with #note_to_client' do
-        subject.rowify(invoice)[5].should == note_to_client
+        row[5].should == note_to_client
       end
     end
   end
