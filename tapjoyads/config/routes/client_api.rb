@@ -11,7 +11,7 @@ Tapjoyad::Application.routes.draw do
         resources :ads, :only => [:index] do
         end
       end
-      resources :partners, :only => [] do
+      resources :partners, :only => [:index, :show] do
         resources :ads, :only => [:index]
         resources :campaigns, :only => [:index, :show]
         resource :reports do
