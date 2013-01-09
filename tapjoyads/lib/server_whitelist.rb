@@ -59,6 +59,8 @@ class ServerWhitelist
     '216.246.74.21',                         # DiscountMags added 2012.08.20
     '204.93.181.78',                         # DiscountMags added 2012.08.20
     '64.91.230.220',                         # ExclusiveCPA LLC added 2012.08.20
+    '75.126.60.79',                          # Incentivize added 2013.01.02
+    '50.22.127.199',                         # Incentivize added 2013.01.02
   ]
 
   def self.ip_whitelist_includes?(ip_address)
