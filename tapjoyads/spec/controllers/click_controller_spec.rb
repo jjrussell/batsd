@@ -46,7 +46,7 @@ describe ClickController do
       end
     end
 
-    context "#rewarded_click" do
+    describe "click.rewarded set properly" do
       context "when offer and currency are rewarded" do
         it "click should be rewarded" do
           @offer.stub(:rewarded?).and_return(true)
@@ -63,10 +63,30 @@ describe ClickController do
           @click.rewarded.should be_false
         end
 
-       it "click should not be rewarded" do
+        it "click should not be rewarded" do
           @currency.stub(:rewarded?).and_return(false)
           get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff', :store_name => 'some_store'))
           @click.rewarded.should be_false
+        end
+      end
+    end
+
+    context 'when click already has an exp field set' do
+      before :each do
+        @click.exp = 'something'
+      end
+
+      context 'when params[:exp] is nil' do
+        it 'click#exp is nil' do
+          get(:generic, @params)
+          @click.exp.should be_nil
+        end
+      end
+
+      context 'when params[:exp] is not nil' do
+        it 'click#exp is set' do
+          get(:generic, @params.merge(:exp => 'another'))
+          @click.exp.should == 'another'
         end
       end
     end

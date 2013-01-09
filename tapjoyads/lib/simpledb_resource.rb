@@ -117,6 +117,10 @@ class SimpledbResource
       def reset_#{name.to_s}!
         reset_attribute!(:#{name.to_s})
       end
+
+      def remove_#{name.to_s}()
+        delete('#{name.to_s}')
+      end
     }
 
     self.attribute_names << attr_name.to_s unless attribute_names.include?(attr_name.to_s)
