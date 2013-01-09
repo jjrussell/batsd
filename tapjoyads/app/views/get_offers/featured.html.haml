@@ -119,7 +119,7 @@
 
     #featured.panel.stretch
       .heading
-        - if !@offer.rewarded? && !@currency.rewarded?
+        - if @offer.rewarded? && @currency.rewarded?
           %span
             earn
           %span.big
