@@ -255,8 +255,9 @@ class WebRequest < AnalyticsLogger::Message
 
   #TODO: Either remove or abstract to do other sanity checks more cleanly
   def check_web_request
-    if self.auditioning == true && self.cached_offer_list_type == 'native'
-      Notifier.alert_new_relic(WebRequestMismatch, "web request has auditioning = true and COLSource = native for key=#{self.id}")
+    if self.path.blank?
+      @@live_debugger ||= LiveDebugger.new('web_request')
+      @@live_debugger.log(self, 'WebRequestMissingPath')
     end
   end
 end
