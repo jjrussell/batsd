@@ -158,6 +158,7 @@ class Job::QueueConversionTrackingController < Job::SqsReaderController
         web_request.exp                = reward.exp
         web_request.viewed_at          = reward.viewed_at
         web_request.click_key          = reward.click_key
+        web_request.reward_id          = reward.id
         web_request.device_type        = reward.device_type
         web_request.offerwall_rank     = reward.offerwall_rank
         web_request.store_name         = reward.store_name
