@@ -291,7 +291,7 @@ describe Offer::Rejecting do
     end
   end
 
-  describe '#carriers_reject?', :focus do
+  describe '#carriers_reject?' do
     before :each do
       @offer = FactoryGirl.create(:app).primary_offer
       @device = FactoryGirl.create(:device)
