@@ -64,10 +64,10 @@ GIT
 
 GIT
   remote: git@github.com:Tapjoy/analytics_logger.git
-  revision: 2e2a2e61fb8ad0849ed4b3fbc9895366313aab18
-  tag: v0.8.10
+  revision: f3f6ec2dab4a8f6f8f8e56b92307e8d106ed31d7
+  tag: v0.8.11
   specs:
-    analytics_logger (0.8.10)
+    analytics_logger (0.8.11)
       activesupport (~> 3.0)
       bunny (~> 0.8.0)
       json (~> 1.5)
@@ -553,7 +553,7 @@ DEPENDENCIES
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
   airbrake (= 3.0.5)
-  analytics_logger (= 0.8.10)!
+  analytics_logger (= 0.8.11)!
   annotate
   archive-tar-minitar
   asset_sync
