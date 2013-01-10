@@ -100,7 +100,7 @@ describe ClickController do
         @offer.payment = 1
         @offer.user_enabled = true
         @params = {
-          :udid => 'stuff',
+          :udid => FactoryGirl.generate(:udid),
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
           :currency_id => @currency.id,
@@ -148,8 +148,9 @@ describe ClickController do
         @offer.tapjoy_enabled = true
         @offer.payment = 1
         @offer.user_enabled = true
+        @udid = FactoryGirl.generate(:udid)
         @params = {
-          :udid => 'stuff',
+          :udid => @udid,
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
           :currency_id => @currency.id,
@@ -163,7 +164,7 @@ describe ClickController do
         Currency.stub(:find_in_cache).and_return(@currency)
         get(:generic, @params)
         assigns(:click_key).should_not be_nil
-        assigns(:click_key).should == "stuff.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
+        assigns(:click_key).should == "#{@udid}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
         response.should be_redirect
       end
     end
@@ -174,8 +175,9 @@ describe ClickController do
         @offer.tapjoy_enabled = true
         @offer.payment = 1
         @offer.user_enabled = true
+        @udid = FactoryGirl.generate(:udid)
         @params = {
-          :udid => 'stuff',
+          :udid => @udid,
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
           :currency_id => @currency.id,
@@ -189,7 +191,7 @@ describe ClickController do
       it "creates the correct click_key and redirects" do
         get(:generic, @params.merge(:advertiser_app_id => 'even_more_stuff'))
         assigns(:click_key).should_not be_nil
-        assigns(:click_key).should == Digest::MD5.hexdigest('stuff.even_more_stuff')
+        assigns(:click_key).should == Digest::MD5.hexdigest("#{@udid}.even_more_stuff")
         response.should be_redirect
       end
 
@@ -198,7 +200,7 @@ describe ClickController do
         @params.merge!(:advertiser_app_id => 'testing click_tracking')
         @offer.should_receive(:queue_click_tracking_requests).with({
           :ip_address       => @controller.send(:ip_address),
-          :udid             => 'stuff',
+          :udid             => @udid,
           :publisher_app_id => 'pub_app_id'}.with_indifferent_access).once
 
         get(:generic, @params)
@@ -235,8 +237,9 @@ describe ClickController do
       @offer.tapjoy_enabled = true
       @offer.payment = 1
       @offer.user_enabled = true
+      @udid = FactoryGirl.generate(:udid)
       @params = {
-        :udid => 'app_stuff',
+        :udid => @udid,
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
         :currency_id => @currency.id,
@@ -251,7 +254,7 @@ describe ClickController do
     it "creates the correct click_key and redirects" do
       get(:app, @params.merge(:advertiser_app_id => 'even_more_app_stuff'))
       assigns(:click_key).should_not be_nil
-      assigns(:click_key).should == 'app_stuff.even_more_app_stuff'
+      assigns(:click_key).should == "#{@udid}.even_more_app_stuff"
       response.should be_redirect
     end
 
@@ -260,7 +263,7 @@ describe ClickController do
       @params.merge!(:advertiser_app_id => 'testing click_tracking')
       @offer.should_receive(:queue_click_tracking_requests).with({
         :ip_address       => @controller.send(:ip_address),
-        :udid             => 'app_stuff',
+        :udid             => @udid,
         :publisher_app_id => 'pub_app_id'}.with_indifferent_access).once
 
       get(:app, @params)
@@ -274,8 +277,9 @@ describe ClickController do
       @offer.payment = 1
       @offer.user_enabled = true
       @offer.item_type = 'Coupon'
+      @udid = FactoryGirl.generate(:udid)
       params = {
-        :udid => 'app_stuff',
+        :udid => @udid,
         :offer_id => @offer.id,
         :viewed_at =>  (Time.zone.now - 1.hour).to_f,
         :currency_id => @currency.id,
@@ -290,7 +294,7 @@ describe ClickController do
 
     it 'creates the correct click_key' do
       get(:coupon, :data => @params, :advertiser_app_id => 'even_more_app_stuff')
-      assigns(:click_key).should == 'app_stuff.even_more_app_stuff'
+      assigns(:click_key).should == "#{@udid}.even_more_app_stuff"
     end
 
     it 'should redirect' do
@@ -302,7 +306,7 @@ describe ClickController do
       Click.any_instance.stub(:offer).and_return(@offer)
       @offer.should_receive(:queue_click_tracking_requests).with({
         :ip_address       => @controller.send(:ip_address),
-        :udid             => 'app_stuff',
+        :udid             => @udid,
         :publisher_app_id => 'pub_app_id'}.with_indifferent_access).once
 
       get(:coupon, :data => @params, :advertiser_app_id => 'even_more_app_stuff')
@@ -318,8 +322,9 @@ describe ClickController do
         @offer.item_type = 'Coupon'
         @app = FactoryGirl.create(:app)
         App.stub(:find_in_cache).and_return(@app)
+        @udid = FactoryGirl.generate(:udid)
         params = {
-          :udid => 'app_stuff',
+          :udid => @udid,
           :id => @offer.id,
           :offer_id => @offer.id,
           :viewed_at =>  (Time.zone.now - 1.hour).to_f,
