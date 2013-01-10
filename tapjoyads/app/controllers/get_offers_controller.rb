@@ -101,6 +101,12 @@ class GetOffersController < ApplicationController
     end
 
     if params[:format] == 'html'
+      if @offer_list.empty?
+        # only SDK >= '9.0' supports status code other than 200
+        render :text => "", :status => (library_version < '9.0' ? 200 : 501)
+        return
+      end
+
       @offer = @offer_list.first
 
       # for pixel tracking

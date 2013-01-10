@@ -337,165 +337,210 @@ describe GetOffersController do
   end
 
   describe '#featured' do
-    before :each do
-      RailsCache.stub(:get).and_return(nil)
-      @device = FactoryGirl.create(:device)
-      @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
-      @currency.update_attribute(:hide_rewarded_app_installs, false)
-      @offer = FactoryGirl.create(:app).primary_offer
-      @offer.partner.balance = 10
-      @offer.save
-      controller.stub(:ip_address).and_return('208.90.212.38')
-      OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
-      @params = {
-        :udid => 'stuff',
-        :publisher_user_id => 'more_stuff',
-        :currency_id => @currency.id,
-        :app_id => @currency.app.id
-      }
-      Currency.stub(:find_in_cache).and_return(@currency)
-      App.stub(:find_in_cache).and_return(@currency.app)
-      @currency.stub(:active_and_future_sales).and_return({})
-    end
-
-    it 'should mark the pub app as using non-html responses' do
-      message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
-      Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
-
-      get(:index, @params)
-    end
-
-    context 'previewing featured ads' do
-      it 'should set for_preview if an offer_id is provided' do
-        get(:featured, @params.merge(:offer_id => @offer.id, :format => 'html'))
-        assigns[:for_preview].should == true
-      end
-
-      it 'should merge in offer overrides for preview' do
-        get(:featured, @params.merge(
-          :format => 'html',
-          :offer_id => @offer.id,
-          :offer_preview_attributes => {
-            :featured => 'true',
-            :featured_ad_action => 'My Action',
-            :featured_ad_content => 'My Content',
-            :featured_ad_color => 'my_color'
-          }))
-
-        assigns[:offer].featured_ad_content.should == 'My Content'
-        assigns[:offer].featured_ad_action.should == 'My Action'
-        assigns[:offer].featured_ad_color.should == 'my_color'
-        assigns[:offer].featured.should == true
-      end
-
-      it 'should not save offer overrides for preview' do
-        get(:featured, @params.merge(
-          :format => 'html',
-          :offer_id => @offer.id,
-          :offer_preview_attributes => {
-            :featured => 'true',
-            :featured_ad_action => 'My Action',
-            :featured_ad_content => 'My Content',
-            :featured_ad_color => 'my_color'
-          }))
-
-        ActiveRecordDisabler.with_queries_enabled { @offer.reload }
-
-        @offer.featured_ad_content.should_not == 'My Content'
-        @offer.featured_ad_action.should_not == 'My Action'
-        @offer.featured_ad_color.should_not == 'my_color'
-        @offer.featured.should_not == true
-      end
-    end
-
-    context 'with a featured offer' do
+    context "empty offer list" do
       before :each do
-        get(:featured, @params)
-      end
-
-      it 'returns the featured offer' do
-        assigns(:web_request).offer_id.should == @offer.id
-        assigns(:web_request).path.should include("featured_offer_shown")
-      end
-
-      it 'does not have more data' do
-        assigns(:more_data_available).should == 0
-      end
-    end
-
-    context 'without a featured offer, but with a non-featured offer' do
-      before :each do
-        device_type = 'itouch'
-        stub_args_1 = [
-          Offer::FEATURED_OFFER_TYPE,
-          @currency.app.platform_name,
-          false,
-          device_type,
-        ]
-        stub_args_2 = [
-          Offer::FEATURED_BACKFILLED_OFFER_TYPE,
-          @currency.app.platform_name,
-          false,
-          device_type,
-        ]
-
-        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_1).once.and_return([])
-        OfferCacher.stub(:get_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
-
-        get(:featured, @params)
-      end
-
-      it 'returns the non-featured offer' do
-        assigns(:web_request).offer_id.should == @offer.id
-        assigns(:web_request).path.should include("featured_offer_shown")
-      end
-
-      it 'does not have more data' do
-        assigns(:more_data_available).should == 0
-      end
-    end
-
-    context 'without an offer' do
-      before :each do
-        OfferCacher.stub(:get_offers_prerejected).and_return([])
         RailsCache.stub(:get).and_return(nil)
+        @device = FactoryGirl.create(:device)
+        @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
+        @currency.update_attribute(:hide_rewarded_app_installs, false)
+
+        OfferCacher.stub(:get_offers_prerejected).and_return([])
+        @params = {
+          :udid => 'stuff',
+          :format => 'html',
+          :publisher_user_id => 'more_stuff',
+          :currency_id => @currency.id,
+          :app_id => @currency.app.id
+        }
+        Currency.stub(:find_in_cache).and_return(@currency)
+        App.stub(:find_in_cache).and_return(@currency.app)
+        @currency.stub(:active_and_future_sales).and_return({})
+      end
+
+      context "library version >= 9.0" do
+        it "should return non-200 status code", :empty_offer_list do
+          @params.merge!({:library_version => "9.0"})
+          get(:featured, @params)
+          response.response_code.should == 501
+        end
+      end
+
+      context "library version <= 9.0" do
+        it "should return non-200 status code", :empty_offer_list do
+          @params.merge!({:library_version => "8.3"})
+          get(:featured, @params)
+          response.response_code.should == 200
+        end
+
+        it "should return non-200 status code", :empty_offer_list do
+          @params.merge!({:library_version => "8.3"})
+          get(:featured, @params)
+          response.body.should == ""
+        end
+      end
+    end
+
+    context "non-empty offer list" do
+      before :each do
+        RailsCache.stub(:get).and_return(nil)
+        @device = FactoryGirl.create(:device)
+        @currency = FactoryGirl.create(:currency, :test_devices => @device.id)
+        @currency.update_attribute(:hide_rewarded_app_installs, false)
+        @offer = FactoryGirl.create(:app).primary_offer
+        @offer.partner.balance = 10
+        @offer.save
+        controller.stub(:ip_address).and_return('208.90.212.38')
+        OfferCacher.stub(:get_offers_prerejected).and_return([@offer])
+        @params = {
+          :udid => 'stuff',
+          :publisher_user_id => 'more_stuff',
+          :currency_id => @currency.id,
+          :app_id => @currency.app.id
+        }
+        Currency.stub(:find_in_cache).and_return(@currency)
+        App.stub(:find_in_cache).and_return(@currency.app)
+        @currency.stub(:active_and_future_sales).and_return({})
+      end
+
+      it 'should mark the pub app as using non-html responses' do
+        message = { :class_name => 'App', :id => @currency.app.id, :attributes => { :uses_non_html_responses => true } }
+        Sqs.should_receive(:send_message).with(QueueNames::RECORD_UPDATES, Base64::encode64(Marshal.dump(message))).once
+
+        get(:index, @params)
+      end
+
+      context 'previewing featured ads' do
+        it 'should set for_preview if an offer_id is provided' do
+          get(:featured, @params.merge(:offer_id => @offer.id, :format => 'html'))
+          assigns[:for_preview].should == true
+        end
+
+        it 'should merge in offer overrides for preview' do
+          get(:featured, @params.merge(
+            :format => 'html',
+            :offer_id => @offer.id,
+            :offer_preview_attributes => {
+              :featured => 'true',
+              :featured_ad_action => 'My Action',
+              :featured_ad_content => 'My Content',
+              :featured_ad_color => 'my_color'
+            }))
+
+          assigns[:offer].featured_ad_content.should == 'My Content'
+          assigns[:offer].featured_ad_action.should == 'My Action'
+          assigns[:offer].featured_ad_color.should == 'my_color'
+          assigns[:offer].featured.should == true
+        end
+
+        it 'should not save offer overrides for preview' do
+          get(:featured, @params.merge(
+            :format => 'html',
+            :offer_id => @offer.id,
+            :offer_preview_attributes => {
+              :featured => 'true',
+              :featured_ad_action => 'My Action',
+              :featured_ad_content => 'My Content',
+              :featured_ad_color => 'my_color'
+            }))
+
+          ActiveRecordDisabler.with_queries_enabled { @offer.reload }
+
+          @offer.featured_ad_content.should_not == 'My Content'
+          @offer.featured_ad_action.should_not == 'My Action'
+          @offer.featured_ad_color.should_not == 'my_color'
+          @offer.featured.should_not == true
+        end
+      end
+
+      context 'with a featured offer' do
+        before :each do
+          get(:featured, @params)
+        end
+
+        it 'returns the featured offer', :featured do
+          assigns(:web_request).offer_id.should == @offer.id
+          assigns(:web_request).path.should include("featured_offer_shown")
+        end
+
+        it 'does not have more data' do
+          assigns(:more_data_available).should == 0
+        end
+      end
+
+      context 'without a featured offer, but with a non-featured offer' do
+        before :each do
+          device_type = 'itouch'
+          stub_args_1 = [
+            Offer::FEATURED_OFFER_TYPE,
+            @currency.app.platform_name,
+            false,
+            device_type,
+          ]
+          stub_args_2 = [
+            Offer::FEATURED_BACKFILLED_OFFER_TYPE,
+            @currency.app.platform_name,
+            false,
+            device_type,
+          ]
+
+          OfferCacher.stub(:get_offers_prerejected).with(*stub_args_1).once.and_return([])
+          OfferCacher.stub(:get_offers_prerejected).with(*stub_args_2).once.and_return([@offer])
+
+          get(:featured, @params)
+        end
+
+        it 'returns the non-featured offer' do
+          assigns(:web_request).offer_id.should == @offer.id
+          assigns(:web_request).path.should include("featured_offer_shown")
+        end
+
+        it 'does not have more data' do
+          assigns(:more_data_available).should == 0
+        end
+      end
+
+      context 'without an offer' do
+        before :each do
+          OfferCacher.stub(:get_offers_prerejected).and_return([])
+          RailsCache.stub(:get).and_return(nil)
+          get(:featured, @params)
+        end
+
+        it 'returns no offers' do
+          assigns(:offer_list).should be_empty
+          web_request = assigns(:web_request)
+          web_request.offer_id.should be_nil
+          web_request.path.should include 'featured_offer_requested'
+          web_request.path.should_not include 'featured_offer_shown'
+        end
+      end
+
+      it 'assigns test offer for test devices' do
+        get(:featured, @params.merge(:udid => @device.id))
+        assigns(:offer_list).first.item_type.should == "TestOffer"
+        assigns(:offer_list).length.should == 1
+      end
+
+      it 'renders appropriate views' do
         get(:featured, @params)
+        should render_template "get_offers/installs_redirect"
+
+        get(:featured, @params.merge(:json => '1'))
+        should render_template "get_offers/installs_json"
+        response.content_type.should == "application/json"
       end
 
-      it 'returns no offers' do
-        assigns(:offer_list).should be_empty
-        web_request = assigns(:web_request)
-        web_request.offer_id.should be_nil
-        web_request.path.should include 'featured_offer_requested'
-        web_request.path.should_not include 'featured_offer_shown'
+      it 'renders tags for XNA' do
+        get(:featured, @params)
+        should render_template "get_offers/installs_redirect"
+        response.content_type.should == "application/xml"
+        # TODO: fix these
+        #response.should have_tag('OfferText')
+        #response.should have_tag('EarnCurrencyText')
+        #response.should have_tag('ActionText')
+        #response.should have_tag('CustomCreative')
+        #response.should have_tag('SkipText')
       end
-    end
-
-    it 'assigns test offer for test devices' do
-      get(:featured, @params.merge(:udid => @device.id))
-      assigns(:offer_list).first.item_type.should == "TestOffer"
-      assigns(:offer_list).length.should == 1
-    end
-
-    it 'renders appropriate views' do
-      get(:featured, @params)
-      should render_template "get_offers/installs_redirect"
-
-      get(:featured, @params.merge(:json => '1'))
-      should render_template "get_offers/installs_json"
-      response.content_type.should == "application/json"
-    end
-
-    it 'renders tags for XNA' do
-      get(:featured, @params)
-      should render_template "get_offers/installs_redirect"
-      response.content_type.should == "application/xml"
-      # TODO: fix these
-      #response.should have_tag('OfferText')
-      #response.should have_tag('EarnCurrencyText')
-      #response.should have_tag('ActionText')
-      #response.should have_tag('CustomCreative')
-      #response.should have_tag('SkipText')
     end
   end
 
