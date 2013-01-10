@@ -52,7 +52,7 @@ describe Job::QueueConversionNotificationsController do
         :title => "Reward Notification",
         :message => "You earned #{@reward.currency_reward} #{@currency.name} by downloading #{@advertiser_app.name}",
         :throttle_key => 'tjofferconversion',
-        :device_aliases => [{:device_key => 'udid', :android_id => 'android_id', :idfa => 'advertising_id'}]
+        :device_aliases => [{:device_key => 'udid', :android_id => 'android_id', :idfa => 'advertising_id', :mac_sha1 => '1f22542dc51c54db355649323bc7792fbcea94a9'}]
       }).and_return(@notification)
 
       get(:run_job, :message => @reward.key)
