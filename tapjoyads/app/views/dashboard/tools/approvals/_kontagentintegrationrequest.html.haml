@@ -8,17 +8,18 @@
       %th
   %tbody
   - @approvals.each do |approval|
-    %tr
-      %td
-        = approval.item.to_s
-        - if approval.item.partner
-          (Partner:
-          = link_to approval.item.partner.name, approval.item.partner
-          )
-      %td= render :partial => 'owner_select', :locals => {:approval => approval}
-      %td= approval.state
-      %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
-      %td.actions
-        - if approval.pending?
-          = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
-          = link_to('Reject', reject_tools_acceptance_path(approval.id), :class => 'reject')
+    - if approval.item
+      %tr
+        %td
+          = approval.item.to_s
+          - if approval.item.partner
+            (Partner:
+            = link_to approval.item.partner.name, approval.item.partner
+            )
+        %td= render :partial => 'owner_select', :locals => {:approval => approval}
+        %td= approval.state
+        %td= approval.rejected? ? (approval.reason? ? approval.reason : '(no reason provided)') : '(not rejected)'
+        %td.actions
+          - if approval.pending?
+            = link_to('Approve', approve_tools_acceptance_path(approval.id), :class => 'approve')
+            = link_to('Reject', reject_tools_acceptance_path(approval.id), :class => 'reject')
