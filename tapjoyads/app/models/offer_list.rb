@@ -159,7 +159,7 @@ class OfferList
   end
 
   def optimized_offers
-    @optmized_offers ||= get_optimized_offers
+    @optimized_offers ||= get_optimized_offers
   end
 
   def default_offers
