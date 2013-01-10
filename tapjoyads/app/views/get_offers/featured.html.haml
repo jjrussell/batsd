@@ -126,6 +126,9 @@
             = @currency.get_visual_reward_amount(@offer, params[:display_multiplier])
           %span.pb5
             = @currency.name
+        - else
+          %span.med.pt10
+            = @offer.name
 
       %div{:class => "content #{@offer.featured_ad_color_in_css}"}
         - if @offer.video_offer?
@@ -137,18 +140,20 @@
             %img#thumb{:src => "#{@offer.video_icon_url}"}
 
         - elsif @offer.banner_creatives.present?
-          %div#creative
-            %img{:id => "creative_img", :src => ""}
+          %a{:href => "#{click_url}"}
+            %div#creative
+              %img{:id => "creative_img", :src => ""}
 
         - else
-          %div#creative
-            .app#app
-              .icon
-                %img#thumb{:src => "#{@offer.item_type == 'App' ? @offer.get_icon_url(:source => :cloudfront, :size => '256') : @offer.get_icon_url}"}
-                .cover
-                .shadow
-              .title.mt5
-                = @offer.name
+          %a{:href => "#{click_url}"}
+            %div#creative
+              .app#app
+                .icon
+                  %img#thumb{:src => "#{@offer.item_type == 'App' ? @offer.get_icon_url(:source => :cloudfront, :size => '256') : @offer.get_icon_url}"}
+                  .cover
+                  .shadow
+                .title.mt5
+                  = @offer.name
 
       .footer
         .wrap
