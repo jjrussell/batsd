@@ -5,8 +5,10 @@ if Rails.env.production?
   $perma_redis = LazyInitProxy.new { Redis.new(:host => 'redis.tapjoy.net', :db => 1) }
   $redis_read  = LazyInitProxy.new { Redis.new(:host => 'alpha.redis.tapjoy.net') }
 else
-  $redis_read = $redis = LazyInitProxy.new { Redis.new }
-  $perma_redis         = LazyInitProxy.new { Redis.new(:db => 1)}
+  (ENV['REDIS_HOST'] || 'localhost').tap do |redis_host|
+    $redis_read  = $redis = LazyInitProxy.new { Redis.new(:host => redis_host) }
+    $perma_redis = LazyInitProxy.new { Redis.new(:host => redis_host, :db => 1) }
+  end
 end
 
 # Collection of connections to do things like reset after forking

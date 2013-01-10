@@ -8,5 +8,8 @@ if defined?(Rails::Console) && ENV['DISABLE_CONSOLE_LOGGING'] != 'false'
   ActiveSupport::Cache::Store.logger = Logger.new(STDOUT)
 end
 
+# Allow configuration through .env
+Dotenv.load if Rails.env.development? || Rails.env.test?
+
 # Initialize the rails application
 Tapjoyad::Application.initialize!

@@ -38,7 +38,7 @@ namespace :db do
     end
   end
 
-  DATABASE_YML = YAML::load_file("config/database.yml")
+  DATABASE_YML = YAML.load(ERB.new(File.read("config/database.yml")).result)
   SOURCE       = DATABASE_YML['production_slave']
   DEST         = DATABASE_YML[Rails.env]
   DUMP_FILE    = "tmp/#{SOURCE['database']}.sql"
