@@ -25,28 +25,49 @@ class UdidReports
 
   def self.generate_report(offer_id, date_str)
     date = Time.zone.parse(date_str).beginning_of_day
-    conditions = "offer_id = '#{offer_id}' AND created >= '#{date.to_i}' AND created < '#{(date + 1.day).to_i}'"
+    map_method = <<-EOF
+     function(v) {
+        var reward = JSON.parse(v.values[0].data);
+        if (reward.created[0] >= #{date.to_i} && reward.created[0] < #{(date + 1.day).to_i}) {
+          return [{
+            "reward_key" : v.key,
+            "udid" : reward.udid ? reward.udid[0] : null,
+            "created" : reward.created[0],
+            "country" : reward.country ? reward.country[0] : null,
+            "mac_address" : reward.mac_address ? reward.mac_address[0] : null,
+            "click_key" : reward.click_key ? reward.click_key[0] : null
+          }];
+        } else {
+          return [];
+        }
+     }
+    EOF
+  
+    rewards = Riak::MapReduce.new($riak).index('rewards', 'offer_id_bin', offer_id).map(map_method, :keep => true).run
+
+    # Create tempfile
     fs_path = "tmp/#{offer_id}_#{date.strftime('%Y-%m-%d')}.s3"
-    outfile = File.open(fs_path, 'w')
+    outfile = File.open(fs_path, 'w')  
 
-    Reward.select_all(:conditions => conditions) do |reward|
-      if reward.udid? || reward.mac_address?
-        line = "#{reward.udid},#{reward.created.to_s(:db)},#{reward.country},"
-        begin
-          line << "#{reward.mac_address || Device.new(:key => reward.udid).mac_address},"
-        rescue
-          line << ","
-        end
-        begin
-          click  = Click.new(:key => reward.click_key)
-          line << "#{click.clicked_at.to_s(:db) || ''}"
-        rescue
-
-        end
-        outfile.puts(line)
+    # Compile results into CSV format
+    rewards.each do |reward|
+      reward_date = Time.zone.at(reward['created'].to_i)
+      line = "#{reward['udid']},#{reward_date.to_s(:db)},#{reward['country']},"
+      begin
+        line << "#{reward['mac_address'] || Device.new(:key => reward['udid']).mac_address},"
+      rescue
+        line << ","
       end
+      begin
+        click  = Click.new(:key => reward['click_key'])
+        line << "#{click.clicked_at.to_s(:db) || ''}"
+      rescue
+        # Intentionally omitted
+      end
+      outfile.puts(line)
     end
 
+    # Write to S3
     if outfile.pos > 0
       outfile.close
       path   = "#{offer_id}/#{date.strftime('%Y-%m')}/#{date.strftime('%Y-%m-%d')}.csv"
@@ -65,7 +86,7 @@ class UdidReports
         end
       end
     end
-
+    
   ensure
     outfile.close rescue nil
     File.delete(fs_path) rescue nil
