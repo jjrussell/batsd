@@ -98,7 +98,7 @@ SDB_MEMCACHE_SERVERS = [
 DISTRIBUTED_MEMCACHE_SERVERS = [
   'localhost:21210', # couchbase us-east-1b
   'localhost:21211', # couchbase us-east-1c
-  'localhost:21212', # couchbase us-east-1d
+  # 'localhost:21212', # couchbase us-east-1d
   'localhost:21213', # couchbase us-east-1e
 ]
 
