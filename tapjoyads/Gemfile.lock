@@ -577,8 +577,8 @@ DEPENDENCIES
   acts_as_approvable (= 0.7.0)
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
-  analytics_logger (= 0.8.11)!
   airbrake (~> 3.0.0)
+  analytics_logger (= 0.8.11)!
   annotate
   archive-tar-minitar
   asset_sync
