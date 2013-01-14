@@ -218,7 +218,6 @@ GEM
       nokogiri (>= 1.5.0)
     curbit (0.2.0)
     daemons (1.0.10)
-    dalli (2.6.0)
     database_cleaner (0.8.0)
     declarative_authorization (0.5.5)
     diff-lcs (1.1.3)
@@ -577,8 +576,8 @@ DEPENDENCIES
   acts_as_approvable (= 0.7.0)
   adapter-redis (= 0.5)
   addressable (= 2.2.6)
-  analytics_logger (= 0.8.11)!
   airbrake (~> 3.0.0)
+  analytics_logger (= 0.8.11)!
   annotate
   archive-tar-minitar
   asset_sync
@@ -595,7 +594,6 @@ DEPENDENCIES
   cucumber-rails
   curbit (= 0.2.0)
   daemons (= 1.0.10)
-  dalli
   database_cleaner
   declarative_authorization
   differ
