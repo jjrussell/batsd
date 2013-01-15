@@ -11,7 +11,7 @@ shared_examples_for "a cache" do
     context 'for a non-existant type' do
       it 'raises a NameError when loading the constant' do
         error = ArgumentError.new("undefined class/module SomethingFake")
-        cache = Dalli::Client.new
+        cache = Memcached.new
         cache.stub(:get).with('key1').and_raise(error)
         lambda { memcache.get('key1', false, [cache]) }.should raise_error(NameError)
       end
@@ -32,17 +32,17 @@ shared_examples_for "a cache" do
     context 'with multiple keys' do
       context 'with first key a miss' do
         it 'returns second key val' do
-          cache = Dalli::Client.new
-          cache.stub(:get).with('key1').and_return(nil)
+          cache = Memcached.new
+          cache.stub(:get).with('key1').and_raise(Memcached::NotFound)
           cache.stub(:get).with('key2').and_return('val')
           memcache.get(['key1', 'key2'], false, [cache]).should == 'val'
         end
 
         it 'only adds last key found' do
-          missing_cache = Dalli::Client.new
-          cache = Dalli::Client.new
-          missing_cache.should_receive(:get).twice.and_return(nil)
-          cache.should_receive(:get).with('key1').and_return(nil)
+          missing_cache = FakeMemcached.new
+          cache = FakeMemcached.new
+          missing_cache.should_receive(:get).twice.and_raise(Memcached::NotFound)
+          cache.should_receive(:get).with('key1').and_raise(Memcached::NotFound)
           cache.should_receive(:get).with('key2').and_return('val')
           missing_cache.should_not_receive(:add).with('key1', 'val', 1.week.to_i)
           missing_cache.should_receive(:add).with('key2', 'val', 1.week.to_i)
@@ -52,8 +52,8 @@ shared_examples_for "a cache" do
 
       context 'with all keys a miss' do
         it 'returns yield' do
-          cache = Dalli::Client.new
-          cache.stub(:get).with('key1').and_return(nil)
+          cache = Memcached.new
+          cache.stub(:get).with('key1').and_raise(Memcached::NotFound)
           res = memcache.get(['key1', 'key2']) do
             'yielded_val'
           end
@@ -107,7 +107,6 @@ shared_examples_for "a cache" do
   it "increments count" do
     key = 'foocount'
     key2 = 'foocount2'
-    #binding.pry
     memcache.get_count(key).should == 0
 
     memcache.increment_count(key).should == 1
@@ -153,6 +152,24 @@ shared_examples_for "a cache" do
       end
 
       retries.should == 2
+      memcache.get('foo').should == 'aaaa'
+
+      # Can't retry more than 2 times
+      memcache.put('foo', 'a')
+      lambda do
+        retries = 0
+        memcache.compare_and_swap('foo', true) do |mc_val|
+          if retries < 3
+            retries += 1;
+            memcache.compare_and_swap('foo', true) do |mc_val|
+              mc_val + 'a'
+            end
+          end
+
+          mc_val + 'a'
+        end
+      end.should raise_error(Memcached::ConnectionDataExists)
+      retries.should == 3
       memcache.get('foo').should == 'aaaa'
     end
   end

@@ -1,6 +1,6 @@
 require 'logging'
 
-class StatsCache < MemcachedMc
+class StatsCache < Mc
   def self.reset_connection
     @cache = Memcached.new(CACHE_SERVERS[:stats], {
       :prefix_key => RUN_MODE_PREFIX,
