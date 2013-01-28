@@ -1,23 +1,16 @@
 require 'logging'
 
 class Mc
-  def self.dalli_opts
-    @dalli_opts ||= {
-      # TODO (amdtech): namespace needs to be nil, otherwise Dalli prepends a colon to the key.
-      #   Instead of this hack, we should clean up RUN_MODE_PREFIX to be nil in production
-      namespace: RUN_MODE_PREFIX == '' ? nil : RUN_MODE_PREFIX,
-      async: ENV['ASYNC'],
-      socket_max_failures: 2,
-      cache_lookups: false,
-      down_retry_delay: 300
-    }
-  end
-
   def self.reset_connection
-    @cache              = Dalli::Client.new(MEMCACHE_SERVERS, dalli_opts)
-    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map do |server|
-      Dalli::Client.new(server, dalli_opts)
-    end
+    options = {
+      :support_cas      => true,
+      :prefix_key       => RUN_MODE_PREFIX,
+      :auto_eject_hosts => false,
+      :cache_lookups    => false
+    }
+
+    @cache              = Memcached.new(MEMCACHE_SERVERS, options)
+    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
   end
 
   class << self
@@ -43,26 +36,26 @@ class Mc
   # returned from the yield block is put into cache and returned.
   def self.get_and_put(key, clone = false, time = 1.week)
     did_yield = false
-    value = Mc.get(key, clone) do
+    value = self.get(key, clone) do
       did_yield = true
       yield
     end
 
     if did_yield
-      Mc.put(key, value, clone, time) rescue nil
+      self.put(key, value, clone, time) rescue nil
     end
     return value
   end
 
   def self.distributed_get_and_put(key, clone = false, time = 1.week)
     did_yield = false
-    value = Mc.distributed_get(key, clone) do
+    value = self.distributed_get(key, clone) do
       did_yield = true
       yield
     end
 
     if did_yield
-      Mc.distributed_put(key, value, clone, time) rescue nil
+      self.distributed_put(key, value, clone, time) rescue nil
     end
     return value
   end
@@ -75,87 +68,87 @@ class Mc
     keys = keys.to_a
     key  = keys.shift
     caches ||= [ @cache ]
-
-    # We use missing_caches to make sure to distribute data in the event of a miss
+    #We use missing_caches to make sure to distribute data in the event of a miss
     missing_caches = []
 
-    # We might not find the value, we'll keep a string to log
-    fail_reason = nil
+    #We use this for looping on the current key with the list of available caches
+    available_caches = caches.clone
 
     value = nil
     log_info_with_time("Read from memcache") do
-      # Loop over caches looking for our key
-      caches.each do |cache|
-        cache = cache.clone if clone
-        begin
-          cache.get(cache_key(key)).tap do |val|
-            # If we didn't find the key in this cache, hang on to it
-            # so we can write the value if we find it in another cache
-            if val
-              val.ensure_utf8_encoding! if val.respond_to?(:ensure_utf8_encoding!)
-              Rails.logger.info("Memcache key found: #{key}")
-              value = val
-              break
-            else
-              missing_caches << cache
-              Rails.logger.info("Memcache key not found in cache, retrying: #{key}")
-              next # try next cache
-            end
-          end
-        rescue Dalli::RingError => e
-          fail_reason = "Dalli::RingError: #{key}"
-          next
-        rescue Dalli::DalliError => e
-          fail_reason = "Dalli::DalliError: #{e.message}"
-          next
-        rescue Dalli::NetworkError => e
-          fail_reason = "Dalli::NetworkError: #{e}"
-        rescue ArgumentError => e
-          if e.message.match /undefined class\/module (.+)$/
-            $1.constantize
-            retry
-          end
-          fail_reason = "ArgumentError: #{e.message}"
+      begin
+        #Grab a cache to try
+        cache = available_caches.shift
+        #"Key: #{cache_key(key)} ::: Value #{cache.get(cache_key(key))}"
+        unless cache.nil?
+          cache = cache.clone if clone
+          value = cache.get(cache_key(key))
+          value.ensure_utf8_encoding! if value.respond_to? :ensure_utf8_encoding!
+          Rails.logger.info("Memcache key found: #{key}")
         end
+      rescue Memcached::NotFound
+        missing_caches << cache
+        Rails.logger.info("Memcache key not found in cache, retrying: #{key}")
+        retry
+      rescue Memcached::ServerIsMarkedDead => e
+        Rails.logger.info("Memcached::ServerIsMarkedDead: #{key}")
+        retry
+      rescue Memcached::ServerError => e
+        Rails.logger.info("Memcached::ServerError: #{e.message}")
+        retry
+      rescue Memcached::NoServersDefined => e
+        Rails.logger.info("Memcached::NoServersDefined: #{e}")
+      rescue Memcached::ATimeoutOccurred => e
+        Rails.logger.info("Memcached::ATimeoutOccurred: #{e}")
+      rescue Memcached::SystemError => e
+        Rails.logger.info("Memcached::SystemError: #{e.message}")
+      rescue ArgumentError => e
+        if e.message.match /undefined class\/module (.+)$/
+          $1.constantize
+          retry
+        end
+        Rails.logger.info("ArgumentError: #{e.message}")
       end
     end
-
-    fail_reason and Rails.logger.info(fail_reason) # value.nil? => true
 
     unless value.nil? || missing_caches.empty?
       missing_caches.each do |cache|
         # The default is 1.week.  The memcached library doesn't give us the expiration
         # information for keys, so these will just have to be refreshed
-        Mc.add(key, value, clone, 1.week, cache)
+        begin
+          self.add(key, value, clone, 1.week, cache)
+        rescue Memcached::NotStored
+          # Refilling a cache server, someone must have done it already
+        rescue Memcached::ServerError
+          # This cache server probably can't fit the key, ignore for now
+        end
       end
     end
 
     if value.nil?
       if keys.present?
-        value = Mc.get(keys, clone, caches, &block)
+        value = self.get(keys, clone, caches, &block)
       elsif block_given?
         value = yield
       end
     end
 
-    ensure_safely_unmarshaled(value)
+    value
   end
 
   def self.distributed_get(key, clone = false)
-    ensure_safely_unmarshaled(
-      Mc.get(key, clone, @distributed_caches.shuffle) do
-        yield if block_given?
-      end
-    )
-  end
+    value = self.get(key, clone, @distributed_caches.shuffle) do
+      yield if block_given?
+    end
 
-  # We hope these values are hashes, but if they are still strings there
-  # is one more trick we can try
-  def self.ensure_safely_unmarshaled(val)
-    if val.is_a?(String)
-      Marshal.restore_with_ensure_utf8(val) rescue val
+    if value.is_a? String
+      begin
+        Marshal.restore_with_ensure_utf8(value)
+      rescue TypeError
+        value
+      end
     else
-      val
+      value
     end
   end
 
@@ -184,17 +177,13 @@ class Mc
     end
   end
 
-  class << self
-    alias_method :set, :put # for rollout
-  end
-
   def self.distributed_put(key, value, clone = false, time = 1.week)
     if value
       errors = []
       log_info_with_time("Wrote to memcache - distributed") do
         @distributed_caches.each do |cache|
           begin
-            Mc.put(key, value, clone, time, cache)
+            self.put(key, value, clone, time, cache)
           rescue Exception => e
             errors << e
           end
@@ -209,60 +198,71 @@ class Mc
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
 
-    if offset > 0
-      count = cache.incr(key, offset)
-    else
-      count = cache.decr(key, -offset)
-    end
-
-    unless count
+    begin
+      if offset > 0
+        count = cache.increment(key, offset)
+      else
+        count = cache.decrement(key, -offset)
+      end
+    rescue Memcached::NotFound
       count = offset + COUNT_OFFSET
-      cache.set(key, count.to_i, time.to_i, raw: true)
+      cache.set(key, count.to_s, time.to_i, false)
     end
 
-    count - COUNT_OFFSET
+    return count - COUNT_OFFSET
   end
 
   def self.get_count(key, clone = false)
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
 
-    count = cache.get(key, false) || COUNT_OFFSET
-    count.to_i - COUNT_OFFSET
+    begin
+      count = cache.get(key, false).to_i
+    rescue Memcached::NotFound
+      count = COUNT_OFFSET
+    end
+
+    return count - COUNT_OFFSET
   end
 
   def self.compare_and_swap(key, clone = false)
     cache = clone ? @cache.clone : @cache
     key = cache_key(key)
-    success = nil
 
-    retries = 5
-    retries.times do
-      success = cache.cas(key) do |mc_val|
-        mc_val.nil? ? success = nil : yield(mc_val)
+    retries = 2
+    begin
+      cache.cas(key) do |mc_val|
+        yield mc_val
       end
-
-      if success.nil?
-        cache.set(key, yield(nil))
-        success = true
+    rescue Memcached::NotFound
+      # Attribute hasn't been stored yet.
+      cache.set(key, yield(nil))
+    rescue Memcached::ConnectionDataExists => e
+      # Attribute was modified before it could write.
+      if retries > 0
+        retries -= 1
+        retry
+      else
+        raise e
       end
-
-      break if success
     end
-
-    success or raise Dalli::DalliError
   end
 
   def self.delete(key, clone = false, cache = nil)
     cache ||= @cache
     cache = cache.clone if clone
+    key = cache_key(key)
 
-    cache.delete(cache_key(key))
+    begin
+      cache.delete(key)
+    rescue Memcached::NotFound
+      Rails.logger.info("Memcached::NotFound when deleting.")
+    end
   end
 
   def self.distributed_delete(key, clone = false)
     @distributed_caches.each do |cache|
-      Mc.delete(key, clone, cache) rescue nil
+      self.delete(key, clone, cache) rescue nil
     end
     nil
   end
