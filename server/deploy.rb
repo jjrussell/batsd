@@ -54,7 +54,7 @@ Dir.chdir "tapjoyads" do
   if server_type == "dev"
     `bundle install`
   else
-    `bundle install --deployment`
+    `bundle install --local`
   end
 
   puts "Updating GeoIPCity Data"
