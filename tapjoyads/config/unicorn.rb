@@ -7,7 +7,7 @@ server_type = `#{base_dir}/server/server_type.rb`
 app_dir = "#{base_dir}/tapjoyads"
 working_directory app_dir
 
-worker_processes 16
+worker_processes 12
 timeout 20
 
 Rainbows! do
