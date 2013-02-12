@@ -316,7 +316,7 @@ GEM
     jquery-rails (1.0.19)
       railties (~> 3.0)
       thor (~> 0.14)
-    json (1.5.3)
+    json (1.5.5)
     kgio (2.7.2)
     launchy (2.1.0)
       addressable (~> 2.2.6)
@@ -624,7 +624,7 @@ DEPENDENCIES
   htmlentities (= 4.3.1)
   httparty (= 0.7.8)
   jquery-rails
-  json (= 1.5.3)
+  json (= 1.5.5)
   kgio (= 2.7.2)
   launchy
   lazy_high_charts (= 1.2.2)
