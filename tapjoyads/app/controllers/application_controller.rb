@@ -129,6 +129,7 @@ class ApplicationController < ActionController::Base
 
   def lookup_udid(set_temporary_udid = false)
     params[:udid] = nil if IGNORED_UDIDS.include?(params[:udid])
+    params[:publisher_user_id] = nil if IGNORED_UDIDS.include?(params[:publisher_user_id])
     return if params[:udid].present?
     lookup_keys = []
 
