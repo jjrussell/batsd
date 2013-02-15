@@ -8,6 +8,8 @@ GEOIP_VERSION = `cat #{Rails.root}/data/GeoIPCity.version`
 # .dat file.
 geoip_tag = (GEOIP_VERSION == '' ? '' : '-')
 GEOIP = Geoproxy.new("#{Rails.root}/data/#{GEOIP_VERSION}#{geoip_tag}GeoIPCity.dat")
+
+#TODO: make this configurable without a code change
 BANNED_IPS = Set.new(['174.120.96.162', '151.197.180.227', '74.63.224.218', '65.19.143.2', '67.164.98.72', '67.180.48.106'])
 BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26bcea38cd6f73b6439a1398ead513a', #UDID and SHA2 of that UDID in pairs.
                         '012345678901234', 'd245de8f862b8f166024c1c4e1a0ce41ec03c33dd9cd2d203487e8cef4b5a061',
@@ -16,7 +18,31 @@ BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26b
                         '355195000000017', '6f2493936ac99c3068d4da6eca711926c496df66500362dceb4b745a63084cf5',
                         '358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8',
                         'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a', '0123456789abcdef'])
-IGNORED_UDIDS = Set.new(['a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a'])
+IGNORED_UDIDS = Set.new([
+  '00000000',
+  '000000000000000',
+  '001068000000006',
+  '111111111111119',
+  '12345678',
+  '123456789012345',
+  '351869058577423',
+  '352273017386340',
+  '352751019523267',
+  '355692547693084',
+  '357070003178961',
+  'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a',
+  'armeabi-v7a',
+  'd01e',
+  'espresso10wifi',
+  'espressowifi',
+  'grouper',
+  'iml74k',
+  'jro03c',
+  'msm7627a',
+  'none',
+  'null',
+  'unknown',
+])
 
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/
 
