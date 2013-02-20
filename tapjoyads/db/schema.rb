@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121214013205) do
+ActiveRecord::Schema.define(:version => 20130207233905) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -193,6 +193,19 @@ ActiveRecord::Schema.define(:version => 20121214013205) do
 
   add_index "clients", ["id"], :name => "index_clients_on_id", :unique => true
   add_index "clients", ["name"], :name => "index_clients_on_name"
+
+  create_table "comscore_demo_data", :force => true do |t|
+    t.string   "app_id",                :limit => 36,                   :null => false
+    t.integer  "targeting_category_id",                                 :null => false
+    t.integer  "target_mau"
+    t.float    "concentration"
+    t.boolean  "active",                              :default => true, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "comscore_demo_data", ["app_id"], :name => "index_comscore_demo_data_on_app_id"
+  add_index "comscore_demo_data", ["targeting_category_id"], :name => "index_comscore_demo_data_on_targeting_category_id"
 
   create_table "console_authentications", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
@@ -959,6 +972,8 @@ ActiveRecord::Schema.define(:version => 20121214013205) do
     t.decimal  "native_rank_score",                               :precision => 8, :scale => 6, :default => 0.0
     t.boolean  "requires_admin_device",                                                         :default => false, :null => false
     t.boolean  "requires_advertising_id",                                                       :default => false, :null => false
+    t.boolean  "use_quality_list",                                                              :default => false, :null => false
+    t.string   "targeting_category_ids"
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
@@ -1278,18 +1293,34 @@ ActiveRecord::Schema.define(:version => 20121214013205) do
   add_index "survey_offers", ["prerequisite_offer_id"], :name => "index_survey_offers_on_prerequisite_offer_id"
 
   create_table "survey_questions", :id => false, :force => true do |t|
-    t.string   "id",                 :limit => 36, :null => false
-    t.string   "survey_offer_id",    :limit => 36
-    t.text     "text",                             :null => false
+    t.string   "id",                  :limit => 36,                    :null => false
+    t.string   "survey_offer_id",     :limit => 36
+    t.text     "text",                                                 :null => false
     t.text     "possible_responses"
-    t.string   "format",                           :null => false
+    t.string   "format",                                               :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "position",                         :null => false
+    t.integer  "position",                                             :null => false
+    t.boolean  "randomize_responses",               :default => false
   end
 
   add_index "survey_questions", ["id"], :name => "index_survey_questions_on_id", :unique => true
   add_index "survey_questions", ["survey_offer_id"], :name => "index_survey_questions_on_survey_offer_id"
+
+  create_table "targeting_categories", :force => true do |t|
+    t.string   "name",          :null => false
+    t.string   "label",         :null => false
+    t.string   "description"
+    t.string   "source",        :null => false
+    t.string   "category_type"
+    t.string   "country"
+    t.string   "category"
+    t.string   "query_table"
+    t.string   "query_field"
+    t.string   "query_value"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "user_roles", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36, :null => false
