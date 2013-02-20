@@ -9,12 +9,15 @@ class Mc
       :cache_lookups    => false
     }
 
-    @cache              = Memcached.new(MEMCACHE_SERVERS, options)
-    @distributed_caches = DISTRIBUTED_MEMCACHE_SERVERS.map { |server| Memcached.new(server, options) }
+    @cache                        = Memcached.new(MEMCACHE_SERVERS, options)
+    @primary_distributed_cache    = [ Memcached.new(PRIMARY_DISTRIBUTED_COUCHBASE_CLUSTER, options) ]
+    @secondary_distributed_caches = SECONDARY_DISTRIBUTED_COUCHBASE_CLUSTERS.map { |server| Memcached.new(server, options) }
+
+    @distributed_caches = (@primary_distributed_cache + @secondary_distributed_caches).compact
   end
 
   class << self
-    attr_accessor :cache, :distributed_caches
+    attr_accessor :cache, :distributed_caches, :primary_distributed_cache, :secondary_distributed_caches
   end
   self.reset_connection
 
@@ -137,7 +140,7 @@ class Mc
   end
 
   def self.distributed_get(key, clone = false)
-    value = self.get(key, clone, @distributed_caches.shuffle) do
+    value = self.get(key, clone, @primary_distributed_cache + @secondary_distributed_caches.shuffle) do
       yield if block_given?
     end
 

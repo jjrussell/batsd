@@ -28,13 +28,15 @@ Tapjoyad::Application.configure do
   config.assets.digest = true
 end
 
-CACHE_SERVERS                    = {}
-CACHE_SERVERS[:analytics_logger] = ['127.0.0.1']
-CACHE_SERVERS[:stats]            = ['127.0.0.1']
-CACHE_SERVERS[:dedupe]           = ['127.0.0.1']
-MEMCACHE_SERVERS                 = ['127.0.0.1']
-SDB_MEMCACHE_SERVERS             = ['127.0.0.1']
-DISTRIBUTED_MEMCACHE_SERVERS     = ['127.0.0.1']
+mc_host_array                            = [ENV['MEMCACHED_HOST'] || '127.0.0.1']
+CACHE_SERVERS                            = {}
+CACHE_SERVERS[:analytics_logger]         = mc_host_array
+CACHE_SERVERS[:stats]                    = mc_host_array
+CACHE_SERVERS[:dedupe]                   = mc_host_array
+MEMCACHE_SERVERS                         = mc_host_array
+SDB_MEMCACHE_SERVERS                     = mc_host_array
+PRIMARY_DISTRIBUTED_COUCHBASE_CLUSTER    = mc_host_array
+SECONDARY_DISTRIBUTED_COUCHBASE_CLUSTERS = []
 
 EXCEPTIONS_NOT_LOGGED = ['ActionController::UnknownAction',
                          'ActionController::RoutingError']

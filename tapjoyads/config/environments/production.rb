@@ -62,6 +62,8 @@ rescue Errno::ENOENT
   local_config = {}
 end
 
+AVAILABILITY_ZONE = `curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone`
+
 CACHE_SERVERS = {}
 CACHE_SERVERS[:analytics_logger] = [
   'rabbit-dedupe.tapjoy.net'
@@ -95,12 +97,15 @@ SDB_MEMCACHE_SERVERS = [
   'riakcache-cache-6.tapjoy.local',
   'riakcache-cache-7.tapjoy.local'
 ]
-DISTRIBUTED_MEMCACHE_SERVERS = [
-  'localhost:21210', # couchbase us-east-1b
-  'localhost:21211', # couchbase us-east-1c
-  'localhost:21212', # couchbase us-east-1d
-  'localhost:21213', # couchbase us-east-1e
-]
+
+distributed_memcache_servers = {
+  'us-east-1b' => 'localhost:21210',
+  'us-east-1c' => 'localhost:21211',
+  'us-east-1d' => 'localhost:21212',
+  'us-east-1e' => 'localhost:21213',
+}
+PRIMARY_DISTRIBUTED_COUCHBASE_CLUSTER = distributed_memcache_servers[AVAILABILITY_ZONE]
+SECONDARY_DISTRIBUTED_COUCHBASE_CLUSTERS = distributed_memcache_servers.reject { |k,v| k == AVAILABILITY_ZONE }.values
 
 SPROCKETS_CONFIG = {
   :compile => true,
