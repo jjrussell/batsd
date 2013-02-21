@@ -974,6 +974,7 @@ ActiveRecord::Schema.define(:version => 20130207233905) do
     t.boolean  "requires_advertising_id",                                                       :default => false, :null => false
     t.boolean  "use_quality_list",                                                              :default => false, :null => false
     t.string   "targeting_category_ids"
+    t.integer  "desired_reach"
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
