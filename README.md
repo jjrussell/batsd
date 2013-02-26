@@ -12,11 +12,11 @@ cd /vagrant
 git clone git@github.com:[your github nickname]/connect.git
 ```
 
-Install necessary gems under ruby 1.8.7:
+Install necessary gems under ruby 1.9.3:
 
 ```
 cd /vagrant/connect/tapjoyads
-rvm use 1.8.7-p358
+rvm use 1.9.3-p194
 bundle
 ```
 
