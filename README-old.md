@@ -121,7 +121,7 @@ source ~/.bash_profile # to reload ~/.bash_profile
 rvm get head # to update rvm
 ```
 
-Install Ruby 1.8.7
+Install Ruby 1.9.3
 ------------------
 
 First install the osx-gcc-installer:
@@ -130,11 +130,11 @@ First install the osx-gcc-installer:
 https://github.com/kennethreitz/osx-gcc-installer/downloads
 ```
 
-Install the current version of 1.8.7 as the default:
+Install the current version of 1.9.3 as the default:
 
 ```
-rvm install 1.8.7
-rvm use 1.8.7 --default
+rvm install 1.9.3-p194
+rvm use 1.9.3 --default
 ```
 
 Sometimes there are issues with this with readline not working correctly. If
@@ -142,7 +142,7 @@ you're having trouble, try this:
 
 ```
 rvm pkg install readline
-rvm reinstall 1.8.7 -C --with-readline-dir=$rvm_path/usr
+rvm reinstall 1.9.3-p194 -C --with-readline-dir=$rvm_path/usr
 ```
 
 Install MySQL
