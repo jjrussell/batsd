@@ -188,6 +188,7 @@ class ApplicationController < ActionController::Base
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:language_code, :language)
     params[:mac_address] = params[:mac_address].downcase.gsub(/:/,"") if params[:mac_address].present?
+    remap_temple_run_app_id
   end
 
   def downcase_param(p)
@@ -373,5 +374,9 @@ class ApplicationController < ActionController::Base
 
   def check_uri
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
+  end
+
+  def remap_temple_run_app_id
+    params[:app_id] = 'e7ad2e09-c82f-4458-9cc9-a6a60c690265' if params[:app_id] == '93e78102-cbd7-4ebf-85cc-315ba83ef2d5'
   end
 end
