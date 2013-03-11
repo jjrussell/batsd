@@ -44,4 +44,8 @@ class String
   def id
     self.object_id
   end
+
+  def valid_version_string?
+    !/^\d+(\.\d+)*$/.match(self).nil?
+  end  
 end

@@ -4,6 +4,11 @@ describe Device do
   before(:all) { ExperimentBucket.rehash_population(:buckets => 1, :limit => 0) }
   after(:all) { ExperimentBucket.destroy_all }
 
+  before :each do
+    @device = FactoryGirl.create :device
+    @key = @device.key
+  end
+
   describe '.normalize_device_type' do
     context 'type is iPhone' do
       it 'returns iphone' do
@@ -57,7 +62,6 @@ describe Device do
 
   describe '#create_identifiers!' do
     before :each do
-      @device = FactoryGirl.create(:device)
       @device.mac_address = 'a1b2c3d4e5f6'
       @device.android_id = 'test-android-id'
       @device.advertising_id = 'test-advertiser-id'
@@ -101,7 +105,6 @@ describe Device do
   describe '#copy_mac_address_device!' do
     context 'without invalid data' do
       before :each do
-        @device = FactoryGirl.create(:device)
         Device.should_not_receive(:new)
       end
 
@@ -125,7 +128,6 @@ describe Device do
     before :each do
       app = FactoryGirl.create :app
       @offer = app.primary_offer
-      @device = FactoryGirl.create :device
       @now = Time.zone.now
     end
 
@@ -205,12 +207,6 @@ describe Device do
   end
 
   describe '#recently_skipped?' do
-    before :each do
-      @device = Device.new
-      @device.save!
-      @key = @device.id
-    end
-
     context 'an offer has just been skipped' do
       it 'returns true' do
         @device.recent_skips = [['a', Time.zone.now]]
@@ -237,11 +233,6 @@ describe Device do
   end
 
   describe '#add_skip' do
-    before :each do
-      @device = Device.new
-      @device.save!
-      @key = @device.id
-    end
     it 'adds offer to recent_skips' do
       now = Time.zone.now
       @device.add_skip('a')
@@ -257,12 +248,6 @@ describe Device do
   end
 
   describe '#remove_old_skips' do
-    before :each do
-      @device = Device.new
-      @device.save!
-      @key = @device.id
-    end
-
     it 'removes all skips more than specfied time ago' do
       a = []
       100.times do
@@ -278,9 +263,9 @@ describe Device do
 
   context 'A Device' do
     before :each do
-     @device = Device.new
-     @device.save!
-     @key = @device.id
+      @device = Device.new
+      @device.save!
+      @key = @device.id
     end
 
     it 'is correctly found when searched by id' do
@@ -301,10 +286,6 @@ describe Device do
   end
 
   context 'Publisher user ids' do
-    before :each do
-      @device = Device.new
-    end
-
     it 'updates publisher_user_id' do
       @device.set_publisher_user_id('app_id', 'foo')
       @device.publisher_user_ids['app_id'].should == 'foo'
@@ -382,9 +363,6 @@ describe Device do
 
   describe '#dashboard_device_info_tool_url' do
     include Rails.application.routes.url_helpers
-    before :each do
-      @device = FactoryGirl.create :device
-    end
 
     it 'matches URL for Rails device_info_tools_url helper' do
       @device.dashboard_device_info_tool_url.should == "#{URI.parse(DASHBOARD_URL).scheme}://#{URI.parse(DASHBOARD_URL).host}/tools/device_info?udid=#{@device.key}"
@@ -632,7 +610,6 @@ describe Device do
     before :each do
       @now = Time.now
       Timecop.freeze(@now)
-      @device = FactoryGirl.create(:device)
     end
 
     it 'marks device suspended' do
@@ -653,7 +630,6 @@ describe Device do
 
   describe '#unsuspend!' do
     it "unsuspends device" do
-      @device = FactoryGirl.create(:device)
       @device.suspend!(24)
       @device.suspended?.should be_true
       @device.unsuspend!
@@ -663,7 +639,6 @@ describe Device do
 
   describe '#set_pending_coupon' do
     before :each do
-      @device = FactoryGirl.create(:device)
       @device.stub(:save).and_return(true)
       @device.set_pending_coupon('123456')
     end
@@ -675,7 +650,6 @@ describe Device do
 
   describe '#remove_pending_coupon' do
     before :each do
-      @device = FactoryGirl.create(:device)
       @device.stub(:save).and_return(true)
       @device.set_pending_coupon('123')
       @device.set_pending_coupon('456')
@@ -702,13 +676,166 @@ describe Device do
       ExternalPublisher.stub(:load_all_for_device).and_return(external_publishers)
 
       InNetworkApp.stub(:new).and_return(mock('in_network_app'))
-      @device = FactoryGirl.create :device
       @device.set_last_run_time!(@app1.id)
       @device.set_last_run_time!(@app2.id)
     end
 
     it 'return in_network_apps based on device.apps' do
       @device.in_network_apps.size.should == 2
+    end
+  end
+
+  describe '#set_sdk_version' do
+    let (:app) { FactoryGirl.create :app }
+
+    context 'with a new app ID' do
+      it 'stores SDK version for a new app ID' do
+        @device.set_sdk_version(app.id, '9.0.0')
+        @device.save
+
+        device = Device.new(:key => @key)
+        device.sdk_version(app.id).should == '9.0.0'
+      end
+    end
+
+    context 'with an app ID that already has a recorded SDK version' do
+      before :each do
+        @device.apps_sdk_versions = { app.id => '8.2.0' }
+        @device.save
+      end
+
+      it 'updates existing SDK version for an app ID' do
+        @device.set_sdk_version(app.id, '9.0.0')
+        @device.save
+
+        device = Device.new(:key => @key)
+        device.sdk_version(app.id).should == '9.0.0'
+      end
+    end
+  end
+
+  describe '#set_sdk_version!' do
+    let (:app) { FactoryGirl.create :app }
+
+    it "updates app SDK version without needing to call save" do
+      @device.set_sdk_version!(app.id, '9.0.0')
+
+      device = Device.new(:key => @key)
+      device.sdk_version(app.id).should == '9.0.0'
+    end
+  end
+
+  describe '#sdk_version' do
+    let (:app) { FactoryGirl.create :app }
+
+    context 'when no SDK version has been saved for this app' do
+       it 'returns nil' do
+        @device.sdk_version(app.id).should be_nil
+      end
+    end
+
+    context 'when an SDK version has been saved for this app' do
+      before :each do
+        @device.apps_sdk_versions = { app.id => '9.0.0' }
+        @device.save
+      end
+
+      it 'returns the SDK version for a given app ID' do
+        device = Device.new(:key => @key)
+        device.sdk_version(app.id).should == '9.0.0'
+      end
+    end
+  end
+
+  describe '#unset_sdk_version!' do
+    let (:app) { FactoryGirl.create :app }
+
+    context 'when no SDK version has been saved for this app' do
+      it 'should return nil after unsetting the SDK version' do
+        @device.unset_sdk_version!(app.id).should be_nil
+      end
+    end
+
+    context 'when an SDK version has been saved for this app' do
+      before :each do
+        @device.apps_sdk_versions = { app.id => '9.0.0' }
+        @device.save
+      end
+
+      it 'should return the SDK version value for the app being unset' do
+        @device.unset_sdk_version!(app.id).should == '9.0.0'
+      end
+
+      it 'should unset the SDK version for the given app' do
+        @device.unset_sdk_version!(app.id)
+
+        device = Device.new(:key => @key)
+        device.sdk_version(app.id).should be_nil
+      end
+    end
+  end
+
+  describe '#handle_connect!' do
+    let (:app)      { FactoryGirl.create :app }
+    let (:params)   { { :udid => @key } }
+
+    context 'when the "library_version" parameter is specified' do
+      before :each do
+        @device.set_sdk_version(app.id, '9.0.0')
+        @device.save
+      end
+
+      context 'when the provided "library_version" is later than the recorded SDK version' do
+        it 'updates the recorded SDK version for the specified app' do
+          params[:library_version] = '9.0.1'
+          @device.handle_connect!(app.id, params)
+
+          device = Device.new(:key => @key)
+          device.sdk_version(app.id).should == '9.0.1'
+        end
+      end
+
+      context 'when the provided "library_version" is the same as the recorded SDK version' do
+        it 'leaves the recorded SDK version for the specified app unchanged' do
+          prev_sdk_version = @device.sdk_version(app.id)
+          params[:library_version] = '9.0.0'
+          @device.handle_connect!(app.id, params)
+
+          device = Device.new(:key => @key)
+          device.sdk_version(app.id).should == prev_sdk_version
+        end
+      end
+
+      context 'when the provided "library_version" is older than the recorded SDK version' do
+        it 'updates the recorded SDK version for the specified app' do
+          params[:library_version] = '8.2.0'
+          @device.handle_connect!(app.id, params)
+
+          device = Device.new(:key => @key)
+          device.sdk_version(app.id).should == '8.2.0'
+        end
+      end
+
+      context 'when the provided "library_version" is bogus' do
+        it 'leaves the recorded SDK version for the specified app unchanged' do
+          prev_sdk_version = @device.sdk_version(app.id)
+          params[:library_version] = 'piece.of.crap'
+          @device.handle_connect!(app.id, params)
+
+          device = Device.new(:key => @key)
+          device.sdk_version(app.id).should == prev_sdk_version
+        end
+      end
+    end
+
+    context 'when the "library_version" parameter is not specified' do
+      it 'leaves the recorded SDK version for the specified app unchanged' do
+        prev_sdk_version = @device.sdk_version(app.id)
+        @device.handle_connect!(app.id, params)
+
+        device = Device.new(:key => @key)
+        device.sdk_version(app.id).should == prev_sdk_version
+      end
     end
   end
 end

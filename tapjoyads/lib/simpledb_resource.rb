@@ -129,6 +129,13 @@ class SimpledbResource
   end
   self.sdb_attr :updated_at, {:type => :time, :attr_name => 'updated-at'}
 
+  def key=(key)
+    if self.class.ancestors.include?(SimpledbShardedResource) && !@this_domain_name.blank?
+      warn "#{caller[0]}: Reassigning :key of a SimpledbShardedResource object is dangerous.  See https://github.com/Tapjoy/tapjoyserver/pull/4828 for details."
+    end
+    @key = key
+  end
+
   def id
     @key
   end
