@@ -7,7 +7,8 @@ class Device < SimpledbShardedResource
 
   attr_reader :parsed_apps, :is_temporary
 
-  self.sdb_attr :apps, :type => :json, :default_value => {}
+  self.sdb_attr :apps, :type => :json, :default_value => {}                     # Formatted as { :app_id => <last_runtime>, ... }
+  self.sdb_attr :apps_sdk_versions, :type => :json, :default_value => {}        # Formatted as { :app_id => '<sdk_version>', ... }
   self.sdb_attr :is_jailbroken, :type => :bool, :default_value => false
   self.sdb_attr :country
   self.sdb_attr :internal_notes
@@ -138,6 +139,11 @@ class Device < SimpledbShardedResource
 
     @parsed_apps[app_id] = "%.5f" % now.to_f
     self.apps = @parsed_apps
+
+    # Make sure we store the current SDK version of this app on this device
+    if params[:library_version].present? && params[:library_version].valid_version_string? && params[:library_version].version_greater_than_or_equal_to?('1.0')
+      self.set_sdk_version(app_id, params[:library_version])
+    end
 
     if params[:lad].present?
       if params[:lad] == '0'
@@ -441,6 +447,30 @@ class Device < SimpledbShardedResource
 
   def mobile_carrier_code
     "#{mobile_country_code}.#{mobile_network_code}"
+  end
+
+  def set_sdk_version(app_id, version)
+    retry_save_on_fail = true if self.apps_sdk_versions[app_id].nil?
+    temp_sdk_versions = self.apps_sdk_versions
+    temp_sdk_versions[app_id] = version
+    self.apps_sdk_versions = temp_sdk_versions
+  end
+
+  def set_sdk_version!(app_id, version)
+    set_sdk_version(app_id, version)
+    save
+  end
+
+  def sdk_version(app_id)
+    self.apps_sdk_versions[app_id]
+  end
+
+  def unset_sdk_version!(app_id)
+    temp_sdk_versions = self.apps_sdk_versions
+    old_sdk_version = temp_sdk_versions.delete(app_id)
+    self.apps_sdk_versions = temp_sdk_versions
+    save
+    old_sdk_version
   end
 
   private

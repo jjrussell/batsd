@@ -1,6 +1,5 @@
 FactoryGirl.define do
   factory :click do
-    key               { FactoryGirl.generate(:guid) }
     udid              { FactoryGirl.create(:device).key }
     currency_id       { FactoryGirl.create(:currency).id }
     currency_reward   2000
@@ -10,7 +9,6 @@ FactoryGirl.define do
   end
 
   factory :device do
-    key               { FactoryGirl.generate(:udid) }
     apps              { }
   end
 
@@ -35,29 +33,24 @@ FactoryGirl.define do
   end
 
   factory :device_identifier do
-    key { FactoryGirl.generate(:guid) }
     udid ''
   end
 
   factory :temporary_device do
-    key     { FactoryGirl.generate(:guid) }
     apps    {}
   end
 
   factory :game_state do
-    key           { FactoryGirl.generate(:udid) }
     udids         { 5.times { [] << FactoryGirl.generate(:udid) } }
     version       1
   end
 
   factory :point_purchases do
-    key           { FactoryGirl.generate(:udid) }
     points        100
     virtual_goods { FactoryGirl.create(:virtual_good) }
   end
 
   factory :game_state_mapping do
-    key               { FactoryGirl.generate(:udid) }
     publisher_user_id UUIDTools::UUID.random_create.to_s
   end
 

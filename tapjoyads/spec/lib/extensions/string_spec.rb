@@ -66,4 +66,22 @@ describe String do
       @version.version_equal_to?(@later_version).should be_false
     end
   end
+
+  context '#valid_version_string?' do
+    it 'returns true for versions with multiple dots' do
+      '9.0.0'.should be_valid_version_string
+    end
+
+    it 'returns true for version numbers containing more than one digit per position' do
+      '10.0.11'.should be_valid_version_string
+    end
+
+    it 'returns true for versions without dots' do
+      '10'.should be_valid_version_string
+    end
+
+    it 'returns false if the string contains any non-digit characters' do
+      '10.0.0a'.should_not be_valid_version_string
+    end
+  end
 end
