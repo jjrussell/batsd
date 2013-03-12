@@ -54,6 +54,7 @@ Tapjoyad::Application.configure do
 
   config.tapjoy_api_key = ENV['TAPJOY_API_KEY'] || raise('Please provide an API key')
   config.hurricane_api_url = ENV['HURRICANE_API_URL'] || raise('Please provide the hurricane server url')
+  config.threadsafe!
 end
 
 begin
