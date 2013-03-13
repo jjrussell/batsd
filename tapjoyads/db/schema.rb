@@ -396,13 +396,16 @@ ActiveRecord::Schema.define(:version => 20130207233905) do
     t.string   "reseller_id",                                :limit => 36
     t.decimal  "reseller_spend_share",                                     :precision => 8, :scale => 6
     t.boolean  "whitelist_overridden",                                                                   :default => false, :null => false
-    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "promoted_offers",                                                                                           :null => false
+    t.string   "enabled_deeplink_offer_id",                  :limit => 36
     t.text     "store_whitelist",                                                                                           :null => false
-    t.boolean  "conversion_rate_enabled",                                                                :default => false, :null => false
     t.string   "offer_filter"
+    t.boolean  "conversion_rate_enabled",                                                                :default => false, :null => false
     t.text     "message"
     t.boolean  "message_enabled",                                                                        :default => false, :null => false
+    t.decimal  "network_share",                                            :precision => 8, :scale => 6, :default => 0.85,  :null => false
+    t.decimal  "partner_rev_share",                                        :precision => 8, :scale => 6, :default => 0.5,   :null => false
+    t.decimal  "reseller_rev_share",                                       :precision => 8, :scale => 6
   end
 
   add_index "currencies", ["app_id"], :name => "index_currencies_on_app_id"
