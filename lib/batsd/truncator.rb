@@ -33,7 +33,7 @@ module Batsd
       keys = @redis.datapoints(with_gauges=false)
       keys = keys.collect do |k|
         if (k.match(/^timer/) rescue false)
-          ["mean", "min", "max", "upper_90", "stddev", "count"].collect{|a| "#{k}:#{a}"}
+          ["mean", "min", "max", "upper_90", "slope", "stddev", "count"].collect{|a| "#{k}:#{a}"}
         else
           k
         end

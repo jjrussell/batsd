@@ -41,6 +41,18 @@ class Array
     (mean_squared/(count-1))**0.5
   end
 
+  def slope
+    # with only one value, the slope of the point is 0
+    return 0 if size < 2
+    i = 0
+    # assume each point has equal weight over this time period
+    x = self.map{|v| i += 1}
+    
+    l = LineFit.new
+    l.setData(x, self)
+    l.coefficients[1]
+  end
+
   # Allow [1,2,3].percentile_90, [1,2,3].percentile(75), etc.
   def method_missing(method, *args, &block)
      if method.to_s =~ /^percentile_(.+)$/
