@@ -8,6 +8,67 @@ class ConnectController < ApplicationController
   tracks_admin_devices # :only => [:index]
   before_filter :reject_banned_udids
 
+  # Order is important.
+  PRIORITIZED_DEVICE_IDENTIFIER_TO_NAME_MAP = {
+    :advertising_id => "Advertising ID",
+    :open_udid      => "OpenUDID",
+    :android_id     => "Android ID",
+    :serial_id      => "Serial ID",
+    :mac_address    => "MAC Address",
+    :udid           => "UDID"           # Not necessarily an actual UDID
+  }
+
+
+  # Handles calls from the advertiser SDK on startup. This call is the mechanism
+  # by which Tapjoy identifies whether an app has been installed on a given
+  # device.
+  #
+  # These endpoints are also called in custom "server-to-server" implementations
+  # of the Tapjoy platform. Because of this, badly-behaved implementations may
+  # not supply the same typical values as the somewhat-standardized advertiser
+  # SDKs supply.
+  #
+  # == Params
+  #
+  # +:udid+                 - IMEI or MEID for Android. Serial for wifi-only devices.  UUID for iOS. MAC for some badly-behaved server-to-server implementations.
+  # +:device_name+          - The device name or model. Ex: "DroidX", "Droid", "iPhone1,1", "iPod 1,1", etc.
+  # +:device_type+          - Device type. Typically 'android', 'iphone', 'ipod', etc.
+  # +:os_version+           - Version of Android or iOS running.
+  # +:country_code+         - The "Alpha-2" code for the country from which the request was made. See: http://en.wikipedia.org/wiki/ISO_3166-1
+  # +:language_code+        - Language code
+  # +:app_id+               - The Tapjoy ID for the app making the connect call
+  # +:app_version+          - The advertiser's version number for their app
+  # +:library_version+      - The version number of the Tapjoy SDK making the call
+  # +:publisher_user_id+    - The publisher-specified User ID for this device/account.  By default, this is the “udid” if using Tapjoy Managed Currency.  Otherwise this is set by the publisher.
+  # +:carrier_name+         - The carrier name for the device making the call
+  # +:carrier_country_code+ - The carrier-supplied Country Code (ISO)
+  # +:mobile_country_code+  - The carrier-supplied Mobile Country Code (MCC)
+  # +:mobile_network_code+  - The carrier-supplied Mobile Network Code (MNC)
+  # +:connection_type+      - The device's connection type. 'mobile' or 'WIFI'
+  # +:platform+             - Software platform running on the device (ex: "android")
+  # +:timestamp+            - The time at which the call was made. Seconds since January 1st, 1970
+  # +:verifier+             - SHA256 hash computed by taking the appID, UDID, timestamp, and app secret key separated by colons - (app_id + ":" + udid + ":" + timestamp + ":" + secret_key)
+  # +:sdk_type+             - SDK type. 'connect' (advertiser SDK), 'offers' (publisher SDK) or 'virtual_goods' (deprecated)
+  # +:plugin+               - Plugin type (ex: unity, phonegap, marmalade, adobeair, native)
+
+  # === iOS SPECIFIC
+  # +:lad+                  - Jailbreak status of the device. 0 for non-jailbroken devices, else 1
+  # +:mac_address+          - MAC address of the device, with colons removed
+  # +:sha1_mac_address+     - SHA1 hash of the MAC address, colon separated
+  # +:open_udid+            - The OpenUDID
+  # +:open_udid_count+      - The Open UDID slot count
+  # +:advertising_id+       - The IDFA of the device
+
+  # === ANDROID SPECIFIC
+  # +:android_id+           - The ANDROID_ID of the device
+  # +:device_manufacturer+  - The manufacturer of the device
+  # +:screen_density+       - The device's screen density
+  # +:screen_layout_size+   - The device's screen layout size
+  # +:serial_id+            - The hardware serial of the device
+  # +:sha1_mac_address+     - SHA1 hash of the MAC address, uppercase, colon separated
+
+  # === WP7 SPECIFIC
+  # +:device_manufacturer+  - The manufacturer of the device
   def index
     lookup_udid(true)
     required_param = [:app_id]
@@ -26,7 +87,11 @@ class ConnectController < ApplicationController
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
       end
       if click.rewardable?
-        message = { :click_key => click.key, :install_timestamp => Time.zone.now.to_f.to_s }.to_json
+        message = {
+          :click_key         => click.key,
+          :device_identifier => advertiser_supplied_device_identifier,
+          :install_timestamp => Time.zone.now.to_f.to_s
+        }.to_json
         Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
       end
     end
@@ -59,5 +124,16 @@ class ConnectController < ApplicationController
     if sdkless_supported?
       @sdkless_clicks = @device.sdkless_clicks
     end
+  end
+
+  private
+
+  # For reporting purposes, we are to record the advertiser-supplied unique
+  # identifier(s) for the device that are least privacy-invasive.
+  def advertiser_supplied_device_identifier
+    PRIORITIZED_DEVICE_IDENTIFIER_TO_NAME_MAP.each do |id, name|
+      return {:id => id, :type => name} if params[id].present?
+    end
+    return {}
   end
 end

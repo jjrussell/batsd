@@ -139,6 +139,74 @@ describe ConnectController do
           response.body.should include('Success')
         end
       end
+
+
+      # The connect call must report the unique identifier for the calling
+      # device that is "least invasive" to the user's privacy. This is the
+      # priority of identifiers that the connect call receives:
+      IDENTIFIER_PRIORITIES = [:advertising_id, :open_udid, :android_id, :serial_id, :mac_address, :udid]
+
+      def self.generate_params_for(*identifiers)
+        params = {}
+
+        identifiers.each do |id|
+          params[id] = id.to_s
+        end
+
+        params
+      end
+
+      def self.preferred_identifier_for(*identifiers)
+        IDENTIFIER_PRIORITIES.each do |id|
+          return id if identifiers.include?(id)
+        end
+      end
+
+      def self.all_combinations_for(identifiers)
+        cs = []
+        1.upto(identifiers.size) do |i|
+          cs += identifiers.combination(i).to_a
+        end
+
+        return cs
+      end
+
+      all_combinations_for(IDENTIFIER_PRIORITIES).each do |identifiers|
+
+        context "and those identifiers are #{identifiers.to_sentence}" do
+          expected_identifier = preferred_identifier_for(*identifiers)
+          let(:click) do
+            mock('Click',
+              :rewardable? => true,
+              :new_record? => false,
+              :key => 'key',
+              :id => 'click_id',
+              :offer_id => 'offer_id'
+            )
+          end
+          let(:device) do
+            FactoryGirl.create(:device).tap do |this|
+              Device.stub(:new).and_return(this)
+            end
+          end
+          let(:params) { @params.merge(self.class.generate_params_for(*identifiers)) }
+          before(:each) do
+            device.stub(:has_app?).and_return false
+            Click.stub(:new).and_return(click)
+          end
+
+          it "includes the #{expected_identifier} in the conversion tracking request" do
+            Sqs.should_receive(:send_message) do |queue, json_params|
+              queue.should be QueueNames::CONVERSION_TRACKING
+              h = JSON.parse(json_params)
+              h['device_identifier']['id'].should == expected_identifier.to_s
+            end
+
+            get(:index, params)
+          end
+
+        end
+      end
     end
   end
 end
