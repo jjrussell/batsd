@@ -132,7 +132,7 @@ class ConnectController < ApplicationController
   # identifier(s) for the device that are least privacy-invasive.
   def advertiser_supplied_device_identifier
     PRIORITIZED_DEVICE_IDENTIFIER_TO_NAME_MAP.each do |id, name|
-      return {:id => id, :type => name} if params[id].present?
+      return {:id => params[id], :type => name} if params[id].present?
     end
     return {}
   end
