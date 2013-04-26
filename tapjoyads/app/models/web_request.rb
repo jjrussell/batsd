@@ -54,9 +54,13 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :sha1_udid
   self.define_attr :sha1_mac_address
   self.define_attr :android_id
-  self.define_attr :advertising_id
+  self.define_attr :advertising_id  # a device identifier, such as IDFA or Android ID, reported by the advertiser
+  self.define_attr :inbound_udid
+  self.define_attr :click_id
+  self.define_attr :click_offer_id
   self.define_attr :udid_via_lookup, :type => :bool
   self.define_attr :udid_is_temporary, :type => :bool
+  self.define_attr :udid_lookup_via
   self.define_attr :app_id
   self.define_attr :offer_id
   self.define_attr :offer_is_paid, :type => :bool
@@ -94,8 +98,6 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :mobile_country_code, :cgi_escape => true
   self.define_attr :mobile_network_code
   self.define_attr :click_key
-  self.define_attr :click_id
-  self.define_attr :click_offer_id
   self.define_attr :transaction_id
   self.define_attr :tap_points
   self.define_attr :publisher_amount, :type => :int
@@ -170,6 +172,33 @@ class WebRequest < AnalyticsLogger::Message
   self.define_attr :geoip_area_code, :type => :int
   self.define_attr :geoip_dma_code, :type => :int
   self.define_attr :rewarded, :type => :bool
+  self.define_attr :offer_bid, :type => :int
+  self.define_attr :offer_payment, :type => :int
+  self.define_attr :currency_exchange_rate, :type => :int
+  self.define_attr :currency_sale_multiplier, :type => :float
+  self.define_attr :display_multiplier, :type => :float
+  self.define_attr :device_identifier
+  self.define_attr :old_udid_for_device_identifier
+  self.define_attr :new_udid_for_device_identifier
+  self.define_attr :tjc_version
+  self.define_attr :statz_data
+  self.define_attr :predecessor_offer_id
+  self.define_attr :announcement_signup_id
+  self.define_attr :announcement_id
+  self.define_attr :email
+  self.define_attr :submit_date, :type => :time
+  self.define_attr :verify_date, :type => :time
+  self.define_attr :redirect_date, :type => :time
+  self.define_attr :agreed_to_tos, :type => :bool
+  self.define_attr :email_verified, :type => :bool
+  self.define_attr :ban_reason
+  self.define_attr :ban_action
+  self.define_attr :gamer_id
+  self.define_attr :session_id
+  self.define_attr :session_start_time, :type => :time
+  self.define_attr :session_last_active_time, :type => :time
+  self.define_attr :third_party_name
+  self.define_attr :third_party_amount, :type => :int
 
   def self.count(conditions = nil)
     VerticaCluster.count('production.web_requests', conditions)
@@ -192,8 +221,7 @@ class WebRequest < AnalyticsLogger::Message
     web_request.save
   end
 
-  def self.log_offer_instructions( time, params, ip_address = nil, geoip_data = nil, user_agent = nil)
-    path = 'offer_instructions'
+  def self.log_offer_instructions(path, time, params, ip_address = nil, geoip_data = nil, user_agent = nil)
     params[:offer_id] = params[:id]
     web_request = WebRequest.new(:time => time)
     web_request.put_values(path, params, ip_address, geoip_data, user_agent)
@@ -211,7 +239,7 @@ class WebRequest < AnalyticsLogger::Message
       # containing some characters in this encoding -- and we can't upgrade JSON
       # (to 1.6.6) due to a conflict with the Chef gem.  As a result, we convert
       # the string to utf8 (which *can* be used by the JSON gem).
-      self.geoip_city         = Iconv.conv('utf-8', 'ISO-8859-1', geoip_data[:city]) if geoip_data[:city]
+      self.geoip_city         = geoip_data[:city] if geoip_data[:city]
       self.country            = geoip_data[:primary_country]
       self.geoip_latitude     = geoip_data[:lat]
       self.geoip_longitude    = geoip_data[:long]
@@ -224,14 +252,46 @@ class WebRequest < AnalyticsLogger::Message
     self.controller_action    = params[:action]
   end
 
+  def self.log_ppc_instruction_click(click)
+    web_request = WebRequest.new(:time => click.instruction_clicked_at)
+    web_request.path                   = 'ppc_instruction_click'
+    web_request.click_key              = click.key
+    web_request.instruction_viewed_at  = click.instruction_viewed_at
+    web_request.instruction_clicked_at = click.instruction_clicked_at
+    web_request.reward_id              = click.reward_key
+    web_request.type                   = click.type
+    web_request.publisher_app_id       = click.publisher_app_id
+    web_request.advertiser_app_id      = click.advertiser_app_id
+    web_request.displayer_app_id       = click.displayer_app_id
+    web_request.offer_id               = click.offer_id
+    web_request.currency_id            = click.currency_id
+    web_request.publisher_user_id      = click.publisher_user_id
+    web_request.advertiser_amount      = click.advertiser_amount
+    web_request.publisher_amount       = click.publisher_amount
+    web_request.displayer_amount       = click.displayer_amount
+    web_request.tapjoy_amount          = click.tapjoy_amount
+    web_request.currency_reward        = click.currency_reward
+    web_request.source                 = click.source
+    web_request.ip_address             = click.ip_address
+    web_request.udid                   = click.udid
+    web_request.country                = click.country
+    web_request.viewed_at              = click.viewed_at
+    web_request.clicked_at             = click.clicked_at
+    web_request.store_name             = click.store_name
+    web_request.mac_address            = click.mac_address
+    web_request.device_type            = click.device_type
+    web_request.geoip_country          = click.geoip_country
+    web_request.save
+  end
+
   def save
     check_web_request
-    super
     begin
       update_realtime_stats
     rescue Exception => e
       Notifier.alert_new_relic(e.class, e.message)
     end
+    super
   end
 
   private
@@ -255,6 +315,7 @@ class WebRequest < AnalyticsLogger::Message
     keys.each do |mc_key|
       StatsCache.increment_count(mc_key, false, 1.day)
     end
+    self.statz_data = keys.join(",")
   end
 
   #TODO: Either remove or abstract to do other sanity checks more cleanly
@@ -262,6 +323,7 @@ class WebRequest < AnalyticsLogger::Message
     if self.path.blank?
       @@live_debugger ||= LiveDebugger.new('web_request')
       @@live_debugger.log(self, 'WebRequestMissingPath')
+      Notifier.alert_new_relic(BlankPathError)
     end
   end
 end

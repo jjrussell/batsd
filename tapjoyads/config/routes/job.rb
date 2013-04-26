@@ -78,6 +78,7 @@ Tapjoyad::Application.routes.draw do
     match 'queue_hourly_partner_stats(/index)' => 'queue_hourly_partner_stats#index'
     match 'queue_mail_chimp_updates(/index)' => 'queue_mail_chimp_updates#index'
     match 'queue_mail_chimp_updates(/index)' => 'queue_mail_chimp_updates#index'
+    match 'queue_new_advertising_ids(/index)' => 'queue_new_advertising_ids#index'
     match 'queue_partner_notifications(/index)' => 'queue_partner_notifications#index'
     match 'queue_recount_stats(/index)' => 'queue_recount_stats#index'
     match 'queue_resolve_support_requests(/index)' => 'queue_resolve_support_requests#index'

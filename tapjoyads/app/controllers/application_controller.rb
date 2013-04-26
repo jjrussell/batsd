@@ -79,7 +79,7 @@ class ApplicationController < ActionController::Base
     required_records = args.flatten
     render_missing_text = options.delete(:render_missing_text) { true }
     raise "Unknown options #{options.keys.join(', ')}" unless options.empty?
-    record_missing = required_records.any?(&:nil?)
+    record_missing = required_records.any?( &:nil? )
     render :text => 'record not found', :status => 400 if render_missing_text && record_missing
     !record_missing
   end
@@ -127,34 +127,43 @@ class ApplicationController < ActionController::Base
     language_code
   end
 
-  def lookup_udid(set_temporary_udid = false)
-    params[:udid] = nil if IGNORED_UDIDS.include?(params[:udid])
-    params[:publisher_user_id] = nil if IGNORED_UDIDS.include?(params[:publisher_user_id])
-    return if params[:udid].present?
-    lookup_keys = []
+  def current_device_id
+    @device_id ||= @device_locator.device_id
+  end
 
-    DeviceIdentifier::ALL_IDENTIFIERS.each do |identifier|
-      lookup_keys.push(params[identifier]) if params[identifier].present?
-    end
-    params[:identifiers_provided] = lookup_keys.any?
+  def current_device
+    @device ||= @device_locator.current_device
+  end
 
-    lookup_keys.each do |lookup_key|
-      identifier = DeviceIdentifier.new(:key => lookup_key)
-      unless identifier.new_record? || identifier.udid.to_s.start_with?('device_identifier')
-        params[:udid_via_lookup] = true
-        params[:udid] = identifier.udid
-        break
-      end
-    end
+  def lookup_device_id(set_temporary_udid = false)
+    ignore_params
 
-    if params[:udid].blank? && params[:mac_address].present?
-      params[:udid] = params[:mac_address]
-    end
+    @device_locator = DeviceService::Locator.new(params, set_temporary_udid)
+    params[:udid] = @device_locator.device_id
+    params[:udid_lookup_via] = @device_locator.lookup_via
+    params[:identifiers_provided] = @device_locator.identifiers_provided
 
-    if params[:udid].blank? && set_temporary_udid && lookup_keys.any?
-      params[:udid] = lookup_keys.first
+    record_lookup_results
+  end
+
+  def record_lookup_results
+    case params[:udid_lookup_via]
+    when :lookup
+      params[:udid_via_lookup] = true
+    when :alternative_udid
       params[:udid_is_temporary] = true
+    when :temporary
+      params[:udid_is_temporary] = true
+    else
+      params[:udid_is_temporary] = false
+      params[:udid_via_lookup]   = false
     end
+  end
+
+  def ignore_params
+    params[:udid]              = nil if DeviceService.ignored_udid?(params[:udid])
+    params[:publisher_user_id] = nil if DeviceService.ignored_udid?(params[:publisher_user_id])
+    params[:advertising_id]    = nil if DeviceService.ignored_advertising_id?(params[:advertising_id])
   end
 
   def fix_params
@@ -162,6 +171,7 @@ class ApplicationController < ActionController::Base
     downcase_param(:sha2_udid)
     downcase_param(:sha1_udid)
     downcase_param(:sha1_mac_address)
+    downcase_param(:advertising_id)
     downcase_param(:app_id)
     downcase_param(:campaign_id)
     downcase_param(:publisher_app_id)
@@ -188,8 +198,17 @@ class ApplicationController < ActionController::Base
     set_param(:max, :Max)
     set_param(:virtual_good_id, :VirtualGoodID)
     set_param(:language_code, :language)
-    params[:mac_address] = params[:mac_address].downcase.gsub(/:/,"") if params[:mac_address].present?
+    params[:mac_address] = DeviceService.normalize_mac_address(params[:mac_address])
+    params[:advertising_id] = DeviceService.normalize_advertising_id(params[:advertising_id])
     remap_temple_run_app_id
+    set_inbound_udid
+  end
+
+  def set_inbound_udid
+    return if @inbound_udid_set
+
+    params[:inbound_udid] = params[:udid]
+    @inbound_udid_set = true
   end
 
   def downcase_param(p)
@@ -212,20 +231,30 @@ class ApplicationController < ActionController::Base
   def geoip_data
     return @cached_geoip_data if @cached_geoip_data.present?
 
+    if Rails.env.development?
+      # GEOIP.city("vpn.tapjoy.net")
+      @cached_geoip_data = { :country     => 'US',
+                             :continent   => 'NA',
+                             :region_name => 'CA',
+                             :city_name   => 'Oakland',
+                             :postal_code => '',
+                             :lat         => 37.795,
+                             :long        => -122.2193,
+                             :area_code   => 510,
+                             :dma_code    => 807 }
+      return @cached_geoip_data
+    end
+
     @cached_geoip_data = {}
 
     unless @server_to_server && params[:device_ip].blank?
       geo_struct = GEOIP.city(params[:device_ip] || ip_address) rescue nil
       if geo_struct.present?
-        @cached_geoip_data[:country]     = geo_struct[:country_code2]
-        @cached_geoip_data[:continent]   = geo_struct[:continent_code]
-        @cached_geoip_data[:region]      = geo_struct[:region_name]
-        @cached_geoip_data[:city]        = geo_struct[:city_name]
-        @cached_geoip_data[:postal_code] = geo_struct[:postal_code]
-        @cached_geoip_data[:lat]         = geo_struct[:latitude]
-        @cached_geoip_data[:long]        = geo_struct[:longitude]
-        @cached_geoip_data[:area_code]   = geo_struct[:area_code]
-        @cached_geoip_data[:dma_code]    = geo_struct[:dma_code]
+        { :country => :country_code2, :continent => :continent_code, :region => :region_name, :city => :city_name,
+          :lat => :latitude, :long => :longitude }.each do |key, struct_key|
+            @cached_geoip_data[key] = geo_struct[struct_key]
+        end
+        @cached_geoip_data.merge!(geo_struct.to_hash.slice(:postal_code, :area_code, :dma_code))
       end
     end
     @cached_geoip_data[:user_country_code]    = params[:country_code].present? ? params[:country_code].to_s.upcase : nil
@@ -322,7 +351,7 @@ class ApplicationController < ActionController::Base
   def generate_verifier(more_data = [])
     hash_bits = [
       params[:app_id],
-      request.query_parameters[:udid] || params[:mac_address],
+      request.query_parameters[:udid] || params[:mac_address] || params[:advertising_id],
       params[:timestamp],
       App.find_in_cache(params[:app_id]).secret_key
     ] + more_data
@@ -369,12 +398,36 @@ class ApplicationController < ActionController::Base
     @device_type ||= HeaderParser.device_type(request.user_agent)
   end
 
+  def is_ios?
+    ['ipod', 'ipad', 'iphone', 'itouch'].include? device_type
+  end
+
   def os_version
     @os_version ||= HeaderParser.os_version(request.user_agent)
   end
 
   def check_uri
     redirect_to request.protocol + "www." + request.host_with_port + request.fullpath if !/^www/.match(request.host)
+  end
+
+  # This filter is to address an issue where a requester sends us an invalid
+  # HTTP Accept header. The specific case seen is where the header is set to
+  # "none". Rails does not recognize this Mime type, but is assuming that it's
+  # valid. It then uses this string as the expected format and looks for a
+  # matching template. When it cannot be found, ActionView::MissingTemplate is
+  # thrown.
+  def override_invalid_http_accept
+    # If env is not set, the rest of this is moot
+    return if env.nil?
+    # Check if the HTTP Accept header contains a forward slash. As per
+    # http://www.w3.org/Protocols/rfc2616/rfc2616-sec14, an HTTP Accept header
+    # must contain a forward slash to be valid.
+    unless /\//.match(env['HTTP_ACCEPT'])
+      # The header was invalid, so we override the interpretation done during
+      # dispatch and force the output to HTML
+      env['action_dispatch.request.accepts'] = [Mime::HTML, Mime::XML, Mime::JSON]
+      env['action_dispatch.request.formats'] = [Mime::HTML, Mime::XML, Mime::JSON]
+    end
   end
 
   def remap_temple_run_app_id
