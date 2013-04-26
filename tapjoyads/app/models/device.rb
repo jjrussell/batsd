@@ -1,3 +1,4 @@
+require_dependency 'ruby_version_independent'
 require_dependency 'device_service'
 
 class Device < SimpledbShardedResource

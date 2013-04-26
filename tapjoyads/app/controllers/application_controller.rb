@@ -1,4 +1,5 @@
 # Multiple STI subclasses in one file needs this line to be findable in development mode
+require_dependency 'ruby_version_independent'
 require_dependency 'review_moderation_vote'
 require_dependency 'library_version'
 require_dependency 'earth'

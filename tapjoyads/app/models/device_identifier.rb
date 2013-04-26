@@ -1,3 +1,6 @@
+require_dependency 'ruby_version_independent'
+require_dependency 'device_service'
+
 class DeviceIdentifier < SimpledbShardedResource
   include RiakMirror
   mirror_configuration :riak_bucket_name => "device_identifiers", :read_from_riak => true
