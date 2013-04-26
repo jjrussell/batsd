@@ -1,6 +1,6 @@
 class GetVgStoreItemsController < ApplicationController
 
-  before_filter :lookup_udid, :set_publisher_user_id, :setup
+  before_filter :lookup_device_id, :set_publisher_user_id, :setup
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.
@@ -51,7 +51,7 @@ class GetVgStoreItemsController < ApplicationController
       list
     end
 
-    if @currency.has_test_device?(params[:udid] || params[:mac_address])
+    if @currency.has_test_device?(params[:udid], params[:mac_address], params[:advertising_id])
       mc_key = "virtual_good_list.beta.#{params[:app_id]}"
       @virtual_good_list = @virtual_good_list | Mc.get_and_put(mc_key, false, 5.minutes) do
         list = []
