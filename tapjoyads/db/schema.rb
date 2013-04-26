@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305182349) do
+ActiveRecord::Schema.define(:version => 20130417221605) do
 
   create_table "action_offers", :id => false, :force => true do |t|
     t.string   "id",                                :limit => 36,                    :null => false
@@ -49,6 +49,31 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
   add_index "admin_devices", ["id"], :name => "index_admin_devices_on_id", :unique => true
   add_index "admin_devices", ["udid"], :name => "index_admin_devices_on_udid", :unique => true
 
+  create_table "announcements", :id => false, :force => true do |t|
+    t.string   "id",                :limit => 36,                    :null => false
+    t.string   "partner_id",        :limit => 36,                    :null => false
+    t.string   "name",                                               :null => false
+    t.text     "instructions"
+    t.string   "app_id",            :limit => 36
+    t.string   "platform"
+    t.string   "app_store_id"
+    t.string   "store_url"
+    t.string   "app_name",                                           :null => false
+    t.text     "app_description"
+    t.integer  "price",                           :default => 0
+    t.string   "screen_shot_1_url"
+    t.string   "screen_shot_2_url"
+    t.string   "screen_shot_3_url"
+    t.string   "trailer_url"
+    t.datetime "release_datetime"
+    t.boolean  "hidden",                          :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "announcements", ["id"], :name => "index_announcements_on_id", :unique => true
+  add_index "announcements", ["partner_id"], :name => "index_announcements_on_partner_id"
+
   create_table "app_metadata_mappings", :id => false, :force => true do |t|
     t.string  "id",              :limit => 36,                    :null => false
     t.string  "app_id",          :limit => 36,                    :null => false
@@ -68,7 +93,7 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
     t.string   "store_id",                                         :null => false
     t.integer  "age_rating"
     t.integer  "file_size_bytes"
-    t.string   "supported_devices"
+    t.text     "supported_devices"
     t.datetime "released_at"
     t.float    "user_rating"
     t.string   "categories"
@@ -107,6 +132,18 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
   add_index "app_reviews", ["app_metadata_id", "author_id"], :name => "index_app_reviews_on_app_metadata_id_and_author_id", :unique => true
   add_index "app_reviews", ["app_metadata_id", "updated_at", "is_blank"], :name => "app_reviews_get_app"
   add_index "app_reviews", ["id"], :name => "index_app_reviews_on_id", :unique => true
+
+  create_table "app_store_category_data", :force => true do |t|
+    t.string   "app_id",                :limit => 36, :null => false
+    t.integer  "targeting_category_id",               :null => false
+    t.string   "csv_entry"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "app_store_category_data", ["app_id"], :name => "index_app_store_category_data_on_app_id"
+  add_index "app_store_category_data", ["csv_entry"], :name => "index_app_store_category_data_on_csv_entry"
+  add_index "app_store_category_data", ["targeting_category_id"], :name => "index_app_store_category_data_on_targeting_category_id"
 
   create_table "approvals", :id => false, :force => true do |t|
     t.string   "id",         :limit => 36,                        :null => false
@@ -179,6 +216,17 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
 
   add_index "brands", ["id"], :name => "index_brands_on_id", :unique => true
   add_index "brands", ["name"], :name => "index_brands_on_name", :unique => true
+
+  create_table "cached_offer_lists", :force => true do |t|
+    t.string   "source"
+    t.string   "memcached_key"
+    t.string   "cached_offer_type"
+    t.datetime "generated_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "cached_offer_lists", ["created_at"], :name => "index_cached_offer_lists_on_created_at"
 
   create_table "clients", :id => false, :force => true do |t|
     t.string   "id",                      :limit => 36, :null => false
@@ -301,6 +349,7 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
     t.integer  "amount",                         :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "advertiser_bid"
   end
 
   create_table "conversions", :id => false, :force => true do |t|
@@ -843,6 +892,18 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
   add_index "offer_events", ["id"], :name => "index_offer_events_on_id", :unique => true
   add_index "offer_events", ["offer_id"], :name => "index_offer_events_on_offer_id"
 
+  create_table "offer_properties", :id => false, :force => true do |t|
+    t.string   "id",         :limit => 36, :null => false
+    t.string   "offer_id",   :limit => 36, :null => false
+    t.string   "name",                     :null => false
+    t.string   "value",                    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "offer_properties", ["id"], :name => "index_offer_properties_on_id", :unique => true
+  add_index "offer_properties", ["offer_id", "name"], :name => "index_offer_properties_on_offer_id_and_name", :unique => true
+
   create_table "offerpal_offers", :id => false, :force => true do |t|
     t.string   "id",          :limit => 36,                    :null => false
     t.string   "partner_id",  :limit => 36,                    :null => false
@@ -957,6 +1018,8 @@ ActiveRecord::Schema.define(:version => 20130305182349) do
     t.boolean  "use_quality_list",                                                              :default => false, :null => false
     t.string   "targeting_category_ids"
     t.integer  "desired_reach"
+    t.string   "language_filters"
+    t.text     "device_model_filters",                                                                             :null => false
   end
 
   add_index "offers", ["app_metadata_id"], :name => "index_offers_on_app_metadata_id"
