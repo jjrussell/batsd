@@ -18,3 +18,5 @@ class DeviceService
     end
   end
 end
+
+require 'device_service/locator'

@@ -1,3 +1,5 @@
+require_dependency 'device_service'
+
 class Device < SimpledbShardedResource
   include Device::Handling
   include Device::Risk

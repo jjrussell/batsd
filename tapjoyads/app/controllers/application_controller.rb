@@ -2,6 +2,7 @@
 require_dependency 'review_moderation_vote'
 require_dependency 'library_version'
 require_dependency 'earth'
+require_dependency 'device_service'
 
 
 # Filters added to this controller apply to all controllers in the application.
