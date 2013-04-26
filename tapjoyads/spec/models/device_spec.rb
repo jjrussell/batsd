@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe Device do
-  before(:all) { ExperimentBucket.rehash_population(:buckets => 1, :limit => 0) }
-  after(:all) { ExperimentBucket.destroy_all }
-
   before :each do
     @device = FactoryGirl.create :device
     @key = @device.key

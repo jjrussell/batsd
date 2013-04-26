@@ -17,7 +17,7 @@ BANNED_UDIDS = Set.new(['004999010640000', '45ace52a5a817f345a6849dcf5f2ed01d26b
                         '352005048247251', 'cafc5c408c7aaa5b1626169964b69be08792d4fe75a0f4a8b062dd7c8bbdebb2',
                         '355195000000017', '6f2493936ac99c3068d4da6eca711926c496df66500362dceb4b745a63084cf5',
                         '358673013795895', '0304c63f3624dbb8fab792f24e6d3f79dd78442031e27e5e8c892d7155f024a8',
-                        'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a', '0123456789abcdef'])
+                        'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a', '0123456789abcdef', '88508850885050'])
 IGNORED_UDIDS = Set.new([
   '00000000',
   '000000000000000',
@@ -30,6 +30,7 @@ IGNORED_UDIDS = Set.new([
   '352751019523267',
   '355692547693084',
   '357070003178961',
+  '88508850885050',
   'a22aaa22-a2aa-2aa2-aa2a-a2aaa2aa2a2a',
   'armeabi-v7a',
   'd01e',
@@ -42,6 +43,10 @@ IGNORED_UDIDS = Set.new([
   'none',
   'null',
   'unknown',
+])
+
+IGNORED_ADVERTISING_IDS = Set.new([
+  '00000000-0000-0000-0000-000000000000',
 ])
 
 APP_ID_FOR_DEVICES_REGEX = /^(\w|\.|-)*$/

@@ -70,14 +70,14 @@ class ConnectController < ApplicationController
   # === WP7 SPECIFIC
   # +:device_manufacturer+  - The manufacturer of the device
   def index
-    lookup_udid(true)
+    lookup_device_id(true)
     required_param = [:app_id]
     required_param << :udid unless params[:identifiers_provided]
 
     return unless verify_params(required_param)
     return unless params[:udid].present?
 
-    @device   = Device.new({ :key => params[:udid], :is_temporary => params[:udid_is_temporary].present? })
+    current_device #sets @device instance variable (application controller)
     click     = nil
     path_list = []
 

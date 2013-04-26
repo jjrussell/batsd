@@ -16,6 +16,7 @@ class QueueNames
   FAILED_RIAK_SAVES          = "#{BASE_NAME}FailedRiakSaves"
   GET_STORE_INFO             = "#{BASE_NAME}GetStoreInfo"
   MAIL_CHIMP_UPDATES         = "#{BASE_NAME}MailChimpUpdates"
+  NEW_ADVERTISING_IDS        = "#{BASE_NAME}NewAdvertisingIds"
   PARTNER_CHANGES            = "#{BASE_NAME}PartnerChanges"
   PARTNER_NOTIFICATIONS      = "#{BASE_NAME}PartnerNotifications"
   PARTNER_STATS_DAILY        = "#{BASE_NAME}PartnerStatsDaily"

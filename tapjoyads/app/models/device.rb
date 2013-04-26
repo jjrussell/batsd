@@ -1,4 +1,7 @@
 class Device < SimpledbShardedResource
+  include Device::Handling
+  include Device::Risk
+  include Device::Sdk
   include RiakMirror
   #Note the that domain name is "d" to save on bytes since device keys are in memory for Riak
   mirror_configuration :riak_bucket_name => "d", :read_from_riak => true, :queue_failed_writes => true, :disable_sdb_writes => true
@@ -27,6 +30,8 @@ class Device < SimpledbShardedResource
   self.sdb_attr :android_id
   self.sdb_attr :idfa
   self.sdb_attr :advertising_id
+  self.sdb_attr :upgraded_idfa
+  self.sdb_attr :udid
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
   self.sdb_attr :all_packages, :type => :json, :default_value => []
@@ -45,6 +50,43 @@ class Device < SimpledbShardedResource
   MAX_OVERWRITES_TRACKED = 100000
   APP_LIMIT = 1500
 
+  def initialize(options = {})
+    @is_temporary = options.delete(:is_temporary) { false }
+    super({ :load_from_memcache => true }.merge(options))
+  end
+
+  def after_initialize
+    @create_device_identifiers = is_new
+    @retry_save_on_fail = is_new
+    fix_app_json
+    fix_publisher_user_ids_json
+    fix_display_multipliers_json
+    load_data_from_temporary_device if @is_temporary
+  end
+
+  def save(options = {})
+    create_identifiers = options.delete(:create_identifiers) { true }
+    if @is_temporary
+      temp_device = TemporaryDevice.new(:key => self.key)
+      temp_device.apps = temp_device.apps.merge(self.parsed_apps)
+      temp_device.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
+      temp_device.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
+      temp_device.save
+      return
+    end
+
+    clear_lru_apps if self.apps.count > APP_LIMIT # Keep simpledb from exploding everywhere
+    remove_old_skips
+    delete_extra_attributes('recent_click_hashes')    # remove obsolete sdb_attr
+    was_new_record = self.new_record?
+    return_value = super({ :write_to_memcache => true }.merge(options))
+    queue_message = {'device_id' => key}.to_json
+    Sqs.send_message(QueueNames::NEW_ADVERTISING_IDS, queue_message) if was_new_record && advertising_id_device?
+    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, queue_message) if @create_device_identifiers && create_identifiers && !advertising_id_device?
+    @create_device_identifiers = false
+    return_value
+  end
+
   def self.cached_count
     Mc.get('statz.devices_count') || 0
   end
@@ -62,111 +104,29 @@ class Device < SimpledbShardedResource
   end
 
   def mac_address=(new_value)
-    new_value = new_value ? new_value.downcase.gsub(/:/,"") : ''
+    new_value = new_value ? DeviceService.normalize_mac_address(new_value) : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
   end
 
-  def android_id=(new_value)
-    @create_device_identifiers ||= (self.android_id != new_value)
-    put('android_id', new_value)
+  def advertising_id=(new_value)
+    new_value = new_value ? DeviceService.normalize_advertising_id(new_value) : ''
+    put('advertising_id', new_value)
   end
 
-  def initialize(options = {})
-    @is_temporary = options.delete(:is_temporary) { false }
-    super({ :load_from_memcache => true }.merge(options))
+  def advertising_id_device?
+    return false if self.advertising_id.nil?
+    self.key == self.advertising_id ||
+      DeviceService.normalize_advertising_id(self.key) == self.advertising_id
   end
 
   def dynamic_domain_name
-    domain_number = @key.matz_silly_hash % NUM_DEVICES_DOMAINS
+    domain_number = RubyVersionIndependent.hash(@key) % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
   end
 
   def tjgames_registration_click_key
     "#{key}.#{TAPJOY_GAMES_REGISTRATION_OFFER_ID}"
-  end
-
-  def external_publishers
-    ExternalPublisher.load_all_for_device(self)
-  end
-
-  def first_rewardable_currency_id
-    ExternalPublisher.first_rewardable_currency_for_device(self).id
-  end
-
-  def after_initialize
-    @create_device_identifiers = is_new
-    @retry_save_on_fail = is_new
-    fix_app_json
-    fix_publisher_user_ids_json
-    fix_display_multipliers_json
-    load_data_from_temporary_device if @is_temporary
-  end
-
-  def handle_connect!(app_id, params)
-    return [] unless app_id =~ APP_ID_FOR_DEVICES_REGEX
-
-    now = Time.zone.now
-    path_list = []
-
-    self.mac_address = params[:mac_address] if params[:mac_address].present?
-    self.android_id = params[:android_id] if params[:android_id].present?
-    self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
-
-    is_jailbroken_was = is_jailbroken
-    country_was = country
-    last_run_time_was = last_run_time(app_id)
-
-    if last_run_time_was.nil?
-      path_list.push('new_user')
-      last_run_time_was = Time.zone.at(0)
-
-      # mark papaya new users as jailbroken
-      if app_id == 'e96062c5-45f0-43ba-ae8f-32bc71b72c99'
-        self.is_jailbroken = true
-      end
-    end
-
-    offset = @key.matz_silly_hash % 1.day
-    adjusted_now = now - offset
-    adjusted_lrt = last_run_time_was - offset
-    if adjusted_now.year != adjusted_lrt.year || adjusted_now.yday != adjusted_lrt.yday
-      path_list.push('daily_user')
-    end
-    if adjusted_now.year != adjusted_lrt.year || adjusted_now.month != adjusted_lrt.month
-      path_list.push('monthly_user')
-    end
-
-    @parsed_apps[app_id] = "%.5f" % now.to_f
-    self.apps = @parsed_apps
-
-    # Make sure we store the current SDK version of this app on this device
-    if params[:library_version].present? && params[:library_version].valid_version_string? && params[:library_version].version_greater_than_or_equal_to?('1.0')
-      self.set_sdk_version(app_id, params[:library_version])
-    end
-
-    if params[:lad].present?
-      if params[:lad] == '0'
-        self.is_jailbroken = false
-      else
-        self.is_jailbroken = true unless app_id == 'f4398199-6316-4680-9acf-d6dbf7f8104a' # Feed Al has inaccurate jailbroken detection
-      end
-    end
-
-    if params[:country].present?
-      if self.country.present? && self.country != params[:country]
-        Notifier.alert_new_relic(DeviceCountryChanged, "Country for udid: #{@key} changed from #{self.country} to #{params[:country]}", nil, params)
-      end
-      self.country = params[:country]
-    end
-
-    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
-      # Temporary change volume tracking, tracking running until 2012-10-31
-      Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
-      save
-    end
-
-    path_list
   end
 
   def set_last_run_time(app_id)
@@ -215,6 +175,10 @@ class Device < SimpledbShardedResource
   def set_publisher_user_id!(app_id, publisher_user_id)
     set_publisher_user_id(app_id, publisher_user_id)
     save if changed?
+  end
+
+  def publisher_user_id_for_app(app)
+    publisher_user_ids[app.id]
   end
 
   def set_display_multiplier(app_id, display_multi)
@@ -274,87 +238,8 @@ class Device < SimpledbShardedResource
     ]
   end
 
-  def save(options = {})
-    create_identifiers = options.delete(:create_identifiers) { true }
-    if @is_temporary
-      temp_device = TemporaryDevice.new(:key => self.key)
-      temp_device.apps = temp_device.apps.merge(self.parsed_apps)
-      temp_device.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
-      temp_device.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
-      temp_device.save
-      return
-    end
-
-    clear_lru_apps if self.apps.count > APP_LIMIT # Keep simpledb from exploding everywhere
-    remove_old_skips
-    delete_extra_attributes('recent_click_hashes')    # remove obsolete sdb_attr
-    return_value = super({ :write_to_memcache => true }.merge(options))
-    Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, {'device_id' => key}.to_json) if @create_device_identifiers && create_identifiers
-    @create_device_identifiers = false
-    return_value
-  end
-
   def self.formatted_mac_address(mac_address)
     mac_address.to_s.empty? ? nil : mac_address.strip.upcase.scan(/.{2}/).join(':')
-  end
-
-  def create_identifiers!
-    all_identifiers = [ Digest::SHA2.hexdigest(key) ]
-    all_identifiers << Digest::SHA1.hexdigest(key)
-    all_identifiers.push(android_id) if self.android_id.present?
-    if self.mac_address.present?
-      all_identifiers.push(mac_address)
-      all_identifiers.push(Digest::SHA1.hexdigest(Device.formatted_mac_address(mac_address)))
-    end
-    all_identifiers.each do |identifier|
-      device_identifier = DeviceIdentifier.new(:key => identifier)
-      next if device_identifier.udid == key
-      device_identifier.udid = key
-      device_identifier.save!
-    end
-    merge_temporary_devices!(all_identifiers)
-  end
-
-  def copy_mac_address_device!
-    return unless mac_address_mergeable?
-    mac_device = Device.new(:key => mac_address)
-    return if mac_device.new_record?
-
-    mac_device.parsed_apps.keys.each do |currency_id|
-      c = Currency.find_in_cache(currency_id)
-      next unless c
-      app_id = c.id
-      mac_pp = PointPurchases.new(:key => "#{mac_address}.#{app_id}")
-      next if mac_pp.new_record?
-
-      udid_pp = PointPurchases.new(:key => "#{key}.#{app_id}")
-      udid_pp.points = mac_pp.points
-      udid_pp.virtual_goods = mac_pp.virtual_goods
-      udid_pp.save!
-      mac_pp.delete_all
-    end
-
-    self.apps = mac_device.parsed_apps.merge(@parsed_apps)
-    self.publisher_user_ids = mac_device.publisher_user_ids.merge(publisher_user_ids)
-    save!
-    mac_device.delete_all(true)
-  end
-
-  def handle_sdkless_click!(offer, now)
-    if offer.sdkless?
-      temp_sdkless_clicks = sdkless_clicks
-
-      hash_key = offer.third_party_data
-      if offer.get_platform == 'iOS'
-        hash_key = offer.app_protocol_handler.present? ? offer.app_protocol_handler : "tjc#{offer.third_party_data}"
-      end
-
-      temp_sdkless_clicks[hash_key] = { 'click_time' => now.to_i, 'item_id' => offer.item_id }
-      temp_sdkless_clicks.reject! { |key, value| value['click_time'] <= (now - 2.days).to_i }
-      self.sdkless_clicks = temp_sdkless_clicks
-      @retry_save_on_fail = true
-      save
-    end
   end
 
   def self.device_type_to_platform(type)
@@ -386,31 +271,6 @@ class Device < SimpledbShardedResource
     self.recent_skips = temp.take_while { |skip| Time.zone.now - Time.parse(skip[1]) <= time }
   end
 
-  def suspend!(num_hours)
-    self.suspension_expires_at = Time.now + num_hours.hours
-    save
-  end
-
-  def unsuspend!
-    self.delete 'suspension_expires_at'
-    save
-  end
-
-  def suspended?
-    if suspension_expires_at?
-      if suspension_expires_at > Time.now
-        true
-      else
-        self.delete 'suspension_expires_at'
-        save and return false
-      end
-    end
-  end
-
-  def can_view_offers?
-    !(opted_out? || banned? || suspended?)
-  end
-
   def set_pending_coupon(offer_id)
     self.pending_coupons += [offer_id]
     save
@@ -421,86 +281,87 @@ class Device < SimpledbShardedResource
     save
   end
 
-  def experiment_bucket
-    ExperimentBucket.find_in_cache(experiment_bucket_id)
-  end
-
-  def experiment_bucket_id(hash_offset = nil)
-    return if ExperimentBucket.count_from_cache == 0
-    hash_offset ||= ExperimentBucket.hash_offset
-
-    # digest the udid, slice the characters we are using, and get an integer
-    hash = Digest::SHA1.hexdigest(self.key)[hash_offset .. 5].hex
-    ExperimentBucket.id_for_index(hash % ExperimentBucket.count_from_cache)
-  end
-
   def in_network_apps
-    in_network_apps = []
-    ExternalPublisher.load_all_for_device(self).each do |external_publisher|
-      app_metadata = App.find_in_cache(external_publisher.app_id).primary_app_metadata
-      in_network_apps << InNetworkApp.new(external_publisher,
-                                          app_metadata,
-                                          last_run_time(external_publisher.app_id))
-    end
-    in_network_apps
+    ExternalPublisher.load_all_for_device(self).map( &:external_store_name_and_key ).compact
   end
 
   def mobile_carrier_code
     "#{mobile_country_code}.#{mobile_network_code}"
   end
 
-  def set_sdk_version(app_id, version)
-    retry_save_on_fail = true if self.apps_sdk_versions[app_id].nil?
-    temp_sdk_versions = self.apps_sdk_versions
-    temp_sdk_versions[app_id] = version
-    self.apps_sdk_versions = temp_sdk_versions
+  def set_opt_out_offer_types(opted_out_types)
+    opted_in_types  = self.opt_out_offer_types - opted_out_types
+    opted_out_types.each { |type| self.opt_out_offer_types = type }
+    opted_in_types.each  { |type| self.delete('opt_out_offer_types', type) }
   end
 
-  def set_sdk_version!(app_id, version)
-    set_sdk_version(app_id, version)
-    save
+  def admin_device
+    @admin_device ||= AdminDevice.find_by_udid(id)
   end
 
-  def sdk_version(app_id)
-    self.apps_sdk_versions[app_id]
+  def admin_device?
+    admin_device.present?
   end
 
-  def unset_sdk_version!(app_id)
-    temp_sdk_versions = self.apps_sdk_versions
-    old_sdk_version = temp_sdk_versions.delete(app_id)
-    self.apps_sdk_versions = temp_sdk_versions
-    save
-    old_sdk_version
+  def app_ids_sorted_by_last_run_time
+    parsed_apps.sort{ |a,b| b[1] <=> a[1] }.map(&:first)
   end
 
   private
 
-  def mac_address_mergeable?
-    !(mac_address.nil? || key == mac_address || mac_address == "null" || key == "null")
+  # Class var holding procs which attempt to find where the 'good' JSON ends
+  # and return a pair of strings, the first of which is suspected to hold valid
+  # JSON and the second of which is the 'leftovers', which *might* hold some valid
+  # JSON but we are OK with losing it in favor of getting this attribute repaired
+  @@badness_splitters = []
+
+  # Some possibly valid JSON may exist after the token that
+  # caused the parser error
+  @@badness_splitters << lambda do |str, e|
+    raise unless badness = e.message.match(/unexpected token at '([^']+)/)[1]
+    raise unless last_good_curly_pos = str.index("}#{badness}")
+
+    # split at first '{' and try to parse
+    # the remaining json
+    before = str[0 .. last_good_curly_pos]
+    after  = str[last_good_curly_pos + 1 .. -1]
+
+    [before, after]
   end
 
-  def merge_temporary_devices!(all_identifiers)
-    orig_apps = self.parsed_apps.clone
-    all_identifiers.each do |identifier|
-      temp_device = TemporaryDevice.find(identifier)
-      if temp_device
-        @parsed_apps.merge!(temp_device.apps)
-        self.publisher_user_ids = temp_device.publisher_user_ids.merge(publisher_user_ids)
-        self.display_multipliers = temp_device.display_multipliers.merge(display_multipliers)
-        temp_device.delete_all
+  # Last ditch effort- slice at the last comma, replace it with a },
+  # and try to parse. It's possible running this proc multiple times on the same
+  # string might work for every string... eventually
+  @@badness_splitters << lambda do |str, e|
+    last_comma_pos = str.rindex(',')
+
+    before = str[0 .. last_comma_pos - 1] + '}'
+    after  = str[last_comma_pos + 1 .. -1]
+
+    [before, after]
+  end
+
+  def parse_bad_json_with_badness_splitters(str, e)
+    @@badness_splitters.reduce({}) do |result, splitter|
+      before, after = splitter.call(str, e) rescue [nil, nil]
+
+      # we may be missing the open '{'
+      after = "{#{after}" if after.present? && !after.starts_with?('{')
+
+      data = nil
+      begin
+        data                = before ? JSON.parse(before) : nil
+      rescue JSON::ParserError => e
+        LiveDebugger.new('user_events_bad_json_error').log(before.inspect)
       end
-    end
-    self.apps = @parsed_apps
 
-    save!(:create_identifiers => false) unless orig_apps == self.parsed_apps
-  end
+      data_after_badness  = after  ? (JSON.parse(after) rescue {}) : {}
 
-  def load_data_from_temporary_device
-    temp_device = TemporaryDevice.new(:key => self.key)
-    @parsed_apps = temp_device.apps.merge(self.parsed_apps)
-    self.publisher_user_ids = temp_device.publisher_user_ids.merge(self.publisher_user_ids)
-    self.display_multipliers = temp_device.display_multipliers.merge(self.display_multipliers)
-    self.apps = @parsed_apps
+      # If we got some data, merge it into the result
+      # It's OK to merge; we shouldn't be getting conflicting values on successive
+      # passes here, but we might have some data another pass missed
+      data ? result.reverse_merge(data.reverse_merge(data_after_badness)) : result
+    end.tap { |data| data.empty? and raise(e) }
   end
 
   def parse_bad_json(attribute, search_from = :left)
@@ -520,24 +381,7 @@ class Device < SimpledbShardedResource
 
     JSON.parse(str)
   rescue JSON::ParserError => e
-    # Some possibly valid JSON may exist after the token that
-    # caused the parser error
-    raise unless badness = e.message.match(/unexpected token at '([^']+)/)[1]
-    raise unless last_good_curly_pos = str.index("}#{badness}")
-
-    # split at first '{' and try to parse
-    # the remaining json
-    before = str[0 .. last_good_curly_pos]
-    after  = str[last_good_curly_pos + 1 .. -1]
-
-    # we may be missing the open '{'
-    after = "{#{after}" unless after.starts_with?('{')
-
-    data_before_badness = JSON.parse(before)
-    data_after_badness  = JSON.parse(after) rescue {}
-
-    # let keys in data_before_badness take precedence
-    data_before_badness.reverse_merge!(data_after_badness)
+    parse_bad_json_with_badness_splitters(str, e)
   end
 
   def fix_app_json

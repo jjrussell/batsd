@@ -10,6 +10,7 @@ class DeviceIdentifier < SimpledbShardedResource
     :mac_address,
     :sha1_mac_address,
     :android_id,
+    :advertising_id,
   ]
 
   self.num_domains = NUM_DEVICE_IDENTIFIER_DOMAINS
@@ -26,7 +27,7 @@ class DeviceIdentifier < SimpledbShardedResource
   end
 
   def dynamic_domain_name
-    domain_number = @key.matz_silly_hash % NUM_DEVICE_IDENTIFIER_DOMAINS
+    domain_number = RubyVersionIndependent.hash(@key) % NUM_DEVICE_IDENTIFIER_DOMAINS
     "device_identifiers_#{domain_number}"
   end
 
@@ -44,20 +45,4 @@ class DeviceIdentifier < SimpledbShardedResource
     return nil if identifier.nil? || identifier.device_id.to_s.start_with?('device_identifier')
     Device.find(identifier.device_id)
   end
-
-  def self.find_device_from_params(params)
-    device = nil
-    [:tapjoy_device_id, :udid, :mac_address].each do |old_udid_style|
-      device = Device.find(params[old_udid_style]) if params.include?(old_udid_style) && params[old_udid_style].present?
-      break if device
-    end
-    if device.nil?
-      params.slice(*ALL_IDENTIFIERS).each do |_, value|
-        device = DeviceIdentifier.find_device_for_identifier(value)
-        break if device
-      end
-    end
-    device
-  end
 end
-
