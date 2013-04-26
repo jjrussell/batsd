@@ -13,7 +13,7 @@ class DeviceService
     end
 
     def normalize_advertising_id(advertising_id)
-      return nil unless advertising_id.present? && advertising_id.uuid?
+      return nil unless advertising_id.present? && (advertising_id.uuid? || advertising_id.length == 32)
       advertising_id.downcase.gsub(/-/,"")
     end
   end
