@@ -82,10 +82,15 @@ class ConnectController < ApplicationController
     path_list = []
 
     unless @device.has_app?(params[:app_id]) && !@device.is_temporary
-      click = Click.new(:key => "#{params[:udid]}.#{params[:app_id]}", :consistent => params[:consistent])
+      [params[:udid], @device.advertising_id, @device.udid].uniq.each do |device_id_for_click|
+        click = Click.new(:key => "#{device_id_for_click}.#{params[:app_id]}", :consistent => params[:consistent])
+        break unless click.new_record?
+      end
+
       if click.new_record? && params[:mac_address].present? && params[:mac_address] != params[:udid]
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
       end
+
       if click.rewardable?
         message = {
           :click_key         => click.key,

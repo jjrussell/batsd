@@ -6,6 +6,7 @@ module Device::Handling
     path_list           = []
     self.mac_address    = params[:mac_address] if params[:mac_address].present?
     self.android_id     = params[:android_id] if params[:android_id].present?
+    self.udid           = params[:inbound_udid] if params[:inbound_udid].present?
     self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
     is_jailbroken_was   = is_jailbroken
     country_was         = country
