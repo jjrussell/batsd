@@ -43,7 +43,32 @@ module Device::Handling
       save
     end
 
+    if self.advertising_id_device?
+      run_set_last_run_time(app_id, self.standard_attributes)
+    else
+      run_set_last_run_time(app_id, self.advertising_attributes)
+    end
+
     path_list
+  end
+
+  def advertising_attributes
+    [self.normalized_advertising_id, self.upgraded_idfa].uniq.compact
+  end
+
+  def standard_attributes
+    [self.udid, self.mac_address].uniq.compact
+  end
+
+  def normalized_advertising_id
+    DeviceService.normalize_advertising_id(self.advertising_id)
+  end
+
+  def run_set_last_run_time(app_id, attributes)
+    attributes.each do |value|
+      associated_device = Device.find(value)
+      associated_device.set_last_run_time!(app_id) if associated_device.present?
+    end
   end
 
   def set_jailbroken(lad, app_id)
@@ -73,8 +98,12 @@ module Device::Handling
 
   def load_historical_data!
     return unless advertising_id_device?
-    device_ids_for_merge = mergeable_devices(true)
-    copy_devices!(device_ids_for_merge, true, true)
+    return if self.idfa_processed
+
+    self.idfa_processed = true
+    device_ids_for_merge = mergeable_devices
+    copy_devices!(device_ids_for_merge, false, true)
+    save! if self.changed?
   end
 
   def create_identifiers!
@@ -150,7 +179,7 @@ module Device::Handling
   def mergeable_devices(is_recreate = false)
     device_ids_for_merge = []
     device_ids_for_merge.concat(duplicate_device_ids) if is_recreate
-    [:udid, :mac_address, :advertising_id].each do |device_key|
+    [:udid, :mac_address].each do |device_key|
       device_ids_for_merge.push(self.send(device_key)) if self.send(device_key)
     end
 

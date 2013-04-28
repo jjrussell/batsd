@@ -32,6 +32,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :mac_address
   self.sdb_attr :android_id
   self.sdb_attr :idfa
+  self.sdb_attr :idfa_processed, :type => :bool, :default_value => false
   self.sdb_attr :advertising_id
   self.sdb_attr :upgraded_idfa
   self.sdb_attr :udid
