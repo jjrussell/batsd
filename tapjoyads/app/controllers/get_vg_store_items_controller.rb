@@ -1,6 +1,6 @@
 class GetVgStoreItemsController < ApplicationController
 
-  before_filter :lookup_device_id, :set_publisher_user_id, :setup
+  before_filter :lookup_device_id, :set_publisher_user_id_for_device, :setup
 
   ##
   # All virtual goods that are available to be purchased for this app from this device.
@@ -34,14 +34,14 @@ class GetVgStoreItemsController < ApplicationController
   private
 
   def setup
-    return unless verify_params([:app_id, :udid, :publisher_user_id])
+    return unless verify_params([:app_id, :udid, :publisher_user_id_for_device])
 
     @currency = Currency.find_in_cache(params[:app_id])
     if @currency.nil?
       @error_message = "There is no currency for this app. Please create one to use the virtual goods API."
       render :template => 'layouts/error' and return
     end
-    @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id]}.#{params[:app_id]}")
+    @point_purchases = PointPurchases.new(:key => "#{params[:publisher_user_id_for_device]}.#{params[:app_id]}")
     mc_key = "virtual_good_list.#{params[:app_id]}"
     @virtual_good_list = Mc.get_and_put(mc_key, false, 5.minutes) do
       list = []
@@ -78,4 +78,9 @@ class GetVgStoreItemsController < ApplicationController
     end
   end
 
+  def set_publisher_user_id_for_device
+    params[:publisher_user_id_for_device] = params[:publisher_user_id] ||
+                                            current_device.publisher_user_id_for_app(params[:app_id]) ||
+                                            params[:udid]
+  end
 end
