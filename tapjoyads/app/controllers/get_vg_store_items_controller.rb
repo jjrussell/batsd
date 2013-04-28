@@ -80,7 +80,7 @@ class GetVgStoreItemsController < ApplicationController
 
   def set_publisher_user_id_for_device
     params[:publisher_user_id_for_device] = params[:publisher_user_id] ||
-                                            current_device.publisher_user_id_for_app(params[:app_id]) ||
+                                            current_device.publisher_user_ids[params[:app_id]] ||
                                             params[:udid]
   end
 end
