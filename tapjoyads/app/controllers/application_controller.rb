@@ -202,8 +202,13 @@ class ApplicationController < ActionController::Base
     set_param(:language_code, :language)
     params[:mac_address] = DeviceService.normalize_mac_address(params[:mac_address])
     params[:advertising_id] = DeviceService.normalize_advertising_id(params[:advertising_id])
+    params[:advertising_id] = nil unless valid_advertising_id?
     remap_temple_run_app_id
     set_inbound_udid
+  end
+
+  def valid_advertising_id?
+    params[:advertising_id].valid_advertising_id?
   end
 
   def set_inbound_udid
