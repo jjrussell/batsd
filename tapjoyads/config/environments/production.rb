@@ -206,7 +206,12 @@ RIAK_NODES = [{:host => 'cluster-1.us-east-e.riak.tapjoy.net'},
               {:host => 'cluster-19.us-east-e.riak.tapjoy.net'},
               {:host => 'cluster-20.us-east-e.riak.tapjoy.net'},
               {:host => 'cluster-21.us-east-e.riak.tapjoy.net'},
-              {:host => 'cluster-22.us-east-e.riak.tapjoy.net'}]
+              {:host => 'cluster-22.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-23.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-24.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-25.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-26.us-east-e.riak.tapjoy.net'},
+              {:host => 'cluster-27.us-east-e.riak.tapjoy.net'}]
 
 DEVICE_RIAK_NODES = [{:host => 'riakdevices-backup-cluster-0.us-east.riak.tapjoy.net'},
                      {:host => 'riakdevices-backup-cluster-1.us-east.riak.tapjoy.net'},
