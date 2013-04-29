@@ -93,10 +93,7 @@ SDB_MEMCACHE_SERVERS = [
   'riakcache-cache-1.tapjoy.local',
   'riakcache-cache-2.tapjoy.local',
   'riakcache-cache-3.tapjoy.local',
-  'riakcache-cache-4.tapjoy.local',
-  'riakcache-cache-5.tapjoy.local',
-  'riakcache-cache-6.tapjoy.local',
-  'riakcache-cache-7.tapjoy.local'
+  'riakcache-cache-4.tapjoy.local'
 ]
 
 distributed_memcache_servers = {
