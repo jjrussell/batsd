@@ -13,7 +13,7 @@ class DeviceService
     end
 
     def normalize_advertising_id(advertising_id)
-      advertising_id.downcase.gsub(/-/,"")
+      advertising_id.downcase.gsub(/-/,"") if advertising_id.present?
     end
   end
 end
