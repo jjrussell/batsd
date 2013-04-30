@@ -9,6 +9,10 @@ module FormatChecks
   def udid?
     self =~ UDID_REGEX
   end
+
+  def valid_advertising_id?
+    self.present? && self.length == 32 && self =~ /^\w+$/
+  end
 end
 
 class String

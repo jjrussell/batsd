@@ -82,7 +82,7 @@ class ConnectController < ApplicationController
     path_list = []
 
     unless @device.has_app?(params[:app_id]) && !@device.is_temporary
-      [params[:udid], @device.advertising_id, @device.udid].uniq.each do |device_id_for_click|
+      [params[:udid], @device.advertising_id, @device.udid, params[:mac_address], @device.mac_address].uniq.compact.each do |device_id_for_click|
         click = Click.new(:key => "#{device_id_for_click}.#{params[:app_id]}", :consistent => params[:consistent])
         break unless click.new_record?
       end
