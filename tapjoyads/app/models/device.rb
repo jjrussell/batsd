@@ -35,6 +35,7 @@ class Device < SimpledbShardedResource
   self.sdb_attr :idfa_processed, :type => :bool, :default_value => false
   self.sdb_attr :advertising_id
   self.sdb_attr :upgraded_idfa
+  self.sdb_attr :upgraded_device_id, :type => :json, :default_value => []
   self.sdb_attr :udid
   self.sdb_attr :platform
   self.sdb_attr :is_papayan, :type => :bool, :default_value => false
@@ -85,7 +86,7 @@ class Device < SimpledbShardedResource
     was_new_record = self.new_record?
     return_value = super({ :write_to_memcache => true }.merge(options))
     queue_message = {'device_id' => key}.to_json
-    Sqs.send_message(QueueNames::NEW_ADVERTISING_IDS, queue_message) if was_new_record && advertising_id_device?
+    Sqs.send_message(QueueNames::NEW_ADVERTISING_IDS, queue_message) if advertising_id_device? && (was_new_record || @upgrade_device)
     Sqs.send_message(QueueNames::CREATE_DEVICE_IDENTIFIERS, queue_message) if @create_device_identifiers && create_identifiers && !advertising_id_device?
     @create_device_identifiers = false
     return_value
@@ -107,15 +108,26 @@ class Device < SimpledbShardedResource
     Device.advertiser_device_id(key, advertiser_partner_id)
   end
 
+  def udid=(new_value)
+    put('udid', new_value)
+    @upgrade_device ||= !self.has_upgraded_device_id?(new_value) if self.advertising_id_device?
+  end
+
   def mac_address=(new_value)
     new_value = new_value ? DeviceService.normalize_mac_address(new_value) : ''
     @create_device_identifiers ||= (self.mac_address != new_value)
     put('mac_address', new_value)
+    @upgrade_device ||= !self.has_upgraded_device_id?(new_value) if self.advertising_id_device?
   end
 
   def advertising_id=(new_value)
     new_value = new_value ? DeviceService.normalize_advertising_id(new_value) : ''
     put('advertising_id', new_value)
+  end
+
+  def has_upgraded_device_id?(device_id)
+    return false unless self.advertising_id_device?
+    self.upgraded_device_id.include?(device_id)
   end
 
   def advertising_id_device?

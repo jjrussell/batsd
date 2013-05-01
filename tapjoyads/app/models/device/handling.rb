@@ -4,10 +4,10 @@ module Device::Handling
 
     now                 = Time.zone.now
     path_list           = []
+    self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
     self.mac_address    = params[:mac_address] if params[:mac_address].present?
     self.android_id     = params[:android_id] if params[:android_id].present?
     self.udid           = params[:inbound_udid] if params[:inbound_udid].present?
-    self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
     is_jailbroken_was   = is_jailbroken
     country_was         = country
     last_run_time_was   = last_run_time(app_id)
@@ -151,6 +151,13 @@ module Device::Handling
     self.advertising_id.present? && !self.advertising_id_device? && !self.has_upgraded_idfa_device?
   end
 
+  def set_upgraded_device_id(device_id)
+    unless has_upgraded_device_id?(device_id)
+      self.upgraded_device_id += [device_id]
+      self.idfa_processed = true
+    end
+  end
+
   private
 
   def mac_address_mergeable?
@@ -179,19 +186,16 @@ module Device::Handling
   def mergeable_devices(is_recreate = false)
     device_ids_for_merge = []
     device_ids_for_merge.concat(duplicate_device_ids) if is_recreate
-    [:udid, :mac_address].each do |device_key|
-      device_ids_for_merge.push(self.send(device_key)) if self.send(device_key)
-    end
-
-    device_ids_for_merge.uniq
+    device_ids_for_merge.concat([self.udid, self.mac_address])
+    device_ids_for_merge.uniq.compact.reject { |device_id| self.upgraded_device_id.include?(device_id) }
   end
 
   def copy_device!(device_id_for_copy, copy_clicks = false, upgrade_advertising_id = false)
     return unless device_id_mergeable?(device_id_for_copy)
-
+    self.set_upgraded_device_id(device_id_for_copy) if self.advertising_id_device?
     device_for_copy = Device.find(device_id_for_copy)
     return unless device_for_copy
-    return if upgrade_advertising_id && device_for_copy.has_upgraded_idfa_device?
+    return if upgrade_advertising_id && device_for_copy.has_upgraded_idfa_device? && !self.upgraded_device_id_changed?
 
     device_for_copy.parsed_apps.keys.each do |app_id|
       copy_for_currency!(app_id, Click.find(device_for_copy.click_key(app_id))) if copy_clicks
