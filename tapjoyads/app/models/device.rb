@@ -108,6 +108,10 @@ class Device < SimpledbShardedResource
     Device.advertiser_device_id(key, advertiser_partner_id)
   end
 
+  def advertising_id
+    DeviceService.normalize_advertising_id(get('advertising_id'))
+  end
+
   def udid=(new_value)
     put('udid', new_value)
     @upgrade_device ||= !self.has_upgraded_device_id?(new_value) if self.advertising_id_device?
