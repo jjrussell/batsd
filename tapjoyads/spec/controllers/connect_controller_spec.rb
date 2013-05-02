@@ -192,6 +192,7 @@ describe ConnectController do
           let(:params) { @params.merge(self.class.generate_params_for(*identifiers)) }
           before(:each) do
             device.stub(:has_app?).and_return false
+            controller.stub(:valid_advertising_id?).and_return(true)
             Click.stub(:new).and_return(click)
           end
 

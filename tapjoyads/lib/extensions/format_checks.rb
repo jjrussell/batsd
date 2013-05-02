@@ -13,6 +13,10 @@ module FormatChecks
   def valid_advertising_id?
     self.present? && self.length == 32 && self =~ /^\w+$/
   end
+
+  def mac_address?
+    self.present? && DeviceService.normalize_mac_address(self).length == 12
+  end
 end
 
 class String

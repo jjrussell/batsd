@@ -99,28 +99,6 @@ describe Device do
     end
   end
 
-  describe '#copy_mac_address_device!' do
-    context 'without invalid data' do
-      before :each do
-        Device.should_not_receive(:new)
-      end
-
-      it 'doesnt attempt a copy' do
-        @device.mac_address = ''
-        @device.copy_mac_address_device!
-
-        @device.mac_address = 'null'
-        @device.copy_mac_address_device!
-
-        @device.mac_address = @device.key
-        @device.copy_mac_address_device!
-
-        @device.key = 'null'
-        @device.copy_mac_address_device!
-      end
-    end
-  end
-
   describe '#handle_sdkless_click!' do
     before :each do
       app = FactoryGirl.create :app
@@ -658,30 +636,6 @@ describe Device do
     end
   end
 
-  describe '#in_network_apps' do
-    before :each do
-      @app1 = FactoryGirl.create :app
-      FactoryGirl.create(:currency, :app_id => @app1.id, :callback_url => 'http://foo.com')
-
-      @app2 = FactoryGirl.create :app
-      FactoryGirl.create(:currency, :app_id => @app2.id, :callback_url => 'http://foo.com')
-
-      ext_pub1 = ExternalPublisher.new(@app1.currencies.first)
-      ext_pub2 = ExternalPublisher.new(@app2.currencies.first)
-
-      external_publishers = [ ext_pub1, ext_pub2 ]
-      ExternalPublisher.stub(:load_all_for_device).and_return(external_publishers)
-
-      InNetworkApp.stub(:new).and_return(mock('in_network_app'))
-      @device.set_last_run_time!(@app1.id)
-      @device.set_last_run_time!(@app2.id)
-    end
-
-    it 'return in_network_apps based on device.apps' do
-      @device.in_network_apps.size.should == 2
-    end
-  end
-
   describe '#set_sdk_version' do
     let (:app) { FactoryGirl.create :app }
 
@@ -775,6 +729,58 @@ describe Device do
   describe '#handle_connect!' do
     let (:app)      { FactoryGirl.create :app }
     let (:params)   { { :udid => @key } }
+
+    context 'when updating with valid attributes' do
+      let(:idfa) { FactoryGirl.generate(:advertising_id) }
+      let(:params_with_idfa) { {
+        :udid => idfa,
+        :advertising_id => idfa,
+        :mac_address => 'aabbccddeeff',
+        :lookedup_udid => FactoryGirl.generate(:udid)
+      }}
+
+      context 'for a device with existing attributes' do
+        let(:valid_device) { Factory.create(:device,
+          :udid => FactoryGirl.generate(:udid),
+          :mac_address => 'aabbccddeegg',
+        )}
+
+        it 'does not update' do
+          valid_device.handle_connect!(app.id, params_with_idfa)
+
+          device = Device.new(:key => valid_device.id)
+          device.mac_address.should == 'aabbccddeegg'
+          device.udid.should == valid_device.udid
+        end
+      end
+
+      context 'for a device without an existing attributes' do
+        let(:valid_device) { FactoryGirl.create(:device) }
+
+        it 'updates the attributes' do
+          valid_device.handle_connect!(app.id, params_with_idfa)
+
+          device = Device.new(:key => valid_device.id)
+          device.mac_address.should == 'aabbccddeeff'
+          device.udid.should == params_with_idfa[:lookedup_udid]
+        end
+      end
+
+      context 'for a device with wrong attributes' do
+        let(:valid_device) { Factory.create(:device,
+          :udid => 'WRONG_UDID',
+          :mac_address => 'WRONG_MAC'
+        )}
+
+        it 'updates te attributes' do
+          valid_device.handle_connect!(app.id, params_with_idfa)
+
+          device = Device.new(:key => valid_device.id)
+          device.mac_address.should == 'aabbccddeeff'
+          device.udid.should == params_with_idfa[:lookedup_udid]
+        end
+      end
+    end
 
     context 'when the "library_version" parameter is specified' do
       before :each do

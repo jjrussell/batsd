@@ -78,12 +78,13 @@ class ConnectController < ApplicationController
     return unless params[:udid].present?
 
     current_device #sets @device instance variable (application controller)
+    fix_lookedup_udid
     click     = nil
     path_list = []
 
-    unless @device.has_app?(params[:app_id]) && !@device.is_temporary
-      [params[:udid], @device.advertising_id, @device.udid, params[:mac_address], @device.mac_address].uniq.compact.each do |device_id_for_click|
-        click = Click.new(:key => "#{device_id_for_click}.#{params[:app_id]}", :consistent => params[:consistent])
+    unless current_device.has_app?(params[:app_id]) && current_device.is_temporary
+      available_device_ids_for_click_matching.each do |device_id|
+        click = click_for_device(device_id)
         break unless click.new_record?
       end
 
@@ -91,14 +92,7 @@ class ConnectController < ApplicationController
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
       end
 
-      if click.rewardable?
-        message = {
-          :click_key         => click.key,
-          :device_identifier => advertiser_supplied_device_identifier,
-          :install_timestamp => Time.zone.now.to_f.to_s
-        }.to_json
-        Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
-      end
+      record_conversion(click) if click.rewardable?
     end
 
     # ivar for the benefit of tracks_admin_devices
@@ -132,6 +126,48 @@ class ConnectController < ApplicationController
   end
 
   private
+
+  def record_conversion(click)
+    if click && click.rewardable?
+      message = {
+        :click_key         => click.key,
+        :device_identifier => advertiser_supplied_device_identifier,
+        :install_timestamp => Time.zone.now.to_f.to_s
+      }.to_json
+      Sqs.send_message(QueueNames::CONVERSION_TRACKING, message)
+    end
+  end
+
+  def fix_lookedup_udid
+    if current_device.advertising_id_device?
+      params[:lookedup_udid] = nil unless params[:lookedup_udid].udid? && Device.find(params[:lookedup_udid])
+      params[:lookedup_udid] = mac_address_device_id unless params[:lookedup_udid].present?
+    end
+  end
+
+  def mac_address_device_id
+    return nil unless params[:mac_address]
+    device_id = DeviceIdentifier.find(params[:mac_address]).try(:udid)
+    device_id.udid? ? device_id : nil
+  end
+
+  def available_device_ids_for_click_matching
+    return @click_device_ids if @click_device_ids
+
+    @click_device_ids = [ current_device.id,
+                          params[:udid],
+                          current_device.udid,
+                          current_device.advertising_id,
+                          current_device.mac_address,
+                          params[:mac_address],
+                          params[:lookedup_udid]]
+    @click_device_ids.uniq!.compact!
+    @click_device_ids
+  end
+
+  def click_for_device(device_id_for_click)
+    Click.new(:key => "#{device_id_for_click}.#{params[:app_id]}", :consistent => params[:consistent])
+  end
 
   # For reporting purposes, we are to record the advertiser-supplied unique
   # identifier(s) for the device that are least privacy-invasive.

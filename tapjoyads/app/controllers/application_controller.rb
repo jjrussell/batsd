@@ -214,7 +214,7 @@ class ApplicationController < ActionController::Base
   def set_inbound_udid
     return if @inbound_udid_set
 
-    params[:inbound_udid] = params[:udid] if params[:udid].present?
+    params[:inbound_udid] = params[:lookedup_udid] = params[:udid] if params[:udid].present?
     @inbound_udid_set = true
   end
 
