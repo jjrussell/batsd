@@ -82,7 +82,7 @@ class ConnectController < ApplicationController
     click     = nil
     path_list = []
 
-    unless current_device.has_app?(params[:app_id]) && current_device.is_temporary
+    unless current_device.has_app?(params[:app_id]) && !current_device.is_temporary
       available_device_ids_for_click_matching.each do |device_id|
         click = click_for_device(device_id)
         break unless click.new_record?
