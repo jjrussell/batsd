@@ -772,7 +772,7 @@ describe Device do
           :mac_address => 'WRONG_MAC'
         )}
 
-        it 'updates te attributes' do
+        it 'updates the attributes' do
           valid_device.handle_connect!(app.id, params_with_idfa)
 
           device = Device.new(:key => valid_device.id)
