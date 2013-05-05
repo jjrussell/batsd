@@ -41,12 +41,7 @@ module Device::Handling
       # Temporary change volume tracking, tracking running until 2012-10-31
       Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
       save
-    end
-
-    if self.advertising_id_device?
-      run_set_last_run_time(app_id, self.standard_attributes)
-    else
-      run_set_last_run_time(app_id, self.advertising_attributes)
+      run_set_last_run_time(app_id, self.alternative_device_ids)
     end
 
     path_list

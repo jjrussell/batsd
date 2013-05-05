@@ -140,6 +140,10 @@ class Device < SimpledbShardedResource
       DeviceService.normalize_advertising_id(self.key) == self.advertising_id
   end
 
+  def alternative_device_ids
+    self.advertising_id_device? ? self.standard_attributes : self.advertising_attributes
+  end
+
   def dynamic_domain_name
     domain_number = RubyVersionIndependent.hash(@key) % NUM_DEVICES_DOMAINS
     "devices_#{domain_number}"
