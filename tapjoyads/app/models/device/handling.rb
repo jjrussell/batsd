@@ -47,7 +47,7 @@ module Device::Handling
   def needs_save?
     last_run_time_tester? ||
       is_jailbroken_was != is_jailbroken ||
-      country_was != country ||
+      country_was != country
   end
 
   def update_identifying_attributes(params)
@@ -89,8 +89,8 @@ module Device::Handling
       if self.advertising_id_device?
         alt_device.advertising_id = self.advertising_id if self.advertising_id?
       else
-        alt_device.mac_address = self.mac_address if self.mac_address?
         alt_device.udid = self.udid if self.udid?
+        alt_device.mac_address = self.mac_address if self.mac_address?
       end
 
       alt_device.save
@@ -170,11 +170,6 @@ module Device::Handling
   def set_upgraded_idfa!(device_id)
     self.upgraded_idfa = device_id
     save!
-  end
-
-  #TODO(nixoncd/isingh): can delete after batch runs
-  def batchable?
-    self.advertising_id.present? && !self.advertising_id_device? && !self.has_upgraded_idfa_device?
   end
 
   def set_upgraded_device_id(device_id)
