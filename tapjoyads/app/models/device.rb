@@ -108,10 +108,6 @@ class Device < SimpledbShardedResource
     Device.advertiser_device_id(key, advertiser_partner_id)
   end
 
-  def alternative_device_ids
-    self.advertising_id_device? ? self.standard_attributes : self.advertising_attributes
-  end
-
   def advertising_id
     DeviceService.normalize_advertising_id(get('advertising_id'))
   end
