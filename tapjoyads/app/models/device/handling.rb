@@ -4,10 +4,7 @@ module Device::Handling
 
     now                 = Time.zone.now
     path_list           = []
-    self.advertising_id = params[:advertising_id] if params[:advertising_id].present?
-    self.mac_address    = params[:mac_address] if params[:mac_address].present?
-    self.android_id     = params[:android_id] if params[:android_id].present?
-    self.udid           = params[:inbound_udid] if params[:inbound_udid].present?
+    update_identifying_attributes(params)
     is_jailbroken_was   = is_jailbroken
     country_was         = country
     last_run_time_was   = last_run_time(app_id)
@@ -37,14 +34,37 @@ module Device::Handling
     self.set_jailbroken(params[:lad], app_id)
     self.set_country(params)
 
-    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
+    if (needs_save? || path_list.include?('daily_user') || @create_device_identifiers)
       # Temporary change volume tracking, tracking running until 2012-10-31
       Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
       save
-      run_set_last_run_time(app_id, self.alternative_device_ids)
+      update_alternative_devices!(app_id)
     end
 
     path_list
+  end
+
+  def needs_save?
+    last_run_time_tester? ||
+      is_jailbroken_was != is_jailbroken ||
+      country_was != country
+  end
+
+  def update_identifying_attributes(params)
+    # TODO(isingh): DRY this up
+    if params[:lookedup_udid].present? && params[:lookedup_udid].udid? && !self.udid.udid?
+      self.udid = params[:lookedup_udid]
+    end
+
+    if params[:mac_address].present? && params[:mac_address].mac_address? && !self.mac_address.mac_address?
+      self.mac_address = params[:mac_address]
+    end
+
+    if params[:advertising_id] && params[:advertising_id].valid_advertising_id? && !self.advertising_id.valid_advertising_id?
+      self.advertising_id = params[:advertising_id]
+    end
+
+    self.android_id = params[:android_id] if params[:android_id].present?
   end
 
   def advertising_attributes
@@ -59,10 +79,21 @@ module Device::Handling
     DeviceService.normalize_advertising_id(self.advertising_id)
   end
 
-  def run_set_last_run_time(app_id, attributes)
-    attributes.each do |value|
-      associated_device = Device.find(value)
-      associated_device.set_last_run_time!(app_id) if associated_device.present?
+  def update_alternative_devices!(app_id)
+    self.alternative_device_ids.each do |alt_device_id|
+      alt_device = Device.find(alt_device_id)
+      next unless alt_device
+
+      alt_device.set_last_run_time(app_id)
+
+      if self.advertising_id_device?
+        alt_device.advertising_id = self.advertising_id if self.advertising_id?
+      else
+        alt_device.udid = self.udid if self.udid?
+        alt_device.mac_address = self.mac_address if self.mac_address?
+      end
+
+      alt_device.save
     end
   end
 
@@ -141,11 +172,6 @@ module Device::Handling
     save!
   end
 
-  #TODO(nixoncd/isingh): can delete after batch runs
-  def batchable?
-    self.advertising_id.present? && !self.advertising_id_device? && !self.has_upgraded_idfa_device?
-  end
-
   def set_upgraded_device_id(device_id)
     unless has_upgraded_device_id?(device_id)
       self.upgraded_device_id += [device_id]
@@ -168,7 +194,6 @@ module Device::Handling
 
     all_identifiers.push(Digest::SHA2.hexdigest(udid)) if self.udid.present?
     all_identifiers.push(android_id) if self.android_id.present?
-    all_identifiers.push(advertising_id) if self.advertising_id.present?
 
     if self.mac_address.present?
       all_identifiers.push(mac_address)

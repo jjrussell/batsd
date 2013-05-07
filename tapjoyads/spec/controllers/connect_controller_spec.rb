@@ -45,6 +45,70 @@ describe ConnectController do
         end
       end
 
+      context 'with an advertising_id device' do
+        let(:idfa) { FactoryGirl.generate(:advertising_id) }
+        let(:udid) { FactoryGirl.generate(:udid) }
+        let(:additional_udid) { FactoryGirl.generate(:udid) }
+        let(:valid_params) {{
+          :udid => additional_udid,
+          :advertising_id => idfa,
+          :mac_address => 'aabbccddeeff',
+          :app_id => 'test_app'
+        }}
+        let(:additional_device) { FactoryGirl.create(:device) }
+
+        before :each do
+          @device = FactoryGirl.create(
+            :device,
+            :key            => idfa,
+            :advertising_id => idfa,
+            :udid           => udid
+          )
+          Device.stub(:new).and_return(@device)
+        end
+
+        context 'with a UDID paramter' do
+          context 'which is invalid' do
+            let(:udid_params) { { :udid => 'TEST_UDID', :app_id => 'test_app', :advertising_id => @device.id } }
+
+            it 'ignores it' do
+              @device.should_receive(:handle_connect!).with(
+                'test_app',
+                { "udid"                  => @device.id,
+                  "advertising_id"        => @device.id,
+                  "app_id"                => "test_app",
+                  "controller"            => "connect",
+                  "action"                => "index",
+                  "mac_address"           => nil,
+                  "lookedup_udid"         => nil,
+                  "inbound_udid"          => "test_udid",
+                  "udid_lookup_via"       => :params,
+                  "identifiers_provided"  => nil,
+                  "udid_is_temporary"     => false,
+                  "udid_via_lookup"       => false
+                }).and_return([])
+              get(:index, udid_params)
+            end
+          end
+        end
+
+        context 'with valid params' do
+          before :each do
+            Device.should_receive(:find).with(additional_udid).and_return(additional_device)
+            @device.should_receive(:handle_connect!).and_return([])
+            c = Click.new
+            controller.should_receive(:click_for_device).with(idfa).and_return(c)
+            controller.should_receive(:click_for_device).with(udid).and_return(c)
+            controller.should_receive(:click_for_device).with('aabbccddeeff').and_return(c)
+            controller.should_receive(:click_for_device).with(additional_udid).and_return(c)
+          end
+
+          it 'tries to lookup clicks with udid' do
+            get(:index, valid_params)
+          end
+        end
+      end
+
       context 'blacklisted udid' do
         before :each do
           @params = { :app_id     => 'test_app',
@@ -192,6 +256,7 @@ describe ConnectController do
           let(:params) { @params.merge(self.class.generate_params_for(*identifiers)) }
           before(:each) do
             device.stub(:has_app?).and_return false
+            controller.stub(:valid_advertising_id?).and_return(true)
             Click.stub(:new).and_return(click)
           end
 

@@ -46,4 +46,5 @@ FactoryGirl.define do
   sequence(:title)            { |n| TitleGenerator.title_for(n.to_s) }
   sequence(:udid)             { |n| UDID.generate }
   sequence(:url)              { |n| "http://example.com/#{n}" }
+  sequence(:advertising_id)   { |n| "#{UUIDTools::UUID.random_create}".downcase.gsub(/-/, '') }
 end
