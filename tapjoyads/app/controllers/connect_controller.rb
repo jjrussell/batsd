@@ -92,7 +92,7 @@ class ConnectController < ApplicationController
         click = Click.new(:key => "#{params[:mac_address]}.#{params[:app_id]}", :consistent => params[:consistent])
       end
 
-      record_conversion(click) if click.rewardable?
+      record_conversion(click)
     end
 
     # ivar for the benefit of tracks_admin_devices
@@ -154,13 +154,13 @@ class ConnectController < ApplicationController
   def available_device_ids_for_click_matching
     return @click_device_ids if @click_device_ids
 
-    @click_device_ids = [ current_device.id,
-                          params[:udid],
-                          current_device.udid,
-                          current_device.advertising_id,
-                          current_device.mac_address,
-                          params[:mac_address],
-                          params[:lookedup_udid]]
+    @click_device_ids = [current_device.id,
+                         params[:udid],
+                         current_device.udid,
+                         current_device.advertising_id,
+                         current_device.mac_address,
+                         params[:mac_address],
+                         params[:lookedup_udid]]
     @click_device_ids.uniq!.compact!
     @click_device_ids
   end
