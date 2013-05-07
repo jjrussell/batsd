@@ -34,7 +34,7 @@ module Device::Handling
     self.set_jailbroken(params[:lad], app_id)
     self.set_country(params)
 
-    if (needs_save? || path_list.include?('daily_user') || @create_device_identifiers)
+    if (last_run_time_tester? || is_jailbroken_was != is_jailbroken || country_was != country || path_list.include?('daily_user') || @create_device_identifiers)
       # Temporary change volume tracking, tracking running until 2012-10-31
       Mc.increment_count(Time.now.strftime("tempstats_device_jbchange_%Y%m%d"), false, 1.month) if is_jailbroken_was != is_jailbroken
       save
@@ -42,12 +42,6 @@ module Device::Handling
     end
 
     path_list
-  end
-
-  def needs_save?
-    last_run_time_tester? ||
-      is_jailbroken_was != is_jailbroken ||
-      country_was != country
   end
 
   def update_identifying_attributes(params)
