@@ -123,7 +123,7 @@ class Device < SimpledbShardedResource
 
   def mac_address=(new_value)
     new_value = new_value ? DeviceService.normalize_mac_address(new_value) : ''
-    @create_device_identifiers ||= (self.mac_address != new_value)
+    @create_device_identifiers ||= (self.mac_address != new_value) unless self.advertising_id_device?
     put('mac_address', new_value)
     @upgrade_device ||= !self.has_upgraded_device_id?(new_value) if self.advertising_id_device?
   end
