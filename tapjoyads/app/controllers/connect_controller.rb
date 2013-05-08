@@ -11,10 +11,10 @@ class ConnectController < ApplicationController
   # Order is important.
   PRIORITIZED_DEVICE_IDENTIFIER_TO_NAME_MAP = {
     :advertising_id => "Advertising ID",
-    :open_udid      => "OpenUDID",
     :android_id     => "Android ID",
     :serial_id      => "Serial ID",
     :mac_address    => "MAC Address",
+    :open_udid      => "OpenUDID", 
     :udid           => "UDID"           # Not necessarily an actual UDID
   }
 
