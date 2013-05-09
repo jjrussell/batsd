@@ -376,13 +376,7 @@ class Device < SimpledbShardedResource
       # we may be missing the open '{'
       after = "{#{after}" if after.present? && !after.starts_with?('{')
 
-      data = nil
-      begin
-        data                = before ? JSON.parse(before) : nil
-      rescue JSON::ParserError => e
-        LiveDebugger.new('user_events_bad_json_error').log(before.inspect)
-      end
-
+      data = (JSON.parse(before) rescue nil)
       data_after_badness  = after  ? (JSON.parse(after) rescue {}) : {}
 
       # If we got some data, merge it into the result
