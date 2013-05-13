@@ -33,8 +33,8 @@ class DeviceService::Locator < DeviceService
 
   def device_id_from_identifier(identifier)
     identifier = DeviceIdentifier.find(identifier)
-    return identifier.udid if identifier && !identifier.udid.to_s.start_with?('device_identifier')
-    nil
+    return nil if invalid_device_id?(identifier.try(:udid))
+    identifier.udid
   end
 
   def device
@@ -50,6 +50,13 @@ class DeviceService::Locator < DeviceService
   end
 
   private
+
+  def invalid_device_id?(device_key)
+    device_key.nil? ||
+      IGNORED_UDIDS.include?(device_key) ||
+      IGNORED_ADVERTISING_IDS.include?(device_key) ||
+      device_key.to_s.start_with?('device_identifier')
+  end
 
   def device_found(device_key, found_by)
     @device         = nil

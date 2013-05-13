@@ -43,6 +43,7 @@ IGNORED_UDIDS = Set.new([
   'none',
   'null',
   'unknown',
+  '00000000000000000000000000000000',
 ])
 
 IGNORED_ADVERTISING_IDS = Set.new([
