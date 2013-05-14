@@ -162,6 +162,7 @@ class ConnectController < ApplicationController
                          params[:mac_address],
                          params[:lookedup_udid]]
     @click_device_ids.uniq!.compact!
+    @click_device_ids.reject! { |device_id| IGNORED_DEVICE_IDS.include?(device_id) }
     @click_device_ids
   end
 
