@@ -232,7 +232,7 @@ If any tests fail, ask for help in Campfire.
 Running locally
 ---------------
 
-Using Unicorn and Foreman, you can run the application directly from the `connect/tapjoyads` directory by running:
+Using Unicorn and Foreman, you can run the application directly from the repository root directory by running:
 
 ```
 foreman start

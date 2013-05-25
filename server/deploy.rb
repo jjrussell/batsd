@@ -36,30 +36,30 @@ if deploy_version == 'master'
 end
 
 if server_type == 'testserver' || server_type == 'staging'
-  `cp tapjoyads/config/newrelic-test.yml tapjoyads/config/newrelic.yml`
-  `cp tapjoyads/config/local-test.yml tapjoyads/config/local.yml`
+  `cp config/newrelic-test.yml config/newrelic.yml`
+  `cp config/local-test.yml config/local.yml`
 elsif server_type == 'connect'
-  `cp tapjoyads/config/newrelic-connect.yml tapjoyads/config/newrelic.yml`
+  `cp config/newrelic-connect.yml config/newrelic.yml`
 end
 
 if server_type == 'connect'
-  `cp -f tapjoyads/db/webserver.sqlite tapjoyads/db/production.sqlite`
-  `chmod 444 tapjoyads/db/production.sqlite`
-  `cp tapjoyads/config/database-webserver.yml tapjoyads/config/database.yml`
+  `cp -f db/webserver.sqlite db/production.sqlite`
+  `chmod 444 db/production.sqlite`
+  `cp config/database-webserver.yml config/database.yml`
 else
-  `cp tapjoyads/config/database-default.yml tapjoyads/config/database.yml`
+  `cp config/database-default.yml config/database.yml`
 end
 
-Dir.chdir "tapjoyads" do
-  if server_type == "dev"
-    `bundle install`
-  else
-    `bundle install --local`
-  end
 
-  puts "Updating GeoIPCity Data"
-  system "bundle exec ../server/update_geoip.rb"
-
-  puts "Restarting unicorn"
-  system "bundle exec ../server/start_or_reload_unicorn.rb"
+if server_type == "dev"
+  `bundle install`
+else
+  `bundle install --local`
 end
+
+puts "Updating GeoIPCity Data"
+system "bundle exec server/update_geoip.rb"
+
+puts "Restarting unicorn"
+system "bundle exec server/start_or_reload_unicorn.rb"
+

@@ -15,7 +15,7 @@ git clone git@github.com:[your github nickname]/connect.git
 Install necessary gems under ruby 1.9.3:
 
 ```
-cd /vagrant/connect/tapjoyads
+cd /vagrant/connect
 rvm use 1.9.3-p194
 bundle
 ```
@@ -30,7 +30,7 @@ rake setup
 Setup the database by syncing the production db with the local db:
 
 ```
-cd /vagrant/connect/tapjoyads
+cd /vagrant/connect
 rake db:create
 rake db:sync
 ```
@@ -49,7 +49,7 @@ If any tests fail, ask for help in Flowdock.
 Running the server
 ------------------
 
-Within Vagrant, you can run the application directly from the `/vagrant/connect/tapjoyads` directory by running:
+Within Vagrant, you can run the application directly from the `/vagrant/connect` directory by running:
 
 ```
 rails s thin

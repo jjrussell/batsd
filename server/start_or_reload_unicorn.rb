@@ -17,7 +17,7 @@ if pid == ''
         when "dev"        then "development"
         else                   "production"
         end
-  `bundle exec rainbows -E #{env} -c #{base_dir}/tapjoyads/config/unicorn.rb -D`
+  `bundle exec rainbows -E #{env} -c #{base_dir}/config/unicorn.rb -D`
 else
   if server_type == "dev"
     puts "Dev environment, memory management is up to you"

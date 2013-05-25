@@ -4,7 +4,7 @@ namespace :admin do
 
   desc "Lists the contents of the tmp dirs on each job machine for *sdb* and *s3*"
   task :view_long_jobs do
-    system("script/cloudrun '#{JOBSERVERS}' 'uptime ; ls -lh tapjoyserver/tapjoyads/tmp/*sdb* tapjoyserver/tapjoyads/tmp/*s3* tapjoyserver/tapjoyads/tmp/*json* 2> /dev/null'")
+    system("script/cloudrun '#{JOBSERVERS}' 'uptime ; ls -lh tapjoyserver/tmp/*sdb* tapjoyserver/tmp/*s3* tapjoyserver/tmp/*json* 2> /dev/null'")
   end
 
   desc "Copies the production database to the development database"

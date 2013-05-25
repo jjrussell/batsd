@@ -29,7 +29,7 @@ The `dev_SendWelcomeEmails` queue is a shared resource in Tapjoy's development e
 4. Navigate to `http://localhost:8080/dashboard/tools/sqs_lengths` to confirm that the `SendWelcomeEmails` queue now has a message queued.
   * If more than one message has been queued, it's likely that another developer has also registered a dummy user.  This is of no concern to this test.
 5. Find the `dev_SendWelcomeEmails` row and click the corresponding 'Run Once' link.
-  * If presented with an authentication challenge, refer to `tapjoyads/app/helpers/authentication_helper.rb` to find credentials for the user `internal`.
+  * If presented with an authentication challenge, refer to `app/helpers/authentication_helper.rb` to find credentials for the user `internal`.
   * *Note*: If other additional SQS messages are present in the `dev_SendWelcomeEmails` queue, they will likely cause your app to stack trace.  However, this is of little concern.  Since the 'Visibility Timeout' setting for this queue is 30 seconds, messages that are not successfully processed will be 'hidden' for 30 seconds.  In other words, continue refreshing the page until you get an 'ok' message.
 6. Check your email for the welcome email.
   * *Note*: Due to ExactTarget's queued processing model, it can take up to 60 seconds for the email to arrive.

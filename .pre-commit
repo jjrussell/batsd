@@ -33,7 +33,7 @@ paths = %w(
 )
 
 filetype_regexp = /\.(#{filetypes.join('|')})$/
-paths_regexp = /^tapjoyads\/(#{paths.join('|')})/
+paths_regexp = /^(#{paths.join('|')})/
 
 files = Array(`git diff-index --name-status --cached HEAD | grep -v ^D | cut -c3-`)
 files.each do |f|

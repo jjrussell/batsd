@@ -29,7 +29,7 @@ class JobRunner
   end
 
   def self.get_unicorn_pid
-    base_dir = File.expand_path("../server", Rails.root)
+    base_dir = File.expand_path("server", Rails.root)
     `#{base_dir}/unicorn_master_pid.rb`.gsub(' ', '_')
   end
 

@@ -5,7 +5,9 @@ if ENV['USER'] != 'webuser'
   exit
 end
 
-server_type = `/home/webuser/connect/server/server_type.rb`
+base_dir = File.expand_path("../../", __FILE__)
+
+server_type = ENV['SERVER_TYPE'] || `#{base_dir}/server/server_type.rb`
 exit if server_type == 'testserver'
 
 require 'rubygems'
@@ -13,7 +15,7 @@ require 'yaml'
 require 'aws-sdk'
 require 'fileutils'
 
-LOCAL_BASE    = '/home/webuser/connect/tapjoyads/data/'
+LOCAL_BASE    = "#{base_dir}/data/"
 
 AWS_CONFIG    = YAML::load_file('/home/webuser/.tapjoy_aws_credentials.yaml')['production']
 BUCKET        = AWS::S3.new(:access_key_id => AWS_CONFIG['access_key_id'], :secret_access_key => AWS_CONFIG['secret_access_key']).buckets['tapjoy']

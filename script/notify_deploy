@@ -4,7 +4,7 @@ require 'optparse'
 require 'yaml'
 
 class DeployNotifier
-  VERSION_FILENAME = "#{File.dirname(__FILE__)}/../../server/version.yaml"
+  VERSION_FILENAME = "#{File.dirname(__FILE__)}/../server/version.yaml"
   GITHUB_ISSUES_URL = "https://github.com/api/v2/json/issues/comment/Tapjoy/connect/"
 
   def initialize(args)

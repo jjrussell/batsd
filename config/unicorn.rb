@@ -1,10 +1,10 @@
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete
 # documentation.
 
-base_dir = File.expand_path("../../../", __FILE__)
+base_dir = File.expand_path("../../", __FILE__)
 server_type = `#{base_dir}/server/server_type.rb`
 
-app_dir = "#{base_dir}/tapjoyads"
+app_dir = "#{base_dir}"
 working_directory app_dir
 
 worker_processes 12
